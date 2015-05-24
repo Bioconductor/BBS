@@ -1,0 +1,111 @@
+Quick install
+=============
+
+  sudo apt-get install \
+    libc6-dev gcc g77 gfortran g++ libreadline5-dev libx11-dev libxt-dev \
+    tetex-bin tk8.4-dev libpng12-dev libjpeg62-dev texinfo make \
+    zlib1g-dev libglib2.0-dev graphviz-dev libgtk1.2-dev libgnome-dev \
+    tetex-extra
+
+
+Detailed instructions
+=====================
+
+Additional Ubuntu packages needed after a fresh Ubuntu
+installation in order to have the R configure script happy:
+
+  - libc6-dev
+  - gcc
+  - g77
+  - gfortran
+  - g++
+  - libreadline5-dev
+  - libx11-dev
+  - libxt-dev
+  - tetex-bin
+
+To get some extra functionalities (highly recommended):
+
+  - tk8.4-dev
+  - libpng12-dev
+  - libjpeg62-dev
+  - texinfo
+
++ of course:
+
+  - make
+
+
+Installing Java from Sun is also required by some BioC packages:
+  o on Ubuntu 6.06 (Dapper Drake):
+    See the Unofficial Ubuntu 6.06 (Dapper Drake) Starter Guide
+    (http://ubuntuguide.org/wiki/Dapper) for an easy way to do this.
+    Create the /etc/ld.so.conf file (if it doesn't exist already)
+    and add
+      /usr/lib/jvm/java-1.5.0-sun-1.5.0.06/jre/lib/i386
+    to it. Then run
+      sudo ldconfig
+  o on Ubuntu 7.04 (Feisty): install the following packages
+      - sun-java6-bin
+      - sun-java6-demo
+      - sun-java6-fonts
+      - sun-java6-jdk
+      - sun-java6-jre
+      - sun-java6-source
+      - gsfonts-x11
+
+
+Other Ubuntu packages that will make biocLite() happy:
+
+  - libxml2-dev (needed by XML)
+
+  - zlib1g-dev (needed by affyio)
+
+  - libglib2.0-dev (needed by Ruuid)
+
+
+Needed by other BioC packages:
+
+  - graphviz-dev (needed by Rgraphviz, create the /etc/ld.so.conf
+                file, put /usr/lib/graphviz in it and run ldconfig
+                before to do biocLite("Rgraphviz"))
+
+  - libgtk1.2-dev and libgnome-dev (needed by RGtk)
+
+
+Other useful stuff (for 'R CMD build' users i.e. for
+developpers or Build System only):
+
+  - tetex-extra (needed to build the vignette of some of the
+               BioC packages)
+
+---
+
+An informal list of Ubuntu packages required for R, from Herve:
+
+make libc6-dev gfortran gfortran-4.6 g++ g++-4.6 libreadline6-dev \
+ libx11-dev libxt-dev
+
+Other highly recommended stuff (TeX/LaTeX, tcltk, PNG, JPEG, cairo, Java):
+ texlive-full
+ tcl8.5-dev
+ tk8.5-dev
+ libxss-dev
+ libpng12-dev
+ libjpeg62-dev
+ libcairo2-dev
+ gcj
+ gcj-4.2
+
+Required by some CRAN or Bioconductor packages:
+ libcurl4-openssl-dev (for RCurl)
+ libxml2-dev (for XML)
+ libgtk2.0-dev, libglade2.0-dev (for RGtk2)
+ libgraphviz-dev (for Rgraphviz)
+ ggobi (for rggobi)
+
+Really nice to have:
+ manpages-dev
+ colorgcc (to activate this: cd /usr/local/bin/ && sudo ln -s
+/usr/bin/colorgcc gcc)
+

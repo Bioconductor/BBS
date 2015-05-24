@@ -1,0 +1,60 @@
+
+Here are the instructions for updating R on the Mac OS X machines.
+
+For devel, we use the builds provided by Simon Urbanek, since these
+are the only binary builds provided for R-devel.
+
+For release, we use the binary provided by CRAN, in order to
+be using the same version of R as the majority of our users.
+
+(Some or all of these steps could be make into a shell script, but
+I find it doesn't take too much time to do them by hand -- Patrick)
+
+8 Steps to update R on Mac OS X build machines
+====================================
+
+1. Login to Mac OS X build machine under biocbuild account.
+
+2. Change to the Downloads directory.
+
+3. Download the appropriate R-*-leopard-universal.tar.gz universal binary from
+   For DEVEL:
+   http://r.research.att.com/
+   (e.g. curl -O http://r.research.att.com/R-devel-leopard-universal.tar.gz).
+   for RELEASE:
+   http://cran.fhcrc.org/bin/macosx/R-X.Y.Z.pkg
+
+4. If replacing an older build of same version of R, remove the old installation
+   using
+   rm -rf /Library/Frameworks/R.framework/Versions/2.x
+
+5. Unpack the R universal binary in the root directory
+   tar fvxz R*.tar.gz -C /
+   (or for release, just run the .pkg file)
+
+6. If installing R-devel, remap R's "Current" soft link, which designates which
+   R script is executed if you just type R at the command line, to point to the
+   release version of R using
+
+   cd /Library/Frameworks/R.framework/Versions
+   rm Current
+   ln -s <<Release Version>> Current
+   
+   IMPORTANT NOTE: When release builds are stopped in preparation for a new 
+   release, begin pointing the Current link to the **DEVEL** version of R.
+   Otherwise, we will be creating broken binaries when we release.
+   
+
+7. Fix references in R script /Library/Frameworks/R.framework/Versions/2.*/Resources/bin/R
+   to designate the version of R you just installed by replacing
+
+   /Library/Frameworks/R.framework/Resources
+
+   with
+
+   /Library/Frameworks/R.framework/Versions/2.*/Resources.
+
+8. Configure the R build flags using the ~/BBS/utils/leopard-R-fix-flags.sh script in
+   each of the architecture directories located at
+   /Library/Frameworks/R.framework/Versions/2.*/Resources/etc/*
+

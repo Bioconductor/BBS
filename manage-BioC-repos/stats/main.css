@@ -1,0 +1,28 @@
+BODY {
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+H1 {
+    font-size: 16pt;
+}
+H2 {
+    font-size: 14pt;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+H3 {
+    font-size: 12pt;
+    margin-top: 0px;
+    margin-bottom: 4px;
+}
+H4 {
+    font-size: 11pt;
+    margin-top: 0px;
+    margin-bottom: 4px;
+}
+
+TABLE.stats {
+    border: solid black 1px;
+}
+

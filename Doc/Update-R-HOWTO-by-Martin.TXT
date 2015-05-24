@@ -1,0 +1,129 @@
+* rsrcs
+
+passwd: <<CENSORED>>
+
+biocbuild@lamb1
+
+lamb1
+- main builder
+wellington
+liverpool
+pitt
+
+* builds
+
+- start at noon, on lamb1
+
+crontab -l
+
+13 12 * * * cd /home/biocbuild/BBS/2.1/bioc/lamb1 && ./stage1.sh >>/home/biocbuild/bbs-2.1-bioc/log/lamb1.log 2>&1
+
+- stage1: lamb1, snapshot of svn; other nodes will use
+
+55 12 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/2.1/bioc/lamb1 && ./run.sh >>/home/biocbuild/bbs-2.1-bioc/log/lamb1.log 2>&1'
+
+- normal run -- wellington, lamb1, liverpool, pit
+
+# IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "run.sh" job on ALL other nodes!
+51 23 * * * cd /home/biocbuild/BBS/2.1/bioc/lamb1 && ./postrun.sh >>/home/biocbuild/bbs-2.1-bioc/log/lamb1.log 2>&1
+
+- postrun -- lamb1 only, report
+
+* ~biocbuild on lamb1
+
+tail -f ~biocbuild/bbs-2.1-bioc/log
+
+- each run appends to log
+- periodic, manual checkpoints
+
+* liverpool (Windows)
+
+** personal account -- task manager
+
+- when something goes wrong on the web
+  - usually processes still running at 9 am
+  - must be killed
+  - Rterm first
+
+** biocbuild
+
+- E:\biocbld
+- same structure as on lamb1
+
+* does it work?
+
+- look at report on web
+- which node failed?
+  - kill all biocbuild processes on node, before noon
+    - kill -9 -1
+  - e.g., partition filled
+
+* updating R
+
+** biocbuild@lamb1 (start before 10)
+
+bin/get-R-devel.sh
+
+- creates ~/src/R-2.6.rXXX, ~/public_html/BBS/R-2.6.rXXX.tgz
+
+  - ~/public_html/BBS/R-2.6.rXXX.tgz is a 'prepared' version, for
+    distribution to windows
+
+cd ~/bbs-2.1-bioc
+rm -rf R.old
+mv R R.old
+mkdir R
+cd R
+~/src/R-2.6.rXXX/configure --enable-R-shlib --enable-strict-barrier
+make -j4
+cd etc
+~/BBS/utils/R-fix-flags.sh
+
+- turns on -Wall
+
+** biocbuild@liverpool
+
+use firefox http://lamb1/BBS
+
+to download R-2.6.rXXX.tgz to E:\biocbld\bbs-2.1-bioc\
+
+in shell:
+
+  cd E:\biocbld\bbs-2.1-bioc\
+  rm -rf R.old
+  mv R R.old
+  tar zxf R-2.6.rXXX.tgz
+  mv R-2.6.rXXX R
+  cd R/src/gnuwin32
+  make
+  make bitmapdll
+  make recommended
+  exit
+
+** biocbuild@pitt
+
+cd /Library/Frameworks
+rm -rf R.framework
+
+available from http://r.research.att.com/
+
+cd ~/Desktop
+curl -O http://r.research.att.com/R-devel-tiger-universal.tar.gz
+tar fvxz R*.tar.gz -C /
+
+cd /Library/Frameworks/R.framework/Resources/etc/i386
+~/BBS/utils/R-fix-flags.sh
+cd /Library/Frameworks/R.framework/Resources/etc/ppc
+~/BBS/utils/R-fix-flags.sh
+
+
+* TODO
+
+- email
+  - release branch: alert if package builds change
+  - summary of build (regardless of failure)
+
+- key pairs -- just 1
+
+- log in (as regular user)
+

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# $1: lockfile
+exit_if_locked()
+{
+	lockfile="$1"
+	if [ ! -f "$lockfile" ]; then
+		return 0
+	fi
+	line1="Could not start $job_label!"
+	line2="The BioC_builder system has been locked by"
+	line3="    `cat $lockfile`"
+	line4="If you know what you are doing, delete lock file"
+	line5="    $lockfile"
+	line6="and try to run"
+	line7="    $stage_topcmd"
+	line8="again..."
+	echo $line1
+	echo $line2
+	echo $line3
+	echo $line4
+	echo $line5
+	echo $line6
+	echo $line7
+	echo $line8
+	mail "$MAIL_TO" -r "$MAIL_FROM" -s "$line1" <<-EOD
+	$line2
+	$line3
+	$line4
+	$line5
+	$line6
+	$line7
+	$line8
+	EOD
+	exit 0
+}

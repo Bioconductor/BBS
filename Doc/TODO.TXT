@@ -1,0 +1,57 @@
+Some CRAN packages depend on omegahat packages (e.g. lsa depends on Rstem).
+Modify cran/interactive/STAGE2.sh to fix this problem.
+
+Integrate the updateReposPkgs-*-x.y.sh scripts (currently in
+/home/biocbuild/bin) into BBS -> this will be stage6.
+
+IN all stages:
+
+- Rename all xx_BASEURL env. var. -> xx_URL
+
+- Use the SimpleMailer class to send an email at the end of a stage.
+
+IN STAGE2, STAGE3:
+
+- [On Windows only] Clean autmatically the "temp" dirs:
+    BBS_WORK_TOPDIR\tmp
+    BBS_WORK_TOPDIR\tmpdir
+  Note: to see list of packages that were victims of the infamous
+  'cannot create directory' R bug on lemming, do:
+    > cd /home/biocbuild/public_html/BBS/1.8d/nodes/lemming/buildsrc
+    > grep 'cannot create' *-out.txt
+  (last time I did it, I got only 2 packages, was 12/16/2005)
+
+IN STAGE3, STAGE4, STAGE5:
+
+- The actual stats printed to stdout at the end of the "big loop" should
+  also be printed into a file (00REPORT.TXT) and this file should be put in
+  BBS_CENTRAL_BASEURL/nodes/<node>/<stage_label>/
+  The presence of this file is the guarantee that the stage was successfull.
+  Then the BBS-report.py script should only include in the report
+  stuff from dirs that contain the 00REPORT.TXT file.
+
+IN stage8:
+
+- Check the presence of 00REPORT.TXT in the "input dirs" used to generate
+  the report. If 00REPORT.TXT is missing, then don't include the node
+  in the report.
+
+From discussion with Seth (10/28/05):
+
+- Report files: add the following fields
+    buildSystemOS
+    buildSystemName
+    R version (svn rev)
+    svn rev of pkg
+    size on disk of srcpkg file .tar.gz
+    size on disk of pkg dir (.tar.gz after extraction)
+    
+- Feature wanted:
+    Provide an easy way for people to use the BBS to
+    automatically rebuild and publish a list of given packages.
+    This should be simple like "one single script to run on one
+    single machine" + of course the unavoidable task of editing
+    the list of packages to rebuild.
+    The machine where the single script is run should be able
+    to dispatch the task to the various BBS nodes, to wait they
+    are done and then to publish the results to cobra.

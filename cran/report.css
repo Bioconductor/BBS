@@ -1,0 +1,288 @@
+BODY {
+    background: #BBB;
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+H1 {
+    font-size: 16pt;
+}
+H2 {
+    font-size: 14pt;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+H3 {
+    font-size: 12pt;
+    margin-top: 0px;
+    margin-bottom: 4px;
+}
+H4 {
+    font-size: 11pt;
+    margin-top: 0px;
+    margin-bottom: 4px;
+}
+
+
+/****************************************************************************
+ * Message of the day
+ */
+
+TABLE.motd {
+    width: 80%;
+    margin: auto;
+    margin-bottom: 6pt;
+    border: solid red 4px;
+    background: white;
+    color: red;
+}
+
+
+/****************************************************************************
+ * svn info
+ */
+
+DIV.svn_info P {
+    margin: 0px;
+    font-weight: bold;
+    font-style: italic;
+}
+TABLE.svn_info {
+    margin-top: 2pt;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+DIV.svn_info TABLE.svn_info {
+    /* margin: auto; */
+    border: solid black 1px;
+}
+TABLE.mainrep TABLE.svn_info {
+    font-size: smaller;
+}
+TABLE.svn_info TR TD.svn_info {
+    padding: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
+    background: #EEC;
+    text-align: left;
+}
+SPAN.svn_info {
+    color: #800;
+}
+DIV.svn_info SPAN.svn_info {
+    font-weight: bold;
+}
+
+
+/****************************************************************************
+ * Table of build node specifications
+ */
+
+TABLE.node_specs {
+    /* margin: auto; */
+    border: solid black 1px;
+    /* font-size: smaller; */
+}
+TABLE.node_specs TH {
+    text-align: left;
+    vertical-align: top;
+    font-style: italic;
+    font-size: smaller;
+}
+TABLE.node_specs TD.spec {
+    border: solid black 1px;
+}
+
+
+/****************************************************************************
+ * Table of 'R CMD config' variables (on the NodeInfo pages)
+ */
+
+TABLE.Rconfig {
+    border-spacing: 1px;
+    font-family: monospace;
+}
+TABLE.Rconfig TD {
+    background: #FFF;
+}
+
+
+/****************************************************************************
+ * Glyph styles
+ */
+
+SPAN.TIMEOUT {
+    font-weight: bold;
+    color: white;
+}
+SPAN.ERROR {
+    font-weight: bold;
+    color: white;
+}
+SPAN.WARNINGS {
+    font-weight: bold;
+    color: white;
+}
+SPAN.OK {
+    font-weight: bold;
+    color: #DDD;
+}
+SPAN.NotNeeded {
+    font-weight: bold;
+    color: #DDD;
+}
+SPAN.skipped {
+    font-weight: bold;
+}
+
+.TIMEOUT,
+TABLE.summary TD.summary.TIMEOUT {
+    background: #A08;
+}
+.ERROR,
+TABLE.summary TD.summary.ERROR {
+    background: #B33;
+}
+.WARNINGS,
+TABLE.summary TD.summary.WARNINGS {
+    background: #D82;
+}
+.OK,
+TABLE.summary TD.summary.OK {
+    background: #282;
+}
+.NotNeeded,
+TABLE.summary TD.summary.NotNeeded {
+    background: #08E;
+}
+
+TABLE.summary {
+    margin: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    color: white;
+}
+TABLE.summary TD {
+    width: 28px;
+    padding: 0px;
+    text-align: center;
+}
+
+
+/****************************************************************************
+ * Main table (the big one)
+ */
+
+TABLE.mainrep {
+    width: 100%;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+TABLE.mainrep TD {
+    padding: 0px;
+}
+TABLE.mainrep .node {
+    text-align: center;
+}
+TABLE.mainrep .stagecmd {
+    width: 120px;
+}
+
+TABLE.mainrep TR.header TD,
+TABLE.mainrep TD.header {
+    /* border-top: solid black 1px; */
+    background: inherit;
+    font-style: italic;
+    font-size: smaller;
+}
+TABLE.mainrep TR.current,
+TABLE.mainrep TD.current {
+    font-weight: bold;
+}
+
+TABLE.mainrep TD.status {
+    /* border: inset 1pt; */
+    text-align: center;
+}
+
+TABLE.mainrep .odd TH,
+TABLE.mainrep .odd TD {
+    background: #FFF;
+}
+TABLE.mainrep .even TH,
+TABLE.mainrep .even TD {
+    background: #DDD;
+}
+
+
+/****************************************************************************
+ * Node specific background colors
+ */
+
+/* zin1 */
+DIV.zin1,
+TR.zin1 TD,
+TABLE.mainrep .zin1,
+TABLE.mainrep .odd .zin1 {
+    background: #BCD;
+}
+TABLE.mainrep .even .zin1 {
+    background: #9AB;
+}
+
+/* zin2 */
+DIV.zin2,
+TR.zin2 TD,
+TABLE.mainrep .zin2,
+TABLE.mainrep .odd .zin2 {
+    background: #ACD;
+}
+TABLE.mainrep .even .zin2 {
+    background: #8AB;
+}
+
+/* moscato1 */
+DIV.moscato1,
+TR.moscato1 TD,
+TABLE.mainrep .moscato1,
+TABLE.mainrep .odd .moscato1 {
+    background: #EBA;
+}
+TABLE.mainrep .even .moscato1 {
+    background: #C98;
+}
+
+/* moscato2 */
+DIV.moscato2,
+TR.moscato2 TD,
+TABLE.mainrep .moscato2,
+TABLE.mainrep .odd .moscato2 {
+    background: #EBA;
+}
+TABLE.mainrep .even .moscato2 {
+    background: #C98;
+}
+
+/* perceval */
+DIV.perceval,
+TR.perceval TD,
+TABLE.mainrep .perceval,
+TABLE.mainrep .odd .perceval {
+    background: #DBF;
+}
+TABLE.mainrep .even .perceval {
+    background: #B9D;
+}
+
+/* petty */
+DIV.petty,
+TR.petty TD,
+TABLE.mainrep .petty,
+TABLE.mainrep .odd .petty {
+    background: #DAE;
+}
+TABLE.mainrep .even .petty {
+    background: #B8C;
+}
+

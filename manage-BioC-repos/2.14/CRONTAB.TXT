@@ -1,0 +1,10 @@
+# 2.14 builds
+# ----------
+
+# Update 2.14/bioc repo with packages from latest "bbs-2.14-bioc" run
+# IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
+10 12 * * * cd /home/biocadmin/manage-BioC-repos/2.14 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/2.14/updateRepos-bioc.log 2>&1
+
+# Update 2.14/data/experiment repo with packages from latest "bbs-2.14-data-experiment" run
+# IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
+10 18 * * * cd /home/biocadmin/manage-BioC-repos/2.14 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocadmin/cron.log/2.14/updateRepos-data-experiment.log 2>&1

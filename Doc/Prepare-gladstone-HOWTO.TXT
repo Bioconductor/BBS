@@ -1,0 +1,124 @@
+Last updated 2006-02-13
+
+
+For each new installed library (not from an RPM), the source tarball
+(.tar.gz) is downloaded under /usr/local/src and the path to the
+directory containing the shared objects (lib*.so* files) is added
+to /etc/ld.so.conf.d/R-package-deps.conf
+Then "sudo /sbin/ldconfig -v" must be run.
+
+
+- The 'rhdf5' package needs the HDF5 library from
+    http://hdf.ncsa.uiuc.edu/HDF5/
+  I installed hdf5-1.6.4 because current 'rhdf5' (1.7.0) doesn't compile
+  with hdf5-1.6.5 (last available version at this time).
+  With this change, rhdf5 1.7.0 can now be installed but can't be loaded:
+
+  > library(rhdf5)
+  Error in dyn.load(x, as.logical(local), as.logical(now)) :
+          unable to load shared library '/home/biocbuild/R-2.3/library/rhdf5/libs/rhdf5.so':
+    /home/biocbuild/R-2.3/library/rhdf5/libs/rhdf5.so: undefined symbol: Rf_mat2indsub
+  Error in library(rhdf5) : .First.lib failed for 'rhdf5'
+
+
+- The 'Rgraphviz' package needs the Graphviz library from
+    http://www.graphviz.org/Download_source.php
+  I installed graphviz-2.8.
+
+
+- The 'RdbiPgSQL' package needs the postgresql-devel and postgresql-libs RPMs
+  (no need to install the PostgreSQL client).
+
+
+- The 'exprDB' package needs the db-devel RPM.
+
+
+- The 'impute' package contains Fortran 77 code. R-2.3 fails to compile
+  the package on gladstone, because it uses 'gfortran' which is the
+  GNU Fortran 95 compiler, even if 'g77' (the GNU Fortran 77 compiler)
+  is installed (both commands are in /usr/bin/). However we can't remove
+  the gcc-fortran RPM because the R-2.3 executable is linked to some stuff
+  contained in it. On gopher5, R-2.3 compiles 'impute' with no problem
+  by using 'g77' ('gfortran' has been compiled and installed from source
+  under /usr/local/).
+
+
+- The 'RGtk' package from Omegahat needs the glib-devel and gtk-devel RPMs.
+
+
+- The 'RCurl' package from Omegahat needs the curl-devel RPM.
+
+
+- The 'biomaRt' package needs the mysql-devel RPM (which itself requires
+  the mysql-client and mysql-shared RPMs).
+
+
+- The 'arji' and 'RMAGEML' packages need the JDK. I uninstalled all
+  the java-*.rpm from SUSE (Java 1.4) and installed the JDK 5.0
+  from Sun (http://java.sun.com/j2se/1.5.0/download.jsp, click
+  on "Download JDK 5.0 Update 6") in order to have Java 1.5
+  like on gopher5. Then I created the "jre -> ../../java/jdk1.5.0_06"
+  symlink in /usr/lib64/jvm (IMPORTANT, also check that there is
+  NO "java" link or subdir here).
+  After logging out and in, $JAVA_BINDIR, $JAVA_HOME
+  and $JAVA_ROOT should be set to /usr/lib64/jvm/jre/bin,
+  /usr/lib64/jvm/jre and /usr/lib64/jvm/jre and $PATH should
+  contain /usr/lib64/jvm/jre/bin (/etc/profile.d/alljava.sh takes
+  care of these settings).
+  Check everything is fine with "which java && which javac" (both
+  should be found in /usr/lib64/jvm/jre/bin) and "java -version":
+    java version "1.5.0_06"
+    Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_06-b05)
+    Java HotSpot(TM) 64-Bit Server VM (build 1.5.0_06-b05, mixed mode)
+  THEN RECOMPILE R!!! (this is because the build process uses the
+  $JAVA_* variables to hardcode paths inside the build products)
+
+
+- The 'Rredland' package requires the following:
+    a) Install raptor from source (raptor-1.4.8.tar.gz)
+    b) sudo /sbin/ldconfig
+    c) Install rasqal from source (rasqal-0.9.11.tar.gz)
+    d) sudo /sbin/ldconfig
+    e) Install redland from source (redland-1.0.2.tar.gz)
+    f) sudo /sbin/ldconfig
+  All these tarballs are available in http://download.librdf.org/source/
+  NOTE: Because the raptor or raptor-devel RPMs from SUSE don't
+  contain the redland-config command needed to build Rredland,
+  then we have to install all the above stuff from source!
+
+
+- The 'aCGH', 'biomaRt', 'bridge', 'marray' and 'nnNorm' packages
+  (+ probably other packages) need psfig.sty in order to build their
+  vignettes. Since the teTeX packaging (tetex-3.0-20) provided with
+  SUSE 10.0 doesn't include this file anymore (because of licencing issues),
+  you need to download it to /usr/share/texmf/tex/latex/graphics
+  and to run "sudo texconfig-sys" to rebuild the filename databases.
+
+
+- Some packages (like 'genArise') need to be able to connect to a
+  an X server when they build their vignettes. In order for them to be
+  able to do so during a non interactive session, we need to install
+  a virtual X server (xorg-x11-Xvfb RPM).
+
+
+- The 'GeneRfold' package needs the ViennaRNA library
+  (http://www.tbi.univie.ac.at/~ivo/RNA/ViennaRNA-1.6.tar.gz).
+  Compile and install with:
+    export CC="gcc -fPIC"
+    ./configure --without-forester --without-perl
+    make
+    sudo make install
+
+
+- The 'xcms' package needs the NetCDF library
+  (ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf.tar.gz).
+  Compile and install with:
+    export CC="gcc -fPIC"
+    export FC=""
+    ./configure --prefix=/usr/local
+    make test
+    sudo make install
+  NB: Remove SUSE netcdf RPM if present (the 'xcms' package
+  can't be linked to the libnetcdf.a static library included
+  in the SUSE RPM because it was not compiled with -fPIC).
+

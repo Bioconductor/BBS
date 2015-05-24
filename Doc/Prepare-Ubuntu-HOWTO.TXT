@@ -1,0 +1,47 @@
+Based on preparing george2 in December 2012
+
+
+Packages to install with apt-get:
+
+    libnetcdf-dev libhdf5-serial-dev sqlite ibfftw3-dev libfftw3-doc
+    libopenbabel-dev fftw3 fftw3-dev pkg-config xfonts-100dpi xfonts-75dpi
+    libopenmpi-dev openmpi-bin mpi-default-bin openmpi-common
+    libexempi3 openmpi-checkpoint python-mpi4py texlive-science biblatex
+
+Software to build manually (in /usr/local/src unless otherwise noted:)
+    GAPS
+    GAPS-JAGS
+    variant_effect_predictor (see ensemblVEP README)
+    ViennaRNA
+    libSBML (./configure --enable-layout)
+    ROOT (./configure --prefix=/usr/local/root)
+
+---    
+CoGAPS note: CoGAPS uses a different version of JAGS than other packages.
+JAGS 2.1.0 and GAPSJAGS should be installed in /usr/local/GAPS-JAGS and 
+the following environment variables set:
+
+export GAPSJAGS_INCLUDE=/usr/local/GAPS-JAGS/include/GAPS-JAGS
+export GAPSJAGS_LIBS=/usr/local/GAPS-JAGS/lib
+export GAPSJAGS_LIB=/usr/local/GAPS-JAGS/lib
+export GAPSJAGS_MODULES=/usr/local/GAPS-JAGS/lib/JAGS/modules-1.0.2
+
+For other packages that use current JAGS, install to /usr/local and 
+set:
+
+export JAGS_INCLUDE=/usr/local/include/JAGS
+export JAGS_LIB=/usr/local/lib
+export JAGS_MODULES=/usr/local/lib/JAGS/modules-3 
+---
+
+
+Other:
+    Edit /etc/texmf/texmf.cnf and set shell_escape = t
+    Add 
+    export R_TEXI2DVICMD=/home/biocbuild/BBS/utils/ourtexi2dvi
+    to BBS/<BIOC-VERSION>/bioc/<MACHINENAME>/config.sh
+    to work around texi2dvi bug in ubuntu. 
+    Be sure
+    /usr/share/texmf-texlive/tex/latex/algorithms/algorithm.sty
+    and algorithmic.sty
+    are present. Then run sudo texhash. 

@@ -1,0 +1,5 @@
+Assuming that gopher5-20060916.log contains logs for the 2006-09-16 builds _only_
+
+grep 'R CMD build ' gopher5-20060916.log | grep seconds |\
+     sed -r "s/^.*R CMD build ([^[:space:]]+)'.* ([^[:space:]]+) seconds.*$/\2\t\1/" |\
+     sort -nr > gopher5-20060916-build-times.txt

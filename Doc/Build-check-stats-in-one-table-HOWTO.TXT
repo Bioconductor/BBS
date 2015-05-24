@@ -1,0 +1,51 @@
+How to generate a table summarizing build/check information for
+all the packages? For example, to get a table like this in R:
+
+> head(lamb1_checks)
+     Package           StartedAt EllapsedTime Status
+1    ABarray 2011-03-01 15:21:29         45.1     OK
+2       aCGH 2011-03-01 15:21:29         74.5     OK
+3       ACME 2011-03-01 15:21:29         66.9     OK
+4    ADaCGH2 2011-03-01 15:22:15        123.9     OK
+5    adSplit 2011-03-01 15:22:39        182.4     OK
+6 affxparser 2011-03-01 15:22:45         94.0     OK
+
+you can proceed as follow:
+
+1. ssh biocbuild@lamb1 (main build node for the devel builds)
+
+2. cd ~biocbuild/public_html/BBS/2.8/bioc/nodes/lamb1/buildsrc
+
+   grep 'EllapsedTime: ' *.buildsrc-summary.dcf | sed -r "s/^(.*)\.buildsrc-summary\.dcf:EllapsedTime: (.*) seconds/\2\t\1/" > ~/lamb1-build-EllapsedTime.txt
+
+   grep 'StartedAt: ' *.buildsrc-summary.dcf | sed -r "s/^(.*)\.buildsrc-summary\.dcf:StartedAt: (.*)/\2\t\1/" > ~/lamb1-build-StartedAt.txt
+
+   grep 'Status: ' *.buildsrc-summary.dcf | sed -r "s/^(.*)\.buildsrc-summary\.dcf:Status: (.*)/\2\t\1/" > ~/lamb1-build-Status.txt
+
+   cd ~biocbuild/public_html/BBS/2.8/bioc/nodes/lamb1/checksrc
+
+   grep 'EllapsedTime: ' *.checksrc-summary.dcf | sed -r "s/^(.*)\.checksrc-summary\.dcf:EllapsedTime: (.*) seconds/\2\t\1/" > ~/lamb1-check-EllapsedTime.txt
+
+   grep 'StartedAt: ' *.checksrc-summary.dcf | sed -r "s/^(.*)\.checksrc-summary\.dcf:StartedAt: (.*)/\2\t\1/" > ~/lamb1-check-StartedAt.txt
+
+   grep 'Status: ' *.checksrc-summary.dcf | sed -r "s/^(.*)\.checksrc-summary\.dcf:Status: (.*)/\2\t\1/" > ~/lamb1-check-Status.txt
+
+3. Then from R:
+
+   lamb1_check_StartedAt <- read.table("lamb1-check-StartedAt.txt", stringsAsFactors=FALSE)
+   lamb1_check_EllapsedTime <- read.table("lamb1-check-EllapsedTime.txt", stringsAsFactors=FALSE)
+   lamb1_check_Status <- read.table("lamb1-check-Status.txt", stringsAsFactors=FALSE)
+
+   pkgs <- intersect(lamb1_check_StartedAt[[8L]], lamb1_check_EllapsedTime[[2L]], lamb1_check_Status[[2L]])
+
+   idx <- lamb1_check_StartedAt[[8L]] %in% pkgs
+   StartedAt1 <- lamb1_check_StartedAt[[1L]][idx]
+   StartedAt2 <- lamb1_check_StartedAt[[2L]][idx]
+   StartedAt <- paste(StartedAt1, StartedAt2)
+   EllapsedTime <- lamb1_check_EllapsedTime[[1L]][lamb1_check_EllapsedTime[[2L]] %in% pkgs]
+   Status <- lamb1_check_Status[[1L]][lamb1_check_Status[[2L]] %in% pkgs]
+   lamb1_checks <- data.frame(Package=pkgs, StartedAt=StartedAt, EllapsedTime=EllapsedTime, Status=Status, stringsAsFactors=FALSE)
+
+   lamb1_checks <- lamb1_checks[order(lamb1_checks$StartedAt), ]
+   head(lamb1_checks)
+

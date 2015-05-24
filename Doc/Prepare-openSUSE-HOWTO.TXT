@@ -1,0 +1,157 @@
+Notes for openSUSE >= 10.3
+==========================
+
+(should be accurate for openSUSE 10.3, might not be so accurate for
+64-bit openSUSE > 10.3)
+
+IMPORTANT NOTE: Some CRAN/Bioconductor packages (like KEGGSOAP) don't work
+properly with UTF-8 so it is recommended to use LANG="en_US" instead of
+LANG="en_US.UTF-8" for now.
+Check this with:
+  echo $LANG
+  locale
+Even if this looks OK, it could be that a different LANG is used by the build
+system, because the build system scripts are runned as cron jobs and some
+obscure settings in openSUSE 10.3 can alter the LANG used for cron jobs.
+To check this, put the following line in biocbuild's crontab:
+  * * * * * /bin/bash --login -c '/usr/bin/locale >>locale.out 2>&1'
+and check the content of locale.out after 1 or 2 minutes. If this is different
+from what /usr/bin/locale gives you, then fix it. There are many ways to do
+this. An easy one is to fix the problem at the system level (so everybody's
+crontab will use the same LANG) by editing the /etc/sysconfig/language file
+(make a backup copy of the original called language.original before anything
+else) as follow: replace
+  RC_LANG="en_US.UTF-8"
+by
+  RC_LANG="en_US"
+Again, wait 1 or 2 minutes and check locale.out again.
+When everything is OK, remove the above line from biocbuild's crontab.
+
+
+openSUSE RPMs
+-------------
+
+Can be installed with yast ('sudo /sbin/yast')
+
+- xorg-x11-server-extra (for the Xvfb executable)
+- libmysqlclient-devel (for RMySQL)
+- libcurl-devel (for RCurl)
+- gtk-devel (for RGtk)
+- unixODBC-devel (for RODBC)
+
+- ImageMagick-devel (for EBImage)
+- libbz2-devel (for EBImage)
+- libredland-devel (for Rredland)
+- sqlite-devel (for Rredland)
+- libnetcdf-devel (for xcms)
+- gsl-devel (for BGmix)
+
+- mpich-devel (for Rmpi)
+    Note: mpich is installed in /opt/mpich and Rmpi won't find it.
+          Need to 'cd /usr/lib; sudo ln -s /opt/mpich'
+
+
+Java
+----
+  We want the java-1_5_0-sun and java-1_5_0-sun-devel RPMs.
+  Note that SJava will not compile with Java 1.6.0.
+
+  In order to get a clean and minimalist Java installation,
+  do the following:
+
+    1. Remove the following RPMs:
+         java-1_4_2-cacao
+         java-1_4_2-cacao-devel
+         java-1_4_2-gcj-compat
+         java-1_4_2-gcj-compat-devel
+         java-1_6_0-sun
+         java-1_6_0-sun-devel
+
+    2. Optionally also delete:
+         java-1_5_0-sun
+       and all its dependencies (there can be many e.g. > 20) so you'll get
+       rid of all the stuff that depends on Java like OpenOffice, Tomcat,
+       etc... This stuff is not needed on a build machine.
+
+    3. Install the java-1_5_0-sun and java-1_5_0-sun-devel RPMs.
+       After loging out and in, $JAVA_BINDIR, $JAVA_HOME
+       and $JAVA_ROOT should be set to:
+
+         var name     val on i686 arch       val on x86_64 arch
+         -----------  ---------------------  -----------------------
+         JAVA_BINDIR  /usr/lib/jvm/java/bin  /usr/lib64/jvm/java/bin
+         JAVA_HOME    /usr/lib/jvm/java      /usr/lib64/jvm/java
+         JAVA_ROOT    /usr/lib/jvm/java      /usr/lib64/jvm/java
+
+       (Note that /etc/profile.d/alljava.sh takes care of these
+       settings at loging time).
+
+       Check everything is fine with "which java && which javac" (both
+       should be found in /usr/bin/) and "java -version":
+         - on i686 arch:
+             java version "1.5.0_13"
+             Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_13-b05)
+             Java HotSpot(TM) Server VM (build 1.5.0_13-b05, mixed mode)
+         - on x86_64 arch, only the last line differs:
+             Java HotSpot(TM) 64-Bit Server VM (build 1.5.0_13-b05, mixed mode)
+
+    4. THEN RECOMPILE R!!! This is because the build process uses the
+       $JAVA_* variables to hardcode paths inside the build products.
+       Remember to configure R with the --enable-R-shlib flag.
+       Finally start R then install and load SJava and RWebServices.
+
+
+LaTeX/TeX files
+---------------
+
+- In openSUSE 10.3, the no-longer supported teTeX distribution is replaced by
+  TeX Live (http://www.tug.org/texlive/).
+
+- If some packages need some extra *.sty file:
+    1. Put the file somewhere under /usr/share/texmf/tex/latex/ (most likely in
+       a subfolder)
+    2. Run 'sudo texconfig-sys' to rebuild the filename databases.
+
+
+Non openSUSE RPMs
+-----------------
+
+The "dipe" RPM repo is Dirk's repo hosted on download.opensuse.org where
+he makes available all the RPMs that he builds via the openSUSE Build Service
+for the Compbio group (the web interface for this service is here
+https://build.opensuse.org/).
+
+Use zypper to install the non openSUSE RPMs.
+
+To add the "dipe" repo to zypper:
+
+  sudo zypper ar --no-refresh http://download.opensuse.org/repositories/home:/dipe/openSUSE_10.3/ dipe
+
+Refresh it:
+
+  sudo zypper ref
+
+Search for a given RPM:
+
+  zypper se graphviz
+  zypper se ggobi
+
+Install (or update) the following RPMs with 'sudo zypper in <pkg1> <pkg2> ...':
+
+  ggobi (for rggobi and explorase)
+  ViennaRNA (for GeneRfold)
+  libsbml libsbml-devel (for rsbml)
+
+Update the following RPMs if the openSUSE default RPM is broken or "not
+good enough for Bioconductor" (i.e. a Bioconductor package requires a more
+recent version of the RPM):
+
+  graphviz graphviz-tcl graphviz-devel (for Rgraphviz)
+
+  UPDATED in March 2012:
+  Note for lamb1 (running openSUSE 12.1):
+  graphviz 2.28.0 is available and installed
+  as an openSUSE RPM. However, it does not work with Rgraphviz.
+  I got it working by building 2.26-3 from source and installing it 
+  (default options: configure && make && sudo make install).
+

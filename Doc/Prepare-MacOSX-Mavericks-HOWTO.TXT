@@ -1,0 +1,404 @@
+
+App Store account is:
+
+Apple ID: dtenenba@fhcrc.org
+Password: same as biocbuild's password on windows (must be 8 characters)
+rescue email: dandante@dandante.com
+
+Dan knows the answers to the security questions
+
+
+# Setting up RAID
+
+If RAID is already set up on the machine, skip this section.
+
+If RAID is not set up, don't do any further configuration
+before reading this section, because you will be erasing
+the hard drives and reinstalling the OS, so aything you
+set up now will have to be set up again.
+
+Make sure you have a valid App Store account.
+
+To set up RAID, you should first configure the new machine
+minimally so that you can at least boot into the OS without
+having to do any first-time installation tasks.
+
+Then use Carbon Copy Cloner to clone the hard drive to 
+an external USB drive. CCC is not free but has a 30 day
+trial version that is fully functional. Be sure and clone
+the recovery partition onto the USB drive.
+
+Then go to System Preferences / Startup Disk and set the
+USB drive as the startup drive.
+
+Power down the machine. Power it back up and hold down
+Command-R  when you hear the startup tone.
+You can release this key combination
+when you see the menu asking
+which disk to start from. Choose one that says "Recovery"
+followed by the OS version number.
+
+You should boot into recovery mode.
+
+Open Disk Utility.
+
+You are now at step 5 of the following instructions:
+
+http://support.apple.com/kb/HT4886
+
+Continue with the rest of the instructions on that page.
+
+
+---
+
+Note: After setting up RAID, there is no recovery partition on the
+resulting disks. So it's important to keep the USB drive you used
+in the RAID setup around. It has a recovery partition which you can 
+use to repair the RAID disks or do other disaster recovery.
+
+--- After RAID INSTALL
+
+Install OS X Server from App store
+Set up host name in OS X server
+Allow ssh by administrators and remote (desktop?) access
+Allow screen sharing
+Set up IP address (DHCP with manual address) in System
+Preferences / Networks
+Install Xcode from app store
+when it's done and installed...
+
+install MacTex
+install texinfo from http://r.research.att.com/libs/texinfo-5.2-darwin10.tar.gz
+(whatever the most recent version is)
+install R, the Mavericks build of course
+
+Install XQuartz from 
+https://xquartz.macosforge.org/
+set up bbs-* and BBS directories, add key to .BBS.
+compile the chown-rootadmin program
+
+Does the mavericks-R-fix-flags.sh script work as it should?
+(seems to)
+
+From 
+http://r.research.att.com/libs
+
+Download - 
+
+gfortran-4.8.2-darwin13.tar.bz2
+
+This is the recommended Fortran compiler.
+I guess, download all the other darwin13 packages?
+
+Simon says it's ok to install darwin10 stuff (except:
+"AFAIK only C++ stuff has ABI differences.")
+
+
+"Currently I'm just using the basics: cairo, fontconfig, freetype, libpng, pitman, pkg-config, tiff, xz
+
+there is a fontconfig patch that needs to be applied, and/or the
+new fontconfig stuff from today (4/16/2014) needs to be installed.
+
+
+"I'll try to get more later - in particular GTK+ and gdal are a pain.""
+
+ trivial cron jobs will work but I could not get the bbs run.sh
+cron job to work until after I did:
+
+sudo touch /etc/crontab 
+
+
+install JAGS from source (standard configure/make/make install)
+test 
+
+install java jvm (not just jre)
+
+install openbabel
+---
+reconcile with below: need netcdf and hdf5 from simon
+
+
+update libsbml instructions, build from source, 
+use configure command
+./configure --enable-layout
+
+but be sure and tweak Makefile.in as described below
+
+---- old snow leopard stuff below ----
+
+
+After a fresh Mavericks install, here are e few things that need to be done
+in order to help BBS run smoothly:
+--all the below is not yet updated--
+
+Make sure Carl receives syslog messages:
+
+http://wiki.splunk.com/Community:HowTo_Configure_Mac_OS_X_Syslog_To_Forward_Data
+
+Basically all you have to do is add a line to /etc/syslog.conf
+
+*.* @140.107.170.145
+
+and restart the syslogd service. Rebooting also would complete it.
+
+
+o Install Simon's Fortran compiler and tcltk from here
+    http://cran.fhcrc.org/bin/macosx/tools/
+    (not sure if tcltk is still needed??? based on Simon's
+    email I think we want to avoid installing it until further
+    notice. I think it's only necessary for the GUI anyway.)
+
+o Install R. Use CRAN official binary for release or Simon's latest devel build
+  from http://r.research.att.com/ for devel.
+  Run the usual leopard-R-fix-flags.sh (this should be copied to
+  snow-leopard-R-fix-flags.sh) in  /Library/Frameworks/R.framework/Resources/etc/
+  Then make an additional change to Makeconf:
+
+35c35
+< FCFLAGS = -mtune=core2 -g -O2 $(LTO)
+---
+> FCFLAGS = -g -O2 $(LTO)
+
+?????? are we sure? doesn't seem to be needed anymore 
+
+Wait - which package requires this?
+(This should be incorporated into the script)
+
+
+
+
+o Start R. Try X11(), then library(tcltk), then check capabilities().
+  Could be that X11() hangs R. This seems to be solved by installing the latest
+  X11 from the XQuartz project (see above).
+
+o Install MacTeX. Try to build a package using pstricks + auto-pst-pdf in its
+  vignette (e.g. R CMD build affyContam). If it fails, add shell_escape = t
+  to /usr/local/texlive/<YYYY>/texmf.cnf
+  Put Sweave.sty in ~/Library/texmf/tex/latex and run
+  sudo texhash.
+  Install texinfo from
+  http://r.research.att.com/libs/texinfo-5.2-darwin10.tar.gz
+  (whatever the most recent version is.)
+
+o Install the GTK+ framework provided by Simon at:
+    http://R.research.att.com/libs/
+  ?? which one? There are 3. The GTK+ tarball is for "tiger or later". Too old?
+  Note that darwin9 is Leopard and darwin10 Snow Leopard.
+  Then create symlink:
+    pkg-config -> /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
+  in /usr/bin. Try:
+    which pkg-config
+  Also add:
+    export PKG_CONFIG_PATH="/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig"
+  to /etc/profile (make a copy as /etc/profile.orginal before modifying).
+
+  Then start R and try:
+    > install.packages("RGtk2", type="source")
+    > library(RGtk2)
+  Finally try R CMD INSTALL HilbertVisGUI
+    
+o Install graphviz from the official graphviz site. Try 'neato --help'
+
+o Install GSL from:
+    http://r.research.att.com/libs/
+     (look for gsl-*.tar.gz)
+     ?? Not there, however, an old version was on petty
+    sudo tar zxf gsl-*.tar.gz -C /
+   Make sure any previous installations of GSL have been removed. In particular,
+   all /usr/local/lib/libgsl*.dylib files should be removed.
+  Try R CMD INSTALL affyILM  
+
+o Install other 3rd party libraries provided by Simon at:
+    http://R.research.att.com/libs/
+  At least: 
+  tiff, libpng, jpeg, readline, freetype, fontconfig, pixman and cairo
+
+  Be sure and install the "darwin9" version of tiff, even though
+  there is a darwin10 version, or it will not work with jpeg,
+  which has no darwin10 version (not yet anyway).
+
+  Then start R and try:
+    > install.packages("Cairo", type="source")
+    > library(Cairo)
+    (not sure about this as Cairo is in our special STAGE2 list
+    I think it's sufficient to install a binary of Cairo and library() it.)
+
+o Install Simon's ggobi from http://R.research.att.com/libs/
+  Add /usr/local/ggobi/lib/pkgconfig to PKG_CONFIG_PATH (in /etc/profile).  
+  Try:
+    pkg-config ggobi --libs 
+  Then start R and try:
+    > install.packages("rggobi", type="source")
+    > library(rggobi)
+    (I think /usr/local/ggobi/lib also needs to be added to DYLD_LIBRARY_PATH
+    but I have not confirmed this)
+
+o Install netcdf and hdf5 from these binaries from Simon:
+    http://r.research.att.com/libs/hdf5-1.8.8-darwin9-bin3.tar.gz
+    http://r.research.att.com/libs/netcdf-4.1.3-darwin9-bin3.tar.gz
+  Make sure that any libnetcdf*dylib or libhdf5*dylib files
+  in /usr/local/lib (from any previous installation) are moved out
+  of the way.
+
+  Then start R and try:
+    > install.packages("ncdf", type="source")
+    > library(ncdf)
+  Then try:
+    R CMD INSTALL xcms
+    R CMD INSTALL rhdf5
+    R CMD INSTALL ncdfFlow
+
+o Install PostgreSQL (the official PostgreSQL website provides links to
+  binaries for MacOSX). The "one click" installer from EnterpriseDB requires
+  a 2-step installation (with reboot in between). Use biocbuild's password for
+  db superuser (postgres).
+  Then try:
+    pg_config
+  NB: EnterpriseDB installer puts everything under /Library/PostgreSQL/ so
+  you need to create symlink:
+    pg_config -> /Library/PostgreSQL/9.0/bin/pg_config
+  in /usr/bin for the above to work. Then start R and try:
+    > install.packages("RPostgreSQL", type="source")
+    > library(RPostgreSQL)
+  
+o Install MySQL (MySQL Community Server). Choose "Mac OS X 10.6 (x86, 64-bit(?)),
+  DMG Archive" available at http://dev.mysql.com/downloads/mysql/.
+  Add:
+    export PATH="$PATH:/usr/local/mysql/bin"
+  to /etc/profile (make a copy as /etc/profile.orginal before modifying).
+  Then try:
+    which mysql_config
+  Also create symlink:
+    mysql -> ../mysql/include
+  in /usr/local/include, and create symlinks in /usr/local/lib to all the files
+  in /usr/local/mysql/lib. 
+  Then add this to /etc/profile:
+  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/mysql/lib
+
+  Start R and try:
+    > install.packages("RMySQL", type="source")
+    > library(RMySQL)
+
+ 
+LIBSBML:
+
+Install libsbml from http://sourceforge.net/projects/sbml/files/libsbml/5.10.2/stable/Mac%20OS%20X/libsbml-5.10.2-libxml2-macosx-mavericks.dmg/download
+
+Make sure there is a libsbml.pc file in /usr/local/lib/pkgconfig.
+It should contain (more or less):
+
+Name: libSBML
+Description: An API library for reading/writing/manipulating SBML
+URL: http://sbml.org/Software/libSBML
+Version: 5.10.2
+
+prefix=/usr/local
+exec_prefix=/usr/local
+libdir=/usr/local/lib
+includedir=/usr/local/include
+
+Libs: -L${libdir}        -lxml2 -lz -lbz2 -lsbml -lstdc++ -lm
+Cflags: -I${includedir}  
+Requires: libxml-2.0 >= 2.6.16
+
+You may need to edit the Version: field. Don't worry about the xml
+version stuff (as discussed in the Snow Leopard version of this 
+document); I think the libxml on Mavericks is new enough that
+it's not an issue.
+Also, you need to modify libsbml.5.dylib so that it contains its own
+location so that code that links to it (rsbml) can find it.
+So do this:
+
+    cd /usr/local/lib
+    sudo install_name_tool -id "/usr/local/lib/libsbml.5.dylib" libsbml.5.dylib 
+
+You can check that it "took" with:
+
+    otool -D libsbml.5.dylib
+
+It should return a fully qualified path to the dylib file.
+
+Failure to do this step will result in binaries that appear to install
+just fine on the build machine but will not necessarily install ok
+for end users.
+
+  Then add this to /etc/profile:
+  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/lib
+
+  Also make sure that PKGCONFIG contains /usr/local/lib/pkgconfig.
+
+
+  Finally try R CMD INSTALL rsbml
+
+  Ideally you should then make a binary (using our scripts)
+  and try it on a different Mavericks machine.
+
+o Install ROOT. 
+  Get from source, ftp://root.cern.ch/root/root_v5.34.18.source.tar.gz
+  or newer.
+  Configure with:
+  ./configure macosx64 --with-f77="/usr/bin/gfortran-4.2" --prefix=/usr/local/root
+  If you get an error, try
+  xcode-select --install
+  (You need to be at the console physically or via vnc for the above command)
+  Then
+  make
+  sudo make install
+  
+  Then add /usr/local/root/bin to PATH (in /etc/profile).
+  Then try:
+    which root-config
+  Finally try R CMD INSTALL xps
+
+bin/thisroot.sh
+...
+
+
+
+
+o Install ImageMagick 
+  From this page (choose the first package):
+  http://cactuslab.com/imagemagick/
+  Test with:
+  R CMD build flowQ
+
+o If there are problems with packages that use GLX (that is, library(rgl)
+  fails), try using the version of the Xvfb executable that is on perceval.
+  The problem (described here: 
+  http://lists.apple.com/archives/x11-users/2012/Dec/msg00056.html
+  ) was solved on 12/21/2012 by copying the Xvfb executable from 
+  perceval to petty. The executable that 'works' is backed up on
+  /shared/silo_researcher/Morgan_M/BioC/BBS
+  as 'Xvfb', and the one that
+  is backed up (did not work) is in the same location as
+  'Xvfb.bak.20121221'
+  (Don't know if this will work, or if there is still a problem,
+  in Snow Leopard)
+
+o Install the Variant Effect Predictor as described in the README
+  of ensemblVEP. Then run
+  R CMD build ensemblVEP
+  to see if it works.
+
+
+o Set locale by adding this to /etc/profile:
+export LC_ALL=en_US.UTF-8  
+  If that doesn't work, add it to nodes/NODENAME/local-settings.sh.
+  
+o Install openmpi per this page:
+https://wiki.helsinki.fi/display/HUGG/Installing+Open+MPI+on+Mac+OS+X
+  The configure command should be:
+  CFLAGS="-m64"  CXXFLAGS="-m64"  FFLAGS="-m64" ./configure --prefix=/usr/local
+
+(note from Mavericks - it also seems you have to set the following,
+e.g. in /etc/profile:
+export RMPI_LIB_PATH=/usr/local/lib
+export RMPI_INCLUDE=/usr/local/include
+export RMPI_TYPE=OPENMPI
+
+)
+
+Install pandoc from 
+http://johnmacfarlane.net/pandoc/
+Then test with
+R CMD build ChemmineOB

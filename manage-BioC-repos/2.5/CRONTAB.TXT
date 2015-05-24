@@ -1,0 +1,14 @@
+
+# 2.5 builds
+# ----------
+
+# Update 2.5/bioc repo with packages from latest "bbs-2.5-bioc" run
+# IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
+57 23 * * * cd /home/biocadmin/manage-BioC-repos/2.5 && ./updateReposPkgs-bioc.sh >>/home/biocadmin/cron.log/2.5/updateRepos-bioc.log 2>&1
+
+# Prepare and publish 2.5/bioc repo
+59 0-3,9-11,21-23 * * * cd /home/biocadmin/manage-BioC-repos/2.5 && (./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/2.5/prepareRepos-bioc.log 2>&1
+
+# Update 2.5/data/experiment repo with packages from latest "bbs-2.5-data-experiment" run
+# IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
+59 04 * * * cd /home/biocadmin/manage-BioC-repos/2.5 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocadmin/cron.log/2.5/updateRepos-data-experiment.log 2>&1

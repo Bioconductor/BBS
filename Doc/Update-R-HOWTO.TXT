@@ -1,0 +1,94 @@
+HOW TO UPDATE R ON THE BUILD SYSTEM
+===================================
+
+Before updating R
+-----------------
+
+- The process of updating R must be performed from the 'biocbuild' account.
+- Make sure BBS is not running and that you have enough time to
+  work on updating R before BBS starts a new run.
+- Don't forget to update R on all the nodes participating to the
+  builds. Also, try to have the exact same R (same revision number)
+  on every nodes (Unix and Windows).
+
+
+Updating R
+----------
+
+1) On Unix/Linux:
+
+   a) Before you run 'make':
+      - Configure R with --enable-R-shlib
+
+   b) After you run 'make':
+      - Change the flags that gcc will use for package compilation.
+        In ${R_HOME}/etc/Makeconf, replace (for C compilation)
+          CFLAGS = -g -O2 -std=gnu99
+        by
+          CFLAGS = -g -O2 -std=gnu99 -Wall
+        Also replace (for C++ compilation)
+          CXXFLAGS = -g -O2 
+        by
+          CXXFLAGS = -g -O2 -Wall
+        and (for Fortran compilation)
+          FFLAGS = -g -O2
+        by
+          FFLAGS = -g -O2 -Wall
+        Notes:
+          The purpose of the -Wall flag is to have gcc generate the maximum
+          amount of warnings in the hope that people looking at the build/check
+          result page will find this output usefull for debugging their package.
+          On Windows, R is build with this flag already ON by default.
+        Experimental: Fast and easy way to do those flag changes:
+          cd $BBS_R_HOME/etc
+          $BBS_HOME/utils/R-fix-flags.sh
+
+2) On Mac OS X, don't forget to execute
+     chmod -Rv a+w /Library/Frameworks/R.framework/Resources/
+   so that other users than 'biocbuild' can install packages
+   (e.g. the 'guest' user on derby).
+
+3) Test the new R on all nodes: start it at least once (and check
+   the date and revision number displayed at startup), quit, 
+   try to install last Biobase from the shell with:
+     $ R CMD INSTALL <pkg_dir>
+   or from R with:
+     > source("http://bioconductor.org/biocLite.R")
+     > biocLite("Biobase")
+   Then try to load Biobase in R.
+
+4) Packages to install by hand on Mac OS X:
+   - stujem: needed by the macat pkg.
+     > install.packages('stujem', rep='http://www.ebi.ac.uk/huber-srv/data/Rrepos', type='source')
+
+5) Packages to install by hand on lamb1:
+   - buildBioC: needed by the updateReposPkgs-*-x.y.sh scripts (stage6),
+     so you only need to install this package on the node that runs
+     this stage.
+   - biocViews: needed by the prepareRepos-*-x.y.sh scripts on lamb1.
+     These scripts are not part of BBS but they might use one of the R
+     installations belonging to the 'biocbuild' user on lamb1.
+     If it happens that they are using the R that you are updating then
+     they will crash if they can't load the biocViews package.
+     Easy way to install biocViews:
+     > source("http://bioconductor.org/biocLite.R")
+     > biocLite("biocViews")
+     > library(biocViews) # Just to make sure it can be loaded
+
+Note that, when using a freshly built R, the builds take longer because all
+the dependencies need to be re-installed (this is done automatically during
+STAGE2).
+
+
+Flushing or not flushing? That is the question...
+-------------------------------------------------
+
+Also you might want to "flush" the whole build pipe i.e. to clean
+the bioc/2.0 repos on lamb1 by removing all its current packages.
+Then you have to create (by hand) the (empty) PACKAGES
+control file (with "touch PACKAGES && gzip PACKAGES && touch PACKAGES")
+because the silly CRAN tools don't generate it when the dir is empty!
+Also, if you decide to create a CRAN-style dir tree by hand, don't
+forget to put a 'replisting' file in its root because the biocViews
+package (used by the prepareRepos-*.sh family of scripts) seems to need it.
+

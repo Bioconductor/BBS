@@ -1,0 +1,6 @@
+To watch the incoming summary.dcf files in real time on the main node,
+e.g. on lamb2, do:
+
+    cd ~biocbuild/public_html/BBS/2.7/bioc/nodes
+    watch -d 'ls -ltr */*/*-summary.dcf | tail'
+

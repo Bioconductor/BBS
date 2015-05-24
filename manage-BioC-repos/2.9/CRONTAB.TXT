@@ -1,0 +1,11 @@
+
+# 2.9 builds
+# ----------
+
+# Update 2.9/bioc repo with packages from latest "bbs-2.9-bioc" run
+# IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
+25 12 * * * cd /home/biocadmin/manage-BioC-repos/2.9 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/2.9/updateRepos-bioc.log 2>&1
+
+# Update 2.9/data/experiment repo with packages from latest "bbs-2.9-data-experiment" run
+# IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
+50 19 * * * cd /home/biocadmin/manage-BioC-repos/2.9 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocadmin/cron.log/2.9/updateRepos-data-experiment.log 2>&1
