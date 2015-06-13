@@ -16,6 +16,8 @@ number_of_hours = 4
 
 for p in psutil.process_iter():
     if p.username() == username and p.name() == "R":
+        if "compute_coverage" in p.cmdline():
+            continue
         pstart = datetime.datetime.fromtimestamp(p.create_time())
         then = now-timedelta(hours=number_of_hours)
         if pstart < then:
