@@ -483,6 +483,7 @@ doesReposNeedPkg <- function(pkg, type, outgoingDirPath, internalRepos)
 ## NOT propagated.
 copyPropagatableFiles <- function(srcDir, fileExt, propagationDb, destDir=".")
 {
+    stopifnot(file.exists(propagationDb))
     contribpaths <- c(source="src/contrib", mac.binary=paste0("bin/macosx/contrib/", rvers),
         mac.binary.mavericks=paste0("bin/macosx/mavericks/contrib/", rvers),
         win.binary=paste0("bin/windows/contrib/", rvers))
