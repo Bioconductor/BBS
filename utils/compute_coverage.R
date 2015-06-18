@@ -131,3 +131,4 @@ param <- MulticoreParam(5)#, log=TRUE)
 res <- bplapply(packages, getCoverage, BPPARAM=param)
 save(res, file="/tmp/res.rda")
 
+ 
