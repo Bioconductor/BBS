@@ -18,6 +18,9 @@ export BBS_NB_CPU=4 # 8 cores are available
 
 export RCYTOSCAPE_PORT_OVERRIDE="5000"
 export RCYTOSCAPE_HOST_OVERRIDE="taipan"
+export RCYTOSCAPE3_PORT_OVERRIDE="5001"
+export RCYTOSCAPE3_HOST_OVERRIDE="taipan"
+
 export GENE_E_URL="http://taipan:9998"
 
 ## for ensemblVEP and rsbml

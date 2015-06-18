@@ -18,6 +18,8 @@ export BBS_NB_CPU=7
 
 export RCYTOSCAPE_PORT_OVERRIDE="7088"
 export RCYTOSCAPE_HOST_OVERRIDE="taipan"
+export RCYTOSCAPE3_PORT_OVERRIDE="7089"
+export RCYTOSCAPE3_HOST_OVERRIDE="taipan"
 export GENE_E_URL="http://taipan:9998"
 
 ## for ensemblVEP and rsbml
