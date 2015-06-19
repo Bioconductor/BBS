@@ -6,9 +6,12 @@ if [ -z "$1" ]
     exit 1
 fi
 
+oldwd=$(pwd)
 
-cd  $1; . config.sh  ; cd -
+cd  $1
+. config.sh
 
+cd $oldwd
 
 . ~/BBS/utils/start-virtual-X.sh
 

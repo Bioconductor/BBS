@@ -76,8 +76,8 @@ if (!exists("svninfo"))
 
 
 # Call me like this:
-# lapply(covs, upload_coverage, svninfo=svninfo, bioc_version="devel") 
-upload_coverage <- function(cov, svninfo, bioc_version="devel")
+# lapply(covs, upload_coverage, svninfo=svninfo) 
+upload_coverage <- function(cov, svninfo)
 {
     pkg <- attr(cov, "package")$package
     print(pkg)
@@ -96,6 +96,7 @@ upload_coverage <- function(cov, svninfo, bioc_version="devel")
     url <- sprintf("https://codecov.io/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
     content <- content(GET(url))
     upload_token <- content$upload_token
+    stopifnot(!is.null(upload_token))
     codecov(coverage=cov, token=upload_token, commit=git_commit_id,
         branch=branch)
 }
@@ -104,9 +105,6 @@ getCoverage <- function(package)
 {
     if(!file.exists(file.path(package, "tests")))
         return(NULL)
-    # remove this soon:
-    if (package %in% c("BrowserViz", "BrowserVizDemo", "RCyjs"))
-        return (NULL)
     print(sprintf("Processing %s...", package))
     flog.info(sprintf("Processing %s...", package))
     ret <- tryCatch({cov <- package_coverage(package)}, error=function(e) e)
