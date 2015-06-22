@@ -101,10 +101,16 @@ upload_coverage <- function(cov, svninfo)
         branch=branch)
 }
 
-getCoverage <- function(package)
+getCoverage <- function(package, force=FALSE)
 {
     if(!file.exists(file.path(package, "tests")))
         return(NULL)
+    if((!force) && (!needs_update(package)))
+    {
+        print(sprintf("Skipping %s, it hasn't changed since last time.",
+            package))
+        return("skipped")
+    }
     print(sprintf("Processing %s...", package))
     flog.info(sprintf("Processing %s...", package))
     ret <- tryCatch({cov <- package_coverage(package)}, error=function(e) e)
@@ -114,11 +120,28 @@ getCoverage <- function(package)
         rcpt <- upload_coverage(ret, svninfo)
         print(sprintf("Uploaded coverage for %s, status was %s.",
             package, rcpt$meta$status))
+        cat(svninfo[[package]], file=file.path(svncachedir, package))
     }
     ret 
 }
 
+
+
 packages <- getPkgListFromManifest()
+
+svncachedir <- "../svn-coverage-cache"
+if (!file.exists(svncachedir))
+    dir.create(svncachedir)
+
+
+needs_update <- function(pkg)
+{
+    cachefile <- file.path(svncachedir, pkg)
+    if(!file.exists(cachefile))
+        return(TRUE)
+    l <- readLines(cachefile, warn=FALSE)
+    as.integer(svninfo[[pkg]]) > as.integer(l)
+}
 
 
 names(packages) <- packages
