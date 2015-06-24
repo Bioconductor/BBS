@@ -648,6 +648,9 @@ def write_Command_output_to_LeafReport(out, node_hostname,
                     file = "%s.Rcheck/tests_%s/runTests.Rout.fail" % (pkg, arch)
                     f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
                 if f is None:
+                    file = "%s.Rcheck/tests_%s/run_tests.Rout.fail" % (pkg, arch)
+                    f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
+                if f is None:
                     file = "%s.Rcheck/tests_%s/test.Rout.fail" % (pkg, arch)
                     f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
                 if f is None:
@@ -679,6 +682,9 @@ def write_Command_output_to_LeafReport(out, node_hostname,
             f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
             if f is None:
                 file = "%s.Rcheck/tests/%s_unit_tests.Rout.fail" % (pkg, pkg)
+                f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
+            if f is None:
+                file = "%s.Rcheck/tests/run_tests.Rout.fail" % (pkg)
                 f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
 
             if f is None:
