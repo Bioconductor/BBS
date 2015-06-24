@@ -91,7 +91,7 @@ upload_coverage <- function(cov, svninfo)
     else
         branch <- "master"
     git_commit_id <- system2("git",  sprintf(
-        "svn find-rev r%s %s", svninfo[[pkg]], branch), stdout=TRUE)
+        "svn find-rev --after r%s %s", svninfo[[pkg]], branch), stdout=TRUE)
     stopifnot(length(git_commit_id) && nchar(git_commit_id) > 0)
     token <- Sys.getenv("CODECOV_TOKEN")
     url <- sprintf("https://codecov.io/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
