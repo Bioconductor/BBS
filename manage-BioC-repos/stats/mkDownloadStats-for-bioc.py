@@ -40,11 +40,11 @@ def make_SoftwarePkg_page(c):
     out.write('</I></P>\n')
     out.write('<HR>\n')
 
-    # Top 50
-    out.write('<H2>%s</H2>\n' % 'Top 50')
+    # Top 75
+    out.write('<H2>%s</H2>\n' % 'Top 75')
     stats_utils.write_TotalDownloadsPerPkg_TABLE(out, 'bioc',
                                                  pkg_to_Y.keys(), pkg_to_Y,
-                                                 True, 50)
+                                                 True, 75)
     out.write('<HR>\n')
 
     # All Software packages
