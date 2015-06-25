@@ -90,6 +90,6 @@ known_fhcrc_machines = {
 # Packages explicitly or implicitly installed by biocLite()
 bioclite_pkgs = [
     "BiocInstaller", "BiocGenerics",
-    "Biobase", "AnnotationDbi", "IRanges"
+    "Biobase", "S4Vectors", "AnnotationDbi", "IRanges"
 ]
 
