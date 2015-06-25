@@ -436,7 +436,7 @@ def write_DownloadsPerMonth_TABLE(c, out, title, sql_where,
                       month_to_Y2, 'Nb of downloads', Y2_color, ymax)
     out.write('<TABLE><TR>\n')
     out.write('<TD>')
-    out.write('<IMG SRC="%s">' % barplot_file)
+    out.write('<IMG SRC="%s" WIDTH="600px" HEIGHT="450px">' % barplot_file)
     out.write('</TD><TD>')
     out.write('<TABLE class="stats">\n')
     out.write('<TR>')
