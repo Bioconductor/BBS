@@ -499,13 +499,18 @@ conn = stats_utils.SQL_createDB(stats_config.dbfile)
 c = conn.cursor()
 stats_utils.SQL_createAccessLogTable(c)
 
-trash_file = open('trash.log', 'w')
+#trash_file = open('trash.log', 'w')
+trash_file = open('/dev/null', 'w')  # trash_file is really too big these days!
 total_imported_lines = total_rejected_lines = 0
+
+# Set 'from_date' to None to process all log files (takes a very long time!)
+from_date = datetime.date(2014, 1, 1)
 
 print ''
 print 'START importing Squid logs.'
 URL_compiled_regex = SQUID_URL_compiled_regex
-total = importLogFiles(c, stats_utils.getSquidAccessLogFiles(), trash_file, s3=False)
+logfiles = stats_utils.getSquidAccessLogFiles(from_date)
+total = importLogFiles(c, logfiles, trash_file, s3=False)
 print 'END importing Squid logs.'
 print '  %d imported Squid lines / %d rejected Squid lines' % (total[0], total[1])
 total_imported_lines += total[0]
@@ -514,7 +519,8 @@ total_rejected_lines += total[1]
 print ''
 print 'START importing Apache2 logs.'
 URL_compiled_regex = APACHE2_URL_compiled_regex
-total = importLogFiles(c, stats_utils.getApache2AccessLogFiles(), trash_file, s3=False)
+logfiles = stats_utils.getApache2AccessLogFiles(from_date)
+total = importLogFiles(c, logfiles, trash_file, s3=False)
 print 'END importing Apache2 logs.'
 print '  %d imported Apache2 lines / %d rejected Apache2 lines' % (total[0], total[1])
 total_imported_lines += total[0]
@@ -523,14 +529,12 @@ total_rejected_lines += total[1]
 print ''
 print 'START importing S3 logs.'
 URL_compiled_regex = APACHE2_URL_compiled_regex # ok?
-total = importLogFiles(c, stats_utils.getS3AccessLogFiles(), trash_file, s3=True)
+logfiles = stats_utils.getCloudFrontAccessLogFiles(from_date)
+total = importLogFiles(c, logfiles, trash_file, s3=True)
 print 'END importing S3 logs.'
 print '  %d imported S3 lines / %d rejected S3 lines' % (total[0], total[1])
 total_imported_lines += total[0]
 total_rejected_lines += total[1]
-
-
-
 
 trash_file.close()
 
