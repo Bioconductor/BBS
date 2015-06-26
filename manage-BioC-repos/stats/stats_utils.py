@@ -3,6 +3,7 @@ import os
 import string
 import sqlite3
 import re
+import datetime
 import time
 import math
 import matplotlib
@@ -52,28 +53,69 @@ def getMatchingFiles(dir=".", regex="", full_names=False, recurse=False,
             matching_files.append(file)
     return matching_files
 
-def getSquidAccessLogFiles():
+def getLogFileDate(logfile):
+    p = re.compile('(20[0-9][0-9])-?([0-1][0-9])-?([0-3][0-9])')
+    m = p.search(logfile)
+    if not m:
+        sys.exit("Cannot get date for logfile '%s' ==> EXIT" % logfile)
+    return datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+
+### 'from_date' and 'to_date' must be None or datetime.date objects e.g.
+### datetime.date(2009, 01, 10)
+def selectLogFilesWithinDates(logfiles, from_date=None, to_date=None):
+    if from_date == None:
+        from_date = datetime.date(1, 1, 1)  # beginning of times
+    if to_date == None:
+        to_date = datetime.date(9999, 12, 31)  # end of times
+    selected_files = []
+    for logfile in logfiles:
+        logfile_date = getLogFileDate(logfile)
+        if logfile_date < from_date or logfile_date > to_date:
+            continue
+        selected_files.append(logfile)
+    return selected_files
+
+def get_access_logfiles(fmt, access_logdirs, get_logfiles_fun,
+                        from_date=None, to_date=None):
+    print 
+    print "Preparing list of %s access logfiles to process:" % fmt
     files = []
-    for dir in stats_config.squid_access_logdirs:
-        files.extend(getMatchingFiles(dir, access_logfiles_regex, True))
-    files.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    for dir in access_logdirs:
+        print "| Scanning '%s' dir ..." % dir,
+        logfiles = get_logfiles_fun(dir)
+        print "OK"
+        print "| ==> %s %s access logfiles found" % (len(logfiles), fmt)
+        files.extend(logfiles)
+    if from_date != None or to_date != None:
+        print "Total: %s %s access logfiles found" % (len(files), fmt)
+        print "Selecting files with dates within %s and %s ..." \
+              % (from_date, to_date)
+        files = selectLogFilesWithinDates(files, from_date, to_date)
+        print "OK"
+    print "Number of %s access logfiles to process: %s" % (fmt, len(files))
+    files.sort(lambda x, y: cmp(getLogFileDate(x), getLogFileDate(y)))
     return files
 
-def getApache2AccessLogFiles():
-    files = []
-    for dir in stats_config.apache2_access_logdirs:
-        files.extend(getMatchingFiles(dir, access_logfiles_regex, True))
-    files.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
-    return files
+def getSquidAccessLogFiles(from_date=None, to_date=None):
+    def get_logfiles_fun(dir):
+        return getMatchingFiles(dir, access_logfiles_regex, True)
+    return get_access_logfiles("Squid",
+                               stats_config.squid_access_logdirs,
+                               get_logfiles_fun, from_date, to_date)
 
+def getApache2AccessLogFiles(from_date=None, to_date=None):
+    def get_logfiles_fun(dir):
+        return getMatchingFiles(dir, access_logfiles_regex, True)
+    return get_access_logfiles("Apache2",
+                               stats_config.apache2_access_logdirs,
+                               get_logfiles_fun, from_date, to_date)
 
-def getS3AccessLogFiles():
-    files = []
-    s3_logfiles_regex = ""
-    for dir in stats_config.s3_access_logdirs:
-        files.extend(getMatchingFiles(dir, "\.gz$", True, True, "search"))
-    files.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
-    return files
+def getCloudFrontAccessLogFiles(from_date=None, to_date=None):
+    def get_logfiles_fun(dir):
+        return getMatchingFiles(dir, "\.gz$", True, True, "search")
+    return get_access_logfiles("CloudFront",
+                               stats_config.s3_access_logdirs,
+                               get_logfiles_fun, from_date, to_date)
 
 def strHasBuildNodeIP(s):
     for ip in stats_config.buildnode_ips:
