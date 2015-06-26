@@ -89,7 +89,7 @@ def get_access_logfiles(fmt, access_logdirs, get_logfiles_fun,
     if from_date != None or to_date != None:
         print "Total: %s %s access logfiles found" % (len(files), fmt)
         print "Selecting files with dates within %s and %s ..." \
-              % (from_date, to_date)
+              % (from_date, to_date),
         files = selectLogFilesWithinDates(files, from_date, to_date)
         print "OK"
     print "Number of %s access logfiles to process: %s" % (fmt, len(files))
