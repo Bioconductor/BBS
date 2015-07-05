@@ -120,8 +120,10 @@ getCoverage <- function(package, force=FALSE)
     if ("coverage" %in% class(ret))
     {
         rcpt <- upload_coverage(ret, svninfo)
-        print(sprintf("Uploaded coverage for %s, status was %s.",
-            package, rcpt$meta$status))
+        msg <- sprintf("Uploaded coverage for %s, status was %s.",
+            package, rcpt$meta$status)
+        print(msg)
+        flog.info(msg)
         cat(svninfo[[package]], file=file.path(svncachedir, package))
     }
     ret 
