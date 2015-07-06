@@ -37,6 +37,12 @@ library(BiocInstaller)
 
 # Assume that we are running in the meat directory
 
+.stopifnot <- function(msg, ...)
+{
+    flog.info(msg)
+    print(msg)
+    stopifnot(...)
+}
 
 getPkgListFromManifest <- function()
 {
@@ -92,13 +98,14 @@ upload_coverage <- function(cov, svninfo)
         branch <- "master"
     git_commit_id <- system2("git",  sprintf(
         "svn find-rev --after r%s %s", svninfo[[pkg]], branch), stdout=TRUE)
-    stopifnot(length(git_commit_id) && nchar(git_commit_id) > 0)
+    .stopifnot("git_commit_id is empty",
+        (length(git_commit_id) && nchar(git_commit_id) > 0))
     token <- Sys.getenv("CODECOV_TOKEN")
-    stopifnot(nchar(token) > 0)
+    .stopifnot("CODECOV_TOKEN not set", nchar(token) > 0)
     url <- sprintf("https://codecov.io/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
     content <- content(GET(url))
     upload_token <- content$upload_token
-    stopifnot(!is.null(upload_token))
+    .stopifnot("upload_token is null!", !is.null(upload_token))
     codecov(coverage=cov, token=upload_token, commit=git_commit_id,
         branch=branch)
 }
