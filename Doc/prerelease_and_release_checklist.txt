@@ -37,7 +37,10 @@ One month before the release:
    schedule.
 
 - Think about changing BiocInstaller and the 
-  /developers/howto/useDevel web page.
+  /developers/howto/useDevel web page. Update the man
+  page for useDevel() accordingly, correcting R/Bioc version
+  numbers and noting whether an R upgrade is required
+  in order to use bioc-devel.
 
 A few days before the new release:
 
