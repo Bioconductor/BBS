@@ -37,11 +37,14 @@ library(BiocInstaller)
 
 # Assume that we are running in the meat directory
 
-.stopifnot <- function(msg, ...)
+.stopifnot <- function(msg, expr)
 {
-    flog.info(msg)
-    print(msg)
-    stopifnot(...)
+    if (!expr)
+    {
+        flog.info(msg)
+        print(msg)
+        stopifnot(expr)
+    }
 }
 
 getPkgListFromManifest <- function()
