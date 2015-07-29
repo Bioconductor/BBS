@@ -27,7 +27,7 @@ import jobs
 ###   - This is used for triggering timeouts so in doubt estimate low.
 ###   - Right now it's only used for transferring data back from the secondary
 ###     nodes to the central node.
-bandwidth_in_kbps = 4000.0  # 0.5 megabyte per sec
+bandwidth_in_kbps = 800.0  # 100 kilobytes per sec
 bandwidth_in_bytes_per_sec = bandwidth_in_kbps * 1000.0 / 8.0
 
 class RemoteDir:

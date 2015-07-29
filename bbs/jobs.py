@@ -180,10 +180,10 @@ def killProc(pid):
         pid2 = proc2.ProcessID
         if not pid2 in all_PIDs:
             continue
-        cmd2 = 'TASKKILL /F /PID %d' % pid2
         print "BBS>   NOTE: %s failed to kill subprocess %d (%s)." \
               % (cmd, pid2, proc2.Name)
         printProcProperties(proc2)
+        cmd2 = 'TASKKILL /F /PID %d' % pid2
         for i in range(5):
             print "BBS>     Now trying with %s ..." % cmd2,
             retcode2 = subprocess.call(cmd2, stderr=subprocess.STDOUT)
