@@ -33,6 +33,11 @@ allnodes = { \
                    "x86_64-linux-gnu", \
                    "source", \
                    "utf_8"), \
+    'linux1':    ("Linux (Ubuntu 14.04.2 LTS)", \
+                   "x86_64", \
+                   "x86_64-linux-gnu", \
+                   "source", \
+                   "utf_8"), \
     'dockernode':("Linux (Ubuntu 14.04.1 LTS)", \
                    "x86_64", \
                    "x86_64-linux-gnu", \
