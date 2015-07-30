@@ -558,7 +558,7 @@ def processJobQueue(job_queue, job_deps, nb_slots=1,
 def getHostname():
     if sys.platform == "win32":
         return os.environ['COMPUTERNAME'].lower()
-    hostname = getCmdOutput('hostname -s')
+    hostname = getCmdOutput('hostname')
     if hostname[-1] == '\n':
         hostname = hostname[0:-1]
     return hostname.lower()
