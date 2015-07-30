@@ -561,7 +561,10 @@ def getHostname():
     hostname = getCmdOutput('hostname')
     if hostname[-1] == '\n':
         hostname = hostname[0:-1]
-    return hostname.lower()
+    hostname = hostname.lower()
+    hostname = hostname.replace(".local", "")
+    hostname = hostname.replace(".fhcrc.org", "")
+    return hostname
 
 ## Formatted date+time.
 ## 'tm' must be a <type 'time.struct_time'> object as returned by
