@@ -33,4 +33,6 @@ cd "$REPORT_DIRNAME"
 /bin/tar zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
 /bin/mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"
 # No more --delete here, too dangerous!
-/usr/bin/rsync -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_REPORT_DEST_DIR/"
+# FIXME - COMMENTED OUT RSYNC TO WEB SITE!
+echo "ATTENTION: **NOT** pushing report to web site (yet)"
+###/usr/bin/rsync -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_REPORT_DEST_DIR/"
