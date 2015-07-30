@@ -1,6 +1,6 @@
 #!/bin/bash
 # ====================
-# Settings for linux1
+# Settings for linux1.bioconductor.org
 # ====================
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="linux1"
+export BBS_NODE_HOSTNAME="linux1.bioconductor.org"
 export BBS_USER="biocbuild"
 export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.2-bioc"
@@ -51,7 +51,7 @@ cd "$wd0"
 # packages to propagate and to later not be replaced by the bi-arch when
 # the dropped node is back.
 
-export BBS_OUTGOING_MAP="source:linux1/buildsrc win.binary:moscato1/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
+export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:moscato1/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)
@@ -59,7 +59,7 @@ export BBS_OUTGOING_MAP="source:linux1/buildsrc win.binary:moscato1/buildbin mac
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
 
-export BBS_REPORT_NODES="linux1 moscato1:bin perceval:bin oaxaca:bin"
+export BBS_REPORT_NODES="linux1.bioconductor.org moscato1:bin perceval:bin oaxaca:bin"
 #export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
@@ -70,6 +70,6 @@ export BBS_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/che
 # Needed only on the node performing stage9 (BBS-notify.py)
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-export BBS_NOTIFY_NODES="linux1"
+export BBS_NOTIFY_NODES="linux1.bioconductor.org"
 export BBS_PUBLISHED_REPORT_URL="http://bioconductor.org/checkResults/$BBS_BIOC_VERSION/bioc-LATEST/"
 
