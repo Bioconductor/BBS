@@ -253,6 +253,19 @@ TABLE.mainrep .even .zin1 {
     background: #9AB;
 }
 
+
+/* linux1_bioconductor_org */
+DIV.linux1.bioconductor.org,
+TR.linux1.bioconductor.org TD,
+TABLE.mainrep .linux1.bioconductor.org,
+TABLE.mainrep .odd .linux1.bioconductor.org {
+    background: #BCD;
+}
+TABLE.mainrep .even .linux1.bioconductor.org {
+    background: #9AB;
+}
+
+
 /* zin2 */
 DIV.zin2,
 TR.zin2 TD,
