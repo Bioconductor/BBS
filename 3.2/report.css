@@ -255,13 +255,13 @@ TABLE.mainrep .even .zin1 {
 
 
 /* linux1_bioconductor_org */
-DIV.linux1.bioconductor.org,
-TR.linux1.bioconductor.org TD,
-TABLE.mainrep .linux1.bioconductor.org,
-TABLE.mainrep .odd .linux1.bioconductor.org {
+DIV.linux1_bioconductor_org,
+TR.linux1_bioconductor_org TD,
+TABLE.mainrep .linux1_bioconductor_org,
+TABLE.mainrep .odd .linux1_bioconductor_org {
     background: #BCD;
 }
-TABLE.mainrep .even .linux1.bioconductor.org {
+TABLE.mainrep .even .linux1_bioconductor_org {
     background: #9AB;
 }
 
