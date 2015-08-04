@@ -365,14 +365,14 @@ TABLE.mainrep .even .gewurz {
     background: #C98;
 }
 
-/* moscato1 */
-DIV.moscato1,
-TR.moscato1 TD,
-TABLE.mainrep .moscato1,
-TABLE.mainrep .odd .moscato1 {
+/* windows1_bioconductor_org */
+DIV.windows1_bioconductor_org,
+TR.windows1_bioconductor_org TD,
+TABLE.mainrep .windows1_bioconductor_org,
+TABLE.mainrep .odd .windows1_bioconductor_org {
     background: #EBA;
 }
-TABLE.mainrep .even .moscato1 {
+TABLE.mainrep .even .windows1_bioconductor_org {
     background: #C98;
 }
 

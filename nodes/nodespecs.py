@@ -93,7 +93,12 @@ allnodes = { \
                    "x86_64-w64-mingw32", \
                    "win64.binary", \
                    "iso8859"), \
-    'moscato1':   ("Windows Server 2008 R2 Enterprise SP1 (64-bit)", \
+    'moscato1':   ("Windows Server 2008 R2 Standard (64-bit)", \
+                   "x64", \
+                   "mingw32 / x86_64-w64-mingw32", \
+                   "win.binary", \
+                   "iso8859"), \
+    'windows1.bioconductor.org':   ("Windows Server 2012 R2 Enterprise SP1 (64-bit)", \
                    "x64", \
                    "mingw32 / x86_64-w64-mingw32", \
                    "win.binary", \
