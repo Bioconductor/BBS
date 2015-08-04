@@ -1,3 +1,8 @@
+# prerequisites:
+# a windows server 2012 r2 machine with
+# cygwin installed, specifically rsync, curl, and ssh
+# (and optionally vim) and in the path
+
 # COMPUTER_NAME should be set 
 # to the name this machine should have
 # (without the domain name)
@@ -50,6 +55,8 @@ $Env:Path = $path
 
 mkdir \biocbld
 
+# FIXME - in future we probably want to check this out
+# from svn, not git
 git clone https://github.com/Bioconductor/BBS.git c:\biocbld\BBS
 
 cd \biocbld\BBS
@@ -118,8 +125,63 @@ $r = "$r_basedir\bin\R"
 
 iex "$curl -LO $env:R_URL"
 
-iex ".\$env:R_INSTALLER /DIR=$r_basedir /noicons /verysilent "
+iex ".\$env:R_INSTALLER /DIR=$r_basedir /noicons /verysilent"
 
 # biocbuild user should MANUALLY add R to their user path
 # or we could try and figure out how to script it, for bonus points
+
+# install BiocInstaller as biocbuild
+# this will prompt for the biocbuild password;
+# not sure if it can be made non-interactive
+#iex "$r -e `"source('http://bioconductor.org/biocLite.R')`""
+Start-Process $r -Credential biocbuild -ArgumentList "-e `"source('http://bioconductor.org/biocLite.R')`""
+
+# be sure USE_DEVEL is set to TRUE or FALSE
+
+# useDevel() if appropriate; this will prompt (again?)
+# for biocbuild's password
+if ($env:USE_DEVEL -eq "TRUE") {Start-Process $r -Credential biocbuild -ArgumentList "-e BiocInstaller::useDevel()"}
+
+# TODO (?) maybe all the stuff that needs to run as biocbuild
+# could be put in its own script and that script could be run
+# as biocbuild, so biocbuild's password only needs to be typed
+# once.
+
+
+# download + install MikTex
+iex "$curl -LO http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.5105.exe"
+
+iex ".\basic-miktex-2.9.5105.exe --unattended"
+
+$path += ";C:\Program Files (x86)\MiKTeX 2.9\miktex\bin"
+
+[Environment]::SetEnvironmentVariable("PATH", $path, "Machine")
+
+# set it locally so we don't have to wait for a restart:
+$Env:Path = $path
+
+[Environment]::SetEnvironmentVariable("MIKTEX_ENABLEWRITE18", "t", "Machine")
+
+# fixme - put all env vars in config (w/example) ps1 script
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/jdk-8u51-windows-x64.exe"
+
+.\jdk-8u51-windows-x64.exe /s
+
+[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk1.8.0_51", "Machine")
+
+$path += ";C:\Program Files\Java\jdk1.8.0_51\bin"
+
+
+[Environment]::SetEnvironmentVariable("PATH", $path, "Machine")
+
+# set it locally so we don't have to wait for a restart:
+$Env:Path = $path
+
+
+[Environment]::SetEnvironmentVariable("CYGWIN", "nodosfilewarning", "Machine")
+
+## seems like javareconf is no longer necessary?
+##Start-Process $r -Credential biocbuild -ArgumentList "CMD javareconf"
+
 
