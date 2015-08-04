@@ -33,4 +33,5 @@ cd "$REPORT_DIRNAME"
 /bin/tar zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
 /bin/mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"
 # No more --delete here, too dangerous!
-/usr/bin/rsync -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_REPORT_DEST_DIR/"
+echo "NOT ACTUALLY RSYNCing, yet...."
+#/usr/bin/rsync -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_REPORT_DEST_DIR/"
