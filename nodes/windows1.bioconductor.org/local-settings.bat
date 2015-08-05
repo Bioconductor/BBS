@@ -2,7 +2,7 @@
 @rem Local settings for windows1.bioconductor.org
 @rem ===========================
 
-set BBS_HOME=D:\biocbld\BBS
+set BBS_HOME=C:\biocbld\BBS
 
 set BBS_PYTHON_CMD=C:\Python27\python.exe
 
