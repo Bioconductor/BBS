@@ -7,8 +7,8 @@ set BBS_DEBUG=0
 
 set BBS_NODE_HOSTNAME=windows1.bioconductor.org
 set BBS_USER=biocbuild
-set BBS_RSAKEY=D:\biocbld\.BBS\id_rsa
-set BBS_WORK_TOPDIR=D:\biocbld\bbs-3.2-bioc
+set BBS_RSAKEY=C:\biocbld\.BBS\id_rsa
+set BBS_WORK_TOPDIR=C:\biocbld\bbs-3.2-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=9
 
