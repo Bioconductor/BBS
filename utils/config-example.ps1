@@ -19,3 +19,5 @@ $Env:R_URL="https://cran.rstudio.com/bin/windows/base/R-3.2.2beta-win.exe"
 $Env:R_INSTALLER="R-3.2.2beta-win.exe"
 $Env:USE_DEVEL="TRUE"
 $Env:GOOGLE_API_KEY="secret!!"
+$Env:POSTGRES_SUPERPASSWORD="1secretT0"
+

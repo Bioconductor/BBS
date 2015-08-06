@@ -3,6 +3,8 @@ prerequisites:
 a windows server 2012 r2 machine with
 cygwin installed, specifically rsync, curl, and ssh
 (and optionally vim) and in the path
+We have an AMI like this (ami-59bf1f32)
+
 
 COMPUTER_NAME should be set 
 to the name this machine should have
@@ -124,6 +126,16 @@ mkdir $bioc_basedir
 cd $bioc_basedir
 
 mkdir log
+# need to create NodeInfo dir as biocbuild:
+Start-Process mkdir -Credential biocbuild -ArgumentList "$bioc_basedir\NodeInfo"
+
+# BTW, sometimes the Start-Process line fails with 
+# an error about an invalid directory. The solution
+# is to close the powershell window and open a new one.
+
+
+
+
 # mkdir tmp 
 # mkdir tmpdir
 # mkdir meat
@@ -249,4 +261,185 @@ unzip gtkmm.zip -d c:\gtkmm
 
 $path += ";c:\gtkmm\i386\bin;c:\gtkmm\x64\bin"
 
+[Environment]::SetEnvironmentVariable("LIB_GTKMM", "c:/gtkmm", "Machine")
+
 [Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# imagemagick
+
+mkdir c:\ImageMagick
+
+[Environment]::SetEnvironmentVariable("IM_BASEPATH", "c:/ImageMagick", "Machine")
+[Environment]::SetEnvironmentVariable("LIB_IMAGEMAGICK", "c:/ImageMagick", "Machine")
+
+
+# a. 32-bit
+
+mkdir c:\ImageMagick\i386
+
+iex "$curl -LO http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-10-Q16-x86-dll.exe"
+
+# the noicons switch does not seem to work:
+.\ImageMagick-6.9.1-10-Q16-x86-dll.exe /DIR=c:\ImageMagick\i386 /noicons /verysilent
+
+$path += ";c:\ImageMagick\i386"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+
+
+# b. 64-bit
+
+mkdir c:\ImageMagick\x64
+
+iex "$curl -LO http://www.imagemagick.org/download/binaries/ImageMagick-6.9.1-10-Q16-x64-dll.exe"
+
+.\ImageMagick-6.9.1-10-Q16-x64-dll.exe /DIR=c:\ImageMagick\x64 /noicons /verysilent
+
+$path += ";c:\ImageMagick\x64"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# JAGS
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/JAGS-3.4.0.exe"
+
+.\JAGS-3.4.0.exe /S
+
+[Environment]::SetEnvironmentVariable("JAGS_ROOT", "C:\Program Files\JAGS\JAGS-3.4.0", "Machine")
+
+# boost
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/boost.zip"
+
+unzip boost.zip -d c:\
+
+[Environment]::SetEnvironmentVariable("LIB_BOOST", "c:/boost", "Machine")
+
+# expat
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/expat.zip"
+
+unzip .\expat.zip -d c:\
+
+[Environment]::SetEnvironmentVariable("LIB_EXPAT", "c:/expat", "Machine")
+
+# gsl
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/gsl.zip"
+
+unzip .\gsl.zip -d c:\gsl
+
+$path += ";c:\gsl\i386\bin;c:\gsl\x64\bin"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+
+[Environment]::SetEnvironmentVariable("LIB_GSL", "c:/gsl", "Machine")
+
+# GTK - doesn't seem to be used?
+
+# hdf5
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/hdf5.zip"
+
+unzip .\hdf5.zip -d c:\hdf5
+
+[Environment]::SetEnvironmentVariable("LIB_HDF5", "c:/hdf5", "Machine")
+
+$path += ";c:\hdf5\i386\bin;c:\hdf6\x64\bin"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# netcdf
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/netcdf.zip"
+
+unzip .\netcdf.zip -d c:\netcdf
+
+[Environment]::SetEnvironmentVariable("LIB_NETCDF", "c:/netcdf", "Machine")
+
+$path += ";C:\netcdf\i386\bin;C:\netcdf\x64\bin;C:\netcdf\i386\deps\shared\bin;C:\netcdf\x64\deps\shared\bin"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# protobuf
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/protobuf.zip"
+
+unzip .\protobuf.zip -d c:\protobuf
+
+[Environment]::SetEnvironmentVariable("LIB_PROTOBUF", "c:/protobuf", "Machine")
+
+# libxml2
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/libxml2.zip"
+
+unzip .\libxml2.zip -d c:\libxml2
+
+[Environment]::SetEnvironmentVariable("LIB_XML2", "c:/libxml2", "Machine")
+
+# libsbml
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/libsbml.zip"
+
+unzip .\libsbml.zip -d c:\libsbml
+
+[Environment]::SetEnvironmentVariable("LIBSBML_PATH", "c:/libsbml", "Machine")
+
+# nlopt
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/nlopt.zip"
+
+unzip .\nlopt.zip -d c:\nlopt
+
+[Environment]::SetEnvironmentVariable("NLOPT_HOME", "c:/nlopt/2.2.3", "Machine")
+
+# openbabel
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/openbabel.zip"
+
+unzip .\openbabel.zip -d c:\
+
+[Environment]::SetEnvironmentVariable("OPEN_BABEL_BIN", "c:/openbabel", "Machine")
+[Environment]::SetEnvironmentVariable("OPEN_BABEL_SRC", "c:/openbabel_src", "Machine")
+
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/OpenBabel2.3.2a_Windows_Installer.exe"
+
+
+# oops, this seems to require interactivity:
+.\OpenBabel2.3.2a_Windows_Installer.exe /S
+
+[Environment]::SetEnvironmentVariable("OPEN_BABEL_INCDIR", "C:/openbabel_src/i386/include", "Machine")
+[Environment]::SetEnvironmentVariable("OPEN_BABEL_LIBDIR", "c:/PROGRA~2/OPENBA~1.2", "Machine")
+
+# no need to add to path, it adds it itself, but we need
+# to re-get the path:
+
+# the installer adds the openbabel path, but just 
+# for the current user, but that's not enough, so we need
+# to add it again (it will appear twice when echoing)
+# the path but that's ok).
+
+$path += ";C:\Program Files (x86)\OpenBabel-2.3.2"
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+
+# misc - (for gdsfmt) - why can't they use another way?
+
+[Environment]::SetEnvironmentVariable("NUMBER_OF_PROCESSORS", "16", "Machine")
+
+# postgresql
+
+iex "$curl -LO https://s3.amazonaws.com/bioc-windows-setup/postgresql-9.1.1-1-windows.exe"
+
+.\postgresql-9.1.1-1-windows.exe --mode unattended --superpassword $Env:POSTGRES_SUPERPASSWORD
+
+[Environment]::SetEnvironmentVariable("PS_HOME", "C:\Program Files (x86)\PostgreSQL\9.1", "Machine")
+
+
+
+
+# root
+# ? need to add to LIB var? (see moscato1)
