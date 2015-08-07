@@ -15,7 +15,7 @@ cd c:\vep
 
 # remove or comment out call to test() inside INSTALL.pl
 
-cat .\INSTALL.pl | sed "s/test()/#test()/" > INSTALL_notest.pl
+cat .\INSTALL.pl | sed "s/test();/#test();/" > INSTALL_notest.pl
 
 perl INSTALL_notest.pl -a a
 
