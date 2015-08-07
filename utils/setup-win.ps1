@@ -42,6 +42,25 @@ cd $download_dir
 
 $curl = "c:\cygwin64\bin\curl"
 
+# perl
+
+iex "$curl -LO http://downloads.activestate.com/ActivePerl/releases/5.20.2.2002/ActivePerl-5.20.2.2002-MSWin32-x86-64int-299195.msi"
+
+.\ActivePerl-5.20.2.2002-MSWin32-x86-64int-299195.msi INSTALLDIR=c:\Perl /qb
+
+# add to path AT THE BEGINNING so other perls are not found
+$path = ";c:\Perl\bin;" +  $path
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# associate .pl extension with perl scripts:
+# does this have to be done as biocbuild as well?
+
+cmd /c "assoc .pl=PerlScript"
+cmd /c 'ftype PerlScript=C:\perl\bin\perl.exe "%1" %*'
+
+
+
 iex "$curl -LO https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20150319/Git-1.9.5-preview20150319.exe"
 
 .\Git-1.9.5-preview20150319.exe /verysilent
@@ -181,6 +200,11 @@ $Env:Path = $path
 
 [Environment]::SetEnvironmentVariable("MIKTEX_ENABLEWRITE18", "t", "Machine")
 
+$wshell = New-Object -ComObject Wscript.Shell
+$wshell.Popup("Manually set miktex settings (admin) to install needed pkgs on the fly w/o asking.",0,"Done",0x1)
+
+
+# java
 
 iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/jdk-8u51-windows-x64.exe"
 
@@ -439,7 +463,68 @@ iex "$curl -LO https://s3.amazonaws.com/bioc-windows-setup/postgresql-9.1.1-1-wi
 [Environment]::SetEnvironmentVariable("PS_HOME", "C:\Program Files (x86)\PostgreSQL\9.1", "Machine")
 
 
+# process explorer
+
+iex "$curl -LO https://download.sysinternals.com/files/ProcessExplorer.zip"
+
+unzip .\ProcessExplorer.zip -d C:\Windows
+
 
 
 # root
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/root.zip"
+
+unzip .\root.zip -d c:\root
+
+[Environment]::SetEnvironmentVariable("ROOTSYS", "C:\root", "Machine")
+
+$path += ";c:\root\bin"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+
 # ? need to add to LIB var? (see moscato1)
+# well, let's just try it...
+
+[Environment]::SetEnvironmentVariable("LIB", "c:\root\lib", "Machine")
+
+
+# perl deps
+
+# put perl on path inside powershell:
+
+[Environment]::GetEnvironmentVariable("PATH","Machine")
+
+ppm install DBD-mysql
+ppm install Archive::Extract
+
+
+
+
+# ensemblVEP
+
+# this needs to be done as biocbuild, so here's a script to do so
+# which must be run as biocbuild
+
+Start-Process "c:\biocbld\BBS\utils\setup-vep.ps1" -Credential biocbuild
+
+
+
+
+cd $download_dir
+
+[Environment]::SetEnvironmentVariable("VEP_PATH", "c:\vep\variant_effect_predictor.pl", "Machine")
+
+$path += ";c:\vep"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# misc
+
+[Environment]::SetEnvironmentVariable("SWEAVE_STYLE", "TRUE", "Machine")
+
+# TEMP and TMP do have values already; should we overwrite them?
+#[Environment]::SetEnvironmentVariable("TEMP", "c:\Windows\TEMP", "Machine")
+#[Environment]::SetEnvironmentVariable("TMP", "c:\Windows\TEMP", "Machine")
+
