@@ -507,6 +507,10 @@ ppm install Archive::Extract
 # this needs to be done as biocbuild, so here's a script to do so
 # which must be run as biocbuild
 
+# this line does not seem to work (at least now)
+# for running the script as biocbuild, but you can manually
+# do so, just log in as biocbuild and run the script
+# at the powershell prompt.
 Start-Process "c:\biocbld\BBS\utils\setup-vep.ps1" -Credential biocbuild
 
 
