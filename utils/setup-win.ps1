@@ -201,25 +201,46 @@ $Env:Path = $path
 [Environment]::SetEnvironmentVariable("MIKTEX_ENABLEWRITE18", "t", "Machine")
 
 $wshell = New-Object -ComObject Wscript.Shell
-$wshell.Popup("Manually set miktex settings (admin) to install needed pkgs on the fly w/o asking.",0,"Done",0x1)
+$wshell.Popup("Manually set miktex settings (admin) to install needed pkgs on the fly w/o asking, and synchronize repositories.",0,"Done",0x1)
 
 
 # java
+
+# 32-bit
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/jdk-8u51-windows-i586.exe"
+
+.\jdk-8u51-windows-i586.exe /s
+
+
+$path +=  "C:\Program Files (x86)\Java\jdk1.8.0_51\bin"
+
+$path += "C:\Program Files (x86)\Java\jdk1.8.0_51\jre\bin\server"
+
+
+# 64-bit
 
 iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/jdk-8u51-windows-x64.exe"
 
 .\jdk-8u51-windows-x64.exe /s
 
-[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk1.8.0_51", "Machine")
+# java_home doesn't seem to matter
+#[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk1.8.0_51", "Machine")
 
 $path += ";C:\Program Files\Java\jdk1.8.0_51\bin"
 
+# Also need to make sure jvm.dll is on path
+
+# add stuff from both 32- and 64-bit sections to path:
+
+$path += "C:\Program Files\Java\jdk1.8.0_51\jre\bin\server"
 
 [Environment]::SetEnvironmentVariable("PATH", $path, "Machine")
 
 # set it locally so we don't have to wait for a restart:
 $Env:Path = $path
 
+# cygwin config
 
 [Environment]::SetEnvironmentVariable("CYGWIN", "nodosfilewarning", "Machine")
 
@@ -532,3 +553,58 @@ $path += ";c:\vep"
 #[Environment]::SetEnvironmentVariable("TEMP", "c:\Windows\TEMP", "Machine")
 #[Environment]::SetEnvironmentVariable("TMP", "c:\Windows\TEMP", "Machine")
 
+# msvc runtimes
+
+# x86
+iex "$curl -LO http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
+
+.\vcredist_x86.exe /q
+
+# x64
+iex "$curl -LO http://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
+
+
+# mpi stuff
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/MSMPISetup.exe"
+
+# Note, this puts its directory at the BEGINNING of the path....
+# should probably fix that.
+.\MSMPISetup.exe -unattend
+
+
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/mpich2.zip"
+
+unzip .\mpich2.zip -d c:\mpich2
+
+$path += ";C:\mpich2\i386\bin;C:\mpich2\x64\bin"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# graphviz
+
+iex "$curl -LO http://www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.38.msi"
+
+ .\graphviz-2.38.msi /quiet
+
+$path += ";C:\Program Files (x86)\Graphviz2.38\bin"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# ipython
+
+C:\Python27\Scripts\pypm.exe install ipython
+
+# jupyter
+
+# FIXME!
+
+# pandoc
+
+iex "$curl -LO https://github.com/jgm/pandoc/releases/download/1.13.2/pandoc-1.13.2-windows.msi"
+
+.\pandoc-1.13.2-windows.msi /quiet ALLUSERS=1
+
+$path += ";C:\Program Files (x86)\Pandoc"
+
+[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
