@@ -608,3 +608,20 @@ iex "$curl -LO https://github.com/jgm/pandoc/releases/download/1.13.2/pandoc-1.1
 $path += ";C:\Program Files (x86)\Pandoc"
 
 [Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
+
+# ghostscript
+
+iex "$curl -LO http://downloads.ghostscript.com/public/gs916w32.exe"
+
+.\gs916w32.exe /S
+
+$path += ";C:\Program Files (x86)\gs\gs9.16\bin"
+
+# clustal omega (clustalo)
+
+iex "$curl -LO http://www.clustal.org/omega/clustal-omega-1.2.0-win32.zip"
+
+unzip -j .\clustal-omega-1.2.0-win32.zip -d c:\clustalo
+
+$path += ";c:\clustalo"
+
