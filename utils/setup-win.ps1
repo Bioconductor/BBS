@@ -213,9 +213,9 @@ iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/jdk-8u51-windows-i586.
 .\jdk-8u51-windows-i586.exe /s
 
 
-$path +=  "C:\Program Files (x86)\Java\jdk1.8.0_51\bin"
+$path +=  ";C:\Program Files (x86)\Java\jdk1.8.0_51\bin"
 
-$path += "C:\Program Files (x86)\Java\jdk1.8.0_51\jre\bin\server"
+$path += ";C:\Program Files (x86)\Java\jdk1.8.0_51\jre\bin\server"
 
 
 # 64-bit
@@ -233,7 +233,7 @@ $path += ";C:\Program Files\Java\jdk1.8.0_51\bin"
 
 # add stuff from both 32- and 64-bit sections to path:
 
-$path += "C:\Program Files\Java\jdk1.8.0_51\jre\bin\server"
+$path += ";C:\Program Files\Java\jdk1.8.0_51\jre\bin\server"
 
 [Environment]::SetEnvironmentVariable("PATH", $path, "Machine")
 
