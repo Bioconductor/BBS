@@ -276,27 +276,17 @@ $path = [Environment]::GetEnvironmentVariable("PATH","Machine")
 
 # GTK+
 
-# a. 32 bit
+iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/gtk2.zip"
 
-iex "$curl -LO http://win32builder.gnome.org/packages/3.6/gtk+_3.6.4-1_win32.zip"
+unzip .\gtk2.zip -d c:\
 
-unzip gtk+_3.6.4-1_win32.zip -d c:\gtk+_3.6.4-1
-
-[Environment]::SetEnvironmentVariable("GTK_BASEPATH", "c:/gtk__3~1.4-1", "Machine")
-
-$path += ";C:\gtk+_3.6.4-1\bin"
+$path += ";C:\gtk2_2.22.1\bin"
+$path += ";C:\gtk2_2.22.1_64bit\bin"
 
 [Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
 
-# b. 64-bit
+[Environment]::SetEnvironmentVariable("GTK_BASEPATH", "c:/GTK2_2~1.1", "Machine")
 
-iex "$curl -LO http://win32builder.gnome.org/packages/3.6/gtk+_3.6.4-1_win64.zip"
-
-unzip gtk+_3.6.4-1_win64.zip -d c:\gtk+_3.6.4-1_64bit
-
-$path += ";C:\gtk+_3.6.4-1_64bit\bin"
-
-[Environment]::SetEnvironmentVariable("PATH", "$path", "Machine")
 
 # gtkmm
 
