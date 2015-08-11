@@ -139,8 +139,11 @@ $path = "C:\Rtools\bin;C:\Rtools\gcc-4.6.3\bin;" + $path
 $Env:Path = $path
 
 $bioc_basedir = "c:\biocbld\bbs-$env:BIOC_VERSION-bioc"
+$exp_basedir = "c:\biocbld\bbs-$env:BIOC_VERSION-data-experiment"
+
 
 mkdir $bioc_basedir
+mkdir $exp_basedir
 
 cd $bioc_basedir
 
@@ -151,6 +154,10 @@ Start-Process mkdir -Credential biocbuild -ArgumentList "$bioc_basedir\NodeInfo"
 # BTW, sometimes the Start-Process line fails with 
 # an error about an invalid directory. The solution
 # is to close the powershell window and open a new one.
+
+cd $exp_basedir
+mkdir log
+Start-Process mkdir -Credential biocbuild -ArgumentList "$exp_basedir\NodeInfo"
 
 
 
