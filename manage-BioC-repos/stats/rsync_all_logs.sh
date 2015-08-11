@@ -9,4 +9,4 @@ cd $STATS_HOME
 rsync -ave ssh webadmin@cobra:'/extra/Backup/log/squid/access.log*' $STATS_HOME/bioc-access-logs/squid/cobra
 rsync -ave ssh webadmin@cobra:'/extra/Backup/log/squid/access-bioc.log*' $STATS_HOME/bioc-access-logs/squid/cobra
 rsync -ave ssh webadmin@mamba:'/extra/Backup/log/squid/access.log*' $STATS_HOME/bioc-access-logs/squid/mamba
-rsync -ave ssh webadmin@krait:'/var/log/apache2/bioconductor-access.log-*' $STATS_HOME/bioc-access-logs/apache2/krait
+rsync -ave ssh webadmin@master.bioconductor.org:'/var/log/apache2/bioconductor-access.log-*' $STATS_HOME/bioc-access-logs/apache2/krait
