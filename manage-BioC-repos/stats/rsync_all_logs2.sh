@@ -28,5 +28,5 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "> RETRIEVING APACHE2 LOG FILES FROM $LOGS_REMOTE_PATH/krait"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo ""
-rsync -ave ssh "ubuntu@master.bioconductor.org:/apache2/bioconductor-access.log-*" $LOGS_LOCAL_PATH/apache2/krait
+rsync -ave ssh "ubuntu@master.bioconductor.org:/var/log/apache2/bioconductor-access.log-*" $LOGS_LOCAL_PATH/apache2/krait
 
