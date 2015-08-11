@@ -25,7 +25,7 @@ rsync -ave ssh "$LOGS_REMOTE_PATH/mamba/squid/access.log*" $LOGS_LOCAL_PATH/squi
 
 echo ""
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "> RETRIEVING APACHE2 LOG FILES FROM master.bioconductor.org...
+echo "> RETRIEVING APACHE2 LOG FILES FROM master.bioconductor.org..."
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo ""
 rsync -ave ssh "ubuntu@master.bioconductor.org:/var/log/apache2/bioconductor-access.log-*" $LOGS_LOCAL_PATH/apache2/krait
