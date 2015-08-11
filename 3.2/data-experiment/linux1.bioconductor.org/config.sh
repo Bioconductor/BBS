@@ -40,7 +40,8 @@ export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:wind
 
 # FIXME add oaxaca:bin
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
-export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin"export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
+export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin"
+export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
 export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
