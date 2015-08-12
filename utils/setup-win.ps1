@@ -299,7 +299,7 @@ $path += ";C:\gtk2_2.22.1_64bit\bin"
 
 iex "$curl -LO http://s3.amazonaws.com/bioc-windows-setup/gtkmm.zip"
 
-unzip gtkmm.zip -d c:\gtkmm
+unzip gtkmm.zip -d c:\
 
 $path += ";c:\gtkmm\i386\bin;c:\gtkmm\x64\bin"
 
