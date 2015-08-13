@@ -16,6 +16,7 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
+set USERDNSDOMAIN=bioconductor.org
 
 @rem Shared settings (by all Windows nodes)
 
