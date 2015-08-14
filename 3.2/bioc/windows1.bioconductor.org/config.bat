@@ -17,16 +17,16 @@ set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
 set RCYTOSCAPE_PORT_OVERRIDE=3023
-set RCYTOSCAPE_HOST_OVERRIDE=taipan
+set RCYTOSCAPE_HOST_OVERRIDE=docker.bioconductor.org
 set RCYTOSCAPE3_PORT_OVERRIDE=3024
-set RCYTOSCAPE3_HOST_OVERRIDE=taipan
+set RCYTOSCAPE3_HOST_OVERRIDE=docker.bioconductor.org
 
 set RCYTOSCAPE_PORT_OVERRIDE_64=8064
-set RCYTOSCAPE_HOST_OVERRIDE_64=taipan
+set RCYTOSCAPE_HOST_OVERRIDE_64=docker.bioconductor.org
 set RCYTOSCAPE3_PORT_OVERRIDE_64=8065
-set RCYTOSCAPE3_HOST_OVERRIDE_64=taipan
+set RCYTOSCAPE3_HOST_OVERRIDE_64=docker.bioconductor.org
 
-set GENE_E_URL=http://taipan:9998
+set GENE_E_URL=http://docker.bioconductor.org:9998
 
 rem graphviz settings
 set GRAPHVIZ_INSTALL_DIR_I386=c:/graphviz/i386
