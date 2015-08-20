@@ -12,6 +12,7 @@
 import sys
 import os
 import smtplib
+import yaml
 
 # On Linux, it seems that from_addr0 must point to the current user or
 # nothing is sent (and no error is raised neither)
@@ -41,13 +42,25 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
         to_addrs = [redirect_to_addr]
     to = ', '.join(to_addrs)
     print "BBS>   About to send email to '%s'..." % to,
-    msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n%s' % (from_addr, to, subject, user_agent, from_addr, errors_to, msg)
-    server = smtplib.SMTP(smtp_host)
+    msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, user_agent, from_addr, errors_to, msg)
+    with open("email_config.yaml", 'r') as stream:
+      config = yaml.load(stream)
+
+    server = smtplib.SMTP(config['hostname'], config['port'])
+    server.ehlo()
+    if config['use_tls']:
+      server.starttls()
+      server.ehlo()
+
+    if 'username' in config and 'password' in config:
+      server.login(config['username'], config['password'])
+
+
     #server.set_debuglevel(1)
     if mode == "do-it":
         print "(NOW SENDING!)",
         sys.stdout.flush()
-        server.sendmail(from_addr0, to_addrs, msg)
+        server.sendmail(from_addr, to_addrs, msg)
     server.quit()
     print "DONE"
     return
