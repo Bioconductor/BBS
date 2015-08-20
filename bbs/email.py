@@ -135,9 +135,22 @@ def createhtmlmail(html, text, from_addr, to_addrs, subject):
 #   bbs.email.sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg)
 def sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg):
     msg = createhtmlmail(html_msg, text_msg, from_addr, to_addrs, subject)
-    server = smtplib.SMTP(smtp_host)
+
+    with open("email_config.yaml", 'r') as stream:
+      config = yaml.load(stream)
+
+    server = smtplib.SMTP(config['hostname'], config['port'])
+    server.ehlo()
+    if config['use_tls']:
+      server.starttls()
+      server.ehlo()
+
+    if 'username' in config and 'password' in config:
+      server.login(config['username'], config['password'])
+
+
     #server.set_debuglevel(1)
-    server.sendmail(from_addr0, to_addrs, msg)
+    server.sendmail(from_addr, to_addrs, msg)
     server.quit()
     return
 
