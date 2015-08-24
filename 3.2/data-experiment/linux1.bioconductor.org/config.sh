@@ -31,7 +31,7 @@ cd "$wd0"
 # BBS_CENTRAL_RHOST machine).
 
 # FIXME add mac.mavericks.binary:oaxaca/buildbin
-export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin"
+export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)
 #
@@ -40,7 +40,7 @@ export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:wind
 
 # FIXME add oaxaca:bin
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
-export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin"
+export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin oaxaca:bin"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
