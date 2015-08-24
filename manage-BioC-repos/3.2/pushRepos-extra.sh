@@ -6,6 +6,5 @@ cd "$HOME/manage-BioC-repos/3.2"
 
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/extra"
 
-echo "ATTENTION: **NOT** pushing files to website (yet)"
 
-#rsync --delete -ave ssh $REPOS_ROOT webadmin@master.bioconductor.org:/extra/www/bioc/packages/$BIOC_VERSION
+rsync --delete -ave ssh $REPOS_ROOT webadmin@master.bioconductor.org:/extra/www/bioc/packages/$BIOC_VERSION
