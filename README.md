@@ -1,3 +1,5 @@
+
+
 Bioconductor Build System Overview
 ==================================
 
@@ -70,7 +72,7 @@ If you have a question not covered here:
 * Dan Tenenbaum should be the first person to ask.
 * Herv&eacute; Pag&egrave;s should be the next person to ask.
   He has not been completely in the loop regarding the move
-  to the cloud but Dan will try and catch him up.
+  to the cloud but Dan (and this document) will try and catch him up.
 * If neither of those two are available, Martin Morgan may know.
 
 ## General overview of BBS
@@ -93,7 +95,7 @@ In general, there are four *builds* that run during any given week:
 
 * = **Note**: The experiment data builds currently run on 
 Snow Leopard but not Mavericks. If you refer to
-[the note below](#snow_leopard_note) you'll see that
+[the note below](#note_about_snow_leopard) you'll see that
 this needs to change; beginning with Bioconductor 3.3
 we will no longer build on Snow Leopard, so experiment
 data builds must happen on Mavericks.
@@ -138,9 +140,11 @@ name is in the cloud. Any machine without a fully qualified
 domain name is (at this point) at FHCRC in Seattle.
 
 
-<span id="snow_leopard_note"></span>
 
-**Note about Snow Leopard**: R's support for Snow Leopard is 
+### Note about Snow Leopard
+
+
+R's support for Snow Leopard is 
 being phased out with R-3.3, which will be released in the
 Spring of 2016. Therefore the upcoming devel version of
 Bioconductor (3.3) will not be built on Snow Leopard; nor will
@@ -316,7 +320,7 @@ So we started running the main build script at 17:00 and now it is
 10:10 the next morning. We hope (as the comment indicates)
 that all the builders have finished by now, otherwise there
 will be (as there often is) some manual steps to do at this point
-(see the ["Care and Feeding"](#care_and_feeding) section below).
+(see the ["Care and Feeding"](#care_and_feeding_of_the_build_system) section below).
 
 The build system will now run postrun.sh which initializes
 environment variables as above and then runs 
@@ -347,7 +351,7 @@ Looking at *biocadmin*'s crontab, we see:
 First of all, notice the time. This starts at 10:30. This is 
 hopefully enough time for the postrun.sh script (above) to have
 finished; otherwise you'll have to re-run some things
-manually (see [care and feeding](#care_and_feeding), below).
+manually (see [care and feeding](#care_and_feeding_of_the_build_system), below).
 
 These steps have to do with managing our *internal
 package repositories*. These repositories live on
@@ -388,9 +392,17 @@ via `biocLite()`.
 
 
 
-<span id="care_and_feeding"></span>
 
 ## Care and Feeding of the Build System
 
-Coming soon.
+Ideally the build system would *just work* every day
+so you wouldn't have to pay much attention to it.
+Often it does.
+
+But should still check up on it daily to make sure
+it is doing what is is supposed to do. (*You* in this context
+basically means Brian, or anyone else who is taking over
+this duty in his absence).
+
+
 
