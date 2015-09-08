@@ -1,4 +1,31 @@
 
+Table of Contents
+=================
+
+  * [Bioconductor Build System Overview](#bioconductor-build-system-overview)
+    * [What is BBS?](#what-is-bbs)
+    * [What is BBS <strong>not</strong>?](#what-is-bbs-not)
+    * [Where is the code?](#where-is-the-code)
+    * [Human resources](#human-resources)
+    * [General overview of BBS](#general-overview-of-bbs)
+    * [What builds where](#what-builds-where)
+      * [About the build machines\.](#about-the-build-machines)
+        * [Note about Snow Leopard](#note-about-snow-leopard)
+      * [How the build machines are organized\.](#how-the-build-machines-are-organized)
+      * [What machines are used in which builds?](#what-machines-are-used-in-which-builds)
+        * [Devel (Bioconductor 3\.2)](#devel-bioconductor-32)
+        * [Release (Bioconductor 3\.1)](#release-bioconductor-31)
+        * [Next devel (Bioconductor 3\.3)](#next-devel-bioconductor-33)
+        * [A note about time zones\.](#a-note-about-time-zones)
+    * [How the build system works](#how-the-build-system-works)
+      * [More post\-build steps (run as <em>biocadmin</em>)](#more-post-build-steps-run-as-biocadmin)
+    * [Care and Feeding of the Build System](#care-and-feeding-of-the-build-system)
+      * [Example workflow](#example-workflow)
+        * [Investigating](#investigating)
+        * [Taking a deeper look](#taking-a-deeper-look)
+      * [Looking at logs](#looking-at-logs)
+      * [Interpreting log output](#interpreting-log-output)
+
 
 Bioconductor Build System Overview
 ==================================
@@ -139,10 +166,7 @@ Any build machine that has "bioconductor.org" in its
 name is in the cloud. Any machine without a fully qualified
 domain name is (at this point) at FHCRC in Seattle.
 
-
-
-### Note about Snow Leopard
-
+#### Note about Snow Leopard
 
 R's support for Snow Leopard is 
 being phased out with R-3.3, which will be released in the
@@ -391,11 +415,9 @@ is where users go when they install a package
 via `biocLite()`.
 
 
-
-
 ## Care and Feeding of the Build System
 
-Ideally the build system would *just work* every day
+Ideally the build system should *just work* every day
 so you wouldn't have to pay much attention to it.
 Often it does.
 
@@ -404,5 +426,156 @@ it is doing what is is supposed to do. (*You* in this context
 basically means Brian, or anyone else who is taking over
 this duty in his absence).
 
+(People who are not FHCRC employees are exempt from
+care and feeding of the 3.1 builds which requires 
+access to the internal FHCRC network. Dan/Hervé will
+do this for the time being and these builds will
+stop on 10/8/2015).
 
+For 3.2 and newer, for issues with any of the Mac
+build machines at FHCRC, you will need to pass those
+off to Dan or Hervé, who can log into those machines
+and see what is going on. Bear in mind, some clues
+may be available on the master builder.)
+
+Regarding causes for failed builds: There are a few things
+that keep cropping up and we hope to work on long term
+solutions for these. (`We` might mean you in these cases!)
+
+
+### Example workflow
+
+This is an example that looks at the current devel 
+(BioC 3.2) builds. The exact commands/urls shown
+here may not be valid for subsequent builds but
+this should give you the idea of what you need to do.
+
+From looking at *biocbuild*'s crontab on 
+*linux1.bioconductor.org* we know that the *postrun* job
+is supposed to run at 13:10 (that's Buffalo time).
+
+(Note that all times in crontab files are subject to change,
+so don't take this as gospel.)
+
+The postrun script takes about 30 minutes tops, so 
+by 13:40 you should see today's date near the top
+of 
+
+[http://master.bioconductor.org/checkResults/devel/bioc-LATEST/](http://master.bioconductor.org/checkResults/devel/bioc-LATEST/)
+
+...then you should investigate. In fact, you don't even
+have to wait till 13:40, it's always a good idea to check
+the status of the builds.
+
+Note that url has `master` in it. Content copied to the web 
+site should immediately be visible in urls that start with
+master.bioconductor.org. If you omit the master or replace it
+with www, it might take a while longer for the content
+to propagate because you are looking at an
+[Amazon CloudFront](https://aws.amazon.com/cloudfront/)
+distribution.
+
+#### Investigating
+
+There are other ways, but my preferred way to 
+investigate is to ssh to the build machine
+(in this case `linux1.bioconductor.org`) as the `biocbuild`
+user and issue the command:
+
+    ls -l ~/public_html/BBS/3.2/bioc/nodes/*|less
+
+This should show some output for each node, for example
+here's the part for `linux1.bioconductor.org`:
+
+  public_html/BBS/3.2/bioc/nodes/linux1.bioconductor.org:
+  total 368
+  -rw-rw-r--    1 biocbuild biocbuild    458 Sep  8 09:39 BBS_EndOfRun.txt
+  drwxr-xr-x    2 biocbuild biocbuild 172032 Sep  8 01:06 buildsrc
+  drwxr-xr-x 1057 biocbuild biocbuild 147456 Sep  8 09:39 checksrc
+  drwxr-xr-x    2 biocbuild biocbuild  36864 Sep  7 20:24 install
+  drwxr-xr-x    2 biocbuild biocbuild   4096 Sep  7 20:24 NodeInfo
+
+Here's what you are looking for:
+
+* There should be a section for each node in the build.
+* Each node should have a BBS_EndOfRun.txt file.
+* The timestamp on that file should be **before** the 
+  postrun.sh script runs in crontab (i.e. before 13:10 in
+  this example).
+
+If any of these conditions are not met, those offer you clues
+to what has gone wrong. The respective possibilities are:
+
+* Somehow the build node did not start, or failed before
+  it could get very far. You need to go to that node 
+  and check the logs. (More on this below.)
+* The builds are still running. Knowing that the build phases
+  are indicated here as `install`, `buildsrc`, `checksrc`,
+  and `buildbin`, and occur in that order, look at the 
+  timestamp on the directory representing the latest
+  build phase. If the time is pretty recent, it probably
+  means the build on that machine is still chugging along
+  on that phase. If the time was hours ago, likely the
+  build failed on that node and you will need to go
+  to the node to figure out why.
+* If all nodes have BBS_EndOfRun.txt files but the timestamp
+  on one or more of them is later than the postrun script,
+  you will need to run the postrun.sh script by hand (
+  and then afterwards you will need to run the 
+  update/prepare/push scripts on biocadmin by hand).
+
+#### Taking a deeper look
+
+If a build phase is not complete on a node, you can see where it
+is without having to connect to that node, with a command like the
+following. Let's say that the `checksrc` phase on node `perceval`
+is not complete. Do a command like this:
+
+    watch 'ls -l public_html/BBS/3.2/bioc/nodes/perceval/checksrc/ ' | tail -4
+
+  This will show you the last 4 files that were pushed
+  to the master node from perceval. The display will 
+  refresh every few seconds. New filenames will show up
+  in alphabetical order (and not case-sensitive). So
+  if you are in the Y's, then you're near the end.
+
+### Looking at logs
+
+If a build appears to have stopped on a node, you will need to
+go to that node and look at its log. 
+
+To go to the node, connect to it as the `biocbuild` user via
+ssh, or Remote Desktop for windows nodes.
+
+On Unix nodes (Linux or Mac), you can find the logs in
+`~/bbs-X.Y-bioc/logs` where `X.Y` is the version of Bioconductor 
+being built. (Substitute `data-experiment` for `bioc` if you
+are troubleshooting the experiment data builds).
+
+On these nodes the log information is appended to 
+a file with the name of the node, for example
+`perceval.log`. These files can get quite large
+and should be manually rotated once in a while
+(do that by archiving the old log with `gzip` and re-creating
+the new one with `touch`), so likely the information you
+are looking for is at the end of the log. 
+
+On Windows nodes, the logs are in
+`c:\biocbld\bbs-3.2-bioc\log`. 
+
+On windows, the logs are a bit different and each build
+has its own datestamped log file. For example, the 
+log file for the build that started on 9/7/2015 is called
+`windows1.bioconductor.org-run-20150907.log`.
+
+On all types of nodes, examine the end of the log file
+with the command 
+
+    tail -200 LOG_FILE_NAME
+
+### Interpreting log output
+
+There are several categories of common problems which
+will be discussed TBA. For now, contact Dan and share your
+findings with him.
 
