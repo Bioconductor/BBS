@@ -209,6 +209,10 @@ On release day (D):
   where XX is the new devel version (one higher than the version)
   that was just released.
 
+- Modify the file /about/removed-packages/ on the web site
+  to indicate the packages that were removed with this release.
+  Link to the last-good landing page of each package.
+
 - Modify the script 
 svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
   Change below where it says "CHANGE THE VALUE IN THE NEXT LINE".
