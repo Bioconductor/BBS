@@ -376,9 +376,9 @@ Looking at *biocadmin*'s crontab, we see:
 
     # Update 3.2/bioc repo with packages from latest "bbs-3.2-bioc" run
     # IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
-    30 10 * * * cd /home/biocadmin/manage-BioC-repos/3.2 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/3.2/updateRepos-bioc.log 2>&1
+    40 13 * * * cd /home/biocadmin/manage-BioC-repos/3.2 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/3.2/updateRepos-bioc.log 2>&1
 
-First of all, notice the time. This starts at 10:30. This is 
+First of all, notice the time. This starts at 13:40. This is 
 hopefully enough time for the postrun.sh script (above) to have
 finished; otherwise you'll have to re-run some things
 manually (see [care and feeding](#care_and_feeding_of_the_build_system), below).
