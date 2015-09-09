@@ -1,6 +1,6 @@
 #!/bin/bash
 # =======================
-# Local settings for linux1.bioconductor.org
+# Local settings for linux2.bioconductor.org
 # =======================
 
 
