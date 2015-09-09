@@ -271,8 +271,8 @@ user on one of the Linux build machines (a/k/a master build nodes).
 Among other things, you'll see the following (from the BioC 3.2
 master build node):
 
-    # bbs-3.2-bioc
-    24 16 * * * cd /home/biocbuild/BBS/3.2/bioc/zin1 && ./prerun.sh >>/home/biocbuild/bbs-3.2-bioc/log/zin1.log 2>&1
+  # bbs-3.2-bioc
+  24 19 * * * cd /home/biocbuild/BBS/3.2/bioc/linux1.bioconductor.org && ./prerun.sh >>/home/biocbuild/bbs-3.2-bioc/log/linux1.bioconductor.org.log 2>&1
 
 The *prerun* step happens only on the master build node.
 I recommend looking to see what happens in that prerun.sh
@@ -280,6 +280,13 @@ script which can be found in SVN at
 [https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/build/BBS/3.2/bioc/zin1/prerun.sh](https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/build/BBS/3.2/bioc/zin1/prerun.sh).
 If you look there, you will see that it is essentially just sourcing
 a shell script called config.sh and then running a python script.
+
+(Note the script above is for zin1, a machine that will soon
+no longer be used; but there is not yet an equivalent directory
+in svn for linux1.bioconductor.org, as that code only exists
+in a [github branch](https://github.com/Bioconductor/BBS/blob/start-linux1/3.2/bioc/linux1.bioconductor.org/prerun.sh)).
+
+
 
 The sourcing of the config script sets up environment variables
 that will be used during the build. First, variables specific to this
@@ -306,14 +313,13 @@ to be built.
 In the numeric stage listing used by Hervé, this is STAGE1.
 (For a release build, this is a release branch;
 for devel, it's trunk.)
-So the fact that this script runs at 16:24 means that's effectively
+So the fact that this script runs at 19:24 means that's effectively
 the deadline for changes for the day. Any changes made
 after that time won't be picked up until the following day's build.
 
 Let's look at the next line in the crontab entry:
 
-    00 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.2/bioc/zin1 && ./run.sh >>/home/biocbuild/bbs-3.2-bioc/log/zin1.log 2>&1'
-
+  00 20  * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.2/bioc/linux1.bioconductor.org && ./run.sh >>/home/biocbuild/bbs-3.2-bioc/log/linux1.bioconductor.org.log 2>&1'
 
 So after giving the prerun script 36 minutes to run, the run.sh
 script starts up.
@@ -338,10 +344,10 @@ Each stage is run in parallel. The system does not move from one stage to the ne
 Moving on to the next line in the crontab:
 
     ##### IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "run.sh" job on ALL other nodes!
-    10 10 * * * cd /home/biocbuild/BBS/3.2/bioc/zin1 && ./postrun.sh >>/home/biocbuild/bbs-3.2-bioc/log/zin1.log 2>&1
+    10 13 * * * cd /home/biocbuild/BBS/3.2/bioc/linux1.bioconductor.org && ./postrun.sh >>/home/biocbuild/bbs-3.2-bioc/log/linux1.bioconductor.org.log 2>&1
 
-So we started running the main build script at 17:00 and now it is
-10:10 the next morning. We hope (as the comment indicates)
+So we started running the main build script at 20:00 and now it is
+13:10 the next afternoon. We hope (as the comment indicates)
 that all the builders have finished by now, otherwise there
 will be (as there often is) some manual steps to do at this point
 (see the ["Care and Feeding"](#care_and_feeding_of_the_build_system) section below).
