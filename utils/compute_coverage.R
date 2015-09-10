@@ -88,12 +88,17 @@ if (!exists("svninfo"))
     svninfo <- unlist(lapply(getPkgListFromManifest(), get_svn_rev))
 
 
-getGitCommitId <- function(package, svn_rev)
+getBranch <- function()
 {
     if (BiocInstaller:::IS_USER)
-        branch <- sprintf("release-%s", biocVersion())
+        sprintf("release-%s", biocVersion())
     else
-        branch = 'master'
+        'master'
+}
+
+getGitCommitId <- function(package, svn_rev)
+{
+    branch <- getBranch()
     url <- sprintf("https://api.github.com/repos/Bioconductor-mirror/%s/commits?sha=%s",
                    package, branch)
     commits <- content(GET(url))
@@ -124,7 +129,7 @@ upload_coverage <- function(cov, svninfo)
     upload_token <- content$upload_token
     .stopifnot("upload_token is null!", !is.null(upload_token))
     codecov(coverage=cov, token=upload_token, commit=git_commit_id,
-        branch=branch)
+        branch=getBranch())
 }
 
 getCoverage <- function(package, force=FALSE)
