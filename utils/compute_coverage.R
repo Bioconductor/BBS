@@ -119,7 +119,7 @@ upload_coverage <- function(cov, svninfo)
         !is.null(git_commit_id))
     token <- Sys.getenv("CODECOV_TOKEN")
     .stopifnot("CODECOV_TOKEN not set", nchar(token) > 0)
-    url <- sprintf("https://codecov.io/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
+    url <- sprintf("https://codecov.io/api/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
     content <- content(GET(url))
     upload_token <- content$upload_token
     .stopifnot("upload_token is null!", !is.null(upload_token))
