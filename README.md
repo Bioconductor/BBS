@@ -567,7 +567,7 @@ the new one with `touch`), so likely the information you
 are looking for is at the end of the log. 
 
 On Windows nodes, the logs are in
-`c:\biocbld\bbs-3.2-bioc\log`. 
+`c:\biocbld\bbs-X.Y-bioc\log`. 
 
 On windows, the logs are a bit different and each build
 has its own datestamped log file. For example, the 
