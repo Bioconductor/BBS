@@ -99,8 +99,8 @@ getBranch <- function()
 getGitCommitId <- function(package, svn_rev)
 {
     branch <- getBranch()
-    url <- sprintf("https://api.github.com/repos/Bioconductor-mirror/%s/commits?sha=%s",
-                   package, branch)
+    url <- sprintf("https://api.github.com/repos/Bioconductor-mirror/%s/commits?sha=%s&access_token=%s",
+                   package, branch, Sys.getenv("GITHUB_OAUTH_TOKEN"))
     commits <- content(GET(url))
     interm <- unlist(lapply(commits, function(x){
         grepl(sprintf("%s@%s", package, svn_rev), x$commit$message)
