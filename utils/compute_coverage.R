@@ -180,7 +180,7 @@ needs_update <- function(pkg)
 names(packages) <- packages
 
 
-param <- MulticoreParam(5)#, log=TRUE)
+param <- MulticoreParam(5, timeout=4800)#, log=TRUE)
 
 res <- bplapply(packages, getCoverage, BPPARAM=param)
 save(res, file="/tmp/res.rda")
