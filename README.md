@@ -400,13 +400,13 @@ is removed from the repository.
 The *prepare* script populates other parts of our
 internal repository which will later be moved to the 
 web site. Most importantly this includes the package
-index pages (PACKAGES and PACKAGES.gz) which tell 
+indexes (`PACKAGES` and `PACKAGES.gz`) which tell 
 install.packages() and biocLite() and friends which packages
-can be installed. There's also a VIEWS file which is
+can be installed. There's also a `VIEWS` file which is
 used to build parts of our web site (especially the 
 package landing pages). From each built package we 
 also extract vignettes (built documents, source documents,
-and Stangled R source), READMEs, INSTALL and LICENSE
+and Stangled R source), `README`s, `INSTALL` and `LICENSE`
 files, reference manuals, and other material that
 we want to link to on the package landing page.
 
@@ -437,7 +437,8 @@ For 3.2 and newer, for issues with any of the Mac
 build machines at FHCRC, you will need to pass those
 off to Dan or Hervé, who can log into those machines
 and see what is going on. Bear in mind, some clues
-may be available on the master builder.)
+may be available on the master builder.) Jim Hester
+also has access to these machines.
 
 Regarding causes for failed builds: There are a few things
 that keep cropping up and we hope to work on long term
