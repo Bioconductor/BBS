@@ -123,7 +123,7 @@ In general, there are four *builds* that run during any given week:
 
 \* = **Note**: The experiment data builds currently run on 
 Snow Leopard but not Mavericks. If you refer to
-[the note below](#note_about_snow_leopard) you'll see that
+[the note below](#note-about-snow-leopard) you'll see that
 this needs to change; beginning with Bioconductor 3.3
 we will no longer build on Snow Leopard, so experiment
 data builds must happen on Mavericks.
