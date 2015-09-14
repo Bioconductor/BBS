@@ -1,7 +1,9 @@
 
+
 Table of Contents
 =================
 
+  * [Table of Contents](#table-of-contents)
   * [Bioconductor Build System Overview](#bioconductor-build-system-overview)
     * [What is BBS?](#what-is-bbs)
     * [What is BBS <strong>not</strong>?](#what-is-bbs-not)
@@ -25,6 +27,7 @@ Table of Contents
         * [Taking a deeper look](#taking-a-deeper-look)
       * [Looking at logs](#looking-at-logs)
       * [Interpreting log output](#interpreting-log-output)
+      * [Running the build report without a given node](#running-the-build-report-without-a-given-node)
 
 
 Bioconductor Build System Overview
@@ -585,4 +588,158 @@ There are several categories of common problems which
 will be discussed TBA. For now, contact Dan and share your
 findings with him.
 
-here is a change
+### Running the build report without a given node
+
+Sometimes a build node failed. A common reason for this is
+that there was an error or timeout when attempting to 
+rsync build products from the node to the master builder.
+This seems to happen most often on the Mac machines
+at FHCRC. We need to investigate and fix this. 
+(Maybe adjusting timeouts?)
+
+If nothing is done, the postrun script will fail because
+it can't find the build products from all build nodes.
+Then, the steps that propagate the build products to
+our web site (the steps that are run as biocadmin) will
+fail to propagate them.
+
+However, we still want a build report every day and
+we want the build products from the successful nodes
+to propagate.
+
+So, if we can get to it well before the daily deadline
+(when the prerun script is run) we should do the following:
+
+Temporarily edit the `config.sh` script for the master builder.
+Assuming the affected build is Bioconductor 3.2 and the master
+builder is `linux1.bioconductor.org`, we would do:
+
+```
+ssh biocbuild@linux1.bioconductor.org
+cd BBS/3.2/bioc/linux1.biocondutor.org
+```
+
+We now want to edit the file `config.sh` in the current directory.
+
+The lines we want to edit are the lines defining the
+`BBS_OUTGOING_MAP` and `BBS_REPORT_NODES` variables.
+Here's what those lines look like:
+
+```
+biocbuild@linux1:-~/BBS/3.2/bioc/linux1.bioconductor.org (start-linux1)$ egrep "BBS_OUTGOING_MAP|BBS_REPORT_NODES" config.sh
+export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
+export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin oaxaca:bin"
+```
+
+Let's assume the node that did not complete was `oaxaca`; we want 
+to remove reference to that node from both lines.
+
+We'll make the following change:
+
+```
+biocbuild@linux1:-~/BBS/3.2/bioc/linux1.bioconductor.org (start-linux1)$ git diff config.sh
+index b7a14b5..490f8b4 100644
+--- a/3.2/bioc/linux1.bioconductor.org/config.sh
++++ b/3.2/bioc/linux1.bioconductor.org/config.sh
+@@ -51,14 +51,14 @@ cd "$wd0"
+ # packages to propagate and to later not be replaced by the bi-arch when
+ # the dropped node is back.
+ 
+-export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
++export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin"
+ # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
+ # stage8 (BBS-report.py)
+ #
+ # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
+ # must be run on the BBS_CENTRAL_RHOST machine.
+ 
+-export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin oaxaca:bin"
++export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin"
+ #export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
+ export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
+ export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
+```
+
+So, to explain a little bit more. `BBS_OUTGOING_MAP` 
+is a space-separated list of items, each separated into
+
+```
+buildtype:nodename/product_to_propagate
+```
+
+So for oaxaca we have:
+
+
+```
+mac.binary.mavericks:oaxaca/buildbin
+```
+
+The first segment (before the colon) is the package
+type (according to `install.packages()`) that
+is produced by this build node. Then comes the node name,
+then the build phase for which we propagate the build
+products. For all nodes except Linux nodes this 
+is `buildbin`, and for Linux nodes it's `buildsrc`.
+
+`BBS_REPORT_NODES` governs which nodes are mentioned
+in the build report and is a space-separated list
+of items, each of which is the node name
+followed by `:bin` if the node is not a Linux 
+node.
+
+Removing oaxaca's entry from both variables will allow
+the build report to be built. 
+
+If the postrun.sh script has not yet been run by
+crontab, it will now run successfully. If the time
+for it to run has already passed, you can run it
+manually.
+
+**Important**: Be sure to revert the config.sh file
+to the state it was in before you made the change.
+Otherwise (in this case) oaxaca will be excluded from
+the subsequent builds even if it did not fail.
+
+The way I typically do this is to start running
+
+`./postrun.sh`
+
+The first thing that script does is source `config.sh`.
+So if you press Control-Z right after starting 
+`postrun.sh` you can then revert config.sh to its original state.
+Currently ~/BBS is a git working copy so you can do this with:
+
+```
+git checkout config.sh
+```
+
+At some point ~/BBS will be an svn working copy again so the
+equivalent command will be:
+
+```
+svn revert config.sh
+```
+
+Then type
+
+```
+fg
+```
+
+To bring postrun.sh back to the foreground and let it finish.
+The reason I do it this way is that I then do not have to
+remember after postrun.sh is done to revert it.
+
+Now, if the biocadmin scripts have not yet been run by
+crontab, you don't have to do anything more.
+
+But if that has already happened, you need to do the following:
+
+```
+ssh biocadmin@linux1.bioconductor.org
+# or ssh ubuntu@linux1.bioconductor.org and then
+# sudo su - biocadmin
+cd manage-BioC-repos/3.2
+ ./updateReposPkgs-bioc.sh  && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh 
+```
+
