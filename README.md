@@ -345,7 +345,7 @@ So we started running the main build script at 20:00 and now it is
 13:10 the next afternoon. We hope (as the comment indicates)
 that all the builders have finished by now, otherwise there
 will be (as there often is) some manual steps to do at this point
-(see the ["Care and Feeding"](#care_and_feeding_of_the_build_system) section below).
+(see the ["Care and Feeding"](#care-and-feeding-of-the-build-system) section below).
 
 The build system will now run postrun.sh which initializes
 environment variables as above and then runs 
@@ -376,7 +376,7 @@ Looking at *biocadmin*'s crontab, we see:
 First of all, notice the time. This starts at 13:40. This is 
 hopefully enough time for the postrun.sh script (above) to have
 finished; otherwise you'll have to re-run some things
-manually (see [care and feeding](#care_and_feeding_of_the_build_system), below).
+manually (see [care and feeding](#care-and-feeding-of-the-build-system), below).
 
 These steps have to do with managing our *internal
 package repositories*. These repositories live on
