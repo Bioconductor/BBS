@@ -1,9 +1,7 @@
 
-
 Table of Contents
 =================
 
-  * [Table of Contents](#table-of-contents)
   * [Bioconductor Build System Overview](#bioconductor-build-system-overview)
     * [What is BBS?](#what-is-bbs)
     * [What is BBS <strong>not</strong>?](#what-is-bbs-not)
@@ -114,16 +112,16 @@ In general, there are four *builds* that run during any given week:
   all release build machines.
 2. Release *experiment package* builds (*data-experiment* is the
    name for our experiment package repository). These builds
-   run twice a week, on Wednesdays and Sundays, on the 
+   run twice a week, on Wednesdays and Saturdays, on the 
    Linux, Windows, and Snow Leopard build machines
    for release. *
 3. Devel *software* builds. These builds run nightly on 
    all devel build machines.
 4. Devel *experiment package* builds. These builds run
-   twice a week, on Wednesdays and Sundays, on the
+   twice a week, on Wednesdays and Saturdays, on the
    Linux, Windows, and Snow Leopard build machines for devel.
 
-* = **Note**: The experiment data builds currently run on 
+\* = **Note**: The experiment data builds currently run on 
 Snow Leopard but not Mavericks. If you refer to
 [the note below](#note_about_snow_leopard) you'll see that
 this needs to change; beginning with Bioconductor 3.3
@@ -148,7 +146,8 @@ Mac build machines are currently located at FHCRC.
 This is because Apple's licensing agreements make it impossible
 to virtualize OS X on anything but OS X hardware therefore
 there are not a lot of affordable cloud providers for Mac.
-It is possible/probable that the Macs will be shipped out of FHCRC,
+It is possible/probable that the Macs will be shipped out of FHCRC
+at some point,
 either to Roswell Park or to a third-party hosting provider.
 We should not need physical access to the Macs (as long as there is a
 person we can call to reboot them if we cannot access them
@@ -205,39 +204,36 @@ section will tell you what is being used, and that
 should be current.
 
 However, just to give you an idea, here is what is 
-in use as of today, September 8 2015.
+in use as of today, September 14 2015.
 
 #### Devel (Bioconductor 3.2)
 
-Linux: linux1.bioconductor.org
-Windows: windows1.bioconductor.org
-Mac Snow Leopard: perceval
-Mac Mavericks: oaxaca
+* Linux: linux1.bioconductor.org
+* Windows: windows1.bioconductor.org
+* Mac Snow Leopard: perceval
+* Mac Mavericks: oaxaca
 
 #### Release (Bioconductor 3.1)
 
-Linux: zin2
-Windows: moscato2
-Mac Snow Leopard: petty
-Mac Mavericks: morelia
+* Linux: zin2
+* Windows: moscato2
+* Mac Snow Leopard: petty
+* Mac Mavericks: morelia
 
 #### Next devel (Bioconductor 3.3)
 
-*We're just going to attempt to start these beginning on
-9/8/2015; these machines may not exist or be accessible
-by the time you read this.*
 
+* Linux: linux2.bioconductor.org
+* Windows: windows2.bioconductor.org
+ 
 Normally I would not start these builds until the current
 release builds had been stopped 
 (see [the prerelease checklist](Doc/prerelease_and_release_checklist.txt)) but it makes more sense to start the new devel
 builds in the cloud than to move the current release builds.
 
-Linux: linux2.bioconductor.org
-Windows: windows2.bioconductor.org
+*After the 3.1 builds stop on 10/8/2015 release, we'll add:*
 
-*After the 3.2 release, we'll add:*
-
-Mac Mavericks: morelia
+* Mac Mavericks: morelia
 
 We will not have a Snow Leopard build machine for the 3.3 builds
 because BioC 3.3 will use R-3.3 which will no longer support
@@ -256,14 +252,13 @@ Mavericks machine which will move to Eastern time.
 From this point forward, all Bioconductor build machines
 will be on Eastern time.
 
-
 ## How the build system works
 
 As described above, on each build machine, the build system
 code is checked out.
 
-On each build machine there is a cron job (or Scheduled Task)
-on Windows that kicks off the builds.
+On each build machine there is a cron job (or Scheduled Task
+on Windows) that kicks off the builds.
 
 On all build machines, the build system runs as the *biocbuild* 
 user. 
@@ -274,8 +269,8 @@ user on one of the Linux build machines (a/k/a master build nodes).
 Among other things, you'll see the following (from the BioC 3.2
 master build node):
 
-  # bbs-3.2-bioc
-  24 19 * * * cd /home/biocbuild/BBS/3.2/bioc/linux1.bioconductor.org && ./prerun.sh >>/home/biocbuild/bbs-3.2-bioc/log/linux1.bioconductor.org.log 2>&1
+    # bbs-3.2-bioc
+    24 19 * * * cd /home/biocbuild/BBS/3.2/bioc/linux1.bioconductor.org && ./prerun.sh >>/home/biocbuild/bbs-3.2-bioc/log/linux1.bioconductor.org.log 2>&1
 
 The *prerun* step happens only on the master build node.
 I recommend looking to see what happens in that prerun.sh
@@ -288,8 +283,6 @@ a shell script called config.sh and then running a python script.
 no longer be used; but there is not yet an equivalent directory
 in svn for linux1.bioconductor.org, as that code only exists
 in a [github branch](https://github.com/Bioconductor/BBS/blob/start-linux1/3.2/bioc/linux1.bioconductor.org/prerun.sh)).
-
-
 
 The sourcing of the config script sets up environment variables
 that will be used during the build. First, variables specific to this
@@ -322,7 +315,7 @@ after that time won't be picked up until the following day's build.
 
 Let's look at the next line in the crontab entry:
 
-  00 20  * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.2/bioc/linux1.bioconductor.org && ./run.sh >>/home/biocbuild/bbs-3.2-bioc/log/linux1.bioconductor.org.log 2>&1'
+    00 20  * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.2/bioc/linux1.bioconductor.org && ./run.sh >>/home/biocbuild/bbs-3.2-bioc/log/linux1.bioconductor.org.log 2>&1'
 
 So after giving the prerun script 36 minutes to run, the run.sh
 script starts up.
@@ -401,7 +394,7 @@ So the `cron` job above runs three scripts, to *update*,
 *prepare*, and *push*.
 
 The *update* script moves the build products into
-our external repository. If a package has been updated,
+our internal repository. If a package has been updated,
 with an appropriate version bump, the older version
 is removed from the repository.
 
@@ -479,7 +472,7 @@ the status of the builds.
 Note that url has `master` in it. Content copied to the web 
 site should immediately be visible in urls that start with
 master.bioconductor.org. If you omit the master or replace it
-with www, it might take a while longer for the content
+with `www`, it might take a while longer for the content
 to propagate because you are looking at an
 [Amazon CloudFront](https://aws.amazon.com/cloudfront/)
 distribution.
@@ -496,18 +489,18 @@ user and issue the command:
 This should show some output for each node, for example
 here's the part for `linux1.bioconductor.org`:
 
-  public_html/BBS/3.2/bioc/nodes/linux1.bioconductor.org:
-  total 368
-  -rw-rw-r--    1 biocbuild biocbuild    458 Sep  8 09:39 BBS_EndOfRun.txt
-  drwxr-xr-x    2 biocbuild biocbuild 172032 Sep  8 01:06 buildsrc
-  drwxr-xr-x 1057 biocbuild biocbuild 147456 Sep  8 09:39 checksrc
-  drwxr-xr-x    2 biocbuild biocbuild  36864 Sep  7 20:24 install
-  drwxr-xr-x    2 biocbuild biocbuild   4096 Sep  7 20:24 NodeInfo
+    public_html/BBS/3.2/bioc/nodes/linux1.bioconductor.org:
+    total 368
+    -rw-rw-r--    1 biocbuild biocbuild    458 Sep  8 09:39 BBS_EndOfRun.txt
+    drwxr-xr-x    2 biocbuild biocbuild 172032 Sep  8 01:06 buildsrc
+    drwxr-xr-x 1057 biocbuild biocbuild 147456 Sep  8 09:39 checksrc
+    drwxr-xr-x    2 biocbuild biocbuild  36864 Sep  7 20:24 install
+    drwxr-xr-x    2 biocbuild biocbuild   4096 Sep  7 20:24 NodeInfo
 
 Here's what you are looking for:
 
 * There should be a section for each node in the build.
-* Each node should have a BBS_EndOfRun.txt file.
+* Each node should have a `BBS_EndOfRun.txt` file.
 * The timestamp on that file should be **before** the 
   postrun.sh script runs in crontab (i.e. before 13:10 in
   this example).
@@ -742,4 +735,34 @@ ssh biocadmin@linux1.bioconductor.org
 cd manage-BioC-repos/3.2
  ./updateReposPkgs-bioc.sh  && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh 
 ```
+
+**If the builds took too long**: Sometimes no build node failed, but
+the builds took longer than the time allotted.
+In this case you do not need to edit `config.sh` but
+you will need to manually run `postrun.sh` and the
+biocadmin update/prepare/push scripts, after all build nodes
+have finished. You can determine if all build nodes have finished by
+running this command (again assuming you are working
+with the 3.2 build on `linux1.bioconductor.org`):
+
+```
+biocbuild@linux1:-~$ ls -l ~/public_html/BBS/3.2/bioc/nodes/*
+```
+
+When that command shows a file `BBS_EndOfRun.txt` for
+each node, you will know the build is complete.
+
+If this starts happening a lot you will need to look
+at the underlying root causes. It could just be
+natural growth of the project. Or a particular machine
+could be too slow. Maybe we need to increase the
+number of cores on the instance (and we need to
+set `BBS_NB_CPU` accordingly in the relevant config file to
+explicitly set the number of cores used by the build
+system--this should **not** be the full number of
+cores on the machine, see relevant comments).
+Sometimes some rogue processes start that slow
+down the build nodes. There shouldn't be any
+R script that runs for many hours.
+
 
