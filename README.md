@@ -133,9 +133,9 @@ data builds must happen on Mavericks.
 We are in the process of moving as much of the build system as
 possible into the cloud. 
 
-As of 8 September 2015, the devel builds are in the cloud
-and we are working on starting the "next devel" (BioC 3.3)
-builds there. The current release (BioC 3.1) builds happen
+As of 14 September 2015, the devel builds are in the cloud
+and the Linux and Windows portions of the "next devel" (BioC 3.3)
+builds are there as well. The current release (BioC 3.1) builds happen
 entirely at FHCRC with physical machines.
 
 "In the cloud" refers to 
@@ -221,7 +221,6 @@ in use as of today, September 14 2015.
 * Mac Mavericks: morelia
 
 #### Next devel (Bioconductor 3.3)
-
 
 * Linux: linux2.bioconductor.org
 * Windows: windows2.bioconductor.org
