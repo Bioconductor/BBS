@@ -520,7 +520,7 @@ to what has gone wrong. The respective possibilities are:
   on that phase. If the time was hours ago, likely the
   build failed on that node and you will need to go
   to the node to figure out why.
-* If all nodes have BBS_EndOfRun.txt files but the timestamp
+* If all nodes have `BBS_EndOfRun.txt` files but the timestamp
   on one or more of them is later than the postrun script,
   you will need to run the postrun.sh script by hand (
   and then afterwards you will need to run the 
@@ -535,11 +535,11 @@ is not complete. Do a command like this:
 
     watch 'ls -l public_html/BBS/3.2/bioc/nodes/perceval/checksrc/ ' | tail -4
 
-  This will show you the last 4 files that were pushed
-  to the master node from perceval. The display will 
-  refresh every few seconds. New filenames will show up
-  in alphabetical order (and not case-sensitive). So
-  if you are in the Y's, then you're near the end.
+This will show you the last 4 files that were pushed
+to the master node from perceval. The display will 
+refresh every few seconds. New filenames will show up
+in alphabetical order (and not case-sensitive). So
+if you are in the Y's, then you're near the end.
 
 ### Looking at logs
 
