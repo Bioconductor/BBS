@@ -51,7 +51,6 @@ cd "$wd0"
 # packages to propagate and to later not be replaced by the bi-arch when
 # the dropped node is back.
 
-#export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:moscato1/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
 export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)
