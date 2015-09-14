@@ -380,7 +380,7 @@ manually (see [care and feeding](#care-and-feeding-of-the-build-system), below).
 
 These steps have to do with managing our *internal
 package repositories*. These repositories live on
-the linux build notes, in *biocadmin*'s home directory
+the linux build nodes, in *biocadmin*'s home directory
 under `~/PACKAGES/X.Y/REPO` where `X.Y` is the version
 of Bioconductor that's being built and `REPO` are the type
 of packages being built, `bioc` being software packages
