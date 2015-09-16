@@ -581,6 +581,10 @@ There are several categories of common problems which
 will be discussed TBA. For now, contact Dan and share your
 findings with him.
 
+Possible problems:
+
+* On windows: A process is holding onto files
+
 ### Running the build report without a given node
 
 Sometimes a build node failed. A common reason for this is
