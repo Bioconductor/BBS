@@ -18,7 +18,7 @@ export BBS_NB_CPU=7 # 8 cores are available
 
 export RCYTOSCAPE_PORT_OVERRIDE="9023"
 export RCYTOSCAPE_HOST_OVERRIDE="docker.bioconductor.org"
-export RCYTOSCAPE3_PORT_OVERRIDE="9024"
+export RCYTOSCAPE3_PORT_OVERRIDE="9293"
 export RCYTOSCAPE3_HOST_OVERRIDE="docker.bioconductor.org"
 export GENE_E_URL="http://docker.bioconductor.org:9998"
 

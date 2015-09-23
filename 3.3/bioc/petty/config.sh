@@ -18,8 +18,8 @@ export BBS_NB_CPU=12
 
 export RCYTOSCAPE_PORT_OVERRIDE="7023"
 export RCYTOSCAPE_HOST_OVERRIDE="taipan"
-export RCYTOSCAPE3_PORT_OVERRIDE="7024"
-export RCYTOSCAPE3_HOST_OVERRIDE="taipan"
+export RCYTOSCAPE3_PORT_OVERRIDE="9297"
+export RCYTOSCAPE3_HOST_OVERRIDE="docker.bioconductor.org"
 
 export GENE_E_URL="http://taipan:9998"
 

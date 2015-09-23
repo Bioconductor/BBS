@@ -21,7 +21,7 @@ export BBS_NB_CPU=5
 # ...? use ecs?
 export RCYTOSCAPE_PORT_OVERRIDE="8023"
 export RCYTOSCAPE_HOST_OVERRIDE="docker.bioconductor.org"
-export RCYTOSCAPE3_PORT_OVERRIDE="8024"
+export RCYTOSCAPE3_PORT_OVERRIDE="9295"
 export RCYTOSCAPE3_HOST_OVERRIDE="docker.bioconductor.org"
 export GENE_E_URL="http://docker.bioconductor.org:9998"
 
