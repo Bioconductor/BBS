@@ -585,6 +585,44 @@ Possible problems:
 
 * On windows: A process is holding onto files
 
+If you go to the windows node (using rdesktop, logging in 
+as the biocbuild user with the password from the Google doc about
+credentials), you can then open a command window and navigate
+to `c:\biocbld\bbs-3.2-bioc\log` (the number may be different
+depending on the version of Bioconductor being built), you can
+look at the most recent log file which will have a name like
+`windows1.bioconductor.org-run-20150926.log`. If you run
+`tail` on this file you may see something like this:
+
+  rsync: delete_file: unlink(XBSeq.buildsrc-out.txt) failed: Device or resource busy (16)
+  rsync: delete_file: unlink(SEPA.buildsrc-out.txt) failed: Device or resource busy (16)
+  rsync: delete_file: unlink(Prize.buildsrc-out.txt) failed: Device or resource busy (16)
+  rsync: delete_file: unlink(PGA.buildsrc-out.txt) failed: Device or resource busy (16)
+  rsync: delete_file: unlink(INSPEcT.buildsrc-out.txt) failed: Device or resourcebusy (16)
+  rsync: delete_file: unlink(ELMER.buildsrc-out.txt) failed: Device or resource busy (16)
+  rsync: delete_file: unlink(CNVPanelizer.buildsrc-out.txt) failed: Device or resource busy (16)
+  rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1637) [generator=3.1.1]
+  ] = 8.97 seconds / retcode = 23 / ERROR!
+  3 failed attempts => EXIT.
+
+This means that some process is holding on to those files and rsync was unable to delete them.
+
+A crude fix for this is to reboot (provided that no other builds,
+software or experiment, are running). Less crude is to double-
+click the `procexp` desktop shortcut (or click Start and type
+`procexp` and press Enter.) Then inside Process Explorer,
+click `Find/Find Handle Or DLL...` and type in the partial
+name of one of the files referenced in the log above, for example
+`XBSeq`. Double-click on any matching process, then right-click the 
+process and choose `Kill Process Tree`. Repeat this until there
+are no processes running that are holding onto any of the
+files mentioned in the log (it's probably the same process or
+process tree that is holding on to all the files mentioned in
+the log).
+
+
+
+
 ### Running the build report without a given node
 
 Sometimes a build node failed. A common reason for this is
