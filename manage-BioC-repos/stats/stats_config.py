@@ -15,7 +15,7 @@ biocrepo2subdir = { \
 
 squid_access_logdirs = [os.path.join('bioc-access-logs', 'squid', 'cobra'), os.path.join('bioc-access-logs', 'squid', 'mamba')]
 
-apache2_access_logdirs = [os.path.join('bioc-access-logs', 'apache2', 'krait', 'master')]
+apache2_access_logdirs = [os.path.join('bioc-access-logs', 'apache2', 'krait'), os.path.join('bioc-access-logs', 'apache2', 'master')]
 
 s3_access_logdirs = [os.path.join('bioc-access-logs', 's3')]
 
