@@ -1,4 +1,4 @@
-As mentioned in [DailyTasks.m](DailyTasks.md), sometimes you'll need to investigate an issue on one of the build 
+As mentioned in [DailyTasks.md](DailyTasks.md), sometimes you'll need to investigate an issue on one of the build 
 servers.  To do this, see the 
 [Investigating](https://github.com/Bioconductor/BBS/blob/master/README.md#investigating) section of the 
 README and also consider the following.  Each build machine has a collection of log files which contain information
