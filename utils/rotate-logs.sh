@@ -10,14 +10,7 @@ set -e
 # TODO: Remove this next line, it's only here for initial debugging
 # set -x
 
-# The `shellcheck disable...` line below is a directive; it tells shellcheck not to error upon the syntax
-# used on the following line.  More information: https://github.com/koalaman/shellcheck/wiki/Directive
-#
-# The directive, or the syntax, may be improved in the future, pending response to this 
-# comment: https://github.com/koalaman/shellcheck/issues/380#issuecomment-145872749
-#
-# shellcheck disable=SC2086
-: ${BBS_BIOC_VERSION:?"The environment variable 'BBS_BIOC_VERSION' must be set and non-empty"}
+: "${BBS_BIOC_VERSION:?"The environment variable 'BBS_BIOC_VERSION' must be set and non-empty"}"
 HN=$(hostname)
 
 function verifyBuildFinished {
