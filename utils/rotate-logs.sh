@@ -10,29 +10,28 @@ set -e
 # TODO: Remove this next line, it's only here for initial debugging
 # set -x
 
-TOTAL_BUILD_NODES=4
+: ${BBS_BIOC_VERSION:?"The environment variable 'BBS_BIOC_VERSION' must be set and non-empty"}
+HN=$(hostname)
 
 function verifyBuildFinished {
-  cd /home/biocbuild/public_html/BBS/3.2/bioc/nodes
-  nodes_finished=$(find . -maxdepth 2 -type f -exec ls -1 {} \;|grep -c "BBS_EndOfRun")
-  if [ "${nodes_finished}" -eq "${TOTAL_BUILD_NODES}" ]; then
+  cd /home/biocbuild/public_html/BBS/"${BBS_BIOC_VERSION}"/bioc/nodes
+  node_finished=$(find . -maxdepth 2 -type f -exec ls -1 {} \;|grep "BBS_EndOfRun"| grep -c "${HN}")
+  if [ "${node_finished}" -eq 1 ]; then
     # 0 = true
     return 0
   else
-    echo "The build has not finished on all nodes.  ${nodes_finished} of ${TOTAL_BUILD_NODES} completed."
-    echo "Can not continue"
+    echo "The build has not finished on this node.  Can not continue".
     # 1 = false
     return 1
   fi
 }
 
 function rotateLog {
-  cd /home/biocbuild/bbs-3.2-bioc/log
+  cd /home/biocbuild/bbs-"${BBS_BIOC_VERSION}"-bioc/log
   mkdir -p log-archives
-  hn=$(hostname)
-  archive_file="log-archives/${hn}-$(date '+%Y%m%d').log"
-  mv "${hn}.log" "${archive_file}"
-  touch "${hn}.log"
+  archive_file="log-archives/${HN}-$(date '+%Y-%b').log"
+  mv "${HN}.log" "${archive_file}"
+  touch "${HN}.log"
   if ! [ -f "${archive_file}.gz" ]; then
     gzip "${archive_file}"
     echo "Finished log rotation"
