@@ -10,7 +10,7 @@ set -e
 # TODO: Remove this next line, it's only here for initial debugging
 # set -x
 
-# The following (uncommented) line is a shellcheck directive; it tells shellcheck not to error upon the syntax
+# The `shellcheck disable...` line below is a directive; it tells shellcheck not to error upon the syntax
 # used on the following line.  More information: https://github.com/koalaman/shellcheck/wiki/Directive
 #
 # The directive, or the syntax, may be improved in the future, pending response to this 
