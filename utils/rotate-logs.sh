@@ -21,7 +21,7 @@ set -e
 HN=$(hostname)
 
 function verifyBuildFinished {
-  cd /home/biocbuild/public_html/BBS/"${BBS_BIOC_VERSION}"/bioc/nodes
+  cd "$HOME"/public_html/BBS/"${BBS_BIOC_VERSION}"/bioc/nodes
   node_finished=$(find . -maxdepth 2 -type f -exec ls -1 {} \;|grep "BBS_EndOfRun"| grep -c "${HN}")
   if [ "${node_finished}" -eq 1 ]; then
     # 0 = true
@@ -34,7 +34,7 @@ function verifyBuildFinished {
 }
 
 function rotateLog {
-  cd /home/biocbuild/bbs-"${BBS_BIOC_VERSION}"-bioc/log
+  cd "$HOME"/bbs-"${BBS_BIOC_VERSION}"-bioc/log
   mkdir -p log-archives
   archive_file="log-archives/${HN}-$(date '+%Y-%b').log"
   mv "${HN}.log" "${archive_file}"
