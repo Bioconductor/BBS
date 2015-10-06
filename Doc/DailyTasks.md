@@ -60,12 +60,11 @@ Which will result in output like :
 /home/biocbuild/public_html/BBS/3.2/bioc/nodes/oaxaca/BBS_EndOfRun.txt
 ```
 
-***If the directories and files do not apear updated when running `ls -l *` in the `nodes` directory, investigate the build server that appears to have a fault.<sup>4</sup>***
+*If the directories and files do not apear updated when running `ls -l *` in the `nodes` directory, investigate the build server that appears to have a fault.*  Information on investigating build servers can be found in the document [InvestigatingBuildServers.md](InvestigatingBuildServers.md).
 
 <hr/>
 <sub>
 1) This manual process of inspecting the build system should be automated.  A GH issue to track this problem has not yet been created.
 <br/>2) For the purpose of automation, we should enumerate exactly which conditions must be met (e.g. exact files / directories updted by a specific time of day).
 <br/>3) The perceval build server has been known to be slow.  We should create a ticket to investigate and resolve this issue.
-<br/>4) TODO: Document and link to investigation steps for each build box.
 </sub>
