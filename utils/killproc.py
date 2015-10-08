@@ -23,9 +23,12 @@ for p in psutil.process_iter():
         if pstart < then:
             print("process %s has been running for more than %s hours!" %
                 (p.pid, number_of_hours))
-            print("name: %s, cmdline: %s, started: %s, cwd: %s" % 
+            try:
+                print("name: %s, cmdline: %s, started: %s, cwd: %s" % 
                 (p.name(), p.cmdline(), pstart.strftime("%Y-%m-%d %H:%M:%S"), 
                 p.cwd()))
+            except (psutil.AccessDenied):
+                print("Could not print out info for this process (access denied)")
             print("killing process at %s ..." % now)
             if psutil.pid_exists(p.pid):
                 os.kill(p.pid, 9)
