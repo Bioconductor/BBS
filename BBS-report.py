@@ -228,9 +228,9 @@ def nodeOSArch_asSPAN(node):
 
 def write_node_spec_asTD(out, node, spec_html, leafreport_ref):
     if leafreport_ref != None and node.id == leafreport_ref.node_id:
-        out.write('<TD class="node %s current"' % node.hostname)
+        out.write('<TD class="node %s current"' % node.hostname.replace(".", "_"))
     else:
-        out.write('<TD class="node %s"' % node.hostname)
+        out.write('<TD class="node %s"' % node.hostname.replace(".", "_"))
     out.write(' style="text-align: left">%s&nbsp;</TD>' % spec_html)
     return
 
@@ -274,7 +274,7 @@ def write_pkg_5stagelabels_as5TDs(out, extra_style=""):
 def write_pkg_propagation_status_asTD(out, pkg, node):
     status = BBSreportutils.get_propagation_status_from_db(pkg, node.hostname)
     if (status is None):
-        out.write('<TD class="status %s" style="width: 11px;"></TD>' % node.hostname)
+        out.write('<TD class="status %s" style="width: 11px;"></TD>' % node.hostname.replace(".", "_"))
         return()
     if (status.startswith("YES")):
         color = "Green"
@@ -286,7 +286,7 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
     if "/" in out.name:
         path = "../"
     out.write('<TD class="status %s" style="width: 11px;"><IMG border="0" width="10" height="10" alt="%s" title="%s" src="%s120px-%s_Light_Icon.svg.png"></TD>' \
-        % (node.hostname, status, status, path, color))
+        % (node.hostname.replace(".", "_"), status, status, path, color))
 
 
 ### Produces 5 TDs
@@ -298,10 +298,10 @@ def write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref, style=None):
         if BBSreportutils.is_doing_buildbin(node):
             write_pkg_status_asTD(out, pkg, node, 'buildbin', leafreport_ref, style)
         else:
-            out.write('<TD class="node %s"></TD>' % node.hostname)
+            out.write('<TD class="node %s"></TD>' % node.hostname.replace(".", "_"))
         write_pkg_propagation_status_asTD(out, pkg, node)
     else:
-        out.write('<TD COLSPAN="5" class="node %s"><I>' % node.hostname)
+        out.write('<TD COLSPAN="5" class="node %s"><I>' % node.hostname.replace(".", "_"))
         sep = '...'
         NOT_SUPPORTED_string = sep + 3 * ('NOT SUPPORTED' + sep)
         out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
@@ -396,7 +396,7 @@ def write_summary_TD(out, node, stagecmd):
     if stagecmd == 'install':
         html += '<TD class="summary %s">%d</TD>' % ("NotNeeded", stats[4])
     html += '</TR></TABLE>'
-    #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname, stagecmd, html))
+    #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stagecmd, html))
     out.write('<TD>%s</TD>' % html)
     return
 
@@ -410,9 +410,9 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     nb_nodes = len(BBSreportutils.NODES)
     for node in BBSreportutils.NODES:
         if current_node == node.id:
-            out.write('<TR class="summary %s current">\n' % node.hostname)
+            out.write('<TR class="summary %s current">\n' % node.hostname.replace(".", "_"))
         else:
-            out.write('<TR class="summary %s">\n' % node.hostname)
+            out.write('<TR class="summary %s">\n' % node.hostname.replace(".", "_"))
         node_id_html = '<I>%s</I>' % node.id
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.id
@@ -589,7 +589,7 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
 
 def write_Summary_to_LeafReport(out, node_hostname, pkg, node_id, stagecmd):
     out.write('<H3>Summary</H3>\n')
-    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname)
+    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
     out.write('<TABLE>\n')
     while True:
@@ -607,7 +607,7 @@ def write_Summary_to_LeafReport(out, node_hostname, pkg, node_id, stagecmd):
 def write_Command_output_to_LeafReport(out, node_hostname,
                                        pkg, node_id, stagecmd):
     out.write('<H3>Command output</H3>\n')
-    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname)
+    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
     encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
     out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
@@ -667,7 +667,7 @@ def write_Command_output_to_LeafReport(out, node_hostname,
 
                 if f != None:
                     out.write('<P>%s:</P>\n' % file)
-                    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname)
+                    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
                     out.write('<PRE style="font-size: smaller;">\n')
                     for line in f:
                         out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
@@ -703,7 +703,7 @@ def write_Command_output_to_LeafReport(out, node_hostname,
                     f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
             if f != None:
                 out.write('<P>%s:</P>\n' % file)
-                out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname)
+                out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
                 out.write('<PRE style="font-size: smaller;">\n')
                 for line in f:
                     out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
@@ -719,7 +719,7 @@ def write_Command_output_to_LeafReport(out, node_hostname,
         f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
         if f != None:
             out.write('<P>%s:</P>\n' % file)
-            out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname)
+            out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
             out.write('<PRE style="font-size: smaller;">\n')
             for line in f:
                 out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
@@ -733,7 +733,7 @@ def write_Command_output_to_LeafReport(out, node_hostname,
             f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
             if f != None:
                 out.write('<P>%s:</P>\n' % file)
-                out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname)
+                out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
                 out.write('<TABLE style="font-size: smaller;">\n')
                 for line in f:
                     out.write('<TR><TD>')
@@ -774,7 +774,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
 
     status = BBSreportutils.get_status_from_db(pkg, node_id, stagecmd)
     if stagecmd == "install" and status == "NotNeeded":
-        out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname)
+        out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
         out.write('REASON FOR NOT INSTALLING: no other package that will ')
         out.write('be built and checked on this platform needs %s' % pkg)
         out.write('</DIV>\n')
@@ -926,7 +926,7 @@ def make_NodeInfo_page(Node_rdir, node):
     write_top_asHTML(out, title, 'report.css')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
-    out.write('<DIV class="%s">\n' % node.hostname)
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
 
     out.write('<H1>%s</H1>' % title)
     out.write('<TABLE>\n')
@@ -985,7 +985,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
     write_top_asHTML(out, title, 'report.css')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
-    out.write('<DIV class="%s">\n' % node.hostname)
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     file = 'NodeInfo/R-instpkgs.txt'
     out.write('<PRE>\n')
     f = Node_rdir.WOpen(file)
@@ -1016,7 +1016,7 @@ def write_node_specs_table(out):
         NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
         Rversion_html = read_Rversion(Node_rdir)
         Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
-        out.write('<TR class="%s">\n' % node.hostname)
+        out.write('<TR class="%s">\n' % node.hostname.replace(".", "_"))
         out.write('<TD><B><A href="%s"><I>%s</I></A></B></TD>\n' % (NodeInfo_page_path, node.id))
         out.write('<TD>%s</TD>\n' % node.os_html)
         out.write('<TD>%s</TD>\n' % node.arch)

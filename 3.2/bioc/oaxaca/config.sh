@@ -17,10 +17,10 @@ export BBS_R_HOME="/Library/Frameworks/R.framework/Versions/Current/Resources"
 export BBS_NB_CPU=7 # 8 cores are available
 
 export RCYTOSCAPE_PORT_OVERRIDE="9023"
-export RCYTOSCAPE_HOST_OVERRIDE="taipan"
-export RCYTOSCAPE3_PORT_OVERRIDE="9024"
-export RCYTOSCAPE3_HOST_OVERRIDE="taipan"
-export GENE_E_URL="http://taipan:9998"
+export RCYTOSCAPE_HOST_OVERRIDE="docker.bioconductor.org"
+export RCYTOSCAPE3_PORT_OVERRIDE="9293"
+export RCYTOSCAPE3_HOST_OVERRIDE="docker.bioconductor.org"
+export GENE_E_URL="http://docker.bioconductor.org:9998"
 
 ## for ensemblVEP and rsbml
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/lib:/usr/local/mysql/lib

@@ -33,6 +33,16 @@ allnodes = { \
                    "x86_64-linux-gnu", \
                    "source", \
                    "utf_8"), \
+    'linux1.bioconductor.org':    ("Linux (Ubuntu 14.04.2 LTS)", \
+                   "x86_64", \
+                   "x86_64-linux-gnu", \
+                   "source", \
+                   "utf_8"), \
+    'linux2.bioconductor.org':    ("Linux (Ubuntu 14.04.2 LTS)", \
+                   "x86_64", \
+                   "x86_64-linux-gnu", \
+                   "source", \
+                   "utf_8"), \
     'dockernode':("Linux (Ubuntu 14.04.1 LTS)", \
                    "x86_64", \
                    "x86_64-linux-gnu", \
@@ -88,7 +98,17 @@ allnodes = { \
                    "x86_64-w64-mingw32", \
                    "win64.binary", \
                    "iso8859"), \
-    'moscato1':   ("Windows Server 2008 R2 Enterprise SP1 (64-bit)", \
+    'moscato1':   ("Windows Server 2008 R2 Standard (64-bit)", \
+                   "x64", \
+                   "mingw32 / x86_64-w64-mingw32", \
+                   "win.binary", \
+                   "iso8859"), \
+    'windows1.bioconductor.org':   ("Windows Server 2012 R2 Enterprise SP1 (64-bit)", \
+                   "x64", \
+                   "mingw32 / x86_64-w64-mingw32", \
+                   "win.binary", \
+                   "iso8859"), \
+    'windows2.bioconductor.org':   ("Windows Server 2012 R2 Enterprise SP1 (64-bit)", \
                    "x64", \
                    "mingw32 / x86_64-w64-mingw32", \
                    "win.binary", \

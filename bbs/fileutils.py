@@ -19,6 +19,8 @@ import string
 # WARNING: Result will not be acurate on Windows when <path> is (or contains)
 # a shortcut
 def total_size(path):
+    if not os.path.exists(path):
+        return 0
     if os.path.islink(path):
         return os.lstat(path).st_size
     size = os.path.getsize(path)

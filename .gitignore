@@ -1,1 +1,3 @@
 *.pyc
+utils/config.ps1
+email_config.yaml

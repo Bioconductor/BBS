@@ -14,7 +14,7 @@ export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.2.manifest"
 export BBS_MEAT0_TYPE=1
 
 # Where is it?
-export BBS_MEAT0_RHOST="zin1"
+export BBS_MEAT0_RHOST="linux1.bioconductor.org"
 export BBS_MEAT0_RUSER="biocbuild"
 export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.2-data-experiment/MEAT0"
 

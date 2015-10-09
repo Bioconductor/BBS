@@ -20,6 +20,10 @@ if (!requireNamespace("BatchJobs", quietly=TRUE))
 if (!requireNamespace("httr", quietly=TRUE))
     biocLite("httr")
 
+if (!requireNamespace("jsonlite", quietly=TRUE))
+    biocLite("jsonlite")
+
+
 #if (!file.exists("/tmp/cclogdir"))
 #    unlink("/tmp/cclogdir", recursive=TRUE)
 
@@ -84,33 +88,48 @@ if (!exists("svninfo"))
     svninfo <- unlist(lapply(getPkgListFromManifest(), get_svn_rev))
 
 
+getBranch <- function()
+{
+    if (BiocInstaller:::IS_USER)
+        sprintf("release-%s", biocVersion())
+    else
+        'master'
+}
+
+getGitCommitId <- function(package, svn_rev)
+{
+    branch <- getBranch()
+    url <- sprintf("https://api.github.com/repos/Bioconductor-mirror/%s/commits?sha=%s&access_token=%s",
+                   package, branch, Sys.getenv("GITHUB_OAUTH_TOKEN"))
+    commits <- content(GET(url))
+    interm <- unlist(lapply(commits, function(x){
+        grepl(sprintf("%s@%s", package, svn_rev), x$commit$message)
+    }))
+    if (!any(interm))
+        return(NULL)
+    if (length(which(interm)) > 1)
+        stop("Implausible results!")
+    commits[interm][[1]]$sha
+}
+
 # Call me like this:
 # lapply(covs, upload_coverage, svninfo=svninfo) 
 upload_coverage <- function(cov, svninfo)
 {
     pkg <- attr(cov, "package")$package
     print(pkg)
-    ## this could throw an error if there is no such repo:
-    oldwd <- setwd(paste0("/fh/fast/morgan_m/git_repos/", pkg))
-    on.exit(setwd(oldwd))
-    branches <- dir(".git/refs/heads")
-    relbranch <- sprintf("release-%s", biocVersion())
-    if (relbranch %in% branches)
-        branch <- relbranch
-    else
-        branch <- "master"
-    git_commit_id <- system2("git",  sprintf(
-        "svn find-rev --after r%s %s", svninfo[[pkg]], branch), stdout=TRUE)
-    .stopifnot("git_commit_id is empty",
-        (length(git_commit_id) && nchar(git_commit_id) > 0))
+
+    git_commit_id <- getGitCommitId(pkg, svninfo[[pkg]])
+    .stopifnot(sprintf("git_commit_id for %s is null!", package),
+        !is.null(git_commit_id))
     token <- Sys.getenv("CODECOV_TOKEN")
     .stopifnot("CODECOV_TOKEN not set", nchar(token) > 0)
-    url <- sprintf("https://codecov.io/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
+    url <- sprintf("https://codecov.io/api/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
     content <- content(GET(url))
     upload_token <- content$upload_token
     .stopifnot("upload_token is null!", !is.null(upload_token))
     codecov(coverage=cov, token=upload_token, commit=git_commit_id,
-        branch=branch)
+        branch=getBranch())
 }
 
 getCoverage <- function(package, force=FALSE)
@@ -161,7 +180,7 @@ needs_update <- function(pkg)
 names(packages) <- packages
 
 
-param <- MulticoreParam(5)#, log=TRUE)
+param <- MulticoreParam(5, timeout=900)#, log=TRUE)
 
 res <- bplapply(packages, getCoverage, BPPARAM=param)
 save(res, file="/tmp/res.rda")
