@@ -14,7 +14,7 @@ export BBS_USER="biocbuild"
 export BBS_RSAKEY="/Users/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.2-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Versions/Current/Resources"
-export BBS_NB_CPU=12
+export BBS_NB_CPU=10
 
 export RCYTOSCAPE_PORT_OVERRIDE="7088"
 export RCYTOSCAPE_HOST_OVERRIDE="docker.bioconductor.org"
