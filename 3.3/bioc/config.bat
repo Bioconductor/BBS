@@ -5,7 +5,7 @@
 
 set BBS_MODE=bioc
 
-set BBS_BIOC_MANIFEST_FILE=bioc_3.2.manifest
+set BBS_BIOC_MANIFEST_FILE=bioc_3.3.manifest
 
 @rem What type of meat? Only 2 types are supported:
 @rem   1: svn repo (contains pkg dirs)

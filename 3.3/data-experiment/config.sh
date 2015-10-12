@@ -7,7 +7,7 @@
 export BBS_MODE="data-experiment"
 
 # TODO change this:
-export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.2.manifest"
+export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.3.manifest"
 
 # What type of meat? Only 2 types are supported:
 #   1: svn repo (contains pkg dirs)
