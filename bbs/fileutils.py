@@ -61,7 +61,7 @@ def nuke_tree(dir):
                 filename = os.path.join(path, file)
                 if not os.access(filename, os.W_OK):
                     os.chmod(filename, 0777)
-    shutil.rmtree(dir)
+    shutil.rmtree(dir, ignore_errors=True)
     return
 
 def remake_dir(path):
