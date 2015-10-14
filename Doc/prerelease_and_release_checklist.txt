@@ -155,10 +155,6 @@ The day we branch (D-1):
   Verify that there are no <NA>s in output. Collate package descriptions
   with biocViews:::getPackageDescriptions().
 
-- Make sure the build report for the newly released version
-  no longer says "devel" in the background, and make sure the
-  "new" devel build report does.
-
 On release day (D):
 
 - UPDATE the /etc/rsyncd.conf on krait. The mirroring instructions 
