@@ -157,7 +157,7 @@ The day we branch (D-1):
 
 On release day (D):
 
-- UPDATE the /etc/rsyncd.conf on krait. The mirroring instructions 
+- UPDATE the /etc/rsyncd.conf on master.bioconductor.org. The mirroring instructions 
  on the website will be updated automatically in the following steps.
 
 - Update config.yaml in the root of the bioconductor.org working copy
@@ -165,7 +165,10 @@ On release day (D):
   things), automatically update the website symlinks ("release" and "devel")
   under /packages. After a release you should
   let the no-longer-release version build one last time so package
-  landing pages won't say "release version".
+  landing pages won't say "release version" (and also so the
+  BiocInstaller landing page will reflect the version of
+  the package that you will push out manually--see the
+  "Modify BiocInstaller..." step below).
 
 
 - Update build report index page and symlinks; remove "devel"
