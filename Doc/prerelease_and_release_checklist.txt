@@ -176,7 +176,9 @@ On release day (D):
 
 - Put release announcement on web and add to pages which contain
   links to all release announcements (/about/release-announcements
-  and **/layouts/_release_announcements.html**).
+  and **/layouts/_release_announcements.html**). Put today's
+  date at the top of the web version of the release
+  announcement.
 
 - Update build times mentioned on web page 
   /developers/how-to/source-control/
