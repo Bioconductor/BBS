@@ -1,3 +1,5 @@
+_In addition to the below information, also consider the [Care and Feeding of the Build System](https://github.com/Bioconductor/BBS#care-and-feeding-of-the-build-system)_.
+
 Each morning, the build system must be inspected (manually<sup>1</sup>).  The expected results of the nigthly build are described below.  To begin, ssh to the Linux build box : 
 
 ```
@@ -45,7 +47,7 @@ windows1.bioconductor.org:
 # Output omitted for brevity
 
 ```
-Notice, there is a directory for each build box (linux1.bioconductor.org,  oaxaca,  perceval,  windows1.bioconductor.org).  Inside, there are various sub-directories and files.  We expect that these directories and files will be updated each day.
+Notice, there is a directory for each build box (***linux1.bioconductor.org***,  ***oaxaca***,  ***perceval***,  ***windows1.bioconductor.org***).  Inside, there are various sub-directories and files.  We expect that these directories and files will be updated each day.
 
 When the build has completely finished on a given build box, a `BBS_EndOfRun.txt` file will be created.  Notice, above there is one for the linux1.bioconductor.org server.  It is often after 1p.m. (Eastern) that the build on perceval is complete<sup>3</sup>, however Linux, Windows and the other Mac build server (oaxaca) are often finished by 11a.m. (Eastern).
 
@@ -64,7 +66,7 @@ Which will result in output like :
 
 <hr/>
 <sub>
-1) This manual process of inspecting the build system should be automated.  A GH issue to track this problem has not yet been created.
-<br/>2) For the purpose of automation, we should enumerate exactly which conditions must be met (e.g. exact files / directories updted by a specific time of day).
+1) This manual process of inspecting the build system should be automated.  The GH issue to track this problem is: https://github.com/Bioconductor/BBS/issues/11 .
+<br/>2) For the purpose of automation, we should enumerate exactly which conditions must be met (e.g. requiring an exact time of day that specific files have been updated).
 <br/>3) The perceval build server has been known to be slow.  We should create a ticket to investigate and resolve this issue.
 </sub>
