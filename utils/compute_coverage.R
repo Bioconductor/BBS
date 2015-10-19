@@ -103,13 +103,28 @@ getGitCommitId <- function(package, svn_rev)
                    package, branch, Sys.getenv("GITHUB_OAUTH_TOKEN"))
     commits <- content(GET(url))
     interm <- unlist(lapply(commits, function(x){
-        grepl(sprintf("%s@%s", package, svn_rev), x$commit$message)
+        grepl(sprintf("%s@", package, svn_rev), x$commit$message)
     }))
     if (!any(interm))
         return(NULL)
-    if (length(which(interm)) > 1)
-        stop("Implausible results!")
-    commits[interm][[1]]$sha
+    intermMatches <- commits[which(interm)]
+    # find the first one that is after svn_rev
+    res <- unlist(lapply(intermMatches, function(x){
+        regex <- sprintf("%s@([0-9]+) ", package)
+        rslt <- regexec(regex, x$commit$message)
+        if (rslt[[1]][1] == -1)
+            return(-1)
+        start <- rslt[[1]][2]
+        len <- attr(rslt[[1]], "match.length")[2] -1
+        as.integer(substr(x$commit$message, start, start+len))
+    }))
+    res <- sort(res)
+    closestSvnRevision <- res[res >= as.numeric(svn_rev)][1]
+    theCommit <- lapply(commits, function(x){
+        grepl(sprintf("%s@%s", package, as.character(closestSvnRevision)),
+            x$commit$message)
+    })
+    commits[which(unlist(theCommit))][[1]]$sha
 }
 
 # Call me like this:
