@@ -120,7 +120,7 @@ upload_coverage <- function(cov, svninfo)
     print(pkg)
 
     git_commit_id <- getGitCommitId(pkg, svninfo[[pkg]])
-    .stopifnot(sprintf("git_commit_id for %s is null!", package),
+    .stopifnot(sprintf("git_commit_id for %s is null!", pkg),
         !is.null(git_commit_id))
     token <- Sys.getenv("CODECOV_TOKEN")
     .stopifnot("CODECOV_TOKEN not set", nchar(token) > 0)
