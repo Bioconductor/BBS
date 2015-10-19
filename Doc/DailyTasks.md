@@ -1,3 +1,5 @@
+_In addition to the below information, also consider the [Care and Feeding of the Build System](https://github.com/Bioconductor/BBS#care-and-feeding-of-the-build-system)_.
+
 Each morning, the build system must be inspected (manually<sup>1</sup>).  The expected results of the nigthly build are described below.  To begin, ssh to the Linux build box : 
 
 ```
