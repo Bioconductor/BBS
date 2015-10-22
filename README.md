@@ -5,7 +5,7 @@ Table of Contents
   * [Bioconductor Build System Overview](#bioconductor-build-system-overview)
     * [What is BBS?](#what-is-bbs)
     * [What is BBS <strong>not</strong>?](#what-is-bbs-not)
-    * [Where is the code?](#where-is-the-code)
+    * [Where is the code?](#where-is-the-code)svn
     * [Human resources](#human-resources)
     * [General overview of BBS](#general-overview-of-bbs)
     * [What builds where](#what-builds-where)
@@ -748,13 +748,6 @@ Currently ~/BBS is a git working copy so you can do this with:
 git checkout config.sh
 ```
 
-At some point ~/BBS will be an svn working copy again so the
-equivalent command will be:
-
-```
-svn revert config.sh
-```
-
 Then type
 
 ```
@@ -764,6 +757,11 @@ fg
 To bring postrun.sh back to the foreground and let it finish.
 The reason I do it this way is that I then do not have to
 remember after postrun.sh is done to revert it.
+
+Alternatively you can use `tmux`; it's a good idea to use
+it for any long-running script. You can then detach from 
+the tmux session and revert config.sh, then reattach 
+to the session to monitor the script's progress.
 
 Now, if the biocadmin scripts have not yet been run by
 crontab, you don't have to do anything more.
