@@ -5,7 +5,7 @@ Table of Contents
   * [Bioconductor Build System Overview](#bioconductor-build-system-overview)
     * [What is BBS?](#what-is-bbs)
     * [What is BBS <strong>not</strong>?](#what-is-bbs-not)
-    * [Where is the code?](#where-is-the-code)svn
+    * [Where is the code?](#where-is-the-code)
     * [Human resources](#human-resources)
     * [General overview of BBS](#general-overview-of-bbs)
     * [What builds where](#what-builds-where)
