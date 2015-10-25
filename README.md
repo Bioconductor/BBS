@@ -65,33 +65,9 @@ is in the [Doc](Doc/) directory.
 
 If you are reading this document, hopefully you've found it.
 
-The canonical location of the code is in Subversion:
-
-[https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/build/BBS](https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/build/BBS)
-
-However, it's also in GitHub:
+The canonical location of the code is in GitHub:
 
 [https://github.com/Bioconductor/BBS](https://github.com/Bioconductor/BBS)
-
-Some things to note about the Github repository:
-
-1. It is not automatically kept in sync with the SVN repository.
-   A technique like
-   [this](https://github.com/Bioconductor/BiocGithubHelp/wiki/Managing-your-Bioc-code-on-hedgehog-and-github)
-   is used to manually sync it.
-2. Normally every build machine should have a checkout/working copy
-   of the Subversion repository. However, during the transition
-   to cloud-based builds we needed to fork the build code,
-   so the cloud-based machines have a Git working copy.
-   After the 3.2 release all machines should be using
-   an SVN working copy (or at least all machines
-   should be using the same version control system).
-3. The cloud-based machines actually have a non-master
-   branch (start-linux1) checked out. After the 
-   3.2 release, this branch should be merged with
-   master and master should be merged with svn.
-
-
 
 ## Human resources
 
@@ -197,7 +173,7 @@ about the build, enough to construct the build report.
 This changes with every release, so in order to avoid
 writing soon-to-be obsolete information here, I will
 refer you to the
-[config.yaml](https://hedgehog.fhcrc.org/bioconductor/trunk/bioconductor.org/config.yaml
+[config.yaml](http://master.bioconductor.org/config.yaml
 ) file for the web site (requires your svn credentials).
 The *active_devel_builders* and *active_release_builders*
 section will tell you what is being used, and that
@@ -748,13 +724,6 @@ Currently ~/BBS is a git working copy so you can do this with:
 git checkout config.sh
 ```
 
-At some point ~/BBS will be an svn working copy again so the
-equivalent command will be:
-
-```
-svn revert config.sh
-```
-
 Then type
 
 ```
@@ -764,6 +733,11 @@ fg
 To bring postrun.sh back to the foreground and let it finish.
 The reason I do it this way is that I then do not have to
 remember after postrun.sh is done to revert it.
+
+Alternatively you can use `tmux`; it's a good idea to use
+it for any long-running script. You can then detach from 
+the tmux session and revert config.sh, then reattach 
+to the session to monitor the script's progress.
 
 Now, if the biocadmin scripts have not yet been run by
 crontab, you don't have to do anything more.
