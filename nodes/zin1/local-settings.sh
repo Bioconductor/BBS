@@ -5,6 +5,8 @@
 
 # FIXME - parameterize this as much as possible
 # maybe use 'which' to find locations of programs
+# but note that 'which' relies on the PATH which
+# may be set incorrectly in crontab.
 
 if [ "$BBS_HOME" == "" ]; then
     export BBS_HOME="/home/biocbuild/BBS"
