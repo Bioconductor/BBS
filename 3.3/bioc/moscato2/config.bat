@@ -1,11 +1,11 @@
 @rem =====================
-@rem Settings for windows2.bioconductor.org
+@rem Settings for moscato2
 @rem =====================
 
 
 set BBS_DEBUG=0
 
-set BBS_NODE_HOSTNAME=windows2.bioconductor.org
+set BBS_NODE_HOSTNAME=moscato2
 set BBS_USER=biocbuild
 set BBS_RSAKEY=c:\biocbld\.BBS\id_rsa
 set BBS_WORK_TOPDIR=c:\biocbld\bbs-3.3-bioc
@@ -20,13 +20,13 @@ set RCYTOSCAPE_PORT_OVERRIDE=4023
 set RCYTOSCAPE_HOST_OVERRIDE=taipan
 
 set RCYTOSCAPE3_PORT_OVERRIDE=9298
-set RCYTOSCAPE3_HOST_OVERRIDE=docker.bioconductor.org
+set RCYTOSCAPE3_HOST_OVERRIDE=taipan
 
 set RCYTOSCAPE_PORT_OVERRIDE_64=3064
 set RCYTOSCAPE_HOST_OVERRIDE_64=taipan
 
 set RCYTOSCAPE3_PORT_OVERRIDE_64=9299
-set RCYTOSCAPE3_HOST_OVERRIDE_64=docker.bioconductor.org
+set RCYTOSCAPE3_HOST_OVERRIDE_64=taipan
 
 
 set GENE_E_URL=http://taipan:9998

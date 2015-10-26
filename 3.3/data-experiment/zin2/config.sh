@@ -1,6 +1,6 @@
 #!/bin/bash
 # ====================
-# Settings for linux2.bioconductor.org
+# Settings for zin2
 # ====================
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="linux2.bioconductor.org"
+export BBS_NODE_HOSTNAME="zin2"
 export BBS_USER="biocbuild"
 export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.3-data-experiment"
@@ -30,7 +30,7 @@ cd "$wd0"
 # Needed only on the node performing stage6 (must be run on the
 # BBS_CENTRAL_RHOST machine).
 
-export BBS_OUTGOING_MAP="source:linux2.bioconductor.org/buildsrc win.binary:windows2.bioconductor.org/buildbin mac.binary:morelia/buildbin"
+export BBS_OUTGOING_MAP="source:zin2/buildsrc win.binary:moscato2/buildbin mac.binary:morelia/buildbin"
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)
@@ -39,7 +39,7 @@ export BBS_OUTGOING_MAP="source:linux2.bioconductor.org/buildsrc win.binary:wind
 # must be run on the BBS_CENTRAL_RHOST machine.
 
 # FIXME add morelia:bin
-export BBS_REPORT_NODES="linux2.bioconductor.org windows2.bioconductor.org:bin morelia:bin"
+export BBS_REPORT_NODES="zin2 moscato2:bin morelia:bin"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b-green2.png"

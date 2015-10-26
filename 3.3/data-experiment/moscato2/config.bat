@@ -1,11 +1,11 @@
 @rem =====================
-@rem Settings for windows2.bioconductor.org
+@rem Settings for moscato2
 @rem =====================
 
 
 set BBS_DEBUG=0
 
-set BBS_NODE_HOSTNAME=windows2.bioconductor.org
+set BBS_NODE_HOSTNAME=moscato2
 set BBS_USER=biocbuild
 set BBS_RSAKEY=c:\biocbld\.BBS\id_rsa
 set BBS_WORK_TOPDIR=c:\biocbld\bbs-3.3-data-experiment
