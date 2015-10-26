@@ -7,6 +7,9 @@
 ### codecs.getdecoder() (test it from python with e.g.
 ### codecs.getdecoder('utf_8') or codecs.getdecoder('iso8859'))
 
+# FIXME - parameterize this as much as possible
+# OS version, etc. can be obtained programmatically
+
 allnodes = { \
     'lamb1':      ("Linux (openSUSE 12.1)", \
                    "x86_64", \

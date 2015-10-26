@@ -3,6 +3,8 @@
 # Local settings for zin1
 # =======================
 
+# FIXME - parameterize this as much as possible
+# maybe use 'which' to find locations of programs
 
 if [ "$BBS_HOME" == "" ]; then
     export BBS_HOME="/home/biocbuild/BBS"
