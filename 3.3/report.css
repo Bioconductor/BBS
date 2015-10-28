@@ -254,16 +254,29 @@ TABLE.mainrep .even .zin1 {
     background: #9AB;
 }
 
-/* linux2_bioconductor_org */
-DIV.linux2_bioconductor_org,
-TR.linux2_bioconductor_org TD,
-TABLE.mainrep .linux2_bioconductor_org,
-TABLE.mainrep .odd .linux2_bioconductor_org {
+/* zin2 */
+DIV.zin2,
+TR.zin2 TD,
+TABLE.mainrep .zin2,
+TABLE.mainrep .odd .zin2 {
     background: #ACD;
 }
-TABLE.mainrep .even .linux2_bioconductor_org {
+TABLE.mainrep .even .zin2 {
     background: #8AB;
 }
+
+/* zin2 */
+DIV.zin2,
+TR.zin2 TD,
+TABLE.mainrep .zin2,
+TABLE.mainrep .odd .zin2 {
+    background: #ACD;
+}
+TABLE.mainrep .even .zin2 {
+    background: #8AB;
+}
+
+
 
 /* dockernode */
 DIV.dockernode,
