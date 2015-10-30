@@ -376,6 +376,19 @@ TABLE.mainrep .even .windows1_bioconductor_org {
     background: #C98;
 }
 
+/* moscato1 */
+DIV.moscato1,
+TR.moscato1 TD,
+TABLE.mainrep .moscato1,
+TABLE.mainrep .odd .moscato1 {
+    background: #EBA;
+}
+TABLE.mainrep .even .moscato1 {
+    background: #C98;
+}
+
+
+
 /* moscato2 */
 DIV.moscato2,
 TR.moscato2 TD,
