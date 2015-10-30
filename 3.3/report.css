@@ -401,6 +401,19 @@ TABLE.mainrep .even .windows2_bioconductor_org {
     background: #C98;
 }
 
+/* moscato2 */
+DIV.moscato2,
+TR.moscato2 TD,
+TABLE.mainrep .moscato2,
+TABLE.mainrep .odd .moscato2 {
+    background: #EBA;
+}
+TABLE.mainrep .even .moscato2 {
+    background: #C98;
+}
+
+
+
 /* walpole */
 DIV.walpole,
 TR.walpole TD,
