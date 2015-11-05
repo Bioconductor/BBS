@@ -15,6 +15,7 @@ import os
 import errno
 import subprocess
 import signal
+import datetime
 if sys.platform == "win32":
     import win32api
     from win32com.client import GetObject
@@ -267,7 +268,8 @@ def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.
         if retcode == 0:
             return
         sleep(sleeptime)
-    sys.exit("%d failed attempts => EXIT." % nb_attempts)
+    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    sys.exit("%d failed attempts => EXIT at %s." % (nb_attempts, now))
 
 ### Objects passed to the processJobQueue() function must be QueuedJob objects.
 ### The QueuedJob class contains the strictly minimal stuff needed by the
