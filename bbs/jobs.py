@@ -104,6 +104,7 @@ if sys.platform == "win32":
             print "BBS>     | - %s: %s" % (prop.Name, prop.Value)
         return
     # Parents are listed *after* all their children in the returned list.
+    # Returns None if 'pid' is an invalid process id.
     def listSubprocs(pid):
         processes = WMI.InstancesOf('Win32_Process')
         pid_exists = False
@@ -113,7 +114,7 @@ if sys.platform == "win32":
                 pid_exists = True
                 break
         if not pid_exists:
-            raise OSError(errno.ESRCH, os.strerror(errno.ESRCH))
+            return None  # invalid process id
         def listSubprocs_rec(proc):
             proc_id = proc.ProcessID
             proc_creation_date = proc.CreationDate
@@ -173,6 +174,8 @@ def killProc(pid):
     # (64-bit Windows Server 2008 R2 Enterprise), so let's try the
     # following:
     subprocs = listSubprocs(pid)
+    if subprocs == None:
+        return  # pid just vanished ==> nothing to do
     cmd = 'TASKKILL /F /PID %d /T' % pid
     retcode = subprocess.call(cmd, stderr=subprocess.STDOUT)
     print "BBS>   NOTE: %s returned code %d" % (cmd, retcode)
