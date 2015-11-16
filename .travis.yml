@@ -6,7 +6,7 @@ addons:
 python: 
   - "2.7"
 cache: pip
-install: pip install --user pyflakes
+install: pip install pyflakes
 script:
   - "shellcheck ./3.3/bioc/zin2/postrun.sh  ./3.2/bioc/zin1/postrun.sh"
   - pyflakes *.py
