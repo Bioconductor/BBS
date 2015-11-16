@@ -43,8 +43,6 @@ msg_footnote = "Notes:\n\n" \
              + "Thanks for contributing to the Bioconductor project!\n\n" 
 
 def send_notification(pkg):
-    version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
-    maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
     maintainer_email = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'MaintainerEmail')
     #print "%s %s %s %s" % (pkg, version, maintainer, maintainer_email)
     #key = 'Last Changed Date'

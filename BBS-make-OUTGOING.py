@@ -83,7 +83,6 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         if (source_node):
             src_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % (BBScorevars.getenv('BBS_WORK_TOPDIR'),
               pkg, pkg)
-            dest_name = "%s.pdf" % pkg
             if (os.path.exists(src_file)):
                 print "BBS> [stage6]   - copying %s manual to OUTGOING/manuals folder..." % pkg
                 shutil.copy(src_file, "%s/%s.pdf" % (manuals_dir, pkg))

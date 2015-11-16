@@ -456,8 +456,6 @@ def STAGE4_loop(srcpkg_paths, nb_cpu):
     nb_jobs = len(job_queue)
     print "BBS> BEGIN STAGE4 loop."
     t0 = time.time()
-    nb_products = bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
-                                           BBScorevars.r_cmd_timeout, True)
     dt = time.time() - t0
     print "BBS> END STAGE4 loop."
     print "BBS> -------------------------------------------------------------"

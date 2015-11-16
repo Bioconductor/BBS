@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/Bioconductor/BBS.svg?branch=feature%2Fstatic-analysis)](https://travis-ci.org/Bioconductor/BBS)
+
 Table of Contents
 =================
 

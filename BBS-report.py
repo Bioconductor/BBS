@@ -11,7 +11,6 @@ import sys
 import os
 import time
 import shutil
-import urllib2
 import re
 
 import bbs.fileutils
