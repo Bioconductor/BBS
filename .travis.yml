@@ -1,8 +1,10 @@
 language: python
 addons:
   apt:
+    sources:
+      - debian-sid
     packages:
-      shellcheck
+      - shellcheck
 python: 
   - "2.7"
 cache: pip
