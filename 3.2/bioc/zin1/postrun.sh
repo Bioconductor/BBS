@@ -8,7 +8,6 @@ echo "-------------------"
 
 # Adapted from : http://stackoverflow.com/a/246128/320399
 script_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-# shellcheck source=3.2/bioc/zin1/config.sh
 . "${script_dir}"/config.sh
 
 # Fix perms
