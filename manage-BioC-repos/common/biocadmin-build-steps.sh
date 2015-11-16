@@ -25,8 +25,7 @@ fi
 
 source "$grandparent_dir""${version_to_build}"/config.sh
 
-# The steps executed by 'biocadmin' will not
-# succeed without the following :
+# TODO: Determine preconditions for biocadmin's cron to run.  Modify below accordingly
 biocadmin_precondition=true
 if ! [ $biocadmin_precondition ]; then
   err_msg="Preconditions for build steps are not met (for biocadmin).  Can not continue."
