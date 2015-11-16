@@ -10,7 +10,7 @@ python:
 cache: pip
 install: pip install pyflakes
 script:
-  - shellcheck -x ./3.3/bioc/zin2/postrun.sh  ./3.2/bioc/zin1/postrun.sh
+  - shellcheck ./3.3/bioc/zin2/postrun.sh  ./3.2/bioc/zin1/postrun.sh
   - pyflakes *.py
   - python -c 'print "Finished static analysis"'
 notifications:
