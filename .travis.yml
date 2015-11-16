@@ -1,16 +1,14 @@
-language: haskell
-sudo: required
+language: python
+addons:
+  apt:
+    packages:
+      shellcheck
 python: 
   - "2.7"
-before_install:
-  - "cabal update"
-  - "cabal install shellcheck"
-# Below, the "install: true" item, means that we'll skip the (Haskell/Cabal) install step.
-# More info: http://docs.travis-ci.com/user/customizing-the-build/#Skipping-the-Installation-Step
-install: true
+cache: pip
+install: pip install --user pyflakes
 script:
   - "shellcheck ./3.3/bioc/zin2/postrun.sh  ./3.2/bioc/zin1/postrun.sh"
-  - "sudo pip install pyflakes"
   - pyflakes *.py
   - python -c 'print "Finished static analysis"'
 notifications:
