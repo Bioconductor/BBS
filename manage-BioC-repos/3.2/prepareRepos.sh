@@ -8,7 +8,7 @@
 ##    CONTRIB_PATHS="c(source='src/contrib', win.binary='bin/windows/contrib/3.2')"
 ##    HTML_DIR="data/experiment/html"
 
-rm -rf "$REPOS_ROOT/html $REPOS_ROOT/index.html $REPOS_ROOT/REPOSITORY $REPOS_ROOT/repository-detail.css $REPOS_ROOT/SYMBOLS $REPOS_ROOT/VIEWS $REPOS_ROOT/vignettes"
+rm -r "$REPOS_ROOT"/html "$REPOS_ROOT"/index.html "$REPOS_ROOT"/REPOSITORY "$REPOS_ROOT"/repository-detail.css "$REPOS_ROOT"/SYMBOLS "$REPOS_ROOT"/VIEWS "$REPOS_ROOT"/vignettes
 
 R_SCRIPT="library('biocViews')"
 R_SCRIPT="$R_SCRIPT; source('http://bioconductor.org/biocLite.R')"
@@ -40,6 +40,6 @@ R_SCRIPT="$R_SCRIPT; extractCitations(reposRoot, contribPaths['source'][1], 'cit
 
 echo "$R_SCRIPT" | $R --slave
 
-chmod +r $REPOS_ROOT -Rc
+chmod +r "$REPOS_ROOT" -Rc
 
 echo "DONE."
