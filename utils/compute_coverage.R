@@ -78,14 +78,17 @@ pkgsWithTestDirectories <- function(invert=FALSE)
 
 get_svn_rev <- function(pkg){
   file <- path.expand(paste0("../svninfo/svn-info-", pkg, ".txt"))
-  dcf <- read.dcf(file)
-  ret <- dcf[,"Last Changed Rev"]
-  names(ret) <- pkg
-  ret
+  if (file.exists(file)) {
+      dcf <- read.dcf(file)
+      ret <- dcf[,"Last Changed Rev"]
+      names(ret) <- pkg
+      ret
+  }
 }
 
-if (!exists("svninfo"))
-    svninfo <- unlist(lapply(getPkgListFromManifest(), get_svn_rev))
+if (!exists("svninfo")) {
+    svninfo <- unlist(Filter(Negate(is.null), lapply(getPkgListFromManifest(), get_svn_rev)))
+}
 
 
 getBranch <- function()
