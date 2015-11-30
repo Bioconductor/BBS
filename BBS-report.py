@@ -823,7 +823,10 @@ def make_node_LeafReports(allpkgs, node):
 
 def make_all_LeafReports(allpkgs):
     for pkg in allpkgs:
-        os.mkdir(pkg)
+        try:
+            os.mkdir(pkg)
+        except:
+            raise Exception("failed to mkdir in make_all_LeaveReports %s" % pkg)
         leafreport_ref = LeafReportReference(pkg, None, None, None)
         make_PkgReportLandingPage(leafreport_ref, allpkgs)
     for node in BBSreportutils.NODES:
