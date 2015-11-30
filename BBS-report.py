@@ -822,6 +822,7 @@ def make_node_LeafReports(allpkgs, node):
     return
 
 def make_all_LeafReports(allpkgs):
+    print "Current workding dir '%s'" % os.getcwd()
     for pkg in allpkgs:
         try:
             os.mkdir(pkg)
