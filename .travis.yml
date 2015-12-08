@@ -3,7 +3,7 @@ dist: trusty
 language: python
 
 before_install:
-    - sudo add-apt-repository "deb http://ftp.us.debian.org/debian unstable main contrib non-free"
+    - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ wily universe"
     - sudo apt-get update -q
     - sudo apt-get install shellcheck -y
 python:
