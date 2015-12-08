@@ -1,11 +1,12 @@
+sudo: required
+dist: trusty
 language: python
-addons:
-  apt:
-    sources:
-      - debian-sid
-    packages:
-      - shellcheck
-python: 
+
+before_install:
+    - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ wily universe"
+    - sudo apt-get update -q
+    - sudo apt-get install shellcheck -y
+python:
   - "2.7"
 cache: pip
 install: pip install pyflakes
