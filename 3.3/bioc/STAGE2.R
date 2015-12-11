@@ -30,8 +30,8 @@ updateNonTargetPkgs <- function()
     ## For these situations where there is no binary or the binary version
     ## lags behind the source version
     cat("\n")
-    cat("--- now trying again to update from source packages ---\n")
+    cat("--- now trying again to update with type=both ---\n")
     cat("\n")
-    update.packages(repos=non_target_repos, ask=FALSE, type="source")
+    update.packages(repos=non_target_repos, ask=FALSE, type="both")
 }
 
