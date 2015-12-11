@@ -638,8 +638,8 @@ def write_Command_output_to_LeafReport(out, node_hostname,
         out.write('</DIV>')
 
     if stagecmd == "checksrc" and unit_test_failed: # unit test output
-        fullpath = "%s/nodes/%s/%s" % (os.environ['BBS_CENTRAL_RDIR'], 
-            node_id, stagecmd)
+        fullpath = os.path.join(BBScorevars.central_rdir_path,"nodes", 
+            node_id, stagecmd, pkg + ".Rcheck")
         for folder, subs, files in os.walk(fullpath):
             for filename in files:
                 if fnmatch.fnmatch(filename, "*.Rout.fail"):
