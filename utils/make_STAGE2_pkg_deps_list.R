@@ -26,6 +26,8 @@
             return(FALSE)
         lines <- readLines(optionsFile)
         idx <- grepl("^ForceInstall:", lines)
+        if (!any(idx))
+            return (FALSE)
         line <- lines[idx]
         value = trimws(toupper(strsplit(line, ":")[[1]][2]))
         return (value == "TRUE")
