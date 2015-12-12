@@ -24,10 +24,11 @@
         optionsFile <- file.path(meatDir, pkg, ".BBSoptions")
         if (!file.exists(optionsFile))
             return(FALSE)
-        dcf <- read.dcf(optionsFile)
-        if (!"ForceInstall" %in% colnames(dcf))
-            return(FALSE)
-        return (toupper(unname(dcf[,"ForceInstall"])) == "TRUE")
+        lines <- readLines(optionsFile)
+        idx <- grepl("^ForceInstall:", lines)
+        line <- lines[idx]
+        value = trimws(toupper(strsplit(line, ":")[[1]][2]))
+        return (value == "TRUE")
     }
     idx <- unlist(lapply(pkgs, shouldBeForceInstalled))
     pkgs[idx]
