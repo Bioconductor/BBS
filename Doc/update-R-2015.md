@@ -119,13 +119,52 @@ Run
 
     ~/BBS/utils/snow-leopard-R-fix-flags.sh 
 
+
+### After installation, part 2.
+
+Also, install the Cairo binary package. This should be available
+in `~/Downloads`:
+
+    R CMD INSTALL Cairo_*.tgz
+
+If you don't do this, the build system will try and
+fail to install this package from source.
+
 ## Windows
 
-TBA
+### Where to get R
+
+ * Release: [https://cran.r-project.org/bin/windows/](https://cran.r-project.org/bin/windows/)
+ * Patched: [https://cran.r-project.org/bin/windows/base/rpatched.html](https://cran.r-project.org/bin/windows/base/rpatched.html)
+ * Devel: [https://cran.r-project.org/bin/windows/base/rdevel.html](https://cran.r-project.org/bin/windows/base/rdevel.html)
+
+### Before Downloading
+
+If you are building Bioconductor 3.3, go to
+`X:\biocbld\bbs-3.3-bioc` (where `X` is the appropriate
+drive letter).
+If there is an `R.old` directory, remove it.
+If there is an `R` directory, rename it to `R.old`.
 
 
 
+### Downloading
 
+ You can download R from within a browser, which
+ means it will be downloaded to
+ `c:\Users\biocbuild\Downloads`.
 
+### Installing
+
+You can double-click the .exe you just downloaded.
+This runs an installation wizard. You can pick all
+the default settings except that you want to install
+to `X:\biocbld\bbs-Y.Z-bioc\R` where `X` is the
+appropriate drive letter and `Y.Z` is the version
+of Bioconductor.
+
+You can also uncheck the options for creating
+desktop shortcuts and associating R files with
+R.
 
 
