@@ -1,5 +1,11 @@
 # How to Update R on the build machines
 
+*NOTE*: Throughout this document, `$BIOC_VERSION` 
+(or `%BIOC_VERSION%` on Windows) is
+used to represent the Bioconductor version, to make
+commands more copy-pastable (assuming `$BIOC_VERSION`
+is defined).
+
 ## When to update
 
 Make sure software builds are not running or about
@@ -16,6 +22,10 @@ the software builds having run first.)
 
 
 ## Linux
+
+Note that we build R *from source* on Linux, we do not
+install a package for a Linux distribution
+(i.e. we don't use `apt-get on Ubuntu).
 
 ### Where to find R
 
@@ -45,7 +55,7 @@ it after downloading.
 
 Download with 
 
-`curl -LO <URL>`
+    curl -LO <URL>
 
 ### Untarring
 
@@ -59,14 +69,16 @@ or `R-devel-20151026`.
 
 ### Building
 
-If the machine you are on builds Bioconductor 3.3,
-go to the `~/bbs-3.3-bioc` directory.
-If there is an `R.old` directory, remove it.
-If there is an `R` directory, rename it to
-`R.old`. That way if there is something really
-wrong with the new R, you can switch back 
-to the old one just by renaming `R.old` to `R`.
-Create an `R` directory and `cd` to it.
+
+    cd ~/bbs-$BIOC_VERSION-bioc
+    # if R.old exists:
+    mv R.old R.deleteme 
+    nohup rm -rf R.deleteme > /dev/null 2>&1 & # takes some time
+    # if R directory exists:
+    mv R R.old
+    mkdir R    
+    cd R
+
 
 Build R as follows.
 
@@ -78,8 +90,9 @@ all cores or `make -jN` to use `N` cores.
 
 ### After building
 
-Go to the `etc` directory and then run:
+Run a script to fix compilation flags:
 
+    cd ./etc
     ~/BBS/utils/R-fix-flags.sh 
 
 This sets the C/C++ compilation flags appropriately
@@ -90,7 +103,8 @@ Run R and install Bioconductor:
 
     source("https://bioconductor.org/biocLite.R")
 
-If you are on a devel build machine, do this:
+If you are on a devel build machine (and not running
+R-devel), do this:
 
     useDevel()
 
@@ -159,13 +173,21 @@ Run R and install Bioconductor:
 
     source("https://bioconductor.org/biocLite.R")
 
-If you are on a devel build machine, do this:
+If you are on a devel build machine (and not running
+R-devel), do this:
 
     useDevel()
 
 
 
 ## Windows
+
+In this section %DRIVELETTER% refers to
+the data drive (D: on moscato1, E: on moscato2;
+in cloud deployments probably everything will be
+on the C: drive).
+
+Install as the `biocbuild` user.
 
 ### Where to get R
 
@@ -175,13 +197,14 @@ If you are on a devel build machine, do this:
 
 ### Before Downloading
 
-If you are building Bioconductor 3.3, go to
-`X:\biocbld\bbs-3.3-bioc` (where `X` is the appropriate
-drive letter).
-If there is an `R.old` directory, remove it.
-If there is an `R` directory, rename it to `R.old`.
 
-
+    cd %DRIVELETTER%:\biocbld\bbs-%BIOC_VERSION%-bioc 
+    rem If there is an R.old directory:
+    mv R.old R.deleteme
+    rem This will take some time:
+    nohup rm -rf R.deleteme > /dev/null 2>&1 &
+    rem If there is an R directory:
+    mv R R.old
 
 ### Downloading
 
@@ -192,22 +215,32 @@ If there is an `R` directory, rename it to `R.old`.
 ### Installing
 
 You can double-click the .exe you just downloaded.
-This runs an installation wizard. You can pick all
-the default settings except that you want to install
-to `X:\biocbld\bbs-Y.Z-bioc\R` where `X` is the
-appropriate drive letter and `Y.Z` is the version
-of Bioconductor.
+But to run it from the command line, do:
 
-You can also uncheck the options for creating
-desktop shortcuts and associating R files with
-R.
+    R-devel-win.exe /SILENT /DIR=%DRIVELETTER%:\biocbld\bbs-%BIOC_VERSION%-bioc\R /NOICONS
+
+If you run by double-clicking, be sure and choose
+`%DRIVELETTER%:\biocbld\bbs-Y.Z-bioc\R` as the
+destination directory. Choose to NOT create a
+start menu item and to NOT associate .R files
+with R.
+
 
 Run R and install Bioconductor:
 
     source("https://bioconductor.org/biocLite.R")
 
-If you are on a devel build machine, do this:
+If you are on a devel build machine (and not
+running R-devel), do this:
 
     useDevel()
+
+#### R for Single Package Builder
+
+SPB has its own R on windows
+when you update R-devel, you need to update the pkgbuild one as well.
+Do this as the `pkgbuild` user. The steps are basically the same as
+above except R is installed in `X:\packagebuilder` (where `X`
+is the appropriate drive letter).
 
 
