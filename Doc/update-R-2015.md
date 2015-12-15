@@ -1,5 +1,14 @@
 # How to Update R on the build machines
 
+## When to update
+
+Make sure software builds are not running or about
+to run in the next 30 minutes or so.
+
+Make sure data/experiment builds are not running
+(Wed/Sat during the day).
+
+
 ## Linux
 
 ### Where to find R
