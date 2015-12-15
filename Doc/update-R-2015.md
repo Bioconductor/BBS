@@ -86,6 +86,16 @@ This sets the C/C++ compilation flags appropriately
 for the build system (i.e. showing additional
 warnings useful for package developers).
 
+Run R and install Bioconductor:
+
+    source("https://bioconductor.org/biocLite.R")
+
+If you are on a devel build machine, do this:
+
+    useDevel()
+
+
+
 ## Mac
 
 
@@ -145,6 +155,16 @@ in `~/Downloads`:
 If you don't do this, the build system will try and
 fail to install this package from source.
 
+Run R and install Bioconductor:
+
+    source("https://bioconductor.org/biocLite.R")
+
+If you are on a devel build machine, do this:
+
+    useDevel()
+
+
+
 ## Windows
 
 ### Where to get R
@@ -181,5 +201,13 @@ of Bioconductor.
 You can also uncheck the options for creating
 desktop shortcuts and associating R files with
 R.
+
+Run R and install Bioconductor:
+
+    source("https://bioconductor.org/biocLite.R")
+
+If you are on a devel build machine, do this:
+
+    useDevel()
 
 
