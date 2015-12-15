@@ -8,6 +8,12 @@ to run in the next 30 minutes or so.
 Make sure data/experiment builds are not running
 (Wed/Sat during the day).
 
+Don't update after the software builds run
+but before the data/experiment builds run.
+(The data/experiment builds depend on
+the software builds having run first.)
+
+
 
 ## Linux
 
