@@ -115,10 +115,12 @@ R-devel), do this:
 
 ### Before downloading
 
-R is installed in `/Library/Frameworks/R.framework`.
-Go to `/Library/Frameworks`.
-If `R.framework.old` exists, remove it.
-If `R.framework` exists, rename it to `R.framework.old`.
+    cd /Library/Frameworks
+    # if R.framework.old exists:
+    sudo mv R.framework.old R.framework.deleteme
+    sudo nohup rm -rf R.framework.deleteme > /dev/null 2>&1 &
+    # if R.framework exists:
+    sudo mv R.framework R.framework.old
 
 
 ### Where to get R
