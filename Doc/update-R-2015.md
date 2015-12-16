@@ -180,6 +180,14 @@ R-devel), do this:
 
     useDevel()
 
+#### Install tkrplot from source
+
+The tkrplot binary is broken and segfaults.
+Install it from source:
+
+    library(BiocInstaller)
+    biocLite("tkrplot", type="source")
+
 
 
 ## Windows
