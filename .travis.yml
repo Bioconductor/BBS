@@ -11,9 +11,9 @@ python:
 cache: pip
 install: pip install pyflakes
 script:
-  - shellcheck ./3.3/bioc/zin2/postrun.sh ./3.2/bioc/zin1/postrun.sh ./manage-BioC-repos/3.3/prepareRepos.sh manage-BioC-repos/3.2/prepareRepos.sh
+  - shellcheck ./3.2/**/*.sh
+  - shellcheck ./3.3/**/*.sh
   - pyflakes *.py
-  - python -c 'print "Finished static analysis"'
 notifications:
   email:
     - brian@bioconductor.org
