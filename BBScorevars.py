@@ -90,12 +90,12 @@ BBS_home = getenv('BBS_HOME')
 sys.path.append(os.path.join(BBS_home, "nodes"))
 import nodespecs
 
-pkgType2FileExt = { \
-    'source': "tar.gz", \
-    'win.binary': "zip", \
-    'win64.binary': "zip", \
-    'mac.binary': "tgz", \
-    'mac.binary.leopard': "tgz", \
+pkgType2FileExt = {
+    'source': "tar.gz",
+    'win.binary': "zip",
+    'win64.binary': "zip",
+    'mac.binary': "tgz",
+    'mac.binary.leopard': "tgz",
     'mac.binary.mavericks': "tgz"
 }
 
