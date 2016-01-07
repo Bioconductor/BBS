@@ -1,0 +1,19 @@
+sudo: required
+dist: trusty
+language: python
+
+before_install:
+    - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ wily universe"
+    - sudo apt-get update -q
+    - sudo apt-get install shellcheck -y
+python:
+  - "2.7"
+cache: pip
+install: pip install pyflakes
+script:
+  - shellcheck ./3.2/**/*.sh
+  - shellcheck ./3.3/**/*.sh
+  - pyflakes *.py
+notifications:
+  email:
+    - brian@bioconductor.org

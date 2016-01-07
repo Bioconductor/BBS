@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/Bioconductor/BBS.svg?branch=feature%2Fstatic-analysis)](https://travis-ci.org/Bioconductor/BBS)
+
 Table of Contents
 =================
 
@@ -216,21 +218,14 @@ Snow Leopard.
 
 #### A note about time zones.
 
-All machines that are part of the BioC 3.2 builds 
-are on Eastern (Buffalo) time. All machines that
-are building BioC 3.1 are on Pacific (Seattle) time.
-
-The "next devel (BioC 3.3)" builds will start with 
-two machines (Linux and Windows) both on Eastern time.
-After the 3.2 release, they will be joined by a
-Mavericks machine which will move to Eastern time.
-From this point forward, all Bioconductor build machines
-will be on Eastern time.
+The builds have been moved back to FHCRC in October 2015
+and all build machines are on west coast time.
 
 ## How the build system works
 
 As described above, on each build machine, the build system
-code is checked out.
+code is checked out. **At present, each machine's working
+copy is checked out to the branch `feature/migrate_back_to_hutch`.**
 
 On each build machine there is a cron job (or Scheduled Task
 on Windows) that kicks off the builds.

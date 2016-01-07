@@ -456,7 +456,7 @@ def STAGE4_loop(srcpkg_paths, nb_cpu):
     nb_jobs = len(job_queue)
     print "BBS> BEGIN STAGE4 loop."
     t0 = time.time()
-    nb_products = bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
+    bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
                                            BBScorevars.r_cmd_timeout, True)
     dt = time.time() - t0
     print "BBS> END STAGE4 loop."
@@ -594,4 +594,3 @@ if __name__ == "__main__":
 # 01/24/2006: 642 lines in BBSbase.py + 286 lines in BBS-run.py
 # 08/17/2006: 772 lines in BBSbase.py + 147 lines in BBSvars.py + 355 lines in BBS-run.py
 # 01/12/2007: 777 lines in BBSbase.py + 130 in BBSvars.py + 225 in BBS-prerun.py + 357 in BBS-run.py
-

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+this_script=$(basename "$0")
+echo "<<< Now starting $this_script at $(date) >>>"
+
 cd "$HOME/manage-BioC-repos/3.3"
 
 . ./config.sh
@@ -62,4 +65,5 @@ do
     cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
 
+echo "<<< Now exiting $this_script at $(date) >>>"
 exit 0

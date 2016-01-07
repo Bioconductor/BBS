@@ -11,8 +11,8 @@ import sys
 import os
 import time
 import shutil
-import urllib2
 import re
+import fnmatch
 
 import bbs.fileutils
 import bbs.parse
@@ -485,7 +485,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
     out.write('<B>%s</B>&nbsp;<B>%s</B>' % (get_pkgname_asHTML(pkg), version))
     out.write('</TD>')
-    maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer') 
+    maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
     out.write('<TD style="text-align: left">%s</TD>' % maintainer)
     write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref)
     out.write('</TR>\n')
@@ -611,22 +611,11 @@ def write_Command_output_to_LeafReport(out, node_hostname,
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
     encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
     out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
-    win_test_regex = re.compile("^\*\* running tests for arch '([^']*)'")
-    unit_test_failure_regex = re.compile("^Running the tests in ")
-    testthat_failure_regex = re.compile("^  Error: Test failures")
+    unit_test_failure_regex = re.compile("^Running the tests in .(.*). failed[.]")
     unit_test_failed = False
-    failed_archs = []
-    current_arch = None
     for line in f:
-        m = win_test_regex.match(line)
-        if (m):
-            current_arch = m.group(1)
-        if(  ((unit_test_failure_regex.match(line)) and \
-            (line.find("failed.") > -1)) or \
-        (testthat_failure_regex.match(line))):
+        if(unit_test_failure_regex.match(line)):
             unit_test_failed = True
-            if current_arch is not None:
-                failed_archs.append(current_arch)
         try:
             html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
         except:
@@ -639,80 +628,23 @@ def write_Command_output_to_LeafReport(out, node_hostname,
     f.close()
     out.write('</DIV>\n')
 
-    if stagecmd == "checksrc": # unit test output
-        if (len(failed_archs) > 0): # we're on windows and tests failed
-            for arch in failed_archs:
-                file = "%s.Rcheck/tests_%s/%s_unit_tests.Rout.fail" % (pkg, arch, pkg)
-                f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-                if f is None:
-                    file = "%s.Rcheck/tests_%s/runTests.Rout.fail" % (pkg, arch)
-                    f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-                if f is None:
-                    file = "%s.Rcheck/tests_%s/run_tests.Rout.fail" % (pkg, arch)
-                    f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-                if f is None:
-                    file = "%s.Rcheck/tests_%s/test.Rout.fail" % (pkg, arch)
-                    f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-                if f is None:
-                    file = "%s.Rcheck/tests_%s/testthat.Rout.fail" % (pkg, arch)
-                    f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-                if f is None:
-                    fullpath = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stagecmd))
-                    dir = "%s/%s.Rcheck/tests_%s" % (fullpath.path, pkg, arch)
-                    files = os.listdir(dir)
-                    cands = filter(lambda x: x.endswith(".Rout.fail"), files)
-                    if (len(cands)):
-                        file = dir + "/" + cands[0]
-                        f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
+    def write_file_output(filename, filehandle=None):
+        out.write('<P>%s:</P>\n' % filename)
+        out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
+        out.write('<PRE style="font-size: smaller;">\n')
+        for line in filehandle:
+            out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
+        out.write('</PRE>\n')
+        out.write('</DIV>')
 
-                if f != None:
-                    out.write('<P>%s:</P>\n' % file)
-                    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-                    out.write('<PRE style="font-size: smaller;">\n')
-                    for line in f:
-                        out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
-                    out.write('</PRE>\n')
-                    out.write('</DIV>')
-                    f.close()
-                else:
-                    # Hmm, there may be yet another variation on the filename.
-                    pass
-        elif (unit_test_failed): # we're not on windows and unit tests failed
-            file = "%s.Rcheck/tests/runTests.Rout.fail" % pkg
-            f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-            if f is None:
-                file = "%s.Rcheck/tests/%s_unit_tests.Rout.fail" % (pkg, pkg)
-                f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-            if f is None:
-                file = "%s.Rcheck/tests/run_tests.Rout.fail" % (pkg)
-                f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-
-            if f is None:
-                file = "%s.Rcheck/tests/test.Rout.fail" % (pkg)
-                f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-            if f is None:
-                file = "%s.Rcheck/tests/testthat.Rout.fail" % (pkg)
-                f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-            if f is None:
-                fullpath = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stagecmd))
-                dir = "%s/%s.Rcheck/tests" % (fullpath.path, pkg)
-                files = os.listdir(dir)
-                cands = filter(lambda x: x.endswith(".Rout.fail"), files)
-                if (len(cands)):
-                    file = dir + "/" + cands[0]
-                    f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
-            if f != None:
-                out.write('<P>%s:</P>\n' % file)
-                out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-                out.write('<PRE style="font-size: smaller;">\n')
-                for line in f:
-                    out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
-                out.write('</PRE>\n')
-                out.write('</DIV>')
-                f.close()
-            else:
-                # Got the filename wrong again. Try another variation.
-                pass
+    if stagecmd == "checksrc" and unit_test_failed: # unit test output
+        fullpath = os.path.join(BBScorevars.central_rdir_path,"nodes", 
+            node_id, stagecmd, pkg + ".Rcheck")
+        for folder, subs, files in os.walk(fullpath):
+            for filename in files:
+                if fnmatch.fnmatch(filename, "*.Rout.fail"):
+                    with open(os.path.join(folder, filename), "r") as fh:
+                        write_file_output(filename, fh)
 
     if stagecmd == "checksrc":
         file = '%s.Rcheck/00install.out' % pkg
@@ -726,7 +658,7 @@ def write_Command_output_to_LeafReport(out, node_hostname,
             out.write('</PRE>\n')
             out.write('</DIV>')
             f.close()
-        files = ['%s.Rcheck/%s-Ex.timings' % (pkg, pkg), 
+        files = ['%s.Rcheck/%s-Ex.timings' % (pkg, pkg),
             '%s.Rcheck/examples_i386/%s-Ex.timings' % (pkg, pkg),
             '%s.Rcheck/examples_x64/%s-Ex.timings' % (pkg, pkg)]
         for file in files:
@@ -823,8 +755,13 @@ def make_node_LeafReports(allpkgs, node):
     return
 
 def make_all_LeafReports(allpkgs):
+    print "Current workding dir '%s'" % os.getcwd()
     for pkg in allpkgs:
-        os.mkdir(pkg)
+        try:
+            os.mkdir(pkg)
+        except:
+            print "mkdir failed in make_all_LeaveReports '%s'" % pkg
+            continue
         leafreport_ref = LeafReportReference(pkg, None, None, None)
         make_PkgReportLandingPage(leafreport_ref, allpkgs)
     for node in BBSreportutils.NODES:

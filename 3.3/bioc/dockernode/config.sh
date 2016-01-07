@@ -43,7 +43,7 @@ export BBS_CENTRAL_BASEURL="http://$BBS_CENTRAL_RHOST/BBS/$BBS_BIOC_VERSION/$BBS
 # BBS_CENTRAL_RHOST machine).
 #
 
-# If you are NOT using a bi-arch builder (i.e. moscato1 or windows2.bioconductor.org) to
+# If you are NOT using a bi-arch builder (i.e. moscato1 or moscato2) to
 # create your Windows build products, the following note applies:
 
 # IMPORTANT NOTE: The win.binary mapping must either include the 2

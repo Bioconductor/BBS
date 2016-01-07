@@ -68,6 +68,8 @@ def writeMeatIndex(pkgs, meat_path):
         out.write('UnsupportedPlatforms: %s\n' % unsupported)
         no_examples = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'NoExamplesOnPlatforms')
         out.write('NoExamplesOnPlatforms: %s\n' % no_examples)
+        force_install = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'ForceInstall')
+        out.write('ForceInstall: %s\n' % force_install)        
         if BBScorevars.mode != "cran":
             alert = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'Alert')
             out.write('Alert: %s\n' % alert)

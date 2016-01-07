@@ -4,6 +4,38 @@
 ### -------------------------------------------------------------------------
 
 
+## If a data/experiment package depends on a software
+## package and nothing else is going to trigger
+## the installation of that software package,
+## (i.e. no other software packages depend on it),
+## then you can manually trigger it by putting
+## ForceInstall: TRUE
+## in the optional .BBSoptions file in the root
+## of the software package's directory. The following
+## function takes the list of target packages and spits out
+## the ones that have this tag, and therefore should
+## be installed no matter what.
+.getPkgsToForceInstall <- function(pkgs)
+{
+    meatDir <- Sys.getenv("BBS_MEAT_PATH")
+
+    shouldBeForceInstalled <- function(pkg)
+    {
+        optionsFile <- file.path(meatDir, pkg, ".BBSoptions")
+        if (!file.exists(optionsFile))
+            return(FALSE)
+        lines <- readLines(optionsFile)
+        idx <- grepl("^ForceInstall:", lines)
+        if (!any(idx))
+            return (FALSE)
+        line <- lines[idx]
+        value = trimws(toupper(strsplit(line, ":")[[1]][2]))
+        return (value == "TRUE")
+    }
+    idx <- unlist(lapply(pkgs, shouldBeForceInstalled))
+    pkgs[idx]
+}
+
 ### Return a character vector containing the *direct* deps for 'pkg' (can
 ### be 'character(0)'), or NULL if 'pkg' is an "unknown" package (i.e. not
 ### available *and* not installed).
@@ -122,6 +154,11 @@ make_STAGE2_pkg_deps_list <- function(target_pkgs_file, outfile="",
                                                 fields="Suggests")
         pkgs <- union(target_pkgs, suggested_pkgs)
     }
+    ## Add in the list of packages that should be
+    ## force-installed no matter what, as indicated
+    ## by the ForceInstall: TRUE tag in
+    ## the .BBSoptions file:
+    pkgs <- unique(c(pkgs, .getPkgsToForceInstall(target_pkgs)))
     STAGE2_pkg_deps_list <- .buildPkgDepsList(pkgs, available_pkgs)
 
     ## Write the package deps list to the output file.

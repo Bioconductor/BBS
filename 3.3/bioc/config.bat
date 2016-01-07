@@ -13,7 +13,7 @@ set BBS_BIOC_MANIFEST_FILE=bioc_3.3.manifest
 set BBS_MEAT0_TYPE=1
 
 @rem Where is it?
-set BBS_MEAT0_RHOST=linux2.bioconductor.org
+set BBS_MEAT0_RHOST=zin2
 set BBS_MEAT0_RUSER=biocbuild
 set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.3-bioc/MEAT0
 

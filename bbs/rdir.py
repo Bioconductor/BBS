@@ -192,7 +192,7 @@ class RemoteDir:
         else:
             # self is a remote dir
             cmd = "%s %s %s" % (self.rsync_rsh_cmd, src_path, self.get_full_remote_path())
-        maxtime = 60.0 + fileutils.total_size(src_path) / bandwidth_in_bytes_per_sec
+        maxtime = 120.0 + fileutils.total_size(src_path) / bandwidth_in_bytes_per_sec
         if verbose:
             if self.host != None:
                 action = "Putting"
