@@ -85,6 +85,16 @@ def getVersionFromDir(pkg_dir):
         raise DcfFieldNotFoundError(desc_file, 'Version')
     return version
 
+def getPackageStatusFromDir(pkg_dir):
+    desc_file = getDescFile(pkg_dir)
+    dcf = open(desc_file, 'r')
+    version = getNextDcfVal(dcf, 'PackageStatus')
+    dcf.close()
+    if version == None:
+        return "OK"
+    return version
+
+
 def _getMaintainerFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
     dcf = open(desc_file, 'r')
