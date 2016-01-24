@@ -54,7 +54,7 @@ def getNextDcfVal(dcf, field, full_line=False):
     p = re.compile(regex)
     val = None
     for line in dcf:
-        if not line.startswith(field):
+        if not line.startswith(field + ":"):
             continue
         m = p.match(line)
         if m:
