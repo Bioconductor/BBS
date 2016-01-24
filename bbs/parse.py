@@ -54,7 +54,7 @@ def getNextDcfVal(dcf, field, full_line=False):
     p = re.compile(regex)
     val = None
     for line in dcf:
-        if not line.startswith(field):
+        if not line.startswith(field + ":"):
             continue
         m = p.match(line)
         if m:
@@ -84,6 +84,16 @@ def getVersionFromDir(pkg_dir):
     if version == None:
         raise DcfFieldNotFoundError(desc_file, 'Version')
     return version
+
+def getPackageStatusFromDir(pkg_dir):
+    desc_file = getDescFile(pkg_dir)
+    dcf = open(desc_file, 'r')
+    version = getNextDcfVal(dcf, 'PackageStatus')
+    dcf.close()
+    if version == None:
+        return "OK"
+    return version
+
 
 def _getMaintainerFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
