@@ -62,10 +62,10 @@ def writeMeatIndex(pkgs, meat_path):
         out.write('Package: %s\n' % pkg)
         out.write('Version: %s\n' % version)
         out.write('Maintainer: %s\n' % maintainer)
-        package_status = bbs.parse.getPackageStatusFromDir(pkgdir_path)
-        out.write('PackageStatus: %s\n' % package_status)
         if BBScorevars.mode != "cran":
             out.write('MaintainerEmail: %s\n' % maintainer_email)
+        package_status = bbs.parse.getPackageStatusFromDir(pkgdir_path)
+        out.write('PackageStatus: %s\n' % package_status)
         unsupported = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'UnsupportedPlatforms')
         out.write('UnsupportedPlatforms: %s\n' % unsupported)
         no_examples = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'NoExamplesOnPlatforms')
