@@ -362,12 +362,19 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             pkgname_html = get_pkgname_asHTML(pkg)
             version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
             maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
+            status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+            if status == "Deprecated":
+                strike = '<s>'
+                strike_close = '</s>'
+            else:
+                strike = ''
+                strike_close = ''
             out.write('<TD ROWSPAN="%d" style="padding-left: 12px; vertical-align: top;">' \
                       % nb_nodes)
             #out.write('<H3>%s</H3>' % pkgname_html)
             #out.write('<H4>%s</H4>' % version)
             #out.write('<B><SPAN style="font-size: larger;">%s</SPAN>&nbsp;%s</B><BR>' % (pkgname_html, version))
-            out.write('<B>%s&nbsp;%s</B>' % (pkgname_html, version))
+            out.write('<B>%s%s%s&nbsp;%s</B>' % (strike, pkgname_html, strike_close, version))
             out.write('<BR>%s' % maintainer)
             if BBSvars.MEAT0_type == 1:
                 out.write('<BR>')
@@ -483,7 +490,14 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('<TD class="header" style="text-align: right;"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left; padding-left: 12px;">')
     version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
-    out.write('<B>%s</B>&nbsp;<B>%s</B>' % (get_pkgname_asHTML(pkg), version))
+    status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+    if status == "Deprecated":
+        strike = "<s>"
+        strike_close = "</s>"
+    else:
+        strike = ""
+        strike_close = ""
+    out.write('%s<B>%s</B>%s&nbsp;<B>%s</B>' % (strike, get_pkgname_asHTML(pkg), strike_close, version))
     out.write('</TD>')
     maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
     out.write('<TD style="text-align: left">%s</TD>' % maintainer)
@@ -1043,6 +1057,9 @@ def write_propagation_glyph_table(out):
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;<IMG border="0" width="10px" height="10px" alt="UNNEEDED" src="120px-Blue_Light_Icon.svg.png"></TD>\n')
     out.write('<TD>UNNEEDED: Package was not propagated because it is already in the repository with this version. A version bump is required in order to propagate it</TD>\n')
+    out.write('</TR>\n')
+    out.write('<TR>\n')
+    out.write('<TD COLSPAN="2">A <s>crossed-out</s> package name indicates the package is <a href="http://bioconductor.org/developers/package-end-of-life/">deprecated</a>.</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
     return
