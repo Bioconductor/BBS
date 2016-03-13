@@ -219,6 +219,7 @@ def getSTAGE2cmd(pkg, version):
             srcpkg_file = pkg + '_' + version + '.tar.gz'
             srcpkg_url = BBScorevars.Central_rdir.url + '/src/contrib/' + \
                          srcpkg_file
+            zipfile = srcpkg_file.replace(".tar.gz", ".zip")
             cmd = 'rm -rf %s.buildbin-libdir' % pkg + ' && ' + \
                   'mkdir %s.buildbin-libdir ' % pkg + ' && ' + \
                   '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \

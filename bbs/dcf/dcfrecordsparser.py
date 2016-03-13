@@ -316,6 +316,18 @@ if __name__ == '__main__':
         res0 = c.getNextDcfVal("C", True)
         assert res0 == "c1", self.m(res0, "c1")
 
+    # def test_long_imports_0(self):
+    #   c = DcfRecordsParser(["Imports: AnnotationDbi, e1071, ggplot2, graphics, grDevices, grid,\n       mvoutlier, org.Hs.eg.db, org.Mm.eg.db, robustbase, stats,\n        topGO, utils"])
+    #   res = c.getNextDcfVal("Imports", True)
+    #   import pdb;pdb.set_trace()
+
+    def test_long_imports_field(self):
+      cc = DcfRecordParser(["Imports: AnnotationDbi, e1071, ggplot2, graphics, grDevices, grid,\n       mvoutlier, org.Hs.eg.db, org.Mm.eg.db, robustbase, stats,\n        topGO, utils"])
+      #c = DcfRecordsParser(["A: a long\n value", "B: b1\n continues"])
+      res = cc.getValue("Imports")
+      import pdb;pdb.set_trace()
+      assert(len(res) > 14)
+
 
   class DcfRecordsParserPerformanceTest():
 
