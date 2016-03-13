@@ -88,7 +88,7 @@ def _noExampleArchs(pkg):
     if "win32" in no_examples:
         archs.append("win32")
     if "win64" in no_examples:
-        archs.append("win32") 
+        archs.append("win32")
     if "linux2" in no_examples:
         archs.append("linux2")
 # see
@@ -219,10 +219,14 @@ def getSTAGE2cmd(pkg, version):
             srcpkg_file = pkg + '_' + version + '.tar.gz'
             srcpkg_url = BBScorevars.Central_rdir.url + '/src/contrib/' + \
                          srcpkg_file
-            cmd = '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
-                  '%s CMD INSTALL --merge-multiarch %s' % \
-                  (BBSvars.r_cmd, srcpkg_file) + ' && ' + \
-                  'rm %s' % srcpkg_file
+            cmd = 'rm -rf %s.buildbin-libdir' % pkg + ' && ' + \
+                  'mkdir %s.buildbin-libdir ' % pkg + ' && ' + \
+                  '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
+                  '%s CMD INSTALL --build --library=%s.buildbin-libdir --merge-multiarch %s' % \
+                  (BBSvars.r_cmd, pkg, srcpkg_file) + ' && ' + \
+                  '%s CMD INSTALL %s ' % (BBSvars.r_cmd,
+                    zipfile)  + ' && ' + \
+                  'rm %s %s' % (srcpkg_file, zipfile)
         else:
             cmd = '%s --arch %s CMD INSTALL --no-multiarch %s' % \
                   (BBSvars.r_cmd, win_archs[0], pkg)
@@ -552,4 +556,3 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.summary.retcode = None
         self.summary.status = 'TIMEOUT'
         self._MakeSummary()
-
