@@ -24,3 +24,4 @@ rm Makeconf.?
 echo "diff Makeconf Makeconf.original"
 diff Makeconf Makeconf.original
 
+exit 0
