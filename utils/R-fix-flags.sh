@@ -20,6 +20,8 @@ cat Makeconf.1 | sed -r "s/^$old_lineC$/$new_lineC/" > Makeconf.0
 cp Makeconf.0 Makeconf
 rm Makeconf.?
 
+set +e # because diff (below) will exit with status code 1
+
 # Show the diff
 echo "diff Makeconf Makeconf.original"
 diff Makeconf Makeconf.original
