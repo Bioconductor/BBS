@@ -647,7 +647,10 @@ def write_Command_output_to_LeafReport(out, node_hostname,
         out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
         out.write('<PRE style="font-size: smaller;">\n')
         for line in filehandle:
-            out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
+            try:
+                out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrus
+            except:
+               out.write(line)
         out.write('</PRE>\n')
         out.write('</DIV>')
 
