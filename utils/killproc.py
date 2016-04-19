@@ -6,11 +6,12 @@
 import psutil
 import datetime
 import os
+import getpass
 from datetime import date, timedelta
 
 now = datetime.datetime.now()
 
-username = "biocbuild"
+username = getpass.getuser()
 
 number_of_hours = 4
 
