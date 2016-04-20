@@ -22,7 +22,7 @@ import BBSbase
 
 
 ##############################################################################
-## 
+##
 ##############################################################################
 
 def remakeCentralRdir(Central_rdir):
@@ -71,7 +71,7 @@ def writeMeatIndex(pkgs, meat_path):
         no_examples = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'NoExamplesOnPlatforms')
         out.write('NoExamplesOnPlatforms: %s\n' % no_examples)
         force_install = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'ForceInstall')
-        out.write('ForceInstall: %s\n' % force_install)        
+        out.write('ForceInstall: %s\n' % force_install)
         if BBScorevars.mode != "cran":
             alert = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'Alert')
             out.write('Alert: %s\n' % alert)
@@ -145,7 +145,7 @@ def snapshotMEAT0(MEAT0_path):
             cmd = update_script
         else:
             svn_cmd = os.environ['BBS_SVN_CMD']
-            cmd = '%s up %s' % (svn_cmd, MEAT0_path)
+            cmd = '%s up --set-depth infinity %s' % (svn_cmd, MEAT0_path)
         print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
         bbs.jobs.doOrDie(cmd)
     return snapshot_date
@@ -319,4 +319,3 @@ if __name__ == "__main__":
         Contrib_rdir = Central_rdir.subdir('src/contrib')
         makeTargetRepo(Contrib_rdir)
         print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
-
