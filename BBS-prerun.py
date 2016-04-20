@@ -145,7 +145,7 @@ def snapshotMEAT0(MEAT0_path):
             cmd = update_script
         else:
             svn_cmd = os.environ['BBS_SVN_CMD']
-            cmd = '%s up --set-depth infinity --username readonly --password readonly %s' % (svn_cmd, MEAT0_path)
+            cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (svn_cmd, MEAT0_path)
         print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
         bbs.jobs.doOrDie(cmd)
     return snapshot_date
