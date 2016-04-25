@@ -49,7 +49,7 @@ cd "$wd0"
 # packages to propagate and to later not be replaced by the bi-arch when
 # the dropped node is back.
 
-export BBS_OUTGOING_MAP="source:zin2/buildsrc win.binary:moscato2/buildbin mac.binary.mavericks:morelia/buildbin"
+export BBS_OUTGOING_MAP="source:zin2/buildsrc win.binary:moscato2/buildbin mac.binary.mavericks:oaxaca/buildbin"
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)
@@ -57,7 +57,7 @@ export BBS_OUTGOING_MAP="source:zin2/buildsrc win.binary:moscato2/buildbin mac.b
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
 
-export BBS_REPORT_NODES="zin2 moscato2:bin morelia:bin"
+export BBS_REPORT_NODES="zin2 moscato2:bin oaxaca:bin"
 #export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
@@ -70,4 +70,3 @@ export BBS_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/che
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
 export BBS_NOTIFY_NODES="zin2"
 export BBS_PUBLISHED_REPORT_URL="http://bioconductor.org/checkResults/$BBS_BIOC_VERSION/bioc-LATEST/"
-
