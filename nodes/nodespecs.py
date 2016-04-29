@@ -26,7 +26,7 @@ allnodes = {
                    "x86_64-linux-gnu",
                    "source",
                   "utf_8"),
-    'zin1':    ("Linux (Ubuntu 14.04.2 LTS)",
+    'zin1':    ("Linux (Ubuntu 16.04 LTS)",
                    "x86_64",
                    "x86_64-linux-gnu",
                    "source",
