@@ -6,8 +6,7 @@
 
 export BBS_MODE="bioc"
 
-# use 3.3 manifest until we branch and create 3.4 manifest
-export BBS_BIOC_MANIFEST_FILE="bioc_3.3.manifest"
+export BBS_BIOC_MANIFEST_FILE="bioc_3.4.manifest"
 
 # What type of meat? Only 2 types are supported:
 #   1: svn repo (contains pkg dirs)

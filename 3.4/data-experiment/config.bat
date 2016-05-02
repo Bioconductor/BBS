@@ -5,8 +5,7 @@
 
 set BBS_MODE=data-experiment
 
-@rem use 3.3 manifest until we branch and create 3.4 manifest
-set BBS_BIOC_MANIFEST_FILE=bioc-data-experiment.3.3.manifest
+set BBS_BIOC_MANIFEST_FILE=bioc-data-experiment.3.4.manifest
 
 @rem What type of meat? Only 2 types are supported:
 @rem   1: svn repo (contains pkg dirs)
