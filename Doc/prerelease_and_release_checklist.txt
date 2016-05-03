@@ -13,7 +13,7 @@ Mac:
 A "clean" machine means, on Windows, no Rtools, LaTeX, etc.
 On Mac it means no Xcode and do not use Simon U's builds, use the one above.
 
-We should test with both the GUI and command-line versions of R. 
+We should test with both the GUI and command-line versions of R.
 One specific thing to test is that the impute, DNAcopy, and NuPoP
 packages can be loaded on a Mac in the R GUI. If they can't, the
 links in the .so files are not being fixed properly.
@@ -29,14 +29,14 @@ One month before the release:
 
  - Think about which machines to use for the new devel.
    Are hardware or OS upgrades required? If so, you'll need more time.
-   If you are going to use the same machine(s) for new devel as you 
+   If you are going to use the same machine(s) for new devel as you
    used for old release, stop old release builds several weeks
    before the release date, to give you enough time to set up
    the machine(s) for new devel builds. The date that
    old release builds are stopped should go in the release
    schedule.
 
-- Think about changing BiocInstaller and the 
+- Think about changing BiocInstaller and the
   /developers/howto/useDevel web page. Update the man
   page for useDevel() accordingly, correcting R/Bioc version
   numbers and noting whether an R upgrade is required
@@ -48,21 +48,21 @@ A few days before the new release:
   repository
 
 - Remove from the manifest of the to-be-released version of BioC all packages
-  which were deprecated in a previous release 
-  cycle (grep -i deprecated */R/zzz.R). 
+  which were deprecated in a previous release
+  cycle (grep -i deprecated */R/zzz.R).
 
 - Stop the old release builds.
 - IMPORTANT: After stopping release builds, on all Mac build machines, point
-  the "Current" symlink in /Library/Frameworks/R.framework/Versions to the 
+  the "Current" symlink in /Library/Frameworks/R.framework/Versions to the
   new DEVEL version of R. Otherwise we will be producing broken binaries!
-  (Not applicable if only one build is running on each Mac machine, as should 
-  be the case from BioC 2.9 onward; but we do want to make sure that there is 
+  (Not applicable if only one build is running on each Mac machine, as should
+  be the case from BioC 2.9 onward; but we do want to make sure that there is
   only ever one version of R installed on these Mac build machines.)
 
   Also, after stopping release builds, you'll disable commits to the release
   branch. But make sure that the 'anon' user can still read from this branch.
   The website build process depends on this!
-  
+
 - Until the next devel builds are running, we want symlinks pointing to the old
   devel builds so that the BiocInstaller package will work.
   This includes the software, data/annotation, and data/experment repositories.
@@ -83,7 +83,7 @@ A few days before the new release:
 - Setup the next devel builds + repositories
    - A minor thing (as a reminder) - make sure that the R
      that runs as biocadmin has the 'knitcitations' package
-     installed. 
+     installed.
 
 - Install the latest biocViews from svn into the R on merlot2
   (in /home/biocadmin/bin/R), so that it will be using the latest biocViews
@@ -91,7 +91,7 @@ A few days before the new release:
 
 - Also install the latest biocViews into the R on the master builder
   (for the version about to be released) in the 'biocadmin' account.
- 
+
 The day before we branch (D-2):
 
 - Create new manifest file. If "new" devel builds have started,
@@ -111,13 +111,13 @@ The day we branch (D-1):
 - Note that we now (as from 12/13) want to branch and bump
   experiment data packages in the same way as software packages
   so note that **THE STEPS BELOW SHOULD APPLY TO BOTH
-  SOFTWARE AND EXPERIMENT DATA PACKAGES**. 
- 
+  SOFTWARE AND EXPERIMENT DATA PACKAGES**.
+
   NOTE: Just to be explicit, we bump experiment data packages
   **EXACTLY** the same way as software packages. That is, we bump
   y to the next even number in release and to the next odd
   number in devel. For a while we were doing it a different
-  way but no longer. Make sure you do it the same way 
+  way but no longer. Make sure you do it the same way
   as the software packages!
 
   One thing that must
@@ -144,8 +144,7 @@ The day we branch (D-1):
 - Make the release builds extract the meat from the new branch in svn.
 
 - In trunk, change R/zzz.R of the BiocInstaller package to indicate new
-  BioC version number and next R-devel version number. In release branch,
-  change R/zzz.R of BiocInstaller as appropriate.
+  BioC version number.
 
 - Change DESCRIPTION file of BiocInstaller to depend on latest devel
   version of R (if that is appropriate).
@@ -157,7 +156,7 @@ The day we branch (D-1):
 
 On release day (D):
 
-- UPDATE the /etc/rsyncd.conf on master.bioconductor.org. The mirroring instructions 
+- UPDATE the /etc/rsyncd.conf on master.bioconductor.org. The mirroring instructions
  on the website will be updated automatically in the following steps.
 
 - Update config.yaml in the root of the bioconductor.org working copy
@@ -180,9 +179,9 @@ On release day (D):
   date at the top of the web version of the release
   announcement.
 
-- Update build times mentioned on web page 
+- Update build times mentioned on web page
   /developers/how-to/source-control/
-  
+
 - Update the useDevel page as appropriate:
   /developers/how-to/useDevel
 
@@ -190,10 +189,10 @@ On release day (D):
   (layouts/_bioc_older_packages.html). **DON'T FORGET THIS!**
 
 - Add new AMI to /help/cloud and /help/bioconductor-cloud-ami/
-  (use AMI placeholder from config.yaml) Update CloudFormation 
+  (use AMI placeholder from config.yaml) Update CloudFormation
   stacks so that the newly released version is the default.
 
-- Link to release announcement on main index page. 
+- Link to release announcement on main index page.
   ?? Do we still do this?? Or is tweeting sufficient?
 
 - Update number of packages on main index page.
@@ -204,6 +203,10 @@ On release day (D):
 
 - Update post-commit hook script extra/svndata/gentleman/svnroot/bioconductor/hooks/post-commit
   on hedgehog, changing to the new devel version, search for CHANGEME.
+
+- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller
+  to change relevant variables. This will automatically push
+  soon after being committed.
 
 - Announce the release.
 
@@ -217,13 +220,13 @@ On release day (D):
   to indicate the packages that were removed with this release.
   Link to the last-good landing page of each package.
 
-- Modify the script 
+- Modify the script
 svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
   Change below where it says "CHANGE THE VALUE IN THE NEXT LINE".
   This causes an rss feed to be generated for the release branch.
 
 - Modify BiocInstaller for the newly obsolete branch (the one before the one
-  that was created yesterday, and change END_OF_LIFE to TRUE, 
+  that was created yesterday, and change END_OF_LIFE to TRUE,
   bump version, then push it out
   for all platforms since builds have stopped. (?)
 
@@ -233,7 +236,7 @@ svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
   make sure the appropriate version is installed. Of course, do the same
   with release.  ** really do this! with R-devel too if appropriate! **
 
-- Make sure that the BiocInstaller package is manually pushed out 
+- Make sure that the BiocInstaller package is manually pushed out
   to the new devel repos. It has to be manually pushed out because
   otherwise it will fail its unit test because it is testing to make
   sure that BiocInstaller is in the devel repos. A chicken-and-egg situation.
