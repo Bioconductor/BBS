@@ -237,6 +237,9 @@ svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
   that was created yesterday, and change END_OF_LIFE to TRUE,
   bump version, then push it out
   for all platforms since builds have stopped. (?)
+  Should not need to do this after 5/2016, since the flag is now
+  set in a file that is online (BiocInstaller.dcf in inst/scripts
+  of the BiocInstaller package). 
 
 
 - Sanity check: Was biocLite.R updated properly? With a fresh R devel
