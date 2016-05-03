@@ -154,6 +154,14 @@ The day we branch (D-1):
   Verify that there are no <NA>s in output. Collate package descriptions
   with biocViews:::getPackageDescriptions().
 
+- Set up git mirrors (if they still exist?) with the new branch.
+  read https://github.com/Bioconductor/mirror/blob/master/README.md#release-workflow
+  Alternatively try (untested):
+
+    update_git.py --type branches/RELEASE_3_3 --search-revision 123456 package_directories*
+
+The benefit of the latter is specifying a search revision close to the branch point saves having to search from the beginning of the SVN history, so it takes less time. They both end up running basically the same commands so in the end either way should get you the same result.
+
 On release day (D):
 
 - UPDATE the /etc/rsyncd.conf on master.bioconductor.org. The mirroring instructions
