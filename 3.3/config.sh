@@ -36,7 +36,6 @@ export BBS_CENTRAL_BASEURL="http://zin2/BBS/$BBS_BIOC_VERSIONED_REPO_PATH"
 # 'R CMD check' variables
 # -----------------------
 
-export _R_CHECK_TIMINGS_="0"
+#export _R_CHECK_TIMINGS_="0"
 export _R_CHECK_EXECUTABLES_=false
 export _R_CHECK_EXECUTABLES_EXCLUSIONS_=false
-

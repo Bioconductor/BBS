@@ -37,7 +37,6 @@ set BBS_CENTRAL_BASEURL=http://zin2/BBS/%BBS_BIOC_VERSIONED_REPO_PATH%
 @rem 'R CMD check' variables
 @rem -----------------------
 
-set _R_CHECK_TIMINGS_=0
+@rem set _R_CHECK_TIMINGS_=0
 set _R_CHECK_EXECUTABLES_=false
 set _R_CHECK_EXECUTABLES_EXCLUSIONS_=false
-
