@@ -5,23 +5,23 @@
 if(!requireNamespace("BiocInstaller", quietly=TRUE))
     stop("BiocInstaller not installed!")
 
-if(!requireNamespace("devtools", quietly=TRUE))
-    biocLite("devtools")
+reqs <- c("devtools", "BiocParallel", "BatchJobs", "httr", "jsonLite", "R.utils")
+lapply(reqs, function(x){
+    if(!requireNamespace(x, quietly=TRUE))
+    {
+        biocLite(x)
+        requireNamespace(x)
+    }
+})
+
 
 if (!requireNamespace("covr", quietly=TRUE))
+{
     devtools::install_github("jimhester/covr")
+    requireNamespace("covr")
+}
 
-if (!requireNamespace("BiocParallel", quietly=TRUE))
-    biocLite("BiocParallel")
-
-if (!requireNamespace("BatchJobs", quietly=TRUE))
-    biocLite("BatchJobs")
-
-if (!requireNamespace("httr", quietly=TRUE))
-    biocLite("httr")
-
-if (!requireNamespace("jsonlite", quietly=TRUE))
-    biocLite("jsonlite")
+TIMEOUT <- 2400 # 40 minutes
 
 
 #if (!file.exists("/tmp/cclogdir"))
@@ -152,7 +152,8 @@ upload_coverage <- function(cov, svninfo)
 
 getCoverage <- function(package, force=FALSE)
 {
-    tryCatch(getCoverage0(package, force), error=function(e)e)
+    tryCatch(evalWithTimeout(getCoverage0(package, force), timeout=TIMEOUT),
+        TimeoutException=function(ex) "TimedOut", error=function(e)e)
 }
 
 getCoverage0 <- function(package, force=FALSE)
