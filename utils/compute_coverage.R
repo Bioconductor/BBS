@@ -7,10 +7,10 @@ if(!require("BiocInstaller", quietly=TRUE))
 
 reqs <- c("devtools", "BiocParallel", "BatchJobs", "httr", "jsonLite", "R.utils")
 lapply(reqs, function(x){
-    if(!require(x, quietly=TRUE))
+    if(!do.call(require, list(package=x, quietly=TRUE)))
     {
         biocLite(x)
-        do.call(require, list(package=x))
+        do.call(require, list(package=x, quietly=TRUE))
     }
 })
 
