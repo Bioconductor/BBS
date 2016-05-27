@@ -131,7 +131,7 @@ getGitCommitId <- function(package, svn_rev)
 }
 
 # Call me like this:
-# lapply(covs, upload_coverage, svninfo=svninfo) 
+# lapply(covs, upload_coverage, svninfo=svninfo)
 upload_coverage <- function(cov, svninfo)
 {
     pkg <- attr(cov, "package")$package
@@ -151,6 +151,11 @@ upload_coverage <- function(cov, svninfo)
 }
 
 getCoverage <- function(package, force=FALSE)
+{
+    tryCatch(getCoverage0(package, force), error=function(e)e)
+}
+
+getCoverage0 <- function(package, force=FALSE)
 {
     if(!file.exists(file.path(package, "tests")))
         return(NULL)
@@ -173,7 +178,7 @@ getCoverage <- function(package, force=FALSE)
         flog.info(msg)
         cat(svninfo[[package]], file=file.path(svncachedir, package))
     }
-    ret 
+    ret
 }
 
 
@@ -200,7 +205,6 @@ names(packages) <- packages
 
 param <- MulticoreParam(5, timeout=900)#, log=TRUE)
 
-res <- bplapply(packages, getCoverage, BPPARAM=param)
+# res <- bplapply(packages, getCoverage, BPPARAM=param)
+res <- lapply(packages, getCoverage)
 save(res, file="/tmp/res.rda")
-
- 
