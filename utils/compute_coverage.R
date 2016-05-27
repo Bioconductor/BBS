@@ -2,7 +2,7 @@
 ## to running this, so that environment variables are set correctly.
 ## ALSO, be sure X11 (Xvfb) is running.
 
-if(!requireNamespace("BiocInstaller", quietly=TRUE))
+if(!require("BiocInstaller", quietly=TRUE))
     stop("BiocInstaller not installed!")
 
 reqs <- c("devtools", "BiocParallel", "BatchJobs", "httr", "jsonLite", "R.utils")
@@ -10,7 +10,7 @@ lapply(reqs, function(x){
     if(!requireNamespace(x, quietly=TRUE))
     {
         biocLite(x)
-        requireNamespace(x)
+        require(x)
     }
 })
 
@@ -18,7 +18,7 @@ lapply(reqs, function(x){
 if (!requireNamespace("covr", quietly=TRUE))
 {
     devtools::install_github("jimhester/covr")
-    requireNamespace("covr")
+    require("covr")
 }
 
 TIMEOUT <- 2400 # 40 minutes
