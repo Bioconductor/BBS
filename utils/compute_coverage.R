@@ -10,7 +10,7 @@ lapply(reqs, function(x){
     if(!require(x, quietly=TRUE))
     {
         biocLite(x)
-        require(x)
+        do.call(require, list(package=x))
     }
 })
 
