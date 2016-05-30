@@ -17,6 +17,7 @@ import subprocess
 import signal
 import datetime
 if sys.platform == "win32":
+    import psutil
     import win32api
     from win32com.client import GetObject
     for i in range(10):
@@ -161,47 +162,36 @@ def killProc(pid):
         # in cmd keeps running in the background!
         os.kill(pid, signal.SIGKILL)
         return
-    # From Python Cookbook:
-    #   http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/347462
-    #win32api.TerminateProcess(int(proc._handle), -1)
-    # but it doesn't work because it only kills the "cmd.exe" process
-    # but not its child (the command passed in the cmd arg of Popen()).
-    # Alternative to the above command (modified version of a
-    # solution posted on the above web page, "/T" stands for tree
-    # so it kills pid + all childs):
-    #os.popen('TASKKILL /F /PID %d /T' % pid)
-    # The above command proved not to be 100% reliable on gewurz either
-    # (64-bit Windows Server 2008 R2 Enterprise), so let's try the
-    # following:
-    subprocs = listSubprocs(pid)
-    if subprocs == None:
-        return  # pid just vanished ==> nothing to do
-    cmd = 'TASKKILL /F /PID %d /T' % pid
-    retcode = subprocess.call(cmd, stderr=subprocess.STDOUT)
-    print "BBS>   NOTE: %s returned code %d" % (cmd, retcode)
-    all_PIDs = getAllActivePIDs()
-    for proc2 in subprocs:
-        pid2 = proc2.ProcessID
-        if not pid2 in all_PIDs:
-            continue
-        print "BBS>   NOTE: %s failed to kill subprocess %d (%s)." \
-              % (cmd, pid2, proc2.Name)
-        printProcProperties(proc2)
-        cmd2 = 'TASKKILL /F /PID %d' % pid2
-        for i in range(5):
-            print "BBS>     Now trying with %s ..." % cmd2,
-            retcode2 = subprocess.call(cmd2, stderr=subprocess.STDOUT)
-            print "(returned code %d)" % retcode2,
-            if getProcByPID(pid2) == None:
-                print "OK"
-                break
-            print "FAILED!"
-            if i >= 4:
-                print "BBS>     Giving up (after 5 tries)."
-                break
-            print "BBS>     Will try again in 10 seconds."
-            sleep(10)
-    return
+    # For now, on windows, try using the psutil module to kill a process
+    # and its children recursively, because we have been having
+    # trouble using TASKKILL to do this. Eventually consider replacing
+    # all the process-related code in this file with psutil.
+    # Of course, the build machines must have this module installed
+    # (it's not installed by default).
+    # Note that the kill() method preemptively checks to see if the PID
+    # has been reused, protecting against killing a different
+    # process than the one you wanted to kill. See
+    # https://pythonhosted.org/psutil/#psutil.Process.kill
+    try:
+        proc = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        print "BBS>     No such process %s."  % pid
+        return
+    except TypeError:
+        sys.exit("BBS>     pid must be an integer! (got %s)" % pid)
+    children = proc.children(True) # recursive list of child procs
+    try:
+        print("BBS>     killing %s" % pid)
+        proc.kill()
+    except psutil.NoSuchProcess:
+        print "BBS>     process %s does not exist." % pid
+    for child in children:
+        try:
+            childproc = psutil.Process(child.pid)
+            print("BBS>       killing child %s" % child.pid)
+            childproc.kill()
+        except psutil.NoSuchProcess:
+            print "BBS>     Child process %s does not exist." % child.pid
 
 ### What if cmd is not found, can't be started or crashes?
 def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
@@ -597,4 +587,3 @@ def currentDateString():
 
 if __name__ == "__main__":
     sys.exit("ERROR: this Python module can't be used as a standalone script yet")
-
