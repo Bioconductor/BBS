@@ -486,6 +486,12 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
             self.summary.status = 'ERROR'
             cumul_inc = 0
         self._MakeSummary()
+        # Avoid leaving rogue processes messing around on the build machine.
+        # self._proc.pid should be dead already but maybe some of its children
+        # are still alive. bbs.jobs.killProc() should work on a non-existing
+        # pid and it should be able to kill all the processes that were started
+        # directly or indirectly by pid.
+        bbs.jobs.killProc(self._proc.pid)
         return cumul_inc
     def AfterTimeout(self, maxtime_per_job):
         self.summary.retcode = None
@@ -552,6 +558,12 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
             self.summary.status = 'ERROR'
             cumul_inc = 0
         self._MakeSummary()
+        # Avoid leaving rogue processes messing around on the build machine.
+        # self._proc.pid should be dead already but maybe some of its children
+        # are still alive. bbs.jobs.killProc() should work on a non-existing
+        # pid and it should be able to kill all the processes that were started
+        # directly or indirectly by pid.
+        bbs.jobs.killProc(self._proc.pid)
         return cumul_inc
     def AfterTimeout(self, maxtime_per_job):
         self.summary.retcode = None
