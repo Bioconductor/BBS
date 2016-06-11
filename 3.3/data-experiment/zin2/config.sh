@@ -30,7 +30,7 @@ cd "$wd0"
 # Needed only on the node performing stage6 (must be run on the
 # BBS_CENTRAL_RHOST machine).
 
-export BBS_OUTGOING_MAP="source:zin2/buildsrc win.binary:moscato2/buildbin mac.binary:morelia/buildbin"
+export BBS_OUTGOING_MAP="source:zin2/buildsrc win.binary:moscato2/buildbin"
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)
@@ -38,8 +38,7 @@ export BBS_OUTGOING_MAP="source:zin2/buildsrc win.binary:moscato2/buildbin mac.b
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
 
-# FIXME add morelia:bin
-export BBS_REPORT_NODES="zin2 moscato2:bin morelia:bin"
+export BBS_REPORT_NODES="zin2 moscato2:bin"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b-green2.png"
