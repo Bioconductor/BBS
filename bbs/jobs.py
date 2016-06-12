@@ -160,7 +160,14 @@ def killProc(pid):
     if sys.platform != "win32":
         # On Solaris, this kills only the shell, but the command passed
         # in cmd keeps running in the background!
-        os.kill(pid, signal.SIGKILL)
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except OSError as e:
+            if e.errno == 3:
+                print("BBS>   No such process: %s" % pid)
+            else:
+                print("BBS>   Error %s killing process %s" % (e.errno, pid))
+            return
         return
     # For now, on windows, try using the psutil module to kill a process
     # and its children recursively, because we have been having
