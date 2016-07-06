@@ -363,7 +363,7 @@ class PkgDumps:
                 bbs.fileutils.touch(self.MISSING_file)
                 to_push = [self.MISSING_file]
         to_push += [self.out_file, self.summary_file]
-        rdir.Mput(to_push, True)
+        rdir.Mput(to_push, False, True)
         return
 
 
@@ -477,6 +477,16 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.summary.Write(self.pkgdumps.summary_file)
         self.pkgdumps.Push(self.rdir)
     def AfterRun(self):
+        # Avoid leaving rogue processes messing around on the build machine.
+        # self._proc.pid should be already dead but some of its children might
+        # still be alive. They need to die too. bbs.jobs.killProc() should work
+        # on a non-existing pid and it should be able to kill all the processes
+        # that were started directly or indirectly by pid.
+        # This needs to happen before calling self._MakeSummary() because
+        # these rogue processes can break the rsync command used by
+        # self.pkgdumps.Push(self.rdir) above by holding on some of the files
+        # that need to be pushed to the central build node.
+        bbs.jobs.killProc(self._proc.pid)
         self.summary.retcode = self._retcode
         pkg_file = self.pkgdumps.product_path
         if os.path.exists(pkg_file) and self._retcode == 0:
@@ -486,12 +496,6 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
             self.summary.status = 'ERROR'
             cumul_inc = 0
         self._MakeSummary()
-        # Avoid leaving rogue processes messing around on the build machine.
-        # self._proc.pid should be dead already but maybe some of its children
-        # are still alive. bbs.jobs.killProc() should work on a non-existing
-        # pid and it should be able to kill all the processes that were started
-        # directly or indirectly by pid.
-        bbs.jobs.killProc(self._proc.pid)
         return cumul_inc
     def AfterTimeout(self, maxtime_per_job):
         self.summary.retcode = None
@@ -544,8 +548,18 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         ## packages are not available)
 	#NOT NEEDED (see above).
         #if os.path.exists(self.install_out):
-        #    self.rdir.Put(self.install_out, True)
+        #    self.rdir.Put(self.install_out, True, True)
     def AfterRun(self):
+        # Avoid leaving rogue processes messing around on the build machine.
+        # self._proc.pid should be already dead but some of its children might
+        # still be alive. They need to die too. bbs.jobs.killProc() should work
+        # on a non-existing pid and it should be able to kill all the processes
+        # that were started directly or indirectly by pid.
+        # This needs to happen before calling self._MakeSummary() because
+        # these rogue processes can break the rsync command used by
+        # self.pkgdumps.Push(self.rdir) above by holding on some of the files
+        # that need to be pushed to the central build node.
+        bbs.jobs.killProc(self._proc.pid)
         self.summary.retcode = self._retcode
         if self._retcode == 0:
             self.warnings = bbs.parse.countWARNINGs(self._output_file)
@@ -558,12 +572,6 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
             self.summary.status = 'ERROR'
             cumul_inc = 0
         self._MakeSummary()
-        # Avoid leaving rogue processes messing around on the build machine.
-        # self._proc.pid should be dead already but maybe some of its children
-        # are still alive. bbs.jobs.killProc() should work on a non-existing
-        # pid and it should be able to kill all the processes that were started
-        # directly or indirectly by pid.
-        bbs.jobs.killProc(self._proc.pid)
         return cumul_inc
     def AfterTimeout(self, maxtime_per_job):
         self.summary.retcode = None

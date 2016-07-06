@@ -87,7 +87,7 @@ def writeMeatIndex(pkgs, meat_path):
 
 def writeAndUploadMeatIndex(pkgs, meat_path):
     meat_index_path = writeMeatIndex(pkgs, meat_path)
-    BBScorevars.Central_rdir.Put(meat_index_path, True)
+    BBScorevars.Central_rdir.Put(meat_index_path, True, True)
     return
 
 def writeAndUploadSvnInfo(snapshot_date):
@@ -113,7 +113,7 @@ def writeAndUploadSvnInfo(snapshot_date):
         cmd = '%s info %s >%s' % (svn_cmd, pkgdir_path, svninfo_file)
         bbs.jobs.doOrDie(cmd)
     update_svnlog()
-    BBScorevars.Central_rdir.Put(svninfo_dir, True)
+    BBScorevars.Central_rdir.Put(svninfo_dir, True, True)
     return
 
 def update_svnlog():
@@ -203,7 +203,7 @@ def MakeReposPACKAGES(rdir):
     cmdTemplate += '| %s --slave'
     cmdStr = cmdTemplate % BBSvars.r_cmd
     bbs.jobs.doOrDie(cmdStr)
-    rdir.Put('PACKAGES', True)
+    rdir.Put('PACKAGES', True, True)
     return
 
 

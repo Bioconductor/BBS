@@ -273,14 +273,17 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
         out.close()
     return retcode
 
-def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.0, verbose=False):
+def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.0, failure_is_fatal=True, verbose=False):
     for i in range(nb_attempts):
         retcode = runJob(cmd, stdout, maxtime, verbose)
         if retcode == 0:
-            return
+            return 0
         sleep(sleeptime)
-    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sys.exit("%d failed attempts => EXIT at %s." % (nb_attempts, now))
+    if failure_is_fatal:
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        sys.exit("%d failed attempts => EXIT at %s." % (nb_attempts, now))
+    print "%d failed attempts => never mind, let's keep going..." % nb_attempts
+    return retcode
 
 ### Objects passed to the processJobQueue() function must be QueuedJob objects.
 ### The QueuedJob class contains the strictly minimal stuff needed by the

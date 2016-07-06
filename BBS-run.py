@@ -92,7 +92,7 @@ def updateNodeInfo():
     writeSysCommandVersion('FC')
     print "BBS>   cd BBS_WORK_TOPDIR"
     os.chdir(BBSvars.work_topdir)
-    BBSvars.Node_rdir.Put(NodeInfo_subdir, True)
+    BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
     return
 
 
@@ -109,7 +109,7 @@ def writeEndOfRunTicket(ticket):
     for t in ticket:
         f.write("%s | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n" % t)
     f.close()
-    BBSvars.Node_rdir.Put(file_path, True)
+    BBSvars.Node_rdir.Put(file_path, True, True)
     print "BBS> END making BBS_EndOfRun.txt Ticket."
     return
 
