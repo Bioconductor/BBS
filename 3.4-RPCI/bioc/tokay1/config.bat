@@ -1,32 +1,32 @@
-@rem =====================
-@rem Settings for moscato1
-@rem =====================
+@rem ===================
+@rem Settings for tokay1
+@rem ===================
 
 
 set BBS_DEBUG=0
 
-set BBS_NODE_HOSTNAME=moscato1
+set BBS_NODE_HOSTNAME=tokay1
 set BBS_USER=biocbuild
-set BBS_RSAKEY=D:\biocbld\.BBS\id_rsa
-set BBS_WORK_TOPDIR=D:\biocbld\bbs-3.4-bioc
+set BBS_RSAKEY=C:\Users\biocbuild\.BBS\id_rsa
+set BBS_WORK_TOPDIR=C:\Users\biocbuild\bbs-3.4-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
-set BBS_NB_CPU=12
+set BBS_NB_CPU=20
 
 set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
 set RCYTOSCAPE_PORT_OVERRIDE=3023
-set RCYTOSCAPE_HOST_OVERRIDE=taipan
+set RCYTOSCAPE_HOST_OVERRIDE=taipan.fhcrc.org
 set RCYTOSCAPE3_PORT_OVERRIDE=3024
-set RCYTOSCAPE3_HOST_OVERRIDE=taipan
+set RCYTOSCAPE3_HOST_OVERRIDE=taipan.fhcrc.org
 
 set RCYTOSCAPE_PORT_OVERRIDE_64=8064
-set RCYTOSCAPE_HOST_OVERRIDE_64=taipan
+set RCYTOSCAPE_HOST_OVERRIDE_64=taipan.fhcrc.org
 set RCYTOSCAPE3_PORT_OVERRIDE_64=8065
-set RCYTOSCAPE3_HOST_OVERRIDE_64=taipan
+set RCYTOSCAPE3_HOST_OVERRIDE_64=taipan.fhcrc.org
 
-set GENE_E_URL=http://taipan:9998
+set GENE_E_URL=http://taipan.fhcrc.org:9998
 
 rem graphviz settings
 set GRAPHVIZ_INSTALL_DIR_I386=c:/graphviz/i386
@@ -38,7 +38,6 @@ set GRAPHVIZ_INSTALL_DIR_X64=c:/graphviz/x64
 set GRAPHVIZ_INSTALL_MAJOR_X64=2
 set GRAPHVIZ_INSTALL_MINOR_X64=25
 set GRAPHVIZ_INSTALL_SUBMINOR_X64=20090912.0445
-
 
 
 
