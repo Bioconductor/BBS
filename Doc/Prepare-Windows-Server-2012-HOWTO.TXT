@@ -1,6 +1,10 @@
 ===============================================================================
-From the Administrator account
+Things to install to have the builds up and running
 -------------------------------------------------------------------------------
+
+
+From the Administrator account
+------------------------------
 
 ** Install Google Chrome
 
@@ -42,15 +46,15 @@ should be done from the Administrator account.
 
   Username: mtmorgan
   Full name: Martin Morgan
-  Password: bui11Dyt
+  Password: bui11Dit
 
   Username: hpages
   Full name: Hervé Pagès
-  Password: bui11Dyt
+  Password: bui11Dit
   
   Username: aoles
   Full name: Andrzej Oleś
-  Password: bui11Dyt
+  Password: bui11Dit
 
   For all these accounts:
     [x] User must change password at next logon
@@ -61,12 +65,12 @@ should be done from the Administrator account.
   Then make these users members of the Administrators group.
 
 From now on, all administrative tasks should be performed from one of the
-personal accounts.
+personal accounts instead of the Administrator account.
 
 ** Create the biocbuild account:
 
   Username: biocbuild
-  Password: bui11Dyt
+  Password: bui11Dit
 
   For this account:
     [ ] User must change password at next logon
@@ -74,11 +78,22 @@ personal accounts.
     [x] Password never expires
     [ ] Account is disabled
 
-  Then make this user member of the Remote Desktop Users group.
+** Make the biocbuild user member of the Remote Desktop Users group.
 
-===============================================================================
-From a personal account
--------------------------------------------------------------------------------
+** Grant the biocbuild user "Log on as batch job" rights
+
+  (This is needed in order to define scheduled tasks run by the biocbuild
+  user.)
+
+  Go in Local Security Policy
+  -> Local Policies
+     -> User Rights Assignment
+  In the right pane, right-click on 'Log on as a batch job' -> Properties
+  Add biocbuild user
+
+
+From a personal administrator account
+-------------------------------------
 
 ** Install MiKTeX
 
@@ -105,7 +120,7 @@ From a personal account
 
   To edit an environment variable:
 
-    Windows start menu -> This PC -> right click on This PC -> Properties
+    Windows start menu -> This PC -> right-click on This PC -> Properties
     -> Advanced system settings -> Environment Variables... 
 
   Test by opening a PowerShell window and try to run ssh, rsync, or curl in
@@ -133,10 +148,156 @@ From a personal account
     rsync       (will crash if 64-bit Cygwin was installed instead of 32-bit)
     which gcc   (should show /cygdrive/c/Rtools/mingw_32/bin/gcc)
 
-** Install the Subversion client
+** Install git client for Windows
+
+  Available at https://git-scm.com/download/win
+  Keep all the default settings when running the installer.
+
+  Test by opening a PowerShell window and try to run 'git --version'
+
+** [OPTIONAL] Install TortoiseSVN (Subversion client for Windows)
+
+  Just a convenience for checking out some individual BioC packages for
+  troubleshooting.
+
+  Available at https://tortoisesvn.net/
+  Choose 64-bit version
+  When running the installer, make sure the command line clients tools are
+  selected (by default they're NOT -- choose 'Entire feature will be installed
+  on local hard drive').
+
+  Test by opening a PowerShell window and try to run 'svn --version'
+
+
+From the biocbuild account
+--------------------------
+
+In a PowerShell window:
+
+** From C:\Users\biocbuild, create the .BBS/id_rsa file:
+
+  - mkdir .BBS
+  - cd .BBS
+  - Use vi (included in Cygwin) to create the id_rsa file (copy/paste its
+    content from another Windows builder e.g. moscato1)
+  - chmod 400 id_rsa
+
+** Try to ssh to central node e.g.
+
+  From C:\Users\biocbuild:
+
+    ssh -i .BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
+
+  If malbec1 not in DNS, replace with 172.29.0.3
+
+** From C:\Users\biocbuild, create and populate the bbs-3.4-bioc subfolder:
+
+  - mkdir bbs-3.4-bioc
+  - cd bbs-3.4-bioc
+  - mkdir log
+  - mkdir NodeInfo
+  - chmod 755 NodeInfo
+  - mkdir tmp
+  - mkdir tmpdir
+
+** Install R in C:\Users\biocbuild\bbs-3.4-bioc (use CRAN binary that matches
+  BioC devel). When running the installer:
+
+  - Select destination location C:\Users\biocbuild\bbs-3.4-bioc\R
+  - Don't create a Start Menu Folder
+  - Don't create a desktop icon
+
+** Edit R\etc\i386\Makeconf, R\etc\x64\Makeconf, and R\etc\Rprofile.site:
+
+  (Without this, compilation of zlibbioc will fail)
+
+  From C:\Users\biocbuild\bbs-3.4-bioc:
+
+  - cd R\etc\i386
+  - cp Makeconf Makeconf.original
+  - vi Makeconf
+      replace
+        BINPREF ?= c:/Rtools/mingw_32/bin/
+      with
+        BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+
+  - cd ..\x64
+  - cp Makeconf Makeconf.original
+  - vi Makeconf
+      replace
+        BINPREF ?= c:/Rtools/mingw_64/bin/
+      with
+        BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+
+  - cd ..
+  - cp Rprofile.site Rprofile.site.original
+  - vi Rprofile.site
+      add the following line at bottom
+        Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
+
+** Switch to devel mode (for devel build only)
+
+  Start R (with R/bin/R from C:\Users\biocbuild), install BiocInstaller and
+  switch to devel mode with:
+
+    source("https://bioconductor.org/biocLite.R")
+    useDevel()
+
+  Quit R (do NOT save the workspace image)
+
+** Test package installation/compilation
+
+  Start R and try to install/compile IRanges, Biobase, and zlibbioc with:
+
+    library(BiocInstaller)
+    biocLite("IRanges", type="source")
+    biocLite("Biobase", type="source")
+    biocLite("zlibbioc", type="source")
+
+  Quit R (do NOT save the workspace image)
+
+** From C:\Users\biocbuild:
+
+  git clone https://github.com/Bioconductor/BBS
+
+
+From a personal administrator account
+-------------------------------------
+
+** Add nightly builds to Task Scheduler
+
+  Open Task Scheduler
+  In the right pane (Actions) click on Enable All Tasks History
+  In the left pane create new BBS folder next to Microsoft folder
+  Right-click on the BBS folder -> choose Create Task
+  - Tab General:
+      Name: bbs-3.4-bioc
+      In Security options:
+        Use TOKAY1\biocbuild account to run the task
+        Run whether user is logged on or not
+      Configure for Windows Server 2012 R2
+  - Tab Triggers:
+      New Trigger
+      Begin the task on a schedule
+      In Settings:
+        Daily - At 7:55 PM - Recur every 1 day
+      In Advanced Settings:
+        nothing should be checked except 'Enabled'
+  - Tab Actions:
+      New Action
+      Action: Start a program
+      In Settings:
+        Program/script: C:\Users\biocbuild\BBS\3.4-RPCI\bioc\tokay1\run.bat
+        Add arguments: >> C:\Users\biocbuild\bbs-3.4-bioc\log\tokay1.log 2>&1
+        Start in: C:\Users\biocbuild\BBS\3.4-RPCI\bioc\tokay1
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand'
+
 
 ===============================================================================
-From the biocbuild account
+Additional things to install to accomodate packages with special needs
 -------------------------------------------------------------------------------
 
 
