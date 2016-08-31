@@ -103,7 +103,17 @@ From a personal administrator account
   - Preferred paper: Letter
   - Install missing packages on-the-fly: Yes
 
-  Then run MiKTeX Update (Admin) in the Windows start menu
+  Run MiKTeX Update (Admin) in the Windows start menu
+
+  Set environment variable MIKTEX_ENABLEWRITE18=t (this is for packages using
+  auto-pst-pdf in their vignette). Not clear that this actually helps with
+  recent versions of Windows/MiKTeX. See below ("Turn on write18 for a few
+  MiKTeX applications") for an alternative that actually seems to help.
+
+** Install Pandoc
+
+  Go to http://pandoc.org/installing.html#windows
+  Download and run the installer
 
 ** Install 32-bit Cygwin
 
@@ -174,7 +184,9 @@ From the biocbuild account
 
 In a PowerShell window:
 
-** From C:\Users\biocbuild, create the .BBS/id_rsa file:
+** Install biocbuild RSA private key
+
+  From C:\Users\biocbuild, create the .BBS/id_rsa file as follow
 
   - mkdir .BBS
   - cd .BBS
@@ -182,15 +194,16 @@ In a PowerShell window:
     content from another Windows builder e.g. moscato1)
   - chmod 400 id_rsa
 
-** Try to ssh to central node e.g.
+  Having the RSA key installed allows the biocbuild user to ssh to the central
+  node. Test this with e.g.
 
-  From C:\Users\biocbuild:
-
-    ssh -i .BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
+    ssh -i C:\Users\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
 
   If malbec1 not in DNS, replace with 172.29.0.3
 
-** From C:\Users\biocbuild, create and populate the bbs-3.4-bioc subfolder:
+** Create and populate the bbs-3.4-bioc folder
+
+  From C:\Users\biocbuild, proceed as follow
 
   - mkdir bbs-3.4-bioc
   - cd bbs-3.4-bioc
@@ -200,17 +213,21 @@ In a PowerShell window:
   - mkdir tmp
   - mkdir tmpdir
 
-** Install R in C:\Users\biocbuild\bbs-3.4-bioc (use CRAN binary that matches
-  BioC devel). When running the installer:
+** Install R in bbs-3.4-bioc
+
+  Use CRAN Windows binary that matches BioC devel.
+  When running the installer:
 
   - Select destination location C:\Users\biocbuild\bbs-3.4-bioc\R
   - Don't create a Start Menu Folder
   - Don't create a desktop icon
 
-** Edit R\etc\i386\Makeconf, R\etc\x64\Makeconf, and R\etc\Rprofile.site:
+** Edit some files in the R installation tree
 
-  (Without this, compilation of zlibbioc will fail)
+  (Without this, compilation of zlibbioc will fail.)
 
+  The files to edit are: R\etc\i386\Makeconf, R\etc\x64\Makeconf, and
+  R\etc\Rprofile.site
   From C:\Users\biocbuild\bbs-3.4-bioc:
 
   - cd R\etc\i386
@@ -235,13 +252,13 @@ In a PowerShell window:
       add the following line at bottom
         Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 
-** Switch to devel mode (for devel build only)
+** Install BiocInstaller and switch to devel mode (for devel builds only)
 
   Start R (with R/bin/R from C:\Users\biocbuild), install BiocInstaller and
   switch to devel mode with:
 
     source("https://bioconductor.org/biocLite.R")
-    useDevel()
+    useDevel()  # only for devel builds
 
   Quit R (do NOT save the workspace image)
 
@@ -256,9 +273,27 @@ In a PowerShell window:
 
   Quit R (do NOT save the workspace image)
 
-** From C:\Users\biocbuild:
+** From C:\Users\biocbuild
 
   git clone https://github.com/Bioconductor/BBS
+
+** Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
+
+  The command below will open an editor. Put EnableWrite18=t in it, save and
+  exit:
+
+    initexmf --edit-config-file=miktex\config\pdflatex.ini
+
+  Without this, 'R CMD build' will fail on packages using auto-pst-pdf in
+  their vignette (e.g. affyContam, arrayMvout, ArrayTools, BrainStars, clst,
+  clstutils, GeneAnswers, GGBase, GGtools, lumi, maSigPro, MassArray,
+  PAnnBuilder, parody, PLPE, ppiStats, randPack, rbsurv, rnaSeqMap, vtpnet,
+  xmapbridge). With the following error:
+
+    LaTeX errors:
+    df.sty:134: Package auto-pst-pdf Error:
+        "shell escape" (or "write18") is not enabled:
+        auto-pst-pdf will not work!
 
 
 From a personal administrator account

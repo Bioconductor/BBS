@@ -387,6 +387,17 @@ TABLE.mainrep .even .windows1_bioconductor_org {
     background: #C98;
 }
 
+/* tokay1 */
+DIV.tokay1,
+TR.tokay1 TD,
+TABLE.mainrep .tokay1,
+TABLE.mainrep .odd .tokay1 {
+    background: #DB9;
+}
+TABLE.mainrep .even .tokay1 {
+    background: #B97;
+}
+
 /* moscato1 */
 DIV.moscato1,
 TR.moscato1 TD,
