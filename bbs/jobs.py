@@ -185,7 +185,7 @@ def killProc(pid):
     # None in this case, we can't call proc.children(), so use this
     # listcomp to find the children. And let's find the children
     # before we kill the parent.
-    children = [x for x in psutil.process_iter() if x.ppid == pid]
+    children = [x for x in psutil.process_iter() if x.ppid() == pid]
 
     try:
         proc = psutil.Process(pid)
