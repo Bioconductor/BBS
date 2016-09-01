@@ -59,10 +59,7 @@ should be done from the Administrator account.
     [ ] Password never expires
     [ ] Account is disabled
 
-  Then make these users members of the Administrators group.
-
-From now on, all administrative tasks should be performed from one of the
-personal accounts instead of the Administrator account.
+  Then make these users members of the Administrators group
 
 ** Create the biocbuild account:
 
@@ -74,7 +71,7 @@ personal accounts instead of the Administrator account.
     [x] Password never expires
     [ ] Account is disabled
 
-** Make the biocbuild user member of the Remote Desktop Users group.
+** Make the biocbuild user member of the Remote Desktop Users group
 
 ** Grant the biocbuild user "Log on as batch job" rights
 
@@ -86,6 +83,9 @@ personal accounts instead of the Administrator account.
      -> User Rights Assignment
   In the right pane, right-click on 'Log on as a batch job' -> Properties
   Add biocbuild user
+
+From now on, all administrative tasks should be performed from one of the
+personal accounts instead of the Administrator account.
 
 
 From a personal administrator account
@@ -163,8 +163,8 @@ From a personal administrator account
 
 ** [OPTIONAL] Install TortoiseSVN (Subversion client for Windows)
 
-  Just a convenience for checking out some individual BioC packages for
-  troubleshooting.
+  Just a convenience that will allow us to check out some individual BioC
+  packages in the future in case we want to troubleshoot them on Windows.
 
   Available at https://tortoisesvn.net/
   Choose 64-bit version
