@@ -46,15 +46,12 @@ should be done from the Administrator account.
 
   Username: mtmorgan
   Full name: Martin Morgan
-  Password: bui11Dit
 
   Username: hpages
   Full name: Hervé Pagès
-  Password: bui11Dit
   
   Username: aoles
   Full name: Andrzej Oleś
-  Password: bui11Dit
 
   For all these accounts:
     [x] User must change password at next logon
@@ -70,7 +67,6 @@ personal accounts instead of the Administrator account.
 ** Create the biocbuild account:
 
   Username: biocbuild
-  Password: bui11Dit
 
   For this account:
     [ ] User must change password at next logon
