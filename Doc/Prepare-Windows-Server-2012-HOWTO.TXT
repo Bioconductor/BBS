@@ -298,11 +298,63 @@ In a PowerShell window:
 From a personal administrator account
 -------------------------------------
 
-** Add nightly builds to Task Scheduler
+** Add loggon_biocbuild_at_startup task to Task Scheduler
+
+  This task is a workaround for the following issue with the Task Scheduler.
+  The issue happens under the following conditions:
+    - The task is run under a regular user (e.g. biocbuild)
+    - It's configured to 'Run whether user is logged on or not'
+    - The user under which the task is running is not logged on when the
+      task starts
+  Under these conditions the environment seen by the running task is not the
+  same as if the user under which the task is running was already logged on
+  when the task started.
+  This issue causes some MiKTeX commands like pdflatex to fail during
+  the nightly builds.
+
+  The following task automatically loggon the biocbuild user at system
+  startup. It's not a "real" loggon (e.g. it's not reported in the Task
+  Manager in the Users tab), just a loggon in batch mode, but that seems
+  to be enough to have the nightly builds run in the correct environment
+  (i.e. the environment that is seen by the task when the biocbuild user
+  is already logged on when the task starts).
+
+  Configure the task as follow:
 
   Open Task Scheduler
   In the right pane (Actions) click on Enable All Tasks History
   In the left pane create new BBS folder next to Microsoft folder
+  Right-click on the BBS folder -> choose Create Task
+  - Tab General:
+      Name: loggon_biocbuild_at_startup
+      In Security options:
+        Use TOKAY1\biocbuild account to run the task
+        Run whether user is logged on or not
+      Configure for Windows Server 2012 R2
+  - Tab Triggers:
+      New Trigger
+      Begin the task At startup
+  - Tab Actions:
+      New Action
+      Action: Start a program
+      In Settings:
+        Program/script: C:\Python27\python.exe
+        Add arguments: C:\Users\biocbuild\BBS\utils\do_nothing_forever.py
+        Start in: C:\Users\biocbuild\log
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+  Then click OK on bottom right (requires biocbuild password)
+
+** Add nightly builds to Task Scheduler
+
+  Open Task Scheduler
+  In the right pane (Actions) click on Enable All Tasks History (if not
+    already done)
+  In the left pane create new BBS folder next to Microsoft folder (if not
+    already done)
   Right-click on the BBS folder -> choose Create Task
   - Tab General:
       Name: bbs-3.4-bioc
@@ -312,7 +364,7 @@ From a personal administrator account
       Configure for Windows Server 2012 R2
   - Tab Triggers:
       New Trigger
-      Begin the task on a schedule
+      Begin the task On a schedule
       In Settings:
         Daily - At 7:55 PM - Recur every 1 day
       In Advanced Settings:
@@ -327,7 +379,9 @@ From a personal administrator account
   - Tab Conditions:
       nothing to do (keep all the defaults)
   - Tab Settings:
-      nothing should be checked except 'Allow task to be run on demand'
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+  Then click OK on bottom right (requires biocbuild password)
 
 
 ===============================================================================
