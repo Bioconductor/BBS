@@ -18,19 +18,19 @@ import signal
 import datetime
 if sys.platform == "win32":
     import psutil
-    import win32api
-    from win32com.client import GetObject
-    for i in range(10):
-        try:
-            WMI = GetObject('winmgmts:')
-        except:
-            if i == 9:
-                sys.exit("BBS>   FATAL ERROR: GetObject('winmgmts:') failed 10 times => EXIT.")
-            print "BBS>   GetObject('winmgmts:') failed. ",
-            print "Trying again in 1 sec."
-            win32api.Sleep(long(1000))
-        else:
-            break
+    #import win32api
+    #from win32com.client import GetObject
+    #for i in range(10):
+    #    try:
+    #        WMI = GetObject('winmgmts:')
+    #    except:
+    #        if i == 9:
+    #            sys.exit("BBS>   FATAL ERROR: GetObject('winmgmts:') failed 10 times => EXIT.")
+    #        print "BBS>   GetObject('winmgmts:') failed. ",
+    #        print "Trying again in 1 sec."
+    #        win32api.Sleep(long(1000))
+    #    else:
+    #        break
 import time
 
 
@@ -41,10 +41,10 @@ import time
 ##############################################################################
 
 def sleep(secs):
-    if sys.platform == "win32":
-        win32api.Sleep(long(secs * 1000))
-    else:
-        time.sleep(secs)
+    #if sys.platform == "win32":
+    #    win32api.Sleep(long(secs * 1000))
+    #else:
+    time.sleep(secs)
 
 
 ##############################################################################
@@ -77,7 +77,8 @@ def doOrDie(cmd):
         return
     sys.exit("BBS>   FATAL ERROR: subprocess '%s' returned nonzero value %d!" % (cmd, retcode))
 
-if sys.platform == "win32":
+#if sys.platform == "win32":
+if False:
     # Helpful places to look at when it comes to manipulate the list of active
     # processes:
     #   http://mail.python.org/pipermail/python-win32/2003-December/001482.html
