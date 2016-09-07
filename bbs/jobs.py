@@ -169,6 +169,7 @@ def killProc(pid):
                 print("BBS>   Error %s killing process %s" % (e.errno, pid))
             return
         return
+
     # For now, on windows, try using the psutil module to kill a process
     # and its children recursively, because we have been having
     # trouble using TASKKILL to do this. Eventually consider replacing
@@ -182,11 +183,18 @@ def killProc(pid):
 
     # The process represented by 'pid' may already have been killed,
     # but it could still have children. Since 'proc' would be
-    # None in this case, we can't call proc.children(), so use this
-    # listcomp to find the children. And let's find the children
-    # before we kill the parent.
-    children = [x for x in psutil.process_iter() if x.ppid() == pid]
+    # None in this case, we can't call proc.children(), so walk over
+    # psutil.process_iter() to find the children. And let's find the
+    # children before we kill the parent.
+    children = []
+    for proc in psutil.process_iter():
+        try:
+            if proc.ppid() == pid:
+                children.append(proc)
+        except psutil.NoSuchProcess:
+            pass
 
+    # Let's start the mass murdering...
     try:
         proc = psutil.Process(pid)
         print("BBS>     killing %s" % pid)
@@ -195,7 +203,6 @@ def killProc(pid):
         print "BBS>     No such process %s."  % pid
     except TypeError:
         sys.exit("BBS>     pid must be an integer! (got %s)" % pid)
-
 
     for child in children:
         try:
