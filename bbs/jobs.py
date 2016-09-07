@@ -197,27 +197,33 @@ def killProc(pid):
 
     # Let's start the mass murdering...
     try:
-        proc = psutil.Process(pid)
         print("BBS>     killing %s" % pid)
+        proc = psutil.Process(pid)
         proc.kill()
     except psutil.NoSuchProcess:
         print "BBS>     No such process %s."  % pid
+    except psutil.AccessDenied:
+        print "BBS>     Access denied (pid=%s)."  % pid
     except TypeError:
         sys.exit("BBS>     pid must be an integer! (got %s)" % pid)
 
     for child in children:
         try:
-            grandkids = child.children(recursive=True)
             print("BBS>       killing child %s" % child.pid)
+            grandkids = child.children(recursive=True)
             child.kill()
             for grandkid in grandkids:
                 try:
                     print("BBS>         killing grandkid %s" % grandkid.pid)
                     grandkid.kill()
-                except NoSuchProcess:
+                except psutil.NoSuchProcess:
                     print("BBS>         Grandkid process %s does not exist." % grandkid.pid)
+                except psutil.AccessDenied:
+                    print "BBS>         Access denied (pid=%s)."  % grandkid.pid
         except psutil.NoSuchProcess:
             print "BBS>       Child process %s does not exist." % child.pid
+        except psutil.AccessDenied:
+            print "BBS>       Access denied (pid=%s)."  % child.pid
 
 ### What if cmd is not found, can't be started or crashes?
 def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
