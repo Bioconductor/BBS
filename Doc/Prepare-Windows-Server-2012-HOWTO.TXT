@@ -348,6 +348,17 @@ From a personal administrator account
       'If the running task does not end when requested force it to stop'
   Then click OK on bottom right (requires biocbuild password)
 
+  Now either start the task manually or reboot the machine (the task should
+  start automatically after reboot).
+
+  When this task is running (and from now on it should always be running),
+  the 2 following processes should be seen in the Task Manager: python.exe
+  and conhost.exe
+  (Open the Task Manager with CTRL+Shift+Esc, click on the Details tab, and
+  sort processes by user name).
+  These should be the *only* processes running as biocbuild when the builds
+  are not running and the biocbuild user is not logged on.
+
 ** Add nightly builds to Task Scheduler
 
   Open Task Scheduler
