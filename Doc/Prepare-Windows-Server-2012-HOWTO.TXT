@@ -2,6 +2,15 @@
 Things to install to have the builds up and running
 -------------------------------------------------------------------------------
 
+General information and tips:
+
+(a) How to edit an environment variable:
+
+  Always from a *personal administrator account* (see below about this):
+
+    Windows start menu -> This PC -> right-click on This PC -> Properties
+    -> Advanced system settings -> Environment Variables... 
+
 
 From the Administrator account
 ------------------------------
@@ -102,9 +111,11 @@ From a personal administrator account
   Run MiKTeX Update (Admin) in the Windows start menu
 
   Set environment variable MIKTEX_ENABLEWRITE18=t (this is for packages using
-  auto-pst-pdf in their vignette). Not clear that this actually helps with
-  recent versions of Windows/MiKTeX. See below ("Turn on write18 for a few
-  MiKTeX applications") for an alternative that actually seems to help.
+  auto-pst-pdf in their vignette). See "How to edit an environment variable"
+  in "General information and tips" at the top of this document for how to do
+  this. Not clear that this actually helps with recent versions of
+  Windows/MiKTeX. See below ("Turn on write18 for a few MiKTeX applications")
+  for an alternative that actually seems to help.
 
 ** Install Pandoc
 
@@ -124,11 +135,8 @@ From a personal administrator account
 
 ** Prepend C:\cygwin\bin to PATH
 
-  To edit an environment variable:
-
-    Windows start menu -> This PC -> right-click on This PC -> Properties
-    -> Advanced system settings -> Environment Variables... 
-
+  See "How to edit an environment variable" in "General information and tips"
+  at the top of this document for how to do this.
   Test by opening a PowerShell window and try to run ssh, rsync, or curl in
   it.
 
@@ -400,6 +408,9 @@ Additional things to install to accomodate packages with special needs
 -------------------------------------------------------------------------------
 
 
+From a personal administrator account
+-------------------------------------
+
 ** Install Ripley's bundle of pre-compiled external software used by some
   packages
 
@@ -408,13 +419,31 @@ Additional things to install to accomodate packages with special needs
   Right-click on the downloaded file, choose 'Extract All...'
   Extract the files to C:\localXYZ
 
-  From C:\Users\biocbuild\bbs-3.4-bioc, set LOCAL_SOFT to C:/localXYZ in
-  R/etc/{i386,x64}/Makeconf
-
-  Try to compile a package that uses the GSL e.g. from
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will automatically be
-  created after the 1st build run):
+  Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
+  set variable LOCAL_SOFT to C:/localXYZ in R/etc/{i386,x64}/Makeconf
+  Finally try to compile a package that uses the GSL e.g. from
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will automatically
+  be created after the 1st build run):
 
     ..\R\bin\R CMD INSTALL GLAD
     ..\R\bin\R CMD INSTALL PICS
+
+** Install Ghostscript
+
+  Available here: http://www.ghostscript.com/download/gsdnld.html
+  Choose Ghostscript AGPL Release for 64 bit Windows.
+  Use the default setting when running the installer.
+  Append C:\Program Files\gs\gs9.19\bin to PATH (see "How to edit an
+  environment variable" in "General information and tips" at the top of this
+  document for how to do this).
+
+  Then from the biocbuild account (log out and on again from this account if
+  you were already logged in), try to build a package that uses Ghostscript
+  for its vignette e.g. from C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder
+  will automatically be created after the 1st build run):
+
+    ..\R\bin\R CMD build clustComp
+    ..\R\bin\R CMD build MANOR
+    ..\R\bin\R CMD build OrderedList
+    ..\R\bin\R CMD build twilight
 
