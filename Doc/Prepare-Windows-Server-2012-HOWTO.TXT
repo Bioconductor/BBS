@@ -137,8 +137,8 @@ From a personal administrator account
 
   See "How to edit an environment variable" in "General information and tips"
   at the top of this document for how to do this.
-  Test by opening a PowerShell window and try to run ssh, rsync, or curl in
-  it.
+
+  TESTING: Open a PowerShell window and try to run ssh, rsync, or curl in it.
 
 ** Install Rtools
 
@@ -154,7 +154,7 @@ From a personal administrator account
   On the System Path page: add c:\Rtools\mingw_64\bin; right after
   c:\Rtools\mingw_32\bin;
 
-  Test by opening a PowerShell window and try to run:
+  TESTING: Open a PowerShell window and try to run:
     which rsync (should show /cygdrive/c/Rtools/bin/rsync, because rsync from
                  Rtools is before Cygwin rsync in PATH)
     which ssh   (should show /usr/bin/ssh)
@@ -167,7 +167,7 @@ From a personal administrator account
   Available at https://git-scm.com/download/win
   Keep all the default settings when running the installer.
 
-  Test by opening a PowerShell window and try to run 'git --version'
+  TESTING: Open a PowerShell window and try to run 'git --version'
 
 ** [OPTIONAL] Install TortoiseSVN (Subversion client for Windows)
 
@@ -180,7 +180,7 @@ From a personal administrator account
   selected (by default they're NOT -- choose 'Entire feature will be installed
   on local hard drive').
 
-  Test by opening a PowerShell window and try to run 'svn --version'
+  TESTING: Open a PowerShell window and try to run 'svn --version'
 
 
 From the biocbuild account
@@ -199,7 +199,9 @@ In a PowerShell window:
   - chmod 400 id_rsa
 
   Having the RSA key installed allows the biocbuild user to ssh to the central
-  node. Test this with e.g.
+  node.
+
+  TESTING: Try to ssh to the central node with:
 
     ssh -i C:\Users\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
 
@@ -269,7 +271,7 @@ In a PowerShell window:
 
   Quit R (do NOT save the workspace image)
 
-** Test package installation/compilation
+** TESTING: Test package installation/compilation
 
   Start R and try to install/compile IRanges, Biobase, and zlibbioc with:
 
@@ -421,24 +423,49 @@ From a personal administrator account
 
   Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
   set variable LOCAL_SOFT to C:/localXYZ in R/etc/{i386,x64}/Makeconf
-  Finally try to compile a package that uses the GSL e.g. from
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will automatically
-  be created after the 1st build run):
+
+  TESTING: Try to compile a package that uses the GSL e.g. from
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  created after the 1st build run):
 
     ..\R\bin\R CMD INSTALL GLAD
     ..\R\bin\R CMD INSTALL PICS
 
+** Install Java
+
+  You need the JDK (Java Development Kit).
+  Available at:
+    http://www.oracle.com/technetwork/java/javase/downloads/index.html
+  Choose "Java Platform", then download the "Windows x64" *and* "Windows x86"
+  products (this will download 2 executables named something like
+  jdk-8u102-windows-i586.exe and jdk-8u102-windows-x64.exe).
+  Install both. Use the default settings when running the installers.
+  
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on), go to C:\Users\biocbuild\bbs-3.4-bioc
+  and try to load the rJava package for the 2 archs (this package will
+  automatically be installed after the 1st build run but cannot be loaded if
+  Java is not found on the system):
+
+    - start R in 64-bit mode with
+        R\bin\R --arch x64
+      and do library(rJava)
+
+    - start R in 32-bit mode with
+        R\bin\R --arch i386
+      and do library(rJava)
+
 ** Install Ghostscript
 
-  Available here: http://www.ghostscript.com/download/gsdnld.html
+  Available at: http://www.ghostscript.com/download/gsdnld.html
   Choose Ghostscript AGPL Release for 64 bit Windows.
-  Use the default setting when running the installer.
+  Use the default settings when running the installer.
   Append C:\Program Files\gs\gs9.19\bin to PATH (see "How to edit an
   environment variable" in "General information and tips" at the top of this
   document for how to do this).
 
-  Then from the biocbuild account (log out and on again from this account if
-  you were already logged in), try to build a package that uses Ghostscript
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on), try to build a package that uses Ghostscript
   for its vignette e.g. from C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder
   will automatically be created after the 1st build run):
 
