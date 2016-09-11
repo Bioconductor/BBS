@@ -442,10 +442,10 @@ From a personal administrator account
   Install both. Use the default settings when running the installers.
   
   TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on), go to C:\Users\biocbuild\bbs-3.4-bioc
-  and try to load the rJava package for the 2 archs (this package will
-  automatically be installed after the 1st build run but cannot be loaded if
-  Java is not found on the system):
+  if you were already logged on) try to load the rJava package for the
+  2 archs (this package will automatically be installed after the 1st build
+  run but cannot be loaded if Java is not found on the system) e.g. open a
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc, then
 
     - start R in 64-bit mode with
         R\bin\R --arch x64
@@ -465,12 +465,60 @@ From a personal administrator account
   document for how to do this).
 
   TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on), try to build a package that uses Ghostscript
-  for its vignette e.g. from C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder
-  will automatically be created after the 1st build run):
+  if you were already logged on) try to build a package that uses Ghostscript
+  for its vignette e.g. open a PowerShell window, cd to
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will automatically be
+  created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
     ..\R\bin\R CMD build MANOR
     ..\R\bin\R CMD build OrderedList
     ..\R\bin\R CMD build twilight
+
+** Install libxml2 and google protocol buffer
+
+  This is needed in order to compile the flowWorkspace package.
+  Download libxml2 and google protocol buffer Windows binaries from
+    http://rglab.github.io/binaries/
+  Extract all the files to C:\libxml2 and to C:\protobuf respectively.
+  Set environment variables LIB_XML2 and LIB_PROTOBUF to C:/libxml2 and
+  C:/protobuf, respectively (see "How to edit an environment variable" in
+  "General information and tips" at the top of this document for how to do
+  this). Make sure to use "/" instead of "\" as the directory delimiter.
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile the flowWorkspace package e.g.
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  folder will automatically be created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL flowWorkspace
+
+** Install Perl
+
+  Download and install Active Perl Community Edition for 64-bit Windows
+  When running the installer, choose "Typical" setup
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to build a package that uses Perl e.g.
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  folder will automatically be created after the 1st build run), then:
+
+    ..\R\bin\R CMD build COHCAP
+
+** Install Clustal Omega
+
+  Download Windows 64-bit zip file from http://www.clustal.org/omega/
+  Extract all the files in C:\ClustalO
+  Append C:\ClustalO to PATH (see "How to edit an environment variable"
+  in "General information and tips" at the top of this document for how to
+  do this).
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to build a package that uses Clustal Omega
+  e.g. open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat
+  (this folder will automatically be created after the 1st build run), then:
+
+    ..\R\bin\R CMD build LowMACA
+
+  (Note that this package also needs Perl.)
 
