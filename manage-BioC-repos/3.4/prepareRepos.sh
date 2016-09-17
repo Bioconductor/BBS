@@ -5,7 +5,7 @@
 ##    REPOS_NAME="Bioconductor 3.4 Packages - Experiment"
 ##    VIEW_ROOT="$HOME/PACKAGES/3.4"
 ##    REPOS_ROOT="$VIEW_ROOT/data/experiment"
-##    CONTRIB_PATHS="c(source='src/contrib', win.binary='bin/windows/contrib/3.4')"
+##    CONTRIB_PATHS="c(source='src/contrib', win.binary='bin/windows/contrib/3.3')"
 ##    HTML_DIR="data/experiment/html"
 
 rm -r "$REPOS_ROOT"/html "$REPOS_ROOT"/index.html "$REPOS_ROOT"/REPOSITORY "$REPOS_ROOT"/repository-detail.css "$REPOS_ROOT"/SYMBOLS "$REPOS_ROOT"/VIEWS "$REPOS_ROOT"/vignettes

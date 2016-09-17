@@ -6,7 +6,7 @@ export LC_COLLATE="C" # to sort the result of local pathname expansion as on cob
 
 LOCAL_REPO_ROOT="$HOME/PACKAGES/3.4/bioc"
 REMOTE_REPO_ROOT="/extra/www/bioc/packages/3.4/bioc"
-PKG_FILEPATHS="src/contrib/*.tar.gz bin/windows/contrib/3.4/*.zip bin/macosx/contrib/3.4/*.tgz"
+PKG_FILEPATHS="src/contrib/*.tar.gz bin/windows/contrib/3.3/*.zip bin/macosx/contrib/3.3/*.tgz"
 CONTRIB_DIR=" \/.*\/"
 
 LOCAL_MD5SUMS="$LOCAL_REPO_ROOT/md5sums.local.txt"
