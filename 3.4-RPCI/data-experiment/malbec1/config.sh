@@ -31,7 +31,7 @@ cd "$wd0"
 # BBS_CENTRAL_RHOST machine).
 
 # FIXME add mac.mavericks.binary:oaxaca/buildbin
-#export BBS_OUTGOING_MAP="source:malbec1/buildsrc win.binary:moscato1/buildbin"
+#export BBS_OUTGOING_MAP="source:malbec1/buildsrc win.binary:tokay1/buildbin"
 export BBS_OUTGOING_MAP="source:malbec1/buildsrc"
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
@@ -41,7 +41,7 @@ export BBS_OUTGOING_MAP="source:malbec1/buildsrc"
 # must be run on the BBS_CENTRAL_RHOST machine.
 
 # FIXME add oaxaca:bin
-#export BBS_REPORT_NODES="malbec1 moscato1:bin"
+#export BBS_REPORT_NODES="malbec1 tokay1:bin"
 export BBS_REPORT_NODES="malbec1"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/${BBS_BIOC_VERSION}-RPCI/report.css"
