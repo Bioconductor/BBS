@@ -416,20 +416,36 @@ From a personal administrator account
 ** Install Ripley's bundle of pre-compiled external software used by some
   packages
 
-  Download the latest localXYZ.zip file (e.g. local323.zip) from
-    http://www.stats.ox.ac.uk/pub/Rtools/libs.html
-  Right-click on the downloaded file, choose 'Extract All...'
-  Extract the files to C:\localXYZ
+  2 bundles to install: localXYZ.zip and spatialXYZ.zip
 
-  Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
-  set variable LOCAL_SOFT to C:/localXYZ in R/etc/{i386,x64}/Makeconf
+  localXYZ.zip:
 
-  TESTING: Try to compile a package that uses the GSL e.g. from
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
-  created after the 1st build run):
+    Download the latest localXYZ.zip file (e.g. local323.zip) from
+      http://www.stats.ox.ac.uk/pub/Rtools/libs.html
+    Right-click on the downloaded file, choose 'Extract All...'
+    Extract the files to C:\localXYZ
 
-    ..\R\bin\R CMD INSTALL GLAD
-    ..\R\bin\R CMD INSTALL PICS
+    Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
+    set variable LOCAL_SOFT to C:/localXYZ in R/etc/{i386,x64}/Makeconf
+
+    TESTING: Try to compile a package that uses the GSL e.g. from
+    C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+    created after the 1st build run):
+
+      ..\R\bin\R CMD INSTALL GLAD
+      ..\R\bin\R CMD INSTALL PICS
+
+  spatialXYZ.zip:
+
+    Download the latest spatialXYZ.zip file (e.g. spatial324.zip) from
+      http://www.stats.ox.ac.uk/pub/Rtools/libs.html
+    Right-click on the downloaded file, choose 'Extract All...'
+    Extract the files to C:\spatialXYZ
+
+    TESTING: Try to compile mzR e.g. from C:\Users\biocbuild\bbs-3.4-bioc\meat
+    (this folder will be automatically created after the 1st build run):
+
+      ..\R\bin\R CMD INSTALL mzR
 
 ** Install Java
 
