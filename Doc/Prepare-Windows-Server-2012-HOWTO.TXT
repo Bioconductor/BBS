@@ -418,32 +418,24 @@ From a personal administrator account
 
   2 bundles to install: localXYZ.zip and spatialXYZ.zip
 
-  localXYZ.zip:
-
-    Download the latest localXYZ.zip file (e.g. local323.zip) from
+  Download the latest localXYZ.zip and spatialXYZ.zip files (e.g. local323.zip
+  and spatial324.zip as of Sep 26, 2016) from
       http://www.stats.ox.ac.uk/pub/Rtools/libs.html
-    Right-click on the downloaded file, choose 'Extract All...'
-    Extract the files to C:\localXYZ
+  Extract both localXYZ.zip and spatialXYZ.zip to C:\localXYZ: for each of
+  them, right-click on it, choose 'Extract All...', extract the files to
+  C:\localXYZ
 
-    Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
-    set variable LOCAL_SOFT to C:/localXYZ in R/etc/{i386,x64}/Makeconf
+  Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
+  set variable LOCAL_SOFT to C:/localXYZ in R\etc\{i386,x64}\Makeconf
 
-    TESTING: Try to compile a package that uses the GSL e.g. from
-    C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
-    created after the 1st build run):
+  TESTING: Try to compile a package that uses the GSL (provided by
+  localXYZ.zip) e.g. from C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder
+  will be automatically created after the 1st build run):
 
       ..\R\bin\R CMD INSTALL GLAD
       ..\R\bin\R CMD INSTALL PICS
 
-  spatialXYZ.zip:
-
-    Download the latest spatialXYZ.zip file (e.g. spatial324.zip) from
-      http://www.stats.ox.ac.uk/pub/Rtools/libs.html
-    Right-click on the downloaded file, choose 'Extract All...'
-    Extract the files to C:\spatialXYZ
-
-    TESTING: Try to compile mzR e.g. from C:\Users\biocbuild\bbs-3.4-bioc\meat
-    (this folder will be automatically created after the 1st build run):
+  Also try to compile a package that uses netCDF (provided by spatialXYZ.zip):
 
       ..\R\bin\R CMD INSTALL mzR
 
@@ -537,4 +529,21 @@ From a personal administrator account
     ..\R\bin\R CMD build LowMACA
 
   (Note that this package also needs Perl.)
+
+** Install JAGS
+
+  Go to http://www.sourceforge.net/projects/mcmc-jags/files
+  You'll see:
+    Looking for the latest version? Download JAGS-X.Y.Z.html
+  Click on that link. It downloads an HTML file.
+  Open the doanloaded file with Chrome and choose the installer that
+  corresponds to the version of R used for the builds.
+  Use the default settings when running the installer, except that we do not
+  need to create shortcuts (check the "Do not create shortcuts" box).
+
+  TESTING: From the biocbuild account, try to load the rjags package e.g.
+  from C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  created after the 1st build run) start R (with ..\R\bin\R), then
+
+    library(rjags)
 
