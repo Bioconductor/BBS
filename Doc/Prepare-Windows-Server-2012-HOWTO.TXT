@@ -40,7 +40,7 @@ From the Administrator account
 Note that installing Python from one of the personal administrator accounts
 below seems to cause problems (e.g. trying to upgrade to the latest pip
 with the above command raises an error). This is why all the above steps
-should be done from the Administrator account.
+should be performed from the Administrator account.
 
 ** Create personal administrator accounts:
 
@@ -48,7 +48,7 @@ should be done from the Administrator account.
         -> System Tools
            -> Local Users and Groups
               -> Users
-  Then in Actions (right panel):
+  Then in the Actions panel (on the right):
         -> Users
            -> More Actions
               -> New User
@@ -58,9 +58,12 @@ should be done from the Administrator account.
 
   Username: hpages
   Full name: Hervé Pagès
-  
+ 
   Username: aoles
   Full name: Andrzej Oleś
+
+  Username: gwargula
+  Full name: Gregory Wargula
 
   For all these accounts:
     [x] User must change password at next logon
