@@ -142,6 +142,8 @@ From a personal administrator account
   at the top of this document for how to do this.
 
   TESTING: Open a PowerShell window and try to run ssh, rsync, or curl in it.
+  cd C:\cygwin\bin
+  e.g. .\ssh
 
 ** Install Rtools
 
@@ -184,29 +186,35 @@ From a personal administrator account
   on local hard drive').
 
   TESTING: Open a PowerShell window and try to run 'svn --version'
+  cd 'C:\Program Files\TortoiseSVN\bin'
+  .\svn --version
 
 
 From the biocbuild account
 --------------------------
 
-In a PowerShell window:
-
 ** Install biocbuild RSA private key
 
-  From C:\Users\biocbuild, create the .BBS/id_rsa file as follow
+  In a PowerShell window:
+
+  cd C:\Users\biocbuild, create the .BBS/id_rsa file as follow
 
   - mkdir .BBS
   - cd .BBS
-  - Use vi (included in Cygwin) to create the id_rsa file (copy/paste its
+  
+  In Cygwin Terminal:
+  - cd 'C:\Users\biocbuild\.BBS'
+  - cat > id_rsa
+  - vi id_rsa file (copy/paste its
     content from another Windows builder e.g. moscato1)
   - chmod 400 id_rsa
 
   Having the RSA key installed allows the biocbuild user to ssh to the central
   node.
 
-  TESTING: Try to ssh to the central node with:
+  TESTING: Try to ssh (in Cygwin) to the central node with:
 
-    ssh -i C:\Users\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
+    ssh -i 'C:\Users\biocbuild\.BBS\id_rsa' biocbuild@malbec1 -o StrictHostKeyChecking=no
 
   If malbec1 not in DNS, replace with 172.29.0.3
 
