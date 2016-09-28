@@ -459,7 +459,15 @@ From a personal administrator account
   products (this will download 2 executables named something like
   jdk-8u102-windows-i586.exe and jdk-8u102-windows-x64.exe).
   Install both. Use the default settings when running the installers.
-  
+
+  Note that the installer will prepend C:\ProgramData\Oracle\Java\javapath;
+  to the PATH. However, on a Windows build machine, c:\Rtools\bin;
+  c:\\Rtools\\mingw_32\\bin; and c:\\Rtools\\mingw_64\\bin; should always be
+  first in the PATH, so move this towards the end of PATH (e.g. anywhere
+  after C:\Program Files\Git\cmd). See "How to edit an environment variable"
+  in "General information and tips" at the top of this document for how to
+  do this.
+
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to load the rJava package for the
   2 archs (this package will automatically be installed after the 1st build
@@ -516,6 +524,14 @@ From a personal administrator account
 
   Download and install Active Perl Community Edition for 64-bit Windows
   When running the installer, choose "Typical" setup
+
+  Note that the installer will prepend C:\Perl64\site\bin;C:\Perl64\bin;
+  to the PATH. However, on a Windows build machine, c:\Rtools\bin;
+  c:\\Rtools\\mingw_32\\bin; and c:\\Rtools\\mingw_64\\bin; should always be
+  first in the PATH, so move this towards the end of PATH (e.g. anywhere
+  after C:\Program Files\Git\cmd). See "How to edit an environment variable"
+  in "General information and tips" at the top of this document for how to
+  do this.
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build a package that uses Perl e.g.
