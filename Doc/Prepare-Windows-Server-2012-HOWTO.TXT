@@ -574,3 +574,20 @@ From a personal administrator account
 
     library(rjags)
 
+** Install libSBML
+
+  Download 64-bit/libSBML-5.10.0-win-x64.exe and
+  32-bit/libSBML-5.10.0-win-x86.exe from
+  https://sourceforge.net/projects/sbml/files/libsbml/5.10.0/stable/Windows/
+
+  Run the 2 installers and keep all the default settings.
+
+  Create C:\libsbml folder and copy
+  C:\Program Files\SBML\libSBML-5.10.0-libxml2-x64\win64 and
+  C:\Program Files (x86)\SBML\libSBML-5.10.0-libxml2-x86\win32 to it.
+  Rename C:\libsbml\win64 and C:\libsbml\win32 -> C:\libsbml\x64 and
+  C:\libsbml\i386.
+
+  Set environment variable LIBSBML_PATH to C:/libsbml (use slash, not
+  backslash).
+
