@@ -439,9 +439,11 @@ From a personal administrator account
   Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
   set variable LOCAL_SOFT to C:/localXYZ in R\etc\{i386,x64}\Makeconf
 
-  TESTING: Try to compile a package that uses the GSL (provided by
-  localXYZ.zip) e.g. from C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder
-  will be automatically created after the 1st build run):
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile a package that uses the GSL
+  (provided by localXYZ.zip) e.g. open a PowerShell window, cd to
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  created after the 1st build run), then:
 
       ..\R\bin\R CMD INSTALL GLAD
       ..\R\bin\R CMD INSTALL PICS
@@ -470,7 +472,7 @@ From a personal administrator account
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to load the rJava package for the
-  2 archs (this package will automatically be installed after the 1st build
+  2 archs (this package will be automatically installed after the 1st build
   run but cannot be loaded if Java is not found on the system) e.g. open a
   PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc, then
 
@@ -494,7 +496,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build a package that uses Ghostscript
   for its vignette e.g. open a PowerShell window, cd to
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will automatically be
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
   created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
@@ -516,7 +518,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile the flowWorkspace package e.g.
   open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
-  folder will automatically be created after the 1st build run), then:
+  folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL flowWorkspace
 
@@ -536,7 +538,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build a package that uses Perl e.g.
   open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
-  folder will automatically be created after the 1st build run), then:
+  folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build COHCAP
 
@@ -551,7 +553,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build a package that uses Clustal Omega
   e.g. open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat
-  (this folder will automatically be created after the 1st build run), then:
+  (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build LowMACA
 
@@ -568,9 +570,11 @@ From a personal administrator account
   Use the default settings when running the installer, except that we do not
   need to create shortcuts (check the "Do not create shortcuts" box).
 
-  TESTING: From the biocbuild account, try to load the rjags package e.g.
-  from C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
-  created after the 1st build run) start R (with ..\R\bin\R), then
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to load the rjags package e.g. open a
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder
+  will be automatically created after the 1st build run), start R (with
+  ..\R\bin\R), then:
 
     library(rjags)
 
@@ -590,4 +594,22 @@ From a personal administrator account
 
   Set environment variable LIBSBML_PATH to C:/libsbml (use slash, not
   backslash).
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile the rsbml package e.g.
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL rsbml
+
+** Install Open Babel
+
+  Follow instructions in ChemmineOB/INSTALL for this.
+
+  IMPORTANT: Unlike all the other things here that need to be installed from
+  a personal administrator account, this one needs to be installed from the
+  biocbuild account. That's because the compilation process described in
+  ChemmineOB/INSTALL need to access stuff under
+
+    c:/Users/biocbuild/bbs-3.4-bioc/R/library/zlibbioc/
 
