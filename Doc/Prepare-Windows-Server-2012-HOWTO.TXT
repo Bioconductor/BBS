@@ -212,7 +212,7 @@ interactively on a Windows build machine.
   Having the RSA key installed allows the biocbuild user to ssh to the central
   node.
 
-  TESTING: Try to ssh to the central node with:
+  TESTING: Open a PowerShell window and try to ssh to the central node with:
 
     ssh -i C:\Users\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
 
@@ -612,4 +612,18 @@ From a personal administrator account
   ChemmineOB/INSTALL need to access stuff under
 
     c:/Users/biocbuild/bbs-3.4-bioc/R/library/zlibbioc/
+
+** Install gtkmm
+
+  Download gtkmm-win32-devel-2.22.0-2.exe from
+    http://ftp.gnome.org/mirror/gnome.org/binaries/win32/gtkmm/2.22/
+
+  Run it (use default settings). This installs gtkmm in C:\gtkmm
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile the HilbertVisGUI package e.g.
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL HilbertVisGUI
 
