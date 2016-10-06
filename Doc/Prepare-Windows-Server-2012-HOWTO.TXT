@@ -2,6 +2,7 @@
 Things to install to have the builds up and running
 -------------------------------------------------------------------------------
 
+
 General information and tips:
 
 (a) How to edit an environment variable:
@@ -10,6 +11,9 @@ General information and tips:
 
     Windows start menu -> This PC -> right-click on This PC -> Properties
     -> Advanced system settings -> Environment Variables... 
+
+  Always go to *System variables* (at the bottom) to add new variables or edit
+  existing variables. Do not add or edit user variables (at the top).
 
 
 From the Administrator account
@@ -640,4 +644,28 @@ From a personal administrator account
   folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build ImmuneSpaceR
+
+** Set up GoogleGenomics package to authenticate for Google Genomics API
+
+  Set environment variable GOOGLE_API_KEY to
+  AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4
+  See "How to edit an environment variable" in "General information and tips"
+  at the top of this document for how to do this.
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to run the getReads example in the
+  GoogleGenomics package e.g. open a PowerShell window, cd to
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  created after the 1st build run), then:
+
+  1) Install the GoogleGenomics package if it's not already installed (check
+     whether it's already installed or not by starting R with ..\R\bin\R and
+     try library(GoogleGenomics)):
+
+       ..\R\bin\R CMD INSTALL GoogleGenomics
+
+  2) Then from within R (start it with ..\R\bin\R):
+
+       library(GoogleGenomics)
+       example(getReads)
 
