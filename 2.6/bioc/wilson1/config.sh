@@ -43,5 +43,5 @@ export BBS_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/che
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
 export BBS_NOTIFY_NODES="$BBS_REPORT_NODES"
-export BBS_PUBLISHED_REPORT_URL="http://bioconductor.org/checkResults/$BBS_BIOC_VERSION/bioc-LATEST/"
+export BBS_PUBLISHED_REPORT_URL="http://master.bioconductor.org/checkResults/$BBS_BIOC_VERSION/bioc-LATEST/"
 
