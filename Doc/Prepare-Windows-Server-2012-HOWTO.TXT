@@ -402,7 +402,7 @@ From a personal administrator account
       New Trigger
       Begin the task On a schedule
       In Settings:
-        Daily - At 7:55 PM - Recur every 1 day
+        Daily - At 5:55 PM - Recur every 1 day
       In Advanced Settings:
         nothing should be checked except 'Enabled'
   - Tab Actions:
@@ -620,17 +620,20 @@ From a personal administrator account
 
 ** Install gtkmm
 
-  Download gtkmm-win32-devel-2.22.0-2.exe from
-    http://ftp.gnome.org/mirror/gnome.org/binaries/win32/gtkmm/2.22/
+  Download gtkmm-win64-devel-2.22.0-2.exe from
+    http://ftp.gnome.org/mirror/gnome.org/binaries/win64/gtkmm/2.22/
 
-  Run it (use default settings). This installs gtkmm in C:\gtkmm
+  Run it (use default settings). This installs gtkmm in C:\gtkmm64
+
+  Set GTK_PATH to C:\gtkmm64
 
   TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on) try to compile the HilbertVisGUI package e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
-  folder will be automatically created after the 1st build run), then:
+  if you were already logged on) try to compile the HilbertVisGUI package
+  for the x64 arch only e.g. open a PowerShell window, cd to
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  created after the 1st build run), then:
 
-    ..\R\bin\R CMD INSTALL HilbertVisGUI
+    ..\R\bin\R --arch x64 CMD INSTALL --no-multiarch HilbertVisGUI
 
 ** Set up ImmuneSpaceR package for connecting to ImmuneSpace
 
