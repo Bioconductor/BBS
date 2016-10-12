@@ -11,9 +11,9 @@ python:
 cache: pip
 install: pip install pyflakes
 script:
-  - shellcheck ./3.2/**/*.sh
-  - shellcheck ./3.3/**/*.sh
+  - shellcheck ./3.4/**/*.sh
+  - shellcheck ./3.5/**/*.sh
   - pyflakes *.py
 notifications:
   email:
-    - brian@bioconductor.org
+    - devteam-bioc@fhcrc.org
