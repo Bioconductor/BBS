@@ -421,7 +421,7 @@ From a personal administrator account
 
 
 ===============================================================================
-Additional things to install to accomodate packages with special needs
+Additional stuff to install for packages with special needs
 -------------------------------------------------------------------------------
 
 
