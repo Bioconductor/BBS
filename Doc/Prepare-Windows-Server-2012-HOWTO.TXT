@@ -26,10 +26,15 @@ From the Administrator account
     https://www.python.org/downloads/release/python-2712/
   - make sure 'Add python.exe to Path' is selected
 
-** Upgrade to the latest pip with:
+** Upgrade to the latest pip
+
+  In a PowerShell Window:
+
     python -m pip install --upgrade pip
 
-** Install Python modules win32api (or pywin32) and psutil
+** Install Python modules pywin32 and psutil
+
+  These modules are needed by BBS.
 
   Download latest 64-bit version of these modules for Python 2.7 from
   Christoph Gohlke's "Unofficial Windows Binaries for Python Extension
@@ -37,9 +42,18 @@ From the Administrator account
     pywin32: pywin32-220.1-cp27-cp27m-win_amd64.whl
     psutil: psutil-4.3.0-cp27-cp27m-win_amd64.whl
 
-  Then:
+  Then, in a PowerShell Window:
+
     pip install pywin32-220.1-cp27-cp27m-win_amd64.whl
     pip install psutil-4.3.0-cp27-cp27m-win_amd64.whl
+
+** Install Python module nbconvert
+
+  This module is needed by CRAN package nbconvertR.
+
+  In a PowerShell Window:
+
+    pip install nbconvert
 
 Note that installing Python from one of the personal administrator accounts
 below seems to cause problems (e.g. trying to upgrade to the latest pip
@@ -203,6 +217,13 @@ window. Don't use the Cygwin terminal! Generally speaking, the PowerShell
 window should always be the preferred command line environment when working
 interactively on a Windows build machine.
 
+** Install BBS source tree
+
+  In a PowerShell Window, clone BBS git source tree with:
+
+    cd C:\Users\biocbuild
+    git clone https://github.com/Bioconductor/BBS
+
 ** Install biocbuild RSA private key
 
   From C:\Users\biocbuild, create the .BBS/id_rsa file as follow
@@ -296,10 +317,6 @@ interactively on a Windows build machine.
     biocLite("zlibbioc", type="source")
 
   Quit R (do NOT save the workspace image)
-
-** From C:\Users\biocbuild
-
-  git clone https://github.com/Bioconductor/BBS
 
 ** Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
 
@@ -614,9 +631,16 @@ From a personal administrator account
   IMPORTANT: Unlike all the other things here that need to be installed from
   a personal administrator account, this one needs to be installed from the
   biocbuild account. That's because the compilation process described in
-  ChemmineOB/INSTALL need to access stuff under
+  ChemmineOB/INSTALL needs to access stuff under
 
     c:/Users/biocbuild/bbs-3.4-bioc/R/library/zlibbioc/
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile the ChemmineOB package e.g.
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL ChemmineOB
 
 ** Install gtkmm
 
