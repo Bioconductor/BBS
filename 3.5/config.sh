@@ -7,7 +7,7 @@
 # Paths to local commands
 # -----------------------
 
-. ../nodes/$BBS_NODE_HOSTNAME/local-settings.sh
+. "../nodes/$BBS_NODE_HOSTNAME/local-settings.sh"
 
 # With StrictHostKeyChecking=no, ssh will automatically add new host keys
 # to the user known hosts files (so it doesn't get stalled waiting for an

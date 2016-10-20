@@ -25,7 +25,7 @@ export BBS_UPDATE_MEAT0=1
 export BBS_MEAT_PATH="$BBS_WORK_TOPDIR/meat"
 
 
-wd1=`pwd`
+wd1=$(pwd)
 cd ..
 . ./config.sh
 cd "$wd1"
