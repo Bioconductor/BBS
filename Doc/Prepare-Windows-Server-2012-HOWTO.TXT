@@ -436,6 +436,45 @@ From a personal administrator account
       'If the running task does not end when requested force it to stop'
   Then click OK on bottom right (requires biocbuild password)
 
+** [NOT MANDATORY BUT HIGHLY RECOMMENDED] Schedule a daily server reboot
+
+  Leftover processes from the previous builds often get in the way of the next
+  builds, causing catastrophic build failures. Until BBS does a better job at
+  killing these leftover processes (see bbs.jobs.killProc() function in BBS
+  source code), rebooting the server will do it. Blunt but efficient.
+  Best time for this reboot is a few minutes (e.g. 15) before the builds start.
+
+  Open Task Scheduler
+  In the right pane (Actions) click on Enable All Tasks History (if not
+    already done)
+  In the left pane create new BBS folder next to Microsoft folder (if not
+    already done)
+  Right-click on the BBS folder -> choose Create Task
+  - Tab General:
+      Name: DAILY SERVER REBOOT
+      In Security options:
+        Run whether user is logged on or not
+        Run with highest privileges
+      Configure for Windows Server 2012 R2
+  - Tab Triggers:
+      New Trigger
+      Begin the task On a schedule
+      In Settings:
+        Daily - At 5:40 PM - Recur every 1 day
+      In Advanced Settings:
+        nothing should be checked except 'Enabled'
+  - Tab Actions:
+      New Action
+      Action: Start a program
+      In Settings:
+        Program/script: powershell
+        Add arguments: restart-computer-force
+  - Tab Conditions:
+      nothing should be checked
+  - Tab Settings:
+      nothing should be checked
+  Then click OK on bottom right (requires personal password)
+
 
 ===============================================================================
 Additional stuff to install for packages with special needs
