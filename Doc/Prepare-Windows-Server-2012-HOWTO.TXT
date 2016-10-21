@@ -468,7 +468,7 @@ From a personal administrator account
       Action: Start a program
       In Settings:
         Program/script: powershell
-        Add arguments: restart-computer-force
+        Add arguments: restart-computer -force
   - Tab Conditions:
       nothing should be checked
   - Tab Settings:
