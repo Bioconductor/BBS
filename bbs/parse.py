@@ -97,22 +97,13 @@ def getPackageStatusFromDir(pkg_dir):
 
 def _getMaintainerFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
-    dcf = open(desc_file, 'r')
-    parser = DcfRecordParser(dcf)
-    dcf.close()
-    try:
-        maintainer = parser.getValue("Maintainer", True)
-    except KeyError:
-        FNULL = open(os.devnull, 'w')
-        rscript_path = os.path.join(os.getenv("BBS_R_HOME"), "bin", "Rscript")
-        script_path = os.path.join(BBScorevars.BBS_home, \
-            "utils", "getMaintainer.R")
-        cmd = "%s --vanilla %s %s" % \
-        (rscript_path, script_path, desc_file)
-        result = subprocess.check_output(cmd.split(" "), stderr=FNULL)
-        if result == "NULL":
-            raise DcfFieldNotFoundError(desc_file, 'Maintainer')
-        return result
+    FNULL = open(os.devnull, 'w')
+    Rscript_cmd = os.path.join(os.getenv("BBS_R_HOME"), "bin", "Rscript")
+    script_path = os.path.join(BBScorevars.BBS_home, "utils", "getMaintainer.R")
+    cmd = [Rscript_cmd, '--vanilla', script_path, desc_file]
+    maintainer = subprocess.check_output(cmd, stderr=FNULL)
+    if maintainer == 'NA':
+        raise DcfFieldNotFoundError(desc_file, 'Maintainer')
     return maintainer
 
 def getMaintainerFromDir(pkg_dir):
