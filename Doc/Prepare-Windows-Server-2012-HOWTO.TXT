@@ -390,6 +390,14 @@ From a personal administrator account
       'If the running task does not end when requested force it to stop'
   Then click OK on bottom right (requires biocbuild password)
 
+  Before the task can be started, the C:\Users\biocbuild\log folder should
+  be created from the biocbuild account. The first time the task will be
+  started, the C:\Users\biocbuild\log\loggon_biocbuild_at_startup.log file
+  will be created and the task will write 1 line to it. Each subsequent time
+  the task will be started in the future (i.e. each time the machine will be
+  rebooted), 1 additional line will be added to this file. So this file will
+  actually keep track of the reboot history.
+
   Now either start the task manually or reboot the machine (the task should
   start automatically after reboot).
 
@@ -400,6 +408,7 @@ From a personal administrator account
   sort processes by user name).
   These should be the *only* processes running as biocbuild when the builds
   are not running and the biocbuild user is not logged on.
+
 
 ** Add nightly builds to Task Scheduler
 
