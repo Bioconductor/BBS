@@ -168,7 +168,7 @@ allnodes = {
                    "utf-8"),
     'oaxaca':     ("Mac OS X Mavericks (10.9.5)",
                    "x86_64",
-                   "x86_64-apple-darwin13.1.0",
+                   "x86_64-apple-darwin13.4.0",
                    "mac.binary.mavericks",
                    "utf-8"),
     'montagu':    ("Mac OS X Leopard (10.5.8)",
