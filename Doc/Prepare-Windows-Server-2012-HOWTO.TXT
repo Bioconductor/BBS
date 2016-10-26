@@ -23,7 +23,7 @@ From the Administrator account
 
 ** Install Python 2.7 (for all users)
   - using Windows x86-64 MSI installer from
-    https://www.python.org/downloads/release/python-2712/
+      https://www.python.org/downloads/release/python-2712/
   - make sure 'Add python.exe to Path' is selected
 
 ** Upgrade to the latest pip
@@ -651,7 +651,7 @@ From a personal administrator account
 
   Download 64-bit/libSBML-5.10.0-win-x64.exe and
   32-bit/libSBML-5.10.0-win-x86.exe from
-  https://sourceforge.net/projects/sbml/files/libsbml/5.10.0/stable/Windows/
+    https://sourceforge.net/projects/sbml/files/libsbml/5.10.0/stable/Windows/
 
   Run the 2 installers and keep all the default settings.
 
@@ -706,6 +706,27 @@ From a personal administrator account
   created after the 1st build run), then:
 
     ..\R\bin\R --arch x64 CMD INSTALL --no-multiarch HilbertVisGUI
+
+** Install GGobi
+
+  Download Windows 64-bit and 32-bit versions from
+    http://www.ggobi.org/downloads/
+  Make sure to remove any old versions of GGobi.
+  Install the new versions.
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to load the rggobi package for the
+  2 archs (this package will be automatically installed after the 1st build
+  run but cannot be loaded if GGobi is not found on the system) e.g. open a
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc, then
+
+    - start R in 64-bit mode with
+        R\bin\R --arch x64
+      and do library(rggobi)
+
+    - start R in 32-bit mode with
+        R\bin\R --arch i386
+      and do library(rggobi)
 
 ** Set up ImmuneSpaceR package for connecting to ImmuneSpace
 
