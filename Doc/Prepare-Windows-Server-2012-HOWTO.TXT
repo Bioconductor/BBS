@@ -451,7 +451,12 @@ From a personal administrator account
   builds, causing catastrophic build failures. Until BBS does a better job at
   killing these leftover processes (see bbs.jobs.killProc() function in BBS
   source code), rebooting the server will do it. Blunt but efficient.
-  Best time for this reboot is a few minutes (e.g. 15) before the builds start.
+  Best time for this reboot is a few minutes (e.g. 15) before the prerun script
+  starts on the central node. This is because if, for some reason, the builds
+  were still running on the Windows node, that would kill them before the
+  prerun script starts. Which is good because otherwise the Windows node would
+  still be sending build products to the "central folder" on the central node,
+  and the prerun script would fail to delete this folder.
 
   Open Task Scheduler
   In the right pane (Actions) click on Enable All Tasks History (if not
@@ -469,7 +474,7 @@ From a personal administrator account
       New Trigger
       Begin the task On a schedule
       In Settings:
-        Daily - At 5:40 PM - Recur every 1 day
+        Daily - At 5:00 PM - Recur every 1 day
       In Advanced Settings:
         nothing should be checked except 'Enabled'
   - Tab Actions:
