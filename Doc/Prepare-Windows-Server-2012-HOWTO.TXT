@@ -467,6 +467,7 @@ From a personal administrator account
   - Tab General:
       Name: DAILY SERVER REBOOT
       In Security options:
+        When running the task, use the following account: SYSTEM
         Run whether user is logged on or not
         Run with highest privileges
       Configure for Windows Server 2012 R2
@@ -481,13 +482,13 @@ From a personal administrator account
       New Action
       Action: Start a program
       In Settings:
-        Program/script: powershell
-        Add arguments: restart-computer -force
+        Program/script: C:\WINDOWS\system32\shutdown.exe
+        Add arguments: -r -f -t 01
   - Tab Conditions:
       nothing should be checked
   - Tab Settings:
       nothing should be checked
-  Then click OK on bottom right (requires personal password)
+  Then click OK on bottom right
 
 
 ===============================================================================
