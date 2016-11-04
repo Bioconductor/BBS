@@ -770,4 +770,65 @@ From a personal administrator account
 
        library(GoogleGenomics)
        example(getReads)
+       
+************************************************************ 
+Single Package Builder Requirements
+************************************************************
+** Create the pkgbuild account:
+
+  Username: pkgbuild
+
+  For this account:
+    [ ] User must change password at next logon
+    [x] User cannot change password
+    [x] Password never expires
+    [ ] Account is disabled
+
+** Make the pkgbuild user member of the Remote Desktop Users group
+
+** Grant the pkgbuild user "Log on as batch job" rights
+
+  (This is needed in order to define scheduled tasks run by the pkgbuild
+  user.)
+
+  Go in Local Security Policy
+  -> Local Policies
+     -> User Rights Assignment
+  In the right pane, right-click on 'Log on as a batch job' -> Properties
+  Add pkgbuild user
+  
+** Grant the pkgbuild user permissions within the biocbuild user folder using the Users security group
+
+  Using File Explorer, go to C:\Users and right click the biocbuild folder and choose properties. Go to the Security tab.
+  -> Click Edit
+  -> Click Add
+  -> Enter the object names to select: Users
+  -> Click Check Names to validate
+  -> Click OK
+  
+  For Permissions choose Read & execute, List folder contents and Read. Click OK.
+  
+  Go to C:\Users\biocbuild\bbs-3.5-bioc and right click the meat folder and choose properties. Go to the Security tab.
+  -> Click Edit
+  -> Click Add
+  -> Enter the object names to select: Users
+  -> Click Check Names to validate
+  -> Click OK
+  
+  For Permissions choose Read & execute, List folder contents and Read. Click OK.
+  
+  Go to C:\Users\biocbuild\bbs-3.5-bioc and right click the NodeInfo folder and choose properties. Go to the Security tab.
+  -> Click Edit
+  -> Click Add
+  -> Enter the object names to select: Users
+  -> Click Check Names to validate
+  -> Click OK
+  
+  For Permissions choose Read & execute, List folder contents and Read. Click OK.
+  
+  
+  
+  
+  
+
 
