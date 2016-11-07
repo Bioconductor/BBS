@@ -5,7 +5,7 @@
 if(!require("BiocInstaller", quietly=TRUE))
     stop("BiocInstaller not installed!")
 
-reqs <- c("devtools", "BiocParallel", "BatchJobs", "httr", "jsonLite", "R.utils")
+reqs <- c("devtools", "BiocParallel", "BatchJobs", "httr", "jsonlite", "R.utils")
 lapply(reqs, function(x){
     if(!do.call(require, list(package=x, quietly=TRUE)))
     {
