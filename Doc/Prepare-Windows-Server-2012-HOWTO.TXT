@@ -827,6 +827,16 @@ Single Package Builder Requirements
   For Permissions choose Read & execute, List folder contents and Read. Click OK.
   
   
+  ** Grant the pkgbuild user permissions within the Windows\Temp folder using the Users security group. This is for BiocCheck.
+
+  Using File Explorer, go to C:\Windows and right click the Temp folder and choose properties. Go to the Security tab.
+  -> Click Edit
+  -> Click Add
+  -> Enter the object names to select: Users
+  -> Click Check Names to validate
+  -> Click OK
+  
+  For Permissions choose Full Control. Click OK.  
   
   
   
