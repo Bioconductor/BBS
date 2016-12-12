@@ -12,7 +12,6 @@ Table of Contents
     * [General overview of BBS](#general-overview-of-bbs)
     * [What builds where](#what-builds-where)
       * [About the build machines\.](#about-the-build-machines)
-        * [Note about Snow Leopard](#note-about-snow-leopard)
       * [How the build machines are organized\.](#how-the-build-machines-are-organized)
       * [What machines are used in which builds?](#what-machines-are-used-in-which-builds)
         * [Devel (Bioconductor 3\.2)](#devel-bioconductor-32)
@@ -91,20 +90,13 @@ In general, there are four *builds* that run during any given week:
 2. Release *experiment package* builds (*data-experiment* is the
    name for our experiment package repository). These builds
    run twice a week, on Wednesdays and Saturdays, on the 
-   Linux, Windows, and Snow Leopard build machines
+   Linux, Windows, and MacOS build machines
    for release. *
 3. Devel *software* builds. These builds run nightly on 
    all devel build machines.
 4. Devel *experiment package* builds. These builds run
    twice a week, on Wednesdays and Saturdays, on the
-   Linux, Windows, and Snow Leopard build machines for devel.
-
-\* = **Note**: The experiment data builds currently run on 
-Snow Leopard but not Mavericks. If you refer to
-[the note below](#note-about-snow-leopard) you'll see that
-this needs to change; beginning with Bioconductor 3.3
-we will no longer build on Snow Leopard, so experiment
-data builds must happen on Mavericks.
+   Linux, Windows, and MacOS build machines for devel.
 
 ## What builds where
 
@@ -139,24 +131,11 @@ This is for the four platforms that we build for:
 
 * Linux (Ubuntu 14.04 LTS)
 * Windows (Server 2008 or Server 2012)
-* Mac OS X 10.6.8 (Snow Leopard)
 * Mac OX X 10.9.5 (Mavericks)
 
 Any build machine that has "bioconductor.org" in its
 name is in the cloud. Any machine without a fully qualified
 domain name is (at this point) at FHCRC in Seattle.
-
-#### Note about Snow Leopard
-
-R's support for Snow Leopard is 
-being phased out with R-3.3, which will be released in the
-Spring of 2016. Therefore the upcoming devel version of
-Bioconductor (3.3) will not be built on Snow Leopard; nor will
-future versions. Therefore we can phase out one Snow Leopard
-machine after the 3.2 release (October 14, 2015), and the second
-one after the 3.3 release sometime in Spring 2016.
-Then we will only have two Mac Minis (morelia and oaxaca)
-which we use for building on Mavericks.
 
 ### How the build machines are organized.
 
@@ -188,14 +167,12 @@ in use as of today, September 14 2015.
 
 * Linux: linux1.bioconductor.org
 * Windows: windows1.bioconductor.org
-* Mac Snow Leopard: perceval
 * Mac Mavericks: oaxaca
 
 #### Release (Bioconductor 3.1)
 
 * Linux: zin2
 * Windows: moscato2
-* Mac Snow Leopard: petty
 * Mac Mavericks: morelia
 
 #### Next devel (Bioconductor 3.3)
@@ -207,14 +184,6 @@ Normally I would not start these builds until the current
 release builds had been stopped 
 (see [the prerelease checklist](Doc/prerelease_and_release_checklist.txt)) but it makes more sense to start the new devel
 builds in the cloud than to move the current release builds.
-
-*After the 3.1 builds stop on 10/8/2015 release, we'll add:*
-
-* Mac Mavericks: morelia
-
-We will not have a Snow Leopard build machine for the 3.3 builds
-because BioC 3.3 will use R-3.3 which will no longer support
-Snow Leopard.
 
 #### A note about time zones.
 
