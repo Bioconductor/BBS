@@ -542,3 +542,15 @@ TABLE.mainrep .odd .oaxaca {
 TABLE.mainrep .even .oaxaca {
     background: #B9C;
 }
+
+/* toluca2 */
+DIV.toluca2,
+TR.toluca2 TD,
+TABLE.mainrep .toluca2,
+TABLE.mainrep .odd .toluca2 {
+    background: #DBE;
+}
+TABLE.mainrep .even .toluca2 {
+    background: #B9C;
+}
+
