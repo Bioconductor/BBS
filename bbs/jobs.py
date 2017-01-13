@@ -597,6 +597,7 @@ def getHostname():
     hostname = hostname.lower()
     hostname = hostname.replace(".local", "")
     hostname = hostname.replace(".fhcrc.org", "")
+    hostname = hostname.replace(".bioconductor.org", "")
     return hostname
 
 ## Formatted date+time.
