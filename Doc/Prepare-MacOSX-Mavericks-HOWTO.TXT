@@ -3,12 +3,6 @@ How to set up a MacOSX Mavericks machine for the daily builds
 -------------------------------------------------------------------------------
 
 
-IT folks at RPCI:
-
-  Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
-  Landsiedel, Timothy <tjlandsi@RoswellPark.org>
-
-
 We assume that the machine has a biocbuild account with admin privileges (i.e.
 who belongs to the admin group). Note that on the Linux and Windows builders
 the biocbuild user is just a regular user with no admin privileges. However,
@@ -26,6 +20,12 @@ biocbuild account.
 Even though they are not needed, the machine can also have personal accounts
 with admin provileges for each person that will participate to the
 configuration and/or management of the builds.
+
+If biocbuild doesn't belong to the admin group (you can check this with
+'id -p biocbuild'), then you can add it by running the following command
+from your personal account (granted you belong to the admin group):
+
+    sudo dseditgroup -o edit -a biocbuild -t user admin
 
 
 From the biocbuild account
@@ -58,16 +58,6 @@ From the biocbuild account
 
       system_profiler SPSoftwareDataType
 
-** Add biocbuild user to admin group
-
-  First check that biocbuild doesn't already belong to the admin group with:
-
-    id -p biocbuild
-
-  Then:
-
-    sudo dseditgroup -o edit -a biocbuild -t user admin
-
 ** Check that you can ping the central build node. Depending on whether the
   node you're ssh'ing from is within RPCI's DMZ or not, use its short or
   long (i.e. hostname+domain) hostname. For example:
@@ -92,7 +82,10 @@ From the biocbuild account
 
     ssh: connect to host malbec2.bioconductor.org port 22: Operation timed out
 
-  Contact the IT folks at RPCI if that's the case.
+  Contact the IT folks at RPCI if that's the case:
+    Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
+    Landsiedel, Timothy <tjlandsi@RoswellPark.org>
+
 
 ** Check that you can send HTTP requests to the central node
 
@@ -103,7 +96,7 @@ From the biocbuild account
 
     curl: (7) Failed connect to malbec2.roswellpark.org:80; Operation timed out
 
-  Contact the IT folks at RPCI if that's the case.
+  Contact the IT folks at RPCI if that's the case (see above).
 
 ** Install the Command Line Developer Tools
 
