@@ -1,5 +1,5 @@
 ===============================================================================
-Things to install to have the builds up and running
+How to set up a Windows Server 2012 machine for the daily builds
 -------------------------------------------------------------------------------
 
 
@@ -499,34 +499,6 @@ Additional stuff to install for packages with special needs
 From a personal administrator account
 -------------------------------------
 
-** Install Ripley's bundle of pre-compiled external software used by some
-  packages
-
-  2 bundles to install: localXYZ.zip and spatialXYZ.zip
-
-  Download the latest localXYZ.zip and spatialXYZ.zip files (e.g. local323.zip
-  and spatial324.zip as of Sep 26, 2016) from
-      http://www.stats.ox.ac.uk/pub/Rtools/libs.html
-  Extract both localXYZ.zip and spatialXYZ.zip to C:\localXYZ: for each of
-  them, right-click on it, choose 'Extract All...', extract the files to
-  C:\localXYZ
-
-  Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
-  set variable LOCAL_SOFT to C:/localXYZ in R\etc\{i386,x64}\Makeconf
-
-  TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on) try to compile a package that uses the GSL
-  (provided by localXYZ.zip) e.g. open a PowerShell window, cd to
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
-  created after the 1st build run), then:
-
-      ..\R\bin\R CMD INSTALL GLAD
-      ..\R\bin\R CMD INSTALL PICS
-
-  Also try to compile a package that uses netCDF (provided by spatialXYZ.zip):
-
-      ..\R\bin\R CMD INSTALL mzR
-
 ** Install Java
 
   You need the JDK (Java Development Kit).
@@ -558,6 +530,34 @@ From a personal administrator account
     - start R in 32-bit mode with
         R\bin\R --arch i386
       and do library(rJava)
+
+** Install Ripley's bundle of pre-compiled external software used by some
+  packages
+
+  2 bundles to install: localXYZ.zip and spatialXYZ.zip
+
+  Download the latest localXYZ.zip and spatialXYZ.zip files (e.g. local323.zip
+  and spatial324.zip as of Sep 26, 2016) from
+      http://www.stats.ox.ac.uk/pub/Rtools/libs.html
+  Extract both localXYZ.zip and spatialXYZ.zip to C:\localXYZ: for each of
+  them, right-click on it, choose 'Extract All...', extract the files to
+  C:\localXYZ
+
+  Then from the biocbuild account, go to C:\Users\biocbuild\bbs-3.4-bioc and
+  set variable LOCAL_SOFT to C:/localXYZ in R\etc\{i386,x64}\Makeconf
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile a package that uses the GSL
+  (provided by localXYZ.zip) e.g. open a PowerShell window, cd to
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  created after the 1st build run), then:
+
+      ..\R\bin\R CMD INSTALL GLAD
+      ..\R\bin\R CMD INSTALL PICS
+
+  Also try to compile a package that uses netCDF (provided by spatialXYZ.zip):
+
+      ..\R\bin\R CMD INSTALL mzR
 
 ** Install Ghostscript
 

@@ -1,3 +1,362 @@
+===============================================================================
+How to set up a MacOSX Mavericks machine for the daily builds
+-------------------------------------------------------------------------------
+
+
+IT folks at RPCI:
+
+  Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
+  Landsiedel, Timothy <tjlandsi@RoswellPark.org>
+
+
+We assume that the machine has a biocbuild account with admin privileges (i.e.
+who belongs to the admin group). Note that on the Linux and Windows builders
+the biocbuild user is just a regular user with no admin privileges. However,
+on a Mac builder, during STAGE5 of the builds (i.e. BUILD BIN step), the
+biocbuild user needs to be able to set ownership and group of the files in
+the binary packages to root:admin (this is done calling the chown-rootadmin
+executable, see below in this document for the details), and then remove all
+these files at the beginning of the next run. It needs to belong to the admin
+group in order to be able to do this.
+
+Because biocbuild belongs to the admin group, it automatically is a sudoer.
+So all the configuration and management of the builds can be done from the
+biocbuild account.
+
+Even though they are not needed, the machine can also have personal accounts
+with admin provileges for each person that will participate to the
+configuration and/or management of the builds.
+
+
+From the biocbuild account
+--------------------------
+
+** Check the hardware and OS
+
+  - Requirements:
+                            strict minimum  recommended
+      Nb of logical cores:               8           16
+      Memory:                         16GB         32GB
+
+      Hard drive: 256GB if the plan is to run BBS only on the machine. More
+      (e.g. 512GB) if the plan is to also run the Single Package Builder.
+
+  - Check nb of logical cores with:
+
+      sysctl -n hw.ncpu
+
+  - Check amount of RAM with:
+
+      system_profiler SPHardwareDataType
+
+  - Check hard drive with:
+
+      system_profiler SPStorageDataType
+
+  - Also make sure that the machine has the latest release of Mavericks i.e.
+    OS X 10.9.5 Mavericks. Check this with
+
+      system_profiler SPSoftwareDataType
+
+** Add biocbuild user to admin group
+
+  First check that biocbuild doesn't already belong to the admin group with:
+
+    id -p biocbuild
+
+  Then:
+
+    sudo dseditgroup -o edit -a biocbuild -t user admin
+
+** Check that you can ping the central build node. Depending on whether the
+  node you're ssh'ing from is within RPCI's DMZ or not, use its short or
+  long (i.e. hostname+domain) hostname. For example:
+
+    ping malbec2                   # from within RPCI's DMZ
+    ping malbec2.bioconductor.org  # from anywhere else
+
+** Check that you can ssh to the central build node
+
+  Add .BBS/id_rsa to the biocbuild home (copy id_rsa from another build
+  machine). Then chmod 400 .BBS/id_rsa so permissions look like this
+
+    toluca2:~ biocbuild$ ls -l .BBS/id_rsa
+    -r--------  1 biocbuild  staff  884 Jan 12 12:19 .BBS/id_rsa
+
+  Then try to ssh to the central build node e.g.
+
+    ssh -i .BBS/id_rsa malbec2                   # from within RPCI's DMZ
+    ssh -i .BBS/id_rsa malbec2.bioconductor.org  # from anywhere else
+
+  If this is blocked by RPCI's firewall, after a while you'll get:
+
+    ssh: connect to host malbec2.bioconductor.org port 22: Operation timed out
+
+  Contact the IT folks at RPCI if that's the case.
+
+** Check that you can send HTTP requests to the central node
+
+    curl "http://malbec2"                  # from within RPCI's DMZ
+    curl "http://malbec2.roswellpark.org"  # from anywhere else
+
+  If this is blocked by RPCI's firewall, after a while you'll get:
+
+    curl: (7) Failed connect to malbec2.roswellpark.org:80; Operation timed out
+
+  Contact the IT folks at RPCI if that's the case.
+
+** Install the Command Line Developer Tools
+
+  The Command Line Developer Tools is a subset of Xcode that includes Apple
+  LLVM compiler (with Clang front-end), linker, Make, and other developper
+  tools that enable Unix-style development at the command line. It's all
+  that is needed to install/compile R packages with native code in them (note
+  that it even includes the svn and git clients).
+  The full Xcode IDE is much bigger (2.6G vs 103M) and is not needed.
+
+  Xcode 6.2 was the last version of Xcode to support OS X 10.9.5 Mavericks so
+  we need to get "Command Line Tools (OS X 10.9) for Xcode 6.2".
+
+  Download it from:
+
+    http://adcdownload.apple.com/Developer_Tools/Command_Line_Tools_OS_X_10.9_for_Xcode__Xcode_6.2/commandlinetoolsosx10.9forxcode6.2.dmg
+
+  Install with:
+
+    sudo hdiutil attach commandlinetoolsosx10.9forxcode6.2.dmg
+    sudo installer -pkg "/Volumes/Command Line Developer Tools/Command Line Tools (OS X 10.9).pkg" -target /
+    sudo hdiutil detach "/Volumes/Command Line Developer Tools"
+
+** Clone BBS git tree
+
+    cd
+    git clone https://github.com/bioconductor/BBS
+
+** Compile chown-rootadmin
+
+    cd ~/BBS/utils
+    gcc chown-rootadmin.c -o chown-rootadmin
+    sudo chown root:admin chown-rootadmin
+    sudo chmod 4750 chown-rootadmin
+
+  TESTING: Check that the permissions on chown-rootadmin look like this:
+
+    toluca2:utils biocbuild$ ls -al chown-rootadmin
+    -rwsr-x---  1 root  admin  8596 Jan 13 12:55 chown-rootadmin
+
+** Install gfortran
+
+  Download gfortran-4.8.2 from https://gcc.gnu.org/wiki/GFortranBinaries#MacOS
+
+  Install with
+
+    sudo hdiutil attach gfortran-4.8.2-Mavericks.dmg
+    sudo installer -pkg /Volumes/gfortran-4.8.2-Mavericks/gfortran-4.8.2-Mavericks/gfortran.pkg -target /
+    sudo hdiutil detach /Volumes/gfortran-4.8.2-Mavericks
+
+    sudo ln -s gfortran gfortran-4.8
+    sudo mkdir -p /usr/local/lib/gcc/x86_64-apple-darwin13.0.0
+    cd /usr/local/lib/gcc/x86_64-apple-darwin13.0.0
+    sudo ln -s /usr/local/gfortran/lib 4.8.2
+
+** Install XQuartz
+
+  Download it from https://xquartz.macosforge.org/
+
+  Install with:
+
+    sudo hdiutil attach XQuartz-2.7.11.dmg
+    sudo installer -pkg /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
+    sudo hdiutil detach /Volumes/XQuartz-2.7.11
+
+** Create bbs-3.5-bioc directory structure
+
+    mkdir bbs-3.5-bioc
+    cd bbs-3.5-bioc
+    mkdir NodeInfo log meat
+
+** Install R
+
+    from Simon's site at AT&T https://r.research.att.com/ for R devel
+    (pick up R-devel-mavericks.pkg)
+
+    from CRAN (e.g. https://cloud.r-project.org/bin/macosx/) for R release
+    (pick up the 1st file e.g. R-3.3.2.pkg)
+
+  Download with e.g.
+
+    curl "https://r.research.att.com/mavericks/R-devel/R-devel-mavericks.pkg" -o R-devel-mavericks.pkg
+
+  Then install with e.g.
+
+    sudo installer -pkg R-devel-mavericks.pkg -target /
+
+  Note that, unlike what we do on the Linux and Windows builders, this is a
+  *system-wide* installation of R i.e. it can be started with 'R' from any
+  account.
+
+  TESTING: Start R and try to install some packages from source:
+
+    # CRAN packages
+    install.packages("Rcpp", type="source")   # contains C++ code
+    install.packages("minqa", type="source")  # contains Fortran code
+
+    # Bioconductor packages
+    source("http://bioconductor.org/biocLite.R")
+    ## ONLY if release and devel are using the same version of R:
+    #useDevel()
+    biocLite("BiocCheck", type="source")
+    biocLite("VariantAnnotation", type="source")
+
+** Install MacTeX
+
+    https://tug.org/mactex/mactex-download.html
+
+  Install with:
+
+    sudo installer -pkg mactex-20161009.pkg -target /
+
+  Add shell_escape = t to /usr/local/texlive/2016/texmf.cnf
+
+    cd /usr/local/texlive/2016/
+    sudo cp texmf.cnf texmf.cnf.original
+    sudo vi texmf.cnf
+    ## add shell_escape = t at the bottom of the file
+
+  TESTING: Try to build a package using pstricks + auto-pst-pdf in its
+  vignette e.g.:
+
+    svn co https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/affyContam
+    R CMD build affyContam
+
+** Install Pandoc
+
+  Download latest Pandoc from https://github.com/jgm/pandoc/releases/latest
+  (pick up .pkg file)
+
+  Install with:
+
+    sudo installer -pkg pandoc-1.19.1-osx.pkg -target /
+
+** Add the following entry to biocbuild crontab
+
+    55 17 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.5/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.5-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+
+===============================================================================
+Additional stuff to install for packages with special needs
+-------------------------------------------------------------------------------
+
+From the biocbuild account
+--------------------------
+
+** Install Java
+
+  Visit https://www.java.com/en/download/faq/develop.xml, then click on the
+  "JDK downloads" link, then on the big Java DOWNLOAD button, then pick up
+  the Java SE Development Kit for Mac OS X. It's a big (> 220 MB) .dmg file
+  named something like jdk-8u111-macosx-x64.dmg
+
+  Install with:
+
+    sudo hdiutil attach jdk-8u111-macosx-x64.dmg
+    sudo installer -pkg "/Volumes/JDK 8 Update 111/JDK 8 Update 111.pkg" -target /
+    sudo hdiutil detach "/Volumes/JDK 8 Update 111"
+
+  Then reconfigure R to use this new Java installation:
+
+    sudo R CMD javareconf
+
+  TESTING: Try to install the rJava package:
+
+    install.packages("rJava", type="source")
+    library(rJava)
+    .jinit()
+    .jcall("java/lang/System","S","getProperty","java.runtime.version")
+
+** Install JPEG system library
+
+    curl http://r.research.att.com/libs/jpeg-9-darwin.13-x86_64.tar.gz -o jpeg-9-darwin.13-x86_64.tar.gz
+    sudo tar fvxz jpeg-9-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install the jpeg package:
+
+    install.packages("jpeg", type="source")
+
+#** Install PNG system library
+#
+#    curl http://r.research.att.com/libs/libpng-1.6.17-darwin.13-x86_64.tar.gz -o libpng-1.6.17-darwin.13-x86_64.tar.gz
+#    sudo tar fvxz libpng-1.6.17-darwin.13-x86_64.tar.gz -C /
+#
+#  TESTING: Try to install the sysfonts package:
+#
+#    install.packages("sysfonts", type="source")
+
+** Install TIFF system library
+
+    curl http://r.research.att.com/libs/tiff-4.0.3-darwin.13-x86_64.tar.gz -o tiff-4.0.3-darwin.13-x86_64.tar.gz
+    sudo tar fvxz tiff-4.0.3-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install the tiff package:
+
+    install.packages("tiff", type="source")
+
+#** Install Cairo system library
+#
+#     curl http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz -o cairo-1.14.2-darwin.13-x86_64.tar.gz
+#     sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
+#
+#   TESTING: Try to install the Cairo package:
+#
+#    install.packages("Cairo", type="source")
+
+** Install NetCDF and HDF5 system libray
+
+    curl http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -o netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
+    curl http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz -o hdf5-1.8.14-darwin.13-x86_64.tar.gz
+
+    sudo tar fvxz netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -C /
+    sudo tar fvxz hdf5-1.8.14-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install the ncdf4 package:
+
+    install.packages("ncdf4", type="source")
+
+** Install FFTW system library
+
+    curl http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz -o fftw-3.3.4-darwin.13-x86_64.tar.gz
+    sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install the fftwtools package:
+
+    install.packages("fftwtools", type="source")
+
+** Install GSL system library
+
+    curl http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz -o gsl-1.16-darwin.13-x86_64.tar.gz
+    sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install the GLAD package:
+
+    library(BiocInstaller)
+    biocLite("GLAD", type="source")
+
+#** Install BOOST system library
+#
+#    curl http://r.research.att.com/libs/boost_1.47.0-darwin9-bin4.tar.bz2 -o boost_1.47.0-darwin9-bin4.tar.bz2
+#    sudo tar fvxz boost_1.47.0-darwin9-bin4.tar.bz2 -C /
+#
+#  TESTING: Try to install the mzR package:
+#
+#    library(BiocInstaller)
+#    biocLite("mzR", type="source")  # takes about 5 min!
+
+
+
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+old stuff
 
 App Store account is:
 
@@ -23,7 +382,7 @@ To set up RAID, you should first configure the new machine
 minimally so that you can at least boot into the OS without
 having to do any first-time installation tasks.
 
-Then use Carbon Copy Cloner to clone the hard drive to 
+Then use Carbon Copy Cloner to clone the hard drive to
 an external USB drive. CCC is not free but has a 30 day
 trial version that is fully functional. Be sure and clone
 the recovery partition onto the USB drive.
@@ -53,7 +412,7 @@ Continue with the rest of the instructions on that page.
 
 Note: After setting up RAID, there is no recovery partition on the
 resulting disks. So it's important to keep the USB drive you used
-in the RAID setup around. It has a recovery partition which you can 
+in the RAID setup around. It has a recovery partition which you can
 use to repair the RAID disks or do other disaster recovery.
 
 --- After RAID INSTALL
@@ -72,7 +431,7 @@ install texinfo from http://r.research.att.com/libs/texinfo-5.2-darwin10.tar.gz
 (whatever the most recent version is)
 install R, the Mavericks build of course
 
-Install XQuartz from 
+Install XQuartz from
 https://xquartz.macosforge.org/
 set up bbs-* and BBS directories, add key to .BBS.
 compile the chown-rootadmin program
@@ -80,10 +439,10 @@ compile the chown-rootadmin program
 Does the mavericks-R-fix-flags.sh script work as it should?
 (seems to)
 
-From 
+From
 http://r.research.att.com/libs
 
-Download - 
+Download -
 
 gfortran-4.8.2-darwin13.tar.bz2
 
@@ -105,11 +464,11 @@ new fontconfig stuff from today (4/16/2014) needs to be installed.
  trivial cron jobs will work but I could not get the bbs run.sh
 cron job to work until after I did:
 
-sudo touch /etc/crontab 
+sudo touch /etc/crontab
 
 
 install JAGS from source (standard configure/make/make install)
-test 
+test
 
 install java jvm (not just jre)
 
@@ -118,7 +477,7 @@ install openbabel
 reconcile with below: need netcdf and hdf5 from simon
 
 
-update libsbml instructions, build from source, 
+update libsbml instructions, build from source,
 use configure command
 ./configure --enable-layout
 
@@ -159,7 +518,7 @@ o Install R. Use CRAN official binary for release or Simon's latest devel build
 ---
 > FCFLAGS = -g -O2 $(LTO)
 
-?????? are we sure? doesn't seem to be needed anymore 
+?????? are we sure? doesn't seem to be needed anymore
 
 Wait - which package requires this?
 (This should be incorporated into the script)
@@ -196,7 +555,7 @@ o Install the GTK+ framework provided by Simon at:
     > install.packages("RGtk2", type="source")
     > library(RGtk2)
   Finally try R CMD INSTALL HilbertVisGUI
-    
+
 o Install graphviz from the official graphviz site. Try 'neato --help'
 
 o Install GSL from:
@@ -206,11 +565,11 @@ o Install GSL from:
     sudo tar zxf gsl-*.tar.gz -C /
    Make sure any previous installations of GSL have been removed. In particular,
    all /usr/local/lib/libgsl*.dylib files should be removed.
-  Try R CMD INSTALL affyILM  
+  Try R CMD INSTALL affyILM
 
 o Install other 3rd party libraries provided by Simon at:
     http://R.research.att.com/libs/
-  At least: 
+  At least:
   tiff, libpng, jpeg, readline, freetype, fontconfig, pixman and cairo
 
   Be sure and install the "darwin9" version of tiff, even though
@@ -224,9 +583,9 @@ o Install other 3rd party libraries provided by Simon at:
     I think it's sufficient to install a binary of Cairo and library() it.)
 
 o Install Simon's ggobi from http://R.research.att.com/libs/
-  Add /usr/local/ggobi/lib/pkgconfig to PKG_CONFIG_PATH (in /etc/profile).  
+  Add /usr/local/ggobi/lib/pkgconfig to PKG_CONFIG_PATH (in /etc/profile).
   Try:
-    pkg-config ggobi --libs 
+    pkg-config ggobi --libs
   Then start R and try:
     > install.packages("rggobi", type="source")
     > library(rggobi)
@@ -260,7 +619,7 @@ o Install PostgreSQL (the official PostgreSQL website provides links to
   in /usr/bin for the above to work. Then start R and try:
     > install.packages("RPostgreSQL", type="source")
     > library(RPostgreSQL)
-  
+
 o Install MySQL (MySQL Community Server). Choose "Mac OS X 10.6 (x86, 64-bit(?)),
   DMG Archive" available at http://dev.mysql.com/downloads/mysql/.
   Add:
@@ -271,7 +630,7 @@ o Install MySQL (MySQL Community Server). Choose "Mac OS X 10.6 (x86, 64-bit(?))
   Also create symlink:
     mysql -> ../mysql/include
   in /usr/local/include, and create symlinks in /usr/local/lib to all the files
-  in /usr/local/mysql/lib. 
+  in /usr/local/mysql/lib.
   Then add this to /etc/profile:
   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/mysql/lib
 
@@ -279,7 +638,7 @@ o Install MySQL (MySQL Community Server). Choose "Mac OS X 10.6 (x86, 64-bit(?))
     > install.packages("RMySQL", type="source")
     > library(RMySQL)
 
- 
+
 LIBSBML:
 
 Install libsbml from http://sourceforge.net/projects/sbml/files/libsbml/5.10.2/stable/Mac%20OS%20X/libsbml-5.10.2-libxml2-macosx-mavericks.dmg/download
@@ -298,11 +657,11 @@ libdir=/usr/local/lib
 includedir=/usr/local/include
 
 Libs: -L${libdir}        -lxml2 -lz -lbz2 -lsbml -lstdc++ -lm
-Cflags: -I${includedir}  
+Cflags: -I${includedir}
 Requires: libxml-2.0 >= 2.6.16
 
 You may need to edit the Version: field. Don't worry about the xml
-version stuff (as discussed in the Snow Leopard version of this 
+version stuff (as discussed in the Snow Leopard version of this
 document); I think the libxml on Mavericks is new enough that
 it's not an issue.
 Also, you need to modify libsbml.5.dylib so that it contains its own
@@ -310,7 +669,7 @@ location so that code that links to it (rsbml) can find it.
 So do this:
 
     cd /usr/local/lib
-    sudo install_name_tool -id "/usr/local/lib/libsbml.5.dylib" libsbml.5.dylib 
+    sudo install_name_tool -id "/usr/local/lib/libsbml.5.dylib" libsbml.5.dylib
 
 You can check that it "took" with:
 
@@ -333,7 +692,7 @@ for end users.
   Ideally you should then make a binary (using our scripts)
   and try it on a different Mavericks machine.
 
-o Install ROOT. 
+o Install ROOT.
   Get from source, ftp://root.cern.ch/root/root_v5.34.18.source.tar.gz
   or newer.
   Configure with:
@@ -344,7 +703,7 @@ o Install ROOT.
   Then
   make
   sudo make install
-  
+
   Then add /usr/local/root/bin to PATH (in /etc/profile).
   Then try:
     which root-config
@@ -356,7 +715,7 @@ bin/thisroot.sh
 
 
 
-o Install ImageMagick 
+o Install ImageMagick
   From this page (choose the first package):
   http://cactuslab.com/imagemagick/
   Test with:
@@ -364,9 +723,9 @@ o Install ImageMagick
 
 o If there are problems with packages that use GLX (that is, library(rgl)
   fails), try using the version of the Xvfb executable that is on perceval.
-  The problem (described here: 
+  The problem (described here:
   http://lists.apple.com/archives/x11-users/2012/Dec/msg00056.html
-  ) was solved on 12/21/2012 by copying the Xvfb executable from 
+  ) was solved on 12/21/2012 by copying the Xvfb executable from
   perceval to petty. The executable that 'works' is backed up on
   /shared/silo_researcher/Morgan_M/BioC/BBS
   as 'Xvfb', and the one that
@@ -382,9 +741,9 @@ o Install the Variant Effect Predictor as described in the README
 
 
 o Set locale by adding this to /etc/profile:
-export LC_ALL=en_US.UTF-8  
+export LC_ALL=en_US.UTF-8
   If that doesn't work, add it to nodes/NODENAME/local-settings.sh.
-  
+
 o Install openmpi per this page:
 https://wiki.helsinki.fi/display/HUGG/Installing+Open+MPI+on+Mac+OS+X
   The configure command should be:
@@ -398,7 +757,7 @@ export RMPI_TYPE=OPENMPI
 
 )
 
-Install pandoc from 
+Install pandoc from
 http://johnmacfarlane.net/pandoc/
 Then test with
 R CMD build ChemmineOB
