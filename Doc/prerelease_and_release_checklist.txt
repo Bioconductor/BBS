@@ -252,6 +252,11 @@ svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
   otherwise it will fail its unit test because it is testing to make
   sure that BiocInstaller is in the devel repos. A chicken-and-egg situation.
 
+- Update SPB to point to correct builders (and ??) 
+
+- Update docker. On github Bioconductor/bioc_docker update the config.yml. On
+  github and dockerhub create release branches and tags. 
+
 On D + 1:
 
 - Go for a beer.
