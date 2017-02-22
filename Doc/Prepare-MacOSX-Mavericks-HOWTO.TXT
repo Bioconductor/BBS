@@ -54,9 +54,13 @@ From the biocbuild account
       system_profiler SPStorageDataType
 
   - Also make sure that the machine has the latest release of Mavericks i.e.
-    OS X 10.9.5 Mavericks. Check this with
+    OS X 10.9.5 Mavericks. Check this with:
 
       system_profiler SPSoftwareDataType
+
+  - Check the kernel version (should be Darwin 13 for OS X Mavericks):
+
+      uname -sr
 
 ** Check that you can ping the central build node. Depending on whether the
   node you're ssh'ing from is within RPCI's DMZ or not, use its short or
@@ -188,7 +192,20 @@ From the biocbuild account
   *system-wide* installation of R i.e. it can be started with 'R' from any
   account.
 
-  TESTING: Start R and try to install some packages from source:
+  TESTING: Start the virtual X server, start R, and check X11:
+
+    # From the shell
+    . ~/BBS/utils/start-virtual-X.sh
+
+    # From R
+    capabilities()[["X11"]]  # must be TRUE
+    X11()                    # nothing visible should happen
+    q("no")
+
+    # From the shell
+    . ~/BBS/utils/stop-virtual-X.sh
+
+  Then start R and try to install a few packages from source:
 
     # CRAN packages
     install.packages("Rcpp", type="source")   # contains C++ code
@@ -370,7 +387,8 @@ From the biocbuild account
 
     export PKG_CONFIG_PATH=/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig
 
-  TESTING: Try to install the RGtk2 package:
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to install the RGtk2 package:
 
     install.packages("RGtk2", type="source")
 
@@ -389,7 +407,8 @@ From the biocbuild account
   Then in /etc/profile append /usr/local/mysql/bin to PATH and
   /usr/local/mysql/lib to DYLD_LIBRARY_PATH.
 
-  TESTING:
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then:
 
     which mysql_config
 
@@ -410,6 +429,47 @@ From the biocbuild account
     install.packages("Rmpfr", type="source")  # requires the mpfr lib
     library(BiocInstaller)
     biocLite("RankProd", type="source")  # requires the gmp and Rmpfr packages
+
+** Install JAGS
+
+  Download with:
+
+    curl -O https://cytranet.dl.sourceforge.net/project/mcmc-jags/JAGS/4.x/Mac%20OS%20X/JAGS-4.2.0.dmg
+
+  Install with:
+
+    sudo hdiutil attach JAGS-4.2.0.dmg
+    sudo installer -pkg /Volumes/JAGS-4.2.0/JAGS-4.2.0.mpkg -target /
+    sudo hdiutil detach /Volumes/JAGS-4.2.0
+
+  TESTING: Try to install the rjags package:
+
+    install.packages("rjags", type="source")
+
+** Install ImageMagick
+
+  Download first installer from this page:
+
+    http://cactuslab.com/imagemagick/
+
+  e.g.
+
+    curl -O http://cactuslab.com/assets/installers/ImageMagick-6.9.1-0.pkg.zip
+
+  Install with:
+
+    unzip ImageMagick-6.9.1-0.pkg.zip
+    sudo installer -pkg ImageMagick-6.9.1-0.pkg -target /
+
+  TESTING: Logout and login again so that the changes to PATH take effect.
+  Then:
+
+    which convert
+
+  Then try to build the flowQ package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build flowQ
 
 
 ===============================================================================
@@ -607,20 +667,6 @@ o Install R. Use CRAN official binary for release or Simon's latest devel build
   from http://r.research.att.com/ for devel.
   Run the usual leopard-R-fix-flags.sh (this should be copied to
   snow-leopard-R-fix-flags.sh) in  /Library/Frameworks/R.framework/Resources/etc/
-  Then make an additional change to Makeconf:
-
-35c35
-< FCFLAGS = -mtune=core2 -g -O2 $(LTO)
----
-> FCFLAGS = -g -O2 $(LTO)
-
-?????? are we sure? doesn't seem to be needed anymore
-
-Wait - which package requires this?
-(This should be incorporated into the script)
-
-
-
 
 o Start R. Try X11(), then library(tcltk), then check capabilities().
   Could be that X11() hangs R. This seems to be solved by installing the latest
@@ -772,15 +818,6 @@ o Install ROOT.
 bin/thisroot.sh
 ...
 
-
-
-
-o Install ImageMagick
-  From this page (choose the first package):
-  http://cactuslab.com/imagemagick/
-  Test with:
-  R CMD build flowQ
-
 o If there are problems with packages that use GLX (that is, library(rgl)
   fails), try using the version of the Xvfb executable that is on perceval.
   The problem (described here:
@@ -793,12 +830,6 @@ o If there are problems with packages that use GLX (that is, library(rgl)
   'Xvfb.bak.20121221'
   (Don't know if this will work, or if there is still a problem,
   in Snow Leopard)
-
-o Install the Variant Effect Predictor as described in the README
-  of ensemblVEP. Then run
-  R CMD build ensemblVEP
-  to see if it works.
-
 
 o Set locale by adding this to /etc/profile:
 export LC_ALL=en_US.UTF-8
