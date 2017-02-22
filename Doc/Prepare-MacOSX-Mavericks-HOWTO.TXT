@@ -141,7 +141,7 @@ From the biocbuild account
 
   Download gfortran-4.8.2 from https://gcc.gnu.org/wiki/GFortranBinaries#MacOS
 
-  Install with
+  Install with:
 
     sudo hdiutil attach gfortran-4.8.2-Mavericks.dmg
     sudo installer -pkg /Volumes/gfortran-4.8.2-Mavericks/gfortran-4.8.2-Mavericks/gfortran.pkg -target /
@@ -344,6 +344,28 @@ From the biocbuild account
 #    library(BiocInstaller)
 #    biocLite("mzR", type="source")  # takes about 5 min!
 
+** Install MySQL Community Server
+
+  Download mysql-5.7.16-osx10.11-x86_64.dmg from:
+
+    https://downloads.mysql.com/archives/community/
+
+  Install with:
+
+    sudo hdiutil attach mysql-5.7.16-osx10.11-x86_64.dmg
+    sudo installer -pkg /Volumes/mysql-5.7.16-osx10.11-x86_64/mysql-5.7.16-osx10.11-x86_64.pkg -target /
+    sudo hdiutil detach /Volumes/mysql-5.7.16-osx10.11-x86_64
+
+  Then in /etc/profile append /usr/local/mysql/bin to PATH and
+  /usr/local/mysql/lib to DYLD_LIBRARY_PATH.
+
+  TESTING:
+
+    which mysql_config
+
+  Then try to install the RMySQL package:
+
+    install.packages("RMySQL", type="source")
 
 
 -----------------------------------------------------------------------------
@@ -612,25 +634,6 @@ o Install PostgreSQL (the official PostgreSQL website provides links to
   in /usr/bin for the above to work. Then start R and try:
     > install.packages("RPostgreSQL", type="source")
     > library(RPostgreSQL)
-
-o Install MySQL (MySQL Community Server). Choose "Mac OS X 10.6 (x86, 64-bit(?)),
-  DMG Archive" available at http://dev.mysql.com/downloads/mysql/.
-  Add:
-    export PATH="$PATH:/usr/local/mysql/bin"
-  to /etc/profile (make a copy as /etc/profile.orginal before modifying).
-  Then try:
-    which mysql_config
-  Also create symlink:
-    mysql -> ../mysql/include
-  in /usr/local/include, and create symlinks in /usr/local/lib to all the files
-  in /usr/local/mysql/lib.
-  Then add this to /etc/profile:
-  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/mysql/lib
-
-  Start R and try:
-    > install.packages("RMySQL", type="source")
-    > library(RMySQL)
-
 
 LIBSBML:
 

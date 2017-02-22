@@ -260,6 +260,7 @@ interactively on a Windows build machine.
   Use CRAN Windows binary that matches BioC devel.
   When running the installer:
 
+  - Ignore warning about the current user not being an admin
   - Select destination location C:\Users\biocbuild\bbs-3.4-bioc\R
   - Don't create a Start Menu Folder
   - Don't create a desktop icon
@@ -770,10 +771,12 @@ From a personal administrator account
 
        library(GoogleGenomics)
        example(getReads)
-       
-************************************************************ 
+
+
+===============================================================================
 Single Package Builder Requirements
-************************************************************
+-------------------------------------------------------------------------------
+       
 ** Create the pkgbuild account:
 
   Username: pkgbuild
@@ -837,8 +840,4 @@ Single Package Builder Requirements
   -> Click OK
   
   For Permissions choose Full Control. Click OK.  
-  
-  
-  
-
 
