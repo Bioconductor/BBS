@@ -178,7 +178,7 @@ From the biocbuild account
 
   Download with e.g.
 
-    curl "https://r.research.att.com/mavericks/R-devel/R-devel-mavericks.pkg" -o R-devel-mavericks.pkg
+    curl -O https://r.research.att.com/mavericks/R-devel/R-devel-mavericks.pkg
 
   Then install with e.g.
 
@@ -269,7 +269,7 @@ From the biocbuild account
 
 ** Install JPEG system library
 
-    curl http://r.research.att.com/libs/jpeg-9-darwin.13-x86_64.tar.gz -o jpeg-9-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/jpeg-9-darwin.13-x86_64.tar.gz
     sudo tar fvxz jpeg-9-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the jpeg package:
@@ -278,7 +278,7 @@ From the biocbuild account
 
 #** Install PNG system library
 #
-#    curl http://r.research.att.com/libs/libpng-1.6.17-darwin.13-x86_64.tar.gz -o libpng-1.6.17-darwin.13-x86_64.tar.gz
+#    curl -O http://r.research.att.com/libs/libpng-1.6.17-darwin.13-x86_64.tar.gz
 #    sudo tar fvxz libpng-1.6.17-darwin.13-x86_64.tar.gz -C /
 #
 #  TESTING: Try to install the sysfonts package:
@@ -287,26 +287,35 @@ From the biocbuild account
 
 ** Install TIFF system library
 
-    curl http://r.research.att.com/libs/tiff-4.0.3-darwin.13-x86_64.tar.gz -o tiff-4.0.3-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/tiff-4.0.3-darwin.13-x86_64.tar.gz
     sudo tar fvxz tiff-4.0.3-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the tiff package:
 
     install.packages("tiff", type="source")
 
-#** Install Cairo system library
-#
-#     curl http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz -o cairo-1.14.2-darwin.13-x86_64.tar.gz
-#     sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
-#
-#   TESTING: Try to install the Cairo package:
-#
-#    install.packages("Cairo", type="source")
+** Install Cairo system library
+
+    curl -O http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz
+    sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install and load the Cairo *binary* package:
+
+    install.packages("Cairo")
+    library(Cairo)
+
+  Note: As of Feb 22, 2017, CRAN still does not provide Mac binary packages
+  for R 3.4. However, it seems that the Cairo binary made for R 3.3 works
+  with R 3.4. Install and load with:
+
+    contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
+    install.packages("Cairo", contriburl=contriburl)
+    library(Cairo)
 
 ** Install NetCDF and HDF5 system libray
 
-    curl http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -o netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
-    curl http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz -o hdf5-1.8.14-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz
 
     sudo tar fvxz netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -C /
     sudo tar fvxz hdf5-1.8.14-darwin.13-x86_64.tar.gz -C /
@@ -317,7 +326,7 @@ From the biocbuild account
 
 ** Install FFTW system library
 
-    curl http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz -o fftw-3.3.4-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz
     sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the fftwtools package:
@@ -326,7 +335,7 @@ From the biocbuild account
 
 ** Install GSL system library
 
-    curl http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz -o gsl-1.16-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz
     sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the GLAD package:
@@ -336,13 +345,34 @@ From the biocbuild account
 
 #** Install BOOST system library
 #
-#    curl http://r.research.att.com/libs/boost_1.47.0-darwin9-bin4.tar.bz2 -o boost_1.47.0-darwin9-bin4.tar.bz2
+#    curl -O http://r.research.att.com/libs/boost_1.47.0-darwin9-bin4.tar.bz2
 #    sudo tar fvxz boost_1.47.0-darwin9-bin4.tar.bz2 -C /
 #
 #  TESTING: Try to install the mzR package:
 #
 #    library(BiocInstaller)
 #    biocLite("mzR", type="source")  # takes about 5 min!
+
+** Install GTK2
+
+    curl -O http://r.research.att.com/libs/GTK_2.24.17-X11.pkg
+    sudo installer -pkg GTK_2.24.17-X11.pkg -target /
+
+  In /usr/bin create symlink:
+
+    pkg-config -> /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
+
+  Try:
+
+    which pkg-config
+
+  Then in /etc/profile add:
+
+    export PKG_CONFIG_PATH=/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig
+
+  TESTING: Try to install the RGtk2 package:
+
+    install.packages("RGtk2", type="source")
 
 ** Install MySQL Community Server
 
@@ -366,6 +396,57 @@ From the biocbuild account
   Then try to install the RMySQL package:
 
     install.packages("RMySQL", type="source")
+
+** Install the GNU MP Bignum and GNU MPFR libraries
+
+    curl -O http://r.research.att.com/libs/gmp-6.0.0-darwin.13-x86_64.tar.gz
+    sudo tar fvxz gmp-6.0.0-darwin.13-x86_64.tar.gz -C /
+    curl -O http://r.research.att.com/libs/mpfr-3.1.2-darwin.13-x86_64.tar.gz
+    sudo tar fvxz mpfr-3.1.2-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install the gmp, Rmpfr, and RankProd packages:
+
+    install.packages("gmp", type="source")    # requires the gmp lib
+    install.packages("Rmpfr", type="source")  # requires the mpfr lib
+    library(BiocInstaller)
+    biocLite("RankProd", type="source")  # requires the gmp and Rmpfr packages
+
+
+===============================================================================
+How to update R
+-------------------------------------------------------------------------------
+
+Perform the following steps:
+
+  1) Rename previous R.framework in /Library/Frameworks/ -> R.framework.old
+
+  2) See "Install R" above for how to install R.
+
+  3) Configure R to use the Java installed on the machine:
+
+       sudo R CMD javareconf
+
+     TESTING: Try to install the rJava package:
+
+       install.packages("rJava", type="source")
+
+  4) As of Feb 22, 2017, CRAN still does not provide Mac binary packages for
+     R 3.4. Unfortunately some Bioconductor packages depend on CRAN packages
+     that are too difficult to install from source. However, for some of these
+     CRAN packages, it seems that the binary made for R 3.3 works with R 3.4.
+     These packages are:
+
+       Cairo		reuired by a bunch of Bioconductor packages
+       rphast, rtfbs	required by cobindR
+       udunits2		indirectly required by Pi
+
+     Install them with:
+
+       pkgs <- c("Cairo", "rphast", "rtfbs", "udunits2")
+       contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
+       install.packages(pkgs, contriburl=contriburl)
+
+
 
 
 -----------------------------------------------------------------------------
@@ -553,23 +634,6 @@ o Install MacTeX. Try to build a package using pstricks + auto-pst-pdf in its
   Install texinfo from
   http://r.research.att.com/libs/texinfo-5.2-darwin10.tar.gz
   (whatever the most recent version is.)
-
-o Install the GTK+ framework provided by Simon at:
-    http://R.research.att.com/libs/
-  ?? which one? There are 3. The GTK+ tarball is for "tiger or later". Too old?
-  Note that darwin9 is Leopard and darwin10 Snow Leopard.
-  Then create symlink:
-    pkg-config -> /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
-  in /usr/bin. Try:
-    which pkg-config
-  Also add:
-    export PKG_CONFIG_PATH="/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig"
-  to /etc/profile (make a copy as /etc/profile.orginal before modifying).
-
-  Then start R and try:
-    > install.packages("RGtk2", type="source")
-    > library(RGtk2)
-  Finally try R CMD INSTALL HilbertVisGUI
 
 o Install graphviz from the official graphviz site. Try 'neato --help'
 
