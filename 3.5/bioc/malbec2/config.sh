@@ -16,13 +16,6 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.5-bioc"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export BBS_NB_CPU=10
 
-
-export RCYTOSCAPE_PORT_OVERRIDE="8023"
-export RCYTOSCAPE_HOST_OVERRIDE="taipan.fhcrc.org"
-export RCYTOSCAPE3_PORT_OVERRIDE="8024"
-export RCYTOSCAPE3_HOST_OVERRIDE="taipan.fhcrc.org"
-export GENE_E_URL="http://taipan.fhcrc.org:9998"
-
 export R_TEXI2DVICMD=/home/biocbuild/BBS/utils/ourtexi2dvi
 
 
