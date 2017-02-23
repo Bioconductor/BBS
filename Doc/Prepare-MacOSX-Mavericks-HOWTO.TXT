@@ -471,6 +471,9 @@ From the biocbuild account
     cd ~/bbs-3.5-bioc/meat
     R CMD build flowQ
 
+** Install libSBML
+
+
 
 ===============================================================================
 How to update R
@@ -480,7 +483,7 @@ Perform the following steps:
 
   1) Rename previous R.framework in /Library/Frameworks/ -> R.framework.old
 
-  2) See "Install R" above for how to install R.
+  2) See "Install R" previously in this file for how to install R.
 
   3) Configure R to use the Java installed on the machine:
 
@@ -489,6 +492,8 @@ Perform the following steps:
      TESTING: Try to install the rJava package:
 
        install.packages("rJava", type="source")
+
+     See "Install Java" previously in this file for more testing.
 
   4) As of Feb 22, 2017, CRAN still does not provide Mac binary packages for
      R 3.4. Unfortunately some Bioconductor packages depend on CRAN packages
