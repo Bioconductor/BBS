@@ -166,6 +166,18 @@ From the biocbuild account
     sudo installer -pkg /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
     sudo hdiutil detach /Volumes/XQuartz-2.7.11
 
+** Install Homebrew
+
+  Install with:
+
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+  TESTING:
+
+    brew doctor
+
+  You might see warnings but you can ignore them.
+
 ** Create bbs-3.5-bioc directory structure
 
     mkdir bbs-3.5-bioc
@@ -470,6 +482,58 @@ From the biocbuild account
 
     cd ~/bbs-3.5-bioc/meat
     R CMD build flowQ
+
+** Install autoconf & automake
+
+  Install with:
+
+    brew install autoconf
+    brew install automake
+
+  TESTING: Try to install the flowWorkspace package:
+
+    library(BiocInstaller)
+    biocLite("flowWorkspace", type="source")
+
+** Install Open MPI
+
+  Install with:
+
+    brew install open-mpi  # takes between 15-20 min.
+
+  TESTING:
+
+    install.packages("Rmpi", type="source")
+    library(Rmpi)
+    mpi.spawn.Rslaves()
+    mpi.parReplicate(100, mean(rnorm(1000000)))
+    mpi.close.Rslaves()
+    mpi.quit()
+
+** Install ROOT
+
+  Download with:
+
+    https://root.cern.ch/download/root_v5.34.36.macosx64-10.9-clang60.dmg
+
+  Install with:
+
+    sudo hdiutil attach root_v5.34.36.macosx64-10.9-clang60.dmg
+    sudo installer -pkg /Volumes/root_v5.34.36.macosx64-10.9-clang60/root_v5.34.36.macosx64-10.9-clang60.mpkg -target /
+    sudo hdiutil detach /Volumes/root_v5.34.36.macosx64-10.9-clang60
+
+  Then in /etc/profile append /Applications/root_v5.34.36/bin to PATH and
+  /Applications/root_v5.34.36/lib to DYLD_LIBRARY_PATH.
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then:
+
+    which root-config
+
+  Then try to install the xps package:
+
+    library(BiocInstaller)
+    biocLite("xps", type="source")
 
 ** Install libSBML
 
