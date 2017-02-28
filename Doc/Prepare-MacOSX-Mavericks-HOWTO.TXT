@@ -543,6 +543,21 @@ From the biocbuild account
     library(BiocInstaller)
     biocLite("ChemmineOB", type="source")
 
+** Install Python 3 + Jupyter + nbconvert + jupyter_client
+
+  Install with:
+
+    brew install python3
+    pip3 install nbconvert
+    pip3 install jupyter_client
+
+  TESTING: Install the nbconvertR package and try to run the example in the
+  man page for nbconvert():
+
+    install.packages("nbconvertR", type="source")
+    library(nbconvertR)
+    ?nbconvert  # copy the commented example and run it
+
 ** Install ROOT
 
   Download with:
