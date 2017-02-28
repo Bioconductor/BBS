@@ -510,6 +510,39 @@ From the biocbuild account
     mpi.close.Rslaves()
     mpi.quit()
 
+** Install OpenBabel
+
+  As of Feb 2017, the ChemmineOB package seems to work only with the 2.3 series
+  of OpenBabel, not with the 2.2 (too old) or 2.4 (too new) series.
+
+  Do NOT install with 'brew install open-babel' because this installs the
+  latest version of OpenBabel (i.e. version 2.4.1 as of Feb 2017) which is
+  incompatible with the current ChemmineOB package.
+
+  So we need to compile/install "manually" OpenBabel 2.3 from source.
+  Download with:
+
+    curl -O https://master.dl.sourceforge.net/project/openbabel/openbabel/2.3.1/openbabel-2.3.1.tar.gz
+
+  Then (instructions adapted from
+  http://openbabel.org/docs/dev/Installation/install.html):
+
+    tar zxvf openbabel-2.3.1.tar.gz
+    mkdir build
+    cd build
+    CXX='g++ -stdlib=libstdc++' cmake ../openbabel-2.3.1
+    make
+    make install
+
+  TESTING:
+
+    which babel
+
+  Then try to install the ChemmineOB package:
+
+    library(BiocInstaller)
+    biocLite("ChemmineOB", type="source")
+
 ** Install ROOT
 
   Download with:
