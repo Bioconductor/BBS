@@ -635,13 +635,14 @@ Perform the following steps:
      CRAN packages, it seems that the binary made for R 3.3 works with R 3.4.
      These packages are:
 
-       Cairo		reuired by a bunch of Bioconductor packages
-       rphast, rtfbs	required by cobindR
-       udunits2		indirectly required by Pi
+       Cairo            required by a bunch of Bioconductor packages
+       rphast, rtfbs    required by cobindR
+       udunits2         indirectly required by Pi
+       RPostgreSQL      suggested by ChemmineR
 
      Install them with:
 
-       pkgs <- c("Cairo", "rphast", "rtfbs", "udunits2")
+       pkgs <- c("Cairo", "rphast", "rtfbs", "udunits2", "RPostgreSQL")
        contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
        install.packages(pkgs, contriburl=contriburl)
 
