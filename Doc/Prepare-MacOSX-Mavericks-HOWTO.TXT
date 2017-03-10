@@ -608,6 +608,27 @@ From the biocbuild account
     library(BiocInstaller)
     biocLite("rsbml", type="source")
 
+** Install ViennaRNA
+
+  Download with:
+
+   curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.3-MacOSX.dmg
+
+  Install with:
+
+    sudo hdiutil attach ViennaRNA-2.3.3-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.3.3/ViennaRNA Package 2.3.3 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.3"
+
+  TESTING:
+
+    which RNAfold
+
+  Then try to build the GeneGA package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build GeneGA
+
 
 ===============================================================================
 How to update R
