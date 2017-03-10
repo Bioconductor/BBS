@@ -629,6 +629,36 @@ From the biocbuild account
     cd ~/bbs-3.5-bioc/meat
     R CMD build GeneGA
 
+** Allow GoogleGenomics to authenticate
+
+  In /etc/profile add
+
+    export GOOGLE_API_KEY=AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to run the getReads example in the GoogleGenomics package:
+
+    ## Install the package if not already installed.
+    #library(BiocInstaller)
+    #biocLite("GoogleGenomics", type="source")
+
+    ## Run the getReads example.
+    library(GoogleGenomics)
+    example(getReads)
+
+** Allow ImmuneSpaceR to authenticate
+
+  In /etc/profile add
+
+    export ISR_login=bioc@immunespace.org
+    export ISR_pwd=1notCRAN
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to build the ImmuneSpaceR package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build ImmuneSpaceR
+
 
 ===============================================================================
 How to update R
