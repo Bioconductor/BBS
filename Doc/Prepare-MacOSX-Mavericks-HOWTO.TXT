@@ -294,7 +294,7 @@ From the biocbuild account
     install.packages("rJava", type="source")
     library(rJava)
     .jinit()
-    .jcall("java/lang/System","S","getProperty","java.runtime.version")
+    .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
 
 ** Install JPEG system library
 
@@ -304,15 +304,6 @@ From the biocbuild account
   TESTING: Try to install the jpeg package:
 
     install.packages("jpeg", type="source")
-
-#** Install PNG system library
-#
-#    curl -O http://r.research.att.com/libs/libpng-1.6.17-darwin.13-x86_64.tar.gz
-#    sudo tar fvxz libpng-1.6.17-darwin.13-x86_64.tar.gz -C /
-#
-#  TESTING: Try to install the sysfonts package:
-#
-#    install.packages("sysfonts", type="source")
 
 ** Install TIFF system library
 
@@ -685,6 +676,8 @@ Perform the following steps:
      These packages are:
 
        Cairo         -- required by a bunch of Bioconductor packages
+       sysfonts      -- required by CRAN package emojifont which is suggested
+                        by ggtree
        rphast, rtfbs -- required by cobindR
        udunits2      -- indirectly required by Pi
        RMySQL        -- required by anamiR & annmap & IntEREst, suggested

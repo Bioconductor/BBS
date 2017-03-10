@@ -526,11 +526,14 @@ From a personal administrator account
 
     - start R in 64-bit mode with
         R\bin\R --arch x64
-      and do library(rJava)
+      and do:
+        library(rJava)
+        .jinit()
+        .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
 
     - start R in 32-bit mode with
         R\bin\R --arch i386
-      and do library(rJava)
+      and do the same as above.
 
 ** Install Ripley's bundle of pre-compiled external software used by some
   packages
