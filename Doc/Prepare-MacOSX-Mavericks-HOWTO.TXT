@@ -629,6 +629,28 @@ From the biocbuild account
     cd ~/bbs-3.5-bioc/meat
     R CMD build GeneGA
 
+** Install Clustal Omega
+
+  Download standalone Mac binary from http://www.clustal.org/omega/
+
+  Make it executable with:
+
+    chmod +x clustal-omega-1.2.3-macosx
+
+  Move it to /usr/local/bin with:
+
+    sudo mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
+
+  Create clustalo symlink with:
+
+    cd /usr/local/bin
+    sudo ln -s clustal-omega-1.2.3-macosx clustalo
+
+  TESTING: Try to build the LowMACA package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build LowMACA
+
 ** Allow GoogleGenomics to authenticate
 
   In /etc/profile add
