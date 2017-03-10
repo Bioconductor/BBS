@@ -585,6 +585,28 @@ From the biocbuild account
 
 ** Install libSBML
 
+  libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
+  Mavericks is 2.6.16 so we first need to install a more recent libxml-2.0.
+  Install a more recent libxml-2.0 with:
+
+    brew install libxml2
+
+  Ignore the "This formula is keg-only..." caveat.
+
+  Then in /etc/profile *prepend* /usr/local/opt/libxml2/lib/pkgconfig to
+  PKG_CONFIG_PATH.
+
+  Then logout and login again so that the changes to /etc/profile take
+  effect.
+
+  Finally install libSBML with:
+
+    brew install homebrew/science/libsbml
+
+  TESTING: Try to install the rsbml package:
+
+    library(BiocInstaller)
+    biocLite("rsbml", type="source")
 
 
 ===============================================================================
