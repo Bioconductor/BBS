@@ -404,30 +404,6 @@ From the biocbuild account
 
     install.packages("RGtk2", type="source")
 
-** Install MySQL Community Server
-
-  Download mysql-5.7.16-osx10.11-x86_64.dmg from:
-
-    https://downloads.mysql.com/archives/community/
-
-  Install with:
-
-    sudo hdiutil attach mysql-5.7.16-osx10.11-x86_64.dmg
-    sudo installer -pkg /Volumes/mysql-5.7.16-osx10.11-x86_64/mysql-5.7.16-osx10.11-x86_64.pkg -target /
-    sudo hdiutil detach /Volumes/mysql-5.7.16-osx10.11-x86_64
-
-  Then in /etc/profile append /usr/local/mysql/bin to PATH and
-  /usr/local/mysql/lib to DYLD_LIBRARY_PATH.
-
-  TESTING: Logout and login again so that the changes to /etc/profile take
-  effect. Then:
-
-    which mysql_config
-
-  Then try to install the RMySQL package:
-
-    install.packages("RMySQL", type="source")
-
 ** Install the GNU MP Bignum and GNU MPFR libraries
 
     curl -O http://r.research.att.com/libs/gmp-6.0.0-darwin.13-x86_64.tar.gz
@@ -458,31 +434,6 @@ From the biocbuild account
 
     install.packages("rjags", type="source")
 
-** Install ImageMagick
-
-  Download first installer from this page:
-
-    http://cactuslab.com/imagemagick/
-
-  e.g.
-
-    curl -O http://cactuslab.com/assets/installers/ImageMagick-6.9.1-0.pkg.zip
-
-  Install with:
-
-    unzip ImageMagick-6.9.1-0.pkg.zip
-    sudo installer -pkg ImageMagick-6.9.1-0.pkg -target /
-
-  TESTING: Logout and login again so that the changes to PATH take effect.
-  Then:
-
-    which convert
-
-  Then try to build the flowQ package:
-
-    cd ~/bbs-3.5-bioc/meat
-    R CMD build flowQ
-
 ** Install autoconf & automake
 
   Install with:
@@ -495,31 +446,16 @@ From the biocbuild account
     library(BiocInstaller)
     biocLite("flowWorkspace", type="source")
 
-** Install Open MPI
-
-  Install with:
-
-    brew install open-mpi  # takes between 15-20 min.
-
-  TESTING:
-
-    install.packages("Rmpi", type="source")
-    library(Rmpi)
-    mpi.spawn.Rslaves()
-    mpi.parReplicate(100, mean(rnorm(1000000)))
-    mpi.close.Rslaves()
-    mpi.quit()
-
-** Install OpenBabel
+** Install Open Babel
 
   As of Feb 2017, the ChemmineOB package seems to work only with the 2.3 series
-  of OpenBabel, not with the 2.2 (too old) or 2.4 (too new) series.
+  of Open Babel, not with the 2.2 (too old) or 2.4 (too new) series.
 
   Do NOT install with 'brew install open-babel' because this installs the
-  latest version of OpenBabel (i.e. version 2.4.1 as of Feb 2017) which is
+  latest version of Open Babel (i.e. version 2.4.1 as of Feb 2017) which is
   incompatible with the current ChemmineOB package.
 
-  So we need to compile/install "manually" OpenBabel 2.3 from source.
+  So we need to compile/install "manually" Open Babel 2.3 from source.
   Download with:
 
     curl -O https://master.dl.sourceforge.net/project/openbabel/openbabel/2.3.1/openbabel-2.3.1.tar.gz
@@ -558,31 +494,6 @@ From the biocbuild account
     library(nbconvertR)
     ?nbconvert  # copy the commented example and run it
 
-** Install ROOT
-
-  Download with:
-
-    https://root.cern.ch/download/root_v5.34.36.macosx64-10.9-clang60.dmg
-
-  Install with:
-
-    sudo hdiutil attach root_v5.34.36.macosx64-10.9-clang60.dmg
-    sudo installer -pkg /Volumes/root_v5.34.36.macosx64-10.9-clang60/root_v5.34.36.macosx64-10.9-clang60.mpkg -target /
-    sudo hdiutil detach /Volumes/root_v5.34.36.macosx64-10.9-clang60
-
-  Then in /etc/profile append /Applications/root_v5.34.36/bin to PATH and
-  /Applications/root_v5.34.36/lib to DYLD_LIBRARY_PATH.
-
-  TESTING: Logout and login again so that the changes to /etc/profile take
-  effect. Then:
-
-    which root-config
-
-  Then try to install the xps package:
-
-    library(BiocInstaller)
-    biocLite("xps", type="source")
-
 ** Install libSBML
 
   libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
@@ -608,27 +519,6 @@ From the biocbuild account
     library(BiocInstaller)
     biocLite("rsbml", type="source")
 
-** Install ViennaRNA
-
-  Download with:
-
-   curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.3-MacOSX.dmg
-
-  Install with:
-
-    sudo hdiutil attach ViennaRNA-2.3.3-MacOSX.dmg
-    sudo installer -pkg "/Volumes/ViennaRNA 2.3.3/ViennaRNA Package 2.3.3 Installer.pkg" -target /
-    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.3"
-
-  TESTING:
-
-    which RNAfold
-
-  Then try to build the GeneGA package:
-
-    cd ~/bbs-3.5-bioc/meat
-    R CMD build GeneGA
-
 ** Install Clustal Omega
 
   Download standalone Mac binary from http://www.clustal.org/omega/
@@ -651,7 +541,20 @@ From the biocbuild account
     cd ~/bbs-3.5-bioc/meat
     R CMD build LowMACA
 
-** Allow GoogleGenomics to authenticate
+** Set up ImmuneSpaceR package for connecting to ImmuneSpace
+
+  In /etc/profile add
+
+    export ISR_login=bioc@immunespace.org
+    export ISR_pwd=1notCRAN
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to build the ImmuneSpaceR package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build ImmuneSpaceR
+
+** Set up GoogleGenomics package to authenticate for Google Genomics API
 
   In /etc/profile add
 
@@ -668,18 +571,91 @@ From the biocbuild account
     library(GoogleGenomics)
     example(getReads)
 
-** Allow ImmuneSpaceR to authenticate
+** Install Open MPI
 
-  In /etc/profile add
+  Install with:
 
-    export ISR_login=bioc@immunespace.org
-    export ISR_pwd=1notCRAN
+    brew install open-mpi  # takes between 15-20 min.
+
+  TESTING:
+
+    install.packages("Rmpi", type="source")
+    library(Rmpi)
+    mpi.spawn.Rslaves()
+    mpi.parReplicate(100, mean(rnorm(1000000)))
+    mpi.close.Rslaves()
+    mpi.quit()
+
+** Install ROOT
+
+  Download with:
+
+    https://root.cern.ch/download/root_v5.34.36.macosx64-10.9-clang60.dmg
+
+  Install with:
+
+    sudo hdiutil attach root_v5.34.36.macosx64-10.9-clang60.dmg
+    sudo installer -pkg /Volumes/root_v5.34.36.macosx64-10.9-clang60/root_v5.34.36.macosx64-10.9-clang60.mpkg -target /
+    sudo hdiutil detach /Volumes/root_v5.34.36.macosx64-10.9-clang60
+
+  Then in /etc/profile append /Applications/root_v5.34.36/bin to PATH and
+  /Applications/root_v5.34.36/lib to DYLD_LIBRARY_PATH.
 
   TESTING: Logout and login again so that the changes to /etc/profile take
-  effect. Then try to build the ImmuneSpaceR package:
+  effect. Then:
+
+    which root-config
+
+  Then try to install the xps package:
+
+    library(BiocInstaller)
+    biocLite("xps", type="source")
+
+** Install ImageMagick
+
+  Download first installer from this page:
+
+    http://cactuslab.com/imagemagick/
+
+  e.g.
+
+    curl -O http://cactuslab.com/assets/installers/ImageMagick-6.9.1-0.pkg.zip
+
+  Install with:
+
+    unzip ImageMagick-6.9.1-0.pkg.zip
+    sudo installer -pkg ImageMagick-6.9.1-0.pkg -target /
+
+  TESTING: Logout and login again so that the changes to PATH take effect.
+  Then:
+
+    which convert
+
+  Then try to build the flowQ package:
 
     cd ~/bbs-3.5-bioc/meat
-    R CMD build ImmuneSpaceR
+    R CMD build flowQ
+
+** Install ViennaRNA
+
+  Download with:
+
+   curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.3-MacOSX.dmg
+
+  Install with:
+
+    sudo hdiutil attach ViennaRNA-2.3.3-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.3.3/ViennaRNA Package 2.3.3 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.3"
+
+  TESTING:
+
+    which RNAfold
+
+  Then try to build the GeneGA package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build GeneGA
 
 
 ===============================================================================
@@ -708,14 +684,17 @@ Perform the following steps:
      CRAN packages, it seems that the binary made for R 3.3 works with R 3.4.
      These packages are:
 
-       Cairo            required by a bunch of Bioconductor packages
-       rphast, rtfbs    required by cobindR
-       udunits2         indirectly required by Pi
-       RPostgreSQL      suggested by ChemmineR
+       Cairo         -- required by a bunch of Bioconductor packages
+       rphast, rtfbs -- required by cobindR
+       udunits2      -- indirectly required by Pi
+       RMySQL        -- required by anamiR & annmap & IntEREst, suggested
+                        by GenVisR & metaseqR & recoup
+       RPostgreSQL   -- suggested by ChemmineR
 
      Install them with:
 
-       pkgs <- c("Cairo", "rphast", "rtfbs", "udunits2", "RPostgreSQL")
+       pkgs <- c("Cairo", "rphast", "rtfbs", "udunits2",
+                 "RMySQL", "RPostgreSQL")
        contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
        install.packages(pkgs, contriburl=contriburl)
 

@@ -580,24 +580,6 @@ From a personal administrator account
     ..\R\bin\R CMD build OrderedList
     ..\R\bin\R CMD build twilight
 
-** Install libxml2 and google protocol buffer
-
-  This is needed in order to compile the flowWorkspace package.
-  Download libxml2 and google protocol buffer Windows binaries from
-    http://rglab.github.io/binaries/
-  Extract all the files to C:\libxml2 and to C:\protobuf respectively.
-  Set environment variables LIB_XML2 and LIB_PROTOBUF to C:/libxml2 and
-  C:/protobuf, respectively (see "How to edit an environment variable" in
-  "General information and tips" at the top of this document for how to do
-  this). Make sure to use "/" instead of "\" as the directory delimiter.
-
-  TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on) try to compile the flowWorkspace package e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
-  folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL flowWorkspace
-
 ** Install Perl
 
   Download and install Active Perl Community Edition for 64-bit Windows
@@ -618,23 +600,6 @@ From a personal administrator account
 
     ..\R\bin\R CMD build COHCAP
 
-** Install Clustal Omega
-
-  Download Windows 64-bit zip file from http://www.clustal.org/omega/
-  Extract all the files in C:\ClustalO
-  Append C:\ClustalO to PATH (see "How to edit an environment variable"
-  in "General information and tips" at the top of this document for how to
-  do this).
-
-  TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on) try to build a package that uses Clustal Omega
-  e.g. open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat
-  (this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD build LowMACA
-
-  (Note that this package also needs Perl.)
-
 ** Install JAGS
 
   Go to http://www.sourceforge.net/projects/mcmc-jags/files
@@ -653,6 +618,42 @@ From a personal administrator account
   ..\R\bin\R), then:
 
     library(rjags)
+
+** Install libxml2 and google protocol buffer
+
+  This is needed in order to compile the flowWorkspace package.
+  Download libxml2 and google protocol buffer Windows binaries from
+    http://rglab.github.io/binaries/
+  Extract all the files to C:\libxml2 and to C:\protobuf respectively.
+  Set environment variables LIB_XML2 and LIB_PROTOBUF to C:/libxml2 and
+  C:/protobuf, respectively (see "How to edit an environment variable" in
+  "General information and tips" at the top of this document for how to do
+  this). Make sure to use "/" instead of "\" as the directory delimiter.
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile the flowWorkspace package e.g.
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL flowWorkspace
+
+** Install Open Babel
+
+  Follow instructions in ChemmineOB/INSTALL for this.
+
+  IMPORTANT: Unlike all the other things here that need to be installed from
+  a personal administrator account, this one needs to be installed from the
+  biocbuild account. That's because the compilation process described in
+  ChemmineOB/INSTALL needs to access stuff under
+
+    c:/Users/biocbuild/bbs-3.4-bioc/R/library/zlibbioc/
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to compile the ChemmineOB package e.g.
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL ChemmineOB
 
 ** Install libSBML
 
@@ -679,23 +680,59 @@ From a personal administrator account
 
     ..\R\bin\R CMD INSTALL rsbml
 
-** Install Open Babel
+** Install Clustal Omega
 
-  Follow instructions in ChemmineOB/INSTALL for this.
-
-  IMPORTANT: Unlike all the other things here that need to be installed from
-  a personal administrator account, this one needs to be installed from the
-  biocbuild account. That's because the compilation process described in
-  ChemmineOB/INSTALL needs to access stuff under
-
-    c:/Users/biocbuild/bbs-3.4-bioc/R/library/zlibbioc/
+  Download Windows 64-bit zip file from http://www.clustal.org/omega/
+  Extract all the files in C:\ClustalO
+  Append C:\ClustalO to PATH (see "How to edit an environment variable"
+  in "General information and tips" at the top of this document for how to
+  do this).
 
   TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on) try to compile the ChemmineOB package e.g.
+  if you were already logged on) try to build a package that uses Clustal Omega
+  e.g. open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat
+  (this folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD build LowMACA
+
+  (Note that this package also needs Perl.)
+
+** Set up ImmuneSpaceR package for connecting to ImmuneSpace
+
+  Set environment variable ISR_login and ISR_pwd to bioc@immunespace.org and
+  1notCRAN, respectively. See "How to edit an environment variable" in "General
+  information and tips" at the top of this document for how to do this.
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to build the ImmuneSpaceR package e.g.
   open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
   folder will be automatically created after the 1st build run), then:
 
-    ..\R\bin\R CMD INSTALL ChemmineOB
+    ..\R\bin\R CMD build ImmuneSpaceR
+
+** Set up GoogleGenomics package to authenticate for Google Genomics API
+
+  Set environment variable GOOGLE_API_KEY to
+  AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4
+  See "How to edit an environment variable" in "General information and tips"
+  at the top of this document for how to do this.
+
+  TESTING: From the biocbuild account (log out and on again from this account
+  if you were already logged on) try to run the getReads example in the
+  GoogleGenomics package e.g. open a PowerShell window, cd to
+  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  created after the 1st build run), then:
+
+  1) Install the GoogleGenomics package if it's not already installed (check
+     whether it's already installed or not by starting R with ..\R\bin\R and
+     try library(GoogleGenomics)):
+
+       ..\R\bin\R CMD INSTALL GoogleGenomics
+
+  2) Then from within R (start it with ..\R\bin\R):
+
+       library(GoogleGenomics)
+       example(getReads)
 
 ** Install gtkmm
 
@@ -734,43 +771,6 @@ From a personal administrator account
     - start R in 32-bit mode with
         R\bin\R --arch i386
       and do library(rggobi)
-
-** Set up ImmuneSpaceR package for connecting to ImmuneSpace
-
-  Set environment variable ISR_login and ISR_pwd to bioc@immunespace.org and
-  1notCRAN, respectively. See "How to edit an environment variable" in "General
-  information and tips" at the top of this document for how to do this.
-
-  TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on) try to build the ImmuneSpaceR package e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
-  folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD build ImmuneSpaceR
-
-** Set up GoogleGenomics package to authenticate for Google Genomics API
-
-  Set environment variable GOOGLE_API_KEY to
-  AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4
-  See "How to edit an environment variable" in "General information and tips"
-  at the top of this document for how to do this.
-
-  TESTING: From the biocbuild account (log out and on again from this account
-  if you were already logged on) try to run the getReads example in the
-  GoogleGenomics package e.g. open a PowerShell window, cd to
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
-  created after the 1st build run), then:
-
-  1) Install the GoogleGenomics package if it's not already installed (check
-     whether it's already installed or not by starting R with ..\R\bin\R and
-     try library(GoogleGenomics)):
-
-       ..\R\bin\R CMD INSTALL GoogleGenomics
-
-  2) Then from within R (start it with ..\R\bin\R):
-
-       library(GoogleGenomics)
-       example(getReads)
 
 
 ===============================================================================
