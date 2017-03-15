@@ -54,9 +54,13 @@ From the biocbuild account
       system_profiler SPStorageDataType
 
   - Also make sure that the machine has the latest release of Mavericks i.e.
-    OS X 10.9.5 Mavericks. Check this with
+    OS X 10.9.5 Mavericks. Check this with:
 
       system_profiler SPSoftwareDataType
+
+  - Check the kernel version (should be Darwin 13 for OS X Mavericks):
+
+      uname -sr
 
 ** Check that you can ping the central build node. Depending on whether the
   node you're ssh'ing from is within RPCI's DMZ or not, use its short or
@@ -141,7 +145,7 @@ From the biocbuild account
 
   Download gfortran-4.8.2 from https://gcc.gnu.org/wiki/GFortranBinaries#MacOS
 
-  Install with
+  Install with:
 
     sudo hdiutil attach gfortran-4.8.2-Mavericks.dmg
     sudo installer -pkg /Volumes/gfortran-4.8.2-Mavericks/gfortran-4.8.2-Mavericks/gfortran.pkg -target /
@@ -162,6 +166,18 @@ From the biocbuild account
     sudo installer -pkg /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
     sudo hdiutil detach /Volumes/XQuartz-2.7.11
 
+** Install Homebrew
+
+  Install with:
+
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+  TESTING:
+
+    brew doctor
+
+  You might see warnings but you can ignore them.
+
 ** Create bbs-3.5-bioc directory structure
 
     mkdir bbs-3.5-bioc
@@ -178,7 +194,7 @@ From the biocbuild account
 
   Download with e.g.
 
-    curl "https://r.research.att.com/mavericks/R-devel/R-devel-mavericks.pkg" -o R-devel-mavericks.pkg
+    curl -O https://r.research.att.com/mavericks/R-devel/R-devel-mavericks.pkg
 
   Then install with e.g.
 
@@ -188,7 +204,20 @@ From the biocbuild account
   *system-wide* installation of R i.e. it can be started with 'R' from any
   account.
 
-  TESTING: Start R and try to install some packages from source:
+  TESTING: Start the virtual X server, start R, and check X11:
+
+    # From the shell
+    . ~/BBS/utils/start-virtual-X.sh
+
+    # From R
+    capabilities()[["X11"]]  # must be TRUE
+    X11()                    # nothing visible should happen
+    q("no")
+
+    # From the shell
+    . ~/BBS/utils/stop-virtual-X.sh
+
+  Then start R and try to install a few packages from source:
 
     # CRAN packages
     install.packages("Rcpp", type="source")   # contains C++ code
@@ -265,48 +294,48 @@ From the biocbuild account
     install.packages("rJava", type="source")
     library(rJava)
     .jinit()
-    .jcall("java/lang/System","S","getProperty","java.runtime.version")
+    .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
 
 ** Install JPEG system library
 
-    curl http://r.research.att.com/libs/jpeg-9-darwin.13-x86_64.tar.gz -o jpeg-9-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/jpeg-9-darwin.13-x86_64.tar.gz
     sudo tar fvxz jpeg-9-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the jpeg package:
 
     install.packages("jpeg", type="source")
 
-#** Install PNG system library
-#
-#    curl http://r.research.att.com/libs/libpng-1.6.17-darwin.13-x86_64.tar.gz -o libpng-1.6.17-darwin.13-x86_64.tar.gz
-#    sudo tar fvxz libpng-1.6.17-darwin.13-x86_64.tar.gz -C /
-#
-#  TESTING: Try to install the sysfonts package:
-#
-#    install.packages("sysfonts", type="source")
-
 ** Install TIFF system library
 
-    curl http://r.research.att.com/libs/tiff-4.0.3-darwin.13-x86_64.tar.gz -o tiff-4.0.3-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/tiff-4.0.3-darwin.13-x86_64.tar.gz
     sudo tar fvxz tiff-4.0.3-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the tiff package:
 
     install.packages("tiff", type="source")
 
-#** Install Cairo system library
-#
-#     curl http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz -o cairo-1.14.2-darwin.13-x86_64.tar.gz
-#     sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
-#
-#   TESTING: Try to install the Cairo package:
-#
-#    install.packages("Cairo", type="source")
+** Install Cairo system library
+
+    curl -O http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz
+    sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install and load the Cairo *binary* package:
+
+    install.packages("Cairo")
+    library(Cairo)
+
+  Note: As of Feb 22, 2017, CRAN still does not provide Mac binary packages
+  for R 3.4. However, it seems that the Cairo binary made for R 3.3 works
+  with R 3.4. Install and load with:
+
+    contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
+    install.packages("Cairo", contriburl=contriburl)
+    library(Cairo)
 
 ** Install NetCDF and HDF5 system libray
 
-    curl http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -o netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
-    curl http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz -o hdf5-1.8.14-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz
 
     sudo tar fvxz netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -C /
     sudo tar fvxz hdf5-1.8.14-darwin.13-x86_64.tar.gz -C /
@@ -317,7 +346,7 @@ From the biocbuild account
 
 ** Install FFTW system library
 
-    curl http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz -o fftw-3.3.4-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz
     sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the fftwtools package:
@@ -326,7 +355,7 @@ From the biocbuild account
 
 ** Install GSL system library
 
-    curl http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz -o gsl-1.16-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz
     sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
 
   TESTING: Try to install the GLAD package:
@@ -336,13 +365,332 @@ From the biocbuild account
 
 #** Install BOOST system library
 #
-#    curl http://r.research.att.com/libs/boost_1.47.0-darwin9-bin4.tar.bz2 -o boost_1.47.0-darwin9-bin4.tar.bz2
+#    curl -O http://r.research.att.com/libs/boost_1.47.0-darwin9-bin4.tar.bz2
 #    sudo tar fvxz boost_1.47.0-darwin9-bin4.tar.bz2 -C /
 #
 #  TESTING: Try to install the mzR package:
 #
 #    library(BiocInstaller)
 #    biocLite("mzR", type="source")  # takes about 5 min!
+
+** Install GTK2
+
+    curl -O http://r.research.att.com/libs/GTK_2.24.17-X11.pkg
+    sudo installer -pkg GTK_2.24.17-X11.pkg -target /
+
+  In /usr/bin create symlink:
+
+    pkg-config -> /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
+
+  Try:
+
+    which pkg-config
+
+  Then in /etc/profile add:
+
+    export PKG_CONFIG_PATH=/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to install the RGtk2 package:
+
+    install.packages("RGtk2", type="source")
+
+** Install the GNU MP Bignum and GNU MPFR libraries
+
+    curl -O http://r.research.att.com/libs/gmp-6.0.0-darwin.13-x86_64.tar.gz
+    sudo tar fvxz gmp-6.0.0-darwin.13-x86_64.tar.gz -C /
+    curl -O http://r.research.att.com/libs/mpfr-3.1.2-darwin.13-x86_64.tar.gz
+    sudo tar fvxz mpfr-3.1.2-darwin.13-x86_64.tar.gz -C /
+
+  TESTING: Try to install the gmp, Rmpfr, and RankProd packages:
+
+    install.packages("gmp", type="source")    # requires the gmp lib
+    install.packages("Rmpfr", type="source")  # requires the mpfr lib
+    library(BiocInstaller)
+    biocLite("RankProd", type="source")  # requires the gmp and Rmpfr packages
+
+** Install JAGS
+
+  Download with:
+
+    curl -O https://cytranet.dl.sourceforge.net/project/mcmc-jags/JAGS/4.x/Mac%20OS%20X/JAGS-4.2.0.dmg
+
+  Install with:
+
+    sudo hdiutil attach JAGS-4.2.0.dmg
+    sudo installer -pkg /Volumes/JAGS-4.2.0/JAGS-4.2.0.mpkg -target /
+    sudo hdiutil detach /Volumes/JAGS-4.2.0
+
+  TESTING: Try to install the rjags package:
+
+    install.packages("rjags", type="source")
+
+** Install autoconf & automake
+
+  Install with:
+
+    brew install autoconf
+    brew install automake
+
+  TESTING: Try to install the flowWorkspace package:
+
+    library(BiocInstaller)
+    biocLite("flowWorkspace", type="source")
+
+** Install Open Babel
+
+  As of Feb 2017, the ChemmineOB package seems to work only with the 2.3 series
+  of Open Babel, not with the 2.2 (too old) or 2.4 (too new) series.
+
+  Do NOT install with 'brew install open-babel' because this installs the
+  latest version of Open Babel (i.e. version 2.4.1 as of Feb 2017) which is
+  incompatible with the current ChemmineOB package.
+
+  So we need to compile/install "manually" Open Babel 2.3 from source.
+  Download with:
+
+    curl -O https://master.dl.sourceforge.net/project/openbabel/openbabel/2.3.1/openbabel-2.3.1.tar.gz
+
+  Then (instructions adapted from
+  http://openbabel.org/docs/dev/Installation/install.html):
+
+    tar zxvf openbabel-2.3.1.tar.gz
+    mkdir build
+    cd build
+    CXX='g++ -stdlib=libstdc++' cmake ../openbabel-2.3.1
+    make
+    make install
+
+  TESTING:
+
+    which babel
+
+  Then try to install the ChemmineOB package:
+
+    library(BiocInstaller)
+    biocLite("ChemmineOB", type="source")
+
+** Install Python 3 + Jupyter + nbconvert + jupyter_client
+
+  Install with:
+
+    brew install python3
+    pip3 install nbconvert
+    pip3 install jupyter_client
+
+  TESTING: Install the nbconvertR package and try to run the example in the
+  man page for nbconvert():
+
+    install.packages("nbconvertR", type="source")
+    library(nbconvertR)
+    ?nbconvert  # copy the commented example and run it
+
+** Install libSBML
+
+  libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
+  Mavericks is 2.6.16 so we first need to install a more recent libxml-2.0.
+  Install a more recent libxml-2.0 with:
+
+    brew install libxml2
+
+  Ignore the "This formula is keg-only..." caveat.
+
+  Then in /etc/profile *prepend* /usr/local/opt/libxml2/lib/pkgconfig to
+  PKG_CONFIG_PATH.
+
+  Then logout and login again so that the changes to /etc/profile take
+  effect.
+
+  Finally install libSBML with:
+
+    brew install homebrew/science/libsbml
+
+  TESTING: Try to install the rsbml package:
+
+    library(BiocInstaller)
+    biocLite("rsbml", type="source")
+
+** Install Clustal Omega
+
+  Download standalone Mac binary from http://www.clustal.org/omega/
+
+  Make it executable with:
+
+    chmod +x clustal-omega-1.2.3-macosx
+
+  Move it to /usr/local/bin with:
+
+    sudo mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
+
+  Create clustalo symlink with:
+
+    cd /usr/local/bin
+    sudo ln -s clustal-omega-1.2.3-macosx clustalo
+
+  TESTING: Try to build the LowMACA package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build LowMACA
+
+** Set up ImmuneSpaceR package for connecting to ImmuneSpace
+
+  In /etc/profile add
+
+    export ISR_login=bioc@immunespace.org
+    export ISR_pwd=1notCRAN
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to build the ImmuneSpaceR package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build ImmuneSpaceR
+
+** Set up GoogleGenomics package to authenticate for Google Genomics API
+
+  In /etc/profile add
+
+    export GOOGLE_API_KEY=AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to run the getReads example in the GoogleGenomics package:
+
+    ## Install the package if not already installed.
+    #library(BiocInstaller)
+    #biocLite("GoogleGenomics", type="source")
+
+    ## Run the getReads example.
+    library(GoogleGenomics)
+    example(getReads)
+
+** Install Open MPI
+
+  Install with:
+
+    brew install open-mpi  # takes between 15-20 min.
+
+  TESTING:
+
+    install.packages("Rmpi", type="source")
+    library(Rmpi)
+    mpi.spawn.Rslaves()
+    mpi.parReplicate(100, mean(rnorm(1000000)))
+    mpi.close.Rslaves()
+    mpi.quit()
+
+** Install ROOT
+
+  Download with:
+
+    https://root.cern.ch/download/root_v5.34.36.macosx64-10.9-clang60.dmg
+
+  Install with:
+
+    sudo hdiutil attach root_v5.34.36.macosx64-10.9-clang60.dmg
+    sudo installer -pkg /Volumes/root_v5.34.36.macosx64-10.9-clang60/root_v5.34.36.macosx64-10.9-clang60.mpkg -target /
+    sudo hdiutil detach /Volumes/root_v5.34.36.macosx64-10.9-clang60
+
+  Then in /etc/profile append /Applications/root_v5.34.36/bin to PATH and
+  /Applications/root_v5.34.36/lib to DYLD_LIBRARY_PATH.
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then:
+
+    which root-config
+
+  Then try to install the xps package:
+
+    library(BiocInstaller)
+    biocLite("xps", type="source")
+
+** Install ImageMagick
+
+  Download first installer from this page:
+
+    http://cactuslab.com/imagemagick/
+
+  e.g.
+
+    curl -O http://cactuslab.com/assets/installers/ImageMagick-6.9.1-0.pkg.zip
+
+  Install with:
+
+    unzip ImageMagick-6.9.1-0.pkg.zip
+    sudo installer -pkg ImageMagick-6.9.1-0.pkg -target /
+
+  TESTING: Logout and login again so that the changes to PATH take effect.
+  Then:
+
+    which convert
+
+  Then try to build the flowQ package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build flowQ
+
+** Install ViennaRNA
+
+  Download with:
+
+   curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.3-MacOSX.dmg
+
+  Install with:
+
+    sudo hdiutil attach ViennaRNA-2.3.3-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.3.3/ViennaRNA Package 2.3.3 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.3"
+
+  TESTING:
+
+    which RNAfold
+
+  Then try to build the GeneGA package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build GeneGA
+
+
+===============================================================================
+How to update R
+-------------------------------------------------------------------------------
+
+Perform the following steps:
+
+  1) Rename previous R.framework in /Library/Frameworks/ -> R.framework.old
+
+  2) See "Install R" previously in this file for how to install R.
+
+  3) Configure R to use the Java installed on the machine:
+
+       sudo R CMD javareconf
+
+     TESTING: Try to install the rJava package:
+
+       install.packages("rJava", type="source")
+
+     See "Install Java" previously in this file for more testing.
+
+  4) As of Feb 22, 2017, CRAN still does not provide Mac binary packages for
+     R 3.4. Unfortunately some Bioconductor packages depend on CRAN packages
+     that are too difficult to install from source. However, for some of these
+     CRAN packages, it seems that the binary made for R 3.3 works with R 3.4.
+     These packages are:
+
+       Cairo         -- required by a bunch of Bioconductor packages
+       sysfonts      -- required by CRAN package emojifont which is suggested
+                        by ggtree
+       rphast, rtfbs -- required by cobindR
+       udunits2      -- indirectly required by Pi
+       RMySQL        -- required by anamiR & annmap & IntEREst, suggested
+                        by GenVisR & metaseqR & recoup
+       RPostgreSQL   -- suggested by ChemmineR
+
+     Install them with:
+
+       pkgs <- c("Cairo", "rphast", "rtfbs", "udunits2",
+                 "RMySQL", "RPostgreSQL")
+       contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
+       install.packages(pkgs, contriburl=contriburl)
+
 
 
 
@@ -504,20 +852,6 @@ o Install R. Use CRAN official binary for release or Simon's latest devel build
   from http://r.research.att.com/ for devel.
   Run the usual leopard-R-fix-flags.sh (this should be copied to
   snow-leopard-R-fix-flags.sh) in  /Library/Frameworks/R.framework/Resources/etc/
-  Then make an additional change to Makeconf:
-
-35c35
-< FCFLAGS = -mtune=core2 -g -O2 $(LTO)
----
-> FCFLAGS = -g -O2 $(LTO)
-
-?????? are we sure? doesn't seem to be needed anymore
-
-Wait - which package requires this?
-(This should be incorporated into the script)
-
-
-
 
 o Start R. Try X11(), then library(tcltk), then check capabilities().
   Could be that X11() hangs R. This seems to be solved by installing the latest
@@ -531,23 +865,6 @@ o Install MacTeX. Try to build a package using pstricks + auto-pst-pdf in its
   Install texinfo from
   http://r.research.att.com/libs/texinfo-5.2-darwin10.tar.gz
   (whatever the most recent version is.)
-
-o Install the GTK+ framework provided by Simon at:
-    http://R.research.att.com/libs/
-  ?? which one? There are 3. The GTK+ tarball is for "tiger or later". Too old?
-  Note that darwin9 is Leopard and darwin10 Snow Leopard.
-  Then create symlink:
-    pkg-config -> /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
-  in /usr/bin. Try:
-    which pkg-config
-  Also add:
-    export PKG_CONFIG_PATH="/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig"
-  to /etc/profile (make a copy as /etc/profile.orginal before modifying).
-
-  Then start R and try:
-    > install.packages("RGtk2", type="source")
-    > library(RGtk2)
-  Finally try R CMD INSTALL HilbertVisGUI
 
 o Install graphviz from the official graphviz site. Try 'neato --help'
 
@@ -612,25 +929,6 @@ o Install PostgreSQL (the official PostgreSQL website provides links to
   in /usr/bin for the above to work. Then start R and try:
     > install.packages("RPostgreSQL", type="source")
     > library(RPostgreSQL)
-
-o Install MySQL (MySQL Community Server). Choose "Mac OS X 10.6 (x86, 64-bit(?)),
-  DMG Archive" available at http://dev.mysql.com/downloads/mysql/.
-  Add:
-    export PATH="$PATH:/usr/local/mysql/bin"
-  to /etc/profile (make a copy as /etc/profile.orginal before modifying).
-  Then try:
-    which mysql_config
-  Also create symlink:
-    mysql -> ../mysql/include
-  in /usr/local/include, and create symlinks in /usr/local/lib to all the files
-  in /usr/local/mysql/lib.
-  Then add this to /etc/profile:
-  export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/mysql/lib
-
-  Start R and try:
-    > install.packages("RMySQL", type="source")
-    > library(RMySQL)
-
 
 LIBSBML:
 
@@ -705,15 +1003,6 @@ o Install ROOT.
 bin/thisroot.sh
 ...
 
-
-
-
-o Install ImageMagick
-  From this page (choose the first package):
-  http://cactuslab.com/imagemagick/
-  Test with:
-  R CMD build flowQ
-
 o If there are problems with packages that use GLX (that is, library(rgl)
   fails), try using the version of the Xvfb executable that is on perceval.
   The problem (described here:
@@ -726,12 +1015,6 @@ o If there are problems with packages that use GLX (that is, library(rgl)
   'Xvfb.bak.20121221'
   (Don't know if this will work, or if there is still a problem,
   in Snow Leopard)
-
-o Install the Variant Effect Predictor as described in the README
-  of ensemblVEP. Then run
-  R CMD build ensemblVEP
-  to see if it works.
-
 
 o Set locale by adding this to /etc/profile:
 export LC_ALL=en_US.UTF-8

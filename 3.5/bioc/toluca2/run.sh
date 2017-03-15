@@ -11,4 +11,4 @@ $BBS_HOME/BBS-run.py
 
 # We have to use brute force because some R processes might still be running
 # in the background. This will kick out the user BBS is running as!
-###kill -9 -1
+kill -9 -1
