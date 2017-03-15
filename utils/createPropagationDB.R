@@ -273,7 +273,7 @@ makePackagesFile <- function(outgoingDir, type, contribpath)
         t2 <- type
         if (type == "mac.binary.mavericks")
             t2 <- "mac.binary"
-        write_PACKAGES(outgoingDir, type=t2, rds_compress='xz')
+        write_PACKAGES(outgoingDir, type=t2)
     # }
     file.copy(file.path(outgoingDir, "PACKAGES"),
         dest, overwrite=TRUE)

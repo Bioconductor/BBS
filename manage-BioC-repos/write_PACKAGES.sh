@@ -21,8 +21,7 @@ PKGS_DIR="$SRC_DOCUMENTROOT/$1"
 R="$HOME/bin/R-2.7"
 
 R_SCRIPT="library('tools')"
-R_SCRIPT="$R_SCRIPT; write_PACKAGES('$PKGS_DIR', verbose=TRUE,
-rds_compress='xz')"
+R_SCRIPT="$R_SCRIPT; write_PACKAGES('$PKGS_DIR', verbose=TRUE)"
 
 echo "$R_SCRIPT" | $R --slave
 
