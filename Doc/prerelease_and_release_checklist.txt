@@ -255,7 +255,7 @@ svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
 - Update SPB to point to correct builders (and ??) 
 
 - Update docker. On github Bioconductor/bioc_docker update the config.yml. On
-  github and dockerhub create release branches and tags. 
+  github and dockerhub create release branches and tags and microbadger.
 
 On D + 1:
 
