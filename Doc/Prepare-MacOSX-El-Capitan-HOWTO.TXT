@@ -1,0 +1,65 @@
+===============================================================================
+How to set up a MacOSX El Capitan machine for the daily builds
+-------------------------------------------------------------------------------
+
+
+From the administrator account
+------------------------------
+
+These steps are the very first steps that need to be performed on a freshly
+created Mac instance on MacStadium. Skip them and go directly to the next
+section if the biocbuild account was created by someone else and if the
+devteam member public keys were already installed.
+
+** Set the hostnames
+
+    sudo scutil --set ComputerName veracruz2
+    sudo scutil --set LocalHostName veracruz2
+    sudo scutil --set HostName veracruz2.bioconductor.org
+
+  TESTING:
+
+    scutil --get ComputerName
+    scutil --get LocalHostName
+    scutil --get HostName
+    networksetup -getcomputername
+
+** Set DNS servers
+
+    sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 8.8.8.8
+
+  then check with
+
+    networksetup -getdnsservers 'Ethernet 1'
+    ping www.bioconductor.org
+
+- Apply all software updates
+
+    softwareupdate -l         # to list all software updates
+    sudo softwareupdate -iva  # install them all
+    sudo reboot               # reboot
+
+  TESTING: After reboot, check we are running the latest release of El Capitan
+  i.e. OS X 10.11.6 El Capitan. Check this with:
+
+    system_profiler SPSoftwareDataType
+
+- Create biocbuild account
+
+    sudo dscl . -create /Users/biocbuild
+    sudo dscl . -create /Users/biocbuild UserShell /bin/bash
+    sudo dscl . -create /Users/biocbuild UniqueID "502"
+    sudo dscl . -create /Users/biocbuild PrimaryGroupID 20
+    sudo dscl . -create /Users/biocbuild NFSHomeDirectory /Users/biocbuild
+    sudo sudo dscl . -passwd /Users/biocbuild <password_for_biocbuild>
+    sudo dscl . -append /Groups/admin GroupMembership biocbuild
+    sudo cp -R /System/Library/User\ Template/English.lproj /Users/biocbuild
+    sudo chown -R biocbuild:staff /Users/biocbuild
+
+- Install devteam member public keys in biocbuild account
+
+  TESTING: Logout and try to login again as biocbuild. From now on, you should
+  never need the administrator account again. Do everything from the biocbuild
+  account.
+
+
