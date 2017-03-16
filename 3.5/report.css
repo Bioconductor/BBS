@@ -554,3 +554,14 @@ TABLE.mainrep .even .toluca2 {
     background: #B9C;
 }
 
+/* veracruz2 */
+DIV.veracruz2,
+TR.veracruz2 TD,
+TABLE.mainrep .veracruz2,
+TABLE.mainrep .odd .veracruz2 {
+    background: #DBE;
+}
+TABLE.mainrep .even .veracruz2 {
+    background: #B9C;
+}
+
