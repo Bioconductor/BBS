@@ -176,7 +176,7 @@ allnodes = {
                    "x86_64-apple-darwin13.4.0",
                    "mac.binary.mavericks",
                    "utf-8"),
-    'veracruz2':  ("Mac OS X El Capitan (10.11.1)",
+    'veracruz2':  ("OS X 10.11.6 El Capitan",
                    "x86_64",
                    "x86_64-apple-darwin15.0.0",
                    "mac.binary.mavericks",
