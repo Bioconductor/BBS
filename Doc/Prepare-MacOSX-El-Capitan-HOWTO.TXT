@@ -3,16 +3,29 @@ How to set up a MacOSX El Capitan machine for the daily builds
 -------------------------------------------------------------------------------
 
 
-Initial setup (from administrator account)
-------------------------------------------
+Table of Contents:
+  A. Initial setup (from administrator account)
+  B. Check hardware, OS, and connectivity with central build node
+  C. Install the developper tools and other core components needed by the builds
+  D. Install BBS git tree and create bbs-3.y-bioc directory structure
+  E. Install R
+  F. Install MacTeX & Pandoc
+  G. Add crontab entries for daily builds
+  H. Additional stuff to install for packages with special needs
+  I. How to update R
 
-These steps are the very first steps that need to be performed on a pristine
-El Capitan installation (e.g. after creating a Mac instance on MacStadium).
-Skip them and go directly to the next section if the biocbuild account was
-created by someone else and if the devteam member public keys were already
-installed.
 
-Perform all the steps below from the administrator account.
+A. Initial setup (from administrator account)
+---------------------------------------------
+
+This section describes the very first steps that need to be performed on a
+pristine El Capitan installation (e.g. after creating a Mac instance on
+MacStadium). Skip them and go directly to the next section if the biocbuild
+account was created by someone else and if the devteam member public keys were
+already installed.
+
+Perform all the steps int this section from the administrator account (the only
+account that should exist at this point).
 
 ** Set the hostnames
 
@@ -31,7 +44,7 @@ Perform all the steps below from the administrator account.
 
     sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 8.8.8.8
 
-  then check with
+  TESTING:
 
     networksetup -getdnsservers 'Ethernet 1'
     ping www.bioconductor.org
@@ -66,8 +79,8 @@ Perform all the steps below from the administrator account.
   account.
 
 
-Check hardware, OS, and connectivity with central build node
-------------------------------------------------------------
+B. Check hardware, OS, and connectivity with central build node
+---------------------------------------------------------------
 
 From now on we assume that the machine has a biocbuild account with admin
 privileges (i.e. who belongs to the admin group). Note that on the Linux and
@@ -136,10 +149,10 @@ From now on everything should be done from the biocbuild account.
 
 ** Check that you can ssh to the central build node
 
-  Add .BBS/id_rsa to the biocbuild home (copy id_rsa from another build
-  machine). Then chmod 400 .BBS/id_rsa so permissions look like this
+  Add ~/.BBS/id_rsa to the biocbuild home (copy id_rsa from another build
+  machine). Then chmod 400 ~/.BBS/id_rsa so permissions look like this
 
-    toluca2:~ biocbuild$ ls -l .BBS/id_rsa
+    veracruz2:~ biocbuild$ ls -l .BBS/id_rsa
     -r--------  1 biocbuild  staff  884 Jan 12 12:19 .BBS/id_rsa
 
   Then try to ssh to the central build node e.g.
@@ -152,6 +165,7 @@ From now on everything should be done from the biocbuild account.
     ssh: connect to host malbec2.bioconductor.org port 22: Operation timed out
 
   Contact the IT folks at RPCI if that's the case:
+
     Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
     Landsiedel, Timothy <tjlandsi@RoswellPark.org>
 
@@ -167,8 +181,8 @@ From now on everything should be done from the biocbuild account.
   Contact the IT folks at RPCI if that's the case (see above).
 
 
-Install the developper tools and other core components needed by the builds
----------------------------------------------------------------------------
+C. Install the developper tools and other core components needed by the builds
+------------------------------------------------------------------------------
 
 Everything in this section can be done from the biocbuild account.
 
@@ -232,8 +246,8 @@ Everything in this section can be done from the biocbuild account.
   You might see warnings but you can ignore them.
 
 
-Install BBS git tree and create bbs-3.5-bioc directory structure
-----------------------------------------------------------------
+D. Install BBS git tree and create bbs-3.y-bioc directory structure
+-------------------------------------------------------------------
 
 Everything in this section should be done from the biocbuild account.
 
@@ -251,7 +265,7 @@ Everything in this section should be done from the biocbuild account.
 
   TESTING: Check that the permissions on chown-rootadmin look like this:
 
-    toluca2:utils biocbuild$ ls -al chown-rootadmin
+    veracruz2:utils biocbuild$ ls -al chown-rootadmin
     -rwsr-x---  1 root  admin  8596 Jan 13 12:55 chown-rootadmin
 
 ** Create bbs-3.5-bioc directory structure
@@ -261,8 +275,8 @@ Everything in this section should be done from the biocbuild account.
     mkdir NodeInfo log meat
 
 
-Install R
----------
+E. Install R
+------------
 
 This should be done from the biocbuild account.
 
@@ -310,8 +324,9 @@ This should be done from the biocbuild account.
     biocLite("BiocCheck", type="source")
     biocLite("VariantAnnotation", type="source")
 
-Install MacTeX & Pandoc
------------------------
+
+F. Install MacTeX & Pandoc
+--------------------------
 
 Everything in this section should be done from the biocbuild account.
 
@@ -346,8 +361,8 @@ Everything in this section should be done from the biocbuild account.
     sudo installer -pkg pandoc-1.19.1-osx.pkg -target /
 
 
-Add crontab entries for nightly builds
---------------------------------------
+G. Add crontab entries for daily builds
+---------------------------------------
 
 This should be done from the biocbuild account.
 
@@ -359,8 +374,8 @@ Now you can proceed to the next section or wait for a complete build run before
 doing so.
 
 
-Additional stuff to install for packages with special needs
------------------------------------------------------------
+H. Additional stuff to install for packages with special needs
+--------------------------------------------------------------
 
 Everything in this section should be done from the biocbuild account.
 
@@ -741,16 +756,14 @@ Everything in this section should be done from the biocbuild account.
     R CMD build GeneGA
 
 
-
-===============================================================================
-How to update R
--------------------------------------------------------------------------------
+I. How to update R
+------------------
 
 Perform the following steps from the biocbuild account:
 
   1) Rename previous R.framework in /Library/Frameworks/ -> R.framework.old
 
-  2) See "Install R" previously in this file for how to install R.
+  2) See "Install R" section previously in this file for how to install R.
 
   3) Configure R to use the Java installed on the machine:
 
