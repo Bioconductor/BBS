@@ -178,7 +178,7 @@ allnodes = {
                    "utf-8"),
     'veracruz2':  ("OS X 10.11.6 El Capitan",
                    "x86_64",
-                   "x86_64-apple-darwin15.0.0",
+                   "x86_64-apple-darwin15.6.0",
                    "mac.binary.mavericks",
                    "utf-8"),
     'montagu':    ("Mac OS X Leopard (10.5.8)",
