@@ -48,7 +48,7 @@ export BBS_OUTGOING_MAP="source:malbec2/buildsrc win.binary:tokay2/buildbin mac.
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
 
-export BBS_REPORT_NODES="malbec2 tokay2:bin toluca2:bin oaxaca:bin"
+export BBS_REPORT_NODES="malbec2 tokay2:bin toluca2:bin veracruz2:bin"
 #export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
