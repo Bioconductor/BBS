@@ -237,6 +237,23 @@ Everything in this section must be done from the biocbuild account.
     sudo installer -pkg /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
     sudo hdiutil detach /Volumes/XQuartz-2.7.11
 
+  TESTING:
+
+    which Xvfb        # should be /opt/X11/bin/Xvfb
+    ls -l /usr/X11R6  # should be a symlink to /opt/X11
+
+    Xvfb
+
+  If the above gives fatal server error "Cannot establish any listening
+  sockets", then try to start the virtual X server as root with 'sudo Xvfb'
+  first (it's totally quiet so if nothing happens that means it's running),
+  then stop it with CTRL+C, then try to start it again as biocbuild. It should
+  work now. So CTRL+C again.
+  IMPORTANT NOTE: For whatever reason, after a reboot the system will go back
+  to a state where biocbuild cannot start the virtual X server. So make sure
+  to 'sudo Xvfb' followed by CTRL+C after each reboot so biocbuild can start
+  Xvfb (the build system needs that).
+
 ** Install Homebrew
 
   Install with:
@@ -333,9 +350,11 @@ This must be done from the biocbuild account.
     # From the shell
     . ~/BBS/utils/start-virtual-X.sh
 
-    # If the above doesn't work, try to manually start the virtual X server
-    # as root with 'sudo /usr/X11R6/bin/Xvfb' first, then stop it with CTRL+C,
-    # then try to source the start-virtual-X.sh script again.
+    # If the above gives fatal server error "Cannot establish any listening
+    # sockets", then try to manually start the virtual X server as root with
+    # 'sudo Xvfb' first, then stop it with CTRL+C, then try to source the
+    # start-virtual-X.sh script again. See "Install XQuartz" previously in
+    # this file for more information about this.
 
     # From R
     capabilities()[["X11"]]  # should be TRUE
