@@ -211,17 +211,19 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install gfortran
 
-    curl -O https://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2
-    sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /
+  Simon uses Coudert's gfortran 6.1 found here:
 
-  #Download latest gfortran version for OS X El Capitan (gfortran 6.1 at the
-  #moment) from https://gcc.gnu.org/wiki/GFortranBinaries#MacOS
-  #
-  #Install with:
-  #
-  #  sudo hdiutil attach gfortran-6.1-ElCapitan.dmg
-  #  sudo installer -pkg /Volumes/gfortran-6.1-ElCapitan/gfortran-6.1-ElCapitan/gfortran.pkg -target /
-  #  sudo hdiutil detach /Volumes/gfortran-6.1-ElCapitan
+    https://gcc.gnu.org/wiki/GFortranBinaries#MacOS
+
+  Download with:
+
+    curl -O http://coudert.name/software/gfortran-6.1-ElCapitan.dmg
+
+  Install with:
+
+    sudo hdiutil attach gfortran-6.1-ElCapitan.dmg
+    sudo installer -pkg /Volumes/gfortran-6.1-ElCapitan/gfortran-6.1-ElCapitan/gfortran.pkg -target /
+    sudo hdiutil detach /Volumes/gfortran-6.1-ElCapitan
 
   TESTING:
 
