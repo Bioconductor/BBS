@@ -93,8 +93,8 @@ and then remove all these files at the beginning of the next run. It needs to
 belong to the admin group in order to be able to do this.
 
 Because biocbuild belongs to the admin group, it automatically is a sudoer.
-So all the configuration and management of the builds can be done from the
-biocbuild account.
+So all the configuration and management of the builds can and should be done
+from the biocbuild account.
 
 If biocbuild doesn't belong to the admin group (you can check this with
 'id -p biocbuild'), then you can add it by running the following command
@@ -102,7 +102,7 @@ from your personal account (granted you belong to the admin group):
 
     sudo dseditgroup -o edit -a biocbuild -t user admin
 
-From now on everything should be done from the biocbuild account.
+From now on everything must be done from the biocbuild account.
 
 - Hardware requirements for running the BioC software builds:
 
@@ -184,7 +184,7 @@ From now on everything should be done from the biocbuild account.
 C. Install the developper tools and other core components needed by the builds
 ------------------------------------------------------------------------------
 
-Everything in this section can be done from the biocbuild account.
+Everything in this section must be done from the biocbuild account.
 
 ** Install the Command Line Developer Tools
 
@@ -250,7 +250,11 @@ Everything in this section can be done from the biocbuild account.
 
     brew doctor
 
-  You might see warnings but you can ignore them.
+  You might see warnings but most of them can be ignored. The warning (1st in
+  the list of warnings) about some directories under /usr/local/ not being
+  writable needs to be addressed though. This can be done with:
+
+    sudo chown -R `whoami`:admin /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
 
 ** Install openssl
 
@@ -258,14 +262,11 @@ Everything in this section can be done from the biocbuild account.
 
     brew install openssl
 
-    LDFLAGS:  -L/usr/local/opt/openssl/lib
-    CPPFLAGS: -I/usr/local/opt/openssl/include
-
 
 D. Install BBS git tree and create bbs-3.y-bioc directory structure
 -------------------------------------------------------------------
 
-Everything in this section should be done from the biocbuild account.
+Everything in this section must be done from the biocbuild account.
 
 ** Clone BBS git tree
 
@@ -294,7 +295,7 @@ Everything in this section should be done from the biocbuild account.
 E. Install R
 ------------
 
-This should be done from the biocbuild account.
+This must be done from the biocbuild account.
 
     from Simon's site at AT&T https://r.research.att.com/ for R devel
     (pick up R-devel-mavericks-signed.pkg)
@@ -389,7 +390,7 @@ Everything in this section should be done from the biocbuild account.
 G. Add crontab entries for daily builds
 ---------------------------------------
 
-This should be done from the biocbuild account.
+This must be done from the biocbuild account.
 
 ** Add the following entry to biocbuild crontab
 
@@ -402,7 +403,7 @@ doing so.
 H. Additional stuff to install for packages with special needs
 --------------------------------------------------------------
 
-Everything in this section should be done from the biocbuild account.
+Everything in this section must be done from the biocbuild account.
 
 ** Install Java
 
@@ -476,6 +477,12 @@ Everything in this section should be done from the biocbuild account.
 
     install.packages("ncdf4", type="source")
 
+  If you have time, you can also try to install the mzR package but be aware
+  that this takes much longer:
+
+    library(BiocInstaller)
+    biocLite("mzR", type="source")  # takes about 8-10 min!
+
 ** Install FFTW system library
 
     curl -O http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz
@@ -495,30 +502,26 @@ Everything in this section should be done from the biocbuild account.
     library(BiocInstaller)
     biocLite("GLAD", type="source")
 
-#** Install BOOST system library
-#
-#    curl -O http://r.research.att.com/libs/boost_1.47.0-darwin9-bin4.tar.bz2
-#    sudo tar fvxz boost_1.47.0-darwin9-bin4.tar.bz2 -C /
-#
-#  TESTING: Try to install the mzR package:
-#
-#    library(BiocInstaller)
-#    biocLite("mzR", type="source")  # takes about 5 min!
-
 ** Install GTK2
 
     curl -O http://r.research.att.com/libs/GTK_2.24.17-X11.pkg
     sudo installer -pkg GTK_2.24.17-X11.pkg -target /
 
-  In /usr/bin create symlink:
+  Create pkg-config symlink in /usr/local/bin with:
 
-    pkg-config -> /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
+    cd /usr/local/bin
+    sudo ln -s /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
+
+  Note that starting with El Capitan, the /usr/bin folder is locked,
+  even for root, so it's not possible to create symlinks in it. See
+  https://en.wikipedia.org/wiki/System_Integrity_Protection for more
+  info about that security feature.
 
   Try:
 
     which pkg-config
 
-  Then in /etc/profile add:
+  Then in /etc/profile add the following line:
 
     export PKG_CONFIG_PATH=/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig
 
@@ -527,25 +530,11 @@ Everything in this section should be done from the biocbuild account.
 
     install.packages("RGtk2", type="source")
 
-** Install the GNU MP Bignum and GNU MPFR libraries
-
-    curl -O http://r.research.att.com/libs/gmp-6.0.0-darwin.13-x86_64.tar.gz
-    sudo tar fvxz gmp-6.0.0-darwin.13-x86_64.tar.gz -C /
-    curl -O http://r.research.att.com/libs/mpfr-3.1.2-darwin.13-x86_64.tar.gz
-    sudo tar fvxz mpfr-3.1.2-darwin.13-x86_64.tar.gz -C /
-
-  TESTING: Try to install the gmp, Rmpfr, and RankProd packages:
-
-    install.packages("gmp", type="source")    # requires the gmp lib
-    install.packages("Rmpfr", type="source")  # requires the mpfr lib
-    library(BiocInstaller)
-    biocLite("RankProd", type="source")  # requires the gmp and Rmpfr packages
-
 ** Install JAGS
 
   Download with:
 
-    curl -O https://cytranet.dl.sourceforge.net/project/mcmc-jags/JAGS/4.x/Mac%20OS%20X/JAGS-4.2.0.dmg
+    curl -O https://iweb.dl.sourceforge.net/project/mcmc-jags/JAGS/4.x/Mac%20OS%20X/JAGS-4.2.0.dmg
 
   Install with:
 
@@ -564,7 +553,15 @@ Everything in this section should be done from the biocbuild account.
     brew install autoconf
     brew install automake
 
-  TESTING: Try to install the flowWorkspace package:
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
+  TESTING:
+
+    which autoconf
+    which automake
+
+  Then try to install the flowWorkspace package:
 
     library(BiocInstaller)
     biocLite("flowWorkspace", type="source")
@@ -578,7 +575,8 @@ Everything in this section should be done from the biocbuild account.
   latest version of Open Babel (i.e. version 2.4.1 as of Feb 2017) which is
   incompatible with the current ChemmineOB package.
 
-  So we need to compile/install "manually" Open Babel 2.3 from source.
+  So we need to "manually" compile/install Open Babel 2.3 from source.
+
   Download with:
 
     curl -O https://master.dl.sourceforge.net/project/openbabel/openbabel/2.3.1/openbabel-2.3.1.tar.gz
@@ -586,12 +584,13 @@ Everything in this section should be done from the biocbuild account.
   Then (instructions adapted from
   http://openbabel.org/docs/dev/Installation/install.html):
 
+    brew install cmake
     tar zxvf openbabel-2.3.1.tar.gz
     mkdir build
     cd build
     CXX='g++ -stdlib=libstdc++' cmake ../openbabel-2.3.1
     make
-    make install
+    sudo make install
 
   TESTING:
 
@@ -654,7 +653,7 @@ Everything in this section should be done from the biocbuild account.
 
     sudo mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
 
-  Create clustalo symlink with:
+  Create clustalo symlink in /usr/local/bin with:
 
     cd /usr/local/bin
     sudo ln -s clustal-omega-1.2.3-macosx clustalo
@@ -807,6 +806,7 @@ Perform the following steps from the biocbuild account:
      These packages are:
 
        Cairo         -- required by a bunch of Bioconductor packages
+       gmp, Rmpfr    -- required by RankProd
        sysfonts      -- required by CRAN package emojifont which is suggested
                         by ggtree
        rphast, rtfbs -- required by cobindR
@@ -817,8 +817,8 @@ Perform the following steps from the biocbuild account:
 
      Install them with:
 
-       pkgs <- c("Cairo", "rphast", "rtfbs", "udunits2",
-                 "RMySQL", "RPostgreSQL")
+       pkgs <- c("Cairo", "gmp", "Rmpfr", "sysfonts", "rphast", "rtfbs",
+                 "udunits2", "RMySQL", "RPostgreSQL")
        contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
        install.packages(pkgs, contriburl=contriburl)
 
