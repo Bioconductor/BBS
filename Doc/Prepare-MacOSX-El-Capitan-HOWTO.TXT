@@ -195,9 +195,6 @@ Everything in this section must be done from the biocbuild account.
   that it even includes the svn and git clients).
   The full Xcode IDE is much bigger (2.6G vs 103M) and is not needed.
 
-  Xcode 6.2 was the last version of Xcode to support OS X 10.9.5 Mavericks so
-  we need to get "Command Line Tools (OS X 10.9) for Xcode 6.2".
-
   Go on https://developer.apple.com/ and pick up the last version for
   OS X 10.11 El Capitan (Command_Line_Tools_macOS_10.11_for_Xcode_8.2.dmg
   at the moment).
@@ -431,8 +428,9 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install JPEG system library
 
-    curl -O http://r.research.att.com/libs/jpeg-9-darwin.13-x86_64.tar.gz
-    sudo tar fvxz jpeg-9-darwin.13-x86_64.tar.gz -C /
+  Install with:
+
+    brew install jpeg
 
   TESTING: Try to install the jpeg package:
 
@@ -603,9 +601,15 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install Python 3 + Jupyter + nbconvert + jupyter_client
 
-  Install with:
+  Install Python 3 + Jupyter + pip3 with:
 
     brew install python3
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
+  Install nbconvert + jupyter_client with:
+
     pip3 install nbconvert
     pip3 install jupyter_client
 
@@ -619,7 +623,7 @@ Everything in this section must be done from the biocbuild account.
 ** Install libSBML
 
   libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
-  Mavericks is 2.6.16 so we first need to install a more recent libxml-2.0.
+  El Capitan is 2.6.16 so we first need to install a more recent libxml-2.0.
   Install a more recent libxml-2.0 with:
 
     brew install libxml2
@@ -643,7 +647,10 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install Clustal Omega
 
-  Download standalone Mac binary from http://www.clustal.org/omega/
+  There is a standalone Mac binary at http://www.clustal.org/omega/
+  Downnload it with:
+
+    curl -O http://www.clustal.org/omega/clustal-omega-1.2.3-macosx
 
   Make it executable with:
 
@@ -658,7 +665,7 @@ Everything in this section must be done from the biocbuild account.
     cd /usr/local/bin
     sudo ln -s clustal-omega-1.2.3-macosx clustalo
 
-  TESTING: Try to build the LowMACA package:
+  TESTING: Try to build the LowMACA package (takes about 5 min.):
 
     cd ~/bbs-3.5-bioc/meat
     R CMD build LowMACA
@@ -712,16 +719,16 @@ Everything in this section must be done from the biocbuild account.
 
   Download with:
 
-    https://root.cern.ch/download/root_v5.34.36.macosx64-10.9-clang60.dmg
+    curl -O https://root.cern.ch/download/root_v6.08.06.macosx64-10.11-clang80.dmg
 
   Install with:
 
-    sudo hdiutil attach root_v5.34.36.macosx64-10.9-clang60.dmg
-    sudo installer -pkg /Volumes/root_v5.34.36.macosx64-10.9-clang60/root_v5.34.36.macosx64-10.9-clang60.mpkg -target /
-    sudo hdiutil detach /Volumes/root_v5.34.36.macosx64-10.9-clang60
+    sudo hdiutil attach root_v6.08.06.macosx64-10.11-clang80.dmg
+    sudo installer -pkg /Volumes/root_v6.08.06.macosx64-10.11-clang80/root_v6.08.06.macosx64-10.11-clang80.mpkg -target /
+    sudo hdiutil detach /Volumes/root_v6.08.06.macosx64-10.11-clang80
 
-  Then in /etc/profile append /Applications/root_v5.34.36/bin to PATH and
-  /Applications/root_v5.34.36/lib to DYLD_LIBRARY_PATH.
+  Then in /etc/profile append /Applications/root_v6.08.06/bin to PATH and
+  /Applications/root_v6.08.06/lib to DYLD_LIBRARY_PATH.
 
   TESTING: Logout and login again so that the changes to /etc/profile take
   effect. Then:
@@ -735,18 +742,9 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install ImageMagick
 
-  Download first installer from this page:
-
-    http://cactuslab.com/imagemagick/
-
-  e.g.
-
-    curl -O http://cactuslab.com/assets/installers/ImageMagick-6.9.1-0.pkg.zip
-
   Install with:
 
-    unzip ImageMagick-6.9.1-0.pkg.zip
-    sudo installer -pkg ImageMagick-6.9.1-0.pkg -target /
+    brew install imagemagick
 
   TESTING: Logout and login again so that the changes to PATH take effect.
   Then:
@@ -762,13 +760,13 @@ Everything in this section must be done from the biocbuild account.
 
   Download with:
 
-   curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.3-MacOSX.dmg
+   curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.4-MacOSX.dmg
 
   Install with:
 
-    sudo hdiutil attach ViennaRNA-2.3.3-MacOSX.dmg
-    sudo installer -pkg "/Volumes/ViennaRNA 2.3.3/ViennaRNA Package 2.3.3 Installer.pkg" -target /
-    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.3"
+    sudo hdiutil attach ViennaRNA-2.3.4-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.3.4/ViennaRNA Package 2.3.4 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.4"
 
   TESTING:
 
