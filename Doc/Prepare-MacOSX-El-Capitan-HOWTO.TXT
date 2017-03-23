@@ -193,7 +193,13 @@ Everything in this section must be done from the biocbuild account.
   tools that enable Unix-style development at the command line. It's all
   that is needed to install/compile R packages with native code in them (note
   that it even includes the svn and git clients).
+
   The full Xcode IDE is much bigger (2.6G vs 103M) and is not needed.
+
+  IMPORTANT NOTE: For R 3.4, the CRAN folks actually decided to use a different
+  set of compilers for compiling R and packages with C and/or C++ code. So we
+  do the same, but we still need the Command Line Developer Tools for the ld
+  (linker) and make commands.
 
   Go on https://developer.apple.com/ and pick up the last version for
   OS X 10.11 El Capitan (Command_Line_Tools_macOS_10.11_for_Xcode_8.2.dmg
@@ -207,7 +213,35 @@ Everything in this section must be done from the biocbuild account.
 
   TESTING:
 
-    gcc -v
+    which make
+    which clang
+    clang -v
+
+** Install the C and C++ compilers used by the CRAN folks
+
+  The CRAN folks use clang 4.0.0 to compile R and produce binary packages on
+  Mac. It can be found at http://r.research.att.com/libs/ in the latest
+  cran-usr-local-darwin15.6-YYYYMMDD.tar.gz tarball. This is a big software
+  bundle that contains many other things. We're only interested in the clang
+  compiler for now.
+
+  Download the software bundle with:
+
+    curl -O http://r.research.att.com/libs/cran-usr-local-darwin15.6-20170320.tar.gz
+
+  Install clang 4.0.0 with:
+
+    sudo tar fvxz cran-usr-local-darwin15.6-20170320.tar.gz -C / usr/local/clang+llvm-4.0.0-x86_64-apple-darwin
+
+  Then in /etc/profile *prepend*
+    /usr/local/clang+llvm-4.0.0-x86_64-apple-darwin/bin
+  to PATH.
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect.
+
+    which clang
+    clang -v
 
 ** Install gfortran
 
@@ -313,74 +347,61 @@ E. Install R
 
 This must be done from the biocbuild account.
 
-    from Simon's site at AT&T https://r.research.att.com/ for R devel
-    (pick up R-devel-el-capitan-signed.pkg)
+  from Simon's site at AT&T https://r.research.att.com/ for R devel
+  (pick up R-devel-el-capitan-signed.pkg)
 
-    from CRAN (e.g. https://cloud.r-project.org/bin/macosx/) for R release
-    (pick up the 1st file e.g. R-3.3.2.pkg)
+  from CRAN (e.g. https://cloud.r-project.org/bin/macosx/) for R release
+  (pick up the 1st file e.g. R-3.3.2.pkg)
 
-  Download with e.g.
+Download and install with:
 
-    curl -O https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan-signed.pkg
+  curl -O https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan-signed.pkg
+  sudo installer -pkg R-devel-el-capitan-signed.pkg -target /
 
-  Then install with e.g.
+Note that, unlike what we do on the Linux and Windows builders, this is a
+*system-wide* installation of R i.e. it can be started with 'R' from any
+account.
 
-    sudo installer -pkg R-devel-el-capitan-signed.pkg -target /
+Finally, go to /Library/Frameworks/R.framework/Resources/etc and edit the
+Makeconf file as follow (after copying it as Makeconf.original):
 
-  Note that, unlike what we do on the Linux and Windows builders, this is a
-  *system-wide* installation of R i.e. it can be started with 'R' from any
-  account.
+  # append -I/opt/X11/include to CPPFLAGS
+  CPPFLAGS = -I/usr/local/include -I/opt/X11/include
 
-  Finally, go to /Library/Frameworks/R.framework/Resources/etc and edit the
-  Makeconf file as follow (after copying it as Makeconf.original):
+TESTING: Start the virtual X server, start R, and check X11:
 
-    - set the following variables (originally set to -fopenmp) to an empty
-      string:
+  # From the shell
+  . ~/BBS/utils/start-virtual-X.sh
 
-        MAIN_LDFLAGS =
-        SHLIB_OPENMP_CFLAGS =
-        SHLIB_OPENMP_CXXFLAGS =
-        SHLIB_OPENMP_FCFLAGS =
-        SHLIB_OPENMP_FFLAGS =
+  # If the above gives fatal server error "Cannot establish any listening
+  # sockets", then try to manually start the virtual X server as root with
+  # 'sudo Xvfb' first, then stop it with CTRL+C, then try to source the
+  # start-virtual-X.sh script again. See "Install XQuartz" previously in
+  # this file for more information about this.
 
-    - append -I/opt/X11/include to CPPFLAGS
+  # From R
+  capabilities()[["X11"]]  # should be TRUE
+  X11()                    # nothing visible should happen
+  q("no")
 
-        CPPFLAGS = -I/usr/local/include -I/opt/X11/include
+  # From the shell
+  . ~/BBS/utils/stop-virtual-X.sh
 
-  TESTING: Start the virtual X server, start R, and check X11:
+Then start R again and try to install a few packages from source:
 
-    # From the shell
-    . ~/BBS/utils/start-virtual-X.sh
+  # CRAN packages
+  install.packages("Rcpp", type="source")   # contains C++ code
+  install.packages("minqa", type="source")  # contains Fortran code
 
-    # If the above gives fatal server error "Cannot establish any listening
-    # sockets", then try to manually start the virtual X server as root with
-    # 'sudo Xvfb' first, then stop it with CTRL+C, then try to source the
-    # start-virtual-X.sh script again. See "Install XQuartz" previously in
-    # this file for more information about this.
+  # Bioconductor packages
+  source("http://bioconductor.org/biocLite.R")
+  ## ONLY if release and devel are using the same version of R:
+  #useDevel()
+  biocLite("BiocCheck", type="source")
+  biocLite("VariantAnnotation", type="source")
 
-    # From R
-    capabilities()[["X11"]]  # should be TRUE
-    X11()                    # nothing visible should happen
-    q("no")
-
-    # From the shell
-    . ~/BBS/utils/stop-virtual-X.sh
-
-  Then start R again and try to install a few packages from source:
-
-    # CRAN packages
-    install.packages("Rcpp", type="source")   # contains C++ code
-    install.packages("minqa", type="source")  # contains Fortran code
-
-    # Bioconductor packages
-    source("http://bioconductor.org/biocLite.R")
-    ## ONLY if release and devel are using the same version of R:
-    #useDevel()
-    biocLite("BiocCheck", type="source")
-    biocLite("VariantAnnotation", type="source")
-
-  WAIT!!! II'S NOT FINISHED YET! Now go to "How to update R" section at the end
-  of this file and perform steps 3) an 4).
+WAIT!!! II'S NOT FINISHED YET! Now go to "How to update R" section at the end
+of this file and perform steps 3) an 4).
 
 
 F. Install MacTeX & Pandoc
@@ -429,9 +450,9 @@ G. Add crontab entries for daily builds
 
 This must be done from the biocbuild account.
 
-** Add the following entry to biocbuild crontab
+Add the following entry to biocbuild crontab:
 
-    55 17 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.5/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.5-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+55 17 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.5/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.5-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run before
 doing so.
@@ -461,7 +482,7 @@ Everything in this section must be done from the biocbuild account.
 
   TESTING: Try to install the rJava package:
 
-    install.packages("rJava", type="source")
+    install.packages("rJava")  # install the CRAN binary!
     library(rJava)
     .jinit()
     .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
@@ -478,6 +499,8 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install TIFF system library
 
+  Download and install with:
+
     curl -O http://r.research.att.com/libs/tiff-4.0.3-darwin.13-x86_64.tar.gz
     sudo tar fvxz tiff-4.0.3-darwin.13-x86_64.tar.gz -C /
 
@@ -486,6 +509,8 @@ Everything in this section must be done from the biocbuild account.
     install.packages("tiff", type="source")
 
 ** Install Cairo system library
+
+  Download and install with:
 
     curl -O http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz
     sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
@@ -505,6 +530,8 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install NetCDF and HDF5 system libray
 
+  Download and install with:
+
     curl -O http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
     curl -O http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz
 
@@ -523,6 +550,8 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install FFTW system library
 
+  Download and install with:
+
     curl -O http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz
     sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
 
@@ -531,6 +560,8 @@ Everything in this section must be done from the biocbuild account.
     install.packages("fftwtools", type="source")
 
 ** Install GSL system library
+
+  Download and install with:
 
     curl -O http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz
     sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
@@ -541,6 +572,8 @@ Everything in this section must be done from the biocbuild account.
     biocLite("GLAD", type="source")
 
 ** Install GTK2
+
+  Download and install with:
 
     curl -O http://r.research.att.com/libs/GTK_2.24.17-X11.pkg
     sudo installer -pkg GTK_2.24.17-X11.pkg -target /
@@ -833,11 +866,15 @@ Perform the following steps from the biocbuild account:
 
      TESTING: Try to install the rJava package:
 
-       install.packages("rJava", type="source")
+       install.packages("rJava")  # install the CRAN binary!
 
      See "Install Java" previously in this file for more testing.
 
-  4) As of Feb 22, 2017, CRAN still does not provide Mac binary packages for
+  4) TESTING: Try to install the RGtk2 package:
+
+       install.packages("RGtk2", type="source")
+
+  5) As of Feb 22, 2017, CRAN still does not provide Mac binary packages for
      R 3.4. Unfortunately some Bioconductor packages depend on CRAN packages
      that are too difficult to install from source. However, for some of these
      CRAN packages, it seems that the binary made for R 3.3 works with R 3.4.
@@ -847,7 +884,7 @@ Perform the following steps from the biocbuild account:
        gmp, Rmpfr    -- required by RankProd
        sysfonts      -- required by CRAN package emojifont which is suggested
                         by ggtree
-       rphast, rtfbs -- required by cobindR
+       #rphast, rtfbs -- required by cobindR
        udunits2      -- indirectly required by Pi
        RMySQL        -- required by anamiR & annmap & IntEREst, suggested
                         by GenVisR & metaseqR & recoup
@@ -855,7 +892,8 @@ Perform the following steps from the biocbuild account:
 
      Install them with:
 
-       pkgs <- c("Cairo", "gmp", "Rmpfr", "sysfonts", "rphast", "rtfbs",
+       pkgs <- c("Cairo", "gmp", "Rmpfr", "sysfonts",
+                 #"rphast", "rtfbs",
                  "udunits2", "RMySQL", "RPostgreSQL")
        contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
        install.packages(pkgs, contriburl=contriburl)
