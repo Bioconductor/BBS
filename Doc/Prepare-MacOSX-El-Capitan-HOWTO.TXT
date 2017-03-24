@@ -856,7 +856,11 @@ I. How to update R
 
 Perform the following steps from the biocbuild account:
 
-  1) Rename previous R.framework in /Library/Frameworks/ -> R.framework.old
+  1) If you have enough disk space (i.e. if available disk space on the /
+     filesystem is more than the size reported by
+     du -sh /Library/Frameworks/R.framework) then cd to /Library/Frameworks/
+     and rename R.framework -> R.framework.old.
+     Otherwise, just delete it.
 
   2) See "Install R" section previously in this file for how to install R.
 
@@ -884,7 +888,7 @@ Perform the following steps from the biocbuild account:
        gmp, Rmpfr    -- required by RankProd
        sysfonts      -- required by CRAN package emojifont which is suggested
                         by ggtree
-       #rphast, rtfbs -- required by cobindR
+       rphast, rtfbs -- required by cobindR
        udunits2      -- indirectly required by Pi
        RMySQL        -- required by anamiR & annmap & IntEREst, suggested
                         by GenVisR & metaseqR & recoup
@@ -893,7 +897,7 @@ Perform the following steps from the biocbuild account:
      Install them with:
 
        pkgs <- c("Cairo", "gmp", "Rmpfr", "sysfonts",
-                 #"rphast", "rtfbs",
+                 "rphast", "rtfbs",
                  "udunits2", "RMySQL", "RPostgreSQL")
        contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
        install.packages(pkgs, contriburl=contriburl)
