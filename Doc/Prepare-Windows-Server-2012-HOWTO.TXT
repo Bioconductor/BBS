@@ -258,6 +258,8 @@ interactively on a Windows build machine.
 ** Install R in bbs-3.4-bioc
 
   1. Download the CRAN Windows binary that matches the BioC version to build.
+     (https://cran.rstudio.com/bin/windows/base/) 
+
      When running the installer:
 
      - Ignore warning about the current user not being an admin
