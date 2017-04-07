@@ -96,7 +96,8 @@ pkgType2FileExt = {
     'win64.binary': "zip",
     'mac.binary': "tgz",
     'mac.binary.leopard': "tgz",
-    'mac.binary.mavericks': "tgz"
+    'mac.binary.mavericks': "tgz",
+    'mac.binary.el-capitan': "tgz"
 }
 
 def getNodeSpec(node_hostname, key):
