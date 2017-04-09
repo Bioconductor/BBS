@@ -213,9 +213,9 @@ Everything in this section must be done from the biocbuild account.
 
   TESTING:
 
-    which make
-    which clang
-    clang -v
+    which make   # /usr/bin/make
+    which clang  # /usr/bin/clang
+    clang -v     # Apple LLVM version 8.0.0
 
 ** Install the C and C++ compilers used by the CRAN folks
 
@@ -233,15 +233,21 @@ Everything in this section must be done from the biocbuild account.
 
     sudo tar fvxz cran-usr-local-darwin15.6-20170320.tar.gz -C / usr/local/clang+llvm-4.0.0-x86_64-apple-darwin
 
+  Create clang4 symlink in /usr/local/ with:
+
+    sudo ln -s clang+llvm-4.0.0-x86_64-apple-darwin clang4
+
   Then in /etc/profile *prepend*
-    /usr/local/clang+llvm-4.0.0-x86_64-apple-darwin/bin
+
+    /usr/local/clang4/bin
+
   to PATH.
 
   TESTING: Logout and login again so that the changes to /etc/profile take
   effect.
 
-    which clang
-    clang -v
+    which clang  # /usr/local/clang4/bin/clang
+    clang -v     # clang version 4.0.0
 
 ** Install gfortran
 
@@ -579,7 +585,7 @@ Everything in this section must be done from the biocbuild account.
     curl -O http://r.research.att.com/libs/GTK_2.24.17-X11.pkg
     sudo installer -pkg GTK_2.24.17-X11.pkg -target /
 
-  Create pkg-config symlink in /usr/local/bin with:
+  Create pkg-config symlink in /usr/local/bin/ with:
 
     cd /usr/local/bin
     sudo ln -s /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
@@ -734,7 +740,7 @@ Everything in this section must be done from the biocbuild account.
 
     sudo mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
 
-  Create clustalo symlink in /usr/local/bin with:
+  Create clustalo symlink in /usr/local/bin/ with:
 
     cd /usr/local/bin
     sudo ln -s clustal-omega-1.2.3-macosx clustalo
@@ -879,11 +885,12 @@ Perform the following steps from the biocbuild account:
 
        install.packages("RGtk2", type="source")
 
-  5) As of Feb 22, 2017, CRAN still does not provide Mac binary packages for
-     R 3.4. Unfortunately some Bioconductor packages depend on CRAN packages
-     that are too difficult to install from source. However, for some of these
-     CRAN packages, it seems that the binary made for R 3.3 works with R 3.4.
-     These packages are:
+  5) As of April 9, 2017, CRAN still does not provide binaries for all CRAN
+     packages for R 3.4. Furthermore, some of those that are provided seem
+     broken (e.g. e1071). Unfortunately some Bioconductor packages depend on
+     CRAN packages that are too difficult to install from source. However,
+     for some of these CRAN packages, it seems that the binary made for R 3.3
+     works with R 3.4. These packages are:
 
        Cairo         -- required by a bunch of Bioconductor packages
        gmp, Rmpfr    -- required by RankProd
