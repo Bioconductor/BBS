@@ -496,24 +496,31 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install JPEG system library
 
-  Install with:
+  Download and install with:
 
-    brew install jpeg
+    curl -O http://r.research.att.com/libs/jpeg-9-darwin.15-x86_64.tar.gz
+    sudo tar fvxz jpeg-9-darwin.15-x86_64.tar.gz -C /
 
   TESTING: Try to install the jpeg package:
 
     install.packages("jpeg", type="source")
+    library(jpeg)
+    example(readJPEG)
+    example(writeJPEG)
 
 ** Install TIFF system library
 
   Download and install with:
 
-    curl -O http://r.research.att.com/libs/tiff-4.0.3-darwin.13-x86_64.tar.gz
-    sudo tar fvxz tiff-4.0.3-darwin.13-x86_64.tar.gz -C /
+    curl -O http://r.research.att.com/libs/tiff-4.0.7-darwin.15-x86_64.tar.gz
+    sudo tar fvxz tiff-4.0.7-darwin.15-x86_64.tar.gz -C /
 
   TESTING: Try to install the tiff package:
 
     install.packages("tiff", type="source")
+    library(tiff)
+    example(readTIFF)
+    example(writeTIFF)
 
 ** Install Cairo system library
 
@@ -822,9 +829,14 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install ImageMagick
 
-  Install with:
-
-    brew install imagemagick
+  # DON'T DO THIS! brew will try to install the jpeg-8d lib on top of the
+  # previously installed jpeg-9 lib!!! So we need to figure out a way to
+  # install ImageMagick (or just standalone command 'convert', which is all
+  # what flowQ needs) without messing up the jpeg-9 lib installation...
+  #Install with:
+  #
+  # brew install imagemagick
+  #
 
   TESTING: Logout and login again so that the changes to PATH take effect.
   Then:
