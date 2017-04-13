@@ -309,7 +309,7 @@ interactively on a Windows build machine.
 
   4. Install BiocInstaller and switch to devel mode (for devel builds only)
 
-     Start R (with R/bin/R from C:\Users\biocbuild), install BiocInstaller and
+     Start R (with R/bin/R from C:\Users\biocbuild\bbs-3.4-bioc), install BiocInstaller and
      switch to devel mode with:
 
        source("https://bioconductor.org/biocLite.R")
