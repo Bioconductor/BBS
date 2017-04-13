@@ -232,6 +232,7 @@ Everything in this section must be done from the biocbuild account.
   Install clang 4.0.0 with:
 
     sudo tar fvxz cran-usr-local-darwin15.6-20170320.tar.gz -C / usr/local/clang+llvm-4.0.0-x86_64-apple-darwin
+    sudo chown -R biocbuild:admin /usr/local
 
   Create clang4 symlink in /usr/local/ with:
 
@@ -500,6 +501,7 @@ Everything in this section must be done from the biocbuild account.
 
     curl -O http://r.research.att.com/libs/jpeg-9-darwin.15-x86_64.tar.gz
     sudo tar fvxz jpeg-9-darwin.15-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the jpeg package:
 
@@ -514,6 +516,7 @@ Everything in this section must be done from the biocbuild account.
 
     curl -O http://r.research.att.com/libs/tiff-4.0.7-darwin.15-x86_64.tar.gz
     sudo tar fvxz tiff-4.0.7-darwin.15-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the tiff package:
 
@@ -528,6 +531,7 @@ Everything in this section must be done from the biocbuild account.
 
     curl -O http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz
     sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install and load the Cairo *binary* package:
 
@@ -551,6 +555,7 @@ Everything in this section must be done from the biocbuild account.
 
     sudo tar fvxz netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -C /
     sudo tar fvxz hdf5-1.8.14-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the ncdf4 package:
 
@@ -568,6 +573,7 @@ Everything in this section must be done from the biocbuild account.
 
     curl -O http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz
     sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the fftwtools package:
 
@@ -579,6 +585,7 @@ Everything in this section must be done from the biocbuild account.
 
     curl -O http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz
     sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the GLAD package:
 
@@ -829,21 +836,58 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install ImageMagick
 
-  # DON'T DO THIS! brew will try to install the jpeg-8d lib on top of the
-  # previously installed jpeg-9 lib!!! So we need to figure out a way to
-  # install ImageMagick (or just standalone command 'convert', which is all
-  # what flowQ needs) without messing up the jpeg-9 lib installation...
-  #Install with:
-  #
-  # brew install imagemagick
-  #
+  WARNING: Don't do 'brew install imagemagick'. This will install the jpeg-8d
+  lib on top of the previously installed jpeg-9 lib!!!
+  So we install a pre-built ImageMagick binary for El Capitan. Note that these
+  pre-built binaries seem very broken and need a bunch of symlinks in order
+  to work!
 
-  TESTING: Logout and login again so that the changes to PATH take effect.
-  Then:
+  Download and install with:
 
-    which convert
+    curl -O https://www.imagemagick.org/download/binaries/ImageMagick-x86_64-apple-darwin16.4.0.tar.gz
+    sudo tar zxvf ImageMagick-x86_64-apple-darwin16.4.0.tar.gz -C /
+    sudo chown -R biocbuild:admin /ImageMagick-7.0.5
 
-  Then try to build the flowQ package:
+  Then in /etc/profile add the following line (before the PATH and
+  DYLD_LIBRARY_PATH lines):
+
+    export MAGICK_HOME="/ImageMagick-7.0.5"
+
+  and append $MAGICK_HOME/bin and $MAGICK_HOME/lib to PATH and
+  DYLD_LIBRARY_PATH, respectively.
+
+  Logout and login again so that the changes to /etc/profile take effect.
+
+  Then create a bunch of symlinks:
+
+    cd /usr/local/include
+    ln -s $MAGICK_HOME/include/ImageMagick-7
+    cd /usr/local/etc
+    ln -s $MAGICK_HOME/etc/ImageMagick-7
+    cd /usr/local/share
+    ln -s $MAGICK_HOME/share/ImageMagick-7
+    cd /usr/local/share/doc
+    ln -s $MAGICK_HOME/share/doc/ImageMagick-7
+
+    ## this creates 10 symlinks in /usr/local/lib
+    cd /usr/local/lib
+    ln -s $MAGICK_HOME/lib/ImageMagick-7.0.5
+    for lib in libMagick++-7 libMagickCore-7 libMagickWand-7; do
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.0.dylib
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.dylib
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.la
+    done
+
+  TESTING:
+
+    which magick
+    magick logo: logo.gif
+    identify logo.gif
+    identify <some-PDF-file>  # important test! (flowQ uses this)
+    #display logo.gif         # fails but flowQ does not use this
+
+  Then try to build the flowQ package (the package makes system calls to
+  standalone commands 'convert', 'identify', and 'montage'):
 
     cd ~/bbs-3.5-bioc/meat
     R CMD build flowQ
@@ -852,7 +896,7 @@ Everything in this section must be done from the biocbuild account.
 
   Download with:
 
-   curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.4-MacOSX.dmg
+    curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.4-MacOSX.dmg
 
   Install with:
 
