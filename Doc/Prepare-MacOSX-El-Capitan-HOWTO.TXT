@@ -853,8 +853,8 @@ Everything in this section must be done from the biocbuild account.
 
     export MAGICK_HOME="/ImageMagick-7.0.5"
 
-  and append $MAGICK_HOME/bin and $MAGICK_HOME/lib to PATH and
-  DYLD_LIBRARY_PATH, respectively.
+  and append $MAGICK_HOME/bin, $MAGICK_HOME/lib, and $MAGICK_HOME/lib/pkgconfig
+  to PATH, DYLD_LIBRARY_PATH, and PKG_CONFIG_PATH, respectively.
 
   Logout and login again so that the changes to /etc/profile take effect.
 
