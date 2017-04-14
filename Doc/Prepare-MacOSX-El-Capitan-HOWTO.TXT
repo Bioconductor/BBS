@@ -941,28 +941,25 @@ Perform the following steps from the biocbuild account:
 
        install.packages("RGtk2", type="source")
 
-  5) As of April 9, 2017, CRAN still does not provide binaries for all CRAN
+  5) Install the following package binaries:
+
+       pkgs <- c("Cairo", "sysfonts", "rphast", "rtfbs", "RMySQL")
+       install.packages(pkgs)
+
+  6) As of April 14, 2017, CRAN still does not provide binaries for all CRAN
      packages for R 3.4. Furthermore, some of those that are provided seem
      broken (e.g. e1071). Unfortunately some Bioconductor packages depend on
      CRAN packages that are too difficult to install from source. However,
      for some of these CRAN packages, it seems that the binary made for R 3.3
      works with R 3.4. These packages are:
 
-       Cairo         -- required by a bunch of Bioconductor packages
        gmp, Rmpfr    -- required by RankProd
-       sysfonts      -- required by CRAN package emojifont which is suggested
-                        by ggtree
-       rphast, rtfbs -- required by cobindR
        udunits2      -- indirectly required by Pi
-       RMySQL        -- required by anamiR & annmap & IntEREst, suggested
-                        by GenVisR & metaseqR & recoup
        RPostgreSQL   -- suggested by ChemmineR
 
      Install them with:
 
-       pkgs <- c("Cairo", "gmp", "Rmpfr", "sysfonts",
-                 "rphast", "rtfbs",
-                 "udunits2", "RMySQL", "RPostgreSQL")
+       pkgs <- c("gmp", "Rmpfr", "udunits2", "RPostgreSQL")
        contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
        install.packages(pkgs, contriburl=contriburl)
 
