@@ -943,7 +943,7 @@ Perform the following steps from the biocbuild account:
 
   5) Install the following package binaries:
 
-       pkgs <- c("Cairo", "sysfonts", "rphast", "rtfbs", "RMySQL")
+       pkgs <- c("Cairo", "sysfonts", "rphast", "rtfbs", "RMySQL", "V8")
        install.packages(pkgs)
 
   6) As of April 14, 2017, CRAN still does not provide binaries for all CRAN
