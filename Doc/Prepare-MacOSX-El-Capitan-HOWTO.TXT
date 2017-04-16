@@ -220,23 +220,13 @@ Everything in this section must be done from the biocbuild account.
 ** Install the C and C++ compilers used by the CRAN folks
 
   The CRAN folks use clang 4.0.0 to compile R and produce binary packages on
-  Mac. It can be found at http://r.research.att.com/libs/ in the latest
-  cran-usr-local-darwin15.6-YYYYMMDD.tar.gz tarball. This is a big software
-  bundle that contains many other things. We're only interested in the clang
-  compiler for now.
+  Mac. It can be found at http://r.research.att.com/libs/
 
-  Download the software bundle with:
+  Download and install with:
 
-    curl -O http://r.research.att.com/libs/cran-usr-local-darwin15.6-20170320.tar.gz
-
-  Install clang 4.0.0 with:
-
-    sudo tar fvxz cran-usr-local-darwin15.6-20170320.tar.gz -C / usr/local/clang+llvm-4.0.0-x86_64-apple-darwin
+    curl -O http://r.research.att.com/libs/clang-4.0.0-darwin15.6-Release.tar.gz
+    sudo tar fvxz clang-4.0.0-darwin15.6-Release.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
-
-  Create clang4 symlink in /usr/local/ with:
-
-    sudo ln -s clang+llvm-4.0.0-x86_64-apple-darwin clang4
 
   Then in /etc/profile *prepend*
 
