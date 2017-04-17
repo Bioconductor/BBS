@@ -495,7 +495,7 @@ copyPropagatableFiles <- function(srcDir, fileExt, propagationDb, destDir=".")
         'win.binary'=paste0("bin/windows/contrib/", rvers),
         'mac.binary'=paste0("bin/macosx/contrib/", rvers),
         'mac.binary.mavericks'=paste0("bin/macosx/mavericks/contrib/", rvers),
-        'mac.binary.el-capitan'=paste0("bin/windows/el-capitan/contrib/", rvers))
+        'mac.binary.el-capitan'=paste0("bin/macosx/el-capitan/contrib/", rvers))
     db <- read.dcf(propagationDb)
     segs <- strsplit(srcDir, "/")[[1]]
     srcType <- segs[length(segs)]
