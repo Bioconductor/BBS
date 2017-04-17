@@ -799,6 +799,35 @@ Everything in this section must be done from the biocbuild account.
     mpi.close.Rslaves()
     mpi.quit()
 
+** Install MySQL Community Server
+
+  Note that we only need this for the ensemblVEP package. RMySQL doesn't need
+  it as long as we can install the binary package.
+
+  Download mysql-8.0.0-dmr-osx10.11-x86_64.dmg from:
+
+    https://downloads.mysql.com/archives/community/
+
+  Install with:
+
+    sudo hdiutil attach mysql-8.0.0-dmr-osx10.11-x86_64.dmg
+    sudo installer -pkg /Volumes/mysql-8.0.0-dmr-osx10.11-x86_64/mysql-8.0.0-dmr-osx10.11-x86_64.pkg -target /
+    sudo hdiutil detach /Volumes/mysql-8.0.0-dmr-osx10.11-x86_64
+    sudo chown -R biocbuild:admin /usr/local
+
+  Then in /etc/profile append /usr/local/mysql/bin to PATH,
+  /usr/local/mysql/lib to DYLD_LIBRARY_PATH, and
+  /usr/local/mysql/lib/pkgconfig to PKG_CONFIG_PATH.
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then:
+
+    which mysql_config
+
+  Then try to install the RMySQL package:
+
+    install.packages("RMySQL", type="source")
+
 ** Install ROOT
 
   Download with:
