@@ -858,8 +858,8 @@ Everything in this section must be done from the biocbuild account.
     # the PATH, by default cmake wants to use the latter).
     export CC=/usr/local/clang4/bin/clang
     export CXX=/usr/local/clang4/bin/clang++
-    cmake -D fortran:BOOL=OFF -D mysql:BOOL=OFF -D sqlite:BOOL=OFF ../root
-    cmake --build . -- -j4  # takes about 15-20 min (> 45 min without -j4)
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ../root
+    cmake --build . -- -j4  # takes about 10-15 min (> 45 min without -j4)
 
   Try to start a ROOT interactive session:
 
@@ -868,7 +868,7 @@ Everything in this section must be done from the biocbuild account.
 
   Install with:
 
-    sudo cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -P cmake_install.cmake
+    sudo cmake --build . --target install
     sudo chown -R biocbuild:admin /usr/local
 
   #Installing a ROOT 6 pre-compiled binary for OS X 10.11.
@@ -887,11 +887,11 @@ Everything in this section must be done from the biocbuild account.
   Then in /etc/profile add the following line (before the PATH and
   DYLD_LIBRARY_PATH lines):
 
-    export ROOTHOME="/usr/local/root"  # do NOT set ROOTSYS, it will break
-                                       # xps configure script!
+    export ROOT_HOME="/usr/local/root"  # do NOT set ROOTSYS, it will break
+                                        # xps configure script!
 
-  and append $ROOTHOME/bin and $ROOTHOME/lib to PATH and DYLD_LIBRARY_PATH,
-  respectively.
+  and append $ROOT_HOME/bin and $ROOT_HOME/lib/root to PATH and
+  DYLD_LIBRARY_PATH, respectively.
 
   TESTING: Logout and login again so that the changes to /etc/profile take
   effect. Then:
