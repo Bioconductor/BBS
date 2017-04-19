@@ -830,23 +830,74 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install ROOT
 
-  Download with:
+  xps wants ROOT 5, not 6. Unfortunately, there are no ROOT 5 binaries
+  for OS X 10.11 / clang4 at https://root.cern.ch/. So we need to install from
+  source.
 
-    curl -O https://root.cern.ch/download/root_v6.08.06.macosx64-10.11-clang80.dmg
+  Download source of latest ROOT 5 release (5.34/36):
+
+    curl -O https://root.cern.ch/download/root_v5.34.36.source.tar.gz
+
+  Make sure cmake is installed:
+
+    which cmake
+
+  If not, install it with:
+
+    brew install cmake
+
+  ROOT supports 2 installation methods: "location independent" and "fix
+  location". Here we do "location independent" installation:
+
+  Build with:
+
+    tar zxvf root_v5.34.36.source.tar.gz
+    mkdir root_builddir
+    cd root_builddir
+    # Tell cmake to use clang4 (even though it comes before Apple's clang in
+    # the PATH, by default cmake wants to use the latter).
+    export CC=/usr/local/clang4/bin/clang
+    export CXX=/usr/local/clang4/bin/clang++
+    cmake -D fortran:BOOL=OFF -D mysql:BOOL=OFF -D sqlite:BOOL=OFF ../root
+    cmake --build . -- -j4  # takes about 15-20 min (> 45 min without -j4)
+
+  Try to start a ROOT interactive session:
+
+    source bin/thisroot.sh
+    root  # then quit the session with .q
 
   Install with:
 
-    sudo hdiutil attach root_v6.08.06.macosx64-10.11-clang80.dmg
-    sudo installer -pkg /Volumes/root_v6.08.06.macosx64-10.11-clang80/root_v6.08.06.macosx64-10.11-clang80.mpkg -target /
-    sudo hdiutil detach /Volumes/root_v6.08.06.macosx64-10.11-clang80
+    sudo cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -P cmake_install.cmake
+    sudo chown -R biocbuild:admin /usr/local
 
-  Then in /etc/profile append /Applications/root_v6.08.06/bin to PATH and
-  /Applications/root_v6.08.06/lib to DYLD_LIBRARY_PATH.
+  #Installing a ROOT 6 pre-compiled binary for OS X 10.11.
+  #WARNING: Don't do this! As of Apr 2017, xps can still not be compiled
+  #against ROOT 6.
+  #Download with:
+  #
+  #  curl -O https://root.cern.ch/download/root_v6.08.06.macosx64-10.11-clang80.dmg
+  #
+  #Install with:
+  #
+  #  sudo hdiutil attach root_v6.08.06.macosx64-10.11-clang80.dmg
+  #  sudo installer -pkg /Volumes/root_v6.08.06.macosx64-10.11-clang80/root_v6.08.06.macosx64-10.11-clang80.mpkg -target /
+  #  sudo hdiutil detach /Volumes/root_v6.08.06.macosx64-10.11-clang80
+
+  Then in /etc/profile add the following line (before the PATH and
+  DYLD_LIBRARY_PATH lines):
+
+    export ROOTHOME="/usr/local/root"  # do NOT set ROOTSYS, it will break
+                                       # xps configure script!
+
+  and append $ROOTHOME/bin and $ROOTHOME/lib to PATH and DYLD_LIBRARY_PATH,
+  respectively.
 
   TESTING: Logout and login again so that the changes to /etc/profile take
   effect. Then:
 
-    which root-config
+    which root-config      # /usr/local/root/bin/root-config
+    root-config --version  # 5.34/36
 
   Then try to install the xps package:
 
