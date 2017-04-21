@@ -303,11 +303,12 @@ Everything in this section must be done from the biocbuild account.
 
     sudo chown -R `whoami`:admin /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
 
-** Install openssl
+** Install openssl and wget
 
   Install with:
 
     brew install openssl
+    brew install wget 
 
 
 D. Install BBS git tree and create bbs-3.y-bioc directory structure
