@@ -255,6 +255,7 @@ Everything in this section must be done from the biocbuild account.
     sudo hdiutil attach gfortran-6.1-ElCapitan.dmg
     sudo installer -pkg /Volumes/gfortran-6.1-ElCapitan/gfortran-6.1-ElCapitan/gfortran.pkg -target /
     sudo hdiutil detach /Volumes/gfortran-6.1-ElCapitan
+    sudo chown -R biocbuild:admin /usr/local
 
   TESTING:
 
@@ -269,6 +270,8 @@ Everything in this section must be done from the biocbuild account.
     sudo hdiutil attach XQuartz-2.7.11.dmg
     sudo installer -pkg /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
     sudo hdiutil detach /Volumes/XQuartz-2.7.11
+    cd /usr/local/include
+    ln -s /opt/X11/include/X11
 
   TESTING:
 
@@ -301,7 +304,7 @@ Everything in this section must be done from the biocbuild account.
   the list of warnings) about some directories under /usr/local/ not being
   writable needs to be addressed though. This can be done with:
 
-    sudo chown -R `whoami`:admin /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
+    sudo chown -R biocbuild:admin /usr/local
 
 ** Install openssl and wget
 
@@ -361,12 +364,6 @@ Note that, unlike what we do on the Linux and Windows builders, this is a
 *system-wide* installation of R i.e. it can be started with 'R' from any
 account.
 
-Finally, go to /Library/Frameworks/R.framework/Resources/etc and edit the
-Makeconf file as follow (after copying it as Makeconf.original):
-
-  # append -I/opt/X11/include to CPPFLAGS
-  CPPFLAGS = -I/usr/local/include -I/opt/X11/include
-
 TESTING: Start the virtual X server, start R, and check X11:
 
   # From the shell
@@ -386,7 +383,7 @@ TESTING: Start the virtual X server, start R, and check X11:
   # From the shell
   . ~/BBS/utils/stop-virtual-X.sh
 
-Then start R again and try to install a few packages from source:
+Then start R again and try to install a few packages *from source*:
 
   # CRAN packages
   install.packages("Rcpp", type="source")   # contains C++ code
@@ -399,8 +396,8 @@ Then start R again and try to install a few packages from source:
   biocLite("BiocCheck", type="source")
   biocLite("VariantAnnotation", type="source")
 
-WAIT!!! II'S NOT FINISHED YET! Now go to "How to update R" section at the end
-of this file and perform steps 3) an 4).
+WAIT!!! II'S NOT FINISHED YET! Now go to the "How to update R" section at the
+end of this file and perform all steps from step 3.
 
 
 F. Install MacTeX & Pandoc
@@ -494,7 +491,7 @@ Everything in this section must be done from the biocbuild account.
     sudo tar fvxz jpeg-9-darwin.15-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
-  TESTING: Try to install the jpeg package:
+  TESTING: Try to install the jpeg package *from source*:
 
     install.packages("jpeg", type="source")
     library(jpeg)
@@ -509,7 +506,7 @@ Everything in this section must be done from the biocbuild account.
     sudo tar fvxz tiff-4.0.7-darwin.15-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
-  TESTING: Try to install the tiff package:
+  TESTING: Try to install the tiff package *from source*:
 
     install.packages("tiff", type="source")
     library(tiff)
@@ -548,7 +545,7 @@ Everything in this section must be done from the biocbuild account.
     sudo tar fvxz hdf5-1.8.14-darwin.13-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
-  TESTING: Try to install the ncdf4 package:
+  TESTING: Try to install the ncdf4 package *from source*:
 
     install.packages("ncdf4", type="source")
 
@@ -566,7 +563,7 @@ Everything in this section must be done from the biocbuild account.
     sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
-  TESTING: Try to install the fftwtools package:
+  TESTING: Try to install the fftwtools package *from source*:
 
     install.packages("fftwtools", type="source")
 
@@ -578,7 +575,7 @@ Everything in this section must be done from the biocbuild account.
     sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
-  TESTING: Try to install the GLAD package:
+  TESTING: Try to install the GLAD package *from source*:
 
     library(BiocInstaller)
     biocLite("GLAD", type="source")
@@ -609,7 +606,7 @@ Everything in this section must be done from the biocbuild account.
     export PKG_CONFIG_PATH=/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig
 
   TESTING: Logout and login again so that the changes to /etc/profile take
-  effect. Then try to install the RGtk2 package:
+  effect. Then try to install the RGtk2 package *from source*:
 
     install.packages("RGtk2", type="source")
 
@@ -625,7 +622,7 @@ Everything in this section must be done from the biocbuild account.
     sudo installer -pkg /Volumes/JAGS-4.2.0/JAGS-4.2.0.mpkg -target /
     sudo hdiutil detach /Volumes/JAGS-4.2.0
 
-  TESTING: Try to install the rjags package:
+  TESTING: Try to install the rjags package *from source*:
 
     install.packages("rjags", type="source")
 
@@ -644,7 +641,7 @@ Everything in this section must be done from the biocbuild account.
     which autoconf
     which automake
 
-  Then try to install the flowWorkspace package:
+  Then try to install the flowWorkspace package *from source*:
 
     library(BiocInstaller)
     biocLite("flowWorkspace", type="source")
@@ -679,7 +676,7 @@ Everything in this section must be done from the biocbuild account.
 
     which babel
 
-  Then try to install the ChemmineOB package:
+  Then try to install the ChemmineOB package *from source*:
 
     library(BiocInstaller)
     biocLite("ChemmineOB", type="source")
@@ -698,8 +695,8 @@ Everything in this section must be done from the biocbuild account.
     pip3 install nbconvert
     pip3 install jupyter_client
 
-  TESTING: Install the nbconvertR package and try to run the example in the
-  man page for nbconvert():
+  TESTING: Install the nbconvertR package *from source* and try to run the
+  example in the man page for nbconvert():
 
     install.packages("nbconvertR", type="source")
     library(nbconvertR)
@@ -725,7 +722,7 @@ Everything in this section must be done from the biocbuild account.
 
     brew install homebrew/science/libsbml
 
-  TESTING: Try to install the rsbml package:
+  TESTING: Try to install the rsbml package *from source*:
 
     library(BiocInstaller)
     biocLite("rsbml", type="source")
@@ -791,7 +788,7 @@ Everything in this section must be done from the biocbuild account.
 
     brew install open-mpi  # takes between 15-20 min.
 
-  TESTING:
+  TESTING: Try to install the Rmpi package *from source*:
 
     install.packages("Rmpi", type="source")
     library(Rmpi)
@@ -825,7 +822,7 @@ Everything in this section must be done from the biocbuild account.
 
     which mysql_config
 
-  Then try to install the RMySQL package:
+  Then try to install the RMySQL package *from source*:
 
     install.packages("RMySQL", type="source")
 
@@ -900,7 +897,7 @@ Everything in this section must be done from the biocbuild account.
     which root-config      # /usr/local/root/bin/root-config
     root-config --version  # 5.34/36
 
-  Then try to install the xps package:
+  Then try to install the xps package *from source*:
 
     library(BiocInstaller)
     biocLite("xps", type="source")
@@ -1008,7 +1005,7 @@ Perform the following steps from the biocbuild account:
 
      See "Install Java" previously in this file for more testing.
 
-  4) TESTING: Try to install the RGtk2 package:
+  4) TESTING: Try to install the RGtk2 package *from source*:
 
        install.packages("RGtk2", type="source")
 
@@ -1018,20 +1015,18 @@ Perform the following steps from the biocbuild account:
                  "RMySQL", "V8")
        install.packages(pkgs)
 
-  6) As of April 14, 2017, CRAN still does not provide binaries for all CRAN
-     packages for R 3.4. Furthermore, some of those that are provided seem
-     broken (e.g. e1071). Unfortunately some Bioconductor packages depend on
+  6) As of April 22, 2017, CRAN still does not provide binaries for all CRAN
+     packages for R 3.4. Unfortunately some Bioconductor packages depend on
      CRAN packages that are too difficult to install from source. However,
      for some of these CRAN packages, it seems that the binary made for R 3.3
      works with R 3.4. These packages are:
 
-       gmp, Rmpfr    -- required by RankProd
        udunits2      -- indirectly required by Pi
        RPostgreSQL   -- suggested by ChemmineR
 
      Install them with:
 
-       pkgs <- c("gmp", "Rmpfr", "udunits2", "RPostgreSQL")
+       pkgs <- c("udunits2", "RPostgreSQL")
        contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
        install.packages(pkgs, contriburl=contriburl)
 
