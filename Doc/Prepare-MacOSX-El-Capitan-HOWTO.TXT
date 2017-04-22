@@ -885,11 +885,11 @@ Everything in this section must be done from the biocbuild account.
   Then in /etc/profile add the following line (before the PATH and
   DYLD_LIBRARY_PATH lines):
 
-    export ROOT_HOME="/usr/local/root"  # do NOT set ROOTSYS, it will break
-                                        # xps configure script!
+    export ROOTSYS="/usr/local/root"  # do NOT set ROOTSYS, it will break
+                                      # xps configure script!
 
-  and append $ROOT_HOME/bin and $ROOT_HOME/lib/root to PATH and
-  DYLD_LIBRARY_PATH, respectively.
+  and append $ROOTSYS/bin and $ROOTSYS/lib/root to PATH and DYLD_LIBRARY_PATH,
+  respectively.
 
   TESTING: Logout and login again so that the changes to /etc/profile take
   effect. Then:
