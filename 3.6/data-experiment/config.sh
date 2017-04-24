@@ -6,7 +6,7 @@
 
 export BBS_MODE="data-experiment"
 
-export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.5.manifest"
+export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.6.manifest"
 
 # What type of meat? Only 2 types are supported:
 #   1: svn repo (contains pkg dirs)
