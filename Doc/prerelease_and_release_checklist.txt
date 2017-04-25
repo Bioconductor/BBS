@@ -85,10 +85,6 @@ A few days before the new release:
      that runs as biocadmin has the 'knitcitations' package
      installed.
 
-- Install the latest biocViews from svn into the R on merlot2
-  (in /home/biocadmin/bin/R), so that it will be using the latest biocViews
-  package when generating the biocViews widget.
-
 - Also install the latest biocViews into the R on the master builder
   (for the version about to be released) in the 'biocadmin' account.
 
@@ -154,13 +150,8 @@ The day we branch (D-1):
   Verify that there are no <NA>s in output. Collate package descriptions
   with biocViews:::getPackageDescriptions().
 
-- Set up git mirrors (if they still exist?) with the new branch.
-  read https://github.com/Bioconductor/mirror/blob/master/README.md#release-workflow
-  Alternatively try (untested):
-
-    update_git.py --type branches/RELEASE_3_3 --search-revision 123456 package_directories*
-
-The benefit of the latter is specifying a search revision close to the branch point saves having to search from the beginning of the SVN history, so it takes less time. They both end up running basically the same commands so in the end either way should get you the same result.
+- Set up git mirrors (if they still exist?) with the new branch. Read
+  https://github.com/Bioconductor/mirror/blob/master/README.md#release-workflow
 
 On release day (D):
 
@@ -187,12 +178,6 @@ On release day (D):
   date at the top of the web version of the release
   announcement.
 
-- Update build times mentioned on web page
-  /developers/how-to/source-control/
-
-- Update the useDevel page as appropriate:
-  /developers/how-to/useDevel
-
 - add the last release version to the list of 'Previous Versions'
   (layouts/_bioc_older_packages.html). **DON'T FORGET THIS!**
 
@@ -201,7 +186,6 @@ On release day (D):
   stacks so that the newly released version is the default.
 
 - Link to release announcement on main index page.
-  ?? Do we still do this?? Or is tweeting sufficient?
 
 - Update number of packages on main index page.
 
@@ -209,12 +193,13 @@ On release day (D):
 
 - Update Wikipedia page for Bioconductor
 
-- Update post-commit hook script extra/svndata/gentleman/svnroot/bioconductor/hooks/post-commit
-  on hedgehog, changing to the new devel version, search for CHANGEME.
+- Update post-commit hook script
+  extra/svndata/gentleman/svnroot/bioconductor/hooks/post-commit on
+  hedgehog, changing to the new devel version, search for CHANGEME.
 
-- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller
-  to change relevant variables. This will automatically push
-  soon after being committed.
+- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller to change
+  relevant variables. This will automatically push soon after being
+  committed.
 
 - Announce the release.
 
@@ -229,18 +214,9 @@ On release day (D):
   Link to the last-good landing page of each package.
 
 - Modify the script
-svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
+  svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
   Change below where it says "CHANGE THE VALUE IN THE NEXT LINE".
   This causes an rss feed to be generated for the release branch.
-
-- Modify BiocInstaller for the newly obsolete branch (the one before the one
-  that was created yesterday, and change END_OF_LIFE to TRUE,
-  bump version, then push it out
-  for all platforms since builds have stopped. (?)
-  Should not need to do this after 5/2016, since the flag is now
-  set in a file that is online (BiocInstaller.dcf in inst/scripts
-  of the BiocInstaller package). 
-
 
 - Sanity check: Was biocLite.R updated properly? With a fresh R devel
   (make sure BiocInstaller is not installed), source biocLite.R and
