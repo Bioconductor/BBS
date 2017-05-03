@@ -90,7 +90,6 @@ From the biocbuild account
     Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
     Landsiedel, Timothy <tjlandsi@RoswellPark.org>
 
-
 ** Check that you can send HTTP requests to the central node
 
     curl "http://malbec2"                  # from within RPCI's DMZ

@@ -984,7 +984,7 @@ def write_node_specs_table(out):
     out.write('<TD COLSPAN="6" style="font-size: smaller;">')
     out.write('<I>Click on any hostname to see more info about the system (e.g. compilers)')
     out.write(' &nbsp;&nbsp;&nbsp;&nbsp; ')
-    out.write('(*) as reported by \'uname -p\', except on Windows and Mac OS X Mavericks')
+    out.write('(*) as reported by \'uname -p\', except on Windows and Mac OS X')
     out.write(' &nbsp;&nbsp;&nbsp;&nbsp; ')
     out.write('(**) as reported by \'gcc -v\'</I>')
     out.write('</TD>\n')

@@ -160,7 +160,7 @@ test_binPkg0 <- function()
 
 test_impossibleDepDoesNotPropagate_win <- function()
 {
-    dir.create(file.path(unitTestHome, "bin", "macosx", "mavericks", "contrib",
+    dir.create(file.path(unitTestHome, "bin", "macosx", "mavericks", "el-capitan", "contrib",
         BiocInstaller:::BIOC_VERSION), recursive=TRUE)
 
     dir.create(file.path(unitTestHome, "bin", "windows", "contrib",
@@ -192,6 +192,19 @@ test_binPkg_mavericks <- function()
     result <- createPropagationList(unitTestHome, outfile, "bioc", unitTestHome)
     lines <- readLines(outfile)
     checkTrue(grepl("myMacPkg#mac.binary.mavericks#propagate: YES", lines))
+}
+
+test_binPkg_elcapitan <- function()
+{
+    macbindir <- file.path(unitTestHome, "mac.binary.el-capitan")
+    dir.create(macbindir)
+    pkgdir <- file.path(macbindir, "myMacPkg")
+    .create(pkgdir)
+    .buildbinpkg("myMacPkg", macbindir, "mac.binary.el-capitan")
+    outfile <- file.path(unitTestHome, "propagationdb.txt")
+    result <- createPropagationList(unitTestHome, outfile, "bioc", unitTestHome)
+    lines <- readLines(outfile)
+    checkTrue(grepl("myMacPkg#mac.binary.el-capitan#propagate: YES", lines))
 }
 
 test_impossibleDepDoesNotPropagate_dataexp0 <- function()

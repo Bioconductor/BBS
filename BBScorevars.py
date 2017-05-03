@@ -96,25 +96,12 @@ pkgType2FileExt = {
     'win64.binary': "zip",
     'mac.binary': "tgz",
     'mac.binary.leopard': "tgz",
-    'mac.binary.mavericks': "tgz"
+    'mac.binary.mavericks': "tgz",
+    'mac.binary.el-capitan': "tgz"
 }
 
 def getNodeSpec(node_hostname, key):
-    
-    spec = None
-    if node_hostname in nodespecs.allnodes: 
-        logging.info("Now attempting to get spec based on node_hostname '{hostname}'".format(hostname = node_hostname))
-        spec = nodespecs.allnodes[node_hostname.lower()]
-    else:
-        logging.warn("node_hostname '{hostname}' is not listed in the hardcoded dictionary.  "
-            "Will attempt to create `spec` object dynamically.".format(hostname = node_hostname))
-        logging.warn("All packages will be built from source with UTF-8 encoding")
-        spec = (platform.platform(),
-                       platform.architecture(),
-                       platform.architecture(),
-                       "source",
-                       "utf_8")
-    
+    spec = nodespecs.allnodes[node_hostname.lower()]
     if key == 'OS':
         return spec[0]
     if key == 'Arch':

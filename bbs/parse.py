@@ -151,7 +151,8 @@ def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
     return val
 
 ### 'node_id' is the name of the node and 'pkgType' the native package type for
-### this node ("source", "win.binary", "win64.binary" "mac.binary" or "mac.binary.mavericks").
+### this node ("source", "win.binary", "win64.binary", "mac.binary",
+### "mac.binary.mavericks", or "mac.binary.el-capitan").
 def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
     pkgs = []
     while True:
@@ -170,10 +171,11 @@ def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
                     break
                 if not pkgType or pkgType == "source":
                     continue
-                if pkgType and x == pkgType: # if x is mac.binary or mac.binary.mavericks:
+                # if 'x' is mac.binary or mac.binary.*
+                if pkgType and x == pkgType:
                     supported = False
                     break
-                # if x is win or mac and pkgType is win.binary or mac.*:
+                # if 'x' is win or mac and pkgType is win.binary or mac.*:
                 if x in ["win", "mac"]:
                     if pkgType.startswith(x):
                         supported = False

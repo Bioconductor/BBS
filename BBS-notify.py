@@ -43,6 +43,9 @@ msg_footnote = "Notes:\n\n" \
              + "Thanks for contributing to the Bioconductor project!\n\n" 
 
 def send_notification(pkg):
+    package_status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+    if package_status == 'Deprecated':
+        return
     maintainer_email = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'MaintainerEmail')
     #print "%s %s %s %s" % (pkg, version, maintainer, maintainer_email)
     #key = 'Last Changed Date'
@@ -72,24 +75,25 @@ def send_notification(pkg):
             problem_desc = "  o %s for 'R CMD check' on %s. See the details here:\n" % (status, node.id) \
                          + "      %s%s\n" % (BBSreportutils.data_source, leafreport_rURL)
             problem_descs.append(problem_desc)
-    if len(problem_descs) != 0:
-        if maintainer_email == "bioconductor@stat.math.ethz.ch":
-            to_addrs = ["devteam-bioc@lists.fhcrc.org"]
-        else:
-            to_addrs = [maintainer_email]
-        subject = "%s problems reported by the \"%s\" for %s" \
-                  % (pkg, main_page_title, BBSreportutils.get_build_label())
-        msg = "%s\nHi %s maintainer,\n\n" % (msg_head, pkg) \
-            + "According to the \"%s\" for %s,\n" % (main_page_title, BBSreportutils.get_build_label()) \
-            + "the %s package has the following problem(s):\n\n" % pkg \
-            + "%s\n%s\n%s" % ('\n'.join(problem_descs), msg_tail, msg_footnote)
-        if arg1 == "":
-            print "###########################################################"
-            print "maintainer_email: %s\n" % maintainer_email
-            print "subject: %s\n" % subject
-            print msg
-            print ""
-        bbs.email.sendtextmail(from_addr, to_addrs, subject, msg)
+    if len(problem_descs) == 0:
+        return
+    if maintainer_email == "bioconductor@stat.math.ethz.ch":
+        to_addrs = ["devteam-bioc@lists.fhcrc.org"]
+    else:
+        to_addrs = [maintainer_email]
+    subject = "%s problems reported by the \"%s\" for %s" \
+              % (pkg, main_page_title, BBSreportutils.get_build_label())
+    msg = "%s\nHi %s maintainer,\n\n" % (msg_head, pkg) \
+        + "According to the \"%s\" for %s,\n" % (main_page_title, BBSreportutils.get_build_label()) \
+        + "the %s package has the following problem(s):\n\n" % pkg \
+        + "%s\n%s\n%s" % ('\n'.join(problem_descs), msg_tail, msg_footnote)
+    if arg1 == "":
+        print "###########################################################"
+        print "maintainer_email: %s\n" % maintainer_email
+        print "subject: %s\n" % subject
+        print msg
+        print ""
+    bbs.email.sendtextmail(from_addr, to_addrs, subject, msg)
     return
 
 def send_notifications(allpkgs):

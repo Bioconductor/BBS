@@ -12,7 +12,7 @@ PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATE_STATUS_DB.txt"
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/bioc"
 SRC_CONTRIB="$REPOS_ROOT/src/contrib"
 WIN_CONTRIB="$REPOS_ROOT/bin/windows/contrib/$R_VERSION"
-MAC_MAVERICKS_CONTRIB="$REPOS_ROOT/bin/macosx/mavericks/contrib/$R_VERSION"
+MAC_ELCAPITAN_CONTRIB="$REPOS_ROOT/bin/macosx/el-capitan/contrib/$R_VERSION"
 
 update_repo()
 {
@@ -42,8 +42,8 @@ echo "Updating $BIOC_VERSION/bioc repo with Windows binary packages..."
 update_repo "$WIN_CONTRIB" "win.binary" "zip"
 
 echo ""
-echo "Updating $BIOC_VERSION/bioc repo with Mac Mavericks binary packages..."
-update_repo "$MAC_MAVERICKS_CONTRIB" "mac.binary.mavericks" "tgz"
+echo "Updating $BIOC_VERSION/bioc repo with Mac El Capitan binary packages..."
+update_repo "$MAC_ELCAPITAN_CONTRIB" "mac.binary.el-capitan" "tgz"
 
 
 

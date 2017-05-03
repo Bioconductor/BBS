@@ -257,60 +257,66 @@ interactively on a Windows build machine.
 
 ** Install R in bbs-3.4-bioc
 
-  Use CRAN Windows binary that matches BioC devel.
-  When running the installer:
+  1. Download the CRAN Windows binary that matches the BioC version to build.
+     (https://cran.rstudio.com/bin/windows/base/) 
 
-  - Ignore warning about the current user not being an admin
-  - Select destination location C:\Users\biocbuild\bbs-3.4-bioc\R
-  - Don't create a Start Menu Folder
-  - Don't create a desktop icon
+     When running the installer:
 
-** Edit some files in the R installation tree
+     - Ignore warning about the current user not being an admin
+     - Select destination location C:\Users\biocbuild\bbs-3.4-bioc\R
+     - Don't create a Start Menu Folder
+     - Don't create a desktop icon
 
-  (Without this, compilation of zlibbioc will fail.)
+  2. Edit the R\etc\i386\Makeconf, R\etc\x64\Makeconf, and R\etc\Rprofile.site
+     files as follow (without this, compilation of zlibbioc will fail):
 
-  The files to edit are: R\etc\i386\Makeconf, R\etc\x64\Makeconf, and
-  R\etc\Rprofile.site
-  From C:\Users\biocbuild\bbs-3.4-bioc:
+     (a) R\etc\i386\Makeconf
 
-  - cd R\etc\i386
-  - cp Makeconf Makeconf.original
-  - vi Makeconf
-      replace
-        BINPREF ?= c:/Rtools/mingw_32/bin/
-      with
-        BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+       From C:\Users\biocbuild\bbs-3.4-bioc:
 
-  - cd ..\x64
-  - cp Makeconf Makeconf.original
-  - vi Makeconf
-      replace
-        BINPREF ?= c:/Rtools/mingw_64/bin/
-      with
-        BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+       - cd R\etc\i386
+       - cp Makeconf Makeconf.original
+       - vi Makeconf
+           replace line
+             BINPREF ?= c:/Rtools/mingw_32/bin/
+           with
+             BINPREF = C:/Rtools/mingw_$(WIN)/bin/
 
-  - cd ..
-  - cp Rprofile.site Rprofile.site.original
-  - vi Rprofile.site
-      add the following line at bottom
-        Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
+     (b) R\etc\x64\Makeconf
 
-  See "Install Ripley's bundle of pre-compiled external software used by some
-  packages" below for other edits to do to R/etc/{i386,x64}/Makeconf
+       From C:\Users\biocbuild\bbs-3.4-bioc:
 
-** Install BiocInstaller and switch to devel mode (for devel builds only)
+       - cd R\etc\x64
+       - cp Makeconf Makeconf.original
+       - vi Makeconf
+           replace line
+             BINPREF ?= c:/Rtools/mingw_64/bin/
+           with
+             BINPREF = C:/Rtools/mingw_$(WIN)/bin/
 
-  Start R (with R/bin/R from C:\Users\biocbuild), install BiocInstaller and
-  switch to devel mode with:
+     (c) R\etc\Rprofile.site
 
-    source("https://bioconductor.org/biocLite.R")
-    useDevel()  # only for devel builds
+       From C:\Users\biocbuild\bbs-3.4-bioc:
 
-  Quit R (do NOT save the workspace image)
+       - cd R\etc
+       - cp Rprofile.site Rprofile.site.original
+       - vi Rprofile.site
+           add the following line at bottom
+             Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 
-** TESTING: Test package installation/compilation
+  3. See "Install Ripley's bundle of pre-compiled external software used by
+     some packages" below for other edits to do to R/etc/{i386,x64}/Makeconf
 
-  Start R and try to install/compile IRanges, Biobase, and zlibbioc with:
+  4. Install BiocInstaller and switch to devel mode (for devel builds only)
+
+     Start R (with R/bin/R from C:\Users\biocbuild\bbs-3.4-bioc), install BiocInstaller and
+     switch to devel mode with:
+
+       source("https://bioconductor.org/biocLite.R")
+       useDevel()  # only for devel builds
+
+  TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
+  with:
 
     library(BiocInstaller)
     biocLite("IRanges", type="source")

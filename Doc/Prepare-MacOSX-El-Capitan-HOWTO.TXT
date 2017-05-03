@@ -1,0 +1,1032 @@
+===============================================================================
+How to set up a MacOSX El Capitan machine for the daily builds
+-------------------------------------------------------------------------------
+
+
+Table of Contents:
+  A. Initial setup (from administrator account)
+  B. Check hardware, OS, and connectivity with central build node
+  C. Install the developper tools and other core components needed by the builds
+  D. Install BBS git tree and create bbs-3.y-bioc directory structure
+  E. Install R
+  F. Install MacTeX & Pandoc
+  G. Add crontab entries for daily builds
+  H. Additional stuff to install for packages with special needs
+  I. How to update R
+
+
+A. Initial setup (from administrator account)
+---------------------------------------------
+
+This section describes the very first steps that need to be performed on a
+pristine El Capitan installation (e.g. after creating a Mac instance on
+MacStadium). Skip them and go directly to the next section if the biocbuild
+account was created by someone else and if the devteam member public keys were
+already installed.
+
+Perform all the steps int this section from the administrator account (the only
+account that should exist at this point).
+
+** Set the hostnames
+
+    sudo scutil --set ComputerName veracruz2
+    sudo scutil --set LocalHostName veracruz2
+    sudo scutil --set HostName veracruz2.bioconductor.org
+
+  TESTING:
+
+    scutil --get ComputerName
+    scutil --get LocalHostName
+    scutil --get HostName
+    networksetup -getcomputername
+
+** Set DNS servers
+
+    sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 8.8.8.8
+
+  TESTING:
+
+    networksetup -getdnsservers 'Ethernet 1'
+    ping www.bioconductor.org
+
+** Apply all software updates
+
+    softwareupdate -l         # to list all software updates
+    sudo softwareupdate -iva  # install them all
+    sudo reboot               # reboot
+
+  TESTING: After reboot, check that the machine is running the latest release
+  of El Capitan i.e. OS X 10.11.6 El Capitan. Check this with:
+
+    system_profiler SPSoftwareDataType
+
+** Create biocbuild account
+
+    sudo dscl . -create /Users/biocbuild
+    sudo dscl . -create /Users/biocbuild UserShell /bin/bash
+    sudo dscl . -create /Users/biocbuild UniqueID "502"
+    sudo dscl . -create /Users/biocbuild PrimaryGroupID 20
+    sudo dscl . -create /Users/biocbuild NFSHomeDirectory /Users/biocbuild
+    sudo sudo dscl . -passwd /Users/biocbuild <password_for_biocbuild>
+    sudo dscl . -append /Groups/admin GroupMembership biocbuild
+    sudo cp -R /System/Library/User\ Template/English.lproj /Users/biocbuild
+    sudo chown -R biocbuild:staff /Users/biocbuild
+
+** Install devteam member public keys in biocbuild account
+
+  TESTING: Logout and try to login again as biocbuild. From now on, you should
+  never need the administrator account again. Do everything from the biocbuild
+  account.
+
+
+B. Check hardware, OS, and connectivity with central build node
+---------------------------------------------------------------
+
+From now on we assume that the machine has a biocbuild account with admin
+privileges (i.e. who belongs to the admin group). Note that on the Linux and
+Windows builders the biocbuild user is just a regular user with no admin
+privileges. However, on a Mac builder, during STAGE5 of the builds (i.e.
+BUILD BIN step), the biocbuild user needs to be able to set ownership and
+group of the files in the binary packages to root:admin (this is done calling
+the chown-rootadmin executable, see below in this document for the details),
+and then remove all these files at the beginning of the next run. It needs to
+belong to the admin group in order to be able to do this.
+
+Because biocbuild belongs to the admin group, it automatically is a sudoer.
+So all the configuration and management of the builds can and should be done
+from the biocbuild account.
+
+If biocbuild doesn't belong to the admin group (you can check this with
+'id -p biocbuild'), then you can add it by running the following command
+from your personal account (granted you belong to the admin group):
+
+    sudo dseditgroup -o edit -a biocbuild -t user admin
+
+From now on everything must be done from the biocbuild account.
+
+- Hardware requirements for running the BioC software builds:
+
+                          strict minimum  recommended
+    Nb of logical cores:               8           16
+    Memory:                         16GB         32GB
+
+  Hard drive: 256GB if the plan is to run BBS only on the machine. More (e.g.
+  512GB) if the plan is to also run the Single Package Builder.
+
+- Check nb of logical cores with:
+
+    sysctl -n hw.ncpu
+
+- Check amount of RAM with:
+
+    system_profiler SPHardwareDataType
+
+- Check hard drive with:
+
+    system_profiler SPStorageDataType
+
+- Also make sure that the machine has the latest release of El Capitan i.e.
+  OS X 10.11.6 El Capitan. Check this with:
+
+    system_profiler SPSoftwareDataType
+
+  If not, update to the latest with
+
+    sudo softwareupdate -iva
+
+  and reboot the machine.
+
+- Check the kernel version (should be Darwin 15 for OS X El Capitan):
+
+    uname -sr
+
+** Check that you can ping the central build node. Depending on whether the
+  node you're ssh'ing from is within RPCI's DMZ or not, use its short or
+  long (i.e. hostname+domain) hostname. For example:
+
+    ping malbec2                   # from within RPCI's DMZ
+    ping malbec2.bioconductor.org  # from anywhere else
+
+** Check that you can ssh to the central build node
+
+  Add ~/.BBS/id_rsa to the biocbuild home (copy id_rsa from another build
+  machine). Then chmod 400 ~/.BBS/id_rsa so permissions look like this
+
+    veracruz2:~ biocbuild$ ls -l .BBS/id_rsa
+    -r--------  1 biocbuild  staff  884 Jan 12 12:19 .BBS/id_rsa
+
+  Then try to ssh to the central build node e.g.
+
+    ssh -i .BBS/id_rsa malbec2                   # from within RPCI's DMZ
+    ssh -i .BBS/id_rsa malbec2.bioconductor.org  # from anywhere else
+
+  If this is blocked by RPCI's firewall, after a while you'll get:
+
+    ssh: connect to host malbec2.bioconductor.org port 22: Operation timed out
+
+  Contact the IT folks at RPCI if that's the case:
+
+    Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
+    Landsiedel, Timothy <tjlandsi@RoswellPark.org>
+
+** Check that you can send HTTP requests to the central node
+
+    curl "http://malbec2"                  # from within RPCI's DMZ
+    curl "http://malbec2.roswellpark.org"  # from anywhere else
+
+  If this is blocked by RPCI's firewall, after a while you'll get:
+
+    curl: (7) Failed connect to malbec2.roswellpark.org:80; Operation timed out
+
+  Contact the IT folks at RPCI if that's the case (see above).
+
+
+C. Install the developper tools and other core components needed by the builds
+------------------------------------------------------------------------------
+
+Everything in this section must be done from the biocbuild account.
+
+** Install the Command Line Developer Tools
+
+  The Command Line Developer Tools is a subset of Xcode that includes Apple
+  LLVM compiler (with Clang front-end), linker, Make, and other developper
+  tools that enable Unix-style development at the command line. It's all
+  that is needed to install/compile R packages with native code in them (note
+  that it even includes the svn and git clients).
+
+  The full Xcode IDE is much bigger (2.6G vs 103M) and is not needed.
+
+  IMPORTANT NOTE: For R 3.4, the CRAN folks actually decided to use a different
+  set of compilers for compiling R and packages with C and/or C++ code. So we
+  do the same, but we still need the Command Line Developer Tools for the ld
+  (linker) and make commands.
+
+  Go on https://developer.apple.com/ and pick up the last version for
+  OS X 10.11 El Capitan (Command_Line_Tools_macOS_10.11_for_Xcode_8.2.dmg
+  at the moment).
+
+  Install with:
+
+    sudo hdiutil attach Command_Line_Tools_macOS_10.11_for_Xcode_8.2.dmg
+    sudo installer -pkg "/Volumes/Command Line Developer Tools/Command Line Tools (macOS El Capitan version 10.11).pkg" -target /
+    sudo hdiutil detach "/Volumes/Command Line Developer Tools"
+
+  TESTING:
+
+    which make   # /usr/bin/make
+    which clang  # /usr/bin/clang
+    clang -v     # Apple LLVM version 8.0.0
+
+** Install the C and C++ compilers used by the CRAN folks
+
+  The CRAN folks use clang 4.0.0 to compile R and produce binary packages on
+  Mac. It can be found at http://r.research.att.com/libs/
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/clang-4.0.0-darwin15.6-Release.tar.gz
+    sudo tar fvxz clang-4.0.0-darwin15.6-Release.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+  Then in /etc/profile *prepend*
+
+    /usr/local/clang4/bin
+
+  to PATH.
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect.
+
+    which clang  # /usr/local/clang4/bin/clang
+    clang -v     # clang version 4.0.0
+
+** Install gfortran
+
+  Simon uses Coudert's gfortran 6.1 found here:
+
+    https://gcc.gnu.org/wiki/GFortranBinaries#MacOS
+
+  Download with:
+
+    curl -O http://coudert.name/software/gfortran-6.1-ElCapitan.dmg
+
+  Install with:
+
+    sudo hdiutil attach gfortran-6.1-ElCapitan.dmg
+    sudo installer -pkg /Volumes/gfortran-6.1-ElCapitan/gfortran-6.1-ElCapitan/gfortran.pkg -target /
+    sudo hdiutil detach /Volumes/gfortran-6.1-ElCapitan
+    sudo chown -R biocbuild:admin /usr/local
+
+  TESTING:
+
+    gfortran -v
+
+** Install XQuartz
+
+  Download it from https://xquartz.macosforge.org/
+
+  Install with:
+
+    sudo hdiutil attach XQuartz-2.7.11.dmg
+    sudo installer -pkg /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
+    sudo hdiutil detach /Volumes/XQuartz-2.7.11
+    cd /usr/local/include
+    ln -s /opt/X11/include/X11
+
+  TESTING:
+
+    which Xvfb        # should be /opt/X11/bin/Xvfb
+    ls -l /usr/X11R6  # should be a symlink to /opt/X11
+
+    Xvfb
+
+  If the above gives fatal server error "Cannot establish any listening
+  sockets", then try to start the virtual X server as root with 'sudo Xvfb'
+  first (it's totally quiet so if nothing happens that means it's running),
+  then stop it with CTRL+C, then try to start it again as biocbuild. It should
+  work now. So CTRL+C again.
+  IMPORTANT NOTE: For whatever reason, after a reboot the system will go back
+  to a state where biocbuild cannot start the virtual X server. So make sure
+  to 'sudo Xvfb' followed by CTRL+C after each reboot so biocbuild can start
+  Xvfb (the build system needs that).
+
+** Install Homebrew
+
+  Install with:
+
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+  TESTING:
+
+    brew doctor
+
+  You might see warnings but most of them can be ignored. The warning (1st in
+  the list of warnings) about some directories under /usr/local/ not being
+  writable needs to be addressed though. This can be done with:
+
+    sudo chown -R biocbuild:admin /usr/local
+
+** Install openssl and wget
+
+  Install with:
+
+    brew install openssl
+    brew install wget 
+
+
+D. Install BBS git tree and create bbs-3.y-bioc directory structure
+-------------------------------------------------------------------
+
+Everything in this section must be done from the biocbuild account.
+
+** Clone BBS git tree
+
+    cd
+    git clone https://github.com/bioconductor/BBS
+
+** Compile chown-rootadmin
+
+    cd ~/BBS/utils
+    gcc chown-rootadmin.c -o chown-rootadmin
+    sudo chown root:admin chown-rootadmin
+    sudo chmod 4750 chown-rootadmin
+
+  TESTING: Check that the permissions on chown-rootadmin look like this:
+
+    veracruz2:utils biocbuild$ ls -al chown-rootadmin
+    -rwsr-x---  1 root  admin  8596 Jan 13 12:55 chown-rootadmin
+
+** Create bbs-3.5-bioc directory structure
+
+    mkdir bbs-3.5-bioc
+    cd bbs-3.5-bioc
+    mkdir NodeInfo log meat
+
+
+E. Install R
+------------
+
+This must be done from the biocbuild account.
+
+  from Simon's site at AT&T https://r.research.att.com/ for R devel
+  (pick up R-devel-el-capitan-signed.pkg) or for R alpha/beta versions
+  (e.g. R-3.4-branch-el-capitan-signed.pkg)
+
+  from CRAN (e.g. https://cloud.r-project.org/bin/macosx/) for R release
+  (pick up the 1st file e.g. R-3.3.2.pkg)
+
+Download and install with:
+
+  curl -O https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan-signed.pkg
+  sudo installer -pkg R-devel-el-capitan-signed.pkg -target /
+
+Note that, unlike what we do on the Linux and Windows builders, this is a
+*system-wide* installation of R i.e. it can be started with 'R' from any
+account.
+
+TESTING: Start the virtual X server, start R, and check X11:
+
+  # From the shell
+  . ~/BBS/utils/start-virtual-X.sh
+
+  # If the above gives fatal server error "Cannot establish any listening
+  # sockets", then try to manually start the virtual X server as root with
+  # 'sudo Xvfb' first, then stop it with CTRL+C, then try to source the
+  # start-virtual-X.sh script again. See "Install XQuartz" previously in
+  # this file for more information about this.
+
+  # From R
+  capabilities()[["X11"]]  # should be TRUE
+  X11()                    # nothing visible should happen
+  q("no")
+
+  # From the shell
+  . ~/BBS/utils/stop-virtual-X.sh
+
+Then start R again and try to install a few packages *from source*:
+
+  # CRAN packages
+  install.packages("Rcpp", type="source")   # contains C++ code
+  install.packages("minqa", type="source")  # contains Fortran code
+
+  # Bioconductor packages
+  source("http://bioconductor.org/biocLite.R")
+  ## ONLY if release and devel are using the same version of R:
+  #useDevel()
+  biocLite("BiocCheck", type="source")
+  biocLite("VariantAnnotation", type="source")
+
+WAIT!!! II'S NOT FINISHED YET! Now go to the "How to update R" section at the
+end of this file and perform all steps from step 3.
+
+
+F. Install MacTeX & Pandoc
+--------------------------
+
+Everything in this section should be done from the biocbuild account.
+
+** Install MacTeX
+
+    https://tug.org/mactex/mactex-download.html
+
+  Install with:
+
+    sudo installer -pkg mactex-20161009.pkg -target /
+
+  TESTING: Logout and login again so that the changes to the $PATH take
+  effect. Then:
+
+    which tex
+
+  Add shell_escape = t to /usr/local/texlive/2016/texmf.cnf
+
+    cd /usr/local/texlive/2016/
+    sudo cp texmf.cnf texmf.cnf.original
+    sudo vi texmf.cnf
+    ## add shell_escape = t at the bottom of the file
+
+  TESTING: Try to build a package using pstricks + auto-pst-pdf in its
+  vignette e.g.:
+
+    svn co https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/affyContam
+    R CMD build affyContam
+
+** Install Pandoc
+
+  Download latest Pandoc from https://github.com/jgm/pandoc/releases/latest
+  (pick up .pkg file)
+
+  Install with:
+
+    sudo installer -pkg pandoc-1.19.2.1-osx.pkg -target /
+
+
+G. Add crontab entries for daily builds
+---------------------------------------
+
+This must be done from the biocbuild account.
+
+Add the following entry to biocbuild crontab:
+
+55 17 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.5/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.5-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+Now you can proceed to the next section or wait for a complete build run before
+doing so.
+
+
+H. Additional stuff to install for packages with special needs
+--------------------------------------------------------------
+
+Everything in this section must be done from the biocbuild account.
+
+** Install Java
+
+  Visit https://www.java.com/en/download/faq/develop.xml, then click on the
+  "JDK downloads" link, then on the big Java DOWNLOAD button, then pick up
+  the Java SE Development Kit for Mac OS X. It's a big (> 220 MB) .dmg file
+  named something like jdk-8u111-macosx-x64.dmg
+
+  Install with:
+
+    sudo hdiutil attach jdk-8u111-macosx-x64.dmg
+    sudo installer -pkg "/Volumes/JDK 8 Update 111/JDK 8 Update 111.pkg" -target /
+    sudo hdiutil detach "/Volumes/JDK 8 Update 111"
+
+  Then reconfigure R to use this new Java installation:
+
+    sudo R CMD javareconf
+
+  TESTING: Try to install the rJava package:
+
+    install.packages("rJava")  # install the CRAN binary!
+    library(rJava)
+    .jinit()
+    .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
+
+** Install JPEG system library
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/jpeg-9-darwin.15-x86_64.tar.gz
+    sudo tar fvxz jpeg-9-darwin.15-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+  TESTING: Try to install the jpeg package *from source*:
+
+    install.packages("jpeg", type="source")
+    library(jpeg)
+    example(readJPEG)
+    example(writeJPEG)
+
+** Install TIFF system library
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/tiff-4.0.7-darwin.15-x86_64.tar.gz
+    sudo tar fvxz tiff-4.0.7-darwin.15-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+  TESTING: Try to install the tiff package *from source*:
+
+    install.packages("tiff", type="source")
+    library(tiff)
+    example(readTIFF)
+    example(writeTIFF)
+
+** Install Cairo system library
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/cairo-1.14.2-darwin.13-x86_64.tar.gz
+    sudo tar fvxz cairo-1.14.2-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+  TESTING: Try to install and load the Cairo *binary* package:
+
+    install.packages("Cairo")
+    library(Cairo)
+
+  Note: As of Feb 22, 2017, CRAN still does not provide Mac binary packages
+  for R 3.4. However, it seems that the Cairo binary made for R 3.3 works
+  with R 3.4. Install and load with:
+
+    contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
+    install.packages("Cairo", contriburl=contriburl)
+    library(Cairo)
+
+** Install NetCDF and HDF5 system libray
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz
+
+    sudo tar fvxz netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -C /
+    sudo tar fvxz hdf5-1.8.14-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+  TESTING: Try to install the ncdf4 package *from source*:
+
+    install.packages("ncdf4", type="source")
+
+  If you have time, you can also try to install the mzR package but be aware
+  that this takes much longer:
+
+    library(BiocInstaller)
+    biocLite("mzR", type="source")  # takes between 7-10 min.
+
+** Install FFTW system library
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz
+    sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+  TESTING: Try to install the fftwtools package *from source*:
+
+    install.packages("fftwtools", type="source")
+
+** Install GSL system library
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz
+    sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+  TESTING: Try to install the GLAD package *from source*:
+
+    library(BiocInstaller)
+    biocLite("GLAD", type="source")
+
+** Install GTK2
+
+  Download and install with:
+
+    curl -O http://r.research.att.com/libs/GTK_2.24.17-X11.pkg
+    sudo installer -pkg GTK_2.24.17-X11.pkg -target /
+
+  Create pkg-config symlink in /usr/local/bin/ with:
+
+    cd /usr/local/bin
+    sudo ln -s /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
+
+  Note that starting with El Capitan, the /usr/bin folder is locked,
+  even for root, so it's not possible to create symlinks in it. See
+  https://en.wikipedia.org/wiki/System_Integrity_Protection for more
+  info about that security feature.
+
+  Try:
+
+    which pkg-config
+
+  Then in /etc/profile add the following line:
+
+    export PKG_CONFIG_PATH=/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to install the RGtk2 package *from source*:
+
+    install.packages("RGtk2", type="source")
+
+** Install JAGS
+
+  Download with:
+
+    curl -O https://iweb.dl.sourceforge.net/project/mcmc-jags/JAGS/4.x/Mac%20OS%20X/JAGS-4.2.0.dmg
+
+  Install with:
+
+    sudo hdiutil attach JAGS-4.2.0.dmg
+    sudo installer -pkg /Volumes/JAGS-4.2.0/JAGS-4.2.0.mpkg -target /
+    sudo hdiutil detach /Volumes/JAGS-4.2.0
+
+  TESTING: Try to install the rjags package *from source*:
+
+    install.packages("rjags", type="source")
+
+** Install autoconf & automake
+
+  Install with:
+
+    brew install autoconf
+    brew install automake
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
+  TESTING:
+
+    which autoconf
+    which automake
+
+  Then try to install the flowWorkspace package *from source*:
+
+    library(BiocInstaller)
+    biocLite("flowWorkspace", type="source")
+
+** Install Open Babel
+
+  As of Feb 2017, the ChemmineOB package seems to work only with the 2.3 series
+  of Open Babel, not with the 2.2 (too old) or 2.4 (too new) series.
+
+  Do NOT install with 'brew install open-babel' because this installs the
+  latest version of Open Babel (i.e. version 2.4.1 as of Feb 2017) which is
+  incompatible with the current ChemmineOB package.
+
+  So we need to "manually" compile/install Open Babel 2.3 from source.
+
+  Download with:
+
+    curl -O https://master.dl.sourceforge.net/project/openbabel/openbabel/2.3.1/openbabel-2.3.1.tar.gz
+
+  Then (instructions adapted from
+  http://openbabel.org/docs/dev/Installation/install.html):
+
+    brew install cmake
+    tar zxvf openbabel-2.3.1.tar.gz
+    mkdir build
+    cd build
+    CXX='g++ -stdlib=libstdc++' cmake ../openbabel-2.3.1
+    make
+    sudo make install
+
+  TESTING:
+
+    which babel
+
+  Then try to install the ChemmineOB package *from source*:
+
+    library(BiocInstaller)
+    biocLite("ChemmineOB", type="source")
+
+** Install Python 3 + Jupyter + nbconvert + jupyter_client
+
+  Install Python 3 + Jupyter + pip3 with:
+
+    brew install python3
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
+  Install nbconvert + jupyter_client with:
+
+    pip3 install nbconvert
+    pip3 install jupyter_client
+
+  TESTING: Install the nbconvertR package *from source* and try to run the
+  example in the man page for nbconvert():
+
+    install.packages("nbconvertR", type="source")
+    library(nbconvertR)
+    ?nbconvert  # copy the commented example and run it
+
+** Install libSBML
+
+  libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
+  El Capitan is 2.6.16 so we first need to install a more recent libxml-2.0.
+  Install a more recent libxml-2.0 with:
+
+    brew install libxml2
+
+  Ignore the "This formula is keg-only..." caveat.
+
+  Then in /etc/profile *prepend* /usr/local/opt/libxml2/lib/pkgconfig to
+  PKG_CONFIG_PATH.
+
+  Then logout and login again so that the changes to /etc/profile take
+  effect.
+
+  Finally install libSBML with:
+
+    brew install homebrew/science/libsbml
+
+  TESTING: Try to install the rsbml package *from source*:
+
+    library(BiocInstaller)
+    biocLite("rsbml", type="source")
+
+** Install Clustal Omega
+
+  There is a standalone Mac binary at http://www.clustal.org/omega/
+  Downnload it with:
+
+    curl -O http://www.clustal.org/omega/clustal-omega-1.2.3-macosx
+
+  Make it executable with:
+
+    chmod +x clustal-omega-1.2.3-macosx
+
+  Move it to /usr/local/bin with:
+
+    sudo mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
+
+  Create clustalo symlink in /usr/local/bin/ with:
+
+    cd /usr/local/bin
+    sudo ln -s clustal-omega-1.2.3-macosx clustalo
+
+  TESTING: Try to build the LowMACA package (takes about 5 min.):
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build LowMACA
+
+** Set up ImmuneSpaceR package for connecting to ImmuneSpace
+
+  In /etc/profile add
+
+    export ISR_login=bioc@immunespace.org
+    export ISR_pwd=1notCRAN
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to build the ImmuneSpaceR package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build ImmuneSpaceR
+
+** Set up GoogleGenomics package to authenticate for Google Genomics API
+
+  In /etc/profile add
+
+    export GOOGLE_API_KEY=AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then try to run the getReads example in the GoogleGenomics package:
+
+    ## Install the package if not already installed.
+    #library(BiocInstaller)
+    #biocLite("GoogleGenomics", type="source")
+
+    ## Run the getReads example.
+    library(GoogleGenomics)
+    example(getReads)
+
+** Install Open MPI
+
+  Install with:
+
+    brew install open-mpi  # takes between 15-20 min.
+
+  TESTING: Try to install the Rmpi package *from source*:
+
+    install.packages("Rmpi", type="source")
+    library(Rmpi)
+    mpi.spawn.Rslaves()
+    mpi.parReplicate(100, mean(rnorm(1000000)))
+    mpi.close.Rslaves()
+    mpi.quit()
+
+** Install MySQL Community Server
+
+  Note that we only need this for the ensemblVEP package. RMySQL doesn't need
+  it as long as we can install the binary package.
+
+  Download mysql-8.0.0-dmr-osx10.11-x86_64.dmg from:
+
+    https://downloads.mysql.com/archives/community/
+
+  Install with:
+
+    sudo hdiutil attach mysql-8.0.0-dmr-osx10.11-x86_64.dmg
+    sudo installer -pkg /Volumes/mysql-8.0.0-dmr-osx10.11-x86_64/mysql-8.0.0-dmr-osx10.11-x86_64.pkg -target /
+    sudo hdiutil detach /Volumes/mysql-8.0.0-dmr-osx10.11-x86_64
+    sudo chown -R biocbuild:admin /usr/local
+
+  Then in /etc/profile append /usr/local/mysql/bin to PATH,
+  /usr/local/mysql/lib to DYLD_LIBRARY_PATH, and
+  /usr/local/mysql/lib/pkgconfig to PKG_CONFIG_PATH.
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then:
+
+    which mysql_config
+
+  Then try to install the RMySQL package *from source*:
+
+    install.packages("RMySQL", type="source")
+
+** Install ROOT
+
+  xps wants ROOT 5, not 6. Unfortunately, there are no ROOT 5 binaries
+  for OS X 10.11 / clang4 at https://root.cern.ch/. So we need to install from
+  source.
+
+  Download source of latest ROOT 5 release (5.34/36):
+
+    curl -O https://root.cern.ch/download/root_v5.34.36.source.tar.gz
+
+  Make sure cmake is installed:
+
+    which cmake
+
+  If not, install it with:
+
+    brew install cmake
+
+  ROOT supports 2 installation methods: "location independent" and "fix
+  location". Here we do "location independent" installation:
+
+  Build with:
+
+    tar zxvf root_v5.34.36.source.tar.gz
+    mkdir root_builddir
+    cd root_builddir
+    # Tell cmake to use clang4 (even though it comes before Apple's clang in
+    # the PATH, by default cmake wants to use the latter).
+    export CC=/usr/local/clang4/bin/clang
+    export CXX=/usr/local/clang4/bin/clang++
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ../root
+    cmake --build . -- -j4  # takes about 10-15 min (> 45 min without -j4)
+
+  Try to start a ROOT interactive session:
+
+    source bin/thisroot.sh
+    root  # then quit the session with .q
+
+  Install with:
+
+    sudo cmake --build . --target install
+    sudo chown -R biocbuild:admin /usr/local
+
+  #Installing a ROOT 6 pre-compiled binary for OS X 10.11.
+  #WARNING: Don't do this! As of Apr 2017, xps can still not be compiled
+  #against ROOT 6.
+  #Download with:
+  #
+  #  curl -O https://root.cern.ch/download/root_v6.08.06.macosx64-10.11-clang80.dmg
+  #
+  #Install with:
+  #
+  #  sudo hdiutil attach root_v6.08.06.macosx64-10.11-clang80.dmg
+  #  sudo installer -pkg /Volumes/root_v6.08.06.macosx64-10.11-clang80/root_v6.08.06.macosx64-10.11-clang80.mpkg -target /
+  #  sudo hdiutil detach /Volumes/root_v6.08.06.macosx64-10.11-clang80
+
+  Then in /etc/profile add the following line (before the PATH and
+  DYLD_LIBRARY_PATH lines):
+
+    export ROOTSYS="/usr/local/root"  # do NOT set ROOTSYS, it will break
+                                      # xps configure script!
+
+  and append $ROOTSYS/bin and $ROOTSYS/lib/root to PATH and DYLD_LIBRARY_PATH,
+  respectively.
+
+  TESTING: Logout and login again so that the changes to /etc/profile take
+  effect. Then:
+
+    which root-config      # /usr/local/root/bin/root-config
+    root-config --version  # 5.34/36
+
+  Then try to install the xps package *from source*:
+
+    library(BiocInstaller)
+    biocLite("xps", type="source")
+
+** Install ImageMagick
+
+  WARNING: Don't do 'brew install imagemagick'. This will install the jpeg-8d
+  lib on top of the previously installed jpeg-9 lib!!!
+  So we install a pre-built ImageMagick binary for El Capitan. Note that these
+  pre-built binaries seem very broken and need a bunch of symlinks in order
+  to work!
+
+  Download and install with:
+
+    curl -O https://www.imagemagick.org/download/binaries/ImageMagick-x86_64-apple-darwin16.4.0.tar.gz
+    sudo tar zxvf ImageMagick-x86_64-apple-darwin16.4.0.tar.gz -C /
+    sudo chown -R biocbuild:admin /ImageMagick-7.0.5
+
+  Then in /etc/profile add the following line (before the PATH and
+  DYLD_LIBRARY_PATH lines):
+
+    export MAGICK_HOME="/ImageMagick-7.0.5"
+
+  and append $MAGICK_HOME/bin, $MAGICK_HOME/lib, and $MAGICK_HOME/lib/pkgconfig
+  to PATH, DYLD_LIBRARY_PATH, and PKG_CONFIG_PATH, respectively.
+
+  Logout and login again so that the changes to /etc/profile take effect.
+
+  Then create a bunch of symlinks:
+
+    cd /usr/local/include
+    ln -s $MAGICK_HOME/include/ImageMagick-7
+    cd /usr/local/etc
+    ln -s $MAGICK_HOME/etc/ImageMagick-7
+    cd /usr/local/share
+    ln -s $MAGICK_HOME/share/ImageMagick-7
+    cd /usr/local/share/doc
+    ln -s $MAGICK_HOME/share/doc/ImageMagick-7
+
+    ## this creates 10 symlinks in /usr/local/lib
+    cd /usr/local/lib
+    ln -s $MAGICK_HOME/lib/ImageMagick-7.0.5
+    for lib in libMagick++-7 libMagickCore-7 libMagickWand-7; do
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.0.dylib
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.dylib
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.la
+    done
+
+  TESTING:
+
+    which magick
+    magick logo: logo.gif
+    identify logo.gif
+    identify <some-PDF-file>  # important test! (flowQ uses this)
+    #display logo.gif         # fails but flowQ does not use this
+
+  Then try to build the flowQ package (the package makes system calls to
+  standalone commands 'convert', 'identify', and 'montage'):
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build flowQ
+
+** Install ViennaRNA
+
+  Download with:
+
+    curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.4-MacOSX.dmg
+
+  Install with:
+
+    sudo hdiutil attach ViennaRNA-2.3.4-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.3.4/ViennaRNA Package 2.3.4 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.4"
+
+  TESTING:
+
+    which RNAfold
+
+  Then try to build the GeneGA package:
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build GeneGA
+
+
+I. How to update R
+------------------
+
+Perform the following steps from the biocbuild account:
+
+  1) If you have enough disk space (i.e. if available disk space on the /
+     filesystem is more than the size reported by
+     du -sh /Library/Frameworks/R.framework) then cd to /Library/Frameworks/
+     and rename R.framework -> R.framework.old.
+     Otherwise, just delete it.
+
+  2) See "Install R" section previously in this file for how to install R.
+
+  3) Configure R to use the Java installed on the machine:
+
+       sudo R CMD javareconf
+
+     TESTING: Try to install the rJava package:
+
+       install.packages("rJava")  # install the CRAN binary!
+
+     See "Install Java" previously in this file for more testing.
+
+  4) TESTING: Try to install the RGtk2 package *from source*:
+
+       install.packages("RGtk2", type="source")
+
+  5) Install the following package binaries:
+
+       pkgs <- c("Cairo", "tkrplot", "sysfonts", "rphast", "rtfbs",
+                 "RMySQL", "V8")
+       install.packages(pkgs)
+
+  6) As of April 22, 2017, CRAN still does not provide binaries for all CRAN
+     packages for R 3.4. Unfortunately some Bioconductor packages depend on
+     CRAN packages that are too difficult to install from source. However,
+     for some of these CRAN packages, it seems that the binary made for R 3.3
+     works with R 3.4. These packages are:
+
+       udunits2      -- indirectly required by Pi
+       RPostgreSQL   -- suggested by ChemmineR
+
+     Install them with:
+
+       pkgs <- c("udunits2", "RPostgreSQL")
+       contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
+       install.packages(pkgs, contriburl=contriburl)
+
