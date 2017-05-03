@@ -42,6 +42,8 @@ One month before the release:
   numbers and noting whether an R upgrade is required
   in order to use bioc-devel.
 
+- If necessary, update versions of R on machines for workflows.
+
 A few days before the new release:
 
 - make a snapshot of CRAN and make it available as an (optional)
