@@ -20,15 +20,17 @@ SINGLE_ARCH=true
 
 # Change dynamic shared library path for
 LOCAL_DYLIB_DIR="/usr/local/lib"
+LOCAL_FORTRAN_DYLIB_DIR="/usr/local/gfortran/lib"
 
-if  uname -a | grep -q "Version 10."
-then
-        # Snow Leopard
-        DYLIB_FILES="libgcc_s.1.dylib libgfortran.2.dylib libreadline.5.2.dylib libreadline.dylib"
-
+if uname -a | grep -q "Version 10."; then
+	# Snow Leopard
+	DYLIB_FILES="libgcc_s.1.dylib libgfortran.2.dylib libreadline.5.2.dylib libreadline.dylib"
+elif uname -a | grep -q "Version 13."; then
+	# Mavericks
+	DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
 else
-        # Mavericks
-        DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
+       # El Capitan
+	DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
 fi
 
 
@@ -105,6 +107,20 @@ fix_dylib_links()
     for dylib_file in $DYLIB_FILES; do
         old_dylib="$LOCAL_DYLIB_DIR/$dylib_file"
         new_dylib="$R_lib_dir/$dylib_file"
+        if [ ! -f "$new_dylib" ]; then
+            echo "ERROR: R installation problem: File $new_dylib not found!"
+            exit 1
+        fi
+        echo "install_name_tool -change \"$old_dylib\" \"$new_dylib\" \"$so_file\""
+        install_name_tool -change "$old_dylib" "$new_dylib" "$so_file"
+    done
+    # 3rd fix: Replace links to .dylib files in LOCAL_FORTRAN_DYLIB_DIR with
+    # links to the .dylib files shipped with R.
+    old_dylibs=`otool -L "$so_file" | grep "$LOCAL_FORTRAN_DYLIB_DIR/.*\.dylib" | cut -d ' ' -f 1`
+    pattern=`echo $LOCAL_FORTRAN_DYLIB_DIR | sed "s/\//\\\\\\\\\//g"`
+    replacement=`echo $R_lib_dir | sed "s/\//\\\\\\\\\//g"`
+    for old_dylib in $old_dylibs; do
+        new_dylib=`echo $old_dylib | sed "s/$pattern/$replacement/"`
         if [ ! -f "$new_dylib" ]; then
             echo "ERROR: R installation problem: File $new_dylib not found!"
             exit 1

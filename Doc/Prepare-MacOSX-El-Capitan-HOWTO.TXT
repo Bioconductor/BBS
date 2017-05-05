@@ -18,8 +18,8 @@ Table of Contents:
 A. Initial setup (from administrator account)
 ---------------------------------------------
 
-This section describes the very first steps that need to be performed on a
-pristine El Capitan installation (e.g. after creating a Mac instance on
+This section describes the very first steps that need to be performed on
+a pristine El Capitan installation (e.g. after creating a Mac instance on
 MacStadium). Skip them and go directly to the next section if the biocbuild
 account was created by someone else and if the devteam member public keys were
 already installed.
@@ -67,7 +67,7 @@ account that should exist at this point).
     sudo dscl . -create /Users/biocbuild UniqueID "502"
     sudo dscl . -create /Users/biocbuild PrimaryGroupID 20
     sudo dscl . -create /Users/biocbuild NFSHomeDirectory /Users/biocbuild
-    sudo sudo dscl . -passwd /Users/biocbuild <password_for_biocbuild>
+    sudo dscl . -passwd /Users/biocbuild <password_for_biocbuild>
     sudo dscl . -append /Groups/admin GroupMembership biocbuild
     sudo cp -R /System/Library/User\ Template/English.lproj /Users/biocbuild
     sudo chown -R biocbuild:staff /Users/biocbuild
