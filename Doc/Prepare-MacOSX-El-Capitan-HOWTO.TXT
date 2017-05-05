@@ -261,6 +261,13 @@ Everything in this section must be done from the biocbuild account.
 
     gfortran -v
 
+  Finally check that the gfortran libraries got installed in
+  /usr/local/gfortran/lib and make sure that LOCAL_FORTRAN_DYLIB_DIR
+  in BBS/utils/macosx-inst-pkg.sh points to this location. Otherwise
+  we will produce broken binaries again:
+
+    https://support.bioconductor.org/p/95587/#95631
+
 ** Install XQuartz
 
   Download it from https://xquartz.macosforge.org/
