@@ -832,6 +832,49 @@ Everything in this section must be done from the biocbuild account.
   Then try to install the RMySQL package *from source*:
 
     install.packages("RMySQL", type="source")
+    
+** Install Ensembl VEP script
+
+  Release 88 brought some substantial changes. The name of the script changed from 
+  variant_effect_predictor.pl to vep and the directory structure of the tarball
+  changed. The instructions in this document are specific for version >= 88.
+  
+  Complete installation instructions are here:
+  http://www.ensembl.org/info/docs/tools/vep/script/vep_download.html#installer
+  
+  Download script from 
+  
+    http://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
+    
+  Unzip the file:
+  
+    cd Downloads/tmp/ 
+    unzip ensembl-vep-release-88.zip
+
+  Move unzipped folder to /usr/local/
+  
+    mv ensembl-vep-release-88 /usr/local/
+    
+  Remove old vep folder or rename it as vep.old/. Run the installer script:
+  
+    cd /usr/local/ensembl-vep-release-88
+    sudo perl INSTALL.pl
+    
+  You may need to install the File::Copy::Recursive module
+  
+    sudo cpan install File::Copy::Recursive
+
+  Modify the PATH and DYLD_LIBRARY_PATH variables:
+
+    sudo vi /etc/profile
+    export PATH=$PATH:/usr/local/ensembl-vep-release-88
+    export DYLD_LIBRARY_PATH=/usr/local/lib:/usr/local/ensembl-vep-release-88/htslib
+    
+  Checks:
+  
+    echo $PATH
+    echo $DYLD_LIBRARY_PATH
+  
 
 ** Install ROOT
 
