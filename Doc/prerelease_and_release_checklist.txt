@@ -42,7 +42,7 @@ One month before the release:
   numbers and noting whether an R upgrade is required
   in order to use bioc-devel.
 
-- If necessary, update versions of R on machines for workflows.
+- If necessary, update versions of R on machines for workflows and switch Bioc version
 
 A few days before the new release:
 
@@ -183,9 +183,8 @@ On release day (D):
 - add the last release version to the list of 'Previous Versions'
   (layouts/_bioc_older_packages.html). **DON'T FORGET THIS!**
 
-- Add new AMI to /help/cloud and /help/bioconductor-cloud-ami/
-  (use AMI placeholder from config.yaml) Update CloudFormation
-  stacks so that the newly released version is the default.
+- Add new AMI and add to  /help/bioconductor-cloud-ami/
+  (use AMI placeholder from config.yaml) 
 
 - Link to release announcement on main index page.
 
