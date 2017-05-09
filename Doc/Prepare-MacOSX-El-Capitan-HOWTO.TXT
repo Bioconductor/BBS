@@ -835,20 +835,23 @@ Everything in this section must be done from the biocbuild account.
     
 ** Install Ensembl VEP script
 
-  Release 88 brought some substantial changes. The name of the script changed from 
-  variant_effect_predictor.pl to vep and the directory structure of the tarball
-  changed. The instructions in this document are specific for version >= 88.
+  In release 88, the primary script was renamed from "variant_effect_predictor.pl" 
+  to "vep" and the directory structure of the tarball changed. The instructions 
+  in this document are specific for installing versions >= 88.
   
   Complete installation instructions are here:
+  
   http://www.ensembl.org/info/docs/tools/vep/script/vep_download.html#installer
   
-  Download script from 
+  Download script:
   
-    http://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
+    cd /Downloads
+    mkdir tmp
+    curl -L -O https://github.com/Ensembl/ensembl-vep/archive/release/88.zip
     
   Unzip the file:
   
-    cd Downloads/tmp/ 
+    cd /Downloads/tmp/ 
     unzip ensembl-vep-release-88.zip
 
   Move unzipped folder to /usr/local/
@@ -860,21 +863,20 @@ Everything in this section must be done from the biocbuild account.
     cd /usr/local/ensembl-vep-release-88
     sudo perl INSTALL.pl
     
-  You may need to install the File::Copy::Recursive module
+  You may need to install the File::Copy::Recursive perl module:
   
     sudo cpan install File::Copy::Recursive
 
   Modify the PATH and DYLD_LIBRARY_PATH variables:
 
     sudo vi /etc/profile
-    export PATH=$PATH:/usr/local/ensembl-vep-release-88
-    export DYLD_LIBRARY_PATH=/usr/local/lib:/usr/local/ensembl-vep-release-88/htslib
+    export PATH=$PATH:/usr/local/ensembl-vep
+    export DYLD_LIBRARY_PATH=/usr/local/lib:/usr/local/ensembl-vep/htslib
     
   Checks:
   
     echo $PATH
     echo $DYLD_LIBRARY_PATH
-  
 
 ** Install ROOT
 
