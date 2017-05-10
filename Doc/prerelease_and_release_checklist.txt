@@ -42,7 +42,9 @@ One month before the release:
   numbers and noting whether an R upgrade is required
   in order to use bioc-devel.
 
-- If necessary, update versions of R on machines for workflows and switch Bioc version
+- Start building workflows on devel
+
+- 
 
 A few days before the new release:
 
@@ -155,21 +157,38 @@ The day we branch (D-1):
 - Set up git mirrors (if they still exist?) with the new branch. Read
   https://github.com/Bioconductor/mirror/blob/master/README.md#release-workflow
 
+- Confirm all of bioc/, extra/, workflows/, annotations/ exist on master
+  at /extra/www/bioc/
+  Clone the 3.5/extra repo on the release linux master builder into 3.6/extra
+  on the devel linux master builder. Run the prepareRepo/pushRepo sequence. 
+  Before running that sequence create the 3.6/extra directory
+  so the pushRepo script has a place to push the stuff.
+
+
 On release day (D):
 
-- UPDATE the /etc/rsyncd.conf on master.bioconductor.org. The mirroring instructions
- on the website will be updated automatically in the following steps.
+- UPDATE the /etc/rsyncd.conf on master.bioconductor.org. Test rsync is
+  still working as expected with commands from:
+  http://www.bioconductor.org/about/mirrors/mirror-how-to/.
+
+  The mirroring instructions on the website will be updated automatically in
+  the following steps.  Test the mirrors with commands from:
+  http://www.bioconductor.org/about/mirrors/mirror-how-to/.
 
 - Update config.yaml in the root of the bioconductor.org working copy
   and change values as indicated in the comments. This will (among other
   things), automatically update the website symlinks ("release" and "devel")
-  under /packages. After a release you should
+  under /packages. NOTE: If there is no annotation branch, that line
+  under 'devel_repos' must be commented out; if any of annotation, experiment
+  data or software are not available (and a simlink makes them unavailable)
+  the script will break and landing pages will not be generated.
+ 
+  After a release you should
   let the no-longer-release version build one last time so package
   landing pages won't say "release version" (and also so the
   BiocInstaller landing page will reflect the version of
   the package that you will push out manually--see the
   "Modify BiocInstaller..." step below).
-
 
 - Update build report index page and symlinks; remove "devel"
   background image from report.css (if there is one).
@@ -233,6 +252,11 @@ On release day (D):
 
 - Update docker. On github Bioconductor/bioc_docker update the config.yml. On
   github and dockerhub create release branches and tags and microbadger.
+
+- Make post-release AMIs of EC2 instances. 
+  See https://github.com/Bioconductor/AWS_management 
+
+- Update Chef recipes with new R / Bioconductor versions
 
 On D + 1:
 
