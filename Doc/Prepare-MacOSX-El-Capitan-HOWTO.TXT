@@ -181,7 +181,7 @@ From now on everything must be done from the biocbuild account.
   Contact the IT folks at RPCI if that's the case (see above).
 
 
-C. Install the developper tools and other core components needed by the builds
+C. Install the developer tools and other core components needed by the builds
 ------------------------------------------------------------------------------
 
 Everything in this section must be done from the biocbuild account.
@@ -313,12 +313,13 @@ Everything in this section must be done from the biocbuild account.
 
     sudo chown -R biocbuild:admin /usr/local
 
-** Install openssl and wget
+** Install openssl, wget and pstree
 
   Install with:
 
     brew install openssl
-    brew install wget 
+    brew install wget
+    brew install pstree
 
 
 D. Install BBS git tree and create bbs-3.y-bioc directory structure
