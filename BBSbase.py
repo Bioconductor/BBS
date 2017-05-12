@@ -239,6 +239,10 @@ def getSTAGE3cmd(pkgdir_path):
 ### 'srcpkg_path' must be a path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    cmd = ''
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend')
+    if prepend != None:
+	cmd += '%s ' % prepend
     common_opts = "--no-vignettes --timings"
     ## Note that 64-bit machines gewurz and moscato1 give a value of
     ## 'win32' for sys.platform. This means that _noExampleArchs() may
@@ -248,7 +252,7 @@ def getSTAGE4cmd(srcpkg_path):
     if sys.platform in no_example_archs:
         common_opts += " --no-examples"
     if BBSvars.STAGE4_mode != "multiarch":
-        cmd = '%s CMD check %s' % (BBSvars.r_cmd, common_opts)
+        cmd += '%s CMD check %s' % (BBSvars.r_cmd, common_opts)
         ## Starting with R-2.12, 'R CMD check' on Windows and Mac OS X can do
         ## runtime tests on various installed sub-archs. New options have been
         ## added to provide some control on this (see 'R CMD check -h').
@@ -299,7 +303,7 @@ def getSTAGE4cmd(srcpkg_path):
         return None
     if len(win_archs) == 1:
         middle = '--arch %s CMD check --no-multiarch' % win_archs[0]
-        cmd = '%s %s %s %s' % (BBSvars.r_cmd, middle, common_opts, srcpkg_path)
+        cmd += '%s %s %s %s' % (BBSvars.r_cmd, middle, common_opts, srcpkg_path)
         return cmd
     ## For some rare BioC packages (e.g. Rdisop, fabia, bgx -- as of July
     ## 2011), 'R CMD check --force-multiarch' will fail to do a bi-arch
@@ -322,7 +326,7 @@ def getSTAGE4cmd(srcpkg_path):
     instpkg_dir = "%s.buildbin-libdir" % pkg
     middle = 'CMD check --library=%s --install="check:%s" --force-multiarch' % \
              (instpkg_dir, instout_file)
-    cmd2 = '%s %s %s %s' % (BBSvars.r_cmd, middle, common_opts, srcpkg_path)
+    cmd2 = '%s %s %s %s %s' % (cmd, BBSvars.r_cmd, middle, common_opts, srcpkg_path)
     ## Step 3: Move installed stuff to <pkg>.Rcheck/
     #cmd3 = 'mv %s/* %s.Rcheck/' % (instpkg_dir, pkg)
     ## Step 4: Cleanup

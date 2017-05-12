@@ -94,7 +94,6 @@ def getPackageStatusFromDir(pkg_dir):
         return "OK"
     return version
 
-
 def _getMaintainerFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
     FNULL = open(os.devnull, 'w')
@@ -192,7 +191,7 @@ def getSrcPkgFileFromDir(pkg_dir):
     srcpkg_file = pkg + '_' + version + '.tar.gz'
     return srcpkg_file
 
-# srcpkg_path must be a path to a srcpkg file (.tar.gz file).
+# srcpkg_path must be a path to a package source tarball (.tar.gz file).
 def getPkgFromPath(srcpkg_path):
     srcpkg_file = os.path.basename(srcpkg_path)
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
