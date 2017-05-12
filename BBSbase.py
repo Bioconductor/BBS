@@ -240,10 +240,11 @@ def getSTAGE3cmd(pkgdir_path):
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
     cmd = ''
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend')
     if sys.platform == "win32":
-        prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend.win')
-    else:
-        prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend')
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend.win')
+        if prepend_win != None:
+            prepend = prepend_win
     if prepend != None:
 	cmd += '%s ' % prepend
     common_opts = "--no-vignettes --timings"
