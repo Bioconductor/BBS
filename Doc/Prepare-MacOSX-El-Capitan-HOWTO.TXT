@@ -60,6 +60,8 @@ account that should exist at this point).
 
     system_profiler SPSoftwareDataType
 
+  Finally see IMPORTANT NOTE AFTER A REBOOT in "Install XQuartz" section below.
+
 ** Create biocbuild account
 
     sudo dscl . -create /Users/biocbuild
@@ -135,6 +137,7 @@ From now on everything must be done from the biocbuild account.
     sudo softwareupdate -iva
 
   and reboot the machine.
+  Finally see IMPORTANT NOTE AFTER A REBOOT in "Install XQuartz" section below.
 
 - Check the kernel version (should be Darwin 15 for OS X El Capitan):
 
@@ -289,13 +292,14 @@ Everything in this section must be done from the biocbuild account.
 
   If the above gives fatal server error "Cannot establish any listening
   sockets", then try to start the virtual X server as root with 'sudo Xvfb'
-  first (it's totally quiet so if nothing happens that means it's running),
-  then stop it with CTRL+C, then try to start it again as biocbuild. It should
-  work now. So CTRL+C again.
-  IMPORTANT NOTE: For whatever reason, after a reboot the system will go back
-  to a state where biocbuild cannot start the virtual X server. So make sure
-  to 'sudo Xvfb' followed by CTRL+C after each reboot so biocbuild can start
-  Xvfb (the build system needs that).
+  first (it's totally quiet so if nothing happens that means it's running).
+  Then stop it with CTRL+C, then try to start it again as biocbuild. Now it
+  should work. So CTRL+C again.
+
+  IMPORTANT NOTE AFTER A REBOOT: For whatever reason, after a reboot the
+  system will go back to a state where biocbuild cannot start the virtual X
+  server. So make sure to 'sudo Xvfb' followed by CTRL+C after each reboot
+  so biocbuild can start Xvfb (the build system needs that).
 
 ** Install Homebrew
 
@@ -313,11 +317,19 @@ Everything in this section must be done from the biocbuild account.
 
     sudo chown -R biocbuild:admin /usr/local
 
-** Install openssl, wget and pstree
+** Install openssl
 
   Install with:
 
     brew install openssl
+
+** [OPTIONAL] Install wget and pstree
+
+  These are just convenient to have when working interactively on a build
+  machine but are not required by the daily builds or propagation pipe.
+
+  Install with:
+
     brew install wget
     brew install pstree
 
