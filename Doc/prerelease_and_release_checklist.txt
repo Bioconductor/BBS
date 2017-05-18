@@ -1,4 +1,18 @@
-Throughout the process we should be testing the latest binary packages with
+# Pre-release Activities 
+
+## Table of Contents
+- [Testing R versions](#rversions)
+- [Six weeks before the release](#sixweeks)
+- [Four weeks before the release](#fourweeks)
+- [Two weeks before the release](#twoweeks)
+- [Day before we branch](#d-2)
+- [Day we branch](#d-1)
+- [Release day](#d)
+
+<a name="rversions"></a>
+## R versions
+
+Prior to the release we should be testing the latest binary packages with
 the upcoming release with R RC or R PRERELEASE on a clean Windows and Mac machine.
 It's important to use these binary R installations:
 
@@ -21,20 +35,22 @@ links in the .so files are not being fixed properly.
 During this process, we want to watch every day for new R versions
 (RC, prerelease,etc) and install them on our devel build systems.
 
-=====================================================================
+
 Some important operations that need to happen before a BioC release,
 in _this_ order
 
-One month before the release:
+<a name="sixweeks"></a>
+## Six weeks before the release:
 
- - Think about which machines to use for the new devel.
-   Are hardware or OS upgrades required? If so, you'll need more time.
-   If you are going to use the same machine(s) for new devel as you
-   used for old release, stop old release builds several weeks
-   before the release date, to give you enough time to set up
-   the machine(s) for new devel builds. The date that
-   old release builds are stopped should go in the release
-   schedule.
+- Identify machines for new devel.
+
+  Are hardware or OS upgrades required? If so, you'll need more time.
+  If you are going to use the same machine(s) for new devel as you
+  used for old release, stop old release builds several weeks
+  before the release date, to give you enough time to set up
+  the machine(s) for new devel builds. The date that
+  old release builds are stopped should go in the release
+  schedule.
 
 - Think about changing BiocInstaller and the
   /developers/howto/useDevel web page. Update the man
@@ -42,21 +58,23 @@ One month before the release:
   numbers and noting whether an R upgrade is required
   in order to use bioc-devel.
 
+- Draft release schedule.
+
+<a name="fourweeks"></a>
+## Four weeks before the release:
+
+- Announce release schedule
+
 - Start building workflows on devel
 
-- 
+- Start building annotations
 
-A few days before the new release:
+<a name="twoweeks"></a>
+## Two weeks before the release:
 
-- make a snapshot of CRAN and make it available as an (optional)
-  repository
+- Stop the old release builds
 
-- Remove from the manifest of the to-be-released version of BioC all packages
-  which were deprecated in a previous release
-  cycle (grep -i deprecated */R/zzz.R).
-
-- Stop the old release builds.
-- IMPORTANT: After stopping release builds, on all Mac build machines, point
+  IMPORTANT: After stopping release builds, on all Mac build machines, point
   the "Current" symlink in /Library/Frameworks/R.framework/Versions to the
   new DEVEL version of R. Otherwise we will be producing broken binaries!
   (Not applicable if only one build is running on each Mac machine, as should
@@ -67,12 +85,34 @@ A few days before the new release:
   branch. But make sure that the 'anon' user can still read from this branch.
   The website build process depends on this!
 
-- Until the next devel builds are running, we want symlinks pointing to the old
+- Simlinks to old devel
+
+  Until the next devel builds are running, we want symlinks pointing to the old
   devel builds so that the BiocInstaller package will work.
   This includes the software, data/annotation, and data/experment repositories.
   Remove these symlinks when the builds start running.
 
-- ASK package maintainers to finalize their NEWS files for inclusion in the release
+- Start setting up new devel builders and repositories.
+
+  Make sure that the R that runs as biocadmin has the 'knitcitations' package
+  installed.
+
+<a name="oneweek"></a>
+## One week before the release:
+
+- FIXME: still necessary?
+  make a snapshot of CRAN and make it available as an (optional)
+  repository
+
+- Deprecated packages
+
+  -- Remove from the manifest of the to-be-released version of BioC all packages
+  which were deprecated in a previous release
+  cycle (grep -i deprecated */R/zzz.R).
+
+  -- Identify new round of packages to-be-deprecated in new devel.
+
+- Package maintainers finalize  NEWS files for inclusion in the release
   announcement. Then after the deadline for that, compile the NEWS using
   biocViews:::getPackageNEWS().
 
@@ -84,21 +124,18 @@ A few days before the new release:
 - FLUSH the internal software repo (~biocadmin/PACKAGES/x.y/bioc)
  of the upcoming release.
 
-- Setup the next devel builds + repositories
-   - A minor thing (as a reminder) - make sure that the R
-     that runs as biocadmin has the 'knitcitations' package
-     installed.
-
 - Also install the latest biocViews into the R on the master builder
   (for the version about to be released) in the 'biocadmin' account.
 
-The day before we branch (D-2):
+<a name="d-2"></a>
+## Day before we branch (D-2):
 
 - Create new manifest file. If "new" devel builds have started,
   make sure they use this new manifest file.
 
 
-The day we branch (D-1):
+<a name="d-1"></a>
+## Day we branch (D-1):
 
 - If a new R is released today, modify the biocLite.R
   script (which lives in the BiocInstaller package in
@@ -165,7 +202,8 @@ The day we branch (D-1):
   so the pushRepo script has a place to push the stuff.
 
 
-On release day (D):
+<a name="d"></a>
+## Release day (D):
 
 - UPDATE the /etc/rsyncd.conf on master.bioconductor.org. Test rsync is
   still working as expected with commands from:
