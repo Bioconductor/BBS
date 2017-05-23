@@ -94,25 +94,15 @@ def getPackageStatusFromDir(pkg_dir):
         return "OK"
     return version
 
-
 def _getMaintainerFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
-    dcf = open(desc_file, 'r')
-    parser = DcfRecordParser(dcf)
-    dcf.close()
-    try:
-        maintainer = parser.getValue("Maintainer", True)
-    except KeyError:
-        FNULL = open(os.devnull, 'w')
-        rscript_path = os.path.join(os.getenv("BBS_R_HOME"), "bin", "Rscript")
-        script_path = os.path.join(BBScorevars.BBS_home, \
-            "utils", "getMaintainer.R")
-        cmd = "%s --vanilla %s %s" % \
-        (rscript_path, script_path, desc_file)
-        result = subprocess.check_output(cmd.split(" "), stderr=FNULL)
-        if result == "NULL":
-            raise DcfFieldNotFoundError(desc_file, 'Maintainer')
-        return result
+    FNULL = open(os.devnull, 'w')
+    Rscript_cmd = os.path.join(os.getenv("BBS_R_HOME"), "bin", "Rscript")
+    script_path = os.path.join(BBScorevars.BBS_home, "utils", "getMaintainer.R")
+    cmd = [Rscript_cmd, '--vanilla', script_path, desc_file]
+    maintainer = subprocess.check_output(cmd, stderr=FNULL)
+    if maintainer == 'NA':
+        raise DcfFieldNotFoundError(desc_file, 'Maintainer')
     return maintainer
 
 def getMaintainerFromDir(pkg_dir):
@@ -160,7 +150,8 @@ def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
     return val
 
 ### 'node_id' is the name of the node and 'pkgType' the native package type for
-### this node ("source", "win.binary", "win64.binary" "mac.binary" or "mac.binary.mavericks").
+### this node ("source", "win.binary", "win64.binary", "mac.binary",
+### "mac.binary.mavericks", or "mac.binary.el-capitan").
 def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
     pkgs = []
     while True:
@@ -179,10 +170,11 @@ def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
                     break
                 if not pkgType or pkgType == "source":
                     continue
-                if pkgType and x == pkgType: # if x is mac.binary or mac.binary.mavericks:
+                # if 'x' is mac.binary or mac.binary.*
+                if pkgType and x == pkgType:
                     supported = False
                     break
-                # if x is win or mac and pkgType is win.binary or mac.*:
+                # if 'x' is win or mac and pkgType is win.binary or mac.*:
                 if x in ["win", "mac"]:
                     if pkgType.startswith(x):
                         supported = False
@@ -199,7 +191,7 @@ def getSrcPkgFileFromDir(pkg_dir):
     srcpkg_file = pkg + '_' + version + '.tar.gz'
     return srcpkg_file
 
-# srcpkg_path must be a path to a srcpkg file (.tar.gz file).
+# srcpkg_path must be a path to a package source tarball (.tar.gz file).
 def getPkgFromPath(srcpkg_path):
     srcpkg_file = os.path.basename(srcpkg_path)
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'

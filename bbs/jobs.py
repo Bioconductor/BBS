@@ -17,19 +17,20 @@ import subprocess
 import signal
 import datetime
 if sys.platform == "win32":
-    import win32api
-    from win32com.client import GetObject
-    for i in range(10):
-        try:
-            WMI = GetObject('winmgmts:')
-        except:
-            if i == 9:
-                sys.exit("BBS>   FATAL ERROR: GetObject('winmgmts:') failed 10 times => EXIT.")
-            print "BBS>   GetObject('winmgmts:') failed. ",
-            print "Trying again in 1 sec."
-            win32api.Sleep(long(1000))
-        else:
-            break
+    import psutil
+    #import win32api
+    #from win32com.client import GetObject
+    #for i in range(10):
+    #    try:
+    #        WMI = GetObject('winmgmts:')
+    #    except:
+    #        if i == 9:
+    #            sys.exit("BBS>   FATAL ERROR: GetObject('winmgmts:') failed 10 times => EXIT.")
+    #        print "BBS>   GetObject('winmgmts:') failed. ",
+    #        print "Trying again in 1 sec."
+    #        win32api.Sleep(long(1000))
+    #    else:
+    #        break
 import time
 
 
@@ -40,10 +41,10 @@ import time
 ##############################################################################
 
 def sleep(secs):
-    if sys.platform == "win32":
-        win32api.Sleep(long(secs * 1000))
-    else:
-        time.sleep(secs)
+    #if sys.platform == "win32":
+    #    win32api.Sleep(long(secs * 1000))
+    #else:
+    time.sleep(secs)
 
 
 ##############################################################################
@@ -76,7 +77,8 @@ def doOrDie(cmd):
         return
     sys.exit("BBS>   FATAL ERROR: subprocess '%s' returned nonzero value %d!" % (cmd, retcode))
 
-if sys.platform == "win32":
+#if sys.platform == "win32":
+if False:
     # Helpful places to look at when it comes to manipulate the list of active
     # processes:
     #   http://mail.python.org/pipermail/python-win32/2003-December/001482.html
@@ -159,49 +161,69 @@ def killProc(pid):
     if sys.platform != "win32":
         # On Solaris, this kills only the shell, but the command passed
         # in cmd keeps running in the background!
-        os.kill(pid, signal.SIGKILL)
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except OSError as e:
+            if e.errno == 3:
+                print("BBS>   No such process: %s" % pid)
+            else:
+                print("BBS>   Error %s killing process %s" % (e.errno, pid))
+            return
         return
-    # From Python Cookbook:
-    #   http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/347462
-    #win32api.TerminateProcess(int(proc._handle), -1)
-    # but it doesn't work because it only kills the "cmd.exe" process
-    # but not its child (the command passed in the cmd arg of Popen()).
-    # Alternative to the above command (modified version of a
-    # solution posted on the above web page, "/T" stands for tree
-    # so it kills pid + all childs):
-    #os.popen('TASKKILL /F /PID %d /T' % pid)
-    # The above command proved not to be 100% reliable on gewurz either
-    # (64-bit Windows Server 2008 R2 Enterprise), so let's try the
-    # following:
-    subprocs = listSubprocs(pid)
-    if subprocs == None:
-        return  # pid just vanished ==> nothing to do
-    cmd = 'TASKKILL /F /PID %d /T' % pid
-    retcode = subprocess.call(cmd, stderr=subprocess.STDOUT)
-    print "BBS>   NOTE: %s returned code %d" % (cmd, retcode)
-    all_PIDs = getAllActivePIDs()
-    for proc2 in subprocs:
-        pid2 = proc2.ProcessID
-        if not pid2 in all_PIDs:
-            continue
-        print "BBS>   NOTE: %s failed to kill subprocess %d (%s)." \
-              % (cmd, pid2, proc2.Name)
-        printProcProperties(proc2)
-        cmd2 = 'TASKKILL /F /PID %d' % pid2
-        for i in range(5):
-            print "BBS>     Now trying with %s ..." % cmd2,
-            retcode2 = subprocess.call(cmd2, stderr=subprocess.STDOUT)
-            print "(returned code %d)" % retcode2,
-            if getProcByPID(pid2) == None:
-                print "OK"
-                break
-            print "FAILED!"
-            if i >= 4:
-                print "BBS>     Giving up (after 5 tries)."
-                break
-            print "BBS>     Will try again in 10 seconds."
-            sleep(10)
-    return
+
+    # For now, on windows, try using the psutil module to kill a process
+    # and its children recursively, because we have been having
+    # trouble using TASKKILL to do this. Eventually consider replacing
+    # all the process-related code in this file with psutil.
+    # Of course, the build machines must have this module installed
+    # (it's not installed by default).
+    # Note that the kill() method preemptively checks to see if the PID
+    # has been reused, protecting against killing a different
+    # process than the one you wanted to kill. See
+    # https://pythonhosted.org/psutil/#psutil.Process.kill
+
+    # The process represented by 'pid' may already have been killed,
+    # but it could still have children. Since 'proc' would be
+    # None in this case, we can't call proc.children(), so walk over
+    # psutil.process_iter() to find the children. And let's find the
+    # children before we kill the parent.
+    children = []
+    for proc in psutil.process_iter():
+        try:
+            if proc.ppid() == pid:
+                children.append(proc)
+        except psutil.NoSuchProcess:
+            pass
+
+    # Let's start the mass murdering...
+    try:
+        print("BBS>     killing %s" % pid)
+        proc = psutil.Process(pid)
+        proc.kill()
+    except psutil.NoSuchProcess:
+        print "BBS>     No such process %s."  % pid
+    except psutil.AccessDenied:
+        print "BBS>     Access denied (pid=%s)."  % pid
+    except TypeError:
+        sys.exit("BBS>     pid must be an integer! (got %s)" % pid)
+
+    for child in children:
+        try:
+            print("BBS>       killing child %s" % child.pid)
+            grandkids = child.children(recursive=True)
+            child.kill()
+            for grandkid in grandkids:
+                try:
+                    print("BBS>         killing grandkid %s" % grandkid.pid)
+                    grandkid.kill()
+                except psutil.NoSuchProcess:
+                    print("BBS>         Grandkid process %s does not exist." % grandkid.pid)
+                except psutil.AccessDenied:
+                    print "BBS>         Access denied (pid=%s)."  % grandkid.pid
+        except psutil.NoSuchProcess:
+            print "BBS>       Child process %s does not exist." % child.pid
+        except psutil.AccessDenied:
+            print "BBS>       Access denied (pid=%s)."  % child.pid
 
 ### What if cmd is not found, can't be started or crashes?
 def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
@@ -265,14 +287,17 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
         out.close()
     return retcode
 
-def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.0, verbose=False):
+def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.0, failure_is_fatal=True, verbose=False):
     for i in range(nb_attempts):
         retcode = runJob(cmd, stdout, maxtime, verbose)
         if retcode == 0:
-            return
+            return 0
         sleep(sleeptime)
-    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    sys.exit("%d failed attempts => EXIT at %s." % (nb_attempts, now))
+    if failure_is_fatal:
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        sys.exit("%d failed attempts => EXIT at %s." % (nb_attempts, now))
+    print "%d failed attempts => never mind, let's keep going..." % nb_attempts
+    return retcode
 
 ### Objects passed to the processJobQueue() function must be QueuedJob objects.
 ### The QueuedJob class contains the strictly minimal stuff needed by the
@@ -572,6 +597,7 @@ def getHostname():
     hostname = hostname.lower()
     hostname = hostname.replace(".local", "")
     hostname = hostname.replace(".fhcrc.org", "")
+    hostname = hostname.replace(".bioconductor.org", "")
     return hostname
 
 ## Formatted date+time.
@@ -597,4 +623,3 @@ def currentDateString():
 
 if __name__ == "__main__":
     sys.exit("ERROR: this Python module can't be used as a standalone script yet")
-

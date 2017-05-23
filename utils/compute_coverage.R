@@ -2,26 +2,26 @@
 ## to running this, so that environment variables are set correctly.
 ## ALSO, be sure X11 (Xvfb) is running.
 
-if(!requireNamespace("BiocInstaller", quietly=TRUE))
+if(!require("BiocInstaller", quietly=TRUE))
     stop("BiocInstaller not installed!")
 
-if(!requireNamespace("devtools", quietly=TRUE))
-    biocLite("devtools")
+reqs <- c("devtools", "BiocParallel", "BatchJobs", "httr", "jsonlite", "R.utils")
+lapply(reqs, function(x){
+    if(!do.call(require, list(package=x, quietly=TRUE)))
+    {
+        biocLite(x)
+        do.call(require, list(package=x, quietly=TRUE))
+    }
+})
 
-if (!requireNamespace("covr", quietly=TRUE))
+
+if (!require("covr", quietly=TRUE))
+{
     devtools::install_github("jimhester/covr")
+    require("covr")
+}
 
-if (!requireNamespace("BiocParallel", quietly=TRUE))
-    biocLite("BiocParallel")
-
-if (!requireNamespace("BatchJobs", quietly=TRUE))
-    biocLite("BatchJobs")
-
-if (!requireNamespace("httr", quietly=TRUE))
-    biocLite("httr")
-
-if (!requireNamespace("jsonlite", quietly=TRUE))
-    biocLite("jsonlite")
+TIMEOUT <- 2400 # 40 minutes
 
 
 #if (!file.exists("/tmp/cclogdir"))
@@ -131,7 +131,7 @@ getGitCommitId <- function(package, svn_rev)
 }
 
 # Call me like this:
-# lapply(covs, upload_coverage, svninfo=svninfo) 
+# lapply(covs, upload_coverage, svninfo=svninfo)
 upload_coverage <- function(cov, svninfo)
 {
     pkg <- attr(cov, "package")$package
@@ -144,13 +144,19 @@ upload_coverage <- function(cov, svninfo)
     .stopifnot("CODECOV_TOKEN not set", nchar(token) > 0)
     url <- sprintf("https://codecov.io/api/github/Bioconductor-mirror/%s?access_token=%s", pkg, token)
     content <- content(GET(url))
-    upload_token <- content$upload_token
+    upload_token <- content$repo$upload_token
     .stopifnot("upload_token is null!", !is.null(upload_token))
     codecov(coverage=cov, token=upload_token, commit=git_commit_id,
         branch=getBranch())
 }
 
 getCoverage <- function(package, force=FALSE)
+{
+    tryCatch(evalWithTimeout(getCoverage0(package, force), timeout=TIMEOUT),
+        TimeoutException=function(ex) "TimedOut", error=function(e)e)
+}
+
+getCoverage0 <- function(package, force=FALSE)
 {
     if(!file.exists(file.path(package, "tests")))
         return(NULL)
@@ -173,7 +179,7 @@ getCoverage <- function(package, force=FALSE)
         flog.info(msg)
         cat(svninfo[[package]], file=file.path(svncachedir, package))
     }
-    ret 
+    ret
 }
 
 
@@ -200,7 +206,6 @@ names(packages) <- packages
 
 param <- MulticoreParam(5, timeout=900)#, log=TRUE)
 
-res <- bplapply(packages, getCoverage, BPPARAM=param)
+# res <- bplapply(packages, getCoverage, BPPARAM=param)
+res <- lapply(packages, getCoverage)
 save(res, file="/tmp/res.rda")
-
- 

@@ -97,7 +97,7 @@
     as.list(buf)
 }
 
-### Same as in STAGE2_cmd.R
+### Same as in installNonTargetPkg.R
 .get_non_target_repos <- function()
 {
     non_target_repos <- readLines(Sys.getenv('BBS_NON_TARGET_REPOS_FILE'))

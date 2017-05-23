@@ -239,6 +239,14 @@ def getSTAGE3cmd(pkgdir_path):
 ### 'srcpkg_path' must be a path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    cmd = ''
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend')
+    if sys.platform == "win32":
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend.win')
+        if prepend_win != None:
+            prepend = prepend_win
+    if prepend != None:
+	cmd += '%s ' % prepend
     common_opts = "--no-vignettes --timings"
     ## Note that 64-bit machines gewurz and moscato1 give a value of
     ## 'win32' for sys.platform. This means that _noExampleArchs() may
@@ -248,7 +256,7 @@ def getSTAGE4cmd(srcpkg_path):
     if sys.platform in no_example_archs:
         common_opts += " --no-examples"
     if BBSvars.STAGE4_mode != "multiarch":
-        cmd = '%s CMD check %s' % (BBSvars.r_cmd, common_opts)
+        cmd += '%s CMD check %s' % (BBSvars.r_cmd, common_opts)
         ## Starting with R-2.12, 'R CMD check' on Windows and Mac OS X can do
         ## runtime tests on various installed sub-archs. New options have been
         ## added to provide some control on this (see 'R CMD check -h').
@@ -299,7 +307,7 @@ def getSTAGE4cmd(srcpkg_path):
         return None
     if len(win_archs) == 1:
         middle = '--arch %s CMD check --no-multiarch' % win_archs[0]
-        cmd = '%s %s %s %s' % (BBSvars.r_cmd, middle, common_opts, srcpkg_path)
+        cmd += '%s %s %s %s' % (BBSvars.r_cmd, middle, common_opts, srcpkg_path)
         return cmd
     ## For some rare BioC packages (e.g. Rdisop, fabia, bgx -- as of July
     ## 2011), 'R CMD check --force-multiarch' will fail to do a bi-arch
@@ -322,7 +330,7 @@ def getSTAGE4cmd(srcpkg_path):
     instpkg_dir = "%s.buildbin-libdir" % pkg
     middle = 'CMD check --library=%s --install="check:%s" --force-multiarch' % \
              (instpkg_dir, instout_file)
-    cmd2 = '%s %s %s %s' % (BBSvars.r_cmd, middle, common_opts, srcpkg_path)
+    cmd2 = '%s %s %s %s %s' % (cmd, BBSvars.r_cmd, middle, common_opts, srcpkg_path)
     ## Step 3: Move installed stuff to <pkg>.Rcheck/
     #cmd3 = 'mv %s/* %s.Rcheck/' % (instpkg_dir, pkg)
     ## Step 4: Cleanup
@@ -363,7 +371,7 @@ class PkgDumps:
                 bbs.fileutils.touch(self.MISSING_file)
                 to_push = [self.MISSING_file]
         to_push += [self.out_file, self.summary_file]
-        rdir.Mput(to_push, True)
+        rdir.Mput(to_push, False, True)
         return
 
 
@@ -477,6 +485,16 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.summary.Write(self.pkgdumps.summary_file)
         self.pkgdumps.Push(self.rdir)
     def AfterRun(self):
+        # Avoid leaving rogue processes messing around on the build machine.
+        # self._proc.pid should be already dead but some of its children might
+        # still be alive. They need to die too. bbs.jobs.killProc() should work
+        # on a non-existing pid and it should be able to kill all the processes
+        # that were started directly or indirectly by pid.
+        # This needs to happen before calling self._MakeSummary() because
+        # these rogue processes can break the rsync command used by
+        # self.pkgdumps.Push(self.rdir) above by holding on some of the files
+        # that need to be pushed to the central build node.
+        bbs.jobs.killProc(self._proc.pid)
         self.summary.retcode = self._retcode
         pkg_file = self.pkgdumps.product_path
         if os.path.exists(pkg_file) and self._retcode == 0:
@@ -538,8 +556,18 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         ## packages are not available)
 	#NOT NEEDED (see above).
         #if os.path.exists(self.install_out):
-        #    self.rdir.Put(self.install_out, True)
+        #    self.rdir.Put(self.install_out, True, True)
     def AfterRun(self):
+        # Avoid leaving rogue processes messing around on the build machine.
+        # self._proc.pid should be already dead but some of its children might
+        # still be alive. They need to die too. bbs.jobs.killProc() should work
+        # on a non-existing pid and it should be able to kill all the processes
+        # that were started directly or indirectly by pid.
+        # This needs to happen before calling self._MakeSummary() because
+        # these rogue processes can break the rsync command used by
+        # self.pkgdumps.Push(self.rdir) above by holding on some of the files
+        # that need to be pushed to the central build node.
+        bbs.jobs.killProc(self._proc.pid)
         self.summary.retcode = self._retcode
         if self._retcode == 0:
             self.warnings = bbs.parse.countWARNINGs(self._output_file)

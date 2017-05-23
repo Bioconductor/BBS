@@ -11,7 +11,8 @@
     return(invisible(NULL))
 }
 
-### Same as in BBS/utils/make_STAGE2_pkg_deps_list.R and BBS/utils/STAGE2_cmd.R
+### Same as in BBS/utils/make_STAGE2_pkg_deps_list.R and in
+### BBS/utils/installNonTargetPkg.R
 .get_non_target_repos <- function()
 {
     non_target_repos <- readLines(Sys.getenv('BBS_NON_TARGET_REPOS_FILE'))

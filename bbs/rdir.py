@@ -104,7 +104,7 @@ class RemoteDir:
             # self is a remote dir
             src_path = "%s/%s" % (self.get_full_remote_path(), src_path)
             cmd = "%s %s %s" % (self.rsync_rsh_cmd, src_path, dest_path)
-        jobs.tryHardToRunJob(cmd, 5, None, 60.0, 20.0, verbose)
+        jobs.tryHardToRunJob(cmd, 5, None, 60.0, 20.0, True, verbose)
         return
 
     def _Call(self, remote_cmd):
@@ -180,7 +180,7 @@ class RemoteDir:
 
     # 'src_path' is a local path that can be absolute or relative to the
     # current dir
-    def Put(self, src_path, verbose=False):
+    def Put(self, src_path, failure_is_fatal=True, verbose=False):
         if sys.platform == "win32" and os.path.exists(src_path) and os.path.isfile(src_path):
             #os.chmod(src_path, 0644) # This doesn't work
             ## This works better but requires Cygwin.
@@ -199,12 +199,12 @@ class RemoteDir:
             else:
                 action = "Copying"
             print "BBS>   %s %s in %s/:" % (action, src_path, self.label)
-        jobs.tryHardToRunJob(cmd, 5, None, maxtime, 30.0, verbose)
+        jobs.tryHardToRunJob(cmd, 5, None, maxtime, 30.0, failure_is_fatal, verbose)
         return
 
-    def Mput(self, paths, verbose=False):
+    def Mput(self, paths, failure_is_fatal=True, verbose=False):
         for path in paths:
-            self.Put(path, verbose)
+            self.Put(path, failure_is_fatal, verbose)
         return
 
     def syncLocalDir(self, local_dir, verbose=False):
@@ -223,7 +223,7 @@ class RemoteDir:
             cmd = "%s -rlptz %s/ %s" % (self.rsync_rsh_cmd, self.get_full_remote_path(), '.')
         if verbose:
             print "BBS>   Syncing local '%s' with %s" % (local_dir, self.label)
-        jobs.tryHardToRunJob(cmd, 3, None, 1800.0, 60.0, verbose)
+        jobs.tryHardToRunJob(cmd, 3, None, 1800.0, 60.0, True, verbose)
         ## Workaround a strange problem observed so far on Windows Server
         ## 2008 R2 Enterprise (64-bit) only. After running rsync (from Cygwin)
         ## on this machine to sync a local folder, the local filesystem seems
