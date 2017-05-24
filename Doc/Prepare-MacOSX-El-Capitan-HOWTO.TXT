@@ -323,6 +323,13 @@ Everything in this section must be done from the biocbuild account.
 
     brew install openssl
 
+  Then in /etc/profile add the following line:
+
+    export OPENSSL_LIBS="/usr/local/Cellar/openssl/1.0.2k/lib/libssl.a /usr/local/Cellar/openssl/1.0.2k/lib/libcrypto.a"
+
+  This will trigger statically linking of the rtracklayer package against the
+  openssl libraries.
+
 ** [OPTIONAL] Install wget and pstree
 
   These are just convenient to have when working interactively on a build
@@ -414,7 +421,13 @@ Then start R again and try to install a few packages *from source*:
   ## ONLY if release and devel are using the same version of R:
   #useDevel()
   biocLite("BiocCheck", type="source")
+  biocLite("rtracklayer", type="source")
   biocLite("VariantAnnotation", type="source")
+
+Quit R and check that rtracklayer got statically linked against the openssl
+libraries with:
+
+  otool -L /Library/Frameworks/R.framework/Resources/library/rtracklayer/libs/rtracklayer.so
 
 WAIT!!! II'S NOT FINISHED YET! Now go to the "How to update R" section at the
 end of this file and perform all steps from step 3.
