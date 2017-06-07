@@ -169,12 +169,12 @@ def snapshotMEAT0git(MEAT0_path):
             pkgdir_path = os.path.join(MEAT0_path, pkg)
             print "BBS> [snapshotMEAT0] Update %s" % pkgdir_path
             if os.path.exists(pkgdir_path):
-                cmd = '%s -C %s pull' % (git_cmd, pkgdir_path)
+                cmd = '%s -C %s fetch' % (git_cmd, pkgdir_path)
             else:
                 cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (git_cmd, MEAT0_path, pkg)
             bbs.jobs.doOrDie(cmd)
             ## checkout based on date, see https://stackoverflow.com/a/6990682/2792099            
-            cmd = '%s checkout `%s rev-list -n 1 --before="%s" master`' %s (git_cmd, git_cmd, snapshot_date)
+            cmd = '%s merge `%s rev-list -n 1 --before="%s" master`' %s (git_cmd, git_cmd, snapshot_date)
             bbs.jobs.doOrDie(cmd)
     return snapshot_date
 
