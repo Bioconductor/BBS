@@ -160,6 +160,19 @@ def snapshotMEAT0git(MEAT0_path):
         print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
         bbs.jobs.doOrDie(cmd)
         # then itarate over manifest to update pkg dirs
+        manifest_path = os.path.join(manifest_dir, BBSvars.manifest_file)
+        print "BBS> [snapshotMEAT0] Get pkg list from %s" % manifest_path
+        dcf = open(manifest_path, 'r')
+        pkgs = bbs.parse.readPkgsFromDCF(dcf)
+        dcf.close()
+        for pkg in pkgs:
+            pkgdir_path = os.path.join(MEAT0_path, pkg)
+            print "BBS> [snapshotMEAT0] Update %s" % pkgdir_path
+            if os.path.exists(pkgdir_path):
+                cmd = '%s -C %s pull' % (git_cmd, pkgdir_path)
+            else:
+                cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (git_cmd, MEAT0_path, pkg)
+            bbs.jobs.doOrDie(cmd)
     return snapshot_date
 
 def writeAndUploadMeatInfo(work_topdir):
