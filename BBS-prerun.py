@@ -178,7 +178,7 @@ def writeAndUploadMeatInfo(work_topdir):
 
 def writeAndUploadMeatInfoGit(work_topdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
-    snapshot_date = snapshotMEAT0(MEAT0_path)
+    snapshot_date = snapshotMEAT0git(MEAT0_path)
     #os.chdir(work_topdir)
     ## "svninfo/" and "meat-index.txt"
     manifest_path = os.path.join(MEAT0_path, BBSvars.manifest_file)
@@ -332,7 +332,7 @@ if __name__ == "__main__":
         print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
     if BBSvars.MEAT0_type == 3 and (arg1 == "" or arg1 == subtask):
         print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
-        writeAndUploadMeatInfo(work_topdir)
+        writeAndUploadMeatInfoGit(work_topdir)
         ## Using rsync is better than "svn export": (1) it's incremental,
         ## (2) it works remotely, (3) it works with "nested working copies
         ## (like we have for the data-experiment MEAT0) and, (4) it's even
