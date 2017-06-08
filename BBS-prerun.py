@@ -115,6 +115,29 @@ def writeAndUploadSvnInfo(snapshot_date):
     update_svnlog()
     BBScorevars.Central_rdir.Put(svninfo_dir, True, True)
     return
+  
+def writeAndUploadGitLog(snapshot_date):
+    git_cmd = os.environ['BBS_GIT_CMD']
+    gitlog_dir = os.path.join(BBSvars.work_topdir, "gitlog")
+    bbs.fileutils.remake_dir(gitlog_dir)
+    ## Create top-level git-log file
+    MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
+    gitlog_file = os.path.join(gitlog_dir, "git-log.txt")
+    f = open(gitlog_file, 'a')
+    f.write('Snapshot Date: %s\n' % snapshot_date)
+    f.close()
+    ## Create git-log file for each package
+    meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
+    dcf = open(meat_index_path, 'r')
+    pkgs = bbs.parse.readPkgsFromDCF(dcf)
+    dcf.close()
+    for pkg in pkgs:
+        pkgdir_path = os.path.join(MEAT0_path, pkg)
+        gitlog_file = os.path.join(gitlog_dir, 'git-log-%s.txt' % pkg)
+        cmd = '%s -C %s log --max-count=1 --abbrev-commit >%s' % (git_cmd, pkgdir_path, svninfo_file)
+        bbs.jobs.doOrDie(cmd)
+    BBScorevars.Central_rdir.Put(gitlog_dir, True, True)
+    return
 
 def update_svnlog():
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
@@ -174,7 +197,7 @@ def snapshotMEAT0git(MEAT0_path):
                 cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (git_cmd, MEAT0_path, pkg)
             bbs.jobs.doOrDie(cmd)
             ## checkout based on date, see https://stackoverflow.com/a/6990682/2792099            
-            cmd = '%s merge `%s rev-list -n 1 --before="%s" master`' %s (git_cmd, git_cmd, snapshot_date)
+            cmd = '%s merge `%s rev-list -n 1 --before="%s" master`' % (git_cmd, git_cmd, snapshot_date)
             bbs.jobs.doOrDie(cmd)
     return snapshot_date
 
@@ -197,13 +220,13 @@ def writeAndUploadMeatInfoGit(work_topdir):
     snapshot_date = snapshotMEAT0git(MEAT0_path)
     #os.chdir(work_topdir)
     ## "svninfo/" and "meat-index.txt"
-    manifest_path = os.path.join(MEAT0_path, BBSvars.manifest_file)
+    manifest_path = os.path.join(MEAT0_path, BBSvars.manifest_dir, BBSvars.manifest_file)
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     writeAndUploadMeatIndex(pkgs, MEAT0_path)
-    writeAndUploadSvnInfo(snapshot_date)
+    writeAndUploadGitLog(snapshot_date)
     return
 
 ##############################################################################
