@@ -218,6 +218,55 @@ def write_svn_info_for_pkg_asTABLE(out, pkg, full_info=False):
     out.write('</TABLE>')
     return
 
+##############################################################################
+### VCS metadata HTMLization
+##############################################################################
+
+def write_Date_asTD(out, pkg, key, full_line=True):
+    val = BBSreportutils.get_vcs_meta(pkg, key)
+    if not full_line:
+        val = ' '.join(val.split(' ')[0:3])
+    key = key.replace(' ', '&nbsp;')
+    val = val.replace(' ', '&nbsp;')
+    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
+    out.write('<TD class="svn_info">%s</TD>' % val)
+    return
+
+def write_URL_asTD(out, pkg):
+    key = 'URL'
+    val = BBSreportutils.get_vcs_meta(pkg, key)
+    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
+    out.write('<TD class="svn_info">%s</TD>' % val)
+    return
+
+def write_LastChange_asTD(out, pkg, key, with_Revision=False):
+    val = BBSreportutils.get_vcs_meta(pkg, key)
+    key = key.replace(' ', '&nbsp;')
+    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
+    if with_Revision:
+        key2 = 'Revision'
+        val2 = BBSreportutils.get_vcs_meta(pkg, key2)
+        val = '%s / %s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (val, key2, val2)
+    out.write('<TD class="svn_info">%s</TD>' % val)
+    return
+
+def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):
+    out.write('<TABLE class="svn_info">')
+    if full_info:
+        out.write('<TR>')
+        write_Date_asTD(out, None, 'Snapshot Date', full_info)
+        out.write('</TR>')
+        out.write('<TR>')
+        write_URL_asTD(out, pkg)
+        out.write('</TR>')
+    out.write('<TR>')
+    write_LastChange_asTD(out, pkg, 'Last Commit', False)
+    out.write('</TR>')
+    out.write('<TR>')
+    write_Date_asTD(out, None, 'Last Changed Date', full_info)
+    out.write('</TR>')
+    out.write('</TABLE>')
+    return
 
 ##############################################################################
 ### leaf-report and mainrep tables
@@ -379,6 +428,9 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             if BBSvars.MEAT0_type == 1:
                 out.write('<BR>')
                 write_svn_info_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
+            if BBSvars.MEAT0_type == 3:
+                out.write('<BR>')
+                write_git_log_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
             is_first = False
         write_node_spec_asTD(out, node, '<I>%s</I>' % node.id, leafreport_ref)
@@ -806,6 +858,11 @@ def write_BioC_mainpage_head_asHTML(out):
         out.write('<DIV class="svn_info">\n')
         out.write('<P>svn info</P>\n')
         write_svn_info_for_pkg_asTABLE(out, None, True)
+        out.write('</DIV>\n')
+    if BBSvars.MEAT0_type == 3:
+        out.write('<DIV class="svn_info">\n')
+        out.write('<P>git log</P>\n')
+        write_git_log_for_pkg_asTABLE(out, None, True)
         out.write('</DIV>\n')
     return
 

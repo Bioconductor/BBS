@@ -130,6 +130,16 @@ def get_svn_info(pkg, key):
         raise bbs.parse.DcfFieldNotFoundError(file, key)
     return val
 
+def get_vcs_meta(pkg, key):
+    Central_rdir = BBScorevars.Central_rdir
+    file = os.path.join(BBSvars.vcsmeta_dir, BBSvars.vcsmeta_file)
+    if pkg != None:
+        file = "-%s.".join(file.split(".")) % pkg
+    val = WReadDcfVal(Central_rdir, file, key, True)
+    if val == None:
+        raise bbs.parse.DcfFieldNotFoundError(file, key)
+    return val
+
 def get_leafreport_rURL(pkg, node_id, stagecmd):
     return "%s/%s-%s.html" % (pkg, node_id, stagecmd)
 

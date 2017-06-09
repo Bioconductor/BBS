@@ -46,6 +46,12 @@ manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
 
 manifest_dir = BBScorevars.getenv('BBS_BIOC_MANIFEST_DIR', False)
 
+if MEAT0_type == 1:
+    vcsmeta_dir = "svninfo"
+    vcsmeta_file = "svn-info.txt"
+if MEAT0_type == 3:
+    vcsmeta_dir = "gitlog"
+    vcsmeta_file = "git-log.txt"
 
 ### Only needed by BBS-run.py
 
