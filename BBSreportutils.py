@@ -14,6 +14,7 @@ import string
 import urllib2 
 
 import bbs.parse
+import BBSvars
 import BBScorevars
 
 
