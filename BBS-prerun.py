@@ -133,8 +133,14 @@ def writeAndUploadGitLog(snapshot_date):
     dcf.close()
     for pkg in pkgs:
         pkgdir_path = os.path.join(MEAT0_path, pkg)
+	git_cmd_pkg = '%s -C %s' % (git_cmd, pkgdir_path)
         gitlog_file = os.path.join(gitlog_dir, 'git-log-%s.txt' % pkg)
-        cmd = '%s -C %s log --max-count=1 --abbrev-commit >%s' % (git_cmd, pkgdir_path, svninfo_file)
+        cmd = ' && '.join([
+        'echo -n "URL: "',
+        '%s remote get-url origin' % git_cmd_pkg,
+        '%s log --max-count=1 -format=format:"Last Commit: %h%nLast Changed Date: %ai%n"' % git_cmd_pkg,
+        ])
+        cmd = '(%s) >%s' % (cmd, gitlog_file)
         bbs.jobs.doOrDie(cmd)
     BBScorevars.Central_rdir.Put(gitlog_dir, True, True)
     return
