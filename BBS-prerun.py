@@ -174,67 +174,51 @@ def snapshotMEAT0(MEAT0_path):
             print "BBS> [snapshotMEAT0] cd BBS_MEAT0_RDIR"
             os.chdir(MEAT0_path)
             cmd = update_script
+            print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
+            bbs.jobs.doOrDie(cmd)
         else:
-            svn_cmd = os.environ['BBS_SVN_CMD']
-            cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (svn_cmd, MEAT0_path)
-        print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
-        bbs.jobs.doOrDie(cmd)
-    return snapshot_date
-  
-def snapshotMEAT0git(MEAT0_path):
-    snapshot_date = bbs.jobs.currentDateString()
-    if BBSvars.update_MEAT0 == 1:
-        git_cmd = os.environ['BBS_GIT_CMD']
-        # first update manifest
-        manifest_dir = os.path.join(BBSvars.work_topdir, 'manifest')
-        cmd = '%s -C %s pull' % (git_cmd, manifest_dir)
-        print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
-        bbs.jobs.doOrDie(cmd)
-        # then itarate over manifest to update pkg dirs
-        manifest_path = os.path.join(manifest_dir, BBSvars.manifest_file)
-        print "BBS> [snapshotMEAT0] Get pkg list from %s" % manifest_path
-        dcf = open(manifest_path, 'r')
-        pkgs = bbs.parse.readPkgsFromDCF(dcf)
-        dcf.close()
-        for pkg in pkgs:
-            pkgdir_path = os.path.join(MEAT0_path, pkg)
-            print "BBS> [snapshotMEAT0] Update %s" % pkgdir_path
-            if os.path.exists(pkgdir_path):
-                cmd = '%s -C %s fetch' % (git_cmd, pkgdir_path)
-            else:
-                cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (git_cmd, MEAT0_path, pkg)
-            bbs.jobs.doOrDie(cmd)
-            ## merge only up to snapshot date, see https://stackoverflow.com/a/8223166/2792099
-            cmd = '%s merge `%s rev-list -n 1 --before="%s" master`' % (git_cmd, git_cmd, snapshot_date)
-            bbs.jobs.doOrDie(cmd)
+            if BBSvars.MEAT0_type == 1:
+                svn_cmd = os.environ['BBS_SVN_CMD']
+                cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (svn_cmd, MEAT0_path)
+                print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
+                bbs.jobs.doOrDie(cmd)
+            if BBSvars.MEAT0_type == 3:
+                git_cmd = os.environ['BBS_GIT_CMD']
+                ## first update manifest
+                manifest_path = BBSvars.manifest_path
+                cmd = '%s -C %s pull' % (git_cmd, os.path.dirname(manifest_path))
+                print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
+                bbs.jobs.doOrDie(cmd)
+                ## then itarate over manifest to update pkg dirs
+                dcf = open(manifest_path, 'r')
+                pkgs = bbs.parse.readPkgsFromDCF(dcf)
+                dcf.close()
+                for pkg in pkgs:
+                    pkgdir_path = os.path.join(MEAT0_path, pkg)
+                    print "BBS> [snapshotMEAT0] Update %s" % pkgdir_path
+                    if os.path.exists(pkgdir_path):
+                        cmd = '%s -C %s fetch' % (git_cmd, pkgdir_path)
+                    else:
+                        cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (git_cmd, MEAT0_path, pkg)
+                    bbs.jobs.doOrDie(cmd)
+                    ## merge only up to snapshot date, see https://stackoverflow.com/a/8223166/2792099
+                    cmd = '%s merge `%s rev-list -n 1 --before="%s" master`' % (git_cmd, git_cmd, snapshot_date)
+                    bbs.jobs.doOrDie(cmd)
     return snapshot_date
 
 def writeAndUploadMeatInfo(work_topdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     snapshot_date = snapshotMEAT0(MEAT0_path)
-    #os.chdir(work_topdir)
-    ## "svninfo/" and "meat-index.txt"
-    manifest_path = os.path.join(MEAT0_path, BBSvars.manifest_file)
-    print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
-    dcf = open(manifest_path, 'r')
-    pkgs = bbs.parse.readPkgsFromDCF(dcf)
-    dcf.close()
-    writeAndUploadMeatIndex(pkgs, MEAT0_path)
-    writeAndUploadSvnInfo(snapshot_date)
-    return
-
-def writeAndUploadMeatInfoGit(work_topdir):
-    MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
-    snapshot_date = snapshotMEAT0git(MEAT0_path)
-    #os.chdir(work_topdir)
-    ## "svninfo/" and "meat-index.txt"
     manifest_path = BBSvars.manifest_path
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     writeAndUploadMeatIndex(pkgs, MEAT0_path)
-    writeAndUploadGitLog(snapshot_date)
+    if BBSvars.MEAT0_type == 1:
+        writeAndUploadSvnInfo(snapshot_date)
+    if BBSvars.MEAT0_type == 3:
+        writeAndUploadGitLog(snapshot_date)
     return
 
 ##############################################################################
@@ -368,18 +352,9 @@ if __name__ == "__main__":
         print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
 
     subtask = "upload-meat-info"
-    if BBSvars.MEAT0_type == 1 and (arg1 == "" or arg1 == subtask):
+    if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3) and (arg1 == "" or arg1 == subtask):
         print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
         writeAndUploadMeatInfo(work_topdir)
-        ## Using rsync is better than "svn export": (1) it's incremental,
-        ## (2) it works remotely, (3) it works with "nested working copies
-        ## (like we have for the data-experiment MEAT0) and, (4) it's even
-        ## slightly faster!
-        BBSvars.MEAT0_rdir.syncLocalDir(BBSvars.meat_path, True)
-        print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
-    if BBSvars.MEAT0_type == 3 and (arg1 == "" or arg1 == subtask):
-        print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
-        writeAndUploadMeatInfoGit(work_topdir)
         ## Using rsync is better than "svn export": (1) it's incremental,
         ## (2) it works remotely, (3) it works with "nested working copies
         ## (like we have for the data-experiment MEAT0) and, (4) it's even
