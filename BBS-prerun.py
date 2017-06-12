@@ -135,11 +135,12 @@ def writeAndUploadGitLog(snapshot_date):
         pkgdir_path = os.path.join(MEAT0_path, pkg)
 	git_cmd_pkg = '%s -C %s' % (git_cmd, pkgdir_path)
         gitlog_file = os.path.join(gitlog_dir, 'git-log-%s.txt' % pkg)
-	gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ai%n"'
+	gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
+	date_format = 'format:"%Y-%m-%d %H:%M:%S %z (%a, %d %b %Y)"'
         cmd = ' && '.join([
         'echo -n "URL: "',
         '%s remote get-url origin' % git_cmd_pkg,
-        '%s log --max-count=1 --format=%s' % (git_cmd_pkg, gitlog_format)
+        '%s log --max-count=1 --date=%s --format=%s' % (git_cmd_pkg, date_format, gitlog_format)
         ])
         cmd = '(%s) >%s' % (cmd, gitlog_file)
         bbs.jobs.doOrDie(cmd)
