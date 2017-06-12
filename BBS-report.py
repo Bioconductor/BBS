@@ -252,21 +252,26 @@ def write_LastChange_asTD(out, pkg, key, with_Revision=False):
 
 def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):
     out.write('<TABLE class="svn_info">')
-    if full_info:
+    ## metadata other than snapshot date exists only for individual pkg repos
+    if pkg == None:
         out.write('<TR>')
         write_Date_asTD(out, None, 'Snapshot Date', full_info)
         out.write('</TR>')
-        out.write('<TR>')
-        write_URL_asTD(out, pkg)
-        out.write('</TR>')
     else:
+        if full_info:
+            out.write('<TR>')
+            write_Date_asTD(out, None, 'Snapshot Date', full_info)
+            out.write('</TR>')
+            out.write('<TR>')
+            write_URL_asTD(out, pkg)
+            out.write('</TR>')
         out.write('<TR>')
         write_LastChange_asTD(out, pkg, 'Last Commit', False)
         out.write('</TR>')
         out.write('<TR>')
-        write_Date_asTD(out, None, 'Last Changed Date', full_info)
+        write_Date_asTD(out, pkg, 'Last Changed Date', full_info)
         out.write('</TR>')
-        out.write('</TABLE>')
+    out.write('</TABLE>')
     return
 
 ##############################################################################
