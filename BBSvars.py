@@ -44,8 +44,6 @@ update_MEAT0 = int(BBScorevars.getenv('BBS_UPDATE_MEAT0', False, "0")) != 0
 
 manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
 
-manifest_dir = BBScorevars.getenv('BBS_BIOC_MANIFEST_DIR', False)
-
 if MEAT0_type == 1:
     vcsmeta_dir = "svninfo"
     vcsmeta_file = "svn-info.txt"

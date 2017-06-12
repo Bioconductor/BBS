@@ -185,7 +185,7 @@ def snapshotMEAT0git(MEAT0_path):
     if BBSvars.update_MEAT0 == 1:
         git_cmd = os.environ['BBS_GIT_CMD']
         # first update manifest
-        manifest_dir = os.path.join(MEAT0_path, BBSvars.manifest_dir)
+        manifest_dir = os.path.join(BBSvars.work_topdir, 'manifest')
         cmd = '%s -C %s pull' % (git_cmd, manifest_dir)
         print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
         bbs.jobs.doOrDie(cmd)
@@ -227,7 +227,7 @@ def writeAndUploadMeatInfoGit(work_topdir):
     snapshot_date = snapshotMEAT0git(MEAT0_path)
     #os.chdir(work_topdir)
     ## "svninfo/" and "meat-index.txt"
-    manifest_path = os.path.join(MEAT0_path, BBSvars.manifest_dir, BBSvars.manifest_file)
+    manifest_path = os.path.join(BBSvars.work_topdir, 'manifest', BBSvars.manifest_file)
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)

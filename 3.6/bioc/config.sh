@@ -6,8 +6,7 @@
 
 export BBS_MODE="bioc"
 
-export BBS_BIOC_MANIFEST_FILE="bioc_3.6.manifest"
-export BBS_BIOC_MANIFEST_DIR="manifest"
+export BBS_BIOC_MANIFEST_FILE="software.txt"
 
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)
