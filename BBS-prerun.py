@@ -228,7 +228,7 @@ def writeAndUploadMeatInfoGit(work_topdir):
     snapshot_date = snapshotMEAT0git(MEAT0_path)
     #os.chdir(work_topdir)
     ## "svninfo/" and "meat-index.txt"
-    manifest_path = os.path.join(BBSvars.work_topdir, 'manifest', BBSvars.manifest_file)
+    manifest_path = BBSvars.manifest_path
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
