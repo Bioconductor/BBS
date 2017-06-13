@@ -135,7 +135,7 @@ def get_vcs_meta(pkg, key):
     Central_rdir = BBScorevars.Central_rdir
     file = os.path.join(BBSvars.vcsmeta_dir, BBSvars.vcsmeta_file)
     if pkg != None:
-        file = "-%s.".join(file.split(".")) % pkg
+        file = "-%s.".join(file.rsplit(".", 1)) % pkg
     val = WReadDcfVal(Central_rdir, file, key, True)
     if val == None:
         raise bbs.parse.DcfFieldNotFoundError(file, key)
