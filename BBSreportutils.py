@@ -121,19 +121,11 @@ def WReadDcfVal(rdir, file, field, full_line=False):
 
 ### Get svn info for Rpacks/ or Rpacks/pkg/
 def get_svn_info(pkg, key):
-    Central_rdir = BBScorevars.Central_rdir
-    if pkg == None:
-        file = "svninfo/svn-info.txt"
-    else:
-        file = "svninfo/svn-info-%s.txt" % pkg
-    val = WReadDcfVal(Central_rdir, file, key, True)
-    if val == None:
-        raise bbs.parse.DcfFieldNotFoundError(file, key)
-    return val
+    return get_vcs_meta(pkg, key)
 
 def get_vcs_meta(pkg, key):
     Central_rdir = BBScorevars.Central_rdir
-    file = os.path.join(BBSvars.vcsmeta_dir, BBSvars.vcsmeta_file)
+    file = BBSvars.vcsmeta_file
     if pkg != None:
         file = "-%s.".join(file.rsplit(".", 1)) % pkg
     val = WReadDcfVal(Central_rdir, file, key, True)
