@@ -108,7 +108,7 @@ def writeAndUploadVcsMeta(snapshot_date):
     f.close()
     if vcs == 'svn':
         ## Top-level svn-info file
-        cmd = '%s info %s >%s' % (vcs_cmd, MEAT0_path, vcsmeta_file)
+        cmd = '%s info %s >>%s' % (vcs_cmd, MEAT0_path, vcsmeta_file)
         bbs.jobs.doOrDie(cmd)
         ## Create svn-info file for each package
         for pkg in pkgs:
