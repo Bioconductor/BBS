@@ -51,13 +51,7 @@ else:
     manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
     manifest_path = os.path.join(MEAT0_rdir.path, manifest_file)
 
-if MEAT0_type == 1:
-    vcsmeta_dir = "svninfo"
-    vcsmeta_file = "svn-info.txt"
-
-if MEAT0_type == 3:
-    vcsmeta_dir = "gitlog"
-    vcsmeta_file = "git-log.txt"
+vcsmeta_file = {1: 'svninfo/svn-info.txt', 2: None, 3: 'gitlog/git-log.txt'}[MEAT0_type]
 
 ### Only needed by BBS-run.py
 

@@ -100,9 +100,9 @@ def writeAndUploadVcsMeta(snapshot_date):
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     ## Create top-level metadata file
-    vcsmeta_dir = BBSvars.vcsmeta_dir
+    vcsmeta_file = BBSvars.vcsmeta_file 
+    vcsmeta_dir = os.path.dirname(vcsmeta_file)
     bbs.fileutils.remake_dir(vcsmeta_dir)
-    vcsmeta_file = os.path.join(vcsmeta_dir, BBSvars.vcsmeta_file)
     f = open(vcsmeta_file, 'a')
     f.write('Snapshot Date: %s\n' % snapshot_date)
     f.close()
