@@ -196,7 +196,6 @@ def write_svn_LastChangedDate_asTD(out, pkg, full_line=True):
     return
 
 def write_svn_info_for_pkg_asTABLE(out, pkg, full_info=False):
-    out.write('<TABLE class="svn_info">')
     if 'BBS_SVNCHANGELOG_URL' in os.environ:
         url = os.environ['BBS_SVNCHANGELOG_URL']
         out.write('<TR>')
@@ -215,7 +214,6 @@ def write_svn_info_for_pkg_asTABLE(out, pkg, full_info=False):
     out.write('<TR>')
     write_svn_LastChangedDate_asTD(out, pkg, full_info)
     out.write('</TR>')
-    out.write('</TABLE>')
     return
 
 ##############################################################################
@@ -250,8 +248,17 @@ def write_LastChange_asTD(out, pkg, key, with_Revision=False):
     out.write('<TD class="svn_info">%s</TD>' % val)
     return
 
-def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):
+def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False, head=False):
+    vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
+    if head:
+        heading = {'svn': 'svn info', 'git': 'git log'}[vcs]
+        out.write('<P>%s</P>\n' % heading)
     out.write('<TABLE class="svn_info">')
+    {'svn': write_svn_info_for_pkg_asTABLE, 'git': write_git_log_for_pkg_asTABLE}[vcs](out, pkg, full_info)
+    out.write('</TABLE>')
+    return
+
+def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):
     ## metadata other than snapshot date exists only for individual pkg repos
     if pkg == None:
         out.write('<TR>')
@@ -271,7 +278,6 @@ def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):
         out.write('<TR>')
         write_Date_asTD(out, pkg, 'Last Changed Date', full_info)
         out.write('</TR>')
-    out.write('</TABLE>')
     return
 
 ##############################################################################
@@ -431,12 +437,9 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             #out.write('<B><SPAN style="font-size: larger;">%s</SPAN>&nbsp;%s</B><BR>' % (pkgname_html, version))
             out.write('<B>%s%s%s&nbsp;%s</B>' % (strike, pkgname_html, strike_close, version))
             out.write('<BR>%s' % maintainer)
-            if BBSvars.MEAT0_type == 1:
+            if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
                 out.write('<BR>')
-                write_svn_info_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
-            if BBSvars.MEAT0_type == 3:
-                out.write('<BR>')
-                write_git_log_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
+                write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
             is_first = False
         write_node_spec_asTD(out, node, '<I>%s</I>' % node.id, leafreport_ref)
@@ -860,15 +863,9 @@ def write_BioC_mainpage_head_asHTML(out):
     out.write('<I>This page was generated on %s.</I>\n' % date)
     out.write('</P>\n')
     write_motd_asTABLE(out)
-    if BBSvars.MEAT0_type == 1:
+    if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
         out.write('<DIV class="svn_info">\n')
-        out.write('<P>svn info</P>\n')
-        write_svn_info_for_pkg_asTABLE(out, None, True)
-        out.write('</DIV>\n')
-    if BBSvars.MEAT0_type == 3:
-        out.write('<DIV class="svn_info">\n')
-        out.write('<P>git log</P>\n')
-        write_git_log_for_pkg_asTABLE(out, None, True)
+        write_vcs_meta_for_pkg_asTABLE(out, None, True, True)
         out.write('</DIV>\n')
     return
 
