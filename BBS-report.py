@@ -139,84 +139,6 @@ def get_pkgname_asHTML(pkg):
 
 
 ##############################################################################
-### svn info HTMLization
-##############################################################################
-
-### Top-level svn info
-def write_svn_info_asHTML(out, key):
-    val = BBSreportutils.get_svn_info(None, key)
-    key = ' - %s' % key
-    key = key.replace(' ', '&nbsp;')
-    out.write('%s: <SPAN class="svn_info">%s</SPAN><BR>\n' % (key, val))
-    return
-
-def write_svn_Changelog_asTD(out, url, pkg):
-    if pkg != None:
-        url = '%s/%s' % (url, pkg)
-    out.write('<TD class="svn_info"><A href="%s">Bioconductor Changelog</A></TD>' % url)
-    return
-
-def write_svn_SnapshotDate_asTD(out):
-    key = 'Snapshot Date'
-    val = BBSreportutils.get_svn_info(None, key)
-    key = key.replace(' ', '&nbsp;')
-    val = val.replace(' ', '&nbsp;')
-    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
-    out.write('<TD class="svn_info">%s</TD>' % val)
-    return
-
-def write_svn_URL_asTD(out, pkg):
-    key = 'URL'
-    val = BBSreportutils.get_svn_info(pkg, key)
-    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
-    out.write('<TD class="svn_info">%s</TD>' % val)
-    return
-
-def write_svn_LastChangedRev_asTD(out, pkg, with_Revision=False):
-    key = 'Last Changed Rev'
-    val = BBSreportutils.get_svn_info(pkg, key)
-    key = key.replace(' ', '&nbsp;')
-    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
-    if with_Revision:
-        key2 = 'Revision'
-        val2 = BBSreportutils.get_svn_info(pkg, key2)
-        val = '%s / %s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (val, key2, val2)
-    out.write('<TD class="svn_info">%s</TD>' % val)
-    return
-
-def write_svn_LastChangedDate_asTD(out, pkg, full_line=True):
-    key = 'Last Changed Date'
-    val = BBSreportutils.get_svn_info(pkg, key)
-    if not full_line:
-        val = ' '.join(val.split(' ')[0:3])
-    key = key.replace(' ', '&nbsp;')
-    val = val.replace(' ', '&nbsp;')
-    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
-    out.write('<TD class="svn_info">%s</TD>' % val)
-    return
-
-def write_svn_info_for_pkg_asTABLE(out, pkg, full_info=False):
-    if 'BBS_SVNCHANGELOG_URL' in os.environ:
-        url = os.environ['BBS_SVNCHANGELOG_URL']
-        out.write('<TR>')
-        write_svn_Changelog_asTD(out, url, pkg)
-        out.write('</TR>')
-    if full_info:
-        out.write('<TR>')
-        write_svn_SnapshotDate_asTD(out)
-        out.write('</TR>')
-        out.write('<TR>')
-        write_svn_URL_asTD(out, pkg)
-        out.write('</TR>')
-    out.write('<TR>')
-    write_svn_LastChangedRev_asTD(out, pkg, True)
-    out.write('</TR>')
-    out.write('<TR>')
-    write_svn_LastChangedDate_asTD(out, pkg, full_info)
-    out.write('</TR>')
-    return
-
-##############################################################################
 ### VCS metadata HTMLization
 ##############################################################################
 
@@ -256,6 +178,33 @@ def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False, head=False):
     out.write('<TABLE class="svn_info">')
     {'svn': write_svn_info_for_pkg_asTABLE, 'git': write_git_log_for_pkg_asTABLE}[vcs](out, pkg, full_info)
     out.write('</TABLE>')
+    return
+
+def write_svn_Changelog_asTD(out, url, pkg):
+    if pkg != None:
+        url = '%s/%s' % (url, pkg)
+    out.write('<TD class="svn_info"><A href="%s">Bioconductor Changelog</A></TD>' % url)
+    return
+
+def write_svn_info_for_pkg_asTABLE(out, pkg, full_info=False):
+    if 'BBS_SVNCHANGELOG_URL' in os.environ:
+        url = os.environ['BBS_SVNCHANGELOG_URL']
+        out.write('<TR>')
+        write_svn_Changelog_asTD(out, url, pkg)
+        out.write('</TR>')
+    if full_info:
+        out.write('<TR>')
+        write_Date_asTD(out, None, 'Snapshot Date', full_info)
+        out.write('</TR>')
+        out.write('<TR>')
+        write_URL_asTD(out, pkg)
+        out.write('</TR>')
+    out.write('<TR>')
+    write_LastChange_asTD(out, pkg, 'Last Changed Rev', True)
+    out.write('</TR>')
+    out.write('<TR>')
+    write_Date_asTD(out, pkg, 'Last Changed Date', full_info)
+    out.write('</TR>')
     return
 
 def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):

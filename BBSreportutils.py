@@ -119,10 +119,7 @@ def WReadDcfVal(rdir, file, field, full_line=False):
     dcf.close()
     return val
 
-### Get svn info for Rpacks/ or Rpacks/pkg/
-def get_svn_info(pkg, key):
-    return get_vcs_meta(pkg, key)
-
+### Get vcs metadata for Rpacks/ or Rpacks/pkg/
 def get_vcs_meta(pkg, key):
     Central_rdir = BBScorevars.Central_rdir
     file = BBSvars.vcsmeta_file
