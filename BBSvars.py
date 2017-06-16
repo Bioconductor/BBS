@@ -52,6 +52,7 @@ else:
     manifest_path = os.path.join(MEAT0_rdir.path, manifest_file)
 
 vcsmeta_file = {1: 'svninfo/svn-info.txt', 2: None, 3: 'gitlog/git-log.txt'}[MEAT0_type]
+vcsmeta_path = os.path.join(work_topdir, vcsmeta_file)
 
 ### Only needed by BBS-run.py
 

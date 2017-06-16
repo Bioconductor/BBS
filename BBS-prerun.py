@@ -100,20 +100,20 @@ def writeAndUploadVcsMeta(snapshot_date):
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     ## Create top-level metadata file
-    vcsmeta_file = BBSvars.vcsmeta_file 
-    vcsmeta_dir = os.path.dirname(vcsmeta_file)
+    vcsmeta_path = BBSvars.vcsmeta_path 
+    vcsmeta_dir = os.path.dirname(vcsmeta_path)
     bbs.fileutils.remake_dir(vcsmeta_dir)
-    f = open(vcsmeta_file, 'a')
+    f = open(vcsmeta_path, 'a')
     f.write('Snapshot Date: %s\n' % snapshot_date)
     f.close()
     if vcs == 'svn':
         ## Top-level svn-info file
-        cmd = '%s info %s >>%s' % (vcs_cmd, MEAT0_path, vcsmeta_file)
+        cmd = '%s info %s >>%s' % (vcs_cmd, MEAT0_path, vcsmeta_path)
         bbs.jobs.doOrDie(cmd)
         ## Create svn-info file for each package
         for pkg in pkgs:
             pkgdir_path = os.path.join(MEAT0_path, pkg)
-            svninfo_file = "-%s.".join(vcsmeta_file.rsplit(".", 1)) % pkg
+            svninfo_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
             cmd = '%s info %s >%s' % (vcs_cmd, pkgdir_path, svninfo_file)
             bbs.jobs.doOrDie(cmd)
         update_svnlog()
@@ -122,7 +122,7 @@ def writeAndUploadVcsMeta(snapshot_date):
         for pkg in pkgs:
             pkgdir_path = os.path.join(MEAT0_path, pkg)
             git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgdir_path)
-            gitlog_file = "-%s.".join(vcsmeta_file.rsplit(".", 1)) % pkg
+            gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
             gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
             date_format = 'format:"%Y-%m-%d %H:%M:%S %z (%a, %d %b %Y)"'
             cmd = ' && '.join([
