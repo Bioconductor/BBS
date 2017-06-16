@@ -124,7 +124,7 @@ def writeAndUploadVcsMeta(snapshot_date):
             git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgdir_path)
             gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
             gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
-            date_format = 'format:"%Y-%m-%d %H:%M:%S %z (%a, %d %b %Y)"'
+            date_format = 'format-local:"%Y-%m-%d %H:%M:%S %s (%a, %d %b %Y)"' % snapshot_date.split(' ')[2]
             cmd = ' && '.join([
             'echo -n "URL: "',
             '%s remote get-url origin' % git_cmd_pkg,
