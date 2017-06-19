@@ -124,7 +124,7 @@ def writeAndUploadVcsMeta(snapshot_date):
             git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgdir_path)
             gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
             gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
-            date_format = 'format-local:"%Y-%m-%d %H:%M:%S %s (%a, %d %b %Y)"' % snapshot_date.split(' ')[2]
+            date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
             cmd = ' && '.join([
             'echo -n "URL: "',
             '%s remote get-url origin' % git_cmd_pkg,
@@ -188,11 +188,12 @@ def snapshotMEAT0(MEAT0_path):
                 dcf.close()
                 for pkg in pkgs:
                     pkgdir_path = os.path.join(MEAT0_path, pkg)
+                    git_cmd = '%s -C %s' % (vcs_cmd, pkgdir_path)
                     if os.path.exists(pkgdir_path):
-                        cmd = '%s -C %s fetch' % (vcs_cmd, pkgdir_path)
+                        cmd = '%s fetch' % git_cmd
                     else:
                         cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (vcs_cmd, MEAT0_path, pkg)
-                    cmd = ' && '.join([cmd, '%s -C %s checkout %s' % (git_cmd, pkgdir_path, git_branch)])
+                    cmd = ' && '.join([cmd, '%s checkout %s' % (git_cmd, git_branch)])
                     print "BBS> [snapshotMEAT0] %s" % cmd
                     bbs.jobs.doOrDie(cmd)
                     ## merge only up to snapshot date, see https://stackoverflow.com/a/8223166/2792099
