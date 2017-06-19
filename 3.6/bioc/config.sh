@@ -11,7 +11,7 @@ export BBS_BIOC_MANIFEST_FILE="bioc_3.6.manifest"
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)
 #   2: CRAN-style local repo containing .tar.gz pkgs
-#   3: git repo contains pkg dirs
+#   3: git repo containing pkg dirs
 export BBS_MEAT0_TYPE=3
 
 # Where is it?

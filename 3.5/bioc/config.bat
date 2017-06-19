@@ -7,10 +7,11 @@ set BBS_MODE=bioc
 
 set BBS_BIOC_MANIFEST_FILE=bioc_3.5.manifest
 
-@rem What type of meat? Only 2 types are supported:
+@rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)
 @rem   2: CRAN-style local repo containing .tar.gz pkgs
-set BBS_MEAT0_TYPE=1
+@rem   3: git repo containing pkg dirs
+set BBS_MEAT0_TYPE=3
 
 @rem Where is it?
 set BBS_MEAT0_RHOST=malbec2
