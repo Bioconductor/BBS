@@ -25,9 +25,13 @@ R_SCRIPT="$R_SCRIPT; statsUrl <- '$STATS_URL'"
 R_SCRIPT="$R_SCRIPT; logUrl <- '$LOG_URL'"
 R_SCRIPT="$R_SCRIPT; setwd(reposRoot)"
 R_SCRIPT="$R_SCRIPT; extractVignettes(reposRoot, contribPaths)"
+R_SCRIPT="$R_SCRIPT; extractHTMLDocuments(reposRoot, contribPaths['source'][1], 'vignettes')"
 R_SCRIPT="$R_SCRIPT; extractManuals(reposRoot, contribPaths)"
 R_SCRIPT="$R_SCRIPT; print('Generating repos control files...')"
 R_SCRIPT="$R_SCRIPT; genReposControlFiles(reposRoot, contribPaths)"
+R_SCRIPT="$R_SCRIPT; writeRFilesFromVignettes(reposRoot, reposName,
+viewUrl=viewUrl, reposFullUrl=biocinstallRepos(),
+devHistoryUrl=logUrl)"
 R_SCRIPT="$R_SCRIPT; extractTopLevelFiles(reposRoot, contribPaths['source'][1], 'readmes', 'README')"
 R_SCRIPT="$R_SCRIPT; extractTopLevelFiles(reposRoot, contribPaths['source'][1], 'install', 'INSTALL')"
 R_SCRIPT="$R_SCRIPT; extractTopLevelFiles(reposRoot, contribPaths['source'][1], 'licenses', 'LICENSE')"
