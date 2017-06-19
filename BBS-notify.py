@@ -49,9 +49,9 @@ def send_notification(pkg):
     maintainer_email = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'MaintainerEmail')
     #print "%s %s %s %s" % (pkg, version, maintainer, maintainer_email)
     #key = 'Last Changed Date'
-    #last_changed_date = BBSreportutils.get_svn_info(pkg, key)
+    #last_changed_date = BBSreportutils.get_vcs_meta(pkg, key)
     #key = 'Last Changed Rev'
-    #last_changed_rev = BBSreportutils.get_svn_info(pkg, key)
+    #last_changed_rev = BBSreportutils.get_vcs_meta(pkg, key)
     problem_descs = []
     for node in BBSreportutils.supported_nodes(pkg):
         stagecmd = 'install'

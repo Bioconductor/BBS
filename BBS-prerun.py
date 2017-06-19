@@ -90,30 +90,49 @@ def writeAndUploadMeatIndex(pkgs, meat_path):
     BBScorevars.Central_rdir.Put(meat_index_path, True, True)
     return
 
-def writeAndUploadSvnInfo(snapshot_date):
-    svn_cmd = os.environ['BBS_SVN_CMD']
-    svninfo_dir = os.path.join(BBSvars.work_topdir, "svninfo")
-    bbs.fileutils.remake_dir(svninfo_dir)
-    ## Create top-level svn-info file
+def writeAndUploadVcsMeta(snapshot_date):
+    vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
+    vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
-    svninfo_file = os.path.join(svninfo_dir, "svn-info.txt")
-    cmd = '%s info %s >%s' % (svn_cmd, MEAT0_path, svninfo_file)
-    bbs.jobs.doOrDie(cmd)
-    f = open(svninfo_file, 'a')
-    f.write('Snapshot Date: %s\n' % snapshot_date)
-    f.close()
-    ## Create svn-info file for each package
+    ## Get list of packages
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
     dcf = open(meat_index_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
-    for pkg in pkgs:
-        pkgdir_path = os.path.join(MEAT0_path, pkg)
-        svninfo_file = os.path.join(svninfo_dir, 'svn-info-%s.txt' % pkg)
-        cmd = '%s info %s >%s' % (svn_cmd, pkgdir_path, svninfo_file)
+    ## Create top-level metadata file
+    vcsmeta_path = BBSvars.vcsmeta_path 
+    vcsmeta_dir = os.path.dirname(vcsmeta_path)
+    bbs.fileutils.remake_dir(vcsmeta_dir)
+    f = open(vcsmeta_path, 'a')
+    f.write('Snapshot Date: %s\n' % snapshot_date)
+    f.close()
+    if vcs == 'svn':
+        ## Top-level svn-info file
+        cmd = '%s info %s >>%s' % (vcs_cmd, MEAT0_path, vcsmeta_path)
         bbs.jobs.doOrDie(cmd)
-    update_svnlog()
-    BBScorevars.Central_rdir.Put(svninfo_dir, True, True)
+        ## Create svn-info file for each package
+        for pkg in pkgs:
+            pkgdir_path = os.path.join(MEAT0_path, pkg)
+            svninfo_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
+            cmd = '%s info %s >%s' % (vcs_cmd, pkgdir_path, svninfo_file)
+            bbs.jobs.doOrDie(cmd)
+        update_svnlog()
+    if vcs == 'git':
+        ## Create git-log file for each package
+        for pkg in pkgs:
+            pkgdir_path = os.path.join(MEAT0_path, pkg)
+            git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgdir_path)
+            gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
+            gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
+            date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
+            cmd = ' && '.join([
+            'echo -n "URL: "',
+            '%s remote get-url origin' % git_cmd_pkg,
+            '%s log --max-count=1 --date=%s --format=%s' % (git_cmd_pkg, date_format, gitlog_format)
+            ])
+            cmd = '(%s) >%s' % (cmd, gitlog_file)
+            bbs.jobs.doOrDie(cmd)
+    BBScorevars.Central_rdir.Put(vcsmeta_dir, True, True)
     return
 
 def update_svnlog():
@@ -143,27 +162,57 @@ def snapshotMEAT0(MEAT0_path):
             print "BBS> [snapshotMEAT0] cd BBS_MEAT0_RDIR"
             os.chdir(MEAT0_path)
             cmd = update_script
+            print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
+            bbs.jobs.doOrDie(cmd)
         else:
-            svn_cmd = os.environ['BBS_SVN_CMD']
-            cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (svn_cmd, MEAT0_path)
-        print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
-        bbs.jobs.doOrDie(cmd)
+            vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
+            vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
+            if vcs == 'svn':
+                cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (vcs_cmd, MEAT0_path)
+                print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
+                bbs.jobs.doOrDie(cmd)
+            if vcs == 'git':
+                ## first update manifest
+                manifest_path = BBSvars.manifest_path
+                git_cmd = '%s -C %s' % (vcs_cmd, os.path.dirname(manifest_path))
+                git_branch = BBSvars.git_branch
+                cmd = ' && '.join([
+                '%s pull' % git_cmd,
+                '%s checkout %s' % (git_cmd, git_branch)
+                ])
+                print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
+                bbs.jobs.doOrDie(cmd)
+                ## then itarate over manifest to update pkg dirs
+                dcf = open(manifest_path, 'r')
+                pkgs = bbs.parse.readPkgsFromDCF(dcf)
+                dcf.close()
+                for pkg in pkgs:
+                    pkgdir_path = os.path.join(MEAT0_path, pkg)
+                    git_cmd = '%s -C %s' % (vcs_cmd, pkgdir_path)
+                    if os.path.exists(pkgdir_path):
+                        cmd = '%s fetch' % git_cmd
+                    else:
+                        cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (vcs_cmd, MEAT0_path, pkg)
+                    cmd = ' && '.join([cmd, '%s checkout %s' % (git_cmd, git_branch)])
+                    print "BBS> [snapshotMEAT0] %s" % cmd
+                    bbs.jobs.doOrDie(cmd)
+                    ## merge only up to snapshot date, see https://stackoverflow.com/a/8223166/2792099
+                    cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, git_branch)
+                    print "BBS> [snapshotMEAT0] %s" % cmd
+                    bbs.jobs.doOrDie(cmd)
     return snapshot_date
 
 def writeAndUploadMeatInfo(work_topdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     snapshot_date = snapshotMEAT0(MEAT0_path)
-    #os.chdir(work_topdir)
-    ## "svninfo/" and "meat-index.txt"
-    manifest_path = os.path.join(MEAT0_path, BBSvars.manifest_file)
+    manifest_path = BBSvars.manifest_path
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     writeAndUploadMeatIndex(pkgs, MEAT0_path)
-    writeAndUploadSvnInfo(snapshot_date)
+    writeAndUploadVcsMeta(snapshot_date)
     return
-
 
 ##############################################################################
 
@@ -296,7 +345,7 @@ if __name__ == "__main__":
         print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
 
     subtask = "upload-meat-info"
-    if BBSvars.MEAT0_type == 1 and (arg1 == "" or arg1 == subtask):
+    if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3) and (arg1 == "" or arg1 == subtask):
         print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
         writeAndUploadMeatInfo(work_topdir)
         ## Using rsync is better than "svn export": (1) it's incremental,

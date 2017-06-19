@@ -21,4 +21,4 @@ export BBS_RSYNC_CMD="/usr/bin/rsync"
 # Linux only)
 export BBS_SVN_CMD="/usr/bin/svn"
 export BBS_TAR_CMD="/bin/tar"
-
+export BBS_GIT_CMD="/usr/bin/git"

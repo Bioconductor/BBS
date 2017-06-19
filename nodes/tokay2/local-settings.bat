@@ -14,3 +14,4 @@ set BBS_CURL_CMD=C:\cygwin\bin\curl.exe
 @rem Linux only)
 @rem set BBS_SVN_CMD=
 @rem set BBS_TAR_CMD=
+@rem set BBS_GIT_CMD=

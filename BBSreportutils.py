@@ -14,6 +14,7 @@ import string
 import urllib2 
 
 import bbs.parse
+import BBSvars
 import BBScorevars
 
 
@@ -118,13 +119,12 @@ def WReadDcfVal(rdir, file, field, full_line=False):
     dcf.close()
     return val
 
-### Get svn info for Rpacks/ or Rpacks/pkg/
-def get_svn_info(pkg, key):
+### Get vcs metadata for Rpacks/ or Rpacks/pkg/
+def get_vcs_meta(pkg, key):
     Central_rdir = BBScorevars.Central_rdir
-    if pkg == None:
-        file = "svninfo/svn-info.txt"
-    else:
-        file = "svninfo/svn-info-%s.txt" % pkg
+    file = BBSvars.vcsmeta_file
+    if pkg != None:
+        file = "-%s.".join(file.rsplit(".", 1)) % pkg
     val = WReadDcfVal(Central_rdir, file, key, True)
     if val == None:
         raise bbs.parse.DcfFieldNotFoundError(file, key)

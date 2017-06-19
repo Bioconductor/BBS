@@ -8,10 +8,11 @@ export BBS_MODE="data-experiment"
 
 export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.5.manifest"
 
-# What type of meat? Only 2 types are supported:
+# What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)
 #   2: CRAN-style local repo containing .tar.gz pkgs
-export BBS_MEAT0_TYPE=1
+#   3: git repo containing pkg dirs
+export BBS_MEAT0_TYPE=3
 
 # Where is it?
 export BBS_MEAT0_RHOST="malbec2"
