@@ -89,7 +89,7 @@ in _this_ order
 
   Until the next devel builds are running, we want symlinks pointing to the old
   devel builds so that the BiocInstaller package will work.
-  This includes the software, data/annotation, and data/experment repositories.
+  This includes the software, data/annotation, and data/experiment repositories.
   Remove these symlinks when the builds start running.
 
 - Start setting up new devel builders and repositories.
@@ -179,6 +179,7 @@ in _this_ order
  the devel version of a package).
 
 - Make the release builds extract the meat from the new branch in svn.
+  From within MEAT0/, run 'svn up' for both software and data experiment.
 
 - In trunk, change R/zzz.R of the BiocInstaller package to indicate new
   BioC version number.
