@@ -7,6 +7,7 @@
 ###
 
 import sys
+import os
 
 import bbs.rdir
 import bbs.jobs
@@ -42,8 +43,16 @@ MEAT0_type = int(BBScorevars.getenv('BBS_MEAT0_TYPE'))
 
 update_MEAT0 = int(BBScorevars.getenv('BBS_UPDATE_MEAT0', False, "0")) != 0
 
-manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
+if MEAT0_type == 3:
+    manifest_file = {'bioc': 'software.txt', 'data-experiment': 'dataexperiment.txt'}[BBScorevars.mode]
+    manifest_path = os.path.join(work_topdir, 'manifest', manifest_file)
+    git_branch = BBScorevars.getenv('BBS_BIOC_GIT_BRANCH')
+else:
+    manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
+    manifest_path = os.path.join(MEAT0_rdir.path, manifest_file)
 
+vcsmeta_file = {1: 'svninfo/svn-info.txt', 2: None, 3: 'gitlog/git-log.txt'}[MEAT0_type]
+vcsmeta_path = os.path.join(work_topdir, vcsmeta_file)
 
 ### Only needed by BBS-run.py
 
