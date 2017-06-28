@@ -40,7 +40,7 @@ cd "$wd0"
 # packages to propagate and to later not be replaced by the bi-arch when
 # the dropped node is back.
 
-export BBS_OUTGOING_MAP="source:malbec1/buildsrc"
+export BBS_OUTGOING_MAP="source:malbec1/buildsrc win.binary:tokay1/buildbin mac.binary.el-capitan:veracruz1/buildbin"
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)
@@ -48,7 +48,7 @@ export BBS_OUTGOING_MAP="source:malbec1/buildsrc"
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
 
-export BBS_REPORT_NODES="malbec1"
+export BBS_REPORT_NODES="malbec1 tokay1:bin veracruz1:bin"
 #export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
