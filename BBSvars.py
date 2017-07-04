@@ -47,6 +47,7 @@ if MEAT0_type == 3:
     manifest_file = {'bioc': 'software.txt', 'data-experiment': 'dataexperiment.txt'}[BBScorevars.mode]
     manifest_path = os.path.join(work_topdir, 'manifest', manifest_file)
     git_branch = BBScorevars.getenv('BBS_BIOC_GIT_BRANCH')
+    manifest_branch = BBScorevars.getenv('BBS_BIOC_MANIFEST_GIT_BRANCH')
 else:
     manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
     manifest_path = os.path.join(MEAT0_rdir.path, manifest_file)

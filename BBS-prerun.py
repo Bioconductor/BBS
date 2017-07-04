@@ -174,11 +174,12 @@ def snapshotMEAT0(MEAT0_path):
             if vcs == 'git':
                 ## first update manifest
                 manifest_path = BBSvars.manifest_path
+                manifest_branch = BBSvars.manifest_branch
                 git_cmd = '%s -C %s' % (vcs_cmd, os.path.dirname(manifest_path))
                 git_branch = BBSvars.git_branch
                 cmd = ' && '.join([
                 '%s pull' % git_cmd,
-                '%s checkout %s' % (git_cmd, git_branch)
+                '%s checkout %s' % (git_cmd, manifest_branch)
                 ])
                 print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
                 bbs.jobs.doOrDie(cmd)
