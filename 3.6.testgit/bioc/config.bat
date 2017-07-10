@@ -5,15 +5,16 @@
 
 set BBS_MODE=bioc
 
-set BBS_BIOC_MANIFEST_FILE=bioc_3.6.manifest
-
 @rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)
 @rem   2: CRAN-style local repo containing .tar.gz pkgs
 @rem   3: git repo containing pkg dirs
 set BBS_MEAT0_TYPE=3
 
-@rem Where is it?
+@rem set BBS_BIOC_MANIFEST_FILE=bioc_3.6.manifest
+set BBS_BIOC_MANIFEST_FILE=software.txt
+
+@rem Where is the fresh meat to be stored by prerun (stage1)
 set BBS_MEAT0_RHOST=malbec1
 set BBS_MEAT0_RUSER=biocbuild
 set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.6.testgit-bioc/MEAT0

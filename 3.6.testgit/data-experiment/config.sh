@@ -6,15 +6,16 @@
 
 export BBS_MODE="data-experiment"
 
-export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.6.manifest"
-
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)
 #   2: CRAN-style local repo containing .tar.gz pkgs
 #   3: git repo containing pkg dirs
 export BBS_MEAT0_TYPE=3
 
-# Where is it?
+#export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.6.manifest"
+export BBS_BIOC_MANIFEST_FILE="dataexperiment.txt"
+
+# Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="malbec1"
 export BBS_MEAT0_RUSER="biocbuild"
 export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.6.testgit-data-experiment/MEAT0"

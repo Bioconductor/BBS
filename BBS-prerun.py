@@ -118,7 +118,7 @@ def writeAndUploadVcsMeta(snapshot_date):
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     ## Create top-level metadata file
-    vcsmeta_path = BBSvars.vcsmeta_path 
+    vcsmeta_path = os.path.join(BBSvars.work_topdir, BBSvars.vcsmeta_file)
     vcsmeta_dir = os.path.dirname(vcsmeta_path)
     bbs.fileutils.remake_dir(vcsmeta_dir)
     f = open(vcsmeta_path, 'a')
@@ -173,12 +173,12 @@ def snapshotMEAT0(MEAT0_path):
             if vcs == 'git':
                 ## first update manifest
                 manifest_path = BBSvars.manifest_path
-                manifest_branch = BBSvars.manifest_branch
+                manifest_git_branch = BBSvars.manifest_git_branch
                 git_cmd = '%s -C %s' % (vcs_cmd, os.path.dirname(manifest_path))
                 git_branch = BBSvars.git_branch
                 cmd = ' && '.join([
                 '%s pull' % git_cmd,
-                '%s checkout %s' % (git_cmd, manifest_branch)
+                '%s checkout %s' % (git_cmd, manifest_git_branch)
                 ])
                 print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
                 bbs.jobs.doOrDie(cmd)
