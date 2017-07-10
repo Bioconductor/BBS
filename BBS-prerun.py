@@ -90,6 +90,24 @@ def writeAndUploadMeatIndex(pkgs, meat_path):
     BBScorevars.Central_rdir.Put(meat_index_path, True, True)
     return
 
+def update_svnlog():
+    MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
+    svn_cmd = os.environ['BBS_SVN_CMD']
+    cmd = '%s info %s' % (svn_cmd, MEAT0_path)
+    output = bbs.jobs.getCmdOutput(cmd)
+    lines = output.split("\n")
+    for line in lines:
+        if "Revision:" in line:
+            revision = line.split(" ")[1]
+            break
+    logfilename = os.path.join(BBSvars.work_topdir, "svnlog.txt")
+    logfile = open(logfilename, "a+")
+    date = time.strftime("%Y-%m-%d")
+    logfile.write("%s\t%s\n" % (date, revision))
+    logfile.close()
+    svninfo_dir = os.path.join(BBSvars.work_topdir, "svninfo")
+    shutil.copy(logfilename, svninfo_dir)
+
 def writeAndUploadVcsMeta(snapshot_date):
     vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
     vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
@@ -134,25 +152,6 @@ def writeAndUploadVcsMeta(snapshot_date):
             bbs.jobs.doOrDie(cmd)
     BBScorevars.Central_rdir.Put(vcsmeta_dir, True, True)
     return
-
-def update_svnlog():
-    MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
-    svn_cmd = os.environ['BBS_SVN_CMD']
-    cmd = '%s info %s' % (svn_cmd, MEAT0_path)
-    output = bbs.jobs.getCmdOutput(cmd)
-    lines = output.split("\n")
-    for line in lines:
-        if "Revision:" in line:
-            revision = line.split(" ")[1]
-            break
-    logfilename = os.path.join(BBSvars.work_topdir, "svnlog.txt")
-    logfile = open(logfilename, "a+")
-    date = time.strftime("%Y-%m-%d")
-    logfile.write("%s\t%s\n" % (date, revision))
-    logfile.close()
-    svninfo_dir = os.path.join(BBSvars.work_topdir, "svninfo")
-    shutil.copy(logfilename, svninfo_dir)
-
 
 def snapshotMEAT0(MEAT0_path):
     snapshot_date = bbs.jobs.currentDateString()

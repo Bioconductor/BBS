@@ -72,11 +72,13 @@ def writeSysCommandVersion(var):
     bbs.jobs.call(syscmd) # ignore retcode
     return
 
-def updateNodeInfo():
+def makeNodeInfo():
     # Generate the NodeInfo files (the files containing some node related info)
     NodeInfo_subdir = "NodeInfo"
     print "BBS>   Updating BBS_WORK_TOPDIR/%s" % NodeInfo_subdir
-    os.chdir(os.path.join(BBSvars.work_topdir, NodeInfo_subdir))
+    NodeInfo_path = os.path.join(BBSvars.work_topdir, NodeInfo_subdir)
+    bbs.fileutils.remake_dir(NodeInfo_path)
+    os.chdir(NodeInfo_path)
     writeRversion()
     writeRconfig()
     Rscript = "sessionInfo()"
@@ -372,7 +374,7 @@ def STAGE2():
     CallRfunctionFromSTAGE2Script("updateNonTargetPkgs",
                                   "updateNonTargetPkgs2.Rout")
 
-    updateNodeInfo()
+    makeNodeInfo()
 
     print "BBS> [STAGE2] DONE at %s." % time.asctime()
     return
