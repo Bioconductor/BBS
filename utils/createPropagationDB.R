@@ -11,7 +11,7 @@
 
 if (!require(BiocInstaller))
 {
-    source("http://bioconductor.org/biocLite.R")
+    source("https://bioconductor.org/biocLite.R")
 }
 library(tools)
 
@@ -394,7 +394,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
         pkgIndex <- file.path(online.contrib, "PACKAGES")
         if(file.exists(pkgIndex))
             unlink(pkgIndex)
-        download.file(paste0("http://bioconductor.org/packages/",
+        download.file(paste0("https://bioconductor.org/packages/",
             biocvers, "/", biocrepo, "/src/contrib/PACKAGES"),
         destfile=pkgIndex)
         biocrepo.url <<- paste0("file://", file.path(t, "biocrepo"))

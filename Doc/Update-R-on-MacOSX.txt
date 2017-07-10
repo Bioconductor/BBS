@@ -23,7 +23,7 @@ I find it doesn't take too much time to do them by hand -- Patrick)
    http://r.research.att.com/
    (e.g. curl -O http://r.research.att.com/R-devel-leopard-universal.tar.gz).
    for RELEASE:
-   http://cran.fhcrc.org/bin/macosx/R-X.Y.Z.pkg
+   https://cran.rstudio.com/bin/macosx/R-X.Y.Z.pkg
 
 4. If replacing an older build of same version of R, remove the old installation
    using

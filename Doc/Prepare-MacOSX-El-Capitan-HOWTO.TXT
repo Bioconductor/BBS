@@ -172,10 +172,10 @@ From now on everything must be done from the biocbuild account.
     Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
     Landsiedel, Timothy <tjlandsi@RoswellPark.org>
 
-** Check that you can send HTTP requests to the central node
+** Check that you can send HTTPS requests to the central node
 
-    curl "http://malbec2"                  # from within RPCI's DMZ
-    curl "http://malbec2.roswellpark.org"  # from anywhere else
+    curl "https://malbec2"                  # from within RPCI's DMZ
+    curl "https://malbec2.roswellpark.org"  # from anywhere else
 
   If this is blocked by RPCI's firewall, after a while you'll get:
 
@@ -417,7 +417,7 @@ Then start R again and try to install a few packages *from source*:
   install.packages("minqa", type="source")  # contains Fortran code
 
   # Bioconductor packages
-  source("http://bioconductor.org/biocLite.R")
+  source("https://bioconductor.org/biocLite.R")
   ## ONLY if release and devel are using the same version of R:
   #useDevel()
   biocLite("BiocCheck", type="source")

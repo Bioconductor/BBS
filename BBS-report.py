@@ -127,7 +127,7 @@ def get_alphabet_dispatcher_asHTML(current_letter=None, href=""):
 
 def get_pkgname_asHTML(pkg):
     if BBScorevars.mode == "cran":
-        url = "http://cran.fhcrc.org/web/packages/%s/" % pkg
+        url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
         version_string = BBSreportutils.bioc_version
         if BBScorevars.mode == "data-experiment":
@@ -548,7 +548,7 @@ def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
 
 def write_top_asHTML(out, title, css_file=None, js_file=None):
     out.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"')
-    out.write(' "http://www.w3.org/TR/html4/loose.dtd">\n')
+    out.write(' "https://www.w3.org/TR/html4/loose.dtd">\n')
     out.write('<HTML>\n')
     out.write('<HEAD>\n')
     out.write('<script language="javascript">\n')
@@ -1071,7 +1071,8 @@ def write_propagation_glyph_table(out):
     out.write('<TD>UNNEEDED: Package was not propagated because it is already in the repository with this version. A version bump is required in order to propagate it</TD>\n')
     out.write('</TR>\n')
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="2">A <s>crossed-out</s> package name indicates the package is <a href="http://bioconductor.org/developers/package-end-of-life/">deprecated</a>.</TD>\n')
+    out.write('<TD COLSPAN="2">A <s>crossed-out</s> package name indicates the
+    package is <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>.</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
     return

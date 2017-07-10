@@ -5,7 +5,7 @@
 # R -e "RUnit::runTestFile('test_createPropagationDB.R')"
 
 if(!require(BiocInstaller))
-    source("http://bioconductor.org/biocLite.R")
+    source("https://bioconductor.org/biocLite.R")
 
 
 deps <- c("RUnit", "devtools", "BiocGenerics")

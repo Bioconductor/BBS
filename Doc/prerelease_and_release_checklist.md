@@ -18,11 +18,11 @@ It's important to use these binary R installations:
 
 Windows:
 
-  http://cran.fhcrc.org/bin/windows/base/
+  https://cran.rstudio.com/bin/windows/base/
 
 Mac:
 
-  http://cran.fhcrc.org/bin/macosx/
+  https://cran.rstudio.com/bin/macosx/
 
 A "clean" machine means, on Windows, no Rtools, LaTeX, etc.
 On Mac it means no Xcode and do not use Simon U's builds, use the one above.

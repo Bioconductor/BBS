@@ -1,6 +1,6 @@
 
 if (!require(BiocInstaller))
-  source("http://bioconductor.org/biocLite.R")
+  source("https://bioconductor.org/biocLite.R")
 
 deps <- c("httr", "yaml", "R.utils")
 
@@ -34,7 +34,7 @@ testHttps <- function(mirrorUrl=defaultMirror())
 
 getMirrors <- function()
 {
-    yaml <- content(GET("http://bioconductor.org/config.yaml"))
+    yaml <- content(GET("https://bioconductor.org/config.yaml"))
     obj <- yaml.load(yaml)
     mirrors <- unlist(lapply(obj$mirrors, function(x) {
         x=unlist(unname(x))

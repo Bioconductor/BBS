@@ -35,11 +35,11 @@ msg_footnote = "Notes:\n\n" \
              + "    package and make sure that all the problems have gone.\n\n" \
              + "  * If you have questions about this report or need help with the\n" \
              + "    maintenance of your package, please use the Bioc-devel mailing list:\n\n" \
-             + "      http://bioconductor.org/help/mailing-list/\n\n" \
+             + "      https://bioconductor.org/help/support/\n\n" \
              + "    (all package maintainers are requested to subscribe to this list)\n\n" \
              + "For immediate notification of package build status, please\n" \
              + "subscribe to your package's RSS feed. Information is at:\n\n" \
-             + "http://bioconductor.org/developers/rss-feeds/\n\n" \
+             + "https://bioconductor.org/developers/rss-feeds/\n\n" \
              + "Thanks for contributing to the Bioconductor project!\n\n" 
 
 def send_notification(pkg):

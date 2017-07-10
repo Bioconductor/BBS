@@ -56,7 +56,7 @@ Updating R
    try to install last Biobase from the shell with:
      $ R CMD INSTALL <pkg_dir>
    or from R with:
-     > source("http://bioconductor.org/biocLite.R")
+     > source("https://bioconductor.org/biocLite.R")
      > biocLite("Biobase")
    Then try to load Biobase in R.
 
@@ -74,7 +74,7 @@ Updating R
      If it happens that they are using the R that you are updating then
      they will crash if they can't load the biocViews package.
      Easy way to install biocViews:
-     > source("http://bioconductor.org/biocLite.R")
+     > source("https://bioconductor.org/biocLite.R")
      > biocLite("biocViews")
      > library(biocViews) # Just to make sure it can be loaded
 

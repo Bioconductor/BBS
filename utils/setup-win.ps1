@@ -181,8 +181,8 @@ iex ".\$env:R_INSTALLER /DIR=$r_basedir /noicons /verysilent"
 # install BiocInstaller as biocbuild
 # this will prompt for the biocbuild password;
 # not sure if it can be made non-interactive
-#iex "$r -e `"source('http://bioconductor.org/biocLite.R')`""
-Start-Process $r -Credential biocbuild -ArgumentList "-e `"source('http://bioconductor.org/biocLite.R')`""
+#iex "$r -e `"source('https://bioconductor.org/biocLite.R')`""
+Start-Process $r -Credential biocbuild -ArgumentList "-e `"source('https://bioconductor.org/biocLite.R')`""
 
 # useDevel() if appropriate; this will prompt (again?)
 # for biocbuild's password
