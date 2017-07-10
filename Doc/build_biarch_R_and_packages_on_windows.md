@@ -35,7 +35,7 @@ The machine should be configured with the following:
 * The [InnoSetup installer](http://jrsoftware.org/isinfo.php). Be sure and
   install the Unicode version of the installer. Don't install it in the
   default location, instead install in c:\packages\Inno. The 
-  [manual](https://cran.rstudio.com/doc/manuals/R-admin.html#The-Inno-Setup-installer)
+  [manual](http://cran.fhcrc.org/doc/manuals/R-admin.html#The-Inno-Setup-installer)
   and the MkRules.local script say you can use a custom location here,
   but I find that problematic. It works if the default value, which is
   c:/Packages/inno (note forward slashes) is left in place in the
@@ -258,7 +258,7 @@ windows but not 32-bit (a rare case, probably).
 ### R CMD check
 
 The [Writing R Extensions]
-(https://cran.r-project.org/doc/manuals/R-exts.html#Checking-packages)
+(http://cran.r-project.org/doc/manuals/R-exts.html#Checking-packages)
 manual suggests a couple of different options for R CMD check:
 
 

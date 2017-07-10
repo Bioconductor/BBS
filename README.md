@@ -154,7 +154,7 @@ about the build, enough to construct the build report.
 This changes with every release, so in order to avoid
 writing soon-to-be obsolete information here, I will
 refer you to the
-[config.yaml](https://master.bioconductor.org/config.yaml
+[config.yaml](http://master.bioconductor.org/config.yaml
 ) file for the web site (requires your svn credentials).
 The *active_devel_builders* and *active_release_builders*
 section will tell you what is being used, and that

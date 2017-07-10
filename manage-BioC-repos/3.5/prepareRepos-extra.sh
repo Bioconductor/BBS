@@ -6,15 +6,15 @@ cd "$HOME/manage-BioC-repos/3.5"
 
 REPOS_NAME="Bioconductor $BIOC_VERSION Packages - Extra"
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/extra"
-REPOS_URL="https://master.bioconductor.org/packages/$BIOC_VERSION/extra"
-VIEW_URL="https://bioconductor.org/packages/$BIOC_VERSION"
+REPOS_URL="http://master.bioconductor.org/packages/$BIOC_VERSION/extra"
+VIEW_URL="http://bioconductor.org/packages/$BIOC_VERSION"
 CONTRIB_PATHS="c('source'='src/contrib', 'win.binary'='bin/windows/contrib/$R_VERSION', 'mac.binary.el-capitan'='bin/macosx/el-capitan/contrib/$R_VERSION')"
 LOG_URL=""
 
 rm -rf "$REPOS_ROOT"/REPOSITORY "$REPOS_ROOT"/repository-detail.css "$REPOS_ROOT"/SYMBOLS "$REPOS_ROOT"/vignettes "$REPOS_ROOT"/manuals "$REPOS_ROOT"/citations "$REPOS_ROOT"/news "$REPOS_ROOT"/licenses "$REPOS_ROOT"/readmes "$REPOS_ROOT"/install
 
 R_SCRIPT="library('biocViews')"
-R_SCRIPT="$R_SCRIPT; source('https://master.bioconductor.org/biocLite.R')"
+R_SCRIPT="$R_SCRIPT; source('http://master.bioconductor.org/biocLite.R')"
 R_SCRIPT="$R_SCRIPT; reposName <- '$REPOS_NAME'"
 R_SCRIPT="$R_SCRIPT; reposRoot <- '$REPOS_ROOT'"
 R_SCRIPT="$R_SCRIPT; reposUrl <- '$REPOS_URL'"
