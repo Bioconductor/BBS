@@ -9,7 +9,7 @@ set BBS_NODE_HOSTNAME=tokay1
 set BBS_USER=biocbuild
 set BBS_RSAKEY=C:\Users\biocbuild\.BBS\id_rsa
 set BBS_WORK_TOPDIR=C:\Users\biocbuild\bbs-3.6.testgit-bioc
-set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
+set BBS_R_HOME=C:\Users\biocbuild\bbs-3.6-bioc\R
 set BBS_NB_CPU=20
 
 set BBS_STAGE2_MODE=multiarch

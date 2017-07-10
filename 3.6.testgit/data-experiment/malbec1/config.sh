@@ -13,7 +13,7 @@ export BBS_NODE_HOSTNAME="malbec1"
 export BBS_USER="biocbuild"
 export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.6.testgit-data-experiment"
-export BBS_R_HOME="/home/biocbuild/bbs-3.6.testgit-bioc/R"
+export BBS_R_HOME="/home/biocbuild/bbs-3.6-bioc/R"
 export BBS_NB_CPU=10
 
 
