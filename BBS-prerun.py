@@ -153,6 +153,59 @@ def writeAndUploadVcsMeta(snapshot_date):
     BBScorevars.Central_rdir.Put(vcsmeta_dir, True, True)
     return
 
+def update_svn_MEAT0(MEAT0_path, snapshot_date):
+    vcs_cmd = os.environ['BBS_SVN_CMD']
+    cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (vcs_cmd, MEAT0_path)
+    print "BBS> [update_svn_MEAT0] %s (at %s)" % (cmd, snapshot_date)
+    bbs.jobs.doOrDie(cmd)
+    return
+
+def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
+    if MEAT0_path == None:
+        MEAT0_path = BBSvars.MEAT0_rdir.path
+    if snapshot_date == None:
+        snapshot_date = bbs.jobs.currentDateString()
+    vcs_cmd = os.environ['BBS_GIT_CMD']
+    manifest_path = BBSvars.manifest_path
+    manifest_dir = os.path.dirname(manifest_path)
+
+    if not os.path.exists(manifest_dir):
+        ## clone manifest repo
+        cmd = '%s clone %s %s' % (vcs_cmd, BBSvars.manifest_git_repo_url, manifest_dir)
+        print "BBS> [update_git_MEAT0] %s" % cmd
+        bbs.jobs.doOrDie(cmd)
+
+    ## update manifest
+    manifest_git_branch = BBSvars.manifest_git_branch
+    git_cmd = '%s -C %s' % (vcs_cmd, manifest_dir)
+    git_branch = BBSvars.git_branch
+    cmd = ' && '.join([
+    '%s pull' % git_cmd,
+    '%s checkout %s' % (git_cmd, manifest_git_branch)
+    ])
+    print "BBS> [update_git_MEAT0] %s (at %s)" % (cmd, snapshot_date)
+    bbs.jobs.doOrDie(cmd)
+
+    ## iterate over manifest to update pkg dirs
+    dcf = open(manifest_path, 'r')
+    pkgs = bbs.parse.readPkgsFromDCF(dcf)
+    dcf.close()
+    for pkg in pkgs:
+        pkgdir_path = os.path.join(MEAT0_path, pkg)
+        git_cmd = '%s -C %s' % (vcs_cmd, pkgdir_path)
+        if os.path.exists(pkgdir_path):
+            cmd = '%s fetch' % git_cmd
+        else:
+            cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (vcs_cmd, MEAT0_path, pkg)
+        cmd = ' && '.join([cmd, '%s checkout %s' % (git_cmd, git_branch)])
+        print "BBS> [update_git_MEAT0] %s" % cmd
+        bbs.jobs.doOrDie(cmd)
+        ## merge only up to snapshot date, see https://stackoverflow.com/a/8223166/2792099
+        cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, git_branch)
+        print "BBS> [update_git_MEAT0] %s" % cmd
+        bbs.jobs.doOrDie(cmd)
+    return
+
 def snapshotMEAT0(MEAT0_path):
     snapshot_date = bbs.jobs.currentDateString()
     if BBSvars.update_MEAT0 == 1:
@@ -163,43 +216,10 @@ def snapshotMEAT0(MEAT0_path):
             cmd = update_script
             print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
             bbs.jobs.doOrDie(cmd)
-        else:
-            vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
-            vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
-            if vcs == 'svn':
-                cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (vcs_cmd, MEAT0_path)
-                print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
-                bbs.jobs.doOrDie(cmd)
-            if vcs == 'git':
-                ## first update manifest
-                manifest_path = BBSvars.manifest_path
-                manifest_git_branch = BBSvars.manifest_git_branch
-                git_cmd = '%s -C %s' % (vcs_cmd, os.path.dirname(manifest_path))
-                git_branch = BBSvars.git_branch
-                cmd = ' && '.join([
-                '%s pull' % git_cmd,
-                '%s checkout %s' % (git_cmd, manifest_git_branch)
-                ])
-                print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
-                bbs.jobs.doOrDie(cmd)
-                ## then itarate over manifest to update pkg dirs
-                dcf = open(manifest_path, 'r')
-                pkgs = bbs.parse.readPkgsFromDCF(dcf)
-                dcf.close()
-                for pkg in pkgs:
-                    pkgdir_path = os.path.join(MEAT0_path, pkg)
-                    git_cmd = '%s -C %s' % (vcs_cmd, pkgdir_path)
-                    if os.path.exists(pkgdir_path):
-                        cmd = '%s fetch' % git_cmd
-                    else:
-                        cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (vcs_cmd, MEAT0_path, pkg)
-                    cmd = ' && '.join([cmd, '%s checkout %s' % (git_cmd, git_branch)])
-                    print "BBS> [snapshotMEAT0] %s" % cmd
-                    bbs.jobs.doOrDie(cmd)
-                    ## merge only up to snapshot date, see https://stackoverflow.com/a/8223166/2792099
-                    cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, git_branch)
-                    print "BBS> [snapshotMEAT0] %s" % cmd
-                    bbs.jobs.doOrDie(cmd)
+        else if BBSvars.MEAT0_type == 1:
+            update_svn_MEAT0(MEAT0_path, snapshot_date)
+        else if BBSvars.MEAT0_type == 3:
+            update_git_MEAT0(MEAT0_path, snapshot_date)
     return snapshot_date
 
 def writeAndUploadMeatInfo(work_topdir):

@@ -12,7 +12,11 @@ export BBS_MODE="data-experiment"
 #   3: git repo containing pkg dirs
 export BBS_MEAT0_TYPE=3
 
-#export BBS_BIOC_MANIFEST_FILE="bioc-data-experiment.3.6.manifest"
+# Needed only if BBS_MEAT0_TYPE is 3
+export BBS_BIOC_MANIFEST_GIT_REPO_URL="https://git.bioconductor.org/admin/manifest"
+export BBS_BIOC_MANIFEST_GIT_BRANCH="master"
+
+# Needed if BBS_MEAT0_TYPE is 1 or 3
 export BBS_BIOC_MANIFEST_FILE="dataexperiment.txt"
 
 # Where is the fresh meat to be stored by prerun (stage1)

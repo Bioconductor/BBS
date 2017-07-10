@@ -42,15 +42,16 @@ r_cmd = BBScorevars.getenv('BBS_R_CMD')
 MEAT0_type = int(BBScorevars.getenv('BBS_MEAT0_TYPE'))
 
 if MEAT0_type == 1:  # svn-based builds
-    manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
+    manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE')
     manifest_path = os.path.join(MEAT0_rdir.path, manifest_file)
     vcsmeta_file = 'svninfo/svn-info.txt'
 
 if MEAT0_type == 3:  # git-based builds
-    manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE', False)
+    manifest_git_repo_url = BBScorevars.getenv('BBS_BIOC_MANIFEST_GIT_REPO_URL')
+    manifest_git_branch = BBScorevars.getenv('BBS_BIOC_MANIFEST_GIT_BRANCH')
+    manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE')
     manifest_path = os.path.join(work_topdir, 'manifest', manifest_file)
     git_branch = BBScorevars.getenv('BBS_BIOC_GIT_BRANCH')
-    manifest_git_branch = BBScorevars.getenv('BBS_BIOC_MANIFEST_GIT_BRANCH')
     vcsmeta_file = 'gitlog/git-log.txt'
 
 update_MEAT0 = int(BBScorevars.getenv('BBS_UPDATE_MEAT0', False, "0")) != 0
