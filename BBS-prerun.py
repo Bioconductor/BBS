@@ -207,9 +207,9 @@ def snapshotMEAT0(MEAT0_path):
             cmd = update_script
             print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
             bbs.jobs.doOrDie(cmd)
-        else if BBSvars.MEAT0_type == 1:
+        elif BBSvars.MEAT0_type == 1:
             update_svn_MEAT0(MEAT0_path, snapshot_date)
-        else if BBSvars.MEAT0_type == 3:
+        elif BBSvars.MEAT0_type == 3:
             update_git_MEAT0(MEAT0_path, snapshot_date)
     return snapshot_date
 
