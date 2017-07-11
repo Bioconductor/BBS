@@ -5,15 +5,20 @@
 
 set BBS_MODE=data-experiment
 
-set BBS_BIOC_MANIFEST_FILE=bioc-data-experiment.3.5.manifest
-
 @rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)
 @rem   2: CRAN-style local repo containing .tar.gz pkgs
 @rem   3: git repo containing pkg dirs
 set BBS_MEAT0_TYPE=3
 
-@rem Where is it?
+@rem Needed only if BBS_MEAT0_TYPE is 3
+set BBS_BIOC_MANIFEST_GIT_REPO_URL=https://git.bioconductor.org/admin/manifest
+set BBS_BIOC_MANIFEST_GIT_BRANCH=RELEASE_3_5
+
+@rem Needed if BBS_MEAT0_TYPE is 1 or 3
+set BBS_BIOC_MANIFEST_FILE=dataexperiment.txt
+
+@rem Where is the fresh meat to be stored by prerun (stage1)
 set BBS_MEAT0_RHOST=malbec2
 set BBS_MEAT0_RUSER=biocbuild
 set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.5-data-experiment/MEAT0
