@@ -166,11 +166,13 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
         MEAT0_path = BBSvars.MEAT0_rdir.path
     if snapshot_date == None:
         snapshot_date = bbs.jobs.currentDateString()
+    print "BBS> ============================================================="
+    print "BBS> BEGIN update_git_MEAT0()"
+    print "BBS>   MEAT0_path: %s" % MEAT0_path
+    print "BBS>   snapshot_date: %s" % snapshot_date
+    print "BBS> -------------------------------------------------------------"
     manifest_path = BBSvars.manifest_path
     manifest_git_clone = os.path.dirname(manifest_path)
-    print "BBS> ============================================================="
-    print "BBS> [update_git_MEAT0] BEGIN (snapshot_date: %s)" % snapshot_date
-    print "BBS> -------------------------------------------------------------"
     bbs.git.update_git_clone(manifest_git_clone, BBSvars.manifest_git_repo_url,
                              BBSvars.manifest_git_branch)
     ## iterate over manifest to update pkg dirs
@@ -182,14 +184,15 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
         i = i + 1
         print "BBS>"
         print "BBS> ----------------------------------------------------------"
-        print "BBS> [update_git_MEAT0] (%d/%d) UPDATE %s BRANCH OF %s REPO ..." % (i, len(pkgs), BBSvars.git_branch, pkg)
+        print "BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
+              (i, len(pkgs), pkg, BBSvars.git_branch)
         print "BBS>"
         pkg_git_clone = os.path.join(MEAT0_path, pkg)
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
         bbs.git.update_git_clone(pkg_git_clone, pkg_git_repo_url,
                                  BBSvars.git_branch, snapshot_date)
     print "BBS> -------------------------------------------------------------"
-    print "BBS> [update_git_MEAT0] END"
+    print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="
     return
 
