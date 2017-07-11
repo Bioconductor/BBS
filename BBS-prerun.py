@@ -168,6 +168,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
     vcs_cmd = os.environ['BBS_GIT_CMD']
     manifest_path = BBSvars.manifest_path
     manifest_dir = os.path.dirname(manifest_path)
+    print "BBS>"
     if not os.path.exists(manifest_dir):
         ## clone manifest repo
         cmd = '%s clone %s %s' % (vcs_cmd, BBSvars.manifest_git_repo_url, manifest_dir)
@@ -176,7 +177,6 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
     ## update manifest
     manifest_git_branch = BBSvars.manifest_git_branch
     git_cmd = '%s -C %s' % (vcs_cmd, manifest_dir)
-    git_branch = BBSvars.git_branch
     cmd = ' && '.join([
     '%s pull' % git_cmd,
     '%s checkout %s' % (git_cmd, manifest_git_branch)
@@ -187,13 +187,16 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
+    git_branch = BBSvars.git_branch
     i = 0
     for pkg in pkgs:
         i = i + 1
+        print "BBS>"
+        print "BBS> ----------------------------------------------------------"
+        print "BBS> [update_git_MEAT0] (%d/%d) UPDATE %s BRANCH OF %s REPO ..." % (i, len(pkgs), git_branch, pkg)
+        print "BBS>"
         pkgdir_path = os.path.join(MEAT0_path, pkg)
         git_cmd = '%s -C %s' % (vcs_cmd, pkgdir_path)
-        print "BBS>"
-        print "BBS> [%d/%d] Update %s branch of %s repo ..." % (i, len(pkgs), git_branch, pkg)
         if os.path.exists(pkgdir_path):
             cmd = '%s fetch' % git_cmd
         else:
