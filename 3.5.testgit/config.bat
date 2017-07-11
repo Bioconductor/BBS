@@ -1,5 +1,5 @@
 @rem ===================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.6 builds
+@rem Settings shared by all the Windows nodes involved in the 3.5.testgit builds
 @rem ===================================================================
 
 
@@ -23,13 +23,13 @@ set TMPDIR=%BBS_WORK_TOPDIR%\tmpdir
 @rem Variables specifying the version and mode of the current builds
 @rem ---------------------------------------------------------------
 
-set BBS_BIOC_VERSION=3.6
-set BBS_BIOC_GIT_BRANCH=master
-set BBS_BIOC_VERSIONED_REPO_PATH=%BBS_BIOC_VERSION%/%BBS_MODE%
+set BBS_BIOC_VERSION=3.5
+set BBS_BIOC_GIT_BRANCH=RELEASE_3_5
+set BBS_BIOC_VERSIONED_REPO_PATH=%BBS_BIOC_VERSION%.testgit/%BBS_MODE%
 set BBS_STAGE2_R_SCRIPT=%BBS_HOME%/%BBS_BIOC_VERSIONED_REPO_PATH%/STAGE2.R
 set BBS_NON_TARGET_REPOS_FILE=%BBS_HOME%/%BBS_BIOC_VERSIONED_REPO_PATH%/non_target_repos.txt
 
-set BBS_CENTRAL_RHOST=malbec1
+set BBS_CENTRAL_RHOST=malbec2
 set BBS_CENTRAL_RUSER=biocbuild
 set BBS_CENTRAL_RDIR=/home/biocbuild/public_html/BBS/%BBS_BIOC_VERSIONED_REPO_PATH%
 set BBS_CENTRAL_BASEURL=http://%BBS_CENTRAL_RHOST%/BBS/%BBS_BIOC_VERSIONED_REPO_PATH%
