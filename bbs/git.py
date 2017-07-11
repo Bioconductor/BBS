@@ -3,8 +3,11 @@
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
-### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Jul 10, 2017
+### Authors:
+###   Andrzej Oleś <andrzej.oles@embl.de>
+###   Hervé Pagès <hpages@fredhutch.org>
+###
+### Last modification: Jul 11, 2017
 ###
 ### git module
 ###
