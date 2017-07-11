@@ -18,6 +18,7 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         git_cmd = os.environ['BBS_GIT_CMD']
     except KeyError:
         git_cmd = 'git'
+    do_merge = False
     if os.path.exists(clone_path):
         os.chdir(clone_path)
         if snapshot_date == None:
@@ -26,6 +27,7 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
             ## we fetch instead of pull so we can then merge up to snapshot
             ## date (see below)
             cmd = '%s fetch' % git_cmd
+            do_merge = True
         print "bbs.git.update_git_clone>   %s" % cmd
         jobs.doOrDie(cmd)
     else:
@@ -38,7 +40,7 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         cmd = '%s checkout %s' % (git_cmd, branch)
         print "bbs.git.update_git_clone>   %s" % cmd
         jobs.doOrDie(cmd)
-    if snapshot_date != None:
+    if do_merge:
         ## merge only up to snapshot date
         ## (see https://stackoverflow.com/a/8223166/2792099)
         cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
