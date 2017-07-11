@@ -20,7 +20,9 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         git_cmd = 'git'
     do_merge = False
     if os.path.exists(clone_path):
+        print "bbs.git.update_git_clone>   cd %s" % clone_path
         os.chdir(clone_path)
+        print ""
         if snapshot_date == None:
             cmd = '%s pull' % git_cmd
         else:
@@ -36,7 +38,9 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         print "bbs.git.update_git_clone>   %s" % cmd
         jobs.doOrDie(cmd)
         print ""
+        print "bbs.git.update_git_clone>   cd %s" % clone_path
         os.chdir(clone_path)
+        print ""
     if branch != None:
         ## checkout branch
         cmd = '%s checkout %s' % (git_cmd, branch)
