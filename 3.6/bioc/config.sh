@@ -6,15 +6,20 @@
 
 export BBS_MODE="bioc"
 
-export BBS_BIOC_MANIFEST_FILE="bioc_3.6.manifest"
-
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)
 #   2: CRAN-style local repo containing .tar.gz pkgs
 #   3: git repo containing pkg dirs
 export BBS_MEAT0_TYPE=3
 
-# Where is it?
+# Needed only if BBS_MEAT0_TYPE is 3
+export BBS_BIOC_MANIFEST_GIT_REPO_URL="https://git.bioconductor.org/admin/manifest"
+export BBS_BIOC_MANIFEST_GIT_BRANCH="master"
+
+# Needed if BBS_MEAT0_TYPE is 1 or 3
+export BBS_BIOC_MANIFEST_FILE="software.txt"
+
+# Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="malbec1"
 export BBS_MEAT0_RUSER="biocbuild"
 export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.6-bioc/MEAT0"
