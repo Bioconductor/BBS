@@ -17,7 +17,7 @@ export BBS_BIOC_MANIFEST_GIT_REPO_URL="https://git.bioconductor.org/admin/manife
 export BBS_BIOC_MANIFEST_GIT_BRANCH="master"
 
 # Needed if BBS_MEAT0_TYPE is 1 or 3
-export BBS_BIOC_MANIFEST_FILE="dataexperiment.txt"
+export BBS_BIOC_MANIFEST_FILE="data-experiment.txt"
 
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="malbec1"

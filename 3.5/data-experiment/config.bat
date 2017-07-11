@@ -16,7 +16,7 @@ set BBS_BIOC_MANIFEST_GIT_REPO_URL=https://git.bioconductor.org/admin/manifest
 set BBS_BIOC_MANIFEST_GIT_BRANCH=RELEASE_3_5
 
 @rem Needed if BBS_MEAT0_TYPE is 1 or 3
-set BBS_BIOC_MANIFEST_FILE=dataexperiment.txt
+set BBS_BIOC_MANIFEST_FILE=data-experiment.txt
 
 @rem Where is the fresh meat to be stored by prerun (stage1)
 set BBS_MEAT0_RHOST=malbec2
