@@ -16,6 +16,7 @@ import bbs.fileutils
 import bbs.parse
 import bbs.dcf
 import bbs.jobs
+import bbs.git
 import BBScorevars
 import BBSvars
 import BBSbase
@@ -165,53 +166,26 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
         MEAT0_path = BBSvars.MEAT0_rdir.path
     if snapshot_date == None:
         snapshot_date = bbs.jobs.currentDateString()
-    vcs_cmd = os.environ['BBS_GIT_CMD']
     manifest_path = BBSvars.manifest_path
-    manifest_dir = os.path.dirname(manifest_path)
+    manifest_git_clone = os.path.dirname(manifest_path)
     print "BBS>"
-    if not os.path.exists(manifest_dir):
-        ## clone manifest repo
-        cmd = '%s clone %s %s' % (vcs_cmd, BBSvars.manifest_git_repo_url, manifest_dir)
-        print "BBS> [update_git_MEAT0] %s" % cmd
-        bbs.jobs.doOrDie(cmd)
-    ## update manifest
-    manifest_git_branch = BBSvars.manifest_git_branch
-    git_cmd = '%s -C %s' % (vcs_cmd, manifest_dir)
-    cmd = ' && '.join([
-    '%s pull' % git_cmd,
-    '%s checkout %s' % (git_cmd, manifest_git_branch)
-    ])
-    print "BBS> [update_git_MEAT0] %s (at %s)" % (cmd, snapshot_date)
-    bbs.jobs.doOrDie(cmd)
+    bbs.git.update_git_clone(manifest_git_clone, BBSvars.manifest_git_repo_url,
+                             BBSvars.manifest_git_branch)
     ## iterate over manifest to update pkg dirs
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
-    git_branch = BBSvars.git_branch
     i = 0
     for pkg in pkgs:
         i = i + 1
         print "BBS>"
         print "BBS> ----------------------------------------------------------"
-        print "BBS> [update_git_MEAT0] (%d/%d) UPDATE %s BRANCH OF %s REPO ..." % (i, len(pkgs), git_branch, pkg)
+        print "BBS> [update_git_MEAT0] (%d/%d) UPDATE %s BRANCH OF %s REPO ..." % (i, len(pkgs), BBSvars.git_branch, pkg)
         print "BBS>"
-        pkgdir_path = os.path.join(MEAT0_path, pkg)
-        git_cmd = '%s -C %s' % (vcs_cmd, pkgdir_path)
-        if os.path.exists(pkgdir_path):
-            cmd = '%s fetch' % git_cmd
-        else:
-            cmd = '%s -C %s clone https://git.bioconductor.org/packages/%s' % (vcs_cmd, MEAT0_path, pkg)
-        print "BBS> [update_git_MEAT0] %s" % cmd
-        bbs.jobs.doOrDie(cmd)
-        ## checkout branch to build
-        cmd = '%s checkout %s' % (git_cmd, git_branch)
-        print "BBS> [update_git_MEAT0] %s" % cmd
-        bbs.jobs.doOrDie(cmd)
-        ## merge only up to snapshot date
-        ## (see https://stackoverflow.com/a/8223166/2792099)
-        cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, git_branch)
-        print "BBS> [update_git_MEAT0] %s" % cmd
-        bbs.jobs.doOrDie(cmd)
+        pkg_git_clone = os.path.join(MEAT0_path, pkg)
+        pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
+        bbs.git.update_git_clone(pkg_git_clone, pkg_git_repo_url,
+                                 BBSvars.git_branch, snapshot_date)
     return
 
 def snapshotMEAT0(MEAT0_path):
