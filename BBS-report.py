@@ -644,7 +644,7 @@ def write_Command_output_to_LeafReport(out, node_hostname,
             if i > 99999:
                 out.write('... [output truncated]\n')
                 break
-            if regex.match(line):
+            if pattern != None and regex.match(line):
                 pattern_detected = True
             #try:
             #    html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
