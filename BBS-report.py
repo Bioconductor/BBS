@@ -30,11 +30,11 @@ class LeafReportReference:
         self.node_id = node_id
         self.stagecmd = stagecmd
 
-def wopen_leafreport_input_file(pkg, node_id, stagecmd, file, catch_HTTPerrors=False):
+def wopen_leafreport_input_file(pkg, node_id, stagecmd, filename, catch_HTTPerrors=False):
     if pkg:
-        file = "%s.%s-%s" % (pkg, stagecmd, file)
+        filename = "%s.%s-%s" % (pkg, stagecmd, filename)
     rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stagecmd))
-    return rdir.WOpen(file, catch_HTTPerrors=catch_HTTPerrors)
+    return rdir.WOpen(filename, catch_HTTPerrors=catch_HTTPerrors)
 
 STATUS_SUMMARY = {}
 
@@ -630,68 +630,64 @@ def write_Summary_to_LeafReport(out, node_hostname, pkg, node_id, stagecmd):
 
 def write_Command_output_to_LeafReport(out, node_hostname,
                                        pkg, node_id, stagecmd):
-    out.write('<H3>Command output</H3>\n')
-    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-    f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
     encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
-    out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
-    unit_test_failure_regex = re.compile("^Running the tests in .(.*). failed[.]")
-    unit_test_failed = False
-    for line in f:
-        if(unit_test_failure_regex.match(line)):
-            unit_test_failed = True
-        try:
-            html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
-        except:
-            html_line = line
-        try:
-            out.write(html_line)
-        except Exception:
-            out.write(html_line.encode("utf-8"))
-    out.write('</PRE>\n')
-    f.close()
-    out.write('</DIV>\n')
 
-    def write_file_output(filename, filehandle=None):
-        out.write('<P>%s:</P>\n' % filename)
+    def write_file_asHTML(f, pattern=None):
+        pattern_detected = False
+        if pattern != None:
+            regex = re.compile(pattern)
         out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-        out.write('<PRE style="font-size: smaller;">\n')
-        for line in filehandle:
-            try:
-                out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrus
-            except:
-               out.write(line)
+        out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
+        i = 0
+        for line in f:
+            i = i + 1
+            if i > 99999:
+                out.write('... [output truncated]\n')
+                break
+            if regex.match(line):
+                pattern_detected = True
+            #try:
+            #    html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
+            #except:
+            #    html_line = line
+            #try:
+            #    out.write(html_line)
+            #except Exception:
+            #    out.write(html_line.encode("utf-8"))
+            out.write(bbs.html.encodeHTMLentities(line, encoding))
         out.write('</PRE>\n')
         out.write('</DIV>')
+        return pattern_detected
 
-    if stagecmd == "checksrc" and unit_test_failed: # unit test output
-        fullpath = os.path.join(BBScorevars.central_rdir_path,"nodes", 
-            node_id, stagecmd, pkg + ".Rcheck")
-        for folder, subs, files in os.walk(fullpath):
-            for filename in files:
-                if fnmatch.fnmatch(filename, "*.Rout.fail"):
-                    with open(os.path.join(folder, filename), "r") as fh:
-                        write_file_output(filename, fh)
+    f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
+    out.write('<H3>Command output</H3>\n')
+    unit_test_failed = write_file_asHTML(f, "^Running the tests in .(.*). failed[.]")
+    f.close()
 
     if stagecmd == "checksrc":
-        file = '%s.Rcheck/00install.out' % pkg
-        f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
+        if unit_test_failed: # unit test output
+            fullpath = os.path.join(BBScorevars.central_rdir_path, "nodes",
+                                    node_id, stagecmd, pkg + ".Rcheck")
+            for folder, subs, files in os.walk(fullpath):
+                for filename in files:
+                    if fnmatch.fnmatch(filename, "*.Rout.fail"):
+                        with open(os.path.join(folder, filename), "r") as f:
+                            out.write('<P>%s:</P>\n' % filename)
+                            write_file_asHTML(f)
+                            f.close()
+        filename = '%s.Rcheck/00install.out' % pkg
+        f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
         if f != None:
-            out.write('<P>%s:</P>\n' % file)
-            out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-            out.write('<PRE style="font-size: smaller;">\n')
-            for line in f:
-                out.write(bbs.html.encodeHTMLentities(line, encoding)) # untrusted
-            out.write('</PRE>\n')
-            out.write('</DIV>')
+            out.write('<P>%s:</P>\n' % filename)
+            write_file_asHTML(f)
             f.close()
         files = ['%s.Rcheck/%s-Ex.timings' % (pkg, pkg),
-            '%s.Rcheck/examples_i386/%s-Ex.timings' % (pkg, pkg),
-            '%s.Rcheck/examples_x64/%s-Ex.timings' % (pkg, pkg)]
-        for file in files:
-            f = wopen_leafreport_input_file(None, node_id, stagecmd, file, catch_HTTPerrors=True)
+                 '%s.Rcheck/examples_i386/%s-Ex.timings' % (pkg, pkg),
+                 '%s.Rcheck/examples_x64/%s-Ex.timings' % (pkg, pkg)]
+        for filename in files:
+            f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
             if f != None:
-                out.write('<P>%s:</P>\n' % file)
+                out.write('<P>%s:</P>\n' % filename)
                 out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
                 out.write('<TABLE style="font-size: smaller;">\n')
                 for line in f:
@@ -832,8 +828,8 @@ def write_CRAN_mainpage_head_asHTML(out):
     return
 
 def read_Rversion(Node_rdir):
-    file = 'NodeInfo/R-version.txt'
-    f = Node_rdir.WOpen(file)
+    filename = 'NodeInfo/R-version.txt'
+    f = Node_rdir.WOpen(filename)
     Rversion = f.readline()
     f.close()
     Rversion = Rversion.replace('R version ', '')
@@ -841,13 +837,13 @@ def read_Rversion(Node_rdir):
     return Rversion_html
 
 def get_Rconfig_value_from_file(Node_rdir, var):
-    file = 'NodeInfo/R-config.txt'
-    dcf = Node_rdir.WOpen(file)
+    filename = 'NodeInfo/R-config.txt'
+    dcf = Node_rdir.WOpen(filename)
     val = bbs.parse.getNextDcfVal(dcf, var, True)
     dcf.close()
     if val == None:
-        filepath = '%s/%s' % (Node_rdir.label, file)
-        raise bbs.parse.DcfFieldNotFoundError(filepath, var)
+        filename = '%s/%s' % (Node_rdir.label, filename)
+        raise bbs.parse.DcfFieldNotFoundError(filename, var)
     return val
 
 def write_Rconfig_table_from_file(out, Node_rdir, vars):
@@ -868,8 +864,8 @@ def write_Rconfig_table_from_file(out, Node_rdir, vars):
     return
 
 def write_SysCommandVersion_from_file(out, Node_rdir, var):
-    file = 'NodeInfo/%s-version.txt' % var
-    f = Node_rdir.WOpen(file, catch_HTTPerrors=True)
+    filename = 'NodeInfo/%s-version.txt' % var
+    f = Node_rdir.WOpen(filename, catch_HTTPerrors=True)
     if f == None:
         return
     cmd = get_Rconfig_value_from_file(Node_rdir, var)
@@ -949,9 +945,9 @@ def make_Rinstpkgs_page(Node_rdir, node):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    file = 'NodeInfo/R-instpkgs.txt'
+    filename = 'NodeInfo/R-instpkgs.txt'
     out.write('<PRE>\n')
-    f = Node_rdir.WOpen(file)
+    f = Node_rdir.WOpen(filename)
     nline = 0
     for line in f:
         out.write(line)
