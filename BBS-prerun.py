@@ -161,20 +161,22 @@ def update_svn_MEAT0(MEAT0_path, snapshot_date):
     bbs.jobs.doOrDie(cmd)
     return
 
-def update_git_MEAT0(git_branch, manifest_git_branch=None,
-                     MEAT0_path=None, snapshot_date=None):
-    if manifest_git_branch == None:
-        manifest_git_branch = git_branch
+def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
+                     git_branch=None, manifest_git_branch=None):
     if MEAT0_path == None:
         MEAT0_path = BBSvars.MEAT0_rdir.path
     if snapshot_date == None:
         snapshot_date = bbs.jobs.currentDateString()
+    if git_branch == None:
+        git_branch = BBSvars.git_branch
+    if manifest_git_branch == None:
+        manifest_git_branch = BBSvars.manifest_git_branch
     print "BBS> ============================================================="
     print "BBS> BEGIN update_git_MEAT0()"
-    print "BBS>   git_branch: %s" % git_branch
-    print "BBS>   manifest_git_branch: %s" % manifest_git_branch
     print "BBS>   MEAT0_path: %s" % MEAT0_path
     print "BBS>   snapshot_date: %s" % snapshot_date
+    print "BBS>   git_branch: %s" % git_branch
+    print "BBS>   manifest_git_branch: %s" % manifest_git_branch
     print "BBS> -------------------------------------------------------------"
     manifest_path = BBSvars.manifest_path
     manifest_git_clone = os.path.dirname(manifest_path)
@@ -215,8 +217,7 @@ def snapshotMEAT0(MEAT0_path):
         elif BBSvars.MEAT0_type == 1:
             update_svn_MEAT0(MEAT0_path, snapshot_date)
         elif BBSvars.MEAT0_type == 3:
-            update_git_MEAT0(BBSvars.git_branch, BBSvars.manifest_git_branch,
-                             MEAT0_path, snapshot_date)
+            update_git_MEAT0(MEAT0_path, snapshot_date)
     return snapshot_date
 
 def writeAndUploadMeatInfo(work_topdir):
