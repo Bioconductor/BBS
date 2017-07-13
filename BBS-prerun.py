@@ -161,13 +161,18 @@ def update_svn_MEAT0(MEAT0_path, snapshot_date):
     bbs.jobs.doOrDie(cmd)
     return
 
-def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
+def update_git_MEAT0(git_branch, manifest_git_branch=None,
+                     MEAT0_path=None, snapshot_date=None):
+    if manifest_git_branch == None:
+        manifest_git_branch = git_branch
     if MEAT0_path == None:
         MEAT0_path = BBSvars.MEAT0_rdir.path
     if snapshot_date == None:
         snapshot_date = bbs.jobs.currentDateString()
     print "BBS> ============================================================="
     print "BBS> BEGIN update_git_MEAT0()"
+    print "BBS>   git_branch: %s" % git_branch
+    print "BBS>   manifest_git_branch: %s" % manifest_git_branch
     print "BBS>   MEAT0_path: %s" % MEAT0_path
     print "BBS>   snapshot_date: %s" % snapshot_date
     print "BBS> -------------------------------------------------------------"
@@ -175,7 +180,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
     manifest_git_clone = os.path.dirname(manifest_path)
     print ""
     bbs.git.update_git_clone(manifest_git_clone, BBSvars.manifest_git_repo_url,
-                             BBSvars.manifest_git_branch)
+                             manifest_git_branch)
     ## iterate over manifest to update pkg dirs
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
@@ -185,12 +190,12 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None):
         i = i + 1
         print "BBS> ----------------------------------------------------------"
         print "BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
-              (i, len(pkgs), pkg, BBSvars.git_branch)
+              (i, len(pkgs), pkg, git_branch)
         print ""
         pkg_git_clone = os.path.join(MEAT0_path, pkg)
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
         bbs.git.update_git_clone(pkg_git_clone, pkg_git_repo_url,
-                                 BBSvars.git_branch, snapshot_date)
+                                 git_branch, snapshot_date)
     print "BBS> -------------------------------------------------------------"
     print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="
@@ -210,7 +215,8 @@ def snapshotMEAT0(MEAT0_path):
         elif BBSvars.MEAT0_type == 1:
             update_svn_MEAT0(MEAT0_path, snapshot_date)
         elif BBSvars.MEAT0_type == 3:
-            update_git_MEAT0(MEAT0_path, snapshot_date)
+            update_git_MEAT0(BBSvars.git_branch, BBSvars.manifest_git_branch,
+                             MEAT0_path, snapshot_date)
     return snapshot_date
 
 def writeAndUploadMeatInfo(work_topdir):
