@@ -34,6 +34,12 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     print "bbs.git.update_git_clone> cd %s" % clone_path
     os.chdir(clone_path)
     print ""
+    if branch != None:
+        ## checkout branch
+        cmd = '%s checkout %s' % (git_cmd, branch)
+        print "bbs.git.update_git_clone> %s" % cmd
+        jobs.doOrDie(cmd)
+        print ""
     if snapshot_date == None:
         cmd = '%s pull' % git_cmd
     else:
@@ -43,12 +49,6 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     print "bbs.git.update_git_clone> %s" % cmd
     jobs.doOrDie(cmd)
     print ""
-    if branch != None:
-        ## checkout branch
-        cmd = '%s checkout %s' % (git_cmd, branch)
-        print "bbs.git.update_git_clone> %s" % cmd
-        jobs.doOrDie(cmd)
-        print ""
     if snapshot_date != None:
         ## merge only up to snapshot date
         ## (see https://stackoverflow.com/a/8223166/2792099)
