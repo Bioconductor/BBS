@@ -650,11 +650,11 @@ def write_Command_output_to_LeafReport(out, node_hostname,
             #    html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
             #except:
             #    html_line = line
-            #try:
-            #    out.write(html_line)
-            #except Exception:
-            #    out.write(html_line.encode("utf-8"))
-            out.write(bbs.html.encodeHTMLentities(line, encoding))
+            html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
+            try:
+                out.write(html_line)
+            except UnicodeEncodeError:
+                out.write(html_line.encode(encoding))
         out.write('</PRE>\n')
         out.write('</DIV>')
         return pattern_detected
