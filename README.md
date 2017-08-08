@@ -13,10 +13,10 @@ Table of Contents
     * [What builds where](#what-builds-where)
       * [About the build machines\.](#about-the-build-machines)
       * [How the build machines are organized\.](#how-the-build-machines-are-organized)
-      * [DNS resolution and https specifics]
-        * [Address and canonical DNS records] 
-        * [Traffic routing within the RPCI DMZ] 
-        * [Mac builders and the RPCI DMZ]
+      * [DNS resolution and https specifics](#dns-resolution-and-https-specifics)
+        * [Address and canonical DNS records](#address-and-cononical-dns-records)
+        * [Traffic routing within the RPCI DMZ](#traffic-routing-within-the-rpci-dmz) 
+        * [Mac builders and the RPCI DMZ](#mac-builders-and-the-rpci-dmz)
       * [What machines are used in which builds?](#what-machines-are-used-in-which-builds)
         * [Devel (Bioconductor 3\.6)](#devel-bioconductor-36)
         * [Release (Bioconductor 3\.5)](#release-bioconductor-35)
