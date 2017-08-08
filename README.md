@@ -13,10 +13,13 @@ Table of Contents
     * [What builds where](#what-builds-where)
       * [About the build machines\.](#about-the-build-machines)
       * [How the build machines are organized\.](#how-the-build-machines-are-organized)
+      * [DNS resolution and https specifics]
+        * [Address and canonical DNS records] 
+        * [Traffic routing within the RPCI DMZ] 
+        * [Mac builders and the RPCI DMZ]
       * [What machines are used in which builds?](#what-machines-are-used-in-which-builds)
-        * [Devel (Bioconductor 3\.2)](#devel-bioconductor-32)
-        * [Release (Bioconductor 3\.1)](#release-bioconductor-31)
-        * [Next devel (Bioconductor 3\.3)](#next-devel-bioconductor-33)
+        * [Devel (Bioconductor 3\.6)](#devel-bioconductor-36)
+        * [Release (Bioconductor 3\.5)](#release-bioconductor-35)
         * [A note about time zones\.](#a-note-about-time-zones)
     * [How the build system works](#how-the-build-system-works)
       * [More post\-build steps (run as <em>biocadmin</em>)](#more-post-build-steps-run-as-biocadmin)
