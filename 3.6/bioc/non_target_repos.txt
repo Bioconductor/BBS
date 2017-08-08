@@ -1,4 +1,4 @@
-http://bioconductor.org/packages/BBS_BIOC_VERSION/data/annotation
-http://bioconductor.org/packages/BBS_BIOC_VERSION/data/experiment
-http://bioconductor.org/packages/BBS_BIOC_VERSION/extra
-http://cran.fhcrc.org
+https://bioconductor.org/packages/BBS_BIOC_VERSION/data/annotation
+https://bioconductor.org/packages/BBS_BIOC_VERSION/data/experiment
+https://bioconductor.org/packages/BBS_BIOC_VERSION/extra
+https://cran.rstudio.com

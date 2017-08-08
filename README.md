@@ -47,8 +47,7 @@ is in the [Doc](Doc/) directory.
   in the future.
 * Home-grown. The system was written originally by 
   Herv&eacute; Pag&egrave;s and is now maintained 
-  by Dan Tenenbaum. Brian Long is learning to maintain
-  it as well.
+  Herv&eacute; and Valerie.
 * Written in a mix of shell scripting (bash shell, 
   Windows batch files), Python, and R.
 
@@ -220,14 +219,12 @@ in use as of today, August 8, 2017.
 
 #### A note about time zones.
 
-The builds have been moved back to FHCRC in October 2015
-and all build machines are on west coast time.
+The builds are on Eastern Standard Time.
 
 ## How the build system works
 
 As described above, on each build machine, the build system
-code is checked out. **At present, each machine's working
-copy is checked out to the branch `feature/migrate_back_to_hutch`.**
+code is checked out.
 
 On each build machine there is a cron job (or Scheduled Task
 on Windows) that kicks off the builds.
@@ -395,23 +392,8 @@ Ideally the build system should *just work* every day
 so you wouldn't have to pay much attention to it.
 Often it does.
 
-But should still check up on it daily to make sure
-it is doing what is is supposed to do. (*You* in this context
-basically means Brian, or anyone else who is taking over
-this duty in his absence).
-
-(People who are not FHCRC employees are exempt from
-care and feeding of the 3.1 builds which requires 
-access to the internal FHCRC network. Dan/Hervé will
-do this for the time being and these builds will
-stop on 10/8/2015).
-
-For 3.2 and newer, for issues with any of the Mac
-build machines at FHCRC, you will need to pass those
-off to Dan or Hervé, who can log into those machines
-and see what is going on. Bear in mind, some clues
-may be available on the master builder.) Jim Hester
-also has access to these machines.
+But it should still be checked on daily to make sure
+it is doing what is is supposed to do.
 
 Regarding causes for failed builds: There are a few things
 that keep cropping up and we hope to work on long term
@@ -550,9 +532,8 @@ with the command
 
 ### Interpreting log output
 
-There are several categories of common problems which
-will be discussed TBA. For now, contact Dan and share your
-findings with him.
+There are several categories of common problems which will be discussed TBA.
+For now, contact Herve or Valerie and share your findings with them.
 
 Possible problems:
 
