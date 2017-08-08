@@ -149,7 +149,7 @@ https://console.aws.amazon.com/route53/home?region=us-east-1#resource-record-set
 #### Traffic routing within the RPCI DMZ 
 
 When http was used to communicate between the Windows and Linux
-builders we used the private IP address. This resulted in direct communication
+builders the private IP was used instead of the hostname. This resulted in direct communication
 between private IPs within the DMZ and traffic was not routed to
 the public IP in the firewall.
 
