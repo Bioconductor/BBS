@@ -135,10 +135,10 @@ transitioned to https.
 Each machine in the RPCI DMZ has both a public and private IP. These are the 
 A (address) record DNS entries and they resolve to the public IPs: 
 
-malbec1.roswellpark.org
-malbec2.roswellpark.org
-tokay1.roswellpark.org
-tokay2.roswellpark.org
+malbec1.roswellpark.org  
+malbec2.roswellpark.org  
+tokay1.roswellpark.org  
+tokay2.roswellpark.org  
 
 In AWS Route 53 we have CNAME (canonical) record DNS entries that point names
 with the .bioconductor.org extension to names with the .roswellpark.org
