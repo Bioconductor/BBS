@@ -172,16 +172,16 @@ From now on everything must be done from the biocbuild account.
     Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
     Landsiedel, Timothy <tjlandsi@RoswellPark.org>
 
-** Check that you can send HTTP requests to the central node
+** Check that you can send HTTPS requests to the central node
 
-    curl "http://malbec2"                  # from within RPCI's DMZ
-    curl "http://malbec2.roswellpark.org"  # from anywhere else
+    curl "https://malbec2.bioconductor.org"
 
   If this is blocked by RPCI's firewall, after a while you'll get:
 
-    curl: (7) Failed connect to malbec2.roswellpark.org:80; Operation timed out
+    curl: (7) Failed connect to malbec2.bioconductor.org:80; Operation timed out
 
-  Contact the IT folks at RPCI if that's the case (see above).
+  Contact the IT folks at RPCI if that's the case (see above). More
+  details on https implementation in the BBS/README.md.
 
 
 C. Install the developer tools and other core components needed by the builds

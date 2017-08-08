@@ -74,10 +74,7 @@ The canonical location of the code is in GitHub:
 
 If you have a question not covered here:
 
-* Dan Tenenbaum should be the first person to ask.
-* Herv&eacute; Pag&egrave;s should be the next person to ask.
-  He has not been completely in the loop regarding the move
-  to the cloud but Dan (and this document) will try and catch him up.
+* Ask Herv&eacute; Pag&egrave;s or Valerie Obenchain.
 * If neither of those two are available, Martin Morgan may know.
 
 ## General overview of BBS
@@ -100,47 +97,23 @@ In general, there are four *builds* that run during any given week:
 
 ## What builds where
 
-We are in the process of moving as much of the build system as
-possible into the cloud. 
-
-As of 14 September 2015, the devel builds are in the cloud
-and the Linux and Windows portions of the "next devel" (BioC 3.3)
-builds are there as well. The current release (BioC 3.1) builds happen
-entirely at FHCRC with physical machines.
-
-"In the cloud" refers to 
-[Amazon Web Services](https://aws.amazon.com/).
-The exception to "in the cloud" in the above is that all 
-Mac build machines are currently located at FHCRC.
-
-This is because Apple's licensing agreements make it impossible
-to virtualize OS X on anything but OS X hardware therefore
-there are not a lot of affordable cloud providers for Mac.
-It is possible/probable that the Macs will be shipped out of FHCRC
-at some point,
-either to Roswell Park or to a third-party hosting provider.
-We should not need physical access to the Macs (as long as there is a
-person we can call to reboot them if we cannot access them
-via ssh or Screen Sharing).
+As of August 2017, the Linux and Windows builders are in the 
+Roswell Park DMZ and the Mac builders are in MacStadium.
 
 ### About the build machines.
 
-There are four build machines each for release and devel.
+There are three build machines each for release and devel.
 
-This is for the four platforms that we build for:
+This is for the three platforms that we build for:
 
-* Linux (Ubuntu 14.04 LTS)
-* Windows (Server 2008 or Server 2012)
-* Mac OX X 10.9.5 (Mavericks)
-
-Any build machine that has "bioconductor.org" in its
-name is in the cloud. Any machine without a fully qualified
-domain name is (at this point) at FHCRC in Seattle.
+* Linux (Ubuntu 16.04 LTS)
+* Windows Server 2012
+* Mac OX X 10.16.6 (El Capitan)
 
 ### How the build machines are organized.
 
-Each build has a *master builder* which is generally
-the same as the Linux build machine.
+Each build has a *master builder* which is the Linux build
+machine.
 
 The *master builder* is where all build machines send
 their build products (via rsync and ssh). Build products are not just
@@ -148,6 +121,73 @@ package archives (.tar.gz, .tgz, and .zip files for
 source packages, mac packages, and windows packages respectively)
 but also the output of each build phase and other information
 about the build, enough to construct the build report.
+
+### DNS resolution and https specifics
+
+In Stage 2, the Windows and Mac builders get packages to build from the *master
+builder*. Historically this was done via http and has recently been 
+transitioned to https.
+
+#### Address and canonical DNS records 
+
+Each machine in the RPCI DMZ has both a public and private IP. These are the 
+A (address) record DNS entries and they resolve to the public IPs: 
+
+malbec1.roswellpark.org
+malbec2.roswellpark.org
+tokay1.roswellpark.org
+tokay2.roswellpark.org
+
+In AWS Route 53 we have CNAME (canonical) record DNS entries that point names
+with the .bioconductor.org extension to names with the .roswellpark.org
+extension.
+
+https://console.aws.amazon.com/route53/home?region=us-east-1#resource-record-sets:Z2LMJH3A2CQNZZ
+
+#### Traffic routing within the RPCI DMZ 
+
+When http was used to communicate between the Windows and Linux
+builders we used the private IP address. This resulted in direct communication
+between private IPs within the DMZ and traffic was not routed to
+the public IP in the firewall.
+
+The direct IP approach doesn't work with https because the SSL certificate must
+be validated and it's registered to the .bioconductor.org name (not the IP).
+
+We tried using the .bioconductor.org name with https but there was a problem 
+with the routing of traffic in the DMZ. The key issue was that the outgoing
+request path was different from the return response path. The 
+return response was coming from a different IP than the outgoing request
+was sent to. Evidently certain protocols don't like this inconsistency and 
+https is one of them.
+
+Outgoing traffic must use https://hostname.bioconductor.org which maps to
+the public IP in the firewall. The return traffic was not forced to use 
+.bioconductor.org so it instead used the internal route table to lookup
+the private IP of the originating machine which is also in the DMZ.
+
+Example of tokay1 trying to talk to malbec1:
+
+Outgoing request:
+tokay1 -> firewall (public IP) -> malbec1
+
+Return response:
+malbec1 -> tokay1
+
+There were several attempts to modify firewall rules to make https work via the
+normal channels. These were unsuccessful and the alternative solution was to
+modify the /etc/hosts file on the DMZ builders. The modification overrides the
+DNS lookup (for this machine) such that .bioconductor.org now maps to the
+private IP instead of the public IP. As a result, traffic no longer goes
+through the firewall but instead occurs directly between the two machines which
+means the outgoing and return IP addresses are the same.
+
+#### Mac builders and the RPCI DMZ 
+
+The Mac builders are located outside the RPCI DMZ. When they https
+to the *master builder*, e.g., malbec1.bioconductor.org, they are
+directed to the public IP which redirects to the private IP. The
+outgoing and return routes are the same. This works fine, no problems here.
 
 ### What machines are used in which builds?
 
@@ -161,29 +201,19 @@ section will tell you what is being used, and that
 should be current.
 
 However, just to give you an idea, here is what is 
-in use as of today, September 14 2015.
+in use as of today, August 8, 2017.
 
-#### Devel (Bioconductor 3.2)
+#### Devel (Bioconductor 3.6)
 
-* Linux: linux1.bioconductor.org
-* Windows: windows1.bioconductor.org
-* Mac Mavericks: oaxaca
+* Linux: malbec1 
+* Windows: tokay1
+* Mac El Capitan: veracruz1
 
-#### Release (Bioconductor 3.1)
+#### Release (Bioconductor 3.5)
 
-* Linux: zin2
-* Windows: moscato2
-* Mac Mavericks: morelia
-
-#### Next devel (Bioconductor 3.3)
-
-* Linux: linux2.bioconductor.org
-* Windows: windows2.bioconductor.org
- 
-Normally I would not start these builds until the current
-release builds had been stopped 
-(see [the prerelease checklist](Doc/prerelease_and_release_checklist.txt)) but it makes more sense to start the new devel
-builds in the cloud than to move the current release builds.
+* Linux: malbec2 
+* Windows: tokay2
+* Mac El Capitan: veracruz2 
 
 #### A note about time zones.
 
