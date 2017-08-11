@@ -19,7 +19,7 @@ set BBS_BIOC_MANIFEST_GIT_BRANCH=master
 set BBS_BIOC_MANIFEST_FILE=data-experiment.txt
 
 @rem Where is the fresh meat to be stored by prerun (stage1)
-set BBS_MEAT0_RHOST=malbec1
+set BBS_MEAT0_RHOST=malbec1.bioconductor.org
 set BBS_MEAT0_RUSER=biocbuild
 set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.6-data-experiment/MEAT0
 

@@ -20,7 +20,6 @@ export BBS_BIOC_MANIFEST_GIT_BRANCH="master"
 export BBS_BIOC_MANIFEST_FILE="software.txt"
 
 # Where is the fresh meat to be stored by prerun (stage1)
-# BBS_MEAT0_RHOST is used in stage2 when syncing from master builder
 export BBS_MEAT0_RHOST="malbec1.bioconductor.org"
 export BBS_MEAT0_RUSER="biocbuild"
 export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.6-bioc/MEAT0"
