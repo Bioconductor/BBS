@@ -137,15 +137,15 @@ def waitForTargetRepoToBeReady():
                   "Looks like the target repo is not ready yet!"
         else:
             break
-        if nb_attempts == 25:
+        if nb_attempts == 30:
             print "BBS> [waitForTargetRepoToBeReady]",
             print "FATAL ERROR: was unable to access %s after %d attempts. " % \
                   (PACKAGES_url, nb_attempts) + "Giving up."
             sys.exit("=> EXIT.")
         print "BBS> [waitForTargetRepoToBeReady]",
-        print "-> will wait 2 minutes before trying again ..."
+        print "-> will wait 3 minutes before trying again ..."
         sys.stdout.flush()
-        bbs.jobs.sleep(120.0)
+        bbs.jobs.sleep(180.0)
     f.close()
     return
 
