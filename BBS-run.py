@@ -144,6 +144,7 @@ def waitForTargetRepoToBeReady():
             sys.exit("=> EXIT.")
         print "BBS> [waitForTargetRepoToBeReady]",
         print "-> will wait 2 minutes before trying again ..."
+        sys.stdout.flush()
         bbs.jobs.sleep(120.0)
     f.close()
     return
