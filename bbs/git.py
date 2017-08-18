@@ -50,9 +50,12 @@ def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     jobs.doOrDie(cmd)
     print ""
     if snapshot_date != None:
-        ## merge only up to snapshot date
-        ## (see https://stackoverflow.com/a/8223166/2792099)
-        cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
+        ## Andrzej: merge only up to snapshot date
+        ##          (see https://stackoverflow.com/a/8223166/2792099)
+        ## Hervé: That doesn't seem to work reliably. Switching to a
+        ## simple 'git merge' for now...
+        #cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
+        cmd = '%s merge' % git_cmd
         print "bbs.git.update_git_clone> %s" % cmd
         jobs.doOrDie(cmd)
         print ""
