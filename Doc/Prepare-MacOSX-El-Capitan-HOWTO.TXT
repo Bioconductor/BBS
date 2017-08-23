@@ -1041,6 +1041,11 @@ Everything in this section must be done from the biocbuild account.
     cd ~/bbs-3.5-bioc/meat
     R CMD build GeneGA
 
+** Install protobuf system dependencies
+
+  Needed for the CRAN RProtoBuf package which is 'Suggested' by GoogleGenomics.
+
+  brew install protobuf
 
 I. How to update R
 ------------------
