@@ -13,18 +13,21 @@
 ### git module
 ###
 
+import sys
 import os
 import jobs
 
-def update_git_clone(clone_path, repo_url, branch=None, snapshot_date=None):
+def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None):
     try:
         git_cmd = os.environ['BBS_GIT_CMD']
     except KeyError:
         git_cmd = 'git'
     if not os.path.exists(clone_path):
-        cmd = '%s clone --depth 1' % git_cmd
+        cmd = '%s clone' % git_cmd
         if branch != None:
             cmd += ' --branch %s' % branch
+        if depth != None:
+            cmd += ' --depth %s' % depth
         cmd = '%s %s %s' % (cmd, repo_url, clone_path)
         print "bbs.git.update_git_clone> %s" % cmd
         jobs.doOrDie(cmd)

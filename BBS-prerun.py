@@ -181,8 +181,10 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     manifest_path = BBSvars.manifest_path
     manifest_git_clone = os.path.dirname(manifest_path)
     print ""
-    bbs.git.update_git_clone(manifest_git_clone, BBSvars.manifest_git_repo_url,
-                             manifest_git_branch)
+    bbs.git.update_git_clone(manifest_git_clone,
+                             BBSvars.manifest_git_repo_url,
+                             manifest_git_branch,
+                             1)
     ## iterate over manifest to update pkg dirs
     dcf = open(manifest_path, 'r')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
@@ -196,8 +198,11 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
         print ""
         pkg_git_clone = os.path.join(MEAT0_path, pkg)
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
-        bbs.git.update_git_clone(pkg_git_clone, pkg_git_repo_url,
-                                 git_branch, snapshot_date)
+        bbs.git.update_git_clone(pkg_git_clone,
+                                 pkg_git_repo_url,
+                                 git_branch,
+                                 1,
+                                 snapshot_date)
     print "BBS> -------------------------------------------------------------"
     print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="
