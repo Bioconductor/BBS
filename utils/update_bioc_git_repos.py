@@ -8,7 +8,7 @@ import git
 
 home = os.path.expanduser('~')
 manifest_git_clone = os.path.join(home, 'git.bioconductor.org', 'manifest')
-manifest_git_repo_url = 'https://git.bioconductor.org/admin/manifest'
+manifest_git_repo_url = 'git@git.bioconductor.org:admin/manifest.git'
 
 def update_manifest(git_branch=None):
     git.update_git_clone(manifest_git_clone,
@@ -42,7 +42,7 @@ def update_packages(pkg_dir, manifest_file, git_branch=None, skip=None):
               (i, len(pkgs), pkg, git_branch)
         print ''
         pkg_git_clone = os.path.join(pkg_dir, pkg)
-        pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
+        pkg_git_repo_url = 'git@git.bioconductor.org:packages/%s.git' % pkg
         git.update_git_clone(pkg_git_clone, pkg_git_repo_url, git_branch)
     return
 
