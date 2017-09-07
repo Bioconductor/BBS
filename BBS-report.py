@@ -747,7 +747,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
     return
 
 def make_node_LeafReports(allpkgs, node):
-    print "BBS> [make_node_LeafReports] Node %s: BEGIN..." % node.id
+    print "BBS> [make_node_LeafReports] Node %s: BEGIN ..." % node.id
+    sys.stdout.flush()
     for pkg in BBSreportutils.supported_pkgs(node):
         # INSTALL leaf-report
         stagecmd = "install"
@@ -774,7 +775,8 @@ def make_node_LeafReports(allpkgs, node):
             if status != "skipped":
                 leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
                 make_LeafReport(leafreport_ref, allpkgs)
-    print "BBS> [make_node_LeafReports] Node %s: END" % node.id
+    print "BBS> [make_node_LeafReports] Node %s: END." % node.id
+    sys.stdout.flush()
     return
 
 def make_all_LeafReports(allpkgs):
@@ -1115,7 +1117,8 @@ def write_select_status_table(out):
 ##############################################################################
 
 def write_node_report(node, allpkgs):
-    print "BBS> [write_node_report] Node %s: BEGIN..." % node.id
+    print "BBS> [write_node_report] Node %s: BEGIN ..." % node.id
+    sys.stdout.flush()
     node_index_file = '%s-index.html' % node.id
     out = open(node_index_file, 'w')
     title = "%s: Build/check report for %s" % (BBSreportutils.get_build_label(), node.id)
@@ -1132,7 +1135,8 @@ def write_node_report(node, allpkgs):
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
-    print "BBS> [write_node_report] Node %s: END" % node.id
+    print "BBS> [write_node_report] Node %s: END." % node.id
+    sys.stdout.flush()
     return node_index_file
 
 def make_all_NodeReports(allpkgs):
@@ -1167,19 +1171,22 @@ def write_mainpage_asHTML(out, allpkgs):
     return
 
 def make_BioC_MainReport(allpkgs):
-    print "BBS> [make_BioC_MainReport] BEGIN..."
+    print "BBS> [make_BioC_MainReport] BEGIN ..."
+    sys.stdout.flush()
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs)
     out.close()
     print "BBS> [make_BioC_MainReport] END."
+    sys.stdout.flush()
     return
 
 def make_CRAN_MainReport(allpkgs):
-    print "BBS> [make_CRAN_MainReport] BEGIN..."
+    print "BBS> [make_CRAN_MainReport] BEGIN ..."
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs)
     out.close()
     print "BBS> [make_CRAN_MainReport] END."
+    sys.stdout.flush()
     return
 
 
