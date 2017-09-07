@@ -28,6 +28,7 @@ def read_manifest(manifest_path):
     return pkgs
 
 def update_packages(pkg_dir, manifest_file, git_branch=None, skip=None):
+    update_manifest(git_branch)
     manifest_path = os.path.join(manifest_git_clone, manifest_file)
     pkgs = read_manifest(manifest_path)
     if skip == None:
@@ -62,9 +63,9 @@ if __name__ == '__main__':
         'or:\n' + \
         '    update_bioc_git_repos.py [manifest|software|data-experiment] [master|RELEASE_3_5]\n' + \
         'or:\n' + \
-        '    update_bioc_git_repos.py [software|data-experiment] skip\n' + \
+        '    update_bioc_git_repos.py [software|data-experiment] <skip>\n' + \
         'or:\n' + \
-        '    update_bioc_git_repos.py [software|data-experiment] [master|RELEASE_3_5] skip'
+        '    update_bioc_git_repos.py [software|data-experiment] [master|RELEASE_3_5] <skip>'
     argc = len(sys.argv)
     git_branch = skip = None
     if argc == 2:
