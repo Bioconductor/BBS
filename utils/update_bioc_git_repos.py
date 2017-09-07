@@ -11,6 +11,9 @@ manifest_git_clone = os.path.join(home, 'git.bioconductor.org', 'manifest')
 manifest_git_repo_url = 'git@git.bioconductor.org:admin/manifest.git'
 
 def update_manifest(git_branch=None):
+    print 'BBS> ----------------------------------------------------------'
+    print 'BBS> [update_manifest] branch: %s' % git_branch
+    print ''
     git.update_git_clone(manifest_git_clone,
                          manifest_git_repo_url,
                          git_branch)
