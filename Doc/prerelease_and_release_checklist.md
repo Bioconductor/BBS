@@ -287,7 +287,7 @@ in _this_ order
   otherwise it will fail its unit test because it is testing to make
   sure that BiocInstaller is in the devel repos. A chicken-and-egg situation.
 
-- Update SPB to point to correct builders (and ??) 
+- Update SPB to point to correct builders (and ??) and clean up sqlite file 
 
 - Update docker. On github Bioconductor/bioc_docker update the config.yml. On
   github and dockerhub create release branches and tags and microbadger.
