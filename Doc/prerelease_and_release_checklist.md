@@ -289,6 +289,8 @@ in _this_ order
 
 - Update SPB to point to correct builders (and ??) and clean up sqlite file 
 
+- Run BiocPkgTooks scripts for creating DOI
+
 - Update docker. On github Bioconductor/bioc_docker update the config.yml. On
   github and dockerhub create release branches and tags and microbadger.
 
