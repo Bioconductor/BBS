@@ -88,9 +88,9 @@ in _this_ order
 - Simlinks to old devel
 
   Until the next devel builds are running, we want symlinks pointing to the old
-  devel builds so that the BiocInstaller package will work.
-  This includes the software, data/annotation, and data/experiment repositories.
-  Remove these symlinks when the builds start running.
+  devel builds so that the BiocInstaller package will work. This includes the
+  software, data/annotation, and data/experiment repositories.  Remove these
+  symlinks when the builds start running.
 
 - Start setting up new devel builders and repositories.
 
@@ -163,20 +163,18 @@ in _this_ order
   and make sure that the add_data.py script in branches/RELEASE_X_XX/pkgs
   contains a URL with the appropriate branch.
 
-- FIRST VERSION BUMP: bump version of devel pkgs (in trunk)
- that are in the manifest file of the upcoming release.
- Scripts for bumping can be found here:
- https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/util/
+- FIRST VERSION BUMP: bump version of devel pkgs (in trunk) that are in the
+  manifest file of the upcoming release.  Scripts for bumping can be found
+  here: https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/util/
 
 - CREATE THE BRANCH FOR THE RELEASE in svn.
 
 - SECOND VERSION BUMP: bump again version of devel pkgs (in trunk)
  that are in the manifest file of the upcoming release.
 
-- Send mail to Bioc-devel to announce the creation of the branch
- and tell people that they can resume commits (provide URL to the
- new branch, clarify the difference between the release and
- the devel version of a package).
+- Send mail to Bioc-devel to announce the creation of the branch and tell
+  people that they can resume commits (provide URL to the new branch, clarify
+  the difference between the release and the devel version of a package).
 
 - Make the release builds extract the meat from the new branch in svn.
   From within MEAT0/, run 'svn up' for both software and data experiment.
