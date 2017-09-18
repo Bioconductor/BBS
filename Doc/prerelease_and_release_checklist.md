@@ -185,6 +185,11 @@ in _this_ order
 - Change DESCRIPTION file of BiocInstaller to depend on latest devel
   version of R (if that is appropriate).
 
+- Make sure that the BiocInstaller package is manually pushed out
+  to the new devel repos. It has to be manually pushed out because
+  otherwise it will fail its unit test because it is testing to make
+  sure that BiocInstaller is in the devel repos. A chicken-and-egg situation.
+
 - Run a script to generate recent NEWS for all packages, to be included
   in the release announcement. (biocViews:::getPackageNEWS.R()).
   Verify that there are no <NA>s in output. Collate package descriptions
@@ -199,6 +204,10 @@ in _this_ order
   on the devel linux master builder. Run the prepareRepo/pushRepo sequence. 
   Before running that sequence create the 3.6/extra directory
   so the pushRepo script has a place to push the stuff.
+
+- Modify the file /about/removed-packages/ on the web site
+  to indicate the packages that were removed with this release.
+  Link to the last-good landing page of each package.
 
 
 <a name="d"></a>
@@ -227,76 +236,67 @@ in _this_ order
   the package that you will push out manually--see the
   "Modify BiocInstaller..." step below).
 
-- Update build report index page and symlinks; remove "devel"
-  background image from report.css (if there is one).
-
-- Put release announcement on web and add to pages which contain
-  links to all release announcements (/about/release-announcements
-  and **/layouts/_release_announcements.html**). Put today's
-  date at the top of the web version of the release
-  announcement.
-
-- add the last release version to the list of 'Previous Versions'
-  (layouts/_bioc_older_packages.html). **DON'T FORGET THIS!**
-
-- Add new AMI and add to  /help/bioconductor-cloud-ami/
-  (use AMI placeholder from config.yaml) 
-
-- Link to release announcement on main index page.
-
-- Update number of packages on main index page.
-
-- Update symlinks ("release" and "devel") under /checkReports
-
-- Update Wikipedia page for Bioconductor
-
-- Update post-commit hook script
-  extra/svndata/gentleman/svnroot/bioconductor/hooks/post-commit on
-  hedgehog, changing to the new devel version, search for CHANGEME.
-
-- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller to change
-  relevant variables. This will automatically push soon after being
-  committed.
-
-- Announce the release.
-
-- Tweet a link to the release announcement.
-
 - Add "Disallow: /packages/XX/" to the web site's robots.txt file
   where XX is the new devel version (one higher than the version)
   that was just released.
 
-- Modify the file /about/removed-packages/ on the web site
-  to indicate the packages that were removed with this release.
-  Link to the last-good landing page of each package.
+- Website updates:
+  -- Update build report index page and symlinks; remove "devel"
+     background image from report.css (if there is one).
+
+  -- Put release announcement on web and add to pages which contain
+     links to all release announcements (/about/release-announcements
+     and **/layouts/_release_announcements.html**). Put today's
+     date at the top of the web version of the release
+     announcement.
+ 
+  -- Add the last release version to the list of 'Previous Versions'
+     (layouts/_bioc_older_packages.html). **DON'T FORGET THIS!**
+
+  -- Update link to release announcement on main index page
+
+  -- Update number of packages on main index page
+
+  -- Update symlinks ("release" and "devel") under /checkReports
+
+- Update post-commit hook script
+  extra/svndata/gentleman/svnroot/bioconductor/hooks/post-commit on
+  hedgehog, changing to the new devel version, search for CHANGEME.
 
 - Modify the script
   svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
   Change below where it says "CHANGE THE VALUE IN THE NEXT LINE".
   This causes an rss feed to be generated for the release branch.
 
+- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller to change
+  relevant variables. This will automatically push soon after being
+  committed.
+
 - Sanity check: Was biocLite.R updated properly? With a fresh R devel
   (make sure BiocInstaller is not installed), source biocLite.R and
   make sure the appropriate version is installed. Of course, do the same
   with release.  ** really do this! with R-devel too if appropriate! **
 
-- Make sure that the BiocInstaller package is manually pushed out
-  to the new devel repos. It has to be manually pushed out because
-  otherwise it will fail its unit test because it is testing to make
-  sure that BiocInstaller is in the devel repos. A chicken-and-egg situation.
+- Announce the release.
+
+- Tweet a link to the release announcement.
+
+- Update Wikipedia page for Bioconductor
+
+On D + 1:
 
 - Update SPB to point to correct builders and clean up sqlite file 
 
 - Run BiocPkgTools scripts for creating DOI
 
+- Make post-release AMIs of EC2 instances. 
+  See https://github.com/Bioconductor/AWS_management 
+  Add new AMI and add to  /help/bioconductor-cloud-ami/
+  (use AMI placeholder from config.yaml) 
+
 - Update docker. On github Bioconductor/bioc_docker update the config.yml. On
   github and dockerhub create release branches and tags and microbadger.
 
-- Make post-release AMIs of EC2 instances. 
-  See https://github.com/Bioconductor/AWS_management 
-
 - Update Chef recipes with new R / Bioconductor versions
-
-On D + 1:
 
 - Go for a beer.
