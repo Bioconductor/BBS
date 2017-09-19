@@ -19,8 +19,8 @@ from_addr = "BBS-noreply@bioconductor.org"
 
 msg_head = "[This is an automatically generated email. Please don't reply.]\n"
 
-msg_tail = "Please take the time to address this then use your Subversion account\n" \
-         + "when you are ready to commit a fix to your package.\n"
+msg_tail = "Please take the time to address this by committing and pushing\n" \
+         + "changes to your package at git.bioconductor.org\n"
 
 msg_footnote = "Notes:\n\n" \
              + "  * This was the status of your package at the time this email was sent to you.\n" \
