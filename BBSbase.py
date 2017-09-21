@@ -212,7 +212,11 @@ def getSTAGE2cmdForNonTargetPkg(pkg):
 
 def getSTAGE2cmd(pkg, version):
     cmd = '%s CMD INSTALL %s' % (BBSvars.r_cmd, pkg)
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RbuildPrepend')
     if sys.platform == "win32":
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'RbuildPrepend.win')
+        if prepend_win != None:
+            prepend = prepend_win
         win_archs = _supportedWinArchs(pkg)
         if _mustRunSTAGE2InMultiarchMode() and len(win_archs) == 2:
             curl_cmd = BBScorevars.getenv('BBS_CURL_CMD')
@@ -231,6 +235,8 @@ def getSTAGE2cmd(pkg, version):
         else:
             cmd = '%s --arch %s CMD INSTALL --no-multiarch %s' % \
                   (BBSvars.r_cmd, win_archs[0], pkg)
+    if prepend != None:
+        cmd = '%s %s' % (prepend, cmd)
     return cmd
 
 def getSTAGE3cmd(pkgdir_path):
@@ -246,7 +252,7 @@ def getSTAGE4cmd(srcpkg_path):
         if prepend_win != None:
             prepend = prepend_win
     if prepend != None:
-	cmd += '%s ' % prepend
+	cmd = '%s %s' % (prepend, cmd)
     common_opts = "--no-vignettes --timings"
     ## Note that 64-bit machines gewurz and moscato1 give a value of
     ## 'win32' for sys.platform. This means that _noExampleArchs() may
