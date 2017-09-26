@@ -57,7 +57,7 @@ list.old.pkgs <- function(path=".", suffix=".tar.gz")
 ###
 ### Move old package versions to Archive/ in release and remove them in devel.
 ###
-manage.old.packages <- function(path=".", suffix=".tar.gz")
+manage.old.pkgs <- function(path=".", suffix=".tar.gz")
 {
     oldpkgs <- list.old.pkgs(path, suffix)
     library(BiocInstaller)
