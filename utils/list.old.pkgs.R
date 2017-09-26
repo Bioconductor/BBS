@@ -62,7 +62,7 @@ manage.old.pkgs <- function(path=".", suffix=".tar.gz")
     oldpkgs <- list.old.pkgs(path, suffix)
     library(BiocInstaller)
     if (!isDevel()) {
-        if (!dir.exists("./Archive")
+        if (!dir.exists("./Archive"))
             dir.create("./Archive")
             for (pkg in oldpkgs)
                 file.copy(pkg, paste0("./Archive"), overwrite=FALSE)
