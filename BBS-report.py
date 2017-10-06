@@ -113,7 +113,7 @@ stagecmd2label = {
     'buildbin': "BUILD BIN"
 }
 
-def get_alphabet_dispatcher_asHTML(current_letter=None, href=""):
+def alphabet_dispatcher_to_HTML(current_letter=None, href=""):
     html = ''
     for i in range(65,91):
         letter = chr(i)
@@ -125,7 +125,7 @@ def get_alphabet_dispatcher_asHTML(current_letter=None, href=""):
         html += html_letter
     return html
 
-def get_pkgname_asHTML(pkg):
+def pkgname_to_HTML(pkg):
     if BBScorevars.mode == "cran":
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
@@ -142,32 +142,37 @@ def get_pkgname_asHTML(pkg):
 ### VCS metadata HTMLization
 ##############################################################################
 
+def keyval_to_HTML(key, val):
+    key = key.replace(' ', '&nbsp;')
+    val = val.replace(' ', '&nbsp;')
+    return '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
+
+def write_keyval_asTD(out, key, val):
+    html = keyval_to_HTML(key, val)
+    out.write('<TD class="svn_info">%s</TD>' % html)
+    return
+
+def write_pkg_keyval_asTD(out, pkg, key):
+    val = BBSreportutils.get_vcs_meta(pkg, key)
+    write_keyval_asTD(out, key, val)
+    return
+
 def write_Date_asTD(out, pkg, key, full_line=True):
     val = BBSreportutils.get_vcs_meta(pkg, key)
     if not full_line:
         val = ' '.join(val.split(' ')[0:3])
-    key = key.replace(' ', '&nbsp;')
-    val = val.replace(' ', '&nbsp;')
-    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
-    out.write('<TD class="svn_info">%s</TD>' % val)
-    return
-
-def write_URL_asTD(out, pkg):
-    key = 'URL'
-    val = BBSreportutils.get_vcs_meta(pkg, key)
-    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
-    out.write('<TD class="svn_info">%s</TD>' % val)
+    write_keyval_asTD(out, key, val)
     return
 
 def write_LastChange_asTD(out, pkg, key, with_Revision=False):
     val = BBSreportutils.get_vcs_meta(pkg, key)
-    key = key.replace(' ', '&nbsp;')
-    val = '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
+    html = keyval_to_HTML(key, val)
     if with_Revision:
         key2 = 'Revision'
         val2 = BBSreportutils.get_vcs_meta(pkg, key2)
-        val = '%s / %s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (val, key2, val2)
-    out.write('<TD class="svn_info">%s</TD>' % val)
+        html2 = keyval_to_HTML(key2, val2)
+        html = '%s / %s' % (html, html2)
+    out.write('<TD class="svn_info">%s</TD>' % html)
     return
 
 def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False, head=False):
@@ -197,7 +202,7 @@ def write_svn_info_for_pkg_asTABLE(out, pkg, full_info=False):
         write_Date_asTD(out, None, 'Snapshot Date', full_info)
         out.write('</TR>')
         out.write('<TR>')
-        write_URL_asTD(out, pkg)
+        write_pkg_keyval_asTD(out, pkg, 'URL')
         out.write('</TR>')
     out.write('<TR>')
     write_LastChange_asTD(out, pkg, 'Last Changed Rev', True)
@@ -219,7 +224,10 @@ def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):
             write_Date_asTD(out, None, 'Snapshot Date', full_info)
             out.write('</TR>')
             out.write('<TR>')
-            write_URL_asTD(out, pkg)
+            write_pkg_keyval_asTD(out, pkg, 'URL')
+            out.write('</TR>')
+            out.write('<TR>')
+            write_pkg_keyval_asTD(out, pkg, 'Branch')
             out.write('</TR>')
         out.write('<TR>')
         write_LastChange_asTD(out, pkg, 'Last Commit', False)
@@ -325,7 +333,7 @@ def write_pkg_index_as2fullTRs(out, current_letter):
     writeThinRowSeparator_asTR(out, "abc")
     out.write('<TR class="abc"><TD COLSPAN="8" style="background: inherit; font-family: monospace;">')
     out.write('<A name="%s"><B style="font-size: larger;">%s</B></A>' % (current_letter, current_letter))
-    out.write('&nbsp;%s' % get_alphabet_dispatcher_asHTML(current_letter))
+    out.write('&nbsp;%s' % alphabet_dispatcher_to_HTML(current_letter))
     out.write('</TD></TR>\n')
     return
 
@@ -369,7 +377,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     for node in BBSreportutils.NODES:
         out.write('<TR class="%s">' % classes)
         if is_first:
-            pkgname_html = get_pkgname_asHTML(pkg)
+            pkgname_html = pkgname_to_HTML(pkg)
             version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
             maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
             status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
@@ -507,7 +515,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     else:
         strike = ""
         strike_close = ""
-    out.write('%s<B>%s</B>%s&nbsp;<B>%s</B>' % (strike, get_pkgname_asHTML(pkg), strike_close, version))
+    out.write('%s<B>%s</B>%s&nbsp;<B>%s</B>' % (strike, pkgname_to_HTML(pkg), strike_close, version))
     out.write('</TD>')
     maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
     out.write('<TD style="text-align: left">%s</TD>' % maintainer)
@@ -571,7 +579,7 @@ def write_goback_asHTML(out, href, current_letter=None):
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
         out.write('<TD style="padding: 0px; text-align: right; font-family: monospace;">')
-        out.write(get_alphabet_dispatcher_asHTML(current_letter, href))
+        out.write(alphabet_dispatcher_to_HTML(current_letter, href))
         out.write('</TD>')
     out.write('</TR></TABLE>\n')
     return

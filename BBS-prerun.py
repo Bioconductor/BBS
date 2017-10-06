@@ -147,6 +147,8 @@ def writeAndUploadVcsMeta(snapshot_date):
             cmd = ' && '.join([
             'echo -n "URL: "',
             '%s remote get-url origin' % git_cmd_pkg,
+            'echo -n "Branch: "',
+            '%s rev-parse --abbrev-ref HEAD' % git_cmd_pkg,
             '%s log --max-count=1 --date=%s --format=%s' % (git_cmd_pkg, date_format, gitlog_format)
             ])
             cmd = '(%s) >%s' % (cmd, gitlog_file)
