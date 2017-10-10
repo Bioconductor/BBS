@@ -118,12 +118,16 @@ fix_dylib_links()
     # links to the .dylib files shipped with R.
     old_dylibs=`otool -L "$so_file" | grep "$LOCAL_FORTRAN_DYLIB_DIR/.*\.dylib" | cut -d ' ' -f 1`
     pattern=`echo $LOCAL_FORTRAN_DYLIB_DIR | sed "s/\//\\\\\\\\\//g"`
-    replacement=`echo $R_lib_dir | sed "s/\//\\\\\\\\\//g"`
+    replacement1=`echo $R_lib_dir | sed "s/\//\\\\\\\\\//g"`
+    replacement2=`echo "/usr/lib" | sed "s/\//\\\\\\\\\//g"`
     for old_dylib in $old_dylibs; do
-        new_dylib=`echo $old_dylib | sed "s/$pattern/$replacement/"`
+        new_dylib=`echo $old_dylib | sed "s/$pattern/$replacement1/"`
         if [ ! -f "$new_dylib" ]; then
-            echo "ERROR: R installation problem: File $new_dylib not found!"
-            exit 1
+            new_dylib=`echo $old_dylib | sed "s/$pattern/$replacement2/"`
+            if [ ! -f "$new_dylib" ]; then
+                echo "ERROR: R installation problem: File $new_dylib not found!"
+                exit 1
+            fi
         fi
         echo "install_name_tool -change \"$old_dylib\" \"$new_dylib\" \"$so_file\""
         install_name_tool -change "$old_dylib" "$new_dylib" "$so_file"
