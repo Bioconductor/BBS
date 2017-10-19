@@ -44,6 +44,7 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
         to_addrs = [redirect_to_addr]
     to = ', '.join(to_addrs)
     print "BBS>   About to send email to '%s'..." % to,
+    sys.stdout.flush()
     msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, user_agent, from_addr, errors_to, msg)
     #with open("email_config.yaml", 'r') as stream:
     #  config = yaml.load(stream)
@@ -66,6 +67,7 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
         server.sendmail(from_addr, to_addrs, msg)
     server.quit()
     print "DONE"
+    sys.stdout.flush()
     return
 
 # From http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/67083
