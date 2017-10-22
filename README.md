@@ -341,7 +341,7 @@ Looking at *biocadmin*'s crontab, we see:
 
     # Update 3.2/bioc repo with packages from latest "bbs-3.2-bioc" run
     # IMPORTANT: Make sure this is started AFTER 'biocbuild' has finished its "postrun.sh" job!
-    40 13 * * * cd /home/biocadmin/manage-BioC-repos/3.2 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/3.2/updateRepos-bioc.log 2>&1
+    40 13 * * * cd /home/biocadmin/propagation-pipe/3.2 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/3.2/updateRepos-bioc.log 2>&1
 
 First of all, notice the time. This starts at 13:40. This is 
 hopefully enough time for the postrun.sh script (above) to have
@@ -726,7 +726,7 @@ But if that has already happened, you need to do the following:
 ssh biocadmin@linux1.bioconductor.org
 # or ssh ubuntu@linux1.bioconductor.org and then
 # sudo su - biocadmin
-cd manage-BioC-repos/3.2
+cd propagation-pipe/3.2
  ./updateReposPkgs-bioc.sh  && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh 
 ```
 
