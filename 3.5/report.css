@@ -242,40 +242,6 @@ TABLE.mainrep .even .malbec2 {
     background: #99B;
 }
 
-/* lamb1 */
-DIV.lamb1,
-TR.lamb1 TD,
-TABLE.mainrep .lamb1,
-TABLE.mainrep .odd .lamb1 {
-    background: #BCC;
-}
-TABLE.mainrep .even .lamb1 {
-    background: #9AA;
-}
-
-/* george2 */
-DIV.george2,
-TR.george2 TD,
-TABLE.mainrep .george2,
-TABLE.mainrep .odd .george2 {
-    background: #EED;
-}
-TABLE.mainrep .even .george2 {
-    background: #CCB;
-}
-
-/* zin1 */
-DIV.zin1,
-TR.zin1 TD,
-TABLE.mainrep .zin1,
-TABLE.mainrep .odd .zin1 {
-    background: #BCD;
-}
-TABLE.mainrep .even .zin1 {
-    background: #9AB;
-}
-
-
 /* linux1_bioconductor_org */
 DIV.linux1_bioconductor_org,
 TR.linux1_bioconductor_org TD,
@@ -285,95 +251,6 @@ TABLE.mainrep .odd .linux1_bioconductor_org {
 }
 TABLE.mainrep .even .linux1_bioconductor_org {
     background: #9AB;
-}
-
-
-/* zin2 */
-DIV.zin2,
-TR.zin2 TD,
-TABLE.mainrep .zin2,
-TABLE.mainrep .odd .zin2 {
-    background: #ACD;
-}
-TABLE.mainrep .even .zin2 {
-    background: #8AB;
-}
-
-/* wilson2 */
-DIV.wilson2,
-TR.wilson2 TD,
-TABLE.mainrep .wilson2,
-TABLE.mainrep .odd .wilson2 {
-    background: #BDD;
-}
-TABLE.mainrep .even .wilson2 {
-    background: #9BB;
-}
-
-/* puck5 */
-DIV.puck5,
-TR.puck5 TD,
-TABLE.mainrep .puck5,
-TABLE.mainrep .odd .puck5 {
-    background: #D99;
-}
-TABLE.mainrep .even .puck5 {
-    background: #B77;
-}
-
-/* wellington */
-DIV.wellington,
-TR.wellington TD,
-TABLE.mainrep .wellington,
-TABLE.mainrep .odd .wellington {
-    background: #EED;
-}
-TABLE.mainrep .even .wellington {
-    background: #CCB;
-}
-
-/* churchill */
-DIV.churchill,
-TR.churchill TD,
-TABLE.mainrep .churchill,
-TABLE.mainrep .odd .churchill {
-    background: #DEF;
-}
-TABLE.mainrep .even .churchill {
-    background: #BCD;
-}
-
-/* gladstone */
-DIV.gladstone,
-TR.gladstone TD,
-TABLE.mainrep .gladstone,
-TABLE.mainrep .odd .gladstone {
-    background: #DED;
-}
-TABLE.mainrep .even .gladstone {
-    background: #BCB;
-}
-
-/* lemming */
-DIV.lemming,
-TR.lemming TD,
-TABLE.mainrep .lemming,
-TABLE.mainrep .odd .lemming {
-    background: #EDD;
-}
-TABLE.mainrep .even .lemming {
-    background: #CBB;
-}
-
-/* liverpool */
-DIV.liverpool,
-TR.liverpool TD,
-TABLE.mainrep .liverpool,
-TABLE.mainrep .odd .liverpool {
-    background: #ECA;
-}
-TABLE.mainrep .even .liverpool {
-    background: #CA8;
 }
 
 /* gewurz */
@@ -431,8 +308,6 @@ TABLE.mainrep .even .moscato1 {
     background: #C98;
 }
 
-
-
 /* moscato2 */
 DIV.moscato2,
 TR.moscato2 TD,
@@ -442,105 +317,6 @@ TABLE.mainrep .odd .moscato2 {
 }
 TABLE.mainrep .even .moscato2 {
     background: #C98;
-}
-
-/* walpole */
-DIV.walpole,
-TR.walpole TD,
-TABLE.mainrep .walpole,
-TABLE.mainrep .odd .walpole {
-    background: #FDD;
-}
-TABLE.mainrep .even .walpole {
-    background: #DBB;
-}
-
-/* matrix1 */
-DIV.matrix1,
-TR.matrix1 TD,
-TABLE.mainrep .matrix1,
-TABLE.mainrep .odd .matrix1 {
-    background: #FCC;
-}
-TABLE.mainrep .even .matrix1 {
-    background: #DAA;
-}
-
-/* matrix2 */
-DIV.matrix2,
-TR.matrix2 TD,
-TABLE.mainrep .matrix2,
-TABLE.mainrep .odd .matrix2 {
-    background: #FBB;
-}
-TABLE.mainrep .even .matrix2 {
-    background: #D99;
-}
-
-/* pitt */
-DIV.pitt,
-TR.pitt TD,
-TABLE.mainrep .pitt,
-TABLE.mainrep .odd .pitt {
-    background: #DBE;
-}
-TABLE.mainrep .even .pitt {
-    background: #B9C;
-}
-
-/* pelham */
-DIV.pelham,
-TR.pelham TD,
-TABLE.mainrep .pelham,
-TABLE.mainrep .odd .pelham {
-    background: #DBE;
-}
-TABLE.mainrep .even .pelham {
-    background: #B9C;
-}
-
-/* petty */
-DIV.petty,
-TR.petty TD,
-TABLE.mainrep .petty,
-TABLE.mainrep .odd .petty {
-    background: #DAE;
-}
-TABLE.mainrep .even .petty {
-    background: #B8C;
-}
-
-/* perceval */
-DIV.perceval,
-TR.perceval TD,
-TABLE.mainrep .perceval,
-TABLE.mainrep .odd .perceval {
-    background: #DBF;
-}
-TABLE.mainrep .even .perceval {
-    background: #B9D;
-}
-
-/* morelia */
-DIV.morelia,
-TR.morelia TD,
-TABLE.mainrep .morelia,
-TABLE.mainrep .odd .morelia {
-    background: #DBE;
-}
-TABLE.mainrep .even .morelia {
-    background: #B9C;
-}
-
-/* oaxaca */
-DIV.oaxaca,
-TR.oaxaca TD,
-TABLE.mainrep .oaxaca,
-TABLE.mainrep .odd .oaxaca {
-    background: #DBE;
-}
-TABLE.mainrep .even .oaxaca {
-    background: #B9C;
 }
 
 /* toluca2 */
