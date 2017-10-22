@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "$HOME/manage-BioC-repos/3.6"
+cd "$HOME/propagation-pipe/3.6"
 
 . ./config.sh
 

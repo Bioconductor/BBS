@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd "$HOME/manage-BioC-repos/3.7"
+cd "$HOME/propagation-pipe/3.7"
 
 . ./config.sh
 . ./prepareRepos-data-annotation.config
