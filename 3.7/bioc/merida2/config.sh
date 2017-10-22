@@ -14,7 +14,7 @@ export BBS_USER="biocbuild"
 export BBS_RSAKEY="/Users/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.7-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Versions/Current/Resources"
-export BBS_NB_CPU=22  # 24 cores are available
+export BBS_NB_CPU=20  # 24 cores are available
 
 
 
