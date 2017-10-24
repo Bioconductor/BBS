@@ -10,30 +10,7 @@ home = os.path.expanduser('~')
 manifest_git_clone = os.path.join(home, 'git.bioconductor.org', 'manifest')
 manifest_git_repo_url = 'git@git.bioconductor.org:admin/manifest.git'
 
-def update_manifest(git_branch=None):
-    print 'BBS> ----------------------------------------------------------'
-    print 'BBS> [update_manifest] branch: %s' % git_branch
-    print ''
-    git.update_git_clone(manifest_git_clone,
-                         manifest_git_repo_url,
-                         git_branch)
-    return
-
-def read_manifest(manifest_path):
-    dcf = open(manifest_path, 'r')
-    pkgs = []
-    for line in dcf:
-        if not line.startswith('Package:'):
-            continue
-        pkg = line[len('Package:'):].strip()
-        pkgs.append(pkg)
-    dcf.close()
-    return pkgs
-
-def update_packages(pkg_dir, manifest_file, git_branch=None, skip=None):
-    update_manifest(git_branch)
-    manifest_path = os.path.join(manifest_git_clone, manifest_file)
-    pkgs = read_manifest(manifest_path)
+def update_packages(pkg_dir, pkgs, git_branch=None, skip=None):
     if skip == None:
         skip = 0
     i = 0
@@ -50,18 +27,67 @@ def update_packages(pkg_dir, manifest_file, git_branch=None, skip=None):
         git.update_git_clone(pkg_git_clone, pkg_git_repo_url, git_branch)
     return
 
+def read_manifest(manifest_path):
+    dcf = open(manifest_path, 'r')
+    pkgs = []
+    for line in dcf:
+        if not line.startswith('Package:'):
+            continue
+        pkg = line[len('Package:'):].strip()
+        pkgs.append(pkg)
+    dcf.close()
+    return pkgs
+
+def update_packages_in_current_working_dir(git_branch=None, skip=None):
+    key = 'MANIFEST_FILE'
+    print 'BBS> Environment variable %s is ' % key,
+    if key in os.environ and os.environ[key] != "":
+        manifest_path = os.environ[key]
+        print 'defined and set to %s' % manifest_path
+        print 'BBS> ==> Using %s as manifest file...' % manifest_path
+        print ''
+        pkgs = read_manifest(manifest_path)
+    else:
+        print 'NOT defined (or is set to the empty string)'
+        print 'BBS> ==> Assuming all subfolders in the current ' + \
+              'directory are git repos and updating them...'
+        pkgs = [f for f in os.listdir('.') if os.path.isdir(f) and not f.startswith('.')]
+    update_packages('.', pkgs, git_branch, skip)
+    return
+
+def update_manifest(git_branch=None):
+    print 'BBS> ----------------------------------------------------------'
+    print 'BBS> [update_manifest] branch: %s' % git_branch
+    print ''
+    git.update_git_clone(manifest_git_clone,
+                         manifest_git_repo_url,
+                         git_branch)
+    return
+
+def update_packages_from_manifest(pkg_dir, manifest_file,
+                                  git_branch=None, skip=None):
+    update_manifest(git_branch)
+    manifest_path = os.path.join(manifest_git_clone, manifest_file)
+    pkgs = read_manifest(manifest_path)
+    update_packages(pkg_dir, pkgs, git_branch, skip)
+    return
+
 def update_software(git_branch=None, skip=None):
     pkg_dir = os.path.join(home, 'git.bioconductor.org', 'software')
-    update_packages(pkg_dir, 'software.txt', git_branch, skip)
+    update_packages_from_manifest(pkg_dir, 'software.txt',
+                                  git_branch, skip)
     return
 
 def update_data_experiment(git_branch=None, skip=None):
     pkg_dir = os.path.join(home, 'git.bioconductor.org', 'data-experiment')
-    update_packages(pkg_dir, 'data-experiment.txt', git_branch, skip)
+    update_packages_from_manifest(pkg_dir, 'data-experiment.txt',
+                                  git_branch, skip)
     return
 
 if __name__ == '__main__':
     usage_msg = 'Usage:\n' + \
+        '    update_bioc_git_repos.py\n' + \
+        'or:\n' + \
         '    update_bioc_git_repos.py [manifest|software|data-experiment]\n' + \
         'or:\n' + \
         '    update_bioc_git_repos.py [manifest|software|data-experiment] [master|RELEASE_3_5]\n' + \
@@ -71,7 +97,10 @@ if __name__ == '__main__':
         '    update_bioc_git_repos.py [software|data-experiment] [master|RELEASE_3_5] <skip>'
     argc = len(sys.argv)
     git_branch = skip = None
-    if argc == 2:
+    if argc == 1:
+        update_packages_in_current_working_dir()
+        sys.exit()
+    elif argc == 2:
         pass
     elif argc == 3:
         arg2 = sys.argv[2]
