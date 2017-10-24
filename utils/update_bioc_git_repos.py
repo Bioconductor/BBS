@@ -51,11 +51,11 @@ def update_packages_in_current_working_dir(git_branch=None, skip=None):
     else:
         print 'NOT defined (or is set to '
         print 'BBS> the empty string).'
-        print 'BBS> ==> Assuming all subfolders in current ' + \
+        print 'BBS> ==> Assuming all subdirs in current ' + \
               'directory are git repos'
         print 'BBS>     and updating them...'
         pkgs = [f for f in os.listdir('.') if os.path.isdir(f) and not f.startswith('.')]
-        print 'BBS> Nb of subfolders in current directory: %d' % len(pkgs)
+        print 'BBS> Nb of subdirs in current directory: %d' % len(pkgs)
     print ''
     update_packages('.', pkgs, git_branch, skip)
     return
