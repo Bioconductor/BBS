@@ -50,7 +50,7 @@ def update_packages_in_current_working_dir(git_branch=None, skip=None):
         pkgs = read_manifest(manifest_path)
     else:
         print 'NOT defined (or is set to '
-        print 'the empty string)'
+        print 'BBS> the empty string)'
         print 'BBS> ==> Assuming all subfolders in the current ' + \
               'directory are git repos'
         print 'BBS>     and updating them...'
