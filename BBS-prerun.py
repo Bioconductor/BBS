@@ -13,6 +13,7 @@ import shutil
 import time
 
 import bbs.fileutils
+import bbs.manifest
 import bbs.parse
 import bbs.dcf
 import bbs.jobs
@@ -188,7 +189,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
                              manifest_git_branch,
                              1)
     ## iterate over manifest to update pkg dirs
-    pkgs = bbs.parse.read_manifest(manifest_path)
+    pkgs = bbs.manifest.read(manifest_path)
     i = 0
     for pkg in pkgs:
         i = i + 1
@@ -230,7 +231,7 @@ def writeAndUploadMeatInfo(work_topdir):
     snapshot_date = snapshotMEAT0(MEAT0_path)
     manifest_path = BBSvars.manifest_path
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
-    pkgs = bbs.parse.read_manifest(manifest_path)
+    pkgs = bbs.manifest.read(manifest_path)
     writeAndUploadMeatIndex(pkgs, MEAT0_path)
     writeAndUploadVcsMeta(snapshot_date)
     return

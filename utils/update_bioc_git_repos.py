@@ -4,7 +4,7 @@
 import sys
 import os
 
-import parse
+import manifest
 import git
 
 home = os.path.expanduser('~')
@@ -36,7 +36,7 @@ def update_packages_in_current_working_dir(git_branch=None, skip=None):
         print 'defined and set to:'
         print 'BBS>     %s' % manifest_path
         print 'BBS> ==> Using %s as manifest file...' % manifest_path
-        pkgs = parse.read_manifest(manifest_path)
+        pkgs = manifest.read(manifest_path)
         print 'BBS> Nb of packages listed in manifest file: %d' % len(pkgs)
     else:
         print 'NOT defined (or is set to '
@@ -63,7 +63,7 @@ def update_packages_from_manifest(pkg_dir, manifest_file,
                                   git_branch=None, skip=None):
     update_manifest(git_branch)
     manifest_path = os.path.join(manifest_git_clone, manifest_file)
-    pkgs = parse.read_manifest(manifest_path)
+    pkgs = manifest.read(manifest_path)
     update_packages(pkg_dir, pkgs, git_branch, skip)
     return
 
