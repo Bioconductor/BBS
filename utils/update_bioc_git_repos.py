@@ -43,18 +43,20 @@ def update_packages_in_current_working_dir(git_branch=None, skip=None):
     print 'BBS> Environment variable %s is' % key,
     if key in os.environ and os.environ[key] != "":
         manifest_path = os.environ[key]
-        print 'defined'
-        print 'BBS> and set to %s' % manifest_path
+        print 'defined and set to:'
+        print 'BBS>     %s' % manifest_path
         print 'BBS> ==> Using %s as manifest file...' % manifest_path
-        print ''
         pkgs = read_manifest(manifest_path)
+        print 'BBS> Nb of packages listed in manifest file: %d' % len(pkgs)
     else:
         print 'NOT defined (or is set to '
-        print 'BBS> the empty string)'
-        print 'BBS> ==> Assuming all subfolders in the current ' + \
+        print 'BBS> the empty string).'
+        print 'BBS> ==> Assuming all subfolders in current ' + \
               'directory are git repos'
         print 'BBS>     and updating them...'
         pkgs = [f for f in os.listdir('.') if os.path.isdir(f) and not f.startswith('.')]
+        print 'BBS> Nb of subfolders in current directory: %d' % len(pkgs)
+    print ''
     update_packages('.', pkgs, git_branch, skip)
     return
 
