@@ -72,24 +72,44 @@ VERSION_REGEXP="^($NB_REGEXP)(\.|-)($NB_REGEXP)(\.|-)($NB_REGEXP)$"
 
 
 # ----------------------------------------------------------------------------
-ls_out=`ls`
-
-# In order to work with the packages that are listed in the manifest file
-# only, cd to the Rpacks dir, then do:
-#   grep 'Package: ' bioc_1.8.manifest | sed 's/Package: //g' > bump.list
-# then uncomment the line below:
-#ls_out=`cat bump.list`
+if test "x$MANIFEST_FILE" = x; then
+    echo "!! Environment variable MANIFEST_FILE is NOT defined (or is set to"
+    echo "!! the empty string)."
+    echo "!! ==> Assuming all subdirs in current directory are package source"
+    echo "!!     trees and will bump their version..."
+    manifest=`ls`
+else
+    echo "!! Environment variable MANIFEST_FILE is defined and set to:"
+    echo "!!     $MANIFEST_FILE"
+    echo "!! ==> Will bump version of packages listed in $MANIFEST_FILE only..."
+    if [ ! -f "$MANIFEST_FILE" ]; then
+	echo "ERROR: $MANIFEST_FILE: No such file"
+	exit 2
+    fi
+    manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
+fi
+echo ""
 
 pkg_list=""
 nodesc_list=""
-for pkg in $ls_out; do
+for pkg in $manifest; do
 	if [ ! -d "$pkg" ]; then
-		continue
+		if test "x$MANIFEST_FILE" = x; then
+			continue
+		else
+			echo "ERROR: $pkg: No such package source tree"
+			exit 2
+		fi
 	fi
 	desc_file="$pkg/DESCRIPTION"
 	if [ ! -f "$desc_file" ]; then
-		nodesc_list="$nodesc_list$pkg "
-		continue
+		if test "x$MANIFEST_FILE" = x; then
+			nodesc_list="$nodesc_list$pkg "
+			continue
+		else
+			echo "ERROR: Package $pkg has no DESCRIPTION file"
+			exit 2
+		fi
 	fi
 	line=`grep -E "^Version$EOK_REGEXP" $desc_file`
 	if [ $? -ne 0 ]; then
