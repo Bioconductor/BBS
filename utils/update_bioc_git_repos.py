@@ -4,6 +4,7 @@
 import sys
 import os
 
+import parse
 import git
 
 home = os.path.expanduser('~')
@@ -27,17 +28,6 @@ def update_packages(pkg_dir, pkgs, git_branch=None, skip=None):
         git.update_git_clone(pkg_git_clone, pkg_git_repo_url, git_branch)
     return
 
-def read_manifest(manifest_path):
-    dcf = open(manifest_path, 'r')
-    pkgs = []
-    for line in dcf:
-        if not line.startswith('Package:'):
-            continue
-        pkg = line[len('Package:'):].strip()
-        pkgs.append(pkg)
-    dcf.close()
-    return pkgs
-
 def update_packages_in_current_working_dir(git_branch=None, skip=None):
     key = 'MANIFEST_FILE'
     print 'BBS> Environment variable %s is' % key,
@@ -46,7 +36,7 @@ def update_packages_in_current_working_dir(git_branch=None, skip=None):
         print 'defined and set to:'
         print 'BBS>     %s' % manifest_path
         print 'BBS> ==> Using %s as manifest file...' % manifest_path
-        pkgs = read_manifest(manifest_path)
+        pkgs = parse.read_manifest(manifest_path)
         print 'BBS> Nb of packages listed in manifest file: %d' % len(pkgs)
     else:
         print 'NOT defined (or is set to '
@@ -73,7 +63,7 @@ def update_packages_from_manifest(pkg_dir, manifest_file,
                                   git_branch=None, skip=None):
     update_manifest(git_branch)
     manifest_path = os.path.join(manifest_git_clone, manifest_file)
-    pkgs = read_manifest(manifest_path)
+    pkgs = parse.read_manifest(manifest_path)
     update_packages(pkg_dir, pkgs, git_branch, skip)
     return
 
