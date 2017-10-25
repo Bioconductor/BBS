@@ -60,16 +60,21 @@ These steps should be performed typically a couple of days before B. and C.
 
       mkdir git.bioconductor.org
 
-  and populate it with clones of the `manifest` and all packages repos:
+* Populate `git.bioconductor.org` with clones of the `manifest` and
+  all packages repos. This takes about 3h so is worth doing in advance
+  e.g. 2 days before the release. It will save time when doing B. and C.
+  below on the day prior to the release:
 
-      # This takes 2h or more so is worth doing in advance e.g. 2 days before
-      # the release. It will save time when doing B. and C. below on the day
-      # prior to the release.
       cd ~/git.bioconductor.org
       export BBS_HOME="$HOME/BBS"
       export PYTHONPATH="$BBS_HOME/bbs"
+
       $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_6
-      $BBS_HOME/utils/update_bioc_git_repos.py software master  # approx. 70 min
+
+      # takes approx. 1h10
+      $BBS_HOME/utils/update_bioc_git_repos.py software master
+
+      # takes approx. 1h45
       $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
 
 * Finally make sure you can push changes to the BioC git server (at
