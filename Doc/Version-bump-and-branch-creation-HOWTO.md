@@ -64,8 +64,8 @@ in sections **C.**, **D.**, and **E.**.
 * Populate `git.bioconductor.org` with git clones of the `manifest` repo
   and of all the package repos (software and data-experiment). This takes
   about 3h so is worth doing in advance e.g. a couple of days before the
-  release. It will save time when doing **C.** and **D.** below on the
-  day prior to the release:
+  release. It will save time when doing **C.**, **D.**, and **E.** below
+  on the day prior to the release:
 
       export BBS_HOME="$HOME/BBS"
       export PYTHONPATH="$BBS_HOME/bbs"
@@ -74,10 +74,10 @@ in sections **C.**, **D.**, and **E.**.
       $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_6
 
       # clone software package repos (takes approx. 1h10)
-      $BBS_HOME/utils/update_bioc_git_repos.py software master
+      time $BBS_HOME/utils/update_bioc_git_repos.py software master
 
       # clone data-experiment package repos (takes approx. 1h45)
-      $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
+      time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
 
 * Make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
@@ -118,10 +118,9 @@ procedure should take about 3 hours. Make sure to reserve enough time.
 
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
 
-Before you start announce or ask a team member to announce on the
-bioc-devel mailing list that people should stop committing/pushing
-changes to the BioC git server (git.bioconductor.org) for the next couple
-of hours.
+Announce or ask a team member to announce on the bioc-devel mailing list
+that people must stop committing/pushing changes to the BioC git server
+(git.bioconductor.org) for the next 3 hours.
 
 ### C2. Login to the machine where you've performed the preliminary steps
 
@@ -165,11 +164,12 @@ software packages that are listed in the `RELEASE_3_6` manifest
 (see **B. Preliminary steps** above). Note that all the git clones
 should be on the **`master`** branch!
 
-Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
+Update the git clones of all the packages listed in `$MANIFEST_FILE`. This
+should take 15-20 minutes:
 
     export BBS_HOME="$HOME/BBS"
     export PYTHONPATH="$BBS_HOME/bbs"
-    $BBS_HOME/utils/update_bioc_git_repos.py
+    time $BBS_HOME/utils/update_bioc_git_repos.py
 
 ### C6. First version bump (to even y)
 
