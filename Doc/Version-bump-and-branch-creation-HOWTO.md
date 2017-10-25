@@ -180,7 +180,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # dry-run
     ~/BBS/utils/bump_pkg_versions.sh test even
 
-    # if everything looks good
+    # if everything looks OK
     ~/BBS/utils/bump_pkg_versions.sh even
 
     # remove the DESCRIPTION.original files
@@ -205,7 +205,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
       git -C $pkg commit --dry-run -m "$commit_msg"
     done
 
-    # if everything looks good
+    # if everything looks OK
     for pkg in $pkgs_in_manifest; do
       echo ">>> commit version bump for package $pkg"
       git -C $pkg commit -m "$commit_msg"
@@ -238,7 +238,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # dry-run
     ~/BBS/utils/bump_pkg_versions.sh test odd
 
-    # if everything looks good
+    # if everything looks OK
     ~/BBS/utils/bump_pkg_versions.sh odd
 
     # remove the DESCRIPTION.original files
@@ -261,7 +261,7 @@ Same as step C7 above EXCEPT that commit message now is:
       git -C $pkg push --all --dry-run
     done
 
-    # if everything looks good
+    # if everything looks OK
     for pkg in $pkgs_in_manifest; do
       echo ">>> push all changes for package $pkg"
       git -C $pkg push --all
