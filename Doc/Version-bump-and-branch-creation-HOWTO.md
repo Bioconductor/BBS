@@ -6,7 +6,7 @@
 On the day prior to the release, we need to make and push the following
 changes to all the packages in the release, **in this order**:
 
-* **First version bump**: bump x.y.z version to even **in the `master` branch**
+* **First version bump**: bump x.y.z version to even y **in the `master` branch**
 * **Branch creation**: create the release branch
 * **Second version bump**: bump x.y.z version to odd y **in the `master` branch**
 
