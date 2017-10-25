@@ -80,7 +80,12 @@ These steps should be performed typically a couple of days before B. and C.
 * Finally make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
 
+      git config --global user.email "you@example.com"
+      git config --global user.name "Your Name"
       git config --global push.default matching
+      # check config file
+      cat ~/.gitconfig
+
       cd ~/git.bioconductor.org/software/affy
       git push  # should display 'Everything up-to-date'
 
@@ -100,9 +105,9 @@ of hours.
 
 ### 2. Login to the machine where you've performed the preliminary steps
 
-For example:
+Make sure to use the `-A` flag to enable forwarding of the authentication
+agent connection e.g.:
 
-    # Use -A option to enable forwarding of the authentication agent connection
     ssh -A hpages@malbec1.bioconductor.org
 
 See **A. Preliminary steps** above for the details.
@@ -152,29 +157,35 @@ Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
     commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_6 branch"
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-    # Stage DESCRIPTION for commit
+    # stage DESCRIPTION for commit
     for pkg in $pkgs_in_manifest; do
       echo "'git add DESCRIPTION' for package $pkg"
       git -C $pkg add DESCRIPTION
     done
 
-    # Dry-run commit
+    # dry-run commit
     for pkg in $pkgs_in_manifest; do
       echo "commit version bump for package $pkg (dry-run)"
       git -C $pkg --dry-run commit -m "$commit_msg"
     done
 
-    # If everything looks good
+    # if everything looks good
     for pkg in $pkgs_in_manifest; do
       echo "commit version bump for package $pkg"
       git -C $pkg commit -m "$commit_msg"
     done
 
+    # check last commit
+    for pkg in $pkgs_in_manifest; do
+      echo "last commit for package $pkg"
+      git -C $pkg log -n 1
+    done
+    
 ### 9. Branch creation
 
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-    # Create the RELEASE_3_6 branch and change back to master
+    # create the RELEASE_3_6 branch and change back to master
     for pkg in $pkgs_in_manifest; do
       echo "create RELEASE_3_6 branch for package $pkg"
       git -C $pkg checkout -b RELEASE_3_6
@@ -196,13 +207,13 @@ Same as step 8 above EXCEPT that commit message now is:
 
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-    # Dry-run push
+    # dry-run push
     for pkg in $pkgs_in_manifest; do
       echo "push all changes for package $pkg (dry-run)"
       git -C $pkg --dry-run push
     done
 
-    # If everything looks good
+    # if everything looks good
     for pkg in $pkgs_in_manifest; do
       echo "push all changes for package $pkg"
       git -C $pkg push
