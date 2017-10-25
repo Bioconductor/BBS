@@ -1,7 +1,7 @@
 # Version-bump-and-branch-creation-HOWTO
 
 
-## Introduction
+## A. Introduction
 
 On the day prior to the release, we need to make and push the following
 changes to all the packages in the release, **in this order**:
@@ -29,9 +29,10 @@ Also be sure to translate to your local time if you are not on the East
 Coast.
 
 
-## A. Preliminary steps
+## B. Preliminary steps
 
-These steps should be performed typically a couple of days before B. and C.
+These steps should be performed typically a couple of days before C., D.,
+and E.
 
 * Update this document to reflect the BioC version to be released (i.e.
   by replacing all occurences of `3.6` and `RELEASE_3_6` with appropriate
@@ -62,7 +63,7 @@ These steps should be performed typically a couple of days before B. and C.
 
 * Populate `git.bioconductor.org` with clones of the `manifest` and
   all packages repos. This takes about 3h so is worth doing in advance
-  e.g. 2 days before the release. It will save time when doing B. and C.
+  e.g. 2 days before the release. It will save time when doing C. and D.
   below on the day prior to the release:
 
       cd ~/git.bioconductor.org
@@ -98,11 +99,11 @@ These steps should be performed typically a couple of days before B. and C.
       git push  # should display 'Everything up-to-date'
 
 
-## B. Version bumps and branch creation for software packages
+## C. Version bumps and branch creation for software packages
 
 Perform these steps on the day prior to the release. They must be completed
-before the software builds get kicked off (see **Introduction**). The full
-procedure should take less than 2 hours. Make sure to reserve enough time.
+before the software builds get kicked off (see **A. Introduction**). The full
+procedure should take about 3 hours. Make sure to reserve enough time.
 
 ### 1. Ask people to stop committing/pushing changes to the BioC git server
 
@@ -118,7 +119,7 @@ agent connection e.g.:
 
     ssh -A hpages@malbec1.bioconductor.org
 
-See **A. Preliminary steps** above for the details.
+See **B. Preliminary steps** above for the details.
 
 ### 3. Checkout/update the `RELEASE_3_6` branch of the `manifest` repo
 
@@ -145,8 +146,8 @@ Steps 6-12 below must be performed from this folder
 
 The `~/git.bioconductor.org/software` folder should already contain the git
 clones of all the software packages that are listed in the `RELEASE_3_6`
-manifest (see **A. Preliminary steps** above). Note that all the git clones
-should be on the **master** branch!
+manifest (see **B. Preliminary steps** above). Note that all the git clones
+should be on the **`master`** branch!
 
 Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
 
@@ -227,13 +228,26 @@ Same as step 8 above EXCEPT that commit message now is:
       git -C $pkg push
     done
 
-### 13. Tell people that committing/pushing to the BioC git server can resume
+
+## D. Version bumps and branch creation for data-experiment packages
+
+
+## E. Finishing up
+
+### E1. Enable push access to new `RELEASE_3_6` branch
+
+This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
+repo (`git clone git@git.bioconductor.org:gitolite-admin`). Ask a team member
+that is familiar with gitolite (Nitesh or Martin at the moment) to help with
+this.
+
+### E2. Tell people that committing/pushing to the BioC git server can resume
 
 Announce or ask a team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
-### 14. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_6` on main BioC 3.6 builder
+### E3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_6` on main BioC 3.6 builder
 
 DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.6 builds grab the
 `RELEASE_3_6` branch of all packages instead of their `master` branch.
@@ -257,8 +271,4 @@ with
     set BBS_BIOC_GIT_BRANCH=RELEASE_3_6
 
 in `~biocbuild/BBS/3.6/config.bat`
-
-
-## C. Version bumps and branch creation for data-experiment packages
-
 
