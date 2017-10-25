@@ -32,16 +32,16 @@ Coast.
 ## B. Preliminary steps
 
 These steps should be performed typically a couple of days before the steps
-in section **C.**, **D.**, and **E.**.
+in sections **C.**, **D.**, and **E.**.
 
-* Update this document to reflect the BioC version to be released (i.e.
-  by replacing all occurences of `3.6` and `RELEASE_3_6` with appropriate
-  version). This will avoid potentially disastrous mistakes when
-  copying/pasting/executing commands from this file.
+* Update this document to reflect the BioC version to be released i.e.
+  replace all occurences of `3.6` and `RELEASE_3_6` with appropriate
+  version. This will avoid potentially disastrous mistakes when
+  copying/pasting/executing commands from this document.
 
 * Choose a machine with enough disk space to clone all the software and
-  experiment packages (total size of all the clones is about 90G as of
-  Oct 24, 2017). Also make sure to pick up a machine that has fast and
+  experiment packages (as of Oct 24, 2017, total size of all the clones
+  is about 90G). Also make sure to pick up a machine that has fast and
   reliable internet access.
 
 * Make sure to use the `-A` flag to enable forwarding of the authentication
@@ -49,7 +49,7 @@ in section **C.**, **D.**, and **E.**.
 
       ssh -A hpages@malbec1.bioconductor.org
 
-* Clone (or update) the BBS git repo:
+* Clone (or update) the `BBS` git repo:
 
       # clone
       git clone https://github.com/Bioconductor/BBS
@@ -61,21 +61,22 @@ in section **C.**, **D.**, and **E.**.
 
       mkdir git.bioconductor.org
 
-* Populate `git.bioconductor.org` with clones of the `manifest` and
-  all packages repos. This takes about 3h so is worth doing in advance
-  e.g. 2 days before the release. It will save time when doing **C.**
-  and **D.** below on the day prior to the release:
+* Populate `git.bioconductor.org` with git clones of the `manifest` repo
+  and of all the package repos (software and data-experiment). This takes
+  about 3h so is worth doing in advance e.g. a couple of days before the
+  release. It will save time when doing **C.** and **D.** below on the
+  day prior to the release:
 
       export BBS_HOME="$HOME/BBS"
       export PYTHONPATH="$BBS_HOME/bbs"
-      cd ~/git.bioconductor.org
 
+      # clone `manifest` repo
       $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_6
 
-      # takes approx. 1h10
+      # clone software package repos (takes approx. 1h10)
       $BBS_HOME/utils/update_bioc_git_repos.py software master
 
-      # takes approx. 1h45
+      # clone data-experiment package repos (takes approx. 1h45)
       $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
 
 * Make sure you can push changes to the BioC git server (at
