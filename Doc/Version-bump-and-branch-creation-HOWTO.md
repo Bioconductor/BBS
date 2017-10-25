@@ -39,10 +39,13 @@ in sections **C.**, **D.**, and **E.**.
   version. This will avoid potentially disastrous mistakes when
   copying/pasting/executing commands from this document.
 
-* Choose a machine with enough disk space to clone all the software and
-  experiment packages (as of Oct 24, 2017, total size of all the clones
+* Choose a Linux machine with enough disk space to clone all the software
+  and experiment packages (as of Oct 24, 2017, total size of all the clones
   is about 90G). Also make sure to pick up a machine that has fast and
-  reliable internet access.
+  reliable internet access. If you want to use one of the Linux builders,
+  use your personal account or the `biocadmin` account. Do NOT use the
+  `biocbuild` account to not interfer with the builds. Using a Mac server
+  might work but was not tested.
 
 * Make sure to use the `-A` flag to enable forwarding of the authentication
   agent connection when you `ssh` to the machine e.g.:
