@@ -80,12 +80,20 @@ These steps should be performed typically a couple of days before B. and C.
 * Finally make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
 
-      git config --global user.email "you@example.com"
-      git config --global user.name "Your Name"
-      git config --global push.default matching
       # check config file
       cat ~/.gitconfig
 
+      # make any necessary adjustment with
+      git config --global user.email "you@example.com"
+      git config --global user.name "Your Name"
+
+      # also make sure to set push.default to matching      
+      git config --global push.default matching
+
+      # check config file again
+      cat ~/.gitconfig
+
+      # try to push
       cd ~/git.bioconductor.org/software/affy
       git push  # should display 'Everything up-to-date'
 
