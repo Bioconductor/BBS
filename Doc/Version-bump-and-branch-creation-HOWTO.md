@@ -86,10 +86,10 @@ Perform these steps on the day prior to the release. They must be completed
 before the software builds get kicked off (see **Introduction**). The full
 procedure should take less than 2 hours. Make sure to reserve enough time.
 
-### 1. Ask people to stop comitting/pushing changes to the BioC git server
+### 1. Ask people to stop committing/pushing changes to the BioC git server
 
 Before you start announce or ask a team member to announce on the
-bioc-devel mailing list that people should stop comitting/pushing
+bioc-devel mailing list that people should stop committing/pushing
 changes to the BioC git server (git.bioconductor.org) for the next couple
 of hours.
 
@@ -203,10 +203,10 @@ Same as step 8 above EXCEPT that commit message now is:
       git -C $pkg push
     done
 
-### 13. Tell people that comitting/pushing to the BioC git server can resume
+### 13. Tell people that committing/pushing to the BioC git server can resume
 
 Announce or ask a team member to announce on the bioc-devel mailing list
-that comitting/pushing changes to the BioC git server (git.bioconductor.org)
+that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
 ### 14. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_6` on main BioC 3.6 builder
