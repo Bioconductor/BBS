@@ -44,8 +44,8 @@ and E.
   Oct 24, 2017). Also make sure to pick up a machine that has fast and
   reliable internet access.
 
-* Make sure to enable forwarding of the authentication agent connection when
-  you login to the machine (`-A` option) e.g.
+* Make sure to use the `-A` flag to enable forwarding of the authentication
+  agent connection when you `ssh` to the machine e.g.:
 
       ssh -A hpages@malbec1.bioconductor.org
 
@@ -66,9 +66,9 @@ and E.
   e.g. 2 days before the release. It will save time when doing C. and D.
   below on the day prior to the release:
 
-      cd ~/git.bioconductor.org
       export BBS_HOME="$HOME/BBS"
       export PYTHONPATH="$BBS_HOME/bbs"
+      cd ~/git.bioconductor.org
 
       $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_6
 
@@ -78,7 +78,7 @@ and E.
       # takes approx. 1h45
       $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
 
-* Finally make sure you can push changes to the BioC git server (at
+* Make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
 
       # check config file
@@ -97,6 +97,16 @@ and E.
       # try to push
       cd ~/git.bioconductor.org/software/affy
       git push  # should display 'Everything up-to-date'
+
+* Find (and fix) packages with problematic versions:
+
+      # software packages
+      cd ~/git.bioconductor.org/software
+      ~/BBS/utils/bump_pkg_versions.sh bad
+
+      # data-experiment packages
+      cd ~/git.bioconductor.org/data-experiment
+      ~/BBS/utils/bump_pkg_versions.sh bad
 
 
 ## C. Version bumps and branch creation for software packages
@@ -140,7 +150,7 @@ from the `RELEASE_3_6` branch of the `manifest` repo:
 
     cd ~/git.bioconductor.org/software
 
-Steps 6-12 below must be performed from this folder
+Steps C6-C12 below must be performed from this folder
 
 ### C6. Make sure all package git clones are up-to-date
 
@@ -153,79 +163,103 @@ Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
 
     export BBS_HOME="$HOME/BBS"
     export PYTHONPATH="$BBS_HOME/bbs"
+    cd ~/git.bioconductor.org/software
+
     $BBS_HOME/utils/update_bioc_git_repos.py
 
 ### C7. First version bump (to even y)
 
-    ~/BBS/utils/bump_pkg_versions.sh bad
+This will modify the DESCRIPTION files only. It won't commit anything.
+
+    cd ~/git.bioconductor.org/software
+
+    # dry-run
     ~/BBS/utils/bump_pkg_versions.sh test even
+
+    # if everything looks good
     ~/BBS/utils/bump_pkg_versions.sh even
+
+    # remove the DESCRIPTION.original files
+    ~/BBS/utils/bump_pkg_versions.sh clean
 
 ### C8. Commit first version bump
 
     commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_6 branch"
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
+    cd ~/git.bioconductor.org/software
 
     # stage DESCRIPTION for commit
     for pkg in $pkgs_in_manifest; do
-      echo "'git add DESCRIPTION' for package $pkg"
+      echo ">>> 'git add DESCRIPTION' for package $pkg"
       git -C $pkg add DESCRIPTION
     done
 
     # dry-run commit
     for pkg in $pkgs_in_manifest; do
-      echo "commit version bump for package $pkg (dry-run)"
-      git -C $pkg --dry-run commit -m "$commit_msg"
+      echo ">>> commit version bump for package $pkg (dry-run)"
+      git -C $pkg commit --dry-run -m "$commit_msg"
     done
 
     # if everything looks good
     for pkg in $pkgs_in_manifest; do
-      echo "commit version bump for package $pkg"
+      echo ">>> commit version bump for package $pkg"
       git -C $pkg commit -m "$commit_msg"
     done
 
     # check last commit
     for pkg in $pkgs_in_manifest; do
-      echo "last commit for package $pkg"
+      echo ">>> last commit for package $pkg"
       git -C $pkg log -n 1
     done
     
 ### C9. Branch creation
 
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
+    cd ~/git.bioconductor.org/software
 
     # create the RELEASE_3_6 branch and change back to master
     for pkg in $pkgs_in_manifest; do
-      echo "create RELEASE_3_6 branch for package $pkg"
+      echo ">>> create RELEASE_3_6 branch for package $pkg"
       git -C $pkg checkout -b RELEASE_3_6
       git -C $pkg checkout master
     done
 
 ### C10. Second version bump (to odd y)
 
+This will modify the DESCRIPTION files only. It won't commit anything.
+
+    cd ~/git.bioconductor.org/software
+
+    # dry-run
     ~/BBS/utils/bump_pkg_versions.sh test odd
+
+    # if everything looks good
     ~/BBS/utils/bump_pkg_versions.sh odd
+
+    # remove the DESCRIPTION.original files
+    ~/BBS/utils/bump_pkg_versions.sh clean
 
 ### C11. Commit second version bump
 
-Same as step 8 above EXCEPT that commit message now is:
+Same as step C8 above EXCEPT that commit message now is:
 
     commit_msg="bump x.y.z versions to odd y after creation of RELEASE_3_6 branch"
 
 ### C12. Push all the changes
 
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
+    cd ~/git.bioconductor.org/software
 
     # dry-run push
     for pkg in $pkgs_in_manifest; do
-      echo "push all changes for package $pkg (dry-run)"
-      git -C $pkg --dry-run push
+      echo ">>> push all changes for package $pkg (dry-run)"
+      git -C $pkg push --all --dry-run
     done
 
     # if everything looks good
     for pkg in $pkgs_in_manifest; do
-      echo "push all changes for package $pkg"
-      git -C $pkg push
+      echo ">>> push all changes for package $pkg"
+      git -C $pkg push --all
     done
 
 
