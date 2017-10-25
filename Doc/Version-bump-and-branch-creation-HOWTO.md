@@ -105,14 +105,14 @@ Perform these steps on the day prior to the release. They must be completed
 before the software builds get kicked off (see **A. Introduction**). The full
 procedure should take about 3 hours. Make sure to reserve enough time.
 
-### 1. Ask people to stop committing/pushing changes to the BioC git server
+### C1. Ask people to stop committing/pushing changes to the BioC git server
 
 Before you start announce or ask a team member to announce on the
 bioc-devel mailing list that people should stop committing/pushing
 changes to the BioC git server (git.bioconductor.org) for the next couple
 of hours.
 
-### 2. Login to the machine where you've performed the preliminary steps
+### C2. Login to the machine where you've performed the preliminary steps
 
 Make sure to use the `-A` flag to enable forwarding of the authentication
 agent connection e.g.:
@@ -121,7 +121,7 @@ agent connection e.g.:
 
 See **B. Preliminary steps** above for the details.
 
-### 3. Checkout/update the `RELEASE_3_6` branch of the `manifest` repo
+### C3. Checkout/update the `RELEASE_3_6` branch of the `manifest` repo
 
     cd ~/git.bioconductor.org/manifest
     git checkout RELEASE_3_6
@@ -129,20 +129,20 @@ See **B. Preliminary steps** above for the details.
     git branch
     git status
 
-### 4. Set the `MANIFEST_FILE` environment variable
+### C4. Set the `MANIFEST_FILE` environment variable
 
 Set it to the manifest file for software packages. This must be the file
 from the `RELEASE_3_6` branch of the `manifest` repo:
 
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
 
-### 5. Go to the `~/git.bioconductor.org/software/` folder
+### C5. Go to the `~/git.bioconductor.org/software/` folder
 
     cd ~/git.bioconductor.org/software
 
 Steps 6-12 below must be performed from this folder
 
-### 6. Make sure all package git clones are up-to-date
+### C6. Make sure all package git clones are up-to-date
 
 The `~/git.bioconductor.org/software` folder should already contain the git
 clones of all the software packages that are listed in the `RELEASE_3_6`
@@ -155,13 +155,13 @@ Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
     export PYTHONPATH="$BBS_HOME/bbs"
     $BBS_HOME/utils/update_bioc_git_repos.py
 
-### 7. First version bump (to even y)
+### C7. First version bump (to even y)
 
     ~/BBS/utils/bump_pkg_versions.sh bad
     ~/BBS/utils/bump_pkg_versions.sh test even
     ~/BBS/utils/bump_pkg_versions.sh even
 
-### 8. Commit first version bump
+### C8. Commit first version bump
 
     commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_6 branch"
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
@@ -190,7 +190,7 @@ Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
       git -C $pkg log -n 1
     done
     
-### 9. Branch creation
+### C9. Branch creation
 
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
@@ -201,18 +201,18 @@ Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
       git -C $pkg checkout master
     done
 
-### 10. Second version bump (to odd y)
+### C10. Second version bump (to odd y)
 
     ~/BBS/utils/bump_pkg_versions.sh test odd
     ~/BBS/utils/bump_pkg_versions.sh odd
 
-### 11. Commit second version bump
+### C11. Commit second version bump
 
 Same as step 8 above EXCEPT that commit message now is:
 
     commit_msg="bump x.y.z versions to odd y after creation of RELEASE_3_6 branch"
 
-### 12. Push all the changes
+### C12. Push all the changes
 
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
