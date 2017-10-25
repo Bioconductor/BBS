@@ -31,8 +31,8 @@ Coast.
 
 ## B. Preliminary steps
 
-These steps should be performed typically a couple of days before C., D.,
-and E.
+These steps should be performed typically a couple of days before the steps
+in section **C.**, **D.**, and **E.**.
 
 * Update this document to reflect the BioC version to be released (i.e.
   by replacing all occurences of `3.6` and `RELEASE_3_6` with appropriate
@@ -63,8 +63,8 @@ and E.
 
 * Populate `git.bioconductor.org` with clones of the `manifest` and
   all packages repos. This takes about 3h so is worth doing in advance
-  e.g. 2 days before the release. It will save time when doing C. and D.
-  below on the day prior to the release:
+  e.g. 2 days before the release. It will save time when doing **C.**
+  and **D.** below on the day prior to the release:
 
       export BBS_HOME="$HOME/BBS"
       export PYTHONPATH="$BBS_HOME/bbs"
@@ -139,39 +139,42 @@ See **B. Preliminary steps** above for the details.
     git branch
     git status
 
-### C4. Set the `MANIFEST_FILE` environment variable
+### C4. Set the `WORKING_DIR` and `MANIFEST_FILE` environment variables
 
-Set it to the manifest file for software packages. This must be the file
-from the `RELEASE_3_6` branch of the `manifest` repo:
+Point `WORKING_DIR` to the folder containing the software packages:
+
+    export WORKING_DIR="$HOME/git.bioconductor.org/software"
+
+All the remaining steps in section **C.** must be performed from within
+this folder.
+
+Point `MANIFEST_FILE` to the manifest file for software packages. This must
+be the file from the `RELEASE_3_6` branch of the `manifest` repo:
 
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
 
-### C5. Go to the `~/git.bioconductor.org/software/` folder
+### C5. Make sure all package git clones are up-to-date
 
-    cd ~/git.bioconductor.org/software
+Go to the working folder:
 
-Steps C6-C12 below must be performed from this folder
+    cd $WORKING_DIR
 
-### C6. Make sure all package git clones are up-to-date
-
-The `~/git.bioconductor.org/software` folder should already contain the git
-clones of all the software packages that are listed in the `RELEASE_3_6`
-manifest (see **B. Preliminary steps** above). Note that all the git clones
+This folder should already contain the git clones of all the
+software packages that are listed in the `RELEASE_3_6` manifest
+(see **B. Preliminary steps** above). Note that all the git clones
 should be on the **`master`** branch!
 
 Update the git clones of all the packages listed in `$MANIFEST_FILE` with:
 
     export BBS_HOME="$HOME/BBS"
     export PYTHONPATH="$BBS_HOME/bbs"
-    cd ~/git.bioconductor.org/software
-
     $BBS_HOME/utils/update_bioc_git_repos.py
 
-### C7. First version bump (to even y)
+### C6. First version bump (to even y)
 
 This will modify the DESCRIPTION files only. It won't commit anything.
 
-    cd ~/git.bioconductor.org/software
+    cd $WORKING_DIR
 
     # dry-run
     ~/BBS/utils/bump_pkg_versions.sh test even
@@ -182,11 +185,12 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # remove the DESCRIPTION.original files
     ~/BBS/utils/bump_pkg_versions.sh clean
 
-### C8. Commit first version bump
+### C7. Commit first version bump
+
+    cd $WORKING_DIR
+    pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
     commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_6 branch"
-    pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-    cd ~/git.bioconductor.org/software
 
     # stage DESCRIPTION for commit
     for pkg in $pkgs_in_manifest; do
@@ -212,10 +216,10 @@ This will modify the DESCRIPTION files only. It won't commit anything.
       git -C $pkg log -n 1
     done
     
-### C9. Branch creation
+### C8. Branch creation
 
+    cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-    cd ~/git.bioconductor.org/software
 
     # create the RELEASE_3_6 branch and change back to master
     for pkg in $pkgs_in_manifest; do
@@ -224,11 +228,11 @@ This will modify the DESCRIPTION files only. It won't commit anything.
       git -C $pkg checkout master
     done
 
-### C10. Second version bump (to odd y)
+### C9. Second version bump (to odd y)
 
 This will modify the DESCRIPTION files only. It won't commit anything.
 
-    cd ~/git.bioconductor.org/software
+    cd $WORKING_DIR
 
     # dry-run
     ~/BBS/utils/bump_pkg_versions.sh test odd
@@ -239,16 +243,16 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # remove the DESCRIPTION.original files
     ~/BBS/utils/bump_pkg_versions.sh clean
 
-### C11. Commit second version bump
+### C10. Commit second version bump
 
-Same as step C8 above EXCEPT that commit message now is:
+Same as step C7 above EXCEPT that commit message now is:
 
     commit_msg="bump x.y.z versions to odd y after creation of RELEASE_3_6 branch"
 
-### C12. Push all the changes
+### C11. Push all the changes
 
+    cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-    cd ~/git.bioconductor.org/software
 
     # dry-run push
     for pkg in $pkgs_in_manifest; do
@@ -265,6 +269,12 @@ Same as step C8 above EXCEPT that commit message now is:
 
 ## D. Version bumps and branch creation for data-experiment packages
 
+Repeat steps C4 to C11 above **but for C4 define the environment variables
+as follow**:
+
+    export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
+    export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-experiment.txt"
+
 
 ## E. Finishing up
 
@@ -272,7 +282,7 @@ Same as step C8 above EXCEPT that commit message now is:
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`). Ask a team member
-that is familiar with gitolite (Nitesh or Martin at the moment) to help with
+who is familiar with `gitolite` (Nitesh and Martin at the moment) to help with
 this.
 
 ### E2. Tell people that committing/pushing to the BioC git server can resume
