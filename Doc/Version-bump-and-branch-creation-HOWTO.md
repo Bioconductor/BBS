@@ -14,8 +14,8 @@ For example, for the BioC 3.6 release, we need to do this for all the
 packages listed in the `software.txt` and `data-experiment.txt` files
 of the `RELEASE_3_6` branch of the `manifest` repo.
 
-This needs to be done **before** the BioC 3.6 software builds start for
-the software packages, and **before** the BioC 3.6 data-experiment builds
+This needs to be done before the BioC 3.6 software builds start for
+the software packages, and before the BioC 3.6 data-experiment builds
 start for the data-experiment packages.
 
 Look for the prerun jobs in the crontab for the `biocbuild` user on the
