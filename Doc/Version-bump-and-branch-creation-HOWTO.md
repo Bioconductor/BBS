@@ -46,38 +46,38 @@ These steps should be performed typically a couple of days before B. and C.
 * Make sure to enable forwarding of the authentication agent connection when
   you login to the machine (`-A` option) e.g.
 
-    ssh -A hpages@malbec1.bioconductor.org
+      ssh -A hpages@malbec1.bioconductor.org
 
 * Clone (or update) the BBS git repo:
 
-    # clone
-    git clone https://github.com/Bioconductor/BBS
-    # update
-    cd ~/BBS
-    git pull
+      # clone
+      git clone https://github.com/Bioconductor/BBS
+      # update
+      cd ~/BBS
+      git pull
 
 * Create the `git.bioconductor.org` folder:
 
-    mkdir git.bioconductor.org
+      mkdir git.bioconductor.org
 
   and populate it with clones of the `manifest` and all packages repos:
 
-    # This takes 2h or more so is worth doing in advance e.g. 2 days before
-    # the release. It will save time when doing B. and C. below on the day
-    # prior to the release.
-    cd ~/git.bioconductor.org
-    export BBS_HOME="$HOME/BBS"
-    export PYTHONPATH="$BBS_HOME/bbs"
-    $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_6
-    $BBS_HOME/utils/update_bioc_git_repos.py software master  # approx. 70 min
-    $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
+      # This takes 2h or more so is worth doing in advance e.g. 2 days before
+      # the release. It will save time when doing B. and C. below on the day
+      # prior to the release.
+      cd ~/git.bioconductor.org
+      export BBS_HOME="$HOME/BBS"
+      export PYTHONPATH="$BBS_HOME/bbs"
+      $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_6
+      $BBS_HOME/utils/update_bioc_git_repos.py software master  # approx. 70 min
+      $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
 
 * Finally make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
 
-    git config --global push.default matching
-    cd ~/git.bioconductor.org/software/affy
-    git push  # should display 'Everything up-to-date'
+      git config --global push.default matching
+      cd ~/git.bioconductor.org/software/affy
+      git push  # should display 'Everything up-to-date'
 
 
 ## B. Version bumps and branch creation for software packages
