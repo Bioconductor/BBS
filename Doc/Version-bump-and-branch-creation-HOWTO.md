@@ -119,13 +119,13 @@ in sections **C.**, **D.**, and **E.**.
 
 Perform these steps on the day prior to the release. They must be completed
 before the software builds get kicked off (see **A. Introduction**). The full
-procedure should take about 3 hours. Make sure to reserve enough time.
+procedure should take about 2 hours. Make sure to reserve enough time.
 
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
 
 Announce or ask a team member to announce on the bioc-devel mailing list
 that people must stop committing/pushing changes to the BioC git server
-(git.bioconductor.org) for the next 3 hours.
+(git.bioconductor.org) for the next 2 hours.
 
 ### C2. Login to the machine where you've performed the preliminary steps
 
@@ -200,24 +200,28 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
     # stage DESCRIPTION for commit
     for pkg in $pkgs_in_manifest; do
+      echo ""
       echo ">>> 'git add DESCRIPTION' for package $pkg"
       git -C $pkg add DESCRIPTION
     done
 
     # dry-run commit
     for pkg in $pkgs_in_manifest; do
+      echo ""
       echo ">>> commit version bump for package $pkg (dry-run)"
       git -C $pkg commit --dry-run -m "$commit_msg"
     done
 
     # if everything looks OK
     for pkg in $pkgs_in_manifest; do
+      echo ""
       echo ">>> commit version bump for package $pkg"
       git -C $pkg commit -m "$commit_msg"
     done
 
     # check last commit
     for pkg in $pkgs_in_manifest; do
+      echo ""
       echo ">>> last commit for package $pkg"
       git -C $pkg log -n 1
     done
@@ -229,9 +233,19 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
     # create the RELEASE_3_6 branch and change back to master
     for pkg in $pkgs_in_manifest; do
+      echo ""
       echo ">>> create RELEASE_3_6 branch for package $pkg"
       git -C $pkg checkout -b RELEASE_3_6
       git -C $pkg checkout master
+    done
+
+    # check existence of the new branch
+    for pkg in $pkgs_in_manifest; do
+      git -C $pkg branch -a | grep RELEASE_3_6
+      if [ $? -ne 0 ]; then
+        echo "ERROR: No RELEASE_3_6 branch in $pkg"
+        break
+      fi
     done
 
 ### C9. Second version bump (to odd y)
@@ -260,17 +274,23 @@ Same as step C7 above EXCEPT that commit message now is:
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-    # dry-run push
-    for pkg in $pkgs_in_manifest; do
-      echo ">>> push all changes for package $pkg (dry-run)"
-      git -C $pkg push --all --dry-run
-    done
+    # dry-run push (takes 20-30 min, not worth it!)
+    #for pkg in $pkgs_in_manifest; do
+    #  echo ""
+    #  echo ">>> push all changes for package $pkg (dry-run)"
+    #  git -C $pkg push --all --dry-run
+    #done
 
-    # if everything looks OK
-    for pkg in $pkgs_in_manifest; do
+    # if everything looks OK (takes approx. 25 min)
+    time for pkg in $pkgs_in_manifest; do
+      echo ""
       echo ">>> push all changes for package $pkg"
       git -C $pkg push --all
-    done
+    done > push.log
+
+Open `push.log` in an editor and search for errors. A typical error is
+`Error: duplicate commits` (happened for affyPLM and Rdisop first time I
+tested this). Report these errors to `gitolite` experts Nitesh and Martin.
 
 
 ## D. Version bumps and branch creation for data-experiment packages
