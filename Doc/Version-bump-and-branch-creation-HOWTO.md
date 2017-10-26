@@ -193,31 +193,24 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
 ### C7. Commit first version bump
 
+    commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_6 branch"
+
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-    commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_6 branch"
-
     # stage DESCRIPTION for commit
-    for pkg in $pkgs_in_manifest; do
+    time for pkg in $pkgs_in_manifest; do
       echo ""
       echo ">>> 'git add DESCRIPTION' for package $pkg"
       git -C $pkg add DESCRIPTION
-    done
+    done > stage.out
 
-    # dry-run commit
-    for pkg in $pkgs_in_manifest; do
-      echo ""
-      echo ">>> commit version bump for package $pkg (dry-run)"
-      git -C $pkg commit --dry-run -m "$commit_msg"
-    done
-
-    # if everything looks OK
-    for pkg in $pkgs_in_manifest; do
+    # commit
+    time for pkg in $pkgs_in_manifest; do
       echo ""
       echo ">>> commit version bump for package $pkg"
       git -C $pkg commit -m "$commit_msg"
-    done
+    done > commit.out
 
     # check last commit
     for pkg in $pkgs_in_manifest; do
@@ -232,12 +225,12 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
     # create the RELEASE_3_6 branch and change back to master
-    for pkg in $pkgs_in_manifest; do
+    time for pkg in $pkgs_in_manifest; do
       echo ""
       echo ">>> create RELEASE_3_6 branch for package $pkg"
       git -C $pkg checkout -b RELEASE_3_6
       git -C $pkg checkout master
-    done
+    done > createbranch.out 2>&1
 
     # check existence of the new branch
     for pkg in $pkgs_in_manifest; do
@@ -286,7 +279,7 @@ Same as step C7 above EXCEPT that commit message now is:
       echo ""
       echo ">>> push all changes for package $pkg"
       git -C $pkg push --all
-    done > push.log
+    done > push.log 2>&1
 
 Open `push.log` in an editor and search for errors. A typical error is
 `Error: duplicate commits` (happened for affyPLM and Rdisop first time I
@@ -300,6 +293,13 @@ as follow**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-experiment.txt"
+
+Timings (approx.):
+
+* **C7**: 11 min for `stage DESCRIPTION`, 15 sec for `commit`
+* **C8**: 10 sec
+* **C10**: < 1 sec for `stage DESCRIPTION`, < 2 sec for `commit`
+* **C11**: 5 min
 
 
 ## E. Finishing up
