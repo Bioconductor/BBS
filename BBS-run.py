@@ -266,7 +266,7 @@ def STAGE2_loop(target_pkgs, pkg_deps_list, installed_pkgs, nb_cpu):
             try:
                 version = bbs.parse.getVersionFromDir(pkg)
             except IOError:
-                print "BBS>   Can't read DESCRIPTION file!"
+                print "BBS>   Can't read %s/DESCRIPTION file!" % pkg
             cmd = BBSbase.getSTAGE2cmd(pkg, version)
             nb_target_pkgs_in_queue += 1
         else:
