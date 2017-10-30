@@ -141,8 +141,8 @@ See **B. Preliminary steps** above for the details.
 ### C3. Checkout/update the `RELEASE_3_6` branch of the `manifest` repo
 
     cd ~/git.bioconductor.org/manifest
+    git pull --all
     git checkout RELEASE_3_6
-    git pull
     git branch
     git status
 
