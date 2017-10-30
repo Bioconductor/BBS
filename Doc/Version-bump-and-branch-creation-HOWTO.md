@@ -324,7 +324,7 @@ can resume.
 DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.6 builds grab the
 `RELEASE_3_6` branch of all packages instead of their `master` branch.
 
-Login to the main BioC 3.6 builder as biocbuild and replace
+Login to the main BioC 3.6 builder as `biocbuild` and replace
 
     export BBS_BIOC_GIT_BRANCH="master"
 
@@ -332,7 +332,7 @@ with
 
     export BBS_BIOC_GIT_BRANCH="RELEASE_3_6"
 
-in `~biocbuild/BBS/3.6/config.sh`
+in `~/BBS/3.6/config.sh`
 
 Also replace
 
@@ -342,5 +342,9 @@ with
 
     set BBS_BIOC_GIT_BRANCH=RELEASE_3_6
 
-in `~biocbuild/BBS/3.6/config.bat`
+in `~/BBS/3.6/config.bat`
+
+Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.6-bioc/` and
+from `~/bbs-3.6-data-experiment/`. They'll get automatically re-created and
+re-populated when the builds start.
 
