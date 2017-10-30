@@ -106,6 +106,8 @@ in sections **C.**, **D.**, and **E.**.
 
 * Find (and fix) packages with problematic versions:
 
+  FIXME: Do we need to set MANIFEST_FILE variable?
+
       # software packages
       cd ~/git.bioconductor.org/software
       ~/BBS/utils/bump_pkg_versions.sh bad
