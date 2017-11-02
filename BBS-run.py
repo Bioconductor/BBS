@@ -425,6 +425,11 @@ def STAGE3():
     print "BBS> [STAGE3] cd BBS_MEAT_PATH"
     os.chdir(BBSvars.meat_path)
     target_pkgs = extractTargetPkgListFromMeatIndex()
+    if BBScorevars.subbuilds == "bioc-longtests":
+        for pkg in target_pkgs:
+            rdir = BBSvars.MEAT0_rdir.subdir(pkg)
+            local_dir = os.path.join(BBSvars.meat_path, pkg)
+            rdir.syncLocalDir(local_dir, True)
     STAGE3_loop(target_pkgs, BBSvars.nb_cpu)
     print "BBS> [STAGE3] DONE at %s." % time.asctime()
     return

@@ -212,16 +212,16 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     print "BBS> =============================================================="
     return
 
-def snapshotMEAT0(MEAT0_path):
+def update_MEAT0(MEAT0_path):
     print "BBS>"
     snapshot_date = bbs.jobs.currentDateString()
     if BBSvars.update_MEAT0 == 1:
         update_script = os.path.join(MEAT0_path, 'update-BBS-meat.sh')
         if os.path.exists(update_script):
-            print "BBS> [snapshotMEAT0] cd BBS_MEAT0_RDIR"
+            print "BBS> [update_MEAT0] cd BBS_MEAT0_RDIR"
             os.chdir(MEAT0_path)
             cmd = update_script
-            print "BBS> [snapshotMEAT0] %s (at %s)" % (cmd, snapshot_date)
+            print "BBS> [update_MEAT0] %s (at %s)" % (cmd, snapshot_date)
             bbs.jobs.doOrDie(cmd)
         elif BBSvars.MEAT0_type == 1:
             update_svn_MEAT0(MEAT0_path, snapshot_date)
@@ -231,7 +231,7 @@ def snapshotMEAT0(MEAT0_path):
 
 def writeAndUploadMeatInfo(work_topdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
-    snapshot_date = snapshotMEAT0(MEAT0_path)
+    snapshot_date = update_MEAT0(MEAT0_path)
     manifest_path = BBSvars.manifest_path
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
     pkgs = bbs.manifest.read(manifest_path)
