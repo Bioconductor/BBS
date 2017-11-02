@@ -1161,7 +1161,7 @@ def make_all_NodeReports(allpkgs):
 def write_mainpage_asHTML(out, allpkgs):
     if BBScorevars.subbuilds in ["bioc", "biocLite", "data-experiment"]:
         write_BioC_mainpage_head_asHTML(out)
-    else: # "cran" mode
+    else: # "cran" subbuilds
         write_CRAN_mainpage_head_asHTML(out)
     out.write('<BR>\n')
     write_node_specs_table(out)
@@ -1251,7 +1251,7 @@ if arg1 != "skip-leaf-reports":
 make_all_NodeReports(allpkgs)
 if BBScorevars.subbuilds != "cran":
     make_BioC_MainReport(allpkgs)
-else: # "cran" mode
+else: # "cran" subbuilds
     make_CRAN_MainReport(allpkgs)
 
 print "BBS> [stage8] DONE at %s." % time.asctime()

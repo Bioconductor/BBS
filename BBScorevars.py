@@ -140,7 +140,7 @@ else:
 
 nodes_rdir = Central_rdir.subdir('nodes')
 
-mode = getenv('BBS_SUBBUILDS', False, "bioc")
+subbuilds = getenv('BBS_SUBBUILDS', False, "bioc")
 
 r_cmd_timeout = float(getenv('BBS_R_CMD_TIMEOUT', False, "2400.0"))
 
