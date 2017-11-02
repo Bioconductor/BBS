@@ -529,9 +529,9 @@ def write_compactreport_header_asfullTR(out):
     out.write('<TD style="text-align: left; padding-left: 12px;">Package</TD>')
     out.write('<TD style="text-align: left">Maintainer</TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
-        write_stagelabel_asTD(out, "checksrc", extra_style)
+        write_stagelabel_asTD(out, "checksrc")
     else:
-        write_pkg_5stagelabels_as5TDs(out, extra_style)
+        write_pkg_5stagelabels_as5TDs(out)
     out.write('</TR>\n')
     return
 
