@@ -375,8 +375,6 @@ def STAGE2():
     CallRfunctionFromSTAGE2Script("updateNonTargetPkgs",
                                   "updateNonTargetPkgs2.Rout")
 
-    makeNodeInfo()
-
     print "BBS> [STAGE2] DONE at %s." % time.asctime()
     return
 
@@ -422,6 +420,7 @@ def STAGE3_loop(pkgdir_paths, nb_cpu):
 def STAGE3():
     print "BBS> [STAGE3] STARTING STAGE3 at %s..." % time.asctime()
     BBSvars.buildsrc_rdir.RemakeMe(True)
+    makeNodeInfo()
     print "BBS> [STAGE3] cd BBS_MEAT_PATH"
     target_pkgs = extractTargetPkgListFromMeatIndex()
     meat_path = BBSvars.meat_path
