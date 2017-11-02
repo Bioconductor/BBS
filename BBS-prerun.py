@@ -46,7 +46,7 @@ def build_meat_index(pkgs, meat_path):
     for pkg in pkgs:
         pkgdir_path = os.path.join(meat_path, pkg)
         if BBScorevars.mode == "longtests" and \
-           bbs.parse.getBBSoptionFromDir(pkgdir_path, 'InLongtestsBuilds') == "TRUE":
+           bbs.parse.getBBSoptionFromDir(pkgdir_path, 'InLongtestsBuilds') != "TRUE":
             continue
         try:
             package = bbs.parse.getPkgFromDir(pkgdir_path)
@@ -370,9 +370,14 @@ if __name__ == "__main__":
         print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
 
     subtask = "upload-meat-info"
-    if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3) and (arg1 == "" or arg1 == subtask):
+    if (arg1 == "" or arg1 == subtask) and (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
         print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
         writeAndUploadMeatInfo(work_topdir)
+        print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
+
+    subtask = "create-local-meat-dir"
+    if (arg1 == "" or arg1 == subtask) and (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
+        print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
         ## Using rsync is better than "svn export": (1) it's incremental,
         ## (2) it works remotely, (3) it works with "nested working copies
         ## (like we have for the data-experiment MEAT0) and, (4) it's even
@@ -381,7 +386,7 @@ if __name__ == "__main__":
         print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
 
     subtask = "extract-meat"
-    if BBSvars.MEAT0_type == 2 and (arg1 == "" or arg1 == subtask):
+    if (arg1 == "" or arg1 == subtask) and BBSvars.MEAT0_type == 2:
         print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
         pkgs = extractSrcPkgTarballs(meat_path)
         writeAndUploadMeatIndex(pkgs, meat_path)
