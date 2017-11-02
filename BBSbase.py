@@ -128,7 +128,7 @@ def _get_RCMDbuild_cmd(pkgdir_path):
     common_opts = ["--keep-empty-dirs", "--no-resave-data"]
     if BBScorevars.subbuilds == "bioc-longtests":
         common_opts += ["--no-build-vignettes", "--no-manual"]
-    cmd += ' '.join(common_opts)
+    cmd = "%s %s" % (cmd, ' '.join(common_opts))
     return cmd
 
 ### 'srcpkg_path' must be a path to a package source tarball.
