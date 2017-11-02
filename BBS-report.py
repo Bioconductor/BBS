@@ -1069,7 +1069,7 @@ def write_glyph_table(out):
     else:
         out.write('><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
         out.write('<I>BUILD BIN</I>')
-    out.write('of package took more than %d minutes' % timeout)
+    out.write(' of package took more than %d minutes' % timeout)
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1082,7 +1082,7 @@ def write_glyph_table(out):
     else:
         out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
         out.write('<I>BUILD BIN</I>')
-    out.write('of package returned errors\n')
+    out.write(' of package returned errors\n')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1101,7 +1101,7 @@ def write_glyph_table(out):
     else:
         out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
         out.write('<I>BUILD BIN</I>')
-    out.write('of package was OK\n')
+    out.write(' of package was OK\n')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
