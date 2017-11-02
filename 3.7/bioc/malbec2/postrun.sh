@@ -17,6 +17,7 @@ cd nodes
 /usr/bin/find . -type d -exec chmod 755 {} -c \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
+
 "$BBS_HOME"/BBS-make-OUTGOING.py
 
 # Generate STATUS_DB.txt file

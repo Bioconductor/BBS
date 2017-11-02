@@ -16,6 +16,8 @@ cd "$BBS_CENTRAL_RDIR"
 cd nodes
 /usr/bin/find . -type d -exec chmod 755 {} -c \;
 
+set -e # Exit immediately if a simple command exits with a non-zero status.
+
 # Generate STATUS_DB.txt file
 "$BBS_HOME"/BBS-make-STATUS_DB.py
 
