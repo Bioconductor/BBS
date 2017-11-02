@@ -87,6 +87,7 @@ def getMatchingFiles(dir=".", regex="", full_names=False):
             matching_files.append(full_name)
         else:
             matching_files.append(file)
+    matching_files.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     return matching_files
 
 # Return the list of srcpkg files found in dir (.tar.gz file).
@@ -95,9 +96,7 @@ def listSrcPkgFiles(dir="."):
     # Should we assume that a pkg name always starts with a letter?
     # If YES, then use regex '^([a-zA-Z][^_]*)_([^_]+)\\.tar\\.gz$'
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
-    srcpkg_files = getMatchingFiles(dir, srcpkg_regex)
-    srcpkg_files.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
-    return srcpkg_files
+    return getMatchingFiles(dir, srcpkg_regex)
 
 
 if __name__ == "__main__":

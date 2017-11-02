@@ -13,6 +13,7 @@ import time
 import shutil
 import re
 import fnmatch
+import string
 
 import bbs.fileutils
 import bbs.parse
@@ -661,7 +662,7 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     out.close()
     return
 
-def write_Summary_to_LeafReport(out, node_hostname, pkg, node_id, stagecmd):
+def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     out.write('<H3>Summary</H3>\n')
     out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
@@ -678,75 +679,113 @@ def write_Summary_to_LeafReport(out, node_hostname, pkg, node_id, stagecmd):
     out.write('</DIV>\n')
     return
 
-def write_Command_output_to_LeafReport(out, node_hostname,
-                                       pkg, node_id, stagecmd):
+### Write content of file 'f' to report.
+def write_file_asHTML(out, f, node_hostname, pattern=None):
     encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
+    pattern_detected = False
+    if pattern != None:
+        regex = re.compile(pattern)
+    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
+    out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
+    i = 0
+    for line in f:
+        i = i + 1
+        if i > 99999:
+            out.write('... [output truncated]\n')
+            break
+        if pattern != None and regex.match(line):
+            pattern_detected = True
+        #try:
+        #    html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
+        #except:
+        #    html_line = line
+        html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
+        try:
+            out.write(html_line)
+        except UnicodeEncodeError:
+            out.write(html_line.encode(encoding))
+    out.write('</PRE>\n')
+    out.write('</DIV>')
+    return pattern_detected
 
-    def write_file_asHTML(f, pattern=None):
-        pattern_detected = False
-        if pattern != None:
-            regex = re.compile(pattern)
+def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
+    out.write('<BR>\n<H3>Tests output</H3>\n')
+    fullpath = os.path.join(BBScorevars.central_rdir_path, "nodes",
+                            node_id, "checksrc")
+    old_cwd = os.getcwd()
+    os.chdir(fullpath)
+    tests_output_dir = os.path.join(pkg + ".Rcheck", "tests")
+    filepaths = []
+    for dirpath, dirnames, filenames in os.walk(tests_output_dir):
+        for filename in filenames:
+            if fnmatch.fnmatch(filename, "*.Rout*"):
+                filepaths.append(os.path.join(dirpath, filename))
+    filepaths.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    #out.write('<UL>\n')
+    for filepath in filepaths:
+        f = open(filepath, "r")
+        #out.write('<LI>\n')
+        out.write('<P>%s:</P>\n' % filepath)
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
+        #out.write('</LI>\n')
+    #out.write('</UL>\n')
+    os.chdir(old_cwd)
+    return
+
+def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
+    out.write('<BR>\n<H3>Example timings</H3>\n')
+    files = ['%s.Rcheck/%s-Ex.timings' % (pkg, pkg),
+             '%s.Rcheck/examples_i386/%s-Ex.timings' % (pkg, pkg),
+             '%s.Rcheck/examples_x64/%s-Ex.timings' % (pkg, pkg)]
+    for filename in files:
+        f = wopen_leafreport_input_file(None, node_id, "checksrc", filename, catch_HTTPerrors=True)
+        if f == None:
+            continue
+        out.write('<P>%s:</P>\n' % filename)
         out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-        out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
-        i = 0
+        out.write('<TABLE style="font-size: smaller;">\n')
         for line in f:
-            i = i + 1
-            if i > 99999:
-                out.write('... [output truncated]\n')
-                break
-            if pattern != None and regex.match(line):
-                pattern_detected = True
-            #try:
-            #    html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
-            #except:
-            #    html_line = line
-            html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
-            try:
-                out.write(html_line)
-            except UnicodeEncodeError:
-                out.write(html_line.encode(encoding))
-        out.write('</PRE>\n')
+            out.write('<TR><TD>')
+            out.write(line.replace('\t', '</TD><TD style="text-align: right;">'))
+            out.write('</TD><TR>\n')
+        out.write('</TABLE>\n')
         out.write('</DIV>')
-        return pattern_detected
+        f.close()
+    return
 
+def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
+    if BBScorevars.subbuilds == "bioc-longtests":
+        write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
+        out.write('<BR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
+    else:
+        out.write('<BR>\n<H3>Command output</H3>\n')
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    out.write('<H3>Command output</H3>\n')
-    unit_test_failed = write_file_asHTML(f, "^Running the tests in .(.*). failed[.]")
+    if stagecmd != "checksrc":
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
+        return
+    ## We don't make any use of 'unit_test_failed' at the moment.
+    #unit_test_failed = write_file_asHTML(out, f, node_hostname,
+    #                       "^Running the tests in .(.*). failed[.]")
+    write_file_asHTML(out, f, node_hostname)
     f.close()
 
-    if stagecmd == "checksrc":
-        if unit_test_failed: # unit test output
-            fullpath = os.path.join(BBScorevars.central_rdir_path, "nodes",
-                                    node_id, stagecmd, pkg + ".Rcheck")
-            for folder, subs, files in os.walk(fullpath):
-                for filename in files:
-                    if fnmatch.fnmatch(filename, "*.Rout.fail"):
-                        with open(os.path.join(folder, filename), "r") as f:
-                            out.write('<P>%s:</P>\n' % filename)
-                            write_file_asHTML(f)
-                            f.close()
-        filename = '%s.Rcheck/00install.out' % pkg
-        f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
-        if f != None:
-            out.write('<P>%s:</P>\n' % filename)
-            write_file_asHTML(f)
-            f.close()
-        files = ['%s.Rcheck/%s-Ex.timings' % (pkg, pkg),
-                 '%s.Rcheck/examples_i386/%s-Ex.timings' % (pkg, pkg),
-                 '%s.Rcheck/examples_x64/%s-Ex.timings' % (pkg, pkg)]
-        for filename in files:
-            f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
-            if f != None:
-                out.write('<P>%s:</P>\n' % filename)
-                out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-                out.write('<TABLE style="font-size: smaller;">\n')
-                for line in f:
-                    out.write('<TR><TD>')
-                    out.write(line.replace('\t', '</TD><TD style="text-align: right;">'))
-                    out.write('</TD><TR>\n')
-                out.write('</TABLE>\n')
-                out.write('</DIV>')
-                f.close()
+    if BBScorevars.subbuilds != "bioc-longtests":
+        write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
+
+    ## Include output of 'R CMD INSTALL'.
+    filename = '%s.Rcheck/00install.out' % pkg
+    f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
+    if f != None:
+        out.write('<BR>\n<H3>Installation output</H3>\n')
+        out.write('<P>%s:</P>\n' % filename)
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
+
+    ## Include example timings.
+    if BBScorevars.subbuilds != "bioc-longtests":
+        write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
     return
 
 def make_LeafReport(leafreport_ref, allpkgs):
@@ -785,12 +824,12 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('</DIV>\n')
     else:
         ## Summary
-        write_Summary_to_LeafReport(out, node_hostname,
-                                    pkg, node_id, stagecmd)
+        write_Summary_to_asHTML(out, node_hostname,
+                                pkg, node_id, stagecmd)
         out.write('<HR>\n')
         ## Command output
-        write_Command_output_to_LeafReport(out, node_hostname,
-                                           pkg, node_id, stagecmd)
+        write_Command_output_asHTML(out, node_hostname,
+                                    pkg, node_id, stagecmd)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
