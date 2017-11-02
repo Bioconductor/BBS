@@ -38,8 +38,8 @@ def remakeCentralRdir(Central_rdir):
 ##############################################################################
 
 def build_meat_index(pkgs, meat_path):
-    print "BBS> [build_meat_index] Start building the meat index for the " +
-          "%s packages in the manifest" % len(pkgs)
+    print "BBS> [build_meat_index] Start building the meat index for " + \
+          "the %s packages in the manifest" % len(pkgs)
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
     out = open(meat_index_path, 'w')
     nout = 0
