@@ -34,9 +34,18 @@ export BBS_CENTRAL_RDIR="/home/biocbuild/public_html/BBS/$BBS_BIOC_VERSIONED_REP
 export BBS_CENTRAL_BASEURL="https://$BBS_CENTRAL_RHOST/BBS/$BBS_BIOC_VERSIONED_REPO_PATH"
 
 
+# Variables specifying the location of the published report
+# ---------------------------------------------------------
+
+export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/$BBS_SUBBUILDS-LATEST/"
+export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
+export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
+
+
 # 'R CMD check' variables
 # -----------------------
 
 #export _R_CHECK_TIMINGS_="0"
 export _R_CHECK_EXECUTABLES_=false
 export _R_CHECK_EXECUTABLES_EXCLUSIONS_=false
+
