@@ -326,6 +326,18 @@ def write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref, style=None):
         out.write('</I></TD>')
     return
 
+### Used in report for longtests subbuilds
+def write_pkg_check_status_asTD(out, pkg, node, leafreport_ref, style=None):
+    if BBSreportutils.is_supported(pkg, node):
+        write_pkg_status_asTD(out, pkg, node, 'checksrc', leafreport_ref, style)
+    else:
+        out.write('<TD class="node %s"><I>' % node.hostname.replace(".", "_"))
+        sep = '...'
+        NOT_SUPPORTED_string = sep + 'NOT SUPPORTED' + sep
+        out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
+        out.write('</I></TD>')
+    return
+
 ### Produces 2 full TRs ("full TR" = TR with 8 TDs)
 def write_pkg_index_as2fullTRs(out, current_letter):
     ## FH: Need the abc class to blend out the alphabetical selection when
@@ -354,7 +366,7 @@ def statuses2classes(statuses):
         classes = "ok"
     return classes
 
-### Produces full TRs ("full TR" = TR with 8 TDs)
+### Produces full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
 def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     if leafreport_ref == None and pkg_pos % 2 == 0:
         classes = "even"
@@ -401,12 +413,15 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             is_first = False
         write_node_spec_asTD(out, node, '<I>%s</I>' % node.id, leafreport_ref)
         write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node), leafreport_ref)
-        #if leafreport_ref == None:
-        #    style = None
-        #else:
-        #    style = "font-size: smaller"
-        #write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref, style)
-        write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref)
+        if BBScorevars.subbuilds == "bioc-longtests":
+            write_pkg_check_status_asTD(out, pkg, node, leafreport_ref)
+        else:
+            #if leafreport_ref == None:
+            #    style = None
+            #else:
+            #    style = "font-size: smaller"
+            #write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref, style)
+            write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref)
         out.write('</TR>\n')
     return
 
@@ -496,7 +511,7 @@ def write_compactreport_header_asfullTR(out):
     out.write('</TR>\n')
     return
 
-### Produces a full TR ("full TR" = TR with 8 TDs)
+### Produces a full TR (normally 8 TDs, only 4 for longtests subbuilds)
 def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     if pkg_pos % 2 == 0 and not leafreport_ref:
         classes = "even"
@@ -519,7 +534,10 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TD>')
     maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
     out.write('<TD style="text-align: left">%s</TD>' % maintainer)
-    write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref)
+    if BBScorevars.subbuilds == "bioc-longtests":
+        write_pkg_check_status_asTD(out, pkg, node, leafreport_ref)
+    else:
+        write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref)
     out.write('</TR>\n')
     return
 
