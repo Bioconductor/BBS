@@ -565,34 +565,34 @@ if __name__ == "__main__":
     ticket = []
     ## STAGE2: preinstall dependencies
     if arg1 in ["", "no-bin"] or arg1 == "STAGE2":
-        startedat = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE2()
         dt = time.time() - t0
-        endedat = bbs.jobs.currentDateString()
-        ticket.append(('STAGE2', startedat, endedat, dt))
+        ended_at = bbs.jobs.currentDateString()
+        ticket.append(('STAGE2', started_at, ended_at, dt))
     ## STAGE3: build source packages
     if arg1 in ["", "no-bin"] or arg1 == "STAGE3":
-        startedat = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE3()
         dt = time.time() - t0
-        endedat = bbs.jobs.currentDateString()
-        ticket.append(('STAGE3', startedat, endedat, dt))
+        ended_at = bbs.jobs.currentDateString()
+        ticket.append(('STAGE3', started_at, ended_at, dt))
     ## STAGE4: check source packages
     if arg1 in ["", "no-bin"] or arg1 == "STAGE4":
-        startedat = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE4()
         dt = time.time() - t0
-        endedat = bbs.jobs.currentDateString()
-        ticket.append(('STAGE4', startedat, endedat, dt))
+        ended_at = bbs.jobs.currentDateString()
+        ticket.append(('STAGE4', started_at, ended_at, dt))
     ## STAGE5: build bin packages
     if arg1 == "" or arg1 == "STAGE5":
-        startedat = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE5()
         dt = time.time() - t0
-        endedat = bbs.jobs.currentDateString()
-        ticket.append(('STAGE5', startedat, endedat, dt))
+        ended_at = bbs.jobs.currentDateString()
+        ticket.append(('STAGE5', started_at, ended_at, dt))
     writeEndOfRunTicket(ticket)
