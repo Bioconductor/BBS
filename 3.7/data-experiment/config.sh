@@ -1,10 +1,10 @@
 #!/bin/bash
-# ================================================================================
-# Settings shared by all the Unix nodes involved in the 3.7-data-experiment builds
-# ================================================================================
+# ===================================================================================
+# Settings shared by all the Unix nodes involved in the 3.7-data-experiment subbuilds
+# ===================================================================================
 
 
-export BBS_MODE="data-experiment"
+export BBS_SUBBUILDS="data-experiment"
 
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)

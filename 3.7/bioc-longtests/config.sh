@@ -1,10 +1,10 @@
 #!/bin/bash
-# ==========================================================================
-# Settings shared by all the Unix nodes involved in the 3.7-longtests builds
-# ==========================================================================
+# ==================================================================================
+# Settings shared by all the Unix nodes involved in the 3.7-bioc-longtests subbuilds
+# ==================================================================================
 
 
-export BBS_MODE="longtests"
+export BBS_SUBBUILDS="bioc-longtests"
 
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)

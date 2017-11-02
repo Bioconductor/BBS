@@ -45,13 +45,13 @@ def build_meat_index(pkgs, meat_path):
     nout = 0
     for pkg in pkgs:
         pkgdir_path = os.path.join(meat_path, pkg)
-        if BBScorevars.mode == "longtests" and \
+        if BBScorevars.subbuilds == "bioc-longtests" and \
            bbs.parse.getBBSoptionFromDir(pkgdir_path, 'InLongtestsBuilds') != "TRUE":
             continue
         try:
             package = bbs.parse.getPkgFromDir(pkgdir_path)
             version = bbs.parse.getVersionFromDir(pkgdir_path)
-            if BBScorevars.mode != "cran":
+            if BBScorevars.subbuilds != "cran":
                 maintainer = bbs.parse.getMaintainerFromDir(pkgdir_path)
                 maintainer_email = bbs.parse.getMaintainerEmailFromDir(pkgdir_path)
             else:
@@ -69,7 +69,7 @@ def build_meat_index(pkgs, meat_path):
         out.write('Package: %s\n' % pkg)
         out.write('Version: %s\n' % version)
         out.write('Maintainer: %s\n' % maintainer)
-        if BBScorevars.mode != "cran":
+        if BBScorevars.subbuilds != "cran":
             out.write('MaintainerEmail: %s\n' % maintainer_email)
         package_status = bbs.parse.getPackageStatusFromDir(pkgdir_path)
         out.write('PackageStatus: %s\n' % package_status)
@@ -79,7 +79,7 @@ def build_meat_index(pkgs, meat_path):
         out.write('NoExamplesOnPlatforms: %s\n' % no_examples)
         force_install = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'ForceInstall')
         out.write('ForceInstall: %s\n' % force_install)
-        if BBScorevars.mode != "cran":
+        if BBScorevars.subbuilds != "cran":
             alert = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'Alert')
             out.write('Alert: %s\n' % alert)
             alert_on = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'AlertOn')

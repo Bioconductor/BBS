@@ -126,11 +126,11 @@ def alphabet_dispatcher_to_HTML(current_letter=None, href=""):
     return html
 
 def pkgname_to_HTML(pkg):
-    if BBScorevars.mode == "cran":
+    if BBScorevars.subbuilds == "cran":
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
         version_string = BBSreportutils.bioc_version
-        if BBScorevars.mode == "data-experiment":
+        if BBScorevars.subbuilds == "data-experiment":
             repo = "data/experiment"
         else:
             repo = "bioc"
@@ -1159,7 +1159,7 @@ def make_all_NodeReports(allpkgs):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs):
-    if BBScorevars.mode in ["bioc", "biocLite", "data-experiment"]:
+    if BBScorevars.subbuilds in ["bioc", "biocLite", "data-experiment"]:
         write_BioC_mainpage_head_asHTML(out)
     else: # "cran" mode
         write_CRAN_mainpage_head_asHTML(out)
@@ -1249,7 +1249,7 @@ print "BBS> [stage8] Generating report for nodes: %s" % report_nodes
 if arg1 != "skip-leaf-reports":
     make_all_LeafReports(allpkgs)
 make_all_NodeReports(allpkgs)
-if BBScorevars.mode != "cran":
+if BBScorevars.subbuilds != "cran":
     make_BioC_MainReport(allpkgs)
 else: # "cran" mode
     make_CRAN_MainReport(allpkgs)

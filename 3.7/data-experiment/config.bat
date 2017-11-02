@@ -1,9 +1,9 @@
-@rem ===================================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.7-data-experiment builds
-@rem ===================================================================================
+@rem ======================================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.7-data-experiment subbuilds
+@rem ======================================================================================
 
 
-set BBS_MODE=data-experiment
+set BBS_SUBBUILDS=data-experiment
 
 @rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)

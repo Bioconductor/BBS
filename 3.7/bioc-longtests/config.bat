@@ -1,9 +1,9 @@
-@rem =============================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.7-longtests builds
-@rem =============================================================================
+@rem =====================================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.7-bioc-longtests subbuilds
+@rem =====================================================================================
 
 
-set BBS_MODE=longtests
+set BBS_SUBBUILDS=bioc-longtests
 
 @rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)

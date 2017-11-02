@@ -134,12 +134,12 @@ def get_leafreport_rURL(pkg, node_id, stagecmd):
     return "%s/%s-%s.html" % (pkg, node_id, stagecmd)
 
 def get_build_label():
-    if BBScorevars.mode == "cran":
+    if BBScorevars.subbuilds == "cran":
         return "CRAN"
     build_label = "BioC %s" % bioc_version
-    if BBScorevars.mode == "biocLite":
+    if BBScorevars.subbuilds == "biocLite":
         build_label = "biocLite (%s)" % build_label
-    elif BBScorevars.mode == "data-experiment":
+    elif BBScorevars.subbuilds == "data-experiment":
         build_label = "BioC experimental data"
     return build_label
 

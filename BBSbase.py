@@ -190,7 +190,7 @@ def getSTAGE1cmd(pkgdir_path):
     return cmd
 
 def _mustRunSTAGE2InMultiarchMode():
-    return BBScorevars.mode == "bioc" and \
+    return BBScorevars.subbuilds == "bioc" and \
            "BBS_STAGE2_MODE" in os.environ and \
            os.environ['BBS_STAGE2_MODE'] == 'multiarch'
 

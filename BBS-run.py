@@ -348,7 +348,7 @@ def STAGE2():
     # build machines.
     if ('BBS_STAGE2_MODE' in os.environ and
       os.environ['BBS_STAGE2_MODE'] == 'multiarch' and
-      BBScorevars.mode == "bioc"):
+      BBScorevars.subbuilds == "bioc"):
         CreateREnvironFiles()
 
     # Try to update all installed packages
@@ -591,9 +591,3 @@ if __name__ == "__main__":
         endedat = bbs.jobs.currentDateString()
         ticket.append(('STAGE5', startedat, endedat, dt))
     writeEndOfRunTicket(ticket)
-
-# 11/02/2005: 590 lines
-# 11/08/2005: 278 lines in BBSbase.py + 380 lines in BBS-run.py
-# 01/24/2006: 642 lines in BBSbase.py + 286 lines in BBS-run.py
-# 08/17/2006: 772 lines in BBSbase.py + 147 lines in BBSvars.py + 355 lines in BBS-run.py
-# 01/12/2007: 777 lines in BBSbase.py + 130 in BBSvars.py + 225 in BBS-prerun.py + 357 in BBS-run.py

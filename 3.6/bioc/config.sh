@@ -1,10 +1,10 @@
 #!/bin/bash
-# =====================================================================
-# Settings shared by all the Unix nodes involved in the 3.6-bioc builds
-# =====================================================================
+# ========================================================================
+# Settings shared by all the Unix nodes involved in the 3.6-bioc subbuilds
+# ========================================================================
 
 
-export BBS_MODE="bioc"
+export BBS_SUBBUILDS="bioc"
 
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)

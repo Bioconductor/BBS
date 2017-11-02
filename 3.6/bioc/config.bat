@@ -1,9 +1,9 @@
-@rem ========================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.6-bioc builds
-@rem ========================================================================
+@rem ===========================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.6-bioc subbuilds
+@rem ===========================================================================
 
 
-set BBS_MODE=bioc
+set BBS_SUBBUILDS=bioc
 
 @rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)
