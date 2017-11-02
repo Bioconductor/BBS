@@ -1201,7 +1201,7 @@ def make_all_NodeReports(allpkgs):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs):
-    if BBScorevars.subbuilds in ["bioc", "biocLite", "data-experiment"]:
+    if BBScorevars.subbuilds in ["bioc", "data-experiment", "bioc-longtests"]:
         write_BioC_mainpage_head_asHTML(out)
     else: # "cran" subbuilds
         write_CRAN_mainpage_head_asHTML(out)
@@ -1270,10 +1270,16 @@ print "BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBScorev
 BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
-if len(BBSreportutils.NODES) != 1:
-    main_page_title = 'Multiple platform build/check report'
+if BBScorevars.subbuilds == "bioc-longtests":
+    if len(BBSreportutils.NODES) != 1:
+        main_page_title = 'Multiple platform long tests report'
+    else:
+        main_page_title = 'Long tests report'
 else:
-    main_page_title = 'Build/check report'
+    if len(BBSreportutils.NODES) != 1:
+        main_page_title = 'Multiple platform build/check report'
+    else:
+        main_page_title = 'Build/check report'
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
 make_STATUS_SUMMARY(allpkgs)
 print "BBS> [stage8] cp %s %s/" % (css_file, report_path)
