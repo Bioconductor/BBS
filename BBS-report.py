@@ -104,7 +104,7 @@ def writeThinRowSeparator_asTR(out, tr_class=None):
         tr_class = '';
     if BBScorevars.subbuilds == "bioc-longtests":
         colspan = 4
-    else
+    else:
         colspan = 8
     out.write('<TR%s><TD COLSPAN="%s" style="height: 4pt; background: inherit;"></TD></TR>\n' % (tr_class, colspan))
     return
@@ -353,7 +353,7 @@ def write_pkg_index_as2fullTRs(out, current_letter):
     writeThinRowSeparator_asTR(out, "abc")
     if BBScorevars.subbuilds == "bioc-longtests":
         colspan = 4
-    else
+    else:
         colspan = 8
     out.write('<TR class="abc"><TD COLSPAN="%s" style="background: inherit; font-family: monospace;">' % colspan)
     out.write('<A name="%s"><B style="font-size: larger;">%s</B></A>' % (current_letter, current_letter))
