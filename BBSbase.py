@@ -125,8 +125,10 @@ def _get_RCMDbuild_cmd(pkgdir_path):
         ## package seems to "fix" the state of the filesystem and to
         ## make 'tar' work again on it.
         cmd = 'chmod a+r ' + pkgdir_path + ' -R && ' + cmd
-    if _BiocGreaterThanOrEqualTo(2, 8):
-        cmd += " --keep-empty-dirs --no-resave-data"
+    common_opts = ["--keep-empty-dirs", "--no-resave-data"]
+    if BBScorevars.subbuilds == "bioc-longtests":
+        common_opts += ["--no-build-vignettes", "--no-manual"]
+    cmd += ' '.join(common_opts)
     return cmd
 
 ### 'srcpkg_path' must be a path to a package source tarball.
@@ -254,22 +256,23 @@ def getSTAGE4cmd(srcpkg_path):
     if prepend != None:
 	cmd = '%s %s' % (prepend, cmd)
     if BBScorevars.subbuilds == "bioc-longtests":
-        common_opts = ' '.join(["--test-dir=longtests",
-                                "--no-stop-on-test-error",
-                                "--no-codoc",
-                                "--no-examples",
-                                "--no-manual",
-                                "--ignore-vignettes",
-                                "--check-subdirs=no"])
+        common_opts = ["--test-dir=longtests",
+                       "--no-stop-on-test-error",
+                       "--no-codoc",
+                       "--no-examples",
+                       "--no-manual",
+                       "--ignore-vignettes",
+                       "--check-subdirs=no"]
     else:
-        common_opts = "--no-vignettes --timings"
+        common_opts = ["--no-vignettes", "--timings"]
         ## Note that 64-bit machines gewurz and moscato1 give a value of
         ## 'win32' for sys.platform. This means that _noExampleArchs() may
         ## not be returning useful results if the intent is to not run
         ## examples for a particular Windows sub-architecture.
         no_example_archs = _noExampleArchs(pkg)
         if sys.platform in no_example_archs:
-            common_opts += " --no-examples"
+            common_opts += ["--no-examples"]
+    common_opts = ' '.join(common_opts)
     if BBSvars.STAGE4_mode != "multiarch":
         cmd += '%s CMD check %s' % (BBSvars.r_cmd, common_opts)
         ## Starting with R-2.12, 'R CMD check' on Windows and Mac OS X can do
