@@ -102,7 +102,11 @@ def writeThinRowSeparator_asTR(out, tr_class=None):
         tr_class = ' class="%s"' % tr_class
     else:
         tr_class = '';
-    out.write('<TR%s><TD COLSPAN="8" style="height: 4pt; background: inherit;"></TD></TR>\n' % tr_class)
+    if BBScorevars.subbuilds == "bioc-longtests":
+        colspan = 4
+    else
+        colspan = 8
+    out.write('<TR%s><TD COLSPAN="%s" style="height: 4pt; background: inherit;"></TD></TR>\n' % (tr_class, colspan))
     return
 
 ### From internal stage command to stage HTML label
@@ -279,13 +283,17 @@ def write_pkg_status_asTD(out, pkg, node, stagecmd, leafreport_ref, style=None):
     out.write('<TD class="status %s %s"%s>%s</TD>' % (node.hostname, stagecmd, style, status_html))
     return
 
+def write_stagelabel_asTD(out, stagecmd, extra_style=""):
+    out.write('<TD class="stagecmd %s" style="text-align: center%s">' % \
+              (stagecmd, extra_style))
+    out.write(stagecmd2label[stagecmd])
+    out.write('</TD>')
+    return
+
 ### Produces 5 TDs (4 of the same width + 1 narrow one on the right)
 def write_pkg_5stagelabels_as5TDs(out, extra_style=""):
     for stagecmd in ["install", "buildsrc", "checksrc", "buildbin"]:
-        out.write('<TD class="stagecmd %s" style="text-align: center%s">' % \
-                  (stagecmd, extra_style))
-        out.write(stagecmd2label[stagecmd])
-        out.write('</TD>')
+        write_stagelabel_asTD(out, stagecmd, extra_style)
     out.write('<TD style="width:11px;"></TD>')
     return
 
@@ -338,12 +346,16 @@ def write_pkg_check_status_asTD(out, pkg, node, leafreport_ref, style=None):
         out.write('</I></TD>')
     return
 
-### Produces 2 full TRs ("full TR" = TR with 8 TDs)
+### Produces 2 full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
 def write_pkg_index_as2fullTRs(out, current_letter):
     ## FH: Need the abc class to blend out the alphabetical selection when
     ## "ok" packages are unselected.
     writeThinRowSeparator_asTR(out, "abc")
-    out.write('<TR class="abc"><TD COLSPAN="8" style="background: inherit; font-family: monospace;">')
+    if BBScorevars.subbuilds == "bioc-longtests":
+        colspan = 4
+    else
+        colspan = 8
+    out.write('<TR class="abc"><TD COLSPAN="%s" style="background: inherit; font-family: monospace;">' % colspan)
     out.write('<A name="%s"><B style="font-size: larger;">%s</B></A>' % (current_letter, current_letter))
     out.write('&nbsp;%s' % alphabet_dispatcher_to_HTML(current_letter))
     out.write('</TD></TR>\n')
@@ -382,7 +394,10 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         extra_style = ""
     else:
         extra_style = "; width: 96px"
-    write_pkg_5stagelabels_as5TDs(out, extra_style)
+    if BBScorevars.subbuilds == "bioc-longtests":
+        write_stagelabel_asTD(out, "checksrc", extra_style)
+    else:
+        write_pkg_5stagelabels_as5TDs(out, extra_style)
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
@@ -440,12 +455,15 @@ def write_summary_TD(out, node, stagecmd):
     out.write('<TD>%s</TD>' % html)
     return
 
-### Produces full TRs ("full TR" = TR with 8 TDs)
+### Produces full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
 def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TR class="summary header">')
     out.write('<TD COLSPAN="2" style="background: inherit;">SUMMARY</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
-    write_pkg_5stagelabels_as5TDs(out)
+    if BBScorevars.subbuilds == "bioc-longtests":
+        write_stagelabel_asTD(out, "checksrc", extra_style)
+    else:
+        write_pkg_5stagelabels_as5TDs(out, extra_style)
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     for node in BBSreportutils.NODES:
@@ -461,14 +479,17 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
                 node_id_html = '[%s]' % node_id_html
         out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
-        write_summary_TD(out, node, 'install')
-        write_summary_TD(out, node, 'buildsrc')
-        write_summary_TD(out, node, 'checksrc')
-        if BBSreportutils.is_doing_buildbin(node):
-            write_summary_TD(out, node, 'buildbin')
+        if BBScorevars.subbuilds == "bioc-longtests":
+            write_summary_TD(out, node, 'checksrc')
         else:
-            out.write('<TD></TD>')
-        out.write('<TD style="width:11px;"></TD>')
+            write_summary_TD(out, node, 'install')
+            write_summary_TD(out, node, 'buildsrc')
+            write_summary_TD(out, node, 'checksrc')
+            if BBSreportutils.is_doing_buildbin(node):
+                write_summary_TD(out, node, 'buildbin')
+            else:
+                out.write('<TD></TD>')
+            out.write('<TD style="width:11px;"></TD>')
         out.write('</TR>\n')
     return
 
@@ -499,7 +520,7 @@ def write_mainreport_asTABLE(out, allpkgs, leafreport_ref=None):
 ### Compact report (the compact layout is used for the node-specific reports).
 ##############################################################################
 
-### Produces a full TR ("full TR" = TR with 8 TDs)
+### Produces a full TR (normally 8 TDs, only 4 for longtests subbuilds)
 def write_compactreport_header_asfullTR(out):
     ## Using the abc class here too to blend out the alphabetical selection +
     ## this header when "ok" packages are unselected.
@@ -507,7 +528,10 @@ def write_compactreport_header_asfullTR(out):
     out.write('<TD style="width: 50px;"></TD>')
     out.write('<TD style="text-align: left; padding-left: 12px;">Package</TD>')
     out.write('<TD style="text-align: left">Maintainer</TD>')
-    write_pkg_5stagelabels_as5TDs(out)
+    if BBScorevars.subbuilds == "bioc-longtests":
+        write_stagelabel_asTD(out, "checksrc", extra_style)
+    else:
+        write_pkg_5stagelabels_as5TDs(out, extra_style)
     out.write('</TR>\n')
     return
 
