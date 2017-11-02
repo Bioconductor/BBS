@@ -364,7 +364,7 @@ def STAGE2():
 
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] cd BBS_MEAT_PATH"
-    os.chdir(BBSvars.meat_path)
+    os.chdir(meat_path)
     BBSvars.install_rdir.RemakeMe(True)
     STAGE2_loop(target_pkgs, pkg_deps_list, installed_pkgs, BBSvars.nb_cpu)
 
@@ -423,13 +423,18 @@ def STAGE3():
     print "BBS> [STAGE3] STARTING STAGE3 at %s..." % time.asctime()
     BBSvars.buildsrc_rdir.RemakeMe(True)
     print "BBS> [STAGE3] cd BBS_MEAT_PATH"
-    os.chdir(BBSvars.meat_path)
     target_pkgs = extractTargetPkgListFromMeatIndex()
+    meat_path = BBSvars.meat_path
     if BBScorevars.subbuilds == "bioc-longtests":
+        if not os.path.exists(meat_path):
+            os.mkdir(meat_path)
+        os.chdir(meat_path)
         for pkg in target_pkgs:
             rdir = BBSvars.MEAT0_rdir.subdir(pkg)
-            local_dir = os.path.join(BBSvars.meat_path, pkg)
+            local_dir = os.path.join(meat_path, pkg)
             rdir.syncLocalDir(local_dir, True)
+    else:
+        os.chdir(meat_path)
     STAGE3_loop(target_pkgs, BBSvars.nb_cpu)
     print "BBS> [STAGE3] DONE at %s." % time.asctime()
     return
