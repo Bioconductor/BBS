@@ -49,8 +49,9 @@ if MEAT0_type == 1:  # svn-based builds
 if MEAT0_type == 3:  # git-based builds
     manifest_git_repo_url = BBScorevars.getenv('BBS_BIOC_MANIFEST_GIT_REPO_URL')
     manifest_git_branch = BBScorevars.getenv('BBS_BIOC_MANIFEST_GIT_BRANCH')
+    manifest_clone_path = BBScorevars.getenv('BBS_BIOC_MANIFEST_CLONE_PATH')
     manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE')
-    manifest_path = os.path.join(work_topdir, 'manifest', manifest_file)
+    manifest_path = os.path.join(manifest_clone_path, manifest_file)
     git_branch = BBScorevars.getenv('BBS_BIOC_GIT_BRANCH')
     vcsmeta_file = 'gitlog/git-log.txt'
 
