@@ -1052,43 +1052,73 @@ def write_node_specs_table(out):
 def write_glyph_table(out):
     timeout = int(BBScorevars.r_cmd_timeout / 60.0)
     out.write('<TABLE style="border-spacing: 1px; font-size: smaller;">\n')
+
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic;">')
     out.write('<B>Package STATUS</B> - ')
     out.write('Package status is indicated by one of the following glyphs:')
     out.write('</TD>\n')
     out.write('</TR>\n')
+
+    ## "TIMEOUT" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('TIMEOUT'))
-    out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
-    out.write('<I>BUILD BIN</I> of package took more than ')
-    out.write('%d minutes</TD>\n' % timeout)
+    if BBScorevars.subbuilds == "bioc-longtests":
+        out.write('<I>CHECK</I>')
+    else:
+        out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
+        out.write('<I>BUILD BIN</I>')
+    out.write('of package took more than %d minutes</TD>\n' % timeout)
     out.write('</TR>\n')
+
+    ## "ERROR" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('ERROR'))
-    out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
-    out.write('<I>BUILD BIN</I> of package returned an error</TD>\n')
+    if BBScorevars.subbuilds == "bioc-longtests":
+        out.write('<I>CHECK</I>')
+    else:
+        out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
+        out.write('<I>BUILD BIN</I>')
+    out.write('of package returned errors</TD>\n')
     out.write('</TR>\n')
+
+    ## "WARNINGS" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('WARNINGS'))
     out.write('<TD><I>CHECK</I> of package produced warnings</TD>\n')
     out.write('</TR>\n')
+
+    ## "OK" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('OK'))
-    out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
-    out.write('<I>BUILD BIN</I> of package was OK</TD>\n')
+    if BBScorevars.subbuilds == "bioc-longtests":
+        out.write('<I>CHECK</I>')
+    else:
+        out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
+        out.write('<I>BUILD BIN</I>')
+    out.write('of package was OK</TD>\n')
     out.write('</TR>\n')
-    out.write('<TR>\n')
-    out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('NotNeeded'))
-    out.write('<TD><I>INSTALL</I> of package was not needed ')
-    out.write('(click on glyph to see why)</TD>\n')
-    out.write('</TR>\n')
+
+    ## "NotNeeded" glyph
+    if BBScorevars.subbuilds != "bioc-longtests":
+        out.write('<TR>\n')
+        out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('NotNeeded'))
+        out.write('<TD><I>INSTALL</I> of package was not needed ')
+        out.write('(click on glyph to see why)</TD>\n')
+        out.write('</TR>\n')
+
+    ## "skipped" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-%s</TD>\n' % status_asSPAN('skipped'))
-    out.write('<TD><I>CHECK</I> or <I>BUILD BIN</I> of package ')
-    out.write('was skipped because the <I>BUILD</I> step failed ')
-    out.write('(or because something bad happened with the Build System itself)</TD>\n')
+    if BBScorevars.subbuilds == "bioc-longtests":
+        out.write('<TD><I>CHECK</I> of package was skipped')
+        out.write('because of an anomaly in the Build System')
+    else:
+        out.write('<TD><I>CHECK</I> or <I>BUILD BIN</I> of package ')
+        out.write('was skipped because the <I>BUILD</I> step failed ')
+        out.write('(or because of an anomaly Build System)</TD>\n')
     out.write('</TR>\n')
+
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="text-align: left;">')
     out.write('<I>Click on any glyph in the report below ')
@@ -1098,12 +1128,12 @@ def write_glyph_table(out):
     out.write('</TABLE>\n')
     return
 
-def write_propagation_glyph_table(out):
+def write_propagation_LED_table(out):
     out.write('<TABLE style="border-spacing: 1px; font-size: smaller;">\n')
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic;">')
     out.write('<B>Package propagation STATUS</B> - ')
-    out.write('Package propagation status is indicated by one of the following glyphs:')
+    out.write('Package propagation status is indicated by one of the following LEDs:')
     out.write('</TD>\n')
     out.write('</TR>\n')
     out.write('<TR>\n')
@@ -1178,7 +1208,8 @@ def write_node_report(node, allpkgs):
     out.write('<BR>\n')
     write_motd_asTABLE(out)
     write_glyph_table(out)
-    write_propagation_glyph_table(out)
+    if BBScorevars.subbuilds != "bioc-longtests":
+        write_propagation_LED_table(out)
     write_select_status_table(out)
     out.write('<HR>\n')
     write_compactreport_asTABLE(out, node, allpkgs)
@@ -1209,7 +1240,8 @@ def write_mainpage_asHTML(out, allpkgs):
     write_node_specs_table(out)
     out.write('<BR>\n')
     write_glyph_table(out)
-    write_propagation_glyph_table(out)
+    if BBScorevars.subbuilds != "bioc-longtests":
+        write_propagation_LED_table(out)
     write_select_status_table(out)
     out.write('<HR>\n')
     if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
