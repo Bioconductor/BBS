@@ -254,14 +254,14 @@ def getSTAGE4cmd(srcpkg_path):
     if prepend != None:
 	cmd = '%s %s' % (prepend, cmd)
     if BBScorevars.subbuilds == "bioc-longtests":
-        common_opts = "--test-dir=longtests" + \
-                      "--no-stop-on-test-error" + \
-                      "--no-codoc" + \
-                      "--no-examples" + \
-                      "--no-manual" + \
-                      "--ignore-vignettes" + \
-                      "--check-subdirs=no"
-    else: 
+        common_opts = ' '.join(["--test-dir=longtests",
+                                "--no-stop-on-test-error",
+                                "--no-codoc",
+                                "--no-examples",
+                                "--no-manual",
+                                "--ignore-vignettes",
+                                "--check-subdirs=no"])
+    else:
         common_opts = "--no-vignettes --timings"
         ## Note that 64-bit machines gewurz and moscato1 give a value of
         ## 'win32' for sys.platform. This means that _noExampleArchs() may
