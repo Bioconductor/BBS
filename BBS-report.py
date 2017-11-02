@@ -1063,23 +1063,27 @@ def write_glyph_table(out):
     ## "TIMEOUT" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('TIMEOUT'))
+    out.write('<TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
         out.write('<I>CHECK</I>')
     else:
-        out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
+        out.write('><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
         out.write('<I>BUILD BIN</I>')
-    out.write('of package took more than %d minutes</TD>\n' % timeout)
+    out.write('of package took more than %d minutes' % timeout)
+    out.write('</TD>\n')
     out.write('</TR>\n')
 
     ## "ERROR" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('ERROR'))
+    out.write('<TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
         out.write('<I>CHECK</I>')
     else:
-        out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
+        out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
         out.write('<I>BUILD BIN</I>')
-    out.write('of package returned errors</TD>\n')
+    out.write('of package returned errors\n')
+    out.write('</TD>\n')
     out.write('</TR>\n')
 
     ## "WARNINGS" glyph
@@ -1091,12 +1095,14 @@ def write_glyph_table(out):
     ## "OK" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('OK'))
+    out.write('<TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
         out.write('<I>CHECK</I>')
     else:
-        out.write('<TD><I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
+        out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ')
         out.write('<I>BUILD BIN</I>')
-    out.write('of package was OK</TD>\n')
+    out.write('of package was OK\n')
+    out.write('</TD>\n')
     out.write('</TR>\n')
 
     ## "NotNeeded" glyph
@@ -1110,13 +1116,15 @@ def write_glyph_table(out):
     ## "skipped" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-%s</TD>\n' % status_asSPAN('skipped'))
+    out.write('<TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<TD><I>CHECK</I> of package was skipped')
+        out.write('<I>CHECK</I> of package was skipped')
         out.write('because of an anomaly in the Build System')
     else:
-        out.write('<TD><I>CHECK</I> or <I>BUILD BIN</I> of package ')
+        out.write('<I>CHECK</I> or <I>BUILD BIN</I> of package ')
         out.write('was skipped because the <I>BUILD</I> step failed ')
-        out.write('(or because of an anomaly Build System)</TD>\n')
+        out.write('(or because of an anomaly Build System)\n')
+    out.write('</TD>\n')
     out.write('</TR>\n')
 
     out.write('<TR>\n')
