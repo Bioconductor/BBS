@@ -1272,9 +1272,9 @@ BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 BBSreportutils.set_NODES(report_nodes)
 if BBScorevars.subbuilds == "bioc-longtests":
     if len(BBSreportutils.NODES) != 1:
-        main_page_title = 'Multiple platform long tests report'
+        main_page_title = 'Multiple platform report for long tests'
     else:
-        main_page_title = 'Long tests report'
+        main_page_title = 'Report for long tests'
 else:
     if len(BBSreportutils.NODES) != 1:
         main_page_title = 'Multiple platform build/check report'
