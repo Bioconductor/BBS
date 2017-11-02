@@ -461,9 +461,9 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TD COLSPAN="2" style="background: inherit;">SUMMARY</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
-        write_stagelabel_asTD(out, "checksrc", extra_style)
+        write_stagelabel_asTD(out, "checksrc")
     else:
-        write_pkg_5stagelabels_as5TDs(out, extra_style)
+        write_pkg_5stagelabels_as5TDs(out)
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     for node in BBSreportutils.NODES:
