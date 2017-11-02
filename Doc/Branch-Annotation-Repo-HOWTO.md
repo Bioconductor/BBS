@@ -19,21 +19,24 @@ A. Set up malbec2
 Dry run first.
 NOTE the trailing slash and dot '.'.
 
-    From malbec1 to malbec2:
+    From malbec1 to malbec2 (logged into malbec2):
     cd ~/PACKAGES/3.7/data/annotation
     rsync --dry-run -ave ssh biocadmin@malbec1:PACKAGES/3.6/data/annotation/ .
 
-    From malbec2 to malbec1:
+    From malbec1 to malbec2 (logged into malbec1):
     cd ~/PACKAGES/3.7/data/annotation
     rsync --dry-run -ave ssh ~/PACKAGES/3.6/data/annotation
     biocadmin@malbec2:PACKAGES/3.7/data/annotation/
 
 3. Remove symlinks for old R versions for windows and mac
 
-These symlinks were transferred over in the rsync:
+There may be symlinks in the windows and macosx folders. These will only be
+present when the new version of BioC uses a new version of R which happens
+every other version of BioC. If they are present, they will look something like
+this:
 
-~/PACKAGES/3.7/data/annotation/bin/windows/contrib/3.5 -> 3.4
-~/PACKAGES/3.7/data/annotation/bin/macosx/el-capitan/contrib/3.5 -> 3.4
+    ~/PACKAGES/3.7/data/annotation/bin/windows/contrib/3.5 -> 3.4
+    ~/PACKAGES/3.7/data/annotation/bin/macosx/el-capitan/contrib/3.5 -> 3.4
 
 Remove the symlinks and rename the folder with content to the version of 
 R being used by devel e.g., 
