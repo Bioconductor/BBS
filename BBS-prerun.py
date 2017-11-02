@@ -37,12 +37,17 @@ def remakeCentralRdir(Central_rdir):
 ## on the manifest file)
 ##############################################################################
 
-def writeMeatIndex(pkgs, meat_path):
+def build_meat_index(pkgs, meat_path):
+    print "BBS> [build_meat_index] Start building the meat index for the " +
+          "%s packages in the manifest" % len(pkgs)
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
     out = open(meat_index_path, 'w')
     nout = 0
     for pkg in pkgs:
         pkgdir_path = os.path.join(meat_path, pkg)
+        if BBScorevars.mode == "longtests" and \
+           bbs.parse.getBBSoptionFromDir(pkgdir_path, 'InLongtestsBuilds')
+            continue
         try:
             package = bbs.parse.getPkgFromDir(pkgdir_path)
             version = bbs.parse.getVersionFromDir(pkgdir_path)
@@ -84,11 +89,11 @@ def writeMeatIndex(pkgs, meat_path):
         out.write('\n')
         nout = nout + 1
     out.close()
-    print "BBS> [writeMeatIndex] %s pkgs written to meat index (out of %s)" % (nout, len(pkgs))
+    print "BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs))
     return meat_index_path
 
 def writeAndUploadMeatIndex(pkgs, meat_path):
-    meat_index_path = writeMeatIndex(pkgs, meat_path)
+    meat_index_path = build_meat_index(pkgs, meat_path)
     BBScorevars.Central_rdir.Put(meat_index_path, True, True)
     return
 
