@@ -1118,7 +1118,7 @@ def write_glyph_table(out):
     out.write('<TD>&nbsp;-%s</TD>\n' % status_asSPAN('skipped'))
     out.write('<TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<I>CHECK</I> of package was skipped')
+        out.write('<I>CHECK</I> of package was skipped ')
         out.write('because of an anomaly in the Build System')
     else:
         out.write('<I>CHECK</I> or <I>BUILD BIN</I> of package ')
