@@ -1133,8 +1133,7 @@ def write_glyph_table(out):
     out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
 
     out.write('<TR>\n')
-    #out.write('<TD COLSPAN="4" style="text-align: center;">')
-    out.write('<TD COLSPAN="4" style="text-align: left;">')
+    out.write('<TD COLSPAN="4" style="text-align: center;">')
     out.write('<B>Package status</B>')
     out.write(' is indicated by one of the following glyphs')
     out.write('</TD>\n')
@@ -1207,15 +1206,14 @@ def write_glyph_table(out):
     if BBScorevars.subbuilds != "bioc-longtests":
         out.write('<TR>\n')
         out.write('<TD>%s</TD>\n' % status_asSPAN('NotNeeded'))
-        out.write('<TD><I>INSTALL</I> of package was not needed')
+        out.write('<TD COLSPAN="3"><I>INSTALL</I> of package was not needed')
         out.write(' (click on glyph to see why)</TD>\n')
-        out.write('<TD COLSPAN="2"></TD>\n')
         out.write('</TR>\n')
 
     ## "skipped" glyph
     out.write('<TR>\n')
     out.write('<TD>%s</TD>\n' % status_asSPAN('skipped'))
-    out.write('<TD>')
+    out.write('<TD COLSPAN="3">')
     if BBScorevars.subbuilds == "bioc-longtests":
         out.write('<I>CHECK</I> of package was skipped')
         out.write(' because of an anomaly in the Build System')
@@ -1224,11 +1222,10 @@ def write_glyph_table(out):
         out.write(' was skipped because the <I>BUILD</I> step failed')
         out.write(' (or because of an anomaly Build System)\n')
     out.write('</TD>\n')
-    out.write('<TD COLSPAN="2"></TD>\n')
     out.write('</TR>\n')
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="text-align: left;">')
+    out.write('<TD COLSPAN="4" style="text-align: center;">')
     out.write('<I>Click on any glyph in the report below')
     out.write(' to see the detailed results.</I>')
     out.write('</TD>\n')
