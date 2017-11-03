@@ -893,7 +893,7 @@ def make_all_LeafReports(allpkgs):
 ### Main page: HTML stuff above main table
 ##############################################################################
 
-def write_BioC_mainpage_head_asHTML(out):
+def write_BioC_mainpage_top_asHTML(out):
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY  onLoad="initialize();">\n')
@@ -909,7 +909,7 @@ def write_BioC_mainpage_head_asHTML(out):
         out.write('</DIV>\n')
     return
 
-def write_CRAN_mainpage_head_asHTML(out):
+def write_CRAN_mainpage_top_asHTML(out):
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY>\n')
     out.write('<H1 style="text-align: center;">%s</H1>\n' % BBSreportutils.report_title)
@@ -1081,13 +1081,13 @@ def make_Rinstpkgs_page(Node_rdir, node):
 
 def write_node_specs_table(out):
     out.write('<TABLE class="node_specs">\n')
-    out.write('<TR>\n')
-    out.write('<TH>Hostname</TH>\n')
-    out.write('<TH>OS</TH>\n')
-    out.write('<TH>Arch&nbsp;(*)</TH>\n')
-    out.write('<TH>Platform&nbsp;label&nbsp;(**)</TH>\n')
-    out.write('<TH>R&nbsp;version</TH>\n')
-    out.write('<TH style="text-align: right;">Installed&nbsp;pkgs</TH>\n')
+    out.write('<TR>')
+    out.write('<TH>Hostname</TH>')
+    out.write('<TH>OS</TH>')
+    out.write('<TH>Arch&nbsp;(*)</TH>')
+    out.write('<TH>Platform&nbsp;label&nbsp;(**)</TH>')
+    out.write('<TH>R&nbsp;version</TH>')
+    out.write('<TH style="text-align: right;">Installed&nbsp;pkgs</TH>')
     out.write('</TR>\n')
     nodes_rdir = BBScorevars.nodes_rdir
     for node in BBSreportutils.NODES:
@@ -1095,24 +1095,24 @@ def write_node_specs_table(out):
         NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
         Rversion_html = read_Rversion(Node_rdir)
         Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
-        out.write('<TR class="%s">\n' % node.hostname.replace(".", "_"))
-        out.write('<TD><B><A href="%s"><I>%s</I></A></B></TD>\n' % (NodeInfo_page_path, node.id))
-        out.write('<TD>%s</TD>\n' % node.os_html)
-        out.write('<TD>%s</TD>\n' % node.arch)
-        out.write('<TD>%s</TD>\n' % node.platform)
-        out.write('<TD class="spec">%s</TD>\n' % Rversion_html)
+        out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
+        out.write('<TD><B><A href="%s"><I>%s</I></A></B></TD>' % (NodeInfo_page_path, node.id))
+        out.write('<TD>%s</TD>' % node.os_html)
+        out.write('<TD>%s</TD>' % node.arch)
+        out.write('<TD>%s</TD>' % node.platform)
+        out.write('<TD class="spec">%s</TD>' % Rversion_html)
         out.write('<TD class="spec" style="text-align: right;">')
         out.write('<A href="%s">%s</A>' % Rinstpkgs_strings)
-        out.write('</TD>\n')
+        out.write('</TD>')
         out.write('</TR>\n')
-    out.write('<TR>\n')
+    out.write('<TR>')
     out.write('<TD COLSPAN="6" style="font-size: smaller;">')
     out.write('<I>Click on any hostname to see more info about the system (e.g. compilers)')
     out.write(' &nbsp;&nbsp;&nbsp;&nbsp; ')
     out.write('(*) as reported by \'uname -p\', except on Windows and Mac OS X')
     out.write(' &nbsp;&nbsp;&nbsp;&nbsp; ')
     out.write('(**) as reported by \'gcc -v\'</I>')
-    out.write('</TD>\n')
+    out.write('</TD>')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
     return
@@ -1318,9 +1318,9 @@ def make_all_NodeReports(allpkgs):
 
 def write_mainpage_asHTML(out, allpkgs):
     if BBScorevars.subbuilds in ["bioc", "data-experiment", "bioc-longtests"]:
-        write_BioC_mainpage_head_asHTML(out)
+        write_BioC_mainpage_top_asHTML(out)
     else: # "cran" subbuilds
-        write_CRAN_mainpage_head_asHTML(out)
+        write_CRAN_mainpage_top_asHTML(out)
     out.write('<BR>\n')
     write_node_specs_table(out)
     out.write('<BR>\n')
