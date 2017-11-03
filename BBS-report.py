@@ -1125,14 +1125,18 @@ def write_node_specs_table(out):
     out.write('</TABLE>\n')
     return
 
+### FH: Create checkboxes to select display types
 def write_glyph_table(out):
-    timeout = int(BBScorevars.r_cmd_timeout / 60.0)
+    out.write('<FORM action="">\n')
     out.write('<TABLE style="border-spacing: 1px; font-size: smaller;">\n')
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic;">')
     out.write('<B>Package STATUS</B>')
     out.write(' - Package status is indicated by one of the following glyphs:')
+    out.write('</TD>\n')
+    out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic;">\n')
+    out.write('Use the check boxes to show only packages with the selected status types:')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1145,7 +1149,14 @@ def write_glyph_table(out):
     else:
         out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or')
         out.write(' <I>BUILD BIN</I>')
+    timeout = int(BBScorevars.r_cmd_timeout / 60.0)
     out.write(' of package took more than %d minutes' % timeout)
+    out.write('</TD>\n')
+    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
+    out.write('<INPUT type="checkbox" checked id="timeout" onClick="toggle(\'timeout\')">')
+    out.write('</TD>\n')
+    out.write('<TD style="text-align: left; vertical-align: middle;">')
+    out.write(status_asSPAN('TIMEOUT'))
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1161,12 +1172,24 @@ def write_glyph_table(out):
         out.write(' of package failed,')
         out.write(' or <I>CHECK</I> produced errors')
     out.write('</TD>\n')
+    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
+    out.write('<INPUT type="checkbox" checked id="error" onClick="toggle(\'error\')">')
+    out.write('</TD>\n')
+    out.write('<TD style="text-align: left; vertical-align: middle;">')
+    out.write(status_asSPAN('ERROR'))
+    out.write('</TD>\n')
     out.write('</TR>\n')
 
     ## "WARNINGS" glyph
     out.write('<TR>\n')
     out.write('<TD>&nbsp;-&nbsp;%s</TD>\n' % status_asSPAN('WARNINGS'))
     out.write('<TD><I>CHECK</I> of package produced warnings</TD>\n')
+    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
+    out.write('<INPUT type="checkbox" checked id="warnings" onClick="toggle(\'warnings\')">')
+    out.write('</TD>\n')
+    out.write('<TD style="text-align: left; vertical-align: middle;">')
+    out.write(status_asSPAN('WARNINGS'))
+    out.write('</TD>\n')
     out.write('</TR>\n')
 
     ## "OK" glyph
@@ -1179,6 +1202,12 @@ def write_glyph_table(out):
         out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or')
         out.write(' <I>BUILD BIN</I>')
     out.write(' of package was OK')
+    out.write('</TD>\n')
+    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
+    out.write('<INPUT type="checkbox" checked id="ok" onClick="toggle(\'ok\')">')
+    out.write('</TD>\n')
+    out.write('<TD style="text-align: left; vertical-align: middle;">')
+    out.write(status_asSPAN('OK'))
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1211,6 +1240,7 @@ def write_glyph_table(out):
     out.write('</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
+    out.write('</FORM>\n')
     return
 
 def write_propagation_LED_table(out):
@@ -1237,43 +1267,6 @@ def write_propagation_LED_table(out):
     out.write('<TD COLSPAN="2">A <s>crossed-out</s> package name indicates the package is <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>.</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
-    return
-
-### FH: Create checkboxes to select display types
-def write_select_status_table(out):
-    out.write('<FORM action="">\n')
-    out.write('<TABLE style="border-spacing: 1px; font-size: smaller;">\n')
-    out.write('<TR>\n')
-    out.write('<TD style="text-align: left; font-style: italic;">\n')
-    out.write('Use the check boxes to show only packages with the selected status types:')
-    out.write('</TD>\n')
-    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="timeout" onClick="toggle(\'timeout\')">')
-    out.write('</TD>')
-    out.write('<TD style="text-align: left; vertical-align: middle;">')
-    out.write(status_asSPAN('TIMEOUT'))
-    out.write('</TD>\n')
-    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="error" onClick="toggle(\'error\')">')
-    out.write('</TD>')
-    out.write('<TD style="text-align: left; vertical-align: middle;">')
-    out.write(status_asSPAN('ERROR'))
-    out.write('</TD>\n')
-    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="warnings" onClick="toggle(\'warnings\')">')
-    out.write('</TD>')
-    out.write('<TD style="text-align: left; vertical-align: middle;">')
-    out.write(status_asSPAN('WARNINGS'))
-    out.write('</TD>\n')
-    out.write('<TD style="width: 30px; text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="ok" onClick="toggle(\'ok\')">')
-    out.write('</TD>')
-    out.write('<TD style="text-align: left; vertical-align: middle;">')
-    out.write(status_asSPAN('OK'))
-    out.write('</TD>\n')
-    out.write('</TR>\n')
-    out.write('</TABLE>\n')
-    out.write('</FORM>\n')
     return
 
 
@@ -1303,7 +1296,6 @@ def write_node_report(node, allpkgs):
     write_glyph_table(out)
     if BBScorevars.subbuilds != "bioc-longtests":
         write_propagation_LED_table(out)
-    write_select_status_table(out)
     out.write('<HR>\n')
     write_compactreport_asTABLE(out, node, allpkgs)
     out.write('</BODY>\n')
@@ -1335,7 +1327,6 @@ def write_mainpage_asHTML(out, allpkgs):
     write_glyph_table(out)
     if BBScorevars.subbuilds != "bioc-longtests":
         write_propagation_LED_table(out)
-    write_select_status_table(out)
     out.write('<HR>\n')
     if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
         write_mainreport_asTABLE(out, allpkgs)
