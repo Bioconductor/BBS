@@ -629,7 +629,7 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
 def write_goback_asHTML(out, href, current_letter=None):
     out.write('<TABLE style="width: 100%; border-spacing: 0px; border-collapse: collapse;"><TR>')
     out.write('<TD style="padding: 0px; text-align: left;">')
-    out.write('<I><A href="%s">Back to the &quot;%s&quot;</A></I>' % \
+    out.write('<I><A href="%s">Back to the <B>%s</B></A></I>' % \
               (href, BBSreportutils.report_title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
