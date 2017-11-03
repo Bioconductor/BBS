@@ -118,18 +118,6 @@ stagecmd2label = {
     'buildbin': "BUILD BIN"
 }
 
-def alphabet_dispatcher_to_HTML(current_letter=None, href=""):
-    html = ''
-    for i in range(65,91):
-        letter = chr(i)
-        html_letter = '<A href="%s#%s">%s</A>' % (href, letter, letter)
-        if letter == current_letter:
-            html_letter = '<B>[%s]</B>' % html_letter
-        else:
-            html_letter = '&nbsp;%s&nbsp;' % html_letter
-        html += html_letter
-    return html
-
 def pkgname_to_HTML(pkg):
     if BBScorevars.subbuilds == "cran":
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
@@ -355,6 +343,17 @@ def write_pkg_check_status_asTD(out, pkg, node, leafreport_ref, style=None):
         out.write('</I></TD>')
     return
 
+def write_abc_dispatcher(out, href="", current_letter=None):
+    out.write('<TABLE class="abc_dispatcher" style="font-family: monospace;"><TR>')
+    for i in range(65,91):
+        letter = chr(i)
+        html_letter = '<A href="%s#%s">%s</A>' % (href, letter, letter)
+        if letter == current_letter:
+            html_letter = '<B>[%s]</B>' % html_letter
+        out.write('<TD>%s</TD>' % html_letter)
+    out.write('</TR></TABLE>')
+    return
+
 ### Produces 2 full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
 def write_pkg_index_as2fullTRs(out, current_letter):
     ## FH: Need the abc class to blend out the alphabetical selection when
@@ -364,9 +363,10 @@ def write_pkg_index_as2fullTRs(out, current_letter):
         colspan = 4
     else:
         colspan = 8
-    out.write('<TR class="abc"><TD COLSPAN="%s" style="background: inherit; font-family: monospace;">' % colspan)
+    out.write('<TR class="abc"><TD COLSPAN="%s" style="background: inherit;">' % colspan)
     out.write('<A name="%s"><B style="font-size: larger;">%s</B></A>' % (current_letter, current_letter))
-    out.write('&nbsp;%s' % alphabet_dispatcher_to_HTML(current_letter))
+    out.write('&nbsp;')
+    write_abc_dispatcher(out, "", current_letter)
     out.write('</TD></TR>\n')
     return
 
@@ -629,12 +629,12 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
 def write_goback_asHTML(out, href, current_letter=None):
     out.write('<TABLE style="width: 100%; border-spacing: 0px; border-collapse: collapse;"><TR>')
     out.write('<TD style="padding: 0px; text-align: left;">')
-    out.write('<I><A href="%s">Back to the <B>%s</B></A></I>' % \
+    out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % \
               (href, BBSreportutils.report_title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
-        out.write('<TD style="padding: 0px; text-align: right; font-family: monospace;">')
-        out.write(alphabet_dispatcher_to_HTML(current_letter, href))
+        out.write('<TD style="padding: 0px; text-align: right;">')
+        write_abc_dispatcher(out, href, current_letter))
         out.write('</TD>')
     out.write('</TR></TABLE>\n')
     return
