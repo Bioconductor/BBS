@@ -756,7 +756,7 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
         f = wopen_leafreport_input_file(None, node_id, "checksrc", filename, catch_HTTPerrors=True)
         if f == None:
             continue
-        out.write('<P>%s:</P>\n' % filename)
+        out.write('<P><SPAN class="filename">%s</SPAN>:</P>\n' % filename)
         out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
         out.write('<TABLE style="font-size: smaller;">\n')
         for line in f:
@@ -790,7 +790,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
     if f != None:
         out.write('<HR>\n<H3>Installation output</H3>\n')
-        out.write('<P>%s:</P>\n' % filename)
+        out.write('<P><SPAN class="filename">%s</SPAN>:</P>\n' % filename)
         write_file_asHTML(out, f, node_hostname)
         f.close()
 
