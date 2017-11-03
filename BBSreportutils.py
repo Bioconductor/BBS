@@ -193,10 +193,7 @@ def supported_nodes(pkg):
     return nodes
 
 if BBScorevars.subbuilds == "bioc-longtests":
-    if len(NODES) != 1:
-        report_title = "Multiple platform long tests"
-    else:
-        report_title = "Long tests"
+    report_title = "Long tests"
 else:
     if len(NODES) != 1:
         report_title = "Multiple platform build/check"
