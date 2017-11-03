@@ -1251,9 +1251,6 @@ def write_propagation_LED_table(out):
     out.write('<TD><IMG border="0" width="10px" height="10px" alt="UNNEEDED" src="120px-Blue_Light_Icon.svg.png"></TD>\n')
     out.write('<TD>UNNEEDED: Package was not propagated because it is already in the repository with this version. A version bump is required in order to propagate it</TD>\n')
     out.write('</TR>\n')
-    out.write('<TR>\n')
-    out.write('<TD COLSPAN="2">A <s>crossed-out</s> package name indicates the package is <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>.</TD>\n')
-    out.write('</TR>\n')
     out.write('</TABLE>\n')
     return
 
@@ -1263,11 +1260,15 @@ def write_glyph_and_propagation_LED_table(out):
     out.write('<TD style="vertical-align: top;">\n')
     write_glyph_table(out)
     out.write('</TD>')
-    out.write('<TD style="vertical-align: top;">\n')
+    out.write('<TD style="vertical-align: top; width: 35%;">\n')
     if BBScorevars.subbuilds != "bioc-longtests":
         write_propagation_LED_table(out)
     out.write('</TD>')
     out.write('</TR></TABLE>\n')
+    out.write('<P>\n')
+    out.write('A <s>crossed-out</s> package name indicates the package is')
+    out.write(' <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>')
+    out.write('</P>\n')
     out.write('</DIV>\n')
     return
 
