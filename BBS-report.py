@@ -1133,9 +1133,10 @@ def write_glyph_table(out):
     out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="text-align: center;">')
-    out.write('<B>Package STATUS</B>')
-    out.write(' - Package status is indicated by one of the following glyphs:')
+    #out.write('<TD COLSPAN="4" style="text-align: center;">')
+    out.write('<TD COLSPAN="4" style="text-align: left;">')
+    out.write('<B>Package status</B>')
+    out.write(' is indicated by one of the following glyphs')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
