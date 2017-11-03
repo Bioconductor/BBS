@@ -443,7 +443,7 @@ From a personal administrator account
       Action: Start a program
       In Settings:
         Program/script: C:\Users\biocbuild\BBS\3.4-RPCI\bioc\tokay1\run.bat
-        Add arguments: >> C:\Users\biocbuild\bbs-3.4-bioc\log\tokay1.log 2>&1
+        Add arguments: >>C:\Users\biocbuild\bbs-3.4-bioc\log\tokay1.log 2>&1
         Start in: C:\Users\biocbuild\BBS\3.4-RPCI\bioc\tokay1
   - Tab Conditions:
       nothing to do (keep all the defaults)
