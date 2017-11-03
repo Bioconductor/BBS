@@ -1127,8 +1127,6 @@ def write_node_specs_table(out):
 
 ### FH: Create checkboxes to select display types
 def write_glyph_table(out):
-    out.write('<DIV style="font-size: smaller;">\n')
-
     out.write('<FORM action="">\n')
     out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
 
@@ -1231,8 +1229,6 @@ def write_glyph_table(out):
     out.write('</TR>\n')
     out.write('</TABLE>\n')
     out.write('</FORM>\n')
-
-    out.write('</DIV>\n')
     return
 
 def write_propagation_LED_table(out):
@@ -1262,6 +1258,7 @@ def write_propagation_LED_table(out):
     return
 
 def write_glyph_and_propagation_LED_table(out):
+    out.write('<DIV style="font-size: smaller;">\n')
     out.write('<TABLE style="margin: 0px;"><TR>')
     out.write('<TD style="vertical-align: top;">\n')
     write_glyph_table(out)
@@ -1271,6 +1268,7 @@ def write_glyph_and_propagation_LED_table(out):
         write_propagation_LED_table(out)
     out.write('</TD>')
     out.write('</TR></TABLE>\n')
+    out.write('</DIV>\n')
     return
 
 
