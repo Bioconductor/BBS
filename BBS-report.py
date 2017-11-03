@@ -903,7 +903,7 @@ def make_all_LeafReports(allpkgs):
 def write_BioC_mainpage_top_asHTML(out):
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
-    out.write('<BODY  onLoad="initialize();">\n')
+    out.write('<BODY onLoad="initialize();">\n')
     out.write('<H1 style="text-align: center;">%s</H1>\n' % BBSreportutils.report_title)
     out.write('<P style="text-align: center;">\n')
     date = bbs.jobs.currentDateString()
@@ -1126,8 +1126,13 @@ def write_node_specs_table(out):
 
 ### FH: Create checkboxes to select display types
 def write_glyph_table(out):
+    def write_checkbox(checkbox_id):
+        out.write('<INPUT style="margin: 0px;" type="checkbox" ')
+        out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
+                  (checkbox_id, checkbox_id))
+        return
     out.write('<FORM action="">\n')
-    out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
+    out.write('<TABLE style="width: 640px; border-spacing: 1px; border: solid black 1px;">\n')
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="4" style="font-style: italic; border-bottom: solid black 1px;">')
@@ -1148,11 +1153,11 @@ def write_glyph_table(out):
     out.write(' of package took more than %d minutes' % timeout)
     out.write('</TD>\n')
     out.write('<TD style="text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="timeout" onClick="toggle(\'timeout\')">')
+    write_checkbox("timeout")
     out.write('</TD>\n')
-    out.write('<TD ROWSPAN="4" style="text-align: left; font-style: italic;">\n')
-    out.write('Use the check<BR>boxes to show<BR>only packages<BR>')
-    out.write('with the<BR>selected<BR>status types.')
+    out.write('<TD ROWSPAN="4" style="width: 85px; text-align: left; font-style: italic;">\n')
+    out.write('Use the check boxes to show only packages ')
+    out.write('with the selected status types.')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1169,7 +1174,7 @@ def write_glyph_table(out):
         out.write(' or <I>CHECK</I> produced errors')
     out.write('</TD>\n')
     out.write('<TD style="text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="error" onClick="toggle(\'error\')">')
+    write_checkbox("error")
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1178,7 +1183,7 @@ def write_glyph_table(out):
     out.write('<TD>%s</TD>\n' % status_asSPAN('WARNINGS'))
     out.write('<TD><I>CHECK</I> of package produced warnings</TD>\n')
     out.write('<TD style="text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="warnings" onClick="toggle(\'warnings\')">')
+    write_checkbox("warnings")
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1194,7 +1199,7 @@ def write_glyph_table(out):
     out.write(' of package was OK')
     out.write('</TD>\n')
     out.write('<TD style="text-align: right; vertical-align: middle;">')
-    out.write('<INPUT type="checkbox" checked id="ok" onClick="toggle(\'ok\')">')
+    write_checkbox("ok")
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1208,7 +1213,7 @@ def write_glyph_table(out):
 
     ## "skipped" glyph
     out.write('<TR>\n')
-    out.write('<TD>%s</TD>\n' % status_asSPAN('skipped'))
+    out.write('<TD style="vertical-align: top;">%s</TD>\n' % status_asSPAN('skipped'))
     out.write('<TD COLSPAN="3">')
     if BBScorevars.subbuilds == "bioc-longtests":
         out.write('<I>CHECK</I> of package was skipped')
@@ -1231,7 +1236,7 @@ def write_glyph_table(out):
     return
 
 def write_propagation_LED_table(out):
-    out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
+    out.write('<TABLE style="width: 380px; border-spacing: 1px; border: solid black 1px;">\n')
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic; border-bottom: solid black 1px;">')
     out.write('<B>Package propagation status')
@@ -1256,11 +1261,11 @@ def write_propagation_LED_table(out):
 def write_glyph_and_propagation_LED_table(out):
     out.write('<DIV style="font-size: smaller;">\n')
     out.write('<TABLE style="margin: 0px;"><TR>')
-    out.write('<TD style="vertical-align: top;">\n')
+    out.write('<TD style="padding: 0px; vertical-align: top;">\n')
     write_glyph_table(out)
     out.write('</TD>')
     if BBScorevars.subbuilds != "bioc-longtests":
-        out.write('<TD style="vertical-align: top; width: 36%;">\n')
+        out.write('<TD style="padding: 0px; padding-left: 10px; vertical-align: top;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
         out.write('A <s>crossed-out</s> package name indicates the package is')
