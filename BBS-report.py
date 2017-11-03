@@ -359,15 +359,19 @@ def write_pkg_index_as2fullTRs(out, current_letter):
     ## FH: Need the abc class to blend out the alphabetical selection when
     ## "ok" packages are unselected.
     writeThinRowSeparator_asTR(out, "abc")
+    out.write('<TR class="abc">')
+    out.write('<TD style="background: inherit;">')
+    out.write('<A name="%s"><B style="font-size: larger;">%s</B></A>' % \
+              (current_letter, current_letter))
+    out.write('</TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
-        colspan = 4
+        colspan = 3
     else:
-        colspan = 8
-    out.write('<TR class="abc"><TD COLSPAN="%s" style="background: inherit;">' % colspan)
-    out.write('<A name="%s"><B style="font-size: larger;">%s</B></A>' % (current_letter, current_letter))
-    out.write('&nbsp;')
+        colspan = 7
+    out.write('<TD COLSPAN="%s" style="background: inherit;">' % colspan)
     write_abc_dispatcher(out, "", current_letter)
-    out.write('</TD></TR>\n')
+    out.write('</TD>')
+    out.write('</TR>\n')
     return
 
 def statuses2classes(statuses):
