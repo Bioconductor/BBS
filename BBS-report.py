@@ -1131,12 +1131,9 @@ def write_glyph_table(out):
     out.write('<TABLE style="border-spacing: 1px; font-size: smaller;">\n')
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic;">')
+    out.write('<TD COLSPAN="4" style="text-align: left; font-style: italic;">')
     out.write('<B>Package STATUS</B>')
     out.write(' - Package status is indicated by one of the following glyphs:')
-    out.write('</TD>\n')
-    out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic;">\n')
-    out.write('Use the check boxes to show only packages with the selected status types:')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1155,8 +1152,8 @@ def write_glyph_table(out):
     out.write('<TD style="text-align: right;">')
     out.write('<INPUT type="checkbox" checked id="timeout" onClick="toggle(\'timeout\')">')
     out.write('</TD>\n')
-    out.write('<TD style="text-align: left;">')
-    out.write(status_asSPAN('TIMEOUT'))
+    out.write('<TD ROWSPAN="4" style="text-align: left; font-style: italic;">\n')
+    out.write('Use the check boxes to show only packages with the selected status types:')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1175,9 +1172,6 @@ def write_glyph_table(out):
     out.write('<TD style="text-align: right;">')
     out.write('<INPUT type="checkbox" checked id="error" onClick="toggle(\'error\')">')
     out.write('</TD>\n')
-    out.write('<TD style="text-align: left;">')
-    out.write(status_asSPAN('ERROR'))
-    out.write('</TD>\n')
     out.write('</TR>\n')
 
     ## "WARNINGS" glyph
@@ -1186,9 +1180,6 @@ def write_glyph_table(out):
     out.write('<TD><I>CHECK</I> of package produced warnings</TD>\n')
     out.write('<TD style="text-align: right;">')
     out.write('<INPUT type="checkbox" checked id="warnings" onClick="toggle(\'warnings\')">')
-    out.write('</TD>\n')
-    out.write('<TD style="text-align: left;">')
-    out.write(status_asSPAN('WARNINGS'))
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1205,9 +1196,6 @@ def write_glyph_table(out):
     out.write('</TD>\n')
     out.write('<TD style="text-align: right;">')
     out.write('<INPUT type="checkbox" checked id="ok" onClick="toggle(\'ok\')">')
-    out.write('</TD>\n')
-    out.write('<TD style="text-align: left;">')
-    out.write(status_asSPAN('OK'))
     out.write('</TD>\n')
     out.write('</TR>\n')
 
