@@ -1127,15 +1127,14 @@ def write_node_specs_table(out):
 
 ### FH: Create checkboxes to select display types
 def write_glyph_table(out):
-    out.write('<DIV style="font-size: smaller; font-style: italic;">\n')
+    out.write('<DIV style="font-size: smaller;">\n')
 
     out.write('<FORM action="">\n')
     out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="text-align: center;">')
-    out.write('<B>Package status</B>')
-    out.write(' is indicated by one of the following glyphs')
+    out.write('<TD COLSPAN="4" style="text-align: center;  font-style: italic;">')
+    out.write('<B>Package status is indicated by one of the following glyphs</B>')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1154,7 +1153,7 @@ def write_glyph_table(out):
     out.write('<TD style="text-align: right;">')
     out.write('<INPUT type="checkbox" checked id="timeout" onClick="toggle(\'timeout\')">')
     out.write('</TD>\n')
-    out.write('<TD ROWSPAN="4" style="text-align: left;">\n')
+    out.write('<TD ROWSPAN="4" style="text-align: left; font-style: italic;">\n')
     out.write('Use the check<BR>boxes to show<BR>only packages<BR>')
     out.write('with the<BR>selected<BR>status types')
     out.write('</TD>\n')
@@ -1225,9 +1224,9 @@ def write_glyph_table(out):
     out.write('</TR>\n')
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="text-align: center;">')
-    out.write('<I>Click on any glyph in the report below')
-    out.write(' to see the detailed results.</I>')
+    out.write('<TD COLSPAN="4" style="text-align: center;  font-style: italic;">')
+    out.write('(click on any glyph in the report below')
+    out.write(' to access the detailed results)')
     out.write('</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
