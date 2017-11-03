@@ -1221,7 +1221,7 @@ def write_glyph_table(out):
     else:
         out.write('<I>CHECK</I> or <I>BUILD BIN</I> of package')
         out.write(' was skipped because the <I>BUILD</I> step failed')
-        out.write(' (or because of<BR>an anomaly in the Build System)\n')
+        out.write(' (or because of an anomaly in the Build System)\n')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
