@@ -785,9 +785,6 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     write_file_asHTML(out, f, node_hostname)
     f.close()
 
-    if BBScorevars.subbuilds != "bioc-longtests":
-        write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
-
     ## Include output of 'R CMD INSTALL'.
     filename = '%s.Rcheck/00install.out' % pkg
     f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
@@ -797,7 +794,9 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         write_file_asHTML(out, f, node_hostname)
         f.close()
 
-    ## Include example timings.
+    if BBScorevars.subbuilds != "bioc-longtests":
+        write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
+
     if BBScorevars.subbuilds != "bioc-longtests":
         write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
     return
