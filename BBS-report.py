@@ -344,7 +344,7 @@ def write_pkg_check_status_asTD(out, pkg, node, leafreport_ref, style=None):
     return
 
 def write_abc_dispatcher(out, href="", current_letter=None):
-    out.write('<TABLE class="abc_dispatcher" style="font-family: monospace;"><TR>')
+    out.write('<TABLE class="abc_dispatcher"><TR>')
     for i in range(65,91):
         letter = chr(i)
         html_letter = '<A href="%s#%s">%s</A>' % (href, letter, letter)
@@ -633,7 +633,7 @@ def write_goback_asHTML(out, href, current_letter=None):
               (href, BBSreportutils.report_title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
-        out.write('<TD style="padding: 0px; text-align: right;">')
+        out.write('<TD style="padding: 0px; text-align: right; margin-left: auto;">')
         write_abc_dispatcher(out, href, current_letter)
         out.write('</TD>')
     out.write('</TR></TABLE>\n')

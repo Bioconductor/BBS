@@ -10,7 +10,7 @@ H1 {
 }
 H2 {
     font-size: 14pt;
-    margin-top: 6px;
+    margin-top: 4px;
     margin-bottom: 3px;
 }
 H3 {
@@ -21,7 +21,7 @@ H3 {
 H4 {
     font-size: 11pt;
     margin-top: 0px;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 SPAN.filename {
     font-family: monospace;
@@ -172,6 +172,21 @@ TABLE.summary {
 TABLE.summary TD {
     width: 32px;
     padding: 0px;
+    text-align: center;
+}
+
+
+/****************************************************************************
+ * ABC dispatcher
+ */
+
+TABLE.abc_dispatcher {
+    font-family: monospace;
+    font-size: 12pt;
+}
+
+TABLE.abc_dispatcher TD {
+    width: 22px;
     text-align: center;
 }
 
