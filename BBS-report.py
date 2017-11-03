@@ -1219,7 +1219,7 @@ def write_glyph_table(out):
     else:
         out.write('<I>CHECK</I> or <I>BUILD BIN</I> of package')
         out.write(' was skipped because the <I>BUILD</I> step failed')
-        out.write(' (or because of an anomaly Build System)\n')
+        out.write(' (or because of<BR>an anomaly in the Build System)\n')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1236,29 +1236,41 @@ def write_glyph_table(out):
     return
 
 def write_propagation_LED_table(out):
-    out.write('<TABLE style="border-spacing: 1px; font-size: smaller;">\n')
+    out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic;">')
-    out.write('<B>Package propagation STATUS</B> - ')
-    out.write('Package propagation status is indicated by one of the following LEDs:')
+    out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic; border-bottom: solid black 1px;">')
+    out.write('<B>Package propagation status')
+    out.write(' is indicated by one of the following LEDs</B>')
     out.write('</TD>\n')
     out.write('</TR>\n')
     out.write('<TR>\n')
-    out.write('<TD>&nbsp;-&nbsp;<IMG border="0" width="10px" height="10px" alt="YES" src="120px-Green_Light_Icon.svg.png"></TD>\n')
+    out.write('<TD><IMG border="0" width="10px" height="10px" alt="YES" src="120px-Green_Light_Icon.svg.png"></TD>\n')
     out.write('<TD>YES: Package was propagated because it didn\'t previously exist or version was bumped</TD>\n')
     out.write('</TR>\n')
     out.write('<TR>\n')
-    out.write('<TD>&nbsp;-&nbsp;<IMG border="0" width="10px" height="10px" alt="NO" src="120px-Red_Light_Icon.svg.png"></TD>\n')
+    out.write('<TD><IMG border="0" width="10px" height="10px" alt="NO" src="120px-Red_Light_Icon.svg.png"></TD>\n')
     out.write('<TD>NO: Package was not propagated because of a problem (impossible dependencies, or version lower than what is already propagated)</TD>\n')
     out.write('</TR>\n')
     out.write('<TR>\n')
-    out.write('<TD>&nbsp;-&nbsp;<IMG border="0" width="10px" height="10px" alt="UNNEEDED" src="120px-Blue_Light_Icon.svg.png"></TD>\n')
+    out.write('<TD><IMG border="0" width="10px" height="10px" alt="UNNEEDED" src="120px-Blue_Light_Icon.svg.png"></TD>\n')
     out.write('<TD>UNNEEDED: Package was not propagated because it is already in the repository with this version. A version bump is required in order to propagate it</TD>\n')
     out.write('</TR>\n')
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2">A <s>crossed-out</s> package name indicates the package is <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>.</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
+    return
+
+def write_glyph_and_propagation_LED_table(out)
+    out.write('<TABLE style="margin: 0px;"><TR>')
+    out.write('<TD style="vertical-align: top;">\n')
+    write_glyph_table(out)
+    out.write('</TD>')
+    out.write('<TD style="vertical-align: top;">\n')
+    if BBScorevars.subbuilds != "bioc-longtests":
+        write_propagation_LED_table(out)
+    out.write('</TD>')
+    out.write('</TR></TABLE>\n')
     return
 
 
@@ -1285,9 +1297,7 @@ def write_node_report(node, allpkgs):
     out.write('</P>\n')
     write_motd_asTABLE(out)
 
-    write_glyph_table(out)
-    if BBScorevars.subbuilds != "bioc-longtests":
-        write_propagation_LED_table(out)
+    write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
     write_compactreport_asTABLE(out, node, allpkgs)
     out.write('</BODY>\n')
@@ -1316,9 +1326,7 @@ def write_mainpage_asHTML(out, allpkgs):
     out.write('<BR>\n')
     write_node_specs_table(out)
     out.write('<BR>\n')
-    write_glyph_table(out)
-    if BBScorevars.subbuilds != "bioc-longtests":
-        write_propagation_LED_table(out)
+    write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
     if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
         write_mainreport_asTABLE(out, allpkgs)
