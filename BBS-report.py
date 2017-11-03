@@ -180,67 +180,75 @@ def write_LastChange_asTD(out, pkg, key, with_Revision=False):
     out.write('<TD class="svn_info">%s</TD>' % html)
     return
 
-def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False, head=False):
-    vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
-    if head:
-        heading = {'svn': 'svn info', 'git': 'git log'}[vcs]
-        out.write('<P>%s</P>\n' % heading)
-    out.write('<TABLE class="svn_info">')
-    {'svn': write_svn_info_for_pkg_asTABLE, 'git': write_git_log_for_pkg_asTABLE}[vcs](out, pkg, full_info)
-    out.write('</TABLE>')
-    return
-
 def write_svn_Changelog_asTD(out, url, pkg):
     if pkg != None:
         url = '%s/%s' % (url, pkg)
     out.write('<TD class="svn_info"><A href="%s">Bioconductor Changelog</A></TD>' % url)
     return
 
-def write_svn_info_for_pkg_asTABLE(out, pkg, full_info=False):
+def write_svn_info_for_pkg_asTRs(out, pkg, full_info=False):
     if 'BBS_SVNCHANGELOG_URL' in os.environ:
         url = os.environ['BBS_SVNCHANGELOG_URL']
         out.write('<TR>')
         write_svn_Changelog_asTD(out, url, pkg)
-        out.write('</TR>')
+        out.write('</TR>\n')
     if full_info:
         out.write('<TR>')
         write_Date_asTD(out, None, 'Snapshot Date', full_info)
-        out.write('</TR>')
+        out.write('</TR>\n')
         out.write('<TR>')
         write_pkg_keyval_asTD(out, pkg, 'URL')
-        out.write('</TR>')
+        out.write('</TR>\n')
     out.write('<TR>')
     write_LastChange_asTD(out, pkg, 'Last Changed Rev', True)
-    out.write('</TR>')
+    out.write('</TR>\n')
     out.write('<TR>')
     write_Date_asTD(out, pkg, 'Last Changed Date', full_info)
-    out.write('</TR>')
+    out.write('</TR>\n')
     return
 
-def write_git_log_for_pkg_asTABLE(out, pkg, full_info=False):
+def write_git_log_for_pkg_asTRs(out, pkg, full_info=False):
     ## metadata other than snapshot date exists only for individual pkg repos
     if pkg == None:
         out.write('<TR>')
         write_Date_asTD(out, None, 'Snapshot Date', full_info)
-        out.write('</TR>')
+        out.write('</TR>\n')
     else:
         if full_info:
             out.write('<TR>')
             write_Date_asTD(out, None, 'Snapshot Date', full_info)
-            out.write('</TR>')
+            out.write('</TR>\n')
             out.write('<TR>')
             write_pkg_keyval_asTD(out, pkg, 'URL')
-            out.write('</TR>')
+            out.write('</TR>\n')
             out.write('<TR>')
             write_pkg_keyval_asTD(out, pkg, 'Branch')
-            out.write('</TR>')
+            out.write('</TR>\n')
         out.write('<TR>')
         write_LastChange_asTD(out, pkg, 'Last Commit', False)
-        out.write('</TR>')
+        out.write('</TR>\n')
         out.write('<TR>')
         write_Date_asTD(out, pkg, 'Last Changed Date', full_info)
-        out.write('</TR>')
+        out.write('</TR>\n')
     return
+
+def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False, with_heading=False):
+    if BBSvars.MEAT0_type == 1:
+        vcs = 'svn'
+        heading = 'svn info'
+    else:
+        vcs = 'git'
+        heading = 'git log'
+    if with_heading:
+        out.write('<P>%s</P>\n' % heading)
+    out.write('<TABLE class="svn_info">\n')
+    if BBSvars.MEAT0_type == 1:
+        write_svn_info_for_pkg_asTRs(out, pkg, full_info)
+    else:
+        write_git_log_for_pkg_asTRs(out, pkg, full_info)
+    out.write('</TABLE>\n')
+    return
+
 
 ##############################################################################
 ### leaf-report and mainrep tables
