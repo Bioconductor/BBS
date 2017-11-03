@@ -24,7 +24,9 @@ H4 {
     margin-bottom: 4px;
 }
 SPAN.filename {
-    background: #CCCCCC;
+    font-family: monospace;
+    background: #445555;
+    color: #AADDDD;
     padding: 3px;
 }
 
