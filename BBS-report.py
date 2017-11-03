@@ -1127,15 +1127,15 @@ def write_node_specs_table(out):
 
 ### FH: Create checkboxes to select display types
 def write_glyph_table(out):
-    out.write('<FORM action="">\n')
-    out.write('<TABLE style="border-spacing: 1px; font-size: smaller; border: solid black 1px;">\n')
+    out.write('<DIV style="font-style: italic;">\n')
 
-    out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="text-align: left; font-style: italic;">')
+    out.write('<P>')
     out.write('<B>Package STATUS</B>')
     out.write(' - Package status is indicated by one of the following glyphs:')
-    out.write('</TD>\n')
-    out.write('</TR>\n')
+    out.write('</P>\n')
+
+    out.write('<FORM action="">\n')
+    out.write('<TABLE style="border-spacing: 1px; font-size: smaller; border: solid black 1px;">\n')
 
     ## "TIMEOUT" glyph
     out.write('<TR>\n')
@@ -1232,6 +1232,8 @@ def write_glyph_table(out):
     out.write('</TR>\n')
     out.write('</TABLE>\n')
     out.write('</FORM>\n')
+
+    out.write('</DIV>\n')
     return
 
 def write_propagation_LED_table(out):
