@@ -1133,7 +1133,7 @@ def write_glyph_table(out):
     out.write('<TABLE style="border-spacing: 1px; border: solid black 1px;">\n')
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="text-align: center;  font-style: italic;">')
+    out.write('<TD COLSPAN="4" style="font-style: italic; border-bottom: solid black 1px;">')
     out.write('<B>Package status is indicated by one of the following glyphs</B>')
     out.write('</TD>\n')
     out.write('</TR>\n')
@@ -1155,7 +1155,7 @@ def write_glyph_table(out):
     out.write('</TD>\n')
     out.write('<TD ROWSPAN="4" style="text-align: left; font-style: italic;">\n')
     out.write('Use the check<BR>boxes to show<BR>only packages<BR>')
-    out.write('with the<BR>selected<BR>status types')
+    out.write('with the<BR>selected<BR>status types.')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
@@ -1224,9 +1224,9 @@ def write_glyph_table(out):
     out.write('</TR>\n')
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="text-align: center;  font-style: italic;">')
-    out.write('(click on any glyph in the report below')
-    out.write(' to access the detailed results)')
+    out.write('<TD COLSPAN="4" style="font-style: italic; border-top: solid black 1px;">')
+    out.write('Click on any glyph in the report below')
+    out.write(' to access the detailed results.')
     out.write('</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
