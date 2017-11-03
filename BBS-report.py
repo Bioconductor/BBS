@@ -618,7 +618,7 @@ def write_top_asHTML(out, title, css_file=None, js_file=None):
 def write_goback_asHTML(out, href, current_letter=None):
     out.write('<TABLE style="width: 100%; border-spacing: 0px; border-collapse: collapse;"><TR>')
     out.write('<TD style="padding: 0px; text-align: left;">')
-    out.write('<I><A href="%s">Back to the &quot;%s&quot;</A></I>' % (href, main_page_title))
+    out.write('<I><A href="%s">Back to the &quot;%s&quot;</A></I>' % (href, mainpage_title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
         out.write('<TD style="padding: 0px; text-align: right; font-family: monospace;">')
@@ -640,8 +640,7 @@ def write_motd_asTABLE(out):
 
 def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     pkg = leafreport_ref.pkg
-    title = '%s: BUILD/CHECK reports for %s' % (BBSreportutils.get_build_label(), pkg)
-    date = bbs.jobs.currentDateString()
+    title = '%s: Build/check reports for %s' % (BBSreportutils.get_build_label(), pkg)
     out_rURL = '%s/index.html' % pkg
     out = open(out_rURL, 'w')
 
@@ -653,9 +652,11 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     out.write('<BR>\n')
     out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
     out.write('<P style="text-align: center;">\n')
+    date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
     out.write('</P>\n')
     write_motd_asTABLE(out)
+
     write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
@@ -794,9 +795,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
     node_id = leafreport_ref.node_id
     stagecmd = leafreport_ref.stagecmd
     title = '%s: %s report for %s on %s' % (BBSreportutils.get_build_label(), stagecmd2label[stagecmd], pkg, node_id)
-    leafreport_rURL = BBSreportutils.get_leafreport_rURL(pkg, node_id, stagecmd)
-    date = bbs.jobs.currentDateString()
-    out = open(leafreport_rURL, 'w')
+    out_rURL = BBSreportutils.get_leafreport_rURL(pkg, node_id, stagecmd)
+    out = open(out_rURL, 'w')
 
     ## Start writing the HTML page
     write_top_asHTML(out, title, '../report.css')
@@ -806,9 +806,11 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out.write('<BR>\n')
     out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
     out.write('<P style="text-align: center;">\n')
+    date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
     out.write('</P>\n')
     write_motd_asTABLE(out)
+
     write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
     #if len(BBSreportutils.NODES) != 1:
     #    write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
@@ -888,14 +890,13 @@ def make_all_LeafReports(allpkgs):
 ##############################################################################
 
 def write_BioC_mainpage_head_asHTML(out):
-    title = "%s: %s" % (BBSreportutils.get_build_label(), main_page_title)
-    date = bbs.jobs.currentDateString()
     ## Start writing the HTML page
-    write_top_asHTML(out, title, 'report.css', 'report.js')
+    write_top_asHTML(out, mainpage_title, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY  onLoad="initialize();">\n')
-    out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % mainpage_title)
     out.write('<P style="text-align: center;">\n')
+    date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
     out.write('</P>\n')
     write_motd_asTABLE(out)
@@ -906,13 +907,12 @@ def write_BioC_mainpage_head_asHTML(out):
     return
 
 def write_CRAN_mainpage_head_asHTML(out):
-    title = 'CRAN: %s' % main_page_title
-    date = bbs.jobs.currentDateString()
     ## Start writing the HTML page
-    write_top_asHTML(out, title, 'report.css', 'report.js')
+    write_top_asHTML(out, mainpage_title, 'report.css', 'report.js')
     out.write('<BODY>\n')
-    out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % mainpage_title)
     out.write('<P style="text-align: center;">\n')
+    date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
     out.write('</P>\n')
     write_motd_asTABLE(out)
@@ -973,12 +973,15 @@ def make_NodeInfo_page(Node_rdir, node):
     title = 'More about %s' % node.id
     NodeInfo_page_path = '%s-NodeInfo.html' % node.id
     out = open(NodeInfo_page_path, 'w')
+
+    ## Start writing the HTML page
     write_top_asHTML(out, title, 'report.css')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    out.write('<BR>\n')
+    out.write('<H1>%s</H1>\n' % title)
 
-    out.write('<H1>%s</H1>' % title)
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     out.write('<TR><TD><B>Hostname:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.hostname)
     out.write('<TR><TD><B>OS:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.os_html)
@@ -1032,9 +1035,18 @@ def make_Rinstpkgs_page(Node_rdir, node):
     title = 'Installed R packages on %s' % node.id
     Rinstpkgs_page = '%s-R-instpkgs.html' % node.id
     out = open(Rinstpkgs_page, 'w')
+
+    ## Start writing the HTML page
     write_top_asHTML(out, title, 'report.css')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
+    out.write('<BR>\n')
+    out.write('<H1>%s</H1>\n' % title)
+    out.write('<P style="text-align: center;">\n')
+    date = bbs.jobs.currentDateString()
+    out.write('<I>This page was generated on %s.</I>\n' % date)
+    out.write('</P>\n')
+
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     filename = 'NodeInfo/R-instpkgs.txt'
     out.write('<PRE>\n')
@@ -1249,11 +1261,19 @@ def write_node_report(node, allpkgs):
     node_index_file = '%s-index.html' % node.id
     out = open(node_index_file, 'w')
     title = "%s: Build/check report for %s" % (BBSreportutils.get_build_label(), node.id)
+
+    ## Start writing the HTML page
     write_top_asHTML(out, title, 'report.css', 'report.js')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
+    out.write('<P style="text-align: center;">\n')
+    date = bbs.jobs.currentDateString()
+    out.write('<I>This page was generated on %s.</I>\n' % date)
+    out.write('</P>\n')
     write_motd_asTABLE(out)
+
     write_glyph_table(out)
     if BBScorevars.subbuilds != "bioc-longtests":
         write_propagation_LED_table(out)
@@ -1351,14 +1371,16 @@ BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 BBSreportutils.set_NODES(report_nodes)
 if BBScorevars.subbuilds == "bioc-longtests":
     if len(BBSreportutils.NODES) != 1:
-        main_page_title = 'Multiple platform report for long tests'
+        mainpage_title = 'Multiple platform long tests'
     else:
-        main_page_title = 'Report for long tests'
+        mainpage_title = 'Long tests'
 else:
     if len(BBSreportutils.NODES) != 1:
-        main_page_title = 'Multiple platform build/check report'
+        mainpage_title = 'Multiple platform build/check'
     else:
-        main_page_title = 'Build/check report'
+        mainpage_title = 'Build/check'
+mainpage_title += ' report for ' + BBSreportutils.get_build_label()
+
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
 make_STATUS_SUMMARY(allpkgs)
 print "BBS> [stage8] cp %s %s/" % (css_file, report_path)

@@ -137,10 +137,8 @@ def get_build_label():
     if BBScorevars.subbuilds == "cran":
         return "CRAN"
     build_label = "BioC %s" % bioc_version
-    if BBScorevars.subbuilds == "biocLite":
-        build_label = "biocLite (%s)" % build_label
-    elif BBScorevars.subbuilds == "data-experiment":
-        build_label = "BioC experimental data"
+    if BBScorevars.subbuilds == "data-experiment":
+        build_label += " experimental data"
     return build_label
 
 

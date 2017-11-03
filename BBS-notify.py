@@ -93,6 +93,8 @@ def send_notification(pkg):
         print "subject: %s\n" % subject
         print msg
         print ""
+    print "BBS> Notifying maintainer(s) of %s:" % pkg
+    sys.stdout.flush()
     bbs.email.sendtextmail(from_addr, to_addrs, subject, msg)
     return
 
@@ -141,9 +143,9 @@ else:
     main_page_title = 'Build/check report'
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
 print "BBS> [stage9] Notifying package maintainers for nodes: %s" % notify_nodes
-if BBScorevars.mode in ["bioc", "biocLite", "data-experiment"]:
+if BBScorevars.subbuilds in ["bioc", "data-experiment"]:
     send_BioC_notifications(allpkgs)
-else: # "cran" mode
+else: # "cran" subbuilds
     send_CRAN_notifications(allpkgs)
 
 print "BBS> [stage9] DONE at %s." % time.asctime()
