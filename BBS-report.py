@@ -676,7 +676,7 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     return
 
 def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
-    out.write('<H3>Summary</H3>\n')
+    out.write('<HR>\n<H3>Summary</H3>\n')
     out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
     out.write('<TABLE>\n')
@@ -722,7 +722,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     return pattern_detected
 
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
-    out.write('<BR>\n<H3>Tests output</H3>\n')
+    out.write('<HR>\n<H3>Tests output</H3>\n')
     fullpath = os.path.join(BBScorevars.central_rdir_path, "nodes",
                             node_id, "checksrc")
     old_cwd = os.getcwd()
@@ -731,8 +731,9 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     filepaths = []
     for dirpath, dirnames, filenames in os.walk(tests_output_dir):
         for filename in filenames:
-            if fnmatch.fnmatch(filename, "*.Rout*"):
-                filepaths.append(os.path.join(dirpath, filename))
+            filepath = os.path.join(dirpath, filename)
+            if fnmatch.fnmatch(filepath, "*/tests*/*.Rout*"):
+                filepaths.append(filepath)
     filepaths.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     #out.write('<UL>\n')
     for filepath in filepaths:
@@ -747,7 +748,7 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     return
 
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
-    out.write('<BR>\n<H3>Example timings</H3>\n')
+    out.write('<HR>\n<H3>Example timings</H3>\n')
     files = ['%s.Rcheck/%s-Ex.timings' % (pkg, pkg),
              '%s.Rcheck/examples_i386/%s-Ex.timings' % (pkg, pkg),
              '%s.Rcheck/examples_x64/%s-Ex.timings' % (pkg, pkg)]
@@ -770,9 +771,9 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
 def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     if BBScorevars.subbuilds == "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
-        out.write('<BR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
+        out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
-        out.write('<BR>\n<H3>Command output</H3>\n')
+        out.write('<HR>\n<H3>Command output</H3>\n')
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
     if stagecmd != "checksrc":
         write_file_asHTML(out, f, node_hostname)
@@ -791,7 +792,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     filename = '%s.Rcheck/00install.out' % pkg
     f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
     if f != None:
-        out.write('<BR>\n<H3>Installation output</H3>\n')
+        out.write('<HR>\n<H3>Installation output</H3>\n')
         out.write('<P>%s:</P>\n' % filename)
         write_file_asHTML(out, f, node_hostname)
         f.close()
@@ -828,10 +829,10 @@ def make_LeafReport(leafreport_ref, allpkgs):
     #    write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
     #else:
     #    write_compactreport_asTABLE(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
-    out.write('<HR>\n')
 
     status = BBSreportutils.get_status_from_db(pkg, node_id, stagecmd)
     if stagecmd == "install" and status == "NotNeeded":
+        out.write('<HR>\n')
         out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
         out.write('REASON FOR NOT INSTALLING: no other package that will ')
         out.write('be built and checked on this platform needs %s' % pkg)
@@ -840,7 +841,6 @@ def make_LeafReport(leafreport_ref, allpkgs):
         ## Summary
         write_Summary_to_asHTML(out, node_hostname,
                                 pkg, node_id, stagecmd)
-        out.write('<HR>\n')
         ## Command output
         write_Command_output_asHTML(out, node_hostname,
                                     pkg, node_id, stagecmd)
