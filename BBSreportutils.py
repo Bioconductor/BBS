@@ -18,8 +18,6 @@ import BBSvars
 import BBScorevars
 
 
-bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
-
 STATUS_DB_file = 'STATUS_DB.txt'
 PROPAGATE_STATUS_DB_file = '../PROPAGATE_STATUS_DB.txt'
 
@@ -133,15 +131,6 @@ def get_vcs_meta(pkg, key):
 def get_leafreport_rURL(pkg, node_id, stagecmd):
     return "%s/%s-%s.html" % (pkg, node_id, stagecmd)
 
-def get_build_label():
-    if BBScorevars.subbuilds == "cran":
-        return "CRAN"
-    build_label = "BioC %s" % bioc_version
-    if BBScorevars.subbuilds == "data-experiment":
-        build_label += " experimental data"
-    return build_label
-
-
 
 ##############################################################################
 ###
@@ -202,4 +191,23 @@ def supported_nodes(pkg):
         if is_supported(pkg, node):
             nodes.append(node)
     return nodes
+
+if BBScorevars.subbuilds == "bioc-longtests":
+    if len(NODES) != 1:
+        report_title = "Multiple platform long tests"
+    else:
+        report_title = "Long tests"
+else:
+    if len(NODES) != 1:
+        report_title = "Multiple platform build/check"
+    else:
+        report_title = "Build/check"
+report_title += " report for "
+if BBScorevars.subbuilds == "cran":
+    report_title += "CRAN"
+else:
+    bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
+    report_title += "BioC %s" % bioc_version
+    if BBScorevars.subbuilds == "data-experiment":
+        report_title += " experimental data"
 

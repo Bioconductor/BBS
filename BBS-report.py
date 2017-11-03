@@ -597,7 +597,7 @@ def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
 ### leaf-reports
 ##############################################################################
 
-def write_top_asHTML(out, title, css_file=None, js_file=None):
+def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     out.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"')
     out.write(' "http://www.w3.org/TR/html4/loose.dtd">\n')
     out.write('<HTML>\n')
@@ -607,7 +607,10 @@ def write_top_asHTML(out, title, css_file=None, js_file=None):
     out.write('  window.location.href = window.location.href + "/";\n')
     out.write('</script>\n')
     out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
-    out.write('<TITLE>%s</TITLE>\n' % title)
+    title = BBSreportutils.report_title
+    if page_title != None:
+        title += " - " + page_title
+    out.write('<TITLE>%s</TITLE>\n' % title
     if css_file:
         out.write('<LINK rel="stylesheet" href="%s" type="text/css">\n' % css_file)
     if js_file:
@@ -618,7 +621,8 @@ def write_top_asHTML(out, title, css_file=None, js_file=None):
 def write_goback_asHTML(out, href, current_letter=None):
     out.write('<TABLE style="width: 100%; border-spacing: 0px; border-collapse: collapse;"><TR>')
     out.write('<TD style="padding: 0px; text-align: left;">')
-    out.write('<I><A href="%s">Back to the &quot;%s&quot;</A></I>' % (href, mainpage_title))
+    out.write('<I><A href="%s">Back to the &quot;%s&quot;</A></I>' % \
+              (href, BBSreportutils.report_title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
         out.write('<TD style="padding: 0px; text-align: right; font-family: monospace;">')
@@ -640,17 +644,17 @@ def write_motd_asTABLE(out):
 
 def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     pkg = leafreport_ref.pkg
-    title = '%s: Build/check reports for %s' % (BBSreportutils.get_build_label(), pkg)
+    page_title = 'Results for %s' % pkg
     out_rURL = '%s/index.html' % pkg
     out = open(out_rURL, 'w')
 
-    ## Start writing the HTML page
-    write_top_asHTML(out, title, '../report.css')
+    write_HTML_header(out, page_title, '../report.css')
     out.write('<BODY>\n')
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % BBSreportutils.report_title)
+    out.write('<H2 style="text-align: center;">%s</H2>\n' % page_title)
     out.write('<P style="text-align: center;">\n')
     date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
@@ -794,17 +798,17 @@ def make_LeafReport(leafreport_ref, allpkgs):
     node_hostname = leafreport_ref.node_hostname
     node_id = leafreport_ref.node_id
     stagecmd = leafreport_ref.stagecmd
-    title = '%s: %s report for %s on %s' % (BBSreportutils.get_build_label(), stagecmd2label[stagecmd], pkg, node_id)
+    page_title = '%s report for %s on %s' % (stagecmd2label[stagecmd], pkg, node_id)
     out_rURL = BBSreportutils.get_leafreport_rURL(pkg, node_id, stagecmd)
     out = open(out_rURL, 'w')
 
-    ## Start writing the HTML page
-    write_top_asHTML(out, title, '../report.css')
+    write_HTML_header(out, page_title, '../report.css')
     out.write('<BODY>\n')
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % BBSreportutils.report_title)
+    out.write('<H2 style="text-align: center;">%s</H2>\n' % page_title)
     out.write('<P style="text-align: center;">\n')
     date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
@@ -890,11 +894,10 @@ def make_all_LeafReports(allpkgs):
 ##############################################################################
 
 def write_BioC_mainpage_head_asHTML(out):
-    ## Start writing the HTML page
-    write_top_asHTML(out, mainpage_title, 'report.css', 'report.js')
+    write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY  onLoad="initialize();">\n')
-    out.write('<H1 style="text-align: center;">%s</H1>\n' % mainpage_title)
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % BBSreportutils.report_title)
     out.write('<P style="text-align: center;">\n')
     date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
@@ -907,10 +910,9 @@ def write_BioC_mainpage_head_asHTML(out):
     return
 
 def write_CRAN_mainpage_head_asHTML(out):
-    ## Start writing the HTML page
-    write_top_asHTML(out, mainpage_title, 'report.css', 'report.js')
+    write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY>\n')
-    out.write('<H1 style="text-align: center;">%s</H1>\n' % mainpage_title)
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % BBSreportutils.report_title)
     out.write('<P style="text-align: center;">\n')
     date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
@@ -970,16 +972,15 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var):
     return
 
 def make_NodeInfo_page(Node_rdir, node):
-    title = 'More about %s' % node.id
+    page_title = 'More about %s' % node.id
     NodeInfo_page_path = '%s-NodeInfo.html' % node.id
     out = open(NodeInfo_page_path, 'w')
 
-    ## Start writing the HTML page
-    write_top_asHTML(out, title, 'report.css')
+    write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    out.write('<H1>%s</H1>\n' % title)
+    out.write('<H1>%s</H1>\n' % page_title)
 
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     out.write('<TABLE>\n')
@@ -989,41 +990,58 @@ def make_NodeInfo_page(Node_rdir, node):
     out.write('<TR><TD><B>Platform:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.platform)
     out.write('<TR><TD><B>R&nbsp;version:&nbsp;</B></TD><TD>%s</TD></TR>\n' % read_Rversion(Node_rdir))
     out.write('</TABLE>\n')
+    out.write('</DIV>\n')
+
     out.write('<HR>\n')
 
     out.write('<H2>C compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     C_vars = ['CC', 'CFLAGS', 'CPICFLAGS', 'CPP']
     write_Rconfig_table_from_file(out, Node_rdir, C_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CC')
+    out.write('</DIV>\n')
+
     out.write('<HR>\n')
 
     out.write('<H2>C++ compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     Cplusplus_vars = ['CXX', 'CXXFLAGS', 'CXXPICFLAGS', 'CXXCPP']
     write_Rconfig_table_from_file(out, Node_rdir, Cplusplus_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CXX')
+    out.write('</DIV>\n')
+
     out.write('<HR>\n')
 
     out.write('<H2>C++11 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     Cplusplus11_vars = ['CXX1X', 'CXX1XFLAGS', 'CXX1XPICFLAGS', 'CXX1XSTD']
     write_Rconfig_table_from_file(out, Node_rdir, Cplusplus11_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CXX1X')
+    out.write('</DIV>\n')
+
     out.write('<HR>\n')
 
     out.write('<H2>Fortran 77 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
     write_Rconfig_table_from_file(out, Node_rdir, Fortran77_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'F77')
+    out.write('</DIV>\n')
+
     out.write('<HR>\n')
 
     out.write('<H2>Fortran 9x compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
     write_Rconfig_table_from_file(out, Node_rdir, Fortran9x_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'FC')
+    out.write('</DIV>\n')
+
     out.write('<HR>\n')
 
     out.write('<P>More information might be added in the future...</P>\n')
 
-    out.write('</DIV></BODY>\n')
+    out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
     return NodeInfo_page_path
@@ -1032,16 +1050,15 @@ def make_NodeInfo_page(Node_rdir, node):
 ### Returns the 2-string tuple containing the filename of the generated page
 ### and the number of installed pkgs.
 def make_Rinstpkgs_page(Node_rdir, node):
-    title = 'Installed R packages on %s' % node.id
+    page_title = 'Installed R packages on %s' % node.id
     Rinstpkgs_page = '%s-R-instpkgs.html' % node.id
     out = open(Rinstpkgs_page, 'w')
 
-    ## Start writing the HTML page
-    write_top_asHTML(out, title, 'report.css')
+    write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    out.write('<H1>%s</H1>\n' % title)
+    out.write('<H1>%s</H1>\n' % page_title)
     out.write('<P style="text-align: center;">\n')
     date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
@@ -1260,14 +1277,14 @@ def write_node_report(node, allpkgs):
     sys.stdout.flush()
     node_index_file = '%s-index.html' % node.id
     out = open(node_index_file, 'w')
-    title = "%s: Build/check report for %s" % (BBSreportutils.get_build_label(), node.id)
+    page_title = "Results for %s" % node.id
 
-    ## Start writing the HTML page
-    write_top_asHTML(out, title, 'report.css', 'report.js')
+    write_HTML_header(out, page_title, 'report.css', 'report.js')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    out.write('<H1 style="text-align: center;">%s</H1>\n' % title)
+    out.write('<H1 style="text-align: center;">%s</H1>\n' % BBSreportutils.report_title)
+    out.write('<H2 style="text-align: center;">%s</H2>\n' % page_title)
     out.write('<P style="text-align: center;">\n')
     date = bbs.jobs.currentDateString()
     out.write('<I>This page was generated on %s.</I>\n' % date)
@@ -1369,17 +1386,6 @@ print "BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBScorev
 BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
-if BBScorevars.subbuilds == "bioc-longtests":
-    if len(BBSreportutils.NODES) != 1:
-        mainpage_title = 'Multiple platform long tests'
-    else:
-        mainpage_title = 'Long tests'
-else:
-    if len(BBSreportutils.NODES) != 1:
-        mainpage_title = 'Multiple platform build/check'
-    else:
-        mainpage_title = 'Build/check'
-mainpage_title += ' report for ' + BBSreportutils.get_build_label()
 
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
 make_STATUS_SUMMARY(allpkgs)
