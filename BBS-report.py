@@ -739,7 +739,7 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     for filepath in filepaths:
         f = open(filepath, "r")
         #out.write('<LI>\n')
-        out.write('<P>%s:</P>\n' % filepath)
+        out.write('<P><SPAN class="filename">%s</SPAN>:</P>\n' % filepath)
         write_file_asHTML(out, f, node_hostname)
         f.close()
         #out.write('</LI>\n')
