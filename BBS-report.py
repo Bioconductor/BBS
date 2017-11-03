@@ -723,13 +723,13 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
 
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
-    fullpath = os.path.join(BBScorevars.central_rdir_path, "nodes",
-                            node_id, "checksrc")
+    checksrc_dir = os.path.join(BBScorevars.central_rdir_path, "nodes",
+                                node_id, "checksrc")
     old_cwd = os.getcwd()
-    os.chdir(fullpath)
-    tests_output_dir = os.path.join(pkg + ".Rcheck", "tests")
+    os.chdir(checksrc_dir)
+    Rcheck_dir = pkg + ".Rcheck"
     filepaths = []
-    for dirpath, dirnames, filenames in os.walk(tests_output_dir):
+    for dirpath, dirnames, filenames in os.walk(Rcheck_dir):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             if fnmatch.fnmatch(filepath, "*/tests*/*.Rout*"):
