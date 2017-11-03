@@ -183,6 +183,8 @@ TABLE.summary TD {
 TABLE.abc_dispatcher {
     font-family: monospace;
     font-size: 12pt;
+    margin-right: 0px;
+    margin-left: auto;
 }
 
 TABLE.abc_dispatcher TD {

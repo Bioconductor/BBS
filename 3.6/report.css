@@ -2,6 +2,7 @@ BODY {
     background: #cc5566;
     font-family: sans-serif;
     font-size: 10pt;
+    color: #2a2a2a;
 }
 
 H1 {
@@ -182,6 +183,8 @@ TABLE.summary TD {
 TABLE.abc_dispatcher {
     font-family: monospace;
     font-size: 12pt;
+    margin-right: 0px;
+    margin-left: auto;
 }
 
 TABLE.abc_dispatcher TD {

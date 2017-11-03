@@ -637,7 +637,7 @@ def write_goback_asHTML(out, href, current_letter=None):
               (href, BBSreportutils.report_title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
-        out.write('<TD style="padding: 0px; text-align: right; margin-left: auto;">')
+        out.write('<TD style="padding: 0px;">')
         write_abc_dispatcher(out, href, current_letter)
         out.write('</TD>')
     out.write('</TR></TABLE>\n')
