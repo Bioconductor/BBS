@@ -608,9 +608,9 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     out.write('</script>\n')
     out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
     title = BBSreportutils.report_title
-    if page_title != None:
+    if page_title:
         title += " - " + page_title
-    out.write('<TITLE>%s</TITLE>\n' % title
+    out.write('<TITLE>%s</TITLE>\n' % title)
     if css_file:
         out.write('<LINK rel="stylesheet" href="%s" type="text/css">\n' % css_file)
     if js_file:
