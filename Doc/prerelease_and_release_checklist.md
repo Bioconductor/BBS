@@ -4,10 +4,13 @@
 - [Testing R versions](#rversions)
 - [Six weeks before the release](#sixweeks)
 - [Four weeks before the release](#fourweeks)
+- [Three weeks before the release](#threeweeks)
 - [Two weeks before the release](#twoweeks)
+- [One week before the release](#oneweek)
 - [Day before we branch](#d-2)
 - [Day we branch](#d-1)
 - [Release day](#d)
+- [Week after the Release](#d+)
 
 <a name="rversions"></a>
 ## R versions
@@ -42,203 +45,228 @@ in _this_ order
 <a name="sixweeks"></a>
 ## Six weeks before the release:
 
-- Identify machines for new devel.
-
-  Are hardware or OS upgrades required? If so, you'll need more time.
-  If you are going to use the same machine(s) for new devel as you
-  used for old release, stop old release builds several weeks
-  before the release date, to give you enough time to set up
-  the machine(s) for new devel builds. The date that
-  old release builds are stopped should go in the release
-  schedule.
-
-- Think about changing BiocInstaller and the
-  /developers/howto/useDevel web page. Update the man
-  page for useDevel() accordingly, correcting R/Bioc version
-  numbers and noting whether an R upgrade is required
-  in order to use bioc-devel.
-
 - Draft release schedule.
+
+- Divide package ranges
+
+- Start contacting maintainers about errors
 
 <a name="fourweeks"></a>
 ## Four weeks before the release:
 
 - Announce release schedule
 
+- Announce deprecated / defunct packages
+
+- Announce contributed annotation deadline
+
 - Start building workflows on devel
 
 - Start building annotations
 
+<a name="threeweeks"></a>
+## Three weeks before the release:
+
+- The day before we stop the release builds, update remove-packages.md in the 
+  current release, e.g., 3.5.
+
+- db0 packages posted to the devel repo
+
+- Deadline for new package submissions
+
 <a name="twoweeks"></a>
 ## Two weeks before the release:
 
-- Stop the old release builds
+- Disable commits to old release branch
 
-  IMPORTANT: After stopping release builds, on all Mac build machines, point
+- After the last build report for old relase is online, stop the old release builds.
+
+  HISTORICAL NOTE: After stopping release builds, on all Mac build machines, point
   the "Current" symlink in /Library/Frameworks/R.framework/Versions to the
   new DEVEL version of R. Otherwise we will be producing broken binaries!
   (Not applicable if only one build is running on each Mac machine, as should
   be the case from BioC 2.9 onward; but we do want to make sure that there is
   only ever one version of R installed on these Mac build machines.)
 
-  Also, after stopping release builds, you'll disable commits to the release
-  branch. But make sure that the 'anon' user can still read from this branch.
-  The website build process depends on this!
+- Update https://bioconductor.org/checkResults/ by moving the old release to
+  the top of the "Archived results for past release" section.
 
-- Simlinks to old devel
+- Feature freeze for the to-be-release version. No API changes, no new
+  packages added to the roster.
 
-  Until the next devel builds are running, we want symlinks pointing to the old
-  devel builds so that the BiocInstaller package will work. This includes the
-  software, data/annotation, and data/experiment repositories.  Remove these
-  symlinks when the builds start running.
+- All contributed annotation packages added to the to-be-release repo.
+
+- Install latest biocViews on biocadmin account on to-be-release master builder.
+
+- Create the software and experimental data manifest files for new devel
 
 - Start setting up new devel builders and repositories.
 
   Make sure that the R that runs as biocadmin has the 'knitcitations' package
   installed.
 
+  Note about Simlinks to old devel:
+
+  Until the next devel builds are running, we want symlinks pointing to the old
+  devel builds so that the BiocInstaller package will work. This includes the
+  software, data/annotation, and data/experiment repositories.  Remove these
+  symlinks when the builds start running.
+
+- Add links to checkResults page for new devel builds
+
+- Confirm build report for new devel builds is intact
+
+- Think about chaning BiocInstaller and the /developers/howto/useDevel web
+  page. Modify any R/BioC versions if necessary.
+
+- Update AMI and docker for the release being frozen, e.g., 3.5. Do this
+  before we branch so r-release is still pointing at 3.5 instead of 3.6.
+
+- OrgDb and TxDb packages posted to the devel repo
+
+- Update NEWS files
+
 <a name="oneweek"></a>
 ## One week before the release:
 
-- FIXME: still necessary?
-  make a snapshot of CRAN and make it available as an (optional)
-  repository
-
 - Deprecated packages
 
-  -- Remove from the manifest of the to-be-released version of BioC all packages
-  which were deprecated in a previous release
-  cycle (grep -i deprecated */R/zzz.R).
+  Remove from the manifest of the to-be-released version of BioC all packages
+  which were deprecated in a previous release cycle 
+  (grep -i deprecated */R/zzz.R).
 
-  -- Identify new round of packages to-be-deprecated in new devel.
+- Add OrgDb and TxDb packages to AnnotationHub
 
-- Package maintainers finalize  NEWS files for inclusion in the release
-  announcement. Then after the deadline for that, compile the NEWS using
-  biocViews:::getPackageNEWS().
+- Deadline for NEWS files to be updated
 
-- PREPARE BiocInstaller package for upcoming release.
-
-- FIX bioconductor.authz on hedgehog (all the paths to the release
- versions of the pkgs need to be updated).
-
-- FLUSH the internal software repo (~biocadmin/PACKAGES/x.y/bioc)
- of the upcoming release.
-
-- Also install the latest biocViews into the R on the master builder
-  (for the version about to be released) in the 'biocadmin' account.
+- Packages and workflows clean of errors and warnings
 
 <a name="d-2"></a>
 ## Day before we branch (D-2):
 
-- Create new manifest file. If "new" devel builds have started,
-  make sure they use this new manifest file.
+- Manifest file for the release branch
 
+  Create the manifest file for the release branch, e.g., "RELEASE_3_6".
+  Up to this point and until we branch tomorrow, both 3.6 and the new devel 
+  should be using the "master" manifest.
+
+  NOTE: Branch creation must be done after all packages for 3.6 have been 
+  added to the manifest.
+
+  NOTE: As part of the bump and branch process tomorrow, the
+  BBS_BIOC_MANIFEST_GIT_BRANCH variable on the release builder will be
+  modified to point to the correct manifest.
+  This variable is defined in the config.sh and config.bat files located in the
+  ~biocbuild/BBS/3.6/bioc/ and ~biocbuild/BBS/3.6/data-experiment/ folders.
+  For now, packages must still be built off their master branch so do NOT 
+  touch the BBS_BIOC_GIT_BRANCH variable!
+
+- Modify the /about/removed-packages/. Link to the last good landing page
+  of each package.
 
 <a name="d-1"></a>
 ## Day we branch (D-1):
 
-- If a new R is released today, modify the biocLite.R
-  script (which lives in the BiocInstaller package in
-  inst/scripts)to make sure the next devel version of
-  R is properly identified.
+- Send mail to bioc-devel to ask people to stop commits until
+  further notice so we can create the 3.6 branches (software and data
+  experiment). The bump and branch took about 2 hours.
 
-- Send mail to Bioc-devel to ask people to not commit for the next
- 2 hours while we create the new branch in svn.
+- Bump versions and create BioC 3.6 release branch
+  https://github.com/Bioconductor/BBS/blob/master/Doc/Version-bump-and-branch-creation-HOWTO.md
 
-- Note that we now (as from 12/13) want to branch and bump
-  experiment data packages in the same way as software packages
-  so note that **THE STEPS BELOW SHOULD APPLY TO BOTH
-  SOFTWARE AND EXPERIMENT DATA PACKAGES**.
+- Confirm MEAT0 is pointed at the correct manifest for the
+  3.6 and 3.7 builds.
 
-  NOTE: Just to be explicit, we bump experiment data packages
-  **EXACTLY** the same way as software packages. That is, we bump
-  y to the next even number in release and to the next odd
-  number in devel. For a while we were doing it a different
-  way but no longer. Make sure you do it the same way
-  as the software packages!
+- Update gitolite authorization files to give maintainers R/W
+  access to their package in the new branch.
 
-  One thing that must
-  be done with experiment data packages is to branch them
-  (at the top level of https://hedgehog.fhcrc.org/bioc-data)
-  and make sure that the add_data.py script in branches/RELEASE_X_XX/pkgs
-  contains a URL with the appropriate branch.
+- Confirm new branch can be checkout from a location other than
+  the machine used to create the branch (i.e., your local system).
 
-- FIRST VERSION BUMP: bump version of devel pkgs (in trunk) that are in the
-  manifest file of the upcoming release.  Scripts for bumping can be found
-  here: https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/util/
+- Announce the creation of the 3.6 branch and that commits can
+  resume. Clarify the difference between the new branch and master.
 
-- CREATE THE BRANCH FOR THE RELEASE in svn.
+- Confirm defunct packages have been removed from the 3.7 manifest.
 
-- SECOND VERSION BUMP: bump again version of devel pkgs (in trunk)
- that are in the manifest file of the upcoming release.
+- BiocInstaller
 
-- Send mail to Bioc-devel to announce the creation of the branch and tell
-  people that they can resume commits (provide URL to the new branch, clarify
-  the difference between the release and the devel version of a package).
+  -- If a new R is released today, modify the biocLite.R script (which lives 
+     in the BiocInstaller package in inst/scripts)to make sure the next devel 
+     version of R is properly identified.
 
-- Make the release builds extract the meat from the new branch in svn.
-  From within MEAT0/, run 'svn up' for both software and data experiment.
+  -- Change R/zzz.R of the BiocInstaller package to indicate new 
+     BioC version number.
 
-- In trunk, change R/zzz.R of the BiocInstaller package to indicate new
-  BioC version number.
+  -- Change DESCRIPTION file of BiocInstaller to depend on latest devel
+     version of R (if that is appropriate).
 
-- Change DESCRIPTION file of BiocInstaller to depend on latest devel
-  version of R (if that is appropriate).
+  -- Modify inst/scripts/BiocInstaller.dcf to change relavant variables.
 
-- Make sure that the BiocInstaller package is manually pushed out
+  OLD NOTE: Make sure that the BiocInstaller package is manually pushed out
   to the new devel repos. It has to be manually pushed out because
   otherwise it will fail its unit test because it is testing to make
   sure that BiocInstaller is in the devel repos. A chicken-and-egg situation.
+
+  NEW NOTE: I'm not sure the unit test refered to above still exits.
+  Reguardless, the key idea is that the correct version of BiocInstaller MUST 
+  be on master by the time the release is announced. If this is not the case, 
+  users tying to biocLite() with the new devel will not get the correct 
+  packages. BiocInstaller can get to master by successfully completing a
+  build cycle or by manually droping the tarball in 
+  /home/biocadmin/PACKAGES/3.7/bioc/src/contrib.
+  The permissions on the tarball must be correct and there can only be one 
+  version of the tarball in the repository.
+
+- Run the builds ...
 
 - Run a script to generate recent NEWS for all packages, to be included
   in the release announcement. (biocViews:::getPackageNEWS.R()).
   Verify that there are no <NA>s in output. Collate package descriptions
   with biocViews:::getPackageDescriptions().
 
-- Set up git mirrors (if they still exist?) with the new branch. Read
-  https://github.com/Bioconductor/mirror/blob/master/README.md#release-workflow
-
-- Confirm all of bioc/, extra/, workflows/, annotations/ exist on master
-  at /extra/www/bioc/
-  Clone the 3.5/extra repo on the release linux master builder into 3.6/extra
-  on the devel linux master builder. Run the prepareRepo/pushRepo sequence. 
-  Before running that sequence create the 3.6/extra directory
-  so the pushRepo script has a place to push the stuff.
-
 - Modify the file /about/removed-packages/ on the web site
   to indicate the packages that were removed with this release.
   Link to the last-good landing page of each package.
+
+- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller to change
+  relevant variables. This will automatically push soon after being
+  committed.
 
 
 <a name="d"></a>
 ## Release day (D):
 
-- UPDATE the /etc/rsyncd.conf on master.bioconductor.org. Test rsync is
-  still working as expected with commands from:
-  http://www.bioconductor.org/about/mirrors/mirror-how-to/.
+- bioconductor.org/config.yaml
 
-  The mirroring instructions on the website will be updated automatically in
-  the following steps.  Test the mirrors with commands from:
-  http://www.bioconductor.org/about/mirrors/mirror-how-to/.
-
-- Update config.yaml in the root of the bioconductor.org working copy
-  and change values as indicated in the comments. This will (among other
-  things), automatically update the website symlinks ("release" and "devel")
-  under /packages. NOTE: If there is no annotation branch, that line
-  under 'devel_repos' must be commented out; if any of annotation, experiment
-  data or software are not available (and a simlink makes them unavailable)
-  the script will break and landing pages will not be generated.
+  Update config.yaml in the root of the bioconductor.org working copy and
+  change values as indicated in the comments. This will (among other things),
+  automatically update the website symlinks ("release" and "devel") under
+  /packages. NOTE: If there is no annotation branch, that line under
+  'devel_repos' must be commented out; if any of annotation, experiment data or
+  software are not available (and a simlink makes them unavailable) the script
+  will break and landing pages will not be generated.
  
-  After a release you should
-  let the no-longer-release version build one last time so package
-  landing pages won't say "release version" (and also so the
-  BiocInstaller landing page will reflect the version of
-  the package that you will push out manually--see the
-  "Modify BiocInstaller..." step below).
+  After a release you should let the no-longer-release version build one last
+  time so package landing pages won't say "release version" (and also so the
+  BiocInstaller landing page will reflect the version of the package that you
+  will push out manually--see the "Modify BiocInstaller..." step below).
 
-- Add "Disallow: /packages/XX/" to the web site's robots.txt file
-  where XX is the new devel version (one higher than the version)
-  that was just released.
+- rsync on master
+
+  UPDATE the /etc/rsyncd.conf on master.bioconductor.org. 
+  Test rsync is still working as expected with commands from:
+  http://www.bioconductor.org/about/mirrors/mirror-how-to/.
+
+- mirrors
+
+  The mirror instructions on the website will be updated 
+  automatically when config.yaml is updated.
+ 
+  Test the mirrors with commands from:
+  http://www.bioconductor.org/about/mirrors/mirror-how-to/.
+
+- Update checkResults page and symlinks ("release" and "devel") under
+  checkResults/.
 
 - Website updates:
   -- Update build report index page and symlinks; remove "devel"
@@ -259,44 +287,55 @@ in _this_ order
 
   -- Update symlinks ("release" and "devel") under /checkReports
 
-- Update post-commit hook script
-  extra/svndata/gentleman/svnroot/bioconductor/hooks/post-commit on
-  hedgehog, changing to the new devel version, search for CHANGEME.
+  -- Add "Disallow: /packages/XX/" to the web site's robots.txt file
+     where XX is the new devel version (one higher than the version)
+     that was just released.
 
-- Modify the script
-  svn@hedgehog:/extra/svndata/gentleman/svnroot/bioconductor/hooks/rssfeed.sh
-  Change below where it says "CHANGE THE VALUE IN THE NEXT LINE".
-  This causes an rss feed to be generated for the release branch.
+- biocLite() sanity check
 
-- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller to change
-  relevant variables. This will automatically push soon after being
-  committed.
+  Was biocLite.R updated properly? With a fresh R devel (make sure
+  BiocInstaller is not installed), source biocLite.R and make sure the
+  appropriate version is installed. Of course, do the same with release.  **
+  really do this! with R-devel too if appropriate! **
 
-- Sanity check: Was biocLite.R updated properly? With a fresh R devel
-  (make sure BiocInstaller is not installed), source biocLite.R and
-  make sure the appropriate version is installed. Of course, do the same
-  with release.  ** really do this! with R-devel too if appropriate! **
+- Finalize release announcement
 
-- Announce the release.
+  -- compare number of packages in announcement with manifest file
 
-- Tweet a link to the release announcement.
+- Once the build report posts and products are pushed to master
+  confirm landing pages have updated versions 
+
+- Announce the release
+
+- Tweet a link to the release announcement
 
 - Update Wikipedia page for Bioconductor
 
-On D + 1:
-
-- Update SPB to point to correct builders and clean up sqlite file 
-
-- Run BiocPkgTools scripts for creating DOI
-
-- Make post-release AMIs of EC2 instances. 
-  See https://github.com/Bioconductor/AWS_management 
-  Add new AMI and add to  /help/bioconductor-cloud-ami/
-  (use AMI placeholder from config.yaml) 
-
-- Update docker. On github Bioconductor/bioc_docker update the config.yml. On
-  github and dockerhub create release branches and tags and microbadger.
-
-- Update Chef recipes with new R / Bioconductor versions
+- Update RSS feed
 
 - Go for a beer.
+
+<a name="d+"></a>
+## Week after the Release (D+):
+
+- Branch annotations
+
+- Confirm Archive/ folder is working for new release
+
+- Build AMIs for new release and devel
+
+- Build dockers for new release and devel
+
+- Update chef recipes
+
+- Update SPB and clean sqlite file
+
+- ID packages for deprecation in BioC 3.7
+
+- Packages deprecated in BioC 3.6 are marked as
+  defunct and removed from 3.7 builds; move
+  defunct to boneyard
+
+- Update Bioconductor GitHub repositories
+
+- Update R for biocadmin on both master Linux builders
