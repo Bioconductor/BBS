@@ -213,6 +213,10 @@ TABLE.check_outputs {
     border-collapse: collapse;
 }
 
+TABLE.check_outputs TD {
+    vertical-align: top;
+}
+
 
 /****************************************************************************
  * Main table (the big one)
