@@ -209,10 +209,6 @@ TABLE.check_outputs {
     border-collapse: collapse;
 }
 
-TABLE.check_outputs TD {
-    margin-left: 20px;
-}
-
 
 /****************************************************************************
  * Main table (the big one)
