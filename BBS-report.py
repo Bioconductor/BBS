@@ -765,7 +765,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
             f.close()
             out.write('</TD>\n')
             filepath = os.path.join(tests_dir2, test2filename2[testname])
-            out.write('<TD>')
+            out.write('<TD style="padding-left: 20px;">')
             out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
                       os.path.join(Rcheck_dir, filepath))
             f = open(filepath, "r")
@@ -788,7 +788,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
-        out.write('<TD></TD>')
+        out.write('<TD style="padding-left: 20px;"></TD>')
         out.write('</TR>\n')
     ## Test output files in 'tests_dir2' that didn't get paired.
     unpaired2 += test2filename2.values()
@@ -797,7 +797,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
         out.write('<TR>')
         out.write('<TD></TD>')
         filepath = os.path.join(tests_dir2, filename)
-        out.write('<TD>')
+        out.write('<TD style="padding-left: 20px;">')
         out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
                   os.path.join(Rcheck_dir, filepath))
         f = open(filepath, "r")
@@ -884,7 +884,7 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
         out.write('</TD>\n')
-        out.write('<TD>\n')
+        out.write('<TD style="padding-left: 20px;">\n')
         filepath = 'examples_x64/%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
