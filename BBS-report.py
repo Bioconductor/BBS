@@ -343,10 +343,14 @@ def write_pkg_check_status_asTD(out, pkg, node, leafreport_ref, style=None):
         out.write('</I></TD>')
     return
 
-def write_abc_dispatcher(out, href="", current_letter=None):
+def write_abc_dispatcher(out, href="", current_letter=None,
+                                       activate_current_letter=False):
     out.write('<TABLE class="abc_dispatcher"><TR>')
     for i in range(65,91):
         letter = chr(i)
+        if letter == current_letter and not activate_current_letter:
+            out.write('<TD style="background: inherit;">%s</TD>' % letter)
+            continue
         html_letter = '<A href="%s#%s">%s</A>' % (href, letter, letter)
         if letter == current_letter:
             html_letter = '<B>[%s]</B>' % html_letter
@@ -360,9 +364,11 @@ def write_pkg_index_as2fullTRs(out, current_letter):
     ## "ok" packages are unselected.
     writeThinRowSeparator_asTR(out, "abc")
     out.write('<TR class="abc">')
-    out.write('<TD style="background: inherit;">')
-    out.write('<A name="%s"><B style="font-size: larger;">%s</B></A>' % \
+    out.write('<TD>')
+    out.write('<TABLE class="big_letter"><TR><TD>')
+    out.write('<A name="%s">%s</A>' % \
               (current_letter, current_letter))
+    out.write('</TD></TR></TABLE>')
     out.write('</TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
         colspan = 3
@@ -638,7 +644,7 @@ def write_goback_asHTML(out, href, current_letter=None):
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
         out.write('<TD style="padding: 0px;">')
-        write_abc_dispatcher(out, href, current_letter)
+        write_abc_dispatcher(out, href, current_letter, True)
         out.write('</TD>')
     out.write('</TR></TABLE>\n')
     return
