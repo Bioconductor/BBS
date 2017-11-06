@@ -202,12 +202,16 @@ TABLE.abc_dispatcher TD {
 
 
 /****************************************************************************
- * Tests output
+ * check_outputs
  */
 
-TABLE.tests_output {
+TABLE.check_outputs {
     border-spacing: 0px;
     border-collapse: collapse;
+}
+
+TABLE.check_outputs TD {
+    margin-left: 20px;
 }
 
 

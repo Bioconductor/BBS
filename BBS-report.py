@@ -751,7 +751,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
     test2filename2 = build_test2filename_dict(tests_dir2, unpaired2)
     testnames1 = test2filename1.keys()
     testnames1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
-    out.write('<TABLE class="tests_output">\n')
+    out.write('<TABLE class="check_outputs">\n')
     ## Paired tests.
     for testname in testnames1:
         if test2filename2.has_key(testname):
@@ -875,9 +875,9 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
         if os.path.isdir(examples_dir) and \
            fnmatch.fnmatch(examples_dir, "examples*"):
             examples_dirs.append(examples_dir)
+    out.write('<TABLE class="check_outputs"><TR>\n')
     if len(examples_dirs) == 2 and \
        'examples_i386' in examples_dirs and 'examples_x64' in examples_dirs:
-        out.write('<TABLE><TR>\n')
         out.write('<TD>\n')
         filepath = 'examples_i386/%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
@@ -890,12 +890,14 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
         out.write('</TD>\n')
-        out.write('</TR></TABLE>\n')
     else:
         filepath = '%s-Ex.timings' % pkg
+        out.write('<TD>\n')
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
+        out.write('</TD>\n')
+    out.write('</TR></TABLE>\n')
     os.chdir(old_cwd)
     return
 
