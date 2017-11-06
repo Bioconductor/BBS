@@ -202,6 +202,16 @@ TABLE.abc_dispatcher TD {
 
 
 /****************************************************************************
+ * Tests output
+ */
+
+TABLE.tests_output {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+
+/****************************************************************************
  * Main table (the big one)
  */
 

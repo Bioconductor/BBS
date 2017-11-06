@@ -180,6 +180,13 @@ TABLE.summary TD {
  * ABC dispatcher
  */
 
+TABLE.big_letter {
+    font-weight: bold;
+    font-size: 16pt;
+    padding: 3px;
+    background: #FFCC00;
+}
+
 TABLE.abc_dispatcher {
     font-family: monospace;
     font-size: 12pt;
@@ -190,6 +197,16 @@ TABLE.abc_dispatcher {
 TABLE.abc_dispatcher TD {
     width: 22px;
     text-align: center;
+}
+
+
+/****************************************************************************
+ * Tests output
+ */
+
+TABLE.tests_output {
+    border-spacing: 0px;
+    border-collapse: collapse;
 }
 
 
