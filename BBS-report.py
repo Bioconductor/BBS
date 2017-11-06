@@ -776,7 +776,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
             del test2filename1[testname]
             del test2filename2[testname]
     ## Test output files in 'test_dir1' that didn't get paired.
-    unpaired1.append(test2filename1.values())
+    unpaired1 += test2filename1.values()
     unpaired1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired1:
         out.write('<TR>')
@@ -791,7 +791,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
         out.write('<TD></TD>')
         out.write('</TR>\n')
     ## Test output files in 'test_dir2' that didn't get paired.
-    unpaired2.append(test2filename2.values())
+    unpaired2 += test2filename2.values()
     unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired2:
         out.write('<TR>')
