@@ -731,29 +731,118 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     out.write('</DIV>')
     return pattern_detected
 
-def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
-    out.write('<HR>\n<H3>Tests output</H3>\n')
-    checksrc_dir = os.path.join(BBScorevars.central_rdir_path, "nodes",
-                                node_id, "checksrc")
-    old_cwd = os.getcwd()
-    os.chdir(checksrc_dir)
-    Rcheck_dir = pkg + ".Rcheck"
-    filepaths = []
-    for dirpath, dirnames, filenames in os.walk(Rcheck_dir):
-        for filename in filenames:
-            filepath = os.path.join(dirpath, filename)
-            if fnmatch.fnmatch(filepath, "*/tests*/*.Rout*"):
-                filepaths.append(filepath)
-    filepaths.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
-    #out.write('<UL>\n')
-    for filepath in filepaths:
+def build_test2filename_dict(dirpath, dups):
+    p = re.compile('(.*)\.Rout.*')
+    test2filename = {}
+    for filename in os.listdir(dirpath):
+        m = p.match(filename)
+        if m != None:
+            testname = m.group(1)
+            if test2filename.has_key(testname):
+                dups.append(filename)
+            else:
+                test2filename[testname] = filename
+    return test2filename
+
+def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
+                                     test_dir1, test_dir2):
+    unpaired1 = unpaired2 = []
+    test2filename1 = build_test2filename_dict(test_dir1, unpaired1)
+    test2filename2 = build_test2filename_dict(test_dir2, unpaired2)
+    testnames1 = test2filename1.keys()
+    testnames1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    out.write('<TABLE class="tests_output">\n')
+    ## Paired tests.
+    for testname in testnames1:
+        if test2filename2.has_key(testname):
+            out.write('<TR>')
+            filepath = os.path.join(test_dir1, test2filename1[testname])
+            out.write('<TD>')
+            out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
+                      os.path.join(Rcheck_dir, filepath))
+            f = open(filepath, "r")
+            write_file_asHTML(out, f, node_hostname)
+            f.close()
+            out.write('</TD>\n')
+            filepath = os.path.join(test_dir2, test2filename2[testname])
+            out.write('<TD>')
+            out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
+                      os.path.join(Rcheck_dir, filepath))
+            f = open(filepath, "r")
+            write_file_asHTML(out, f, node_hostname)
+            f.close()
+            out.write('</TD>\n')
+            out.write('</TR>\n')
+            del test2filename1[testname]
+            del test2filename2[testname]
+    ## Test output files in 'test_dir1' that didn't get paired.
+    unpaired1.append(test2filename1.values())
+    unpaired1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    for filename in unpaired1:
+        out.write('<TR>')
+        filepath = os.path.join(test_dir1, filename)
+        out.write('<TD>')
+        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
+                  os.path.join(Rcheck_dir, filepath))
         f = open(filepath, "r")
-        #out.write('<LI>\n')
-        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % filepath)
         write_file_asHTML(out, f, node_hostname)
         f.close()
-        #out.write('</LI>\n')
-    #out.write('</UL>\n')
+        out.write('</TD>\n')
+        out.write('<TD></TD>')
+        out.write('</TR>\n')
+    ## Test output files in 'test_dir2' that didn't get paired.
+    unpaired2.append(test2filename2.values())
+    unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    for filename in unpaired2:
+        out.write('<TR>')
+        out.write('<TD></TD>')
+        filepath = os.path.join(test_dir2, filename)
+        out.write('<TD>')
+        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
+                  os.path.join(Rcheck_dir, filepath))
+        f = open(filepath, "r")
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
+        out.write('</TD>\n')
+        out.write('</TR>\n')
+    out.write('</TABLE>\n')
+    return
+
+def write_Tests_output_from_test_dir(out, node_hostname, Rcheck_dir, test_dir):
+    p = re.compile('(.*)\.Rout.*')
+    filenames = []
+    for filename in os.listdir(test_dir):
+        m = p.match(filename)
+        if m != None:
+             filenames.append(filename)
+    filenames.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    for filename in filenames:
+        filepath = os.path.join(test_dir, filename)
+        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
+                  os.path.join(Rcheck_dir, filepath))
+        f = open(filepath, "r")
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
+    return
+
+def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
+    out.write('<HR>\n<H3>Tests output</H3>\n')
+    Rcheck_dir = pkg + ".Rcheck"
+    old_cwd = os.getcwd()
+    os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
+                          node_id, "checksrc", Rcheck_dir))
+    test_dirs = []
+    for test_dir in os.listdir("."):
+        if os.path.isdir(test_dir) and fnmatch.fnmatch(test_dir, "tests*"):
+            test_dirs.append(test_dir)
+    if len(test_dirs) == 2 and \
+       'tests_i386' in test_dirs and 'tests_x64' in test_dirs:
+        write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
+                                         'tests_i386', 'tests_x64')
+    else:
+        for test_dir in test_dirs:
+            write_Tests_output_from_test_dir(out, node_hostname, Rcheck_dir,
+                                             test_dir):
     os.chdir(old_cwd)
     return
 
