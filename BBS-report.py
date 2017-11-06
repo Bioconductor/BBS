@@ -745,10 +745,10 @@ def build_test2filename_dict(dirpath, dups):
     return test2filename
 
 def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
-                                     test_dir1, test_dir2):
+                                     tests_dir1, tests_dir2):
     unpaired1 = unpaired2 = []
-    test2filename1 = build_test2filename_dict(test_dir1, unpaired1)
-    test2filename2 = build_test2filename_dict(test_dir2, unpaired2)
+    test2filename1 = build_test2filename_dict(tests_dir1, unpaired1)
+    test2filename2 = build_test2filename_dict(tests_dir2, unpaired2)
     testnames1 = test2filename1.keys()
     testnames1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     out.write('<TABLE class="tests_output">\n')
@@ -756,7 +756,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
     for testname in testnames1:
         if test2filename2.has_key(testname):
             out.write('<TR>')
-            filepath = os.path.join(test_dir1, test2filename1[testname])
+            filepath = os.path.join(tests_dir1, test2filename1[testname])
             out.write('<TD>')
             out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
                       os.path.join(Rcheck_dir, filepath))
@@ -764,7 +764,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
-            filepath = os.path.join(test_dir2, test2filename2[testname])
+            filepath = os.path.join(tests_dir2, test2filename2[testname])
             out.write('<TD>')
             out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
                       os.path.join(Rcheck_dir, filepath))
@@ -775,12 +775,12 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
             out.write('</TR>\n')
             del test2filename1[testname]
             del test2filename2[testname]
-    ## Test output files in 'test_dir1' that didn't get paired.
+    ## Test output files in 'tests_dir1' that didn't get paired.
     unpaired1 += test2filename1.values()
     unpaired1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired1:
         out.write('<TR>')
-        filepath = os.path.join(test_dir1, filename)
+        filepath = os.path.join(tests_dir1, filename)
         out.write('<TD>')
         out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
                   os.path.join(Rcheck_dir, filepath))
@@ -790,13 +790,13 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
         out.write('</TD>\n')
         out.write('<TD></TD>')
         out.write('</TR>\n')
-    ## Test output files in 'test_dir2' that didn't get paired.
+    ## Test output files in 'tests_dir2' that didn't get paired.
     unpaired2 += test2filename2.values()
     unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired2:
         out.write('<TR>')
         out.write('<TD></TD>')
-        filepath = os.path.join(test_dir2, filename)
+        filepath = os.path.join(tests_dir2, filename)
         out.write('<TD>')
         out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
                   os.path.join(Rcheck_dir, filepath))
@@ -808,16 +808,17 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
     out.write('</TABLE>\n')
     return
 
-def write_Tests_output_from_test_dir(out, node_hostname, Rcheck_dir, test_dir):
+def write_Tests_output_from_tests_dir(out, node_hostname, Rcheck_dir,
+                                      tests_dir):
     p = re.compile('(.*)\.Rout.*')
     filenames = []
-    for filename in os.listdir(test_dir):
+    for filename in os.listdir(tests_dir):
         m = p.match(filename)
         if m != None:
              filenames.append(filename)
     filenames.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in filenames:
-        filepath = os.path.join(test_dir, filename)
+        filepath = os.path.join(tests_dir, filename)
         out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
                   os.path.join(Rcheck_dir, filepath))
         f = open(filepath, "r")
@@ -831,40 +832,71 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
                           node_id, "checksrc", Rcheck_dir))
-    test_dirs = []
-    for test_dir in os.listdir("."):
-        if os.path.isdir(test_dir) and fnmatch.fnmatch(test_dir, "tests*"):
-            test_dirs.append(test_dir)
-    if len(test_dirs) == 2 and \
-       'tests_i386' in test_dirs and 'tests_x64' in test_dirs:
+    tests_dirs = []
+    for tests_dir in os.listdir("."):
+        if os.path.isdir(tests_dir) and \
+           fnmatch.fnmatch(tests_dir, "tests*"):
+            tests_dirs.append(tests_dir)
+    if len(tests_dirs) == 2 and \
+       'tests_i386' in tests_dirs and 'tests_x64' in tests_dirs:
         write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
                                          'tests_i386', 'tests_x64')
     else:
-        for test_dir in test_dirs:
-            write_Tests_output_from_test_dir(out, node_hostname, Rcheck_dir,
-                                             test_dir)
+        for tests_dir in tests_dirs:
+            write_Tests_output_from_tests_dir(out, node_hostname, Rcheck_dir,
+                                              tests_dir)
     os.chdir(old_cwd)
+    return
+
+def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
+    f = open(filepath, "r")
+    out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
+              os.path.join(Rcheck_dir, filepath))
+    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % \
+              node_hostname.replace(".", "_"))
+    out.write('<TABLE style="font-size: smaller;">\n')
+    for line in f:
+        out.write('<TR><TD>')
+        out.write(line.replace('\t', '</TD><TD style="text-align: right;">'))
+        out.write('</TD><TR>\n')
+    out.write('</TABLE>\n')
+    out.write('</DIV>')
+    f.close()
     return
 
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
-    files = ['%s.Rcheck/%s-Ex.timings' % (pkg, pkg),
-             '%s.Rcheck/examples_i386/%s-Ex.timings' % (pkg, pkg),
-             '%s.Rcheck/examples_x64/%s-Ex.timings' % (pkg, pkg)]
-    for filename in files:
-        f = wopen_leafreport_input_file(None, node_id, "checksrc", filename, catch_HTTPerrors=True)
-        if f == None:
-            continue
-        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % filename)
-        out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
-        out.write('<TABLE style="font-size: smaller;">\n')
-        for line in f:
-            out.write('<TR><TD>')
-            out.write(line.replace('\t', '</TD><TD style="text-align: right;">'))
-            out.write('</TD><TR>\n')
-        out.write('</TABLE>\n')
-        out.write('</DIV>')
-        f.close()
+    Rcheck_dir = pkg + ".Rcheck"
+    old_cwd = os.getcwd()
+    os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
+                          node_id, "checksrc", Rcheck_dir))
+    examples_dirs = []
+    for examples_dir in os.listdir("."):
+        if os.path.isdir(examples_dir) and \
+           fnmatch.fnmatch(examples_dir, "examples*"):
+            examples_dirs.append(examples_dir)
+    if len(examples_dirs) == 2 and \
+       'examples_i386' in examples_dirs and 'examples_x64' in examples_dirs:
+        out.write('<TABLE><TR>\n')
+        out.write('<TD>\n')
+        filepath = 'examples_i386/%s-Ex.timings' % pkg
+        if os.path.isfile(filepath):
+            write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
+                                            filepath)
+        out.write('</TD>\n')
+        out.write('<TD>\n')
+        filepath = 'examples_x64/%s-Ex.timings' % pkg
+        if os.path.isfile(filepath):
+            write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
+                                            filepath)
+        out.write('</TD>\n')
+        out.write('</TR></TABLE>\n')
+    else:
+        filepath = '%s-Ex.timings' % pkg
+        if os.path.isfile(filepath):
+            write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
+                                            filepath)
+    os.chdir(old_cwd)
     return
 
 def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
