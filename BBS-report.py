@@ -842,7 +842,7 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     else:
         for test_dir in test_dirs:
             write_Tests_output_from_test_dir(out, node_hostname, Rcheck_dir,
-                                             test_dir):
+                                             test_dir)
     os.chdir(old_cwd)
     return
 
