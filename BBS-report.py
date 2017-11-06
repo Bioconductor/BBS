@@ -754,8 +754,9 @@ def write_filepath_asHTML(out, Rcheck_dir, filepath):
 
 def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
                                      tests_dir1, tests_dir2):
-    unpaired1 = unpaired2 = []
+    unpaired1 = []
     test2filename1 = build_test2filename_dict(tests_dir1, unpaired1)
+    unpaired2 = []
     test2filename2 = build_test2filename_dict(tests_dir2, unpaired2)
     testnames1 = test2filename1.keys()
     testnames1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
