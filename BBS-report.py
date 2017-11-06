@@ -744,6 +744,14 @@ def build_test2filename_dict(dirpath, dups):
                 test2filename[testname] = filename
     return test2filename
 
+def write_filepath_asHTML(out, Rcheck_dir, filepath):
+    span_class = "filename"
+    if fnmatch.fnmatch(filepath, "*.fail"):
+        span_class += " fail"
+    out.write('<P><SPAN class="%s">%s</SPAN></P>\n' % \
+              (span_class, os.path.join(Rcheck_dir, filepath)))
+    return
+
 def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
                                      tests_dir1, tests_dir2):
     unpaired1 = unpaired2 = []
@@ -758,16 +766,14 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
             out.write('<TR>')
             filepath = os.path.join(tests_dir1, test2filename1[testname])
             out.write('<TD>')
-            out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
-                      os.path.join(Rcheck_dir, filepath))
+            write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
             filepath = os.path.join(tests_dir2, test2filename2[testname])
             out.write('<TD style="padding-left: 20px;">')
-            out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
-                      os.path.join(Rcheck_dir, filepath))
+            write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
             f.close()
@@ -782,8 +788,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
         out.write('<TR>')
         filepath = os.path.join(tests_dir1, filename)
         out.write('<TD>')
-        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
-                  os.path.join(Rcheck_dir, filepath))
+        write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
@@ -798,8 +803,7 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
         out.write('<TD></TD>')
         filepath = os.path.join(tests_dir2, filename)
         out.write('<TD style="padding-left: 20px;">')
-        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
-                  os.path.join(Rcheck_dir, filepath))
+        write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
@@ -819,8 +823,7 @@ def write_Tests_output_from_tests_dir(out, node_hostname, Rcheck_dir,
     filenames.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in filenames:
         filepath = os.path.join(tests_dir, filename)
-        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
-                  os.path.join(Rcheck_dir, filepath))
+        write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
@@ -850,8 +853,7 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
 
 def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
     f = open(filepath, "r")
-    out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % \
-              os.path.join(Rcheck_dir, filepath))
+    write_filepath_asHTML(out, Rcheck_dir, filepath)
     out.write('<DIV class="%s" style="margin-left: 12px;">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE style="font-size: smaller;">\n')
@@ -919,11 +921,13 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     f.close()
 
     ## Include output of 'R CMD INSTALL'.
-    filename = '%s.Rcheck/00install.out' % pkg
-    f = wopen_leafreport_input_file(None, node_id, stagecmd, filename, catch_HTTPerrors=True)
+    Rcheck_dir = pkg + ".Rcheck"
+    filename = '00install.out'
+    filepath = os.path.join(Rcheck_dir, filename)
+    f = wopen_leafreport_input_file(None, node_id, stagecmd, filepath, catch_HTTPerrors=True)
     if f != None:
         out.write('<HR>\n<H3>Installation output</H3>\n')
-        out.write('<P><SPAN class="filename">%s</SPAN></P>\n' % filename)
+        write_filepath_asHTML(out, Rcheck_dir, filename)
         write_file_asHTML(out, f, node_hostname)
         f.close()
 

@@ -29,6 +29,9 @@ SPAN.filename {
     color: #AADDDD;
     padding: 3px;
 }
+SPAN.filename.fail {
+    background: #B33;
+}
 
 
 /****************************************************************************
