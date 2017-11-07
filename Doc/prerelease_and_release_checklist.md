@@ -224,10 +224,6 @@ in _this_ order
   Verify that there are no <NA>s in output. Collate package descriptions
   with biocViews:::getPackageDescriptions().
 
-- Modify the file /about/removed-packages/ on the web site
-  to indicate the packages that were removed with this release.
-  Link to the last-good landing page of each package.
-
 - Edit inst/scripts/BiocInstaller.dcf in BiocInstaller to change
   relevant variables. This will automatically push soon after being
   committed.
