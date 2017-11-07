@@ -711,7 +711,7 @@ def write_file_asHTML(out, f, node_hostname, with_margin=False, pattern=None):
         regex = re.compile(pattern)
     if with_margin:
         style = ' style="margin-left: 18px;"'
-    else
+    else:
         style = ''
     out.write('<DIV class="%s hscrollable"%s>\n' % \
               (node_hostname.replace(".", "_"), style))
