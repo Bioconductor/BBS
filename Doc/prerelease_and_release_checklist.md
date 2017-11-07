@@ -332,10 +332,6 @@ in _this_ order
 
 - ID packages for deprecation in BioC 3.7
 
-- Packages deprecated in BioC 3.6 are marked as
-  defunct and removed from 3.7 builds; move
-  defunct to boneyard
-
 - Update Bioconductor GitHub repositories
 
 - Update R for biocadmin on both master Linux builders
