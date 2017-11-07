@@ -687,9 +687,9 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
 
 def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     out.write('<HR>\n<H3>Summary</H3>\n')
-    out.write('<TABLE class="leaf_content"><TR><TD>\n')
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
-    out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
+    out.write('<DIV class="%s hscrollable">\n' % \
+              node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     while True:
         field_val = bbs.parse.getNextDcfFieldVal(dcf, True)
@@ -701,7 +701,6 @@ def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
     dcf.close()
-    out.write('</TD></TR></TABLE>\n')
     return
 
 ### Write content of file 'f' to report.

@@ -23,6 +23,13 @@ H4 {
     margin-top: 0px;
     margin-bottom: 2px;
 }
+
+DIV.hscrollable {
+    overflow: auto;
+    white-space: nowrap;
+    margin-left: 18px;
+}
+
 SPAN.filename {
     font-family: monospace;
     background: #445555;
@@ -215,6 +222,7 @@ TABLE.leaf_content {
 
 TABLE.leaf_content TD {
     vertical-align: top;
+    padding: 0px;
 }
 
 
