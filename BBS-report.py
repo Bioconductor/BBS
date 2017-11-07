@@ -687,8 +687,9 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
 
 def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     out.write('<HR>\n<H3>Summary</H3>\n')
-    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
+    out.write('<TABLE class="leaf_content"><TR><TD>\n')
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
+    out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     while True:
         field_val = bbs.parse.getNextDcfFieldVal(dcf, True)
@@ -698,8 +699,9 @@ def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
             field_val = (field_val[0], status_asSPAN(field_val[1]))
         out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % field_val)
     out.write('</TABLE>\n')
-    dcf.close()
     out.write('</DIV>\n')
+    dcf.close()
+    out.write('</TD></TR></TABLE>\n')
     return
 
 ### Write content of file 'f' to report.
@@ -708,7 +710,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     pattern_detected = False
     if pattern != None:
         regex = re.compile(pattern)
-    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
+    out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
     out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
     i = 0
     for line in f:
@@ -752,28 +754,27 @@ def write_filepath_asHTML(out, Rcheck_dir, filepath):
               (span_class, os.path.join(Rcheck_dir, filepath)))
     return
 
-def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
-                                     tests_dir1, tests_dir2):
+def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
+                                   tests_dir1, tests_dir2):
     unpaired1 = []
     test2filename1 = build_test2filename_dict(tests_dir1, unpaired1)
     unpaired2 = []
     test2filename2 = build_test2filename_dict(tests_dir2, unpaired2)
     testnames1 = test2filename1.keys()
     testnames1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
-    out.write('<TABLE class="check_outputs">\n')
     ## Paired tests.
     for testname in testnames1:
         if test2filename2.has_key(testname):
             out.write('<TR>')
             filepath = os.path.join(tests_dir1, test2filename1[testname])
-            out.write('<TD>')
+            out.write('<TD style="width: 45%;">')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
             filepath = os.path.join(tests_dir2, test2filename2[testname])
-            out.write('<TD style="padding-left: 20px;">')
+            out.write('<TD style="padding-left: 15px;">')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
@@ -788,33 +789,31 @@ def write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
     for filename in unpaired1:
         out.write('<TR>')
         filepath = os.path.join(tests_dir1, filename)
-        out.write('<TD>')
+        out.write('<TD style="width: 45%;">')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
-        out.write('<TD style="padding-left: 20px;"></TD>')
+        out.write('<TD style="padding-left: 15px;"></TD>')
         out.write('</TR>\n')
     ## Test output files in 'tests_dir2' that didn't get paired.
     unpaired2 += test2filename2.values()
     unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired2:
         out.write('<TR>')
-        out.write('<TD></TD>')
+        out.write('<TD style="width: 45%;"></TD>')
         filepath = os.path.join(tests_dir2, filename)
-        out.write('<TD style="padding-left: 20px;">')
+        out.write('<TD style="padding-left: 15px;">')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
         out.write('</TR>\n')
-    out.write('</TABLE>\n')
     return
 
-def write_Tests_output_from_tests_dir(out, node_hostname, Rcheck_dir,
-                                      tests_dir):
+def write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir, tests_dir):
     p = re.compile('(.*)\.Rout.*')
     filenames = []
     for filename in os.listdir(tests_dir):
@@ -824,14 +823,17 @@ def write_Tests_output_from_tests_dir(out, node_hostname, Rcheck_dir,
     filenames.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in filenames:
         filepath = os.path.join(tests_dir, filename)
+        out.write('<TR><TD>\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
+        out.write('<TD><TR>\n')
     return
 
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
+    out.write('<TABLE class="leaf_content">\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
@@ -843,19 +845,20 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
             tests_dirs.append(tests_dir)
     if len(tests_dirs) == 2 and \
        'tests_i386' in tests_dirs and 'tests_x64' in tests_dirs:
-        write_Tests_output_in_2col_table(out, node_hostname, Rcheck_dir,
-                                         'tests_i386', 'tests_x64')
+        write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
+                                       'tests_i386', 'tests_x64')
     else:
         for tests_dir in tests_dirs:
-            write_Tests_output_from_tests_dir(out, node_hostname, Rcheck_dir,
-                                              tests_dir)
+            write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir,
+                                           tests_dir)
     os.chdir(old_cwd)
+    out.write('</TABLE>\n')
     return
 
 def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
     f = open(filepath, "r")
     write_filepath_asHTML(out, Rcheck_dir, filepath)
-    out.write('<DIV class="%s" style="margin-left: 12px;">\n' % \
+    out.write('<DIV class="%s">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE style="font-size: smaller;">\n')
     for line in f:
@@ -869,6 +872,7 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
+    out.write('<TABLE class="leaf_content"><TR>\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
@@ -878,7 +882,6 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
         if os.path.isdir(examples_dir) and \
            fnmatch.fnmatch(examples_dir, "examples*"):
             examples_dirs.append(examples_dir)
-    out.write('<TABLE class="check_outputs"><TR>\n')
     if len(examples_dirs) == 2 and \
        'examples_i386' in examples_dirs and 'examples_x64' in examples_dirs:
         out.write('<TD>\n')
@@ -900,8 +903,8 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
         out.write('</TD>\n')
-    out.write('</TR></TABLE>\n')
     os.chdir(old_cwd)
+    out.write('</TR></TABLE>\n')
     return
 
 def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
@@ -910,16 +913,13 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
+    out.write('<TABLE class="leaf_content"><TR><TD>\n')
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    if stagecmd != "checksrc":
-        write_file_asHTML(out, f, node_hostname)
-        f.close()
-        return
-    ## We don't make any use of 'unit_test_failed' at the moment.
-    #unit_test_failed = write_file_asHTML(out, f, node_hostname,
-    #                       "^Running the tests in .(.*). failed[.]")
     write_file_asHTML(out, f, node_hostname)
     f.close()
+    out.write('</TD></TR></TABLE>\n')
+    if stagecmd != "checksrc":
+        return
 
     ## Include output of 'R CMD INSTALL'.
     Rcheck_dir = pkg + ".Rcheck"
@@ -928,8 +928,10 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     f = wopen_leafreport_input_file(None, node_id, stagecmd, filepath, catch_HTTPerrors=True)
     if f != None:
         out.write('<HR>\n<H3>Installation output</H3>\n')
+        out.write('<TABLE class="leaf_content"><TR><TD>\n')
         write_filepath_asHTML(out, Rcheck_dir, filename)
         write_file_asHTML(out, f, node_hostname)
+        out.write('</TD></TR></TABLE>\n')
         f.close()
 
     if BBScorevars.subbuilds != "bioc-longtests":
@@ -970,7 +972,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     status = BBSreportutils.get_status_from_db(pkg, node_id, stagecmd)
     if stagecmd == "install" and status == "NotNeeded":
         out.write('<HR>\n')
-        out.write('<DIV class="%s" style="margin-left: 12px;">\n' % node_hostname.replace(".", "_"))
+        out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
         out.write('REASON FOR NOT INSTALLING: no other package that will ')
         out.write('be built and checked on this platform needs %s' % pkg)
         out.write('</DIV>\n')

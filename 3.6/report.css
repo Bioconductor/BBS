@@ -205,15 +205,15 @@ TABLE.abc_dispatcher TD {
 
 
 /****************************************************************************
- * check_outputs
+ * Leaf content
  */
 
-TABLE.check_outputs {
+TABLE.leaf_content {
     border-spacing: 0px;
     border-collapse: collapse;
 }
 
-TABLE.check_outputs TD {
+TABLE.leaf_content TD {
     vertical-align: top;
 }
 
