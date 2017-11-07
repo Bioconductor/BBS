@@ -1402,12 +1402,12 @@ def write_propagation_LED_table(out):
 
 def write_glyph_and_propagation_LED_table(out):
     out.write('<DIV style="font-size: smaller;">\n')
-    out.write('<TABLE style="margin: 0px;"><TR>')
-    out.write('<TD style="padding: 0px; vertical-align: top;">\n')
+    out.write('<TABLE class="grid_layout"><TR>')
+    out.write('<TD>\n')
     write_glyph_table(out)
     out.write('</TD>')
     if BBScorevars.subbuilds != "bioc-longtests":
-        out.write('<TD style="padding: 0px; padding-left: 10px; vertical-align: top;">\n')
+        out.write('<TD style="padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
         out.write('A <s>crossed-out</s> package name indicates the package is')
