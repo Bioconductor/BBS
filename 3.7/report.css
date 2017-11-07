@@ -27,7 +27,15 @@ H4 {
 DIV.hscrollable {
     overflow: auto;
     white-space: nowrap;
-    margin-left: 18px;
+}
+
+TABLE.grid_layout {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+TABLE.grid_layout TD {
+    vertical-align: top;
+    padding: 0px;
 }
 
 SPAN.filename {
@@ -208,21 +216,6 @@ TABLE.abc_dispatcher TD {
     width: 22px;
     text-align: center;
     background: #FFCC00;
-}
-
-
-/****************************************************************************
- * Leaf content
- */
-
-TABLE.leaf_content {
-    border-spacing: 0px;
-    border-collapse: collapse;
-}
-
-TABLE.leaf_content TD {
-    vertical-align: top;
-    padding: 0px;
 }
 
 

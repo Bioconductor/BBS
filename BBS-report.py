@@ -688,7 +688,7 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
 def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     out.write('<HR>\n<H3>Summary</H3>\n')
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
-    out.write('<DIV class="%s hscrollable">\n' % \
+    out.write('<DIV class="%s hscrollable" style="margin-left: 18px;">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     while True:
@@ -832,7 +832,7 @@ def write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir, tests_dir):
 
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
-    out.write('<TABLE class="leaf_content">\n')
+    out.write('<TABLE class="grid_layout" style="margin-left: 18px;">\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
@@ -871,7 +871,7 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
-    out.write('<TABLE class="leaf_content"><TR>\n')
+    out.write('<TABLE class="grid_layout"><TR>\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
@@ -912,7 +912,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
-    out.write('<TABLE class="leaf_content"><TR><TD>\n')
+    out.write('<TABLE class="grid_layout"><TR><TD>\n')
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
     write_file_asHTML(out, f, node_hostname)
     f.close()
@@ -927,7 +927,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     f = wopen_leafreport_input_file(None, node_id, stagecmd, filepath, catch_HTTPerrors=True)
     if f != None:
         out.write('<HR>\n<H3>Installation output</H3>\n')
-        out.write('<TABLE class="leaf_content"><TR><TD>\n')
+        out.write('<TABLE class="grid_layout"><TR><TD>\n')
         write_filepath_asHTML(out, Rcheck_dir, filename)
         write_file_asHTML(out, f, node_hostname)
         out.write('</TD></TR></TABLE>\n')
