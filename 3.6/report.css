@@ -109,7 +109,7 @@ DIV.svn_info SPAN.svn_info {
 TABLE.node_specs {
     /* margin: auto; */
     border: solid black 1px;
-    /* font-size: smaller; */
+    font-size: smaller;
 }
 TABLE.node_specs TH {
     text-align: left;
