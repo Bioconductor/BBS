@@ -710,7 +710,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     if pattern != None:
         regex = re.compile(pattern)
     out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
-    out.write('<PRE style="font-size: smaller; padding: 2px;">\n')
+    out.write('<PRE style="font-size: smaller; padding: 3px;">\n')
     i = 0
     for line in f:
         i = i + 1
@@ -764,16 +764,16 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     ## Paired tests.
     for testname in testnames1:
         if test2filename2.has_key(testname):
-            out.write('<TR>')
+            out.write('<TR>\n')
             filepath = os.path.join(tests_dir1, test2filename1[testname])
-            out.write('<TD style="width: 45%;">')
+            out.write('<TD style="padding-left: 18px; width: 50%;">\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
             filepath = os.path.join(tests_dir2, test2filename2[testname])
-            out.write('<TD style="padding-left: 15px;">')
+            out.write('<TD style="padding-left: 18px; width: 50%;">\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
@@ -786,24 +786,24 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     unpaired1 += test2filename1.values()
     unpaired1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired1:
-        out.write('<TR>')
+        out.write('<TR>\n')
         filepath = os.path.join(tests_dir1, filename)
-        out.write('<TD style="width: 45%;">')
+        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
-        out.write('<TD style="padding-left: 15px;"></TD>')
+        out.write('<TD style="padding-left: 18px; width: 50%;"></TD>\n')
         out.write('</TR>\n')
     ## Test output files in 'tests_dir2' that didn't get paired.
     unpaired2 += test2filename2.values()
     unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired2:
-        out.write('<TR>')
-        out.write('<TD style="width: 45%;"></TD>')
+        out.write('<TR>\n')
+        out.write('<TD style="padding-left: 18px; width: 50%;"></TD>\n')
         filepath = os.path.join(tests_dir2, filename)
-        out.write('<TD style="padding-left: 15px;">')
+        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
@@ -822,7 +822,7 @@ def write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir, tests_dir):
     filenames.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in filenames:
         filepath = os.path.join(tests_dir, filename)
-        out.write('<TR><TD>\n')
+        out.write('<TR><TD style="padding-left: 18px;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
@@ -832,7 +832,7 @@ def write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir, tests_dir):
 
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
-    out.write('<TABLE class="grid_layout" style="margin-left: 18px;">\n')
+    out.write('<TABLE class="grid_layout" style="width: 100%;">\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
