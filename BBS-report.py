@@ -704,12 +704,17 @@ def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     return
 
 ### Write content of file 'f' to report.
-def write_file_asHTML(out, f, node_hostname, pattern=None):
+def write_file_asHTML(out, f, node_hostname, with_margin=False, pattern=None):
     encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
     pattern_detected = False
     if pattern != None:
         regex = re.compile(pattern)
-    out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
+    if with_margin:
+        style = ' style="margin-left: 18px;"'
+    else
+        style = ''
+    out.write('<DIV class="%s hscrollable"%s>\n' % \
+              (node_hostname.replace(".", "_"), style))
     out.write('<PRE style="font-size: smaller; padding: 3px;">\n')
     i = 0
     for line in f:
@@ -871,7 +876,7 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
-    out.write('<TABLE class="grid_layout"><TR>\n')
+    out.write('<TABLE class="grid_layout" style="width: 100%;"><TR>\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
@@ -883,13 +888,13 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
             examples_dirs.append(examples_dir)
     if len(examples_dirs) == 2 and \
        'examples_i386' in examples_dirs and 'examples_x64' in examples_dirs:
-        out.write('<TD>\n')
+        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
         filepath = 'examples_i386/%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
         out.write('</TD>\n')
-        out.write('<TD style="padding-left: 20px;">\n')
+        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
         filepath = 'examples_x64/%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
@@ -897,7 +902,7 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
         out.write('</TD>\n')
     else:
         filepath = '%s-Ex.timings' % pkg
-        out.write('<TD>\n')
+        out.write('<TD style="padding-left: 18px;">\n')
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
@@ -912,11 +917,9 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
-    out.write('<TABLE class="grid_layout"><TR><TD>\n')
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    write_file_asHTML(out, f, node_hostname)
+    write_file_asHTML(out, f, node_hostname, True)
     f.close()
-    out.write('</TD></TR></TABLE>\n')
     if stagecmd != "checksrc":
         return
 
@@ -927,10 +930,8 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     f = wopen_leafreport_input_file(None, node_id, stagecmd, filepath, catch_HTTPerrors=True)
     if f != None:
         out.write('<HR>\n<H3>Installation output</H3>\n')
-        out.write('<TABLE class="grid_layout"><TR><TD>\n')
         write_filepath_asHTML(out, Rcheck_dir, filename)
-        write_file_asHTML(out, f, node_hostname)
-        out.write('</TD></TR></TABLE>\n')
+        write_file_asHTML(out, f, node_hostname, True)
         f.close()
 
     if BBScorevars.subbuilds != "bioc-longtests":
