@@ -24,11 +24,6 @@ H4 {
     margin-bottom: 2px;
 }
 
-DIV.hscrollable {
-    overflow: auto;
-    white-space: nowrap;
-}
-
 TABLE.grid_layout {
     border-spacing: 0px;
     border-collapse: collapse;
@@ -46,6 +41,14 @@ SPAN.filename {
 }
 SPAN.filename.fail {
     background: #B33;
+}
+
+DIV.hscrollable {
+    overflow: auto;
+    white-space: nowrap;
+}
+TABLE.grid_layout DIV.hscrollable {
+    width: 550px;
 }
 
 

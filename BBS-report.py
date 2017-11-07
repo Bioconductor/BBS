@@ -637,13 +637,14 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     return
 
 def write_goback_asHTML(out, href, current_letter=None):
-    out.write('<TABLE style="width: 100%; border-spacing: 0px; border-collapse: collapse;"><TR>')
-    out.write('<TD style="padding: 0px; text-align: left;">')
+    out.write('<TABLE class="grid_layout"')
+    out.write(' style="width: 100%; background: #BBB;"><TR>')
+    out.write('<TD style="text-align: left; padding-left: 5px; vertical-align: middle;">')
     out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % \
               (href, BBSreportutils.report_title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
-        out.write('<TD style="padding: 0px;">')
+        out.write('<TD>')
         write_abc_dispatcher(out, href, current_letter, True)
         out.write('</TD>')
     out.write('</TR></TABLE>\n')
@@ -703,6 +704,14 @@ def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     dcf.close()
     return
 
+def write_filepath_asHTML(out, Rcheck_dir, filepath):
+    span_class = "filename"
+    if fnmatch.fnmatch(filepath, "*.fail"):
+        span_class += " fail"
+    out.write('<P><SPAN class="%s">%s</SPAN></P>\n' % \
+              (span_class, os.path.join(Rcheck_dir, filepath)))
+    return
+
 ### Write content of file 'f' to report.
 def write_file_asHTML(out, f, node_hostname, with_margin=False, pattern=None):
     encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
@@ -715,7 +724,7 @@ def write_file_asHTML(out, f, node_hostname, with_margin=False, pattern=None):
         style = ''
     out.write('<DIV class="%s hscrollable"%s>\n' % \
               (node_hostname.replace(".", "_"), style))
-    out.write('<PRE style="font-size: smaller; padding: 3px;">\n')
+    out.write('<PRE style="padding: 3px;">\n')
     i = 0
     for line in f:
         i = i + 1
@@ -750,14 +759,6 @@ def build_test2filename_dict(dirpath, dups):
                 test2filename[testname] = filename
     return test2filename
 
-def write_filepath_asHTML(out, Rcheck_dir, filepath):
-    span_class = "filename"
-    if fnmatch.fnmatch(filepath, "*.fail"):
-        span_class += " fail"
-    out.write('<P><SPAN class="%s">%s</SPAN></P>\n' % \
-              (span_class, os.path.join(Rcheck_dir, filepath)))
-    return
-
 def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
                                    tests_dir1, tests_dir2):
     unpaired1 = []
@@ -771,14 +772,14 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         if test2filename2.has_key(testname):
             out.write('<TR>\n')
             filepath = os.path.join(tests_dir1, test2filename1[testname])
-            out.write('<TD style="padding-left: 18px; width: 50%;">\n')
+            out.write('<TD style="padding-left: 18px;">\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
             filepath = os.path.join(tests_dir2, test2filename2[testname])
-            out.write('<TD style="padding-left: 18px; width: 50%;">\n')
+            out.write('<TD style="padding-left: 18px;">\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
@@ -793,22 +794,22 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     for filename in unpaired1:
         out.write('<TR>\n')
         filepath = os.path.join(tests_dir1, filename)
-        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
+        out.write('<TD style="padding-left: 18px;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
-        out.write('<TD style="padding-left: 18px; width: 50%;"></TD>\n')
+        out.write('<TD style="padding-left: 18px;"></TD>\n')
         out.write('</TR>\n')
     ## Test output files in 'tests_dir2' that didn't get paired.
     unpaired2 += test2filename2.values()
     unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired2:
         out.write('<TR>\n')
-        out.write('<TD style="padding-left: 18px; width: 50%;"></TD>\n')
+        out.write('<TD style="padding-left: 18px;"></TD>\n')
         filepath = os.path.join(tests_dir2, filename)
-        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
+        out.write('<TD style="padding-left: 18px;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
@@ -817,7 +818,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         out.write('</TR>\n')
     return
 
-def write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir, tests_dir):
+def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
     p = re.compile('(.*)\.Rout.*')
     filenames = []
     for filename in os.listdir(tests_dir):
@@ -827,17 +828,14 @@ def write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir, tests_dir):
     filenames.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in filenames:
         filepath = os.path.join(tests_dir, filename)
-        out.write('<TR><TD style="padding-left: 18px;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
-        write_file_asHTML(out, f, node_hostname)
+        write_file_asHTML(out, f, node_hostname, True)
         f.close()
-        out.write('<TD><TR>\n')
     return
 
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
-    out.write('<TABLE class="grid_layout" style="width: 100%;">\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
@@ -849,22 +847,28 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
             tests_dirs.append(tests_dir)
     if len(tests_dirs) == 2 and \
        'tests_i386' in tests_dirs and 'tests_x64' in tests_dirs:
+        out.write('<TABLE class="grid_layout">\n')
         write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
                                        'tests_i386', 'tests_x64')
+        out.write('</TABLE>\n')
     else:
         for tests_dir in tests_dirs:
-            write_Tests_outputs_in_1TD_TRs(out, node_hostname, Rcheck_dir,
-                                           tests_dir)
+            write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir,
+                                         tests_dir)
     os.chdir(old_cwd)
-    out.write('</TABLE>\n')
     return
 
-def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
+def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath,
+                                    with_margin=False):
     f = open(filepath, "r")
     write_filepath_asHTML(out, Rcheck_dir, filepath)
-    out.write('<DIV class="%s">\n' % \
-              node_hostname.replace(".", "_"))
-    out.write('<TABLE style="font-size: smaller;">\n')
+    if with_margin:
+        style = ' style="margin-left: 18px;"'
+    else:
+        style = ''
+    out.write('<DIV class="%s hscrollable"%s>\n' % \
+              (node_hostname.replace(".", "_"), style))
+    out.write('<TABLE>\n')
     for line in f:
         out.write('<TR><TD>')
         out.write(line.replace('\t', '</TD><TD style="text-align: right;">'))
@@ -876,7 +880,6 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
-    out.write('<TABLE class="grid_layout" style="width: 100%;"><TR>\n')
     Rcheck_dir = pkg + ".Rcheck"
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
@@ -888,27 +891,26 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
             examples_dirs.append(examples_dir)
     if len(examples_dirs) == 2 and \
        'examples_i386' in examples_dirs and 'examples_x64' in examples_dirs:
-        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
+        out.write('<TABLE class="grid_layout"><TR>\n')
+        out.write('<TD style="padding-left: 18px;">\n')
         filepath = 'examples_i386/%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
         out.write('</TD>\n')
-        out.write('<TD style="padding-left: 18px; width: 50%;">\n')
+        out.write('<TD style="padding-left: 18px;">\n')
         filepath = 'examples_x64/%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
                                             filepath)
         out.write('</TD>\n')
+        out.write('</TR></TABLE>\n')
     else:
         filepath = '%s-Ex.timings' % pkg
-        out.write('<TD style="padding-left: 18px;">\n')
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
-                                            filepath)
-        out.write('</TD>\n')
+                                            filepath, True)
     os.chdir(old_cwd)
-    out.write('</TR></TABLE>\n')
     return
 
 def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
