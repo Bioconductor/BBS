@@ -328,6 +328,10 @@ in _this_ order
 
 - ID packages for deprecation in BioC 3.7
 
+- Update R for biocadmin on both master Linux builders
+
 - Update Bioconductor GitHub repositories
 
-- Update R for biocadmin on both master Linux builders
+  Push packages with "core-package tag from git.bioconductor.org to github.
+  Check if any packages have commits to just github (not sure how to fix?). If
+  all looks ok, sync from git.bioconductor.org to github.
