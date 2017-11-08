@@ -1190,7 +1190,7 @@ def make_NodeInfo_page(Node_rdir, node):
 ### Returns the 2-string tuple containing the filename of the generated page
 ### and the number of installed pkgs.
 def make_Rinstpkgs_page(Node_rdir, node):
-    page_title = 'Installed R packages on %s' % node.id
+    page_title = 'R packages installed on %s' % node.id
     Rinstpkgs_page = '%s-R-instpkgs.html' % node.id
     out = open(Rinstpkgs_page, 'w')
 
