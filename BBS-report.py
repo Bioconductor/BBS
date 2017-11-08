@@ -689,7 +689,7 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
 def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     out.write('<HR>\n<H3>Summary</H3>\n')
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
-    out.write('<DIV class="%s hscrollable" style="margin-left: 18px;">\n' % \
+    out.write('<DIV class="%s hscrollable">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     while True:
@@ -713,17 +713,13 @@ def write_filepath_asHTML(out, Rcheck_dir, filepath):
     return
 
 ### Write content of file 'f' to report.
-def write_file_asHTML(out, f, node_hostname, with_margin=False, pattern=None):
+def write_file_asHTML(out, f, node_hostname, pattern=None):
     encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
     pattern_detected = False
     if pattern != None:
         regex = re.compile(pattern)
-    if with_margin:
-        style = ' style="margin-left: 18px;"'
-    else:
-        style = ''
-    out.write('<DIV class="%s hscrollable"%s>\n' % \
-              (node_hostname.replace(".", "_"), style))
+    out.write('<DIV class="%s hscrollable">\n' % \
+              node_hostname.replace(".", "_"))
     out.write('<PRE style="padding: 3px;">\n')
     i = 0
     for line in f:
@@ -772,7 +768,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         if test2filename2.has_key(testname):
             out.write('<TR>\n')
             filepath = os.path.join(tests_dir1, test2filename1[testname])
-            out.write('<TD style="padding-left: 18px;">\n')
+            out.write('<TD>\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             f = open(filepath, "r")
             write_file_asHTML(out, f, node_hostname)
@@ -794,7 +790,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     for filename in unpaired1:
         out.write('<TR>\n')
         filepath = os.path.join(tests_dir1, filename)
-        out.write('<TD style="padding-left: 18px;">\n')
+        out.write('<TD>\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
         write_file_asHTML(out, f, node_hostname)
@@ -807,7 +803,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
     for filename in unpaired2:
         out.write('<TR>\n')
-        out.write('<TD style="padding-left: 18px;"></TD>\n')
+        out.write('<TD></TD>\n')
         filepath = os.path.join(tests_dir2, filename)
         out.write('<TD style="padding-left: 18px;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
@@ -830,7 +826,7 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
         filepath = os.path.join(tests_dir, filename)
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         f = open(filepath, "r")
-        write_file_asHTML(out, f, node_hostname, True)
+        write_file_asHTML(out, f, node_hostname)
         f.close()
     return
 
@@ -858,16 +854,11 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     os.chdir(old_cwd)
     return
 
-def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath,
-                                    with_margin=False):
+def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
     f = open(filepath, "r")
     write_filepath_asHTML(out, Rcheck_dir, filepath)
-    if with_margin:
-        style = ' style="margin-left: 18px;"'
-    else:
-        style = ''
-    out.write('<DIV class="%s hscrollable"%s>\n' % \
-              (node_hostname.replace(".", "_"), style))
+    out.write('<DIV class="%s hscrollable">\n' % \
+              node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     for line in f:
         out.write('<TR><TD>')
@@ -892,7 +883,7 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     if len(examples_dirs) == 2 and \
        'examples_i386' in examples_dirs and 'examples_x64' in examples_dirs:
         out.write('<TABLE class="grid_layout"><TR>\n')
-        out.write('<TD style="padding-left: 18px;">\n')
+        out.write('<TD>\n')
         filepath = 'examples_i386/%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
@@ -909,7 +900,7 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
         filepath = '%s-Ex.timings' % pkg
         if os.path.isfile(filepath):
             write_Example_timings_from_file(out, node_hostname, Rcheck_dir,
-                                            filepath, True)
+                                            filepath)
     os.chdir(old_cwd)
     return
 
@@ -920,7 +911,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    write_file_asHTML(out, f, node_hostname, True)
+    write_file_asHTML(out, f, node_hostname)
     f.close()
     if stagecmd != "checksrc":
         return
@@ -933,7 +924,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     if f != None:
         out.write('<HR>\n<H3>Installation output</H3>\n')
         write_filepath_asHTML(out, Rcheck_dir, filename)
-        write_file_asHTML(out, f, node_hostname, True)
+        write_file_asHTML(out, f, node_hostname)
         f.close()
 
     if BBScorevars.subbuilds != "bioc-longtests":
