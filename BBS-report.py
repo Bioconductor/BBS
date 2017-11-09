@@ -1285,7 +1285,7 @@ def write_glyph_table(out):
 
     ## "TIMEOUT" glyph
     out.write('<TR>\n')
-    out.write('<TD style="text-align: right;">%s</TD>\n' % \
+    out.write('<TD style="text-align: right; width: 75px;">%s</TD>\n' % \
               status_asSPAN('TIMEOUT'))
     out.write('<TD>')
     if BBScorevars.subbuilds == "bioc-longtests":
