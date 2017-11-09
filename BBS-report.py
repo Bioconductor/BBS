@@ -904,17 +904,23 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     os.chdir(old_cwd)
     return
 
-def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
-    if BBScorevars.subbuilds == "bioc-longtests":
-        write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
+def write_Command_output_asHTML(out, pkg, node_id, stagecmd)
+    if stagecmd == "checksrc" and BBScorevars.subbuilds == "bioc-longtests":
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
     f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
     write_file_asHTML(out, f, node_hostname)
     f.close()
+    return
+
+def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     if stagecmd != "checksrc":
+        write_Command_output_asHTML(out, pkg, node_id, stagecmd)
         return
+    if BBScorevars.subbuilds == "bioc-longtests":
+        write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
+    write_Command_output_asHTML(out, pkg, node_id, stagecmd)
 
     ## Include output of 'R CMD INSTALL'.
     Rcheck_dir = pkg + ".Rcheck"
@@ -970,11 +976,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('be built and checked on this platform needs %s' % pkg)
         out.write('</DIV>\n')
     else:
-        ## Summary
         write_Summary_asHTML(out, node_hostname, pkg, node_id, stagecmd)
-        ## Command output
-        write_Command_output_asHTML(out, node_hostname,
-                                    pkg, node_id, stagecmd)
+        write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
