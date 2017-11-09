@@ -102,8 +102,8 @@ in _this_ order
 
 - Start setting up new devel builders and repositories.
 
-  Make sure that the R that runs as biocadmin has the 'knitcitations' package
-  installed.
+  Make sure that the R that runs as biocadmin is current, has the
+  most current biocViews and that 'knitcitations' is installed.
 
   Note about Simlinks to old devel:
 
@@ -327,8 +327,6 @@ in _this_ order
 - Update SPB and clean sqlite file
 
 - ID packages for deprecation in BioC 3.7
-
-- Update R for biocadmin on both master Linux builders
 
 - Update Bioconductor GitHub repositories
 
