@@ -259,7 +259,7 @@ def status_asSPAN(status):
 def write_pkg_status_asTD(out, pkg, node, stagecmd, leafreport_ref, style=None):
     #print "  %s %s %s" % (pkg, node.id, stagecmd)
     status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-    if status == "skipped":
+    if status in ["skipped", "NA"]:
         status_html = status_asSPAN(status)
     else:
         if leafreport_ref != None:
@@ -1014,7 +1014,7 @@ def make_node_LeafReports(allpkgs, node):
     return
 
 def make_all_LeafReports(allpkgs):
-    print "Current workding dir '%s'" % os.getcwd()
+    print "Current working dir '%s'" % os.getcwd()
     for pkg in allpkgs:
         try:
             os.mkdir(pkg)
