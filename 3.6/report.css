@@ -1,7 +1,7 @@
 BODY {
     background: #cc5566;
     font-family: sans-serif;
-    font-size: 10pt;
+    font-size: 11pt;
     color: #2a2a2a;
 }
 
@@ -57,6 +57,10 @@ DIV.hscrollable {
 }
 TABLE.grid_layout DIV.hscrollable {
     width: 550px;
+}
+
+P.nooutput {
+    text-align: center;
 }
 
 
