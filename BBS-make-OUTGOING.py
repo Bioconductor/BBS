@@ -93,7 +93,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         if os.path.exists(pkg_file):
             shutil.copy(pkg_file, ".")
         else:
-            print "BBS> [stage6]     SKIPPED (file doesn't exist)"
+            print "BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pkg_file
         if source_node:
             ## Get reference manual from pkg.Rcheck directory.
             pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \
@@ -102,7 +102,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
             if os.path.exists(pdf_file):
                 shutil.copy(pdf_file, "%s/%s.pdf" % (manuals_dir, pkg))
             else:
-                print "BBS> [stage6]     SKIPPED (file doesn't exist)"
+                print "BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pdf_file
     print "BBS> [stage6] END copying outgoing packages from %s." % fresh_pkgs_subdir
     return
 

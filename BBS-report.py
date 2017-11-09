@@ -75,10 +75,10 @@ def make_STATUS_SUMMARY(allpkgs):
             stagecmd = 'buildsrc'
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
-            skipped_is_OK = status in ["TIMEOUT", "ERROR"]
+            ok_to_skip = status in ["TIMEOUT", "ERROR"]
             # CHECK status
             stagecmd = 'checksrc'
-            if skipped_is_OK:
+            if ok_to_skip:
                 status = "skipped"
             else:
                 status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
@@ -86,7 +86,7 @@ def make_STATUS_SUMMARY(allpkgs):
             if BBSreportutils.is_doing_buildbin(node):
                 # BUILD BIN status
                 stagecmd = 'buildbin'
-                if skipped_is_OK:
+                if ok_to_skip:
                     status = "skipped"
                 else:
                     status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
@@ -686,7 +686,7 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     out.close()
     return
 
-def write_Summary_to_asHTML(out, node_hostname, pkg, node_id, stagecmd):
+def write_Summary_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     out.write('<HR>\n<H3>Summary</H3>\n')
     dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
     out.write('<DIV class="%s hscrollable">\n' % \
@@ -971,8 +971,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('</DIV>\n')
     else:
         ## Summary
-        write_Summary_to_asHTML(out, node_hostname,
-                                pkg, node_id, stagecmd)
+        write_Summary_asHTML(out, node_hostname, pkg, node_id, stagecmd)
         ## Command output
         write_Command_output_asHTML(out, node_hostname,
                                     pkg, node_id, stagecmd)
@@ -994,20 +993,20 @@ def make_node_LeafReports(allpkgs, node):
         # BUILD leaf-report
         stagecmd = "buildsrc"
         status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-        if status != "skipped":
+        if not status in ["skipped", "NA"]:
             leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
             make_LeafReport(leafreport_ref, allpkgs)
         # CHECK leaf-report
         stagecmd = "checksrc"
         status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-        if status != "skipped":
+        if not status in ["skipped", "NA"]:
             leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
             make_LeafReport(leafreport_ref, allpkgs)
         if BBSreportutils.is_doing_buildbin(node):
             # BUILD BIN leaf-report
             stagecmd = "buildbin"
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-            if status != "skipped":
+            if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
                 make_LeafReport(leafreport_ref, allpkgs)
     print "BBS> [make_node_LeafReports] Node %s: END." % node.id
