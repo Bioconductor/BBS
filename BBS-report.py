@@ -14,6 +14,7 @@ import shutil
 import re
 import fnmatch
 import string
+import urllib2
 
 import bbs.fileutils
 import bbs.parse
