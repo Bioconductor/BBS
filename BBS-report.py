@@ -909,9 +909,16 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
-    f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    write_file_asHTML(out, f, node_hostname)
-    f.close()
+    try:
+        f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
+    except urllib2.HTTPError:
+        print "BBS> [make_node_LeafReports] ERROR: " + \
+              "Command output for %s/%s/%s not available" % \
+              (pkg, node_id, stagecmd)
+        sys.exit("==> EXIT")
+    else:
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
     return
 
 def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd):
