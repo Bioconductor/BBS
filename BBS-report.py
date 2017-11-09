@@ -1344,16 +1344,27 @@ def write_glyph_table(out):
         out.write('</TR>\n')
 
     ## "skipped" glyph
+    if BBScorevars.subbuilds != "bioc-longtests":
+        out.write('<TR>\n')
+        out.write('<TD style="vertical-align: top;">%s</TD>\n' % \
+                  status_asSPAN('skipped'))
+        out.write('<TD COLSPAN="3">')
+        out.write('<I>CHECK</I> or <I>BUILD BIN</I> of package')
+        out.write(' was skipped because the <I>BUILD</I> step failed\n')
+        out.write('</TD>\n')
+        out.write('</TR>\n')
+
+    ## "NA" glyph
     out.write('<TR>\n')
-    out.write('<TD style="vertical-align: top;">%s</TD>\n' % status_asSPAN('skipped'))
+    out.write('<TD style="vertical-align: top;">%s</TD>\n' % \
+              status_asSPAN('NA'))
     out.write('<TD COLSPAN="3">')
     if BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<I>CHECK</I> of package was skipped')
-        out.write(' because of an anomaly in the Build System')
+        out.write('<I>CHECK</I>')
     else:
-        out.write('<I>CHECK</I> or <I>BUILD BIN</I> of package')
-        out.write(' was skipped because the <I>BUILD</I> step failed')
-        out.write(' (or because of an anomaly in the Build System)\n')
+        out.write('<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>')
+    out.write(' result is not available because of an anomaly')
+    out.write(' in the Build System\n')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
