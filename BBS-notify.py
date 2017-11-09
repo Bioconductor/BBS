@@ -81,10 +81,10 @@ def send_notification(pkg):
         to_addrs = ["devteam-bioc@lists.fhcrc.org"]
     else:
         to_addrs = [maintainer_email]
-    subject = "%s problems reported by the \"%s\" for %s" \
-              % (pkg, main_page_title, BBSreportutils.get_build_label())
+    subject = "%s problems reported in the %s" % \
+              (pkg, BBSreportutils.report_title)
     msg = "%s\nHi %s maintainer,\n\n" % (msg_head, pkg) \
-        + "According to the \"%s\" for %s,\n" % (main_page_title, BBSreportutils.get_build_label()) \
+        + "According to the %s,\n" % BBSreportutils.report_title \
         + "the %s package has the following problem(s):\n\n" % pkg \
         + "%s\n%s\n%s" % ('\n'.join(problem_descs), msg_tail, msg_footnote)
     if arg1 == "":
@@ -137,10 +137,6 @@ if arg1 != "":
         bbs.email.redirect_to_addr = arg1
 
 BBSreportutils.set_NODES(notify_nodes)
-if len(BBSreportutils.NODES) != 1:
-    main_page_title = 'Multiple platform build/check report'
-else:
-    main_page_title = 'Build/check report'
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
 print "BBS> [stage9] Notifying package maintainers for nodes: %s" % notify_nodes
 if BBScorevars.subbuilds in ["bioc", "data-experiment"]:
