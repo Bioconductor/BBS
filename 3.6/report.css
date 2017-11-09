@@ -167,7 +167,7 @@ SPAN.NotNeeded {
     font-weight: bold;
     color: #EEE;
 }
-SPAN.skipped {
+SPAN.skipped, SPAN.NA {
     font-weight: bold;
 }
 
