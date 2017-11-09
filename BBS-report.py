@@ -904,7 +904,7 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     os.chdir(old_cwd)
     return
 
-def write_Command_output_asHTML(out, pkg, node_id, stagecmd)
+def write_Command_output_asHTML(out, pkg, node_id, stagecmd):
     if stagecmd == "checksrc" and BBScorevars.subbuilds == "bioc-longtests":
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
