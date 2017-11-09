@@ -86,20 +86,23 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         dcf = open(meat_index_file, 'r')
         version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBScorevars.meat_index_file)
         dcf.close()
-        ## Copy pkg from 'fresh_pkgs_subdir2'
+        ## Copy pkg from 'fresh_pkgs_subdir2'.
         pkg_file = "%s_%s.%s" % (pkg, version, fileext)
         pkg_file = os.path.join(fresh_pkgs_subdir, pkg_file)
         print "BBS> [stage6]   - copying %s to OUTGOING folder..." % pkg_file
-        shutil.copy(pkg_file, ".")
-        ## Get reference manual from pkg.Rcheck directory
-        if (source_node):
-            src_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % (BBScorevars.getenv('BBS_WORK_TOPDIR'),
-              pkg, pkg)
-            if (os.path.exists(src_file)):
-                print "BBS> [stage6]   - copying %s manual to OUTGOING/manuals folder..." % pkg
-                shutil.copy(src_file, "%s/%s.pdf" % (manuals_dir, pkg))
+        if os.path.exists(pkg_file):
+            shutil.copy(pkg_file, ".")
+        else:
+            print "BBS> [stage6]     SKIPPED (file doesn't exist)"
+        if source_node:
+            ## Get reference manual from pkg.Rcheck directory.
+            pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \
+                       (BBScorevars.getenv('BBS_WORK_TOPDIR'), pkg, pkg)
+            print "BBS> [stage6]   - copying %s manual to OUTGOING/manuals folder..." % pkg
+            if os.path.exists(pdf_file):
+                shutil.copy(pdf_file, "%s/%s.pdf" % (manuals_dir, pkg))
             else:
-                print "BBS> [stage6]   - manual for %s could not be found." % pkg
+                print "BBS> [stage6]     SKIPPED (file doesn't exist)"
     print "BBS> [stage6] END copying outgoing packages from %s." % fresh_pkgs_subdir
     return
 
