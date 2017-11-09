@@ -24,10 +24,16 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     nodes_path = BBScorevars.nodes_rdir.path
     node_path = os.path.join(nodes_path, node_id)
     summary_file0 = "%s.%%s-summary.dcf" % pkg
-    ## Extract Status from BUILD summary
+    ## Extract Status from summary file.
     buildsrc_path = os.path.join(node_path, 'buildsrc')
     summary_file = os.path.join(buildsrc_path, summary_file0 % 'buildsrc')
-    dcf = open(summary_file, 'r')
+    ## Could happen that summary file is not available (because the node
+    ## where that file is coming from didn't finish to build yet or failed
+    ## to send the file back).
+    try:
+        dcf = open(summary_file, 'r')
+    except IOError:
+        return True
     status = bbs.parse.getNextDcfVal(dcf, 'Status')
     dcf.close()
     if status != 'OK':
@@ -35,7 +41,10 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     ## Extract Status from CHECK summary
     checksrc_path = os.path.join(node_path, 'checksrc')
     summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
-    dcf = open(summary_file, 'r')
+    try:
+        dcf = open(summary_file, 'r')
+    except IOError:
+        return True
     status = bbs.parse.getNextDcfVal(dcf, 'Status')
     dcf.close()
     if status not in ["OK", "WARNINGS"]:
@@ -45,7 +54,10 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     ## Extract Status from BUILD BIN summary
     buildbin_path = os.path.join(node_path, 'buildbin')
     summary_file = os.path.join(buildbin_path, summary_file0 % 'buildbin')
-    dcf = open(summary_file, 'r')
+    try:
+        dcf = open(summary_file, 'r')
+    except IOError:
+        return True
     status = bbs.parse.getNextDcfVal(dcf, 'Status')
     dcf.close()
     return status != 'OK'

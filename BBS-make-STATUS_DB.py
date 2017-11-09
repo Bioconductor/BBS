@@ -23,8 +23,7 @@ def get_status_from_summary_file(pkg, node_id, stagecmd):
     except urllib2.HTTPError:
         if stagecmd == "install":
             return "NotNeeded"
-        print "==> FATAL ERROR: cannot get %s status for package %s on %s" % (stagecmd, pkg, node_id)
-        sys.exit("==> EXIT")
+        return "NA"
     return status
 
 def make_STATUS_DB(allpkgs):
