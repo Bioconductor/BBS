@@ -59,10 +59,6 @@ TABLE.grid_layout DIV.hscrollable {
     width: 550px;
 }
 
-P.nooutput {
-    text-align: center;
-}
-
 
 /****************************************************************************
  * Message of the day
@@ -194,6 +190,14 @@ TABLE.summary TD.summary.OK {
 .NotNeeded,
 TABLE.summary TD.summary.NotNeeded {
     background: #69C;
+}
+.NA,
+TABLE.summary TD.summary.NA {
+    background: #BBB;
+}
+P.noresult {
+    background: #BBB;
+    text-align: center;
 }
 
 TABLE.summary {
