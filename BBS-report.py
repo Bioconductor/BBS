@@ -772,7 +772,8 @@ def write_00install_asHTML(out, node_hostname, pkg, node_id):
         return
     filename = '00install.out'
     filepath = os.path.join(Rcheck_dir, filename)
-    f = wopen_leafreport_input_file(None, node_id, stagecmd, filepath, catch_HTTPerrors=True)
+    f = wopen_leafreport_input_file(None, node_id, "checksrc", filepath,
+                                    catch_HTTPerrors=True)
     out.write('<HR>\n<H3>Installation output</H3>\n')
     write_filepath_asHTML(out, Rcheck_dir, filename)
     write_file_asHTML(out, f, node_hostname)
