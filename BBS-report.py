@@ -760,7 +760,8 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         f.close()
     return
 
-def write_00install_asHTML(out, node_hostname, pkg, node_id):
+def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
+    out.write('<HR>\n<H3>Installation output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
     Rcheck_path = os.path.join(BBScorevars.central_rdir_path, "nodes",
                                node_id, "checksrc", Rcheck_dir)
@@ -774,7 +775,6 @@ def write_00install_asHTML(out, node_hostname, pkg, node_id):
     filepath = os.path.join(Rcheck_dir, filename)
     f = wopen_leafreport_input_file(None, node_id, "checksrc", filepath,
                                     catch_HTTPerrors=True)
-    out.write('<HR>\n<H3>Installation output</H3>\n')
     write_filepath_asHTML(out, Rcheck_dir, filename)
     write_file_asHTML(out, f, node_hostname)
     f.close()
@@ -963,7 +963,7 @@ def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     if BBScorevars.subbuilds == "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
     write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd)
-    write_00install_asHTML(out, node_hostname, pkg, node_id)
+    write_Installation_output_asHTML(out, node_hostname, pkg, node_id)
     if BBScorevars.subbuilds != "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
         write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
