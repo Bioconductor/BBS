@@ -775,9 +775,10 @@ def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
     filepath = os.path.join(Rcheck_dir, filename)
     f = wopen_leafreport_input_file(None, node_id, "checksrc", filepath,
                                     catch_HTTPerrors=True)
-    write_filepath_asHTML(out, Rcheck_dir, filename)
-    write_file_asHTML(out, f, node_hostname)
-    f.close()
+    if f != None:
+        write_filepath_asHTML(out, Rcheck_dir, filename)
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
     return
 
 def build_test2filename_dict(dirpath, dups):
