@@ -196,8 +196,10 @@ TABLE.summary TD.summary.NA {
     background: #BBB;
 }
 P.noresult {
-    background: #BBB;
     text-align: center;
+}
+P.noresult SPAN {
+    background: #BBB;
 }
 
 TABLE.summary {

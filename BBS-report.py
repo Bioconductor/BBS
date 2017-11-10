@@ -913,10 +913,10 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     try:
         f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
     except urllib2.HTTPError:
-        out.write('<P class="noresult">')
+        out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
         out.write('is not available. We apologize for the inconvenience.')
-        out.write('</P>\n')
+        out.write('</SPAN></P>\n')
     else:
         write_file_asHTML(out, f, node_hostname)
         f.close()
