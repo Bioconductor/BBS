@@ -743,6 +743,40 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     out.write('</DIV>')
     return pattern_detected
 
+def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
+    if stagecmd == "checksrc" and BBScorevars.subbuilds == "bioc-longtests":
+        out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
+    else:
+        out.write('<HR>\n<H3>Command output</H3>\n')
+    try:
+        f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
+    except urllib2.HTTPError:
+        out.write('<P class="noresult"><SPAN>')
+        out.write('Due to an anomaly in the Build System, this output ')
+        out.write('is not available. We apologize for the inconvenience.')
+        out.write('</SPAN></P>\n')
+    else:
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
+    return
+
+def write_00install_asHTML(out, node_hostname, pkg, node_id):
+    Rcheck_dir = pkg + ".Rcheck"
+    if not os.path.exists(Rcheck_dir):
+        out.write('<P class="noresult"><SPAN>')
+        out.write('Due to an anomaly in the Build System, this output ')
+        out.write('is not available. We apologize for the inconvenience.')
+        out.write('</SPAN></P>\n')
+        return
+    filename = '00install.out'
+    filepath = os.path.join(Rcheck_dir, filename)
+    f = wopen_leafreport_input_file(None, node_id, stagecmd, filepath, catch_HTTPerrors=True)
+    out.write('<HR>\n<H3>Installation output</H3>\n')
+    write_filepath_asHTML(out, Rcheck_dir, filename)
+    write_file_asHTML(out, f, node_hostname)
+    f.close()
+    return
+
 def build_test2filename_dict(dirpath, dups):
     p = re.compile('(.*)\.Rout.*')
     test2filename = {}
@@ -834,6 +868,12 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
+    if not os.path.exists(Rcheck_dir):
+        out.write('<P class="noresult"><SPAN>')
+        out.write('Due to an anomaly in the Build System, this output ')
+        out.write('is not available. We apologize for the inconvenience.')
+        out.write('</SPAN></P>\n')
+        return
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
                           node_id, "checksrc", Rcheck_dir))
@@ -873,6 +913,12 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
+    if not os.path.exists(Rcheck_dir):
+        out.write('<P class="noresult"><SPAN>')
+        out.write('Due to an anomaly in the Build System, this output ')
+        out.write('is not available. We apologize for the inconvenience.')
+        out.write('</SPAN></P>\n')
+        return
     old_cwd = os.getcwd()
     os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
                           node_id, "checksrc", Rcheck_dir))
@@ -905,23 +951,6 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     os.chdir(old_cwd)
     return
 
-def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
-    if stagecmd == "checksrc" and BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
-    else:
-        out.write('<HR>\n<H3>Command output</H3>\n')
-    try:
-        f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    except urllib2.HTTPError:
-        out.write('<P class="noresult"><SPAN>')
-        out.write('Due to an anomaly in the Build System, this output ')
-        out.write('is not available. We apologize for the inconvenience.')
-        out.write('</SPAN></P>\n')
-    else:
-        write_file_asHTML(out, f, node_hostname)
-        f.close()
-    return
-
 def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     if stagecmd != "checksrc":
         write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd)
@@ -929,22 +958,9 @@ def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd):
     if BBScorevars.subbuilds == "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
     write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd)
-
-    ## Include output of 'R CMD INSTALL'.
-    Rcheck_dir = pkg + ".Rcheck"
-    filename = '00install.out'
-    filepath = os.path.join(Rcheck_dir, filename)
-    f = wopen_leafreport_input_file(None, node_id, stagecmd, filepath, catch_HTTPerrors=True)
-    if f != None:
-        out.write('<HR>\n<H3>Installation output</H3>\n')
-        write_filepath_asHTML(out, Rcheck_dir, filename)
-        write_file_asHTML(out, f, node_hostname)
-        f.close()
-
+    write_00install_asHTML(out, node_hostname, pkg, node_id)
     if BBScorevars.subbuilds != "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
-
-    if BBScorevars.subbuilds != "bioc-longtests":
         write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
     return
 
