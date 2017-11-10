@@ -193,13 +193,14 @@ TABLE.summary TD.summary.NotNeeded {
 }
 .NA,
 TABLE.summary TD.summary.NA {
-    background: #BBB;
+    background: #8AA;
 }
 P.noresult {
     text-align: center;
 }
 P.noresult SPAN {
-    background: #BBB;
+    background: #8AA;
+    padding: 4pt;
 }
 
 TABLE.summary {
