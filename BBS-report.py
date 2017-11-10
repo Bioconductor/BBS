@@ -762,7 +762,9 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
 
 def write_00install_asHTML(out, node_hostname, pkg, node_id):
     Rcheck_dir = pkg + ".Rcheck"
-    if not os.path.exists(Rcheck_dir):
+    Rcheck_path = os.path.join(BBScorevars.central_rdir_path, "nodes",
+                               node_id, "checksrc", Rcheck_dir)
+    if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
         out.write('is not available. We apologize for the inconvenience.')
@@ -868,15 +870,16 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    if not os.path.exists(Rcheck_dir):
+    Rcheck_path = os.path.join(BBScorevars.central_rdir_path, "nodes",
+                               node_id, "checksrc", Rcheck_dir)
+    if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
         out.write('is not available. We apologize for the inconvenience.')
         out.write('</SPAN></P>\n')
         return
     old_cwd = os.getcwd()
-    os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
-                          node_id, "checksrc", Rcheck_dir))
+    os.chdir(Rcheck_path)
     tests_dirs = []
     for tests_dir in os.listdir("."):
         if os.path.isdir(tests_dir) and \
@@ -913,15 +916,16 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    if not os.path.exists(Rcheck_dir):
+    Rcheck_path = os.path.join(BBScorevars.central_rdir_path, "nodes",
+                               node_id, "checksrc", Rcheck_dir)
+    if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
         out.write('is not available. We apologize for the inconvenience.')
         out.write('</SPAN></P>\n')
         return
     old_cwd = os.getcwd()
-    os.chdir(os.path.join(BBScorevars.central_rdir_path, "nodes",
-                          node_id, "checksrc", Rcheck_dir))
+    os.chdir(Rcheck_path)
     examples_dirs = []
     for examples_dir in os.listdir("."):
         if os.path.isdir(examples_dir) and \
