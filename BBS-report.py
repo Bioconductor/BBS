@@ -921,8 +921,8 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
                                node_id, "checksrc", Rcheck_dir)
     if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
-        out.write('Due to an anomaly in the Build System, this output ')
-        out.write('is not available. We apologize for the inconvenience.')
+        out.write('Due to an anomaly in the Build System, the timings ')
+        out.write('are not available. We apologize for the inconvenience.')
         out.write('</SPAN></P>\n')
         return
     old_cwd = os.getcwd()
