@@ -1297,7 +1297,7 @@ def write_glyph_table(out):
                   (checkbox_id, checkbox_id))
         return
     out.write('<FORM action="">\n')
-    out.write('<TABLE style="width: 640px; border-spacing: 1px; border: solid black 1px;">\n')
+    out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="4" style="font-style: italic; border-bottom: solid black 1px;">')
@@ -1321,7 +1321,7 @@ def write_glyph_table(out):
     out.write('<TD style="text-align: right; vertical-align: middle;">')
     write_checkbox("timeout")
     out.write('</TD>\n')
-    out.write('<TD ROWSPAN="4" style="width: 85px; text-align: left; font-style: italic;">\n')
+    out.write('<TD ROWSPAN="6" style="width: 85px; text-align: left; font-style: italic;">\n')
     out.write('Use the check boxes to show only packages ')
     out.write('with the selected status types.')
     out.write('</TD>\n')
