@@ -55,3 +55,12 @@ From discussion with Seth (10/28/05):
     The machine where the single script is run should be able
     to dispatch the task to the various BBS nodes, to wait they
     are done and then to publish the results to cobra.
+
+## -----------------------------------------------------------------------
+## New TODO
+## -----------------------------------------------------------------------
+
+* prepareRepos script should take care of generating the PACKAGES, 
+PACKAGES.gz, and PACKAGES.rds files. We should not need to do this by hand.
+
+* annotation push script only push packages that have changed
