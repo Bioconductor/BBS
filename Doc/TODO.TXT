@@ -61,6 +61,6 @@ From discussion with Seth (10/28/05):
 ## -----------------------------------------------------------------------
 
 * prepareRepos script should take care of generating the PACKAGES, 
-PACKAGES.gz, and PACKAGES.rds files. We should not need to do this by hand.
+PACKAGES.gz, and PACKAGES.rds files. Use tools::write_PACKAGES.
 
 * annotation push script only push packages that have changed
