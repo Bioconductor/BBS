@@ -55,14 +55,15 @@ From the Administrator account
 
     pip install nbconvert
 
-** Install Python modules sklearn, numpy and pandas 
+** Install Python modules numpy, sklearn, h5py and pandas 
 
-  All 3 modules are needed by BiocSklearn and numpy is needed by DChIPRep.
+  All 4 modules are needed by BiocSklearn and numpy is needed by DChIPRep.
 
   In a PowerShell Window:
 
     pip install numpy 
     pip install sklearn 
+    pip install h5py 
     pip install pandas 
 
 Note that installing Python from one of the personal administrator accounts
