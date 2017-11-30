@@ -55,6 +55,16 @@ From the Administrator account
 
     pip install nbconvert
 
+** Install Python modules sklearn, numpy and pandas 
+
+  All 3 modules are needed by BiocSklearn and numpy is needed by DChIPRep.
+
+  In a PowerShell Window:
+
+    pip install numpy 
+    pip install sklearn 
+    pip install pandas 
+
 Note that installing Python from one of the personal administrator accounts
 below seems to cause problems (e.g. trying to upgrade to the latest pip
 with the above command raises an error). This is why all the above steps
