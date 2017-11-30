@@ -1,5 +1,5 @@
 ===============================================================================
-How to set up a MacOSX El Capitan machine for the daily builds
+How to set up a Mac OS X El Capitan machine for the daily builds
 -------------------------------------------------------------------------------
 
 
@@ -323,6 +323,9 @@ Everything in this section must be done from the biocbuild account.
 
     brew install openssl
 
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
   Then in /etc/profile add the following line:
 
     export OPENSSL_LIBS="/usr/local/Cellar/openssl/1.0.2k/lib/libssl.a /usr/local/Cellar/openssl/1.0.2k/lib/libcrypto.a"
@@ -339,6 +342,9 @@ Everything in this section must be done from the biocbuild account.
 
     brew install wget
     brew install pstree
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
 
 
 D. Install BBS git tree and create bbs-3.y-bioc directory structure
@@ -586,7 +592,7 @@ Everything in this section must be done from the biocbuild account.
   that this takes much longer:
 
     library(BiocInstaller)
-    biocLite("mzR", type="source")  # takes between 7-10 min.
+    biocLite("mzR", type="source")  # takes between 7-10 min
 
 ** Install FFTW system library
 
@@ -686,6 +692,9 @@ Everything in this section must be done from the biocbuild account.
 
     brew install open-babel
 
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
   TESTING:
 
     which babel
@@ -695,6 +704,55 @@ Everything in this section must be done from the biocbuild account.
 
     library(BiocInstaller)
     biocLite("ChemmineOB", type="source")
+
+** Install numpy + scipy + pandas + sklearn + h5py
+
+  These Python modules are needed by the BiocSklearn package.
+
+  numpy and scipy are part of the Python installation shipped with Mac OS X
+  so are already installed in:
+
+    /System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python
+
+  You can check this by doing the following in an interactive Python session:
+
+    import numpy
+    numpy.__version__    # 1.8.0rc1 (version shipped with Mac OS X)
+    import scipy
+    scipy.__version__    # 0.13.0b1 (version shipped with Mac OS X)
+
+  However this numpy is too old for pandas and this scipy is too old for
+  sklearn so we must install more recent versions. All the modules will get
+  installed in /Library/Python/2.7/site-packages/
+
+    sudo easy_install-2.7 pip  # easy_install-2.7 is shipped with Mac OS X
+    sudo -H pip install --ignore-installed numpy
+    sudo -H pip install --ignore-installed scipy
+    sudo -H pip install pandas
+    sudo -H pip install sklearn
+    sudo -H pip install h5py
+
+  Check the installed versions with:
+
+    import numpy
+    numpy.__version__    # 1.13.3 (on 11/30/2017)
+    import scipy
+    scipy.__version__    # 1.0.0  (on 11/30/2017)
+    import pandas
+    pandas.__version__   # 0.21.0 (on 11/30/2017)
+    import sklearn
+    sklearn.__version__  # 0.19.1 (on 11/30/2017)
+    import h5py
+    h5py.__version__     # 2.7.1  (on 11/30/2017)
+
+  IMPORTANT NOTE: Do NOT install pip via Homebrew. Homebrew only provides
+  pip via 'brew install python' which should be avoided because it leads to
+  two Pythons installed on the machine!
+
+  TESTING: Try to build the BiocSklearn package (takes < 1 min):
+
+    cd ~/bbs-3.5-bioc/meat
+    R CMD build BiocSklearn
 
 ** Install Python 3 + Jupyter + nbconvert + jupyter_client
 
@@ -727,6 +785,9 @@ Everything in this section must be done from the biocbuild account.
 
   Ignore the "This formula is keg-only..." caveat.
 
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
   Then in /etc/profile *prepend* /usr/local/opt/libxml2/lib/pkgconfig to
   PKG_CONFIG_PATH.
 
@@ -736,6 +797,9 @@ Everything in this section must be done from the biocbuild account.
   Finally install libSBML with:
 
     brew install homebrew/science/libsbml
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
 
   TESTING: Try to install the rsbml package *from source*:
 
@@ -762,7 +826,7 @@ Everything in this section must be done from the biocbuild account.
     cd /usr/local/bin
     sudo ln -s clustal-omega-1.2.3-macosx clustalo
 
-  TESTING: Try to build the LowMACA package (takes about 5 min.):
+  TESTING: Try to build the LowMACA package (takes about 5 min):
 
     cd ~/bbs-3.5-bioc/meat
     R CMD build LowMACA
@@ -801,7 +865,10 @@ Everything in this section must be done from the biocbuild account.
 
   Install with:
 
-    brew install open-mpi  # takes between 15-20 min.
+    brew install open-mpi  # takes between 15-20 min
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
 
   TESTING: Try to install the Rmpi package *from source*:
 
@@ -903,6 +970,9 @@ Everything in this section must be done from the biocbuild account.
   If not, install it with:
 
     brew install cmake
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
 
   ROOT supports 2 installation methods: "location independent" and "fix
   location". Here we do "location independent" installation:
@@ -1049,6 +1119,10 @@ Everything in this section must be done from the biocbuild account.
   Install with:
 
     brew install protobuf
+
+  See "Install Homebrew" previously in this file if you get errors about
+  /usr/local/bin or other directories under /usr/local not being writable.
+
 
 I. How to update R
 ------------------
