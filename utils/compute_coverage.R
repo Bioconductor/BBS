@@ -2,15 +2,19 @@
 ## to running this, so that environment variables are set correctly.
 ## ALSO, be sure X11 (Xvfb) is running.
 
-if(!require("BiocInstaller", quietly=TRUE))
-    stop("BiocInstaller not installed!")
+suppressMessages({
 
-reqs <- c("covr", "futile.logger", "R.utils")
-lapply(reqs, function(x) {
-    if(!do.call(require, list(package=x, quietly=TRUE))) {
-        biocLite(x)
-        do.call(require, list(package=x, quietly=TRUE))
+    if(!require("BiocInstaller", quietly=TRUE))
+        stop("BiocInstaller not installed!")
+
+    reqs <- c("covr", "futile.logger", "R.utils")
+    for(x in reqs) {
+        if(!do.call(require, list(package=x, quietly=TRUE))) {
+            biocLite(x)
+            do.call(require, list(package=x, quietly=TRUE))
+        }
     }
+
 })
 
 TIMEOUT <- 2400 # 40 minutes
@@ -20,20 +24,23 @@ TIMEOUT <- 2400 # 40 minutes
 .stopifnot <- function(msg, expr) {
     if (!expr) {
         flog.info(msg)
-        print(msg)
         stopifnot(expr)
     }
 }
 
-getPkgListFromManifest <- function() {
-    manifestFile <- normalizePath(file.path("..", "manifest", "software.txt"))
+getPkgListFromManifest <- function(manifestFile) {
     lines <- readLines(manifestFile)
     pattern <- "^Package:[[:blank:]]*([^[:blank:]]+).*"
     lines <- grep(pattern, lines, value = TRUE)
     sub(pattern, "\\1", lines)
 }
 
-packages <- getPkgListFromManifest()
+manifestFilePath <- function() {
+    file.path(Sys.getenv("BBS_BIOC_MANIFEST_CLONE_PATH"),
+              Sys.getenv("BBS_BIOC_MANIFEST_FILE"))
+}
+
+packages <- getPkgListFromManifest(manifestFilePath())
 
 get_git_commit <- function(pkg) {
   file <- normalizePath(paste0("../gitlog/git-log-", pkg, ".txt"))
@@ -49,29 +56,36 @@ gitlog <- unlist(Filter(Negate(is.null), lapply(packages, get_git_commit)))
 
 getCoverage <- function(package, force=FALSE) {
     tryCatch(evalWithTimeout(getCoverage0(package, force), timeout=TIMEOUT),
-        TimeoutException=function(ex) "TimedOut", error=function(e)e)
+        TimeoutException = function(ex) "TimedOut", error = function(e) NA)
 }
 
 getCoverage0 <- function(package, force=FALSE) {
     if(!file.exists(file.path(package, "tests")))
         return(NULL)
-    if((!force) && (!needs_update(package)) && (!is.null(coverage[package]))) {
-        print(sprintf("Skipping %s, it hasn't changed since last time.", package))
-        return("skipped")
+    if((!force) && (!needs_update(package)) && (!is.na(coverage[package,]))) {
+	cov <- as.integer(coverage[package,])
+        flog.info("Skipping %s, it hasn't changed since last time.", package)
     }
-    print(sprintf("Processing %s...", package))
-    flog.info(sprintf("Processing %s...", package))
-    ret <- tryCatch({cov <- percent_coverage(package_coverage(package))}, error = function(e) e)
-    cat(gitlog[[package]], file=file.path(gitcachedir, package))
-    ret
+    else {
+        flog.info("Processing %s...", package)
+        cov <- tryCatch(as.integer(percent_coverage(package_coverage(package))), error = function(e) NA)
+        if(is.integer(cov)) cat(gitlog[[package]], file=file.path(gitcachedir, package))
+    }
+    cov
 }
 
 gitcachedir <- file.path("..", "git-coverage-cache")
 if (!file.exists(gitcachedir))
     dir.create(gitcachedir)
 
-cov_file <- "coverage.txt"
-coverage <- if (file.exists(cov_file)) read.dcf(cov_file) else NULL
+cov_file <- file.path(Sys.getenv("BBS_CENTRAL_RDIR"), "coverage.txt")
+
+coverage <- data.frame(Coverage = character(0L), stringsAsFactors=FALSE)
+
+if (file.exists(cov_file)) 
+    coverage <- data.frame(read.dcf(cov_file, all=TRUE), row.names="Package")
+
+coverage
 
 needs_update <- function(pkg) {
     cachefile <- file.path(gitcachedir, pkg)
@@ -80,6 +94,6 @@ needs_update <- function(pkg) {
     gitlog[[pkg]] != readLines(cachefile, warn=FALSE)
 }
 
-coverage <- sapply(packages, getCoverage)
+coverage <- data.frame(Package = packages, Coverage = sapply(packages, getCoverage))
 
 write.dcf(coverage, cov_file)

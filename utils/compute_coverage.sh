@@ -15,11 +15,6 @@ cd $oldwd
 
 . ~/BBS/utils/start-virtual-X.sh
 
-time $BBS_R_CMD -q -f ~/BBS/utils/compute_coverage.R
-
+time $BBS_R_HOME/bin/Rscript ~/BBS/utils/compute_coverage.R
 
 . ~/BBS/utils/stop-virtual-X.sh
-
-
-
- 
