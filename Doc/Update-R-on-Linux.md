@@ -1,29 +1,36 @@
-# How to Update R on the Linux build machines
+# Update R on the Linux build machines
+
+This document describes how to update update (not install) R on Linux. Normally
+both installation and update instructions would be included in the
+HOWTO doc but we don't have one for Linux. Instead, we have a Chef recipe
+which documents how to configure the Linux builder (which includes installing
+R):
+
+  https://github.com/Bioconductor/BBS-provision-cookbook
+
+The Chef recipe doesn't have an obvious place for 'update' instructions so
+we've included them here.
 
 *NOTE*: Throughout this document, `$BIOC_VERSION` 
 used to represent the Bioconductor version, to make
 commands more copy-pastable (assuming `$BIOC_VERSION`
 is defined).
 
-## Updating R on Mac OSX and Windows:
+## Table of Contents
+- [When to update](#when-to-update)
+- [R for biocbuild](#biocbuild)
+  - [Where to find R](#where-to-find)
+  - [Downloading](#downloading)
+  - [Untarring](#untarring)
+  - [Building](#building)
+  - [After Building](#after-building)
+  - [Testing](#testing)
+  - [First build cycle after a fresh R install](#first-cycle)
+  - [Flushing](#flushing)
+- [R for biocadmin](#biocadmin)
+- [Updating R on Mac OSX and Windows](mac-and-windows)
 
-This document only describes updating R on Linux. We do not have a
-HOWTO document for configuring a Linux builders but instead use a Chef
-recipe.
-
-  https://github.com/Bioconductor/BBS-provision-cookbook
-
-Because the Chef recipe doesn't have an obvious place for this sort of 
-documentation we've included it here.
-
-The HOWTWO doc for Mac OSX describes how to install R on that platform:
-
-  https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT
-
-The HOWTO doc for Windows describes how to install R on that platform:
-
-  https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-Windows-Server-2012-HOWTO.TXT
-
+<a name="when-to-update"></a>
 ## When to update
 
 Make sure software builds are not running or about to run in the next 30
@@ -41,8 +48,10 @@ schedule to pick an appropriate time for the update:
 
   https://docs.google.com/document/d/1Ubp7Tcxr1I1HQ8Xrp9f73P40YQ0qhWQ_hSmHs05Ln_M/edit#heading=h.r7sorafgdpnf
 
+<a name="biocbuild"></a>
 ## R for biocbuild
 
+<a name="where-to-find"></a>
 ### Where to find R
 
 Note that we build R *from source* on Linux, we do not
@@ -61,6 +70,7 @@ install a package for a Linux distribution
 
 [https://cran.r-project.org/src/base-prerelease/](https://cran.r-project.org/src/base-prerelease/)
 
+<a name="downloading"></a>
 ### Downloading
 
 As the `biocbuild` user, download to `~/bbs-3.*-bioc/rdownloads`
@@ -80,6 +90,7 @@ Check the date:
 
     ls -altr
 
+<a name="untarring"></a>
 ### Untarring
 
 Remove the old R-devel folder if present:
@@ -102,6 +113,7 @@ Check version and revision:
     cat R-devel_2017-02-13/VERSION
     cat R-devel_2017-02-13/SVN-REV
 
+<a name="building"></a>
 ### Building
 
     cd ~/bbs-$BIOC_VERSION-bioc
@@ -121,6 +133,7 @@ Build R as follows from within the ~/bbs-3.*-bioc/R/ directory:
 Instead of `make` you can also do `make -j` to use
 all cores or `make -jN` to use `N` cores.
 
+<a name="after-building"></a>
 ### After building
 
 Run a script to fix compilation flags by modifying Makeconf. It's very
@@ -143,35 +156,27 @@ R-devel), do this:
 
     useDevel()
 
+<a name="testing"></a>
 ### Testing
 
-Start the new R. Check the date and revision number displayed
+Start the new R and check the date and revision number displayed
 at startup:
 
   ~/bbs-3.*-bioc/R/bin/R
 
-Install a few packages and their dependencies:
 
-    biocLite("Biobase", type="source")
-    biocLite("IRanges", type="source")
-    biocLite("zlibbioc", type="source")
-    biocLite("GLAD")
-    biocLite("PICS")
+FIXME: What testing is relevant on Linux? Same as on Mac after an
+       R update? (section 'I' in Prepare-MacOSX-ElCapitan-HOWTO.TXT)
 
-Try to load them with library().
 
-Quit the session. Try to install GLAD and PICS from the shell:
-
-    cd ~/bbs-3.*-bioc/meat
-    $ R CMD INSTALL GLAD 
-    $ R CMD INSTALL PICS 
-
-### The first build cycle after a fresh R install
+<a name="first-cycle"></a>
+### First build cycle after a fresh R install
 
 Note that, when using a freshly built R, the builds take longer because all
 the dependencies need to be re-installed (this is done automatically during
 STAGE2).
 
+<a name="flushing"></a>
 ### Flushing
 
 Historically we used to 'flush' the whole build pipe by removing all current
@@ -182,6 +187,7 @@ Also, when a CRAN-style dir tree is created by hand, a 'replisting' file must
 be present in its root because the biocViews package (use by prepareRepos-*.sh
 family) seems to need it.
 
+<a name="biocadmin"></a>
 ## R for biocadmin
 
 Updating/preparing the staging repos is done from the biocadmin account by
@@ -219,3 +225,14 @@ R="$HOME/bin/R-$R_VERSION"
     BiocInstaller  biocViews  DynDoc  graph  README
 
     biocLite(c('biocViews','DynDoc','graph', 'knitr', 'knitcitations'))
+
+<a name="mac-and-windows"></a>
+## Updating R on Mac OSX and Windows:
+
+Instructions for installing and updating R on Mac OSX are in the HOWTO doc:
+
+  https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT
+
+Instructions for installing and updating R on Windows are in the HOWTO doc:
+
+  https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-Windows-Server-2012-HOWTO.TXT
