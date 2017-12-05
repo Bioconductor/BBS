@@ -1157,21 +1157,6 @@ Perform the following steps from the biocbuild account:
   5) Install the following package binaries:
 
        pkgs <- c("Cairo", "tkrplot", "sysfonts", "rphast", "rtfbs",
-                 "RMySQL", "V8")
+                 "RMySQL", "RPostgreSQL", "V8", "udunits2")
        install.packages(pkgs)
-
-  6) As of April 22, 2017, CRAN still does not provide binaries for all CRAN
-     packages for R 3.4. Unfortunately some Bioconductor packages depend on
-     CRAN packages that are too difficult to install from source. However,
-     for some of these CRAN packages, it seems that the binary made for R 3.3
-     works with R 3.4. These packages are:
-
-       udunits2      -- indirectly required by Pi
-       RPostgreSQL   -- suggested by ChemmineR
-
-     Install them with:
-
-       pkgs <- c("udunits2", "RPostgreSQL")
-       contriburl <- "http://cran.case.edu/bin/macosx/mavericks/contrib/3.3"
-       install.packages(pkgs, contriburl=contriburl)
 
