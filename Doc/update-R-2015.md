@@ -1,33 +1,53 @@
-# How to Update R on the build machines
+# How to Update R on the Linux build machines
 
 *NOTE*: Throughout this document, `$BIOC_VERSION` 
-(or `%BIOC_VERSION%` on Windows) is
 used to represent the Bioconductor version, to make
 commands more copy-pastable (assuming `$BIOC_VERSION`
 is defined).
 
+## Updating R on Mac OSX and Windows:
+
+This document only describes updating R on Linux. We do not have a
+HOWTO document for configuring a Linux builders but instead use a Chef
+recipe.
+
+  https://github.com/Bioconductor/BBS-provision-cookbook
+
+Because the Chef recipe doesn't have an obvious place for this sort of 
+documentation we've included it here.
+
+The HOWTWO doc for Mac OSX describes how to install R on that platform:
+
+  https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT
+
+The HOWTO doc for Windows describes how to install R on that platform:
+
+  https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-Windows-Server-2012-HOWTO.TXT
+
 ## When to update
 
-Make sure software builds are not running or about
-to run in the next 30 minutes or so.
+Make sure software builds are not running or about to run in the next 30
+minutes or so. Make sure data/experiment builds are not running. Don't forget
+to update R on all the nodes participating to the builds. Also, try to have the
+same R (same revision number) on all the nodes.
 
-Make sure data/experiment builds are not running
-(Wed/Sat during the day).
+Don't update after the software builds run but before the data/experiment
+builds run.  (The data/experiment builds depend on the software builds having
+run first.)
 
-Don't update after the software builds run
-but before the data/experiment builds run.
-(The data/experiment builds depend on
-the software builds having run first.)
+Build start times and duration change over time. The 'Build Machine Daily 
+Schedule' keeps record of when the different builds are running. Consult this
+schedule to pick an appropriate time for the update:
 
+  https://docs.google.com/document/d/1Ubp7Tcxr1I1HQ8Xrp9f73P40YQ0qhWQ_hSmHs05Ln_M/edit#heading=h.r7sorafgdpnf
 
+## R for biocbuild
 
-## Linux
+### Where to find R
 
 Note that we build R *from source* on Linux, we do not
 install a package for a Linux distribution
 (i.e. we don't use `apt-get on Ubuntu).
-
-### Where to find R
 
 #### R-devel
 
@@ -43,8 +63,7 @@ install a package for a Linux distribution
 
 ### Downloading
 
-
-As the `biocbuild` user, download to `~/public_html/BBS`
+As the `biocbuild` user, download to `~/bbs-3.*-bioc/rdownloads`
 on the Linux build node.
 
 The file you download should have a descriptive name, including
@@ -53,22 +72,37 @@ a version or a date, such as `R-3.2.r67960.tar.gz` or
 a name (i.e., it's just caled R-devel.tar.gz) please rename
 it after downloading.
 
-Download with 
+Download with wget or curl: 
 
     curl -LO <URL>
 
+Check the date:
+
+    ls -altr
+
 ### Untarring
 
-Untar in the `~src` directory. 
-If the directory created by untarring does not have
-a descriptive name (containing a date or svn revision
+Remove the old R-devel folder if present:
+
+    rm R-devel/
+ 
+Untar the download with
+
+    tar -zvxf
+
+If the directory created by untarring is called something like `R-devel`
+and does not have a descriptive name (containing a date or svn revision
 number) then please rename accordingly.
 
 Directory should have a name like `R-3.2.r67960`
 or `R-devel-20151026`.
 
-### Building
+Check version and revision:
 
+    cat R-devel_2017-02-13/VERSION
+    cat R-devel_2017-02-13/SVN-REV
+
+### Building
 
     cd ~/bbs-$BIOC_VERSION-bioc
     # if R.old exists:
@@ -76,181 +110,112 @@ or `R-devel-20151026`.
     nohup rm -rf R.deleteme > /dev/null 2>&1 & # takes some time
     # if R directory exists:
     mv R R.old
-    mkdir R    
+    mkdir R 
     cd R
 
+Build R as follows from within the ~/bbs-3.*-bioc/R/ directory:
 
-Build R as follows.
-
-    ~/src/<DIRECTORY_WHERE_R_WAS_UNTARRED>/configure --enable-R-shlib
-    make 
+    ~/bbs-3.*-bioc/rdownloads/<DIRECTORY_WHERE_R_WAS_UNTARRED>/configure --enable-R-shlib
+    time make
 
 Instead of `make` you can also do `make -j` to use
 all cores or `make -jN` to use `N` cores.
 
 ### After building
 
-Run a script to fix compilation flags:
+Run a script to fix compilation flags by modifying Makeconf. It's very
+important to run this from the ~/bbs-3.*-bioc/R/etc/ directory and not one 
+level up. Both locations have Makefiles.
 
-    cd ./etc
+    cd ~/bbs-3.8-bioc/R/etc
     ~/BBS/utils/R-fix-flags.sh 
 
-This sets the C/C++ compilation flags appropriately
-for the build system (i.e. showing additional
-warnings useful for package developers).
+This sets the C/C++ compilation flags appropriately for the build system, e.g.,
+-Wall, which show additional warnings useful for package developers.
 
 Run R and install Bioconductor:
 
     source("https://bioconductor.org/biocLite.R")
+
 
 If you are on a devel build machine (and not running
 R-devel), do this:
 
     useDevel()
 
+### Testing
 
+Start the new R. Check the date and revision number displayed
+at startup:
 
-## Mac
+  ~/bbs-3.*-bioc/R/bin/R
 
+Install a few packages and their dependencies:
 
-### Before downloading
+    biocLite("Biobase", type="source")
+    biocLite("IRanges", type="source")
+    biocLite("zlibbioc", type="source")
+    biocLite("GLAD")
+    biocLite("PICS")
 
-    cd /Library/Frameworks
-    # if R.framework.old exists:
-    sudo mv R.framework.old R.framework.deleteme
-    sudo nohup rm -rf R.framework.deleteme > /dev/null 2>&1 &
-    # if R.framework exists:
-    sudo mv R.framework R.framework.old
+Try to load them with library().
 
+Quit the session. Try to install GLAD and PICS from the shell:
 
-### Where to get R
+    cd ~/bbs-3.*-bioc/meat
+    $ R CMD INSTALL GLAD 
+    $ R CMD INSTALL PICS 
 
-Release versions can be found at
-[https://cran.r-project.org/bin/macosx/](https://cran.r-project.org/bin/macosx/).
+### The first build cycle after a fresh R install
 
-All other versions (devel, beta, etc.) are at
-[http://r.research.att.com/](http://r.research.att.com/).
+Note that, when using a freshly built R, the builds take longer because all
+the dependencies need to be re-installed (this is done automatically during
+STAGE2).
 
-Download to the `~/Downloads` directory (as `biocbuild`).
+### Flushing
 
-Before downloading, if a file of the same name
-that you are about to download already exists,
-rename it to the same name with the date appended,
-i.e., rename `R-3.2-branch-mavericks-signed.pkg`
-to `R-3.2-branch-mavericks-signed.pkg.20150721`.
-Download the file with 
+Historically we used to 'flush' the whole build pipe by removing all current
+packages. (I don't think this is done anymore as of BioC 3.5) When that is
+done, the empty PACKAGES, PACKAGES.gzip and PACKAGES.rds must be recreated.
 
-    curl -LO <URL>
+Also, when a CRAN-style dir tree is created by hand, a 'replisting' file must
+be present in its root because the biocViews package (use by prepareRepos-*.sh
+family) seems to need it.
 
-### Installing
+## R for biocadmin
 
-sudo installer -pkg <NAME_OF_PKG_FILE> -target /
+Updating/preparing the staging repos is done from the biocadmin account by
+running the prepareRepos-*.sh scripts. Most of the work done by the
+prepareRepos-*.sh scripts is actually done in R by calling functions defined in
+the biocViews package.
 
-### After installing
+All these scripts share some configuration variables via the 
+BBS/propagation-pipe/3.7/config.sh file.
 
-Go to `/Library/Frameworks/R.framework/Versions/Current/Resources/etc`.
+BIOC_VERSION="3.7"
+R_VERSION="3.5"
+R="$HOME/bin/R-$R_VERSION"
 
-#### Mavericks
+- Download the new R tarball to /home/biocadmin/rdownloads.
+- Untar and name directory to something like R-3.5.
+- Move the un-tared directory up one level (same level as bin/).
+- From within R-3.5 directory
+    ./configure --enable-R-shlib && make
+- Modify the symlink in bin/
 
-Run
+    biocadmin@malbec2:~$ ls -l bin
+    total 0
+    lrwxrwxrwx 1 biocadmin biocadmin 27 Oct 23 11:44 R-3.5 -> /home/biocadmin/R-3.5/bin/R
 
-    ~/BBS/utils/mavericks-R-fix-flags.sh 
+- Start R and download biocLite:
 
-#### Snow Leopard
+    ./bin/R-3.5
+    source("https://bioconductor.org/biocLite.R");
 
-    ~/BBS/utils/snow-leopard-R-fix-flags.sh 
+- Install the packages in /home/biocbuild/pkgs_to_install/ + knitr and
+  knitcitations:
 
+    biocadmin@malbec2:~$ ls pkgs_to_install/
+    BiocInstaller  biocViews  DynDoc  graph  README
 
-### After installation, part 2.
-
-Also, install the Cairo binary package. This should be available
-in `~/Downloads`:
-
-    R CMD INSTALL Cairo_*.tgz
-
-If you don't do this, the build system will try and
-fail to install this package from source.
-
-Run R and install Bioconductor:
-
-    source("https://bioconductor.org/biocLite.R")
-
-If you are on a devel build machine (and not running
-R-devel), do this:
-
-    useDevel()
-
-#### Install tkrplot from source
-
-The tkrplot binary is broken and segfaults.
-Install it from source:
-
-    library(BiocInstaller)
-    biocLite("tkrplot", type="source")
-
-
-
-## Windows
-
-In this section %DRIVELETTER% refers to
-the data drive (D: on moscato1, E: on moscato2;
-in cloud deployments probably everything will be
-on the C: drive).
-
-Install as the `biocbuild` user.
-
-### Where to get R
-
- * Release: [https://cran.r-project.org/bin/windows/](https://cran.r-project.org/bin/windows/)
- * Patched: [https://cran.r-project.org/bin/windows/base/rpatched.html](https://cran.r-project.org/bin/windows/base/rpatched.html)
- * Devel: [https://cran.r-project.org/bin/windows/base/rdevel.html](https://cran.r-project.org/bin/windows/base/rdevel.html)
-
-### Before Downloading
-
-
-    cd %DRIVELETTER%:\biocbld\bbs-%BIOC_VERSION%-bioc 
-    rem If there is an R.old directory:
-    mv R.old R.deleteme
-    rem This will take some time:
-    nohup rm -rf R.deleteme > /dev/null 2>&1 &
-    rem If there is an R directory:
-    mv R R.old
-
-### Downloading
-
- You can download R from within a browser, which
- means it will be downloaded to
- `c:\Users\biocbuild\Downloads`.
-
-### Installing
-
-You can double-click the .exe you just downloaded.
-But to run it from the command line, do:
-
-    R-devel-win.exe /SILENT /DIR=%DRIVELETTER%:\biocbld\bbs-%BIOC_VERSION%-bioc\R /NOICONS
-
-If you run by double-clicking, be sure and choose
-`%DRIVELETTER%:\biocbld\bbs-Y.Z-bioc\R` as the
-destination directory. Choose to NOT create a
-start menu item and to NOT associate .R files
-with R.
-
-
-Run R and install Bioconductor:
-
-    source("https://bioconductor.org/biocLite.R")
-
-If you are on a devel build machine (and not
-running R-devel), do this:
-
-    useDevel()
-
-#### R for Single Package Builder
-
-SPB has its own R on windows
-when you update R-devel, you need to update the pkgbuild one as well.
-Do this as the `pkgbuild` user. The steps are basically the same as
-above except R is installed in `X:\packagebuilder` (where `X`
-is the appropriate drive letter).
-
-
+    biocLite(c('biocViews','DynDoc','graph', 'knitr', 'knitcitations'))

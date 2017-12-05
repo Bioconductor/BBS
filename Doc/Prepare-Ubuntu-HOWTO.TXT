@@ -1,3 +1,9 @@
+## December 2017
+## This file is being saved for historical purposes.
+## The current set-up for the Linux build machines is recorded
+## in the Chef recipe:
+## https://github.com/Bioconductor/BBS-provision-cookbook
+
 Based on preparing george2 in December 2012
 
 
