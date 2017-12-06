@@ -296,8 +296,7 @@ run.sh job has finished on all nodes.
 
 The prerun build script started at 17:00 and now it is 13:45 the following 
 afternoon. We hope that all builders have finished by now, otherwise there will
-be (as there often is) some manual steps to do at this point (see the ["Care
-and Feeding"](#care-and-feeding-of-the-build-system) section below).
+be (as there often is) some manual steps to do at this point.
 
 The build system will now run postrun.sh which initializes environment 
 variables as described above and then runs the following 3 python scripts:
