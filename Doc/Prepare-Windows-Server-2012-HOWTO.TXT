@@ -55,13 +55,19 @@ From the Administrator account
 
     pip install nbconvert
 
-** Install Python modules numpy, sklearn, h5py and pandas 
+** Install Python modules numpy, scipy, sklearn, h5py and pandas 
 
-  All 4 modules are needed by BiocSklearn and numpy is needed by DChIPRep.
+  scipy is a dependency of sklearn and must be installed before
+  sklearn will work properly. For whatever reason, `pip install sklearn`
+  completes successfully even if scipy is not installed. When sklearn 
+  is loaded (imported) and scipy is not present it breaks.
+ 
+  All modules are needed by BiocSklearn and numpy is also needed by DChIPRep.
 
   In a PowerShell Window:
 
-    pip install numpy 
+    pip install numpy
+    pip install scipy
     pip install sklearn 
     pip install h5py 
     pip install pandas 
