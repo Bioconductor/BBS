@@ -78,7 +78,8 @@ gitcachedir <- file.path("..", "git-coverage-cache")
 if (!file.exists(gitcachedir))
     dir.create(gitcachedir)
 
-cov_file <- file.path(Sys.getenv("BBS_CENTRAL_RDIR"), "COVERAGE.txt")
+#cov_file <- file.path(Sys.getenv("BBS_CENTRAL_RDIR"), "COVERAGE.txt")
+cov_file <- file.path("..", "COVERAGE.txt")
 
 if (file.exists(cov_file)) {
     coverage <- data.frame(read.dcf(cov_file, all=TRUE), row.names="Package")
