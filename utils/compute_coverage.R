@@ -17,7 +17,7 @@ suppressMessages({
 
 })
 
-TIMEOUT <- 2400 # 40 minutes
+TIMEOUT <- 600 # 10 minutes
 
 # Assume that we are running in the meat directory
 
@@ -55,20 +55,22 @@ get_git_commit <- function(pkg) {
 gitlog <- unlist(Filter(Negate(is.null), lapply(packages, get_git_commit)))
 
 getCoverage <- function(package, force=FALSE) {
-    tryCatch(evalWithTimeout(getCoverage0(package, force), timeout=TIMEOUT),
-        TimeoutException = function(ex) "TimedOut", error = function(e) NA_integer_)
-}
-
-getCoverage0 <- function(package, force=FALSE) {
-    if(!file.exists(file.path(package, "tests")))
+    if(!file.exists(file.path(package, "tests"))) {
+        flog.info("Skipping %s, it contains no tests", package)
         return(NA_integer_)
+    }
     if((!force) && (!needs_update(package)) && (!is.na(coverage[package,]))) {
 	cov <- as.integer(coverage[package,])
-        flog.info("Skipping %s, it hasn't changed since last time.", package)
+        flog.info("Skipping %s, it hasn't changed since last run", package)
     }
     else {
         flog.info("Processing %s...", package)
-        cov <- tryCatch(as.integer(percent_coverage(package_coverage(package))), error = function(e) NA_integer_)
+        cov <- tryCatch(withTimeout(as.integer(percent_coverage(package_coverage(package))), timeout=TIMEOUT),
+            TimeoutException = function(ex) stop("timed out"),
+            error = function(e) {
+                flog.error("%s failed: %s", package, e$message);
+                NA_integer_
+            })
         if(is.integer(cov)) cat(gitlog[[package]], file=file.path(gitcachedir, package))
     }
     cov
