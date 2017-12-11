@@ -1,34 +1,47 @@
-Before restarting a BBS run on a given node:
+Before restarting the BBS run script on a given node:
 
- 1. Make sure it's not currently running! ('kill -9 -1' as 'biocbuild'
-    on Unix will stop it, but make sure nobody else is logged as 'biocbuild'
-    on the same machine before to kill him...)
+ 1. Confirm that if restarted, there is enough time for the run script to 
+    complete before the postrun script starts.
 
- 2. Some R childs might have been started by BBS and still running
-    (there is a bug that needs to be fixed: in case of a timeout, "R CMD build"
-    or "R CMD check" are not killed by BBS, they keep running in the background
-    forever, NEW: may be this bug is fixed now). Kill them all!
+ 2. Make sure the run script is not currently running and that no one else is
+    logged in as the 'biocbuild' user.
+ 
+        ps -u biocbuild
+        ps auxwww | grep biocbuild
 
- 3. Remove R library lock dir (BBS_R_HOME/library/00LOCK) if present.
+ 3. On Linux and Mac do a  `kill -9 -1` as the 'biocbuild' user to 
+    git rid of any leftover processes. This will kick you off the machine if 
+    you were logged in as 'biocbuild' and will terminate the sessions of 
+    anyone else logged on the machine as 'biocbuild'.
 
- 4. On Windows, clean BBS_WORK_TOPDIR/tmp/ and BBS_WORK_TOPDIR/tmpdir/.
+    The `kill` command also has the advantage of terminating any rogue child 
+    processes started by the BBS. In the past we've hit a bug where if
+    a package has a timeout, "R CMD build" or "R CMD check" processes
+    are not killed by the BBS and they keep running in the background
+    forever. We haven't seen this problem for awhile so the bug may be fixed.
 
- 5. You can also remove the current log file (should be in
+ 4. Remove R library lock dir (BBS_R_HOME/library/00LOCK) if present.
+
+ 5. On Windows, clean BBS_WORK_TOPDIR/tmp/ and BBS_WORK_TOPDIR/tmpdir/.
+
+ 6. You can also remove the current log file (should be in 
     BBS_WORK_TOPDIR/log/) if you don't want to keep the output of the
     previous runs.
 
-Then you can restart the run:
+Then restart the run:
 
  1. Make the appropriate change in the crontab (Unix) or in the Task Scheduler
     (Windows) to have BBS automatically restarted in the next minutes.
 
  2. If you want to restart the run by hand (instead of using the crontab
     or the Task Scheduler) do the following (as 'biocbuild'):
-    - On gopher5:
-        cd ~/BBS/bioc/1.8d/gopher5
-        ./run.sh >>/loc/biocbuild/1.8d/log/gopher5.log 2>&1
-    - On lemming:
-        CD D:\biocbld\BBS\bioc\1.8d\lemming
-        run.bat >>D:\biocbld\work-area\1.8d\log\lemming.log 2>&1
+    - On malbec1:
+        cd /home/biocbuild/BBS/3.6/bioc/malbec1 
+        ./run.sh >>/home/biocbuild/bbs-3.6-bioc/log/malbec1-`date +\%Y\%m\%d`-run.log 2>&1'
+
+    - On tokay1:
+        cd C:\Users\biocbuild\BBS\3.6\bioc\tokay1
+        run.bat >> C:\Users\biocbuild\bbs-3.6-bioc\log\tokay1.log 2>&1
+
     - should be easy to adapt the above commands on other nodes...
 
