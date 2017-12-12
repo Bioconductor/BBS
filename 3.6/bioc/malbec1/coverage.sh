@@ -2,7 +2,7 @@
 
 . ./config.sh
 
-export COVERAGE_FILE="$BBS_CENTRAL_RDIR/COVERAGE.txt"
+export COVERAGE_FILE="$BBS_WORK_TOPDIR/COVERAGE.txt"
 
 . $BBS_HOME/utils/start-virtual-X.sh
 $BBS_R_HOME/bin/Rscript $BBS_HOME/utils/compute_coverage.R
