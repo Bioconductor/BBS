@@ -391,7 +391,7 @@ This must be done from the biocbuild account.
 
 Download and install with:
 
-  cd /home/biocbuild/Downloads
+  cd /Users/biocbuild/Downloads
   curl -O https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan.pkg
   sudo installer -pkg R-devel-el-capitan.pkg -target /
 
