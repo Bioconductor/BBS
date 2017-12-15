@@ -19,7 +19,10 @@ suppressMessages({
 
 TIMEOUT <- 600 # 10 minutes
 
-# Assume that we are running in the meat directory
+# Run in the meat directory
+setwd(Sys.getenv("BBS_MEAT_PATH"))
+
+bbs_workdir <- Sys.getenv("BBS_WORK_TOPDIR")
 
 .stopifnot <- function(msg, expr) {
     if (!expr) {
@@ -43,7 +46,7 @@ manifestFilePath <- function() {
 packages <- getPkgListFromManifest(manifestFilePath())
 
 get_git_commit <- function(pkg) {
-  file <- normalizePath(paste0("../gitlog/git-log-", pkg, ".txt"))
+  file <- file.path(bbs_workdir, "gitlog", paste0("git-log-", pkg, ".txt"))
   if (file.exists(file)) {
       dcf <- read.dcf(file)
       ret <- dcf[,"Last Commit"]
@@ -76,12 +79,11 @@ getCoverage <- function(package, force=FALSE) {
     cov
 }
 
-gitcachedir <- file.path("..", "git-coverage-cache")
+gitcachedir <- file.path(bbs_workdir, "git-coverage-cache")
 if (!file.exists(gitcachedir))
     dir.create(gitcachedir)
 
-#cov_file <- file.path(Sys.getenv("BBS_CENTRAL_RDIR"), "COVERAGE.txt")
-cov_file <- file.path("..", "COVERAGE.txt")
+cov_file <- Sys.getenv("COVERAGE_FILE")
 
 if (file.exists(cov_file)) {
     coverage <- data.frame(read.dcf(cov_file, all=TRUE), row.names="Package")
