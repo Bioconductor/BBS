@@ -17,7 +17,7 @@ suppressMessages({
 
 })
 
-TIMEOUT <- 600 # 10 minutes
+TIMEOUT <- 2400 # 40 minutes
 
 # Run in the meat directory
 setwd(Sys.getenv("BBS_MEAT_PATH"))
