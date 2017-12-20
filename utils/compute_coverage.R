@@ -49,13 +49,15 @@ get_git_commit <- function(pkg) {
   file <- file.path(bbs_workdir, "gitlog", paste0("git-log-", pkg, ".txt"))
   if (file.exists(file)) {
       dcf <- read.dcf(file)
-      ret <- dcf[,"Last Commit"]
-      names(ret) <- pkg
-      ret
+      id <- dcf[,"Last Commit"]
+  } else {
+      id = NA 
   }
+  names(id) <- pkg
+  id
 }
 
-gitlog <- unlist(Filter(Negate(is.null), lapply(packages, get_git_commit)))
+gitlog <- unlist(lapply(packages, get_git_commit))
 
 getCoverage <- function(package, force=FALSE) {
     if(!file.exists(file.path(package, "tests"))) {
@@ -93,7 +95,7 @@ if (file.exists(cov_file)) {
 
 needs_update <- function(pkg) {
     cachefile <- file.path(gitcachedir, pkg)
-    if(!file.exists(cachefile))
+    if ( !file.exists(cachefile) || is.na(gitlog[[pkg]]) )
         return(TRUE)
     gitlog[[pkg]] != readLines(cachefile, warn=FALSE)
 }
