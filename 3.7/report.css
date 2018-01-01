@@ -71,6 +71,7 @@ TABLE.motd {
     border: solid red 4px;
     background: white;
     color: red;
+    text-align: center;
 }
 
 

@@ -54,6 +54,7 @@ export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
 export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
+#export BBS_REPORT_MOTD="Happy new year to all Bioconductor developers!"
 
 # Needed only on the node performing stage9 (BBS-notify.py)
 
