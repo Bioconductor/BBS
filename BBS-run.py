@@ -568,7 +568,7 @@ if __name__ == "__main__":
         BBSvars.Node_rdir.RemakeMe(True)
     ticket = []
     ## STAGE2: preinstall dependencies
-    if arg1 in ["", "no-bin"] or arg1 == "STAGE2":
+    if arg1 in ["", "no-bin"] or "STAGE2" in sys.argv:
         started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE2()
@@ -576,7 +576,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE2', started_at, ended_at, dt))
     ## STAGE3: build source packages
-    if arg1 in ["", "no-bin"] or arg1 == "STAGE3":
+    if arg1 in ["", "no-bin"] or "STAGE3" in sys.argv:
         started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE3()
@@ -584,7 +584,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE3', started_at, ended_at, dt))
     ## STAGE4: check source packages
-    if arg1 in ["", "no-bin"] or arg1 == "STAGE4":
+    if arg1 in ["", "no-bin"] or "STAGE4" in sys.argv:
         started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE4()
@@ -592,7 +592,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE4', started_at, ended_at, dt))
     ## STAGE5: build bin packages
-    if arg1 == "" or arg1 == "STAGE5":
+    if arg1 == "" or "STAGE5" in sys.argv:
         started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         STAGE5()
