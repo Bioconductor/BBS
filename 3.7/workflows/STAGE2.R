@@ -1,5 +1,5 @@
 updateNonTargetPkgs <- function()
 {
-    ## No update for the data-experiment builds
+    ## No update for the workflows builds
 }
 
