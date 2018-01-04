@@ -143,11 +143,13 @@ nodes_rdir = Central_rdir.subdir('nodes')
 subbuilds = getenv('BBS_SUBBUILDS', False, "bioc")
 
 if subbuilds == "data-experiment":
-    default_r_cmd_timeout = "4800.0"  # 80 min
+    default_r_cmd_timeout = "4800.0"   # 80 min
+elif subbuilds == "workflows":
+    default_r_cmd_timeout = "7200.0"   # 2 h
 elif subbuilds == "bioc-longtests":
     default_r_cmd_timeout = "21600.0"  # 6 h
 else:
-    default_r_cmd_timeout = "2400.0"  # 40 min
+    default_r_cmd_timeout = "2400.0"   # 40 min
 r_cmd_timeout = float(getenv('BBS_R_CMD_TIMEOUT', False, default_r_cmd_timeout))
 
 meat_index_file = 'meat-index.txt'
