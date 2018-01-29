@@ -1502,7 +1502,7 @@ def make_all_NodeReports(allpkgs):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs):
-    if BBScorevars.subbuilds in ["bioc", "data-experiment", "bioc-longtests"]:
+    if BBScorevars.subbuilds != "cran":
         write_BioC_mainpage_top_asHTML(out)
     else: # "cran" subbuilds
         write_CRAN_mainpage_top_asHTML(out)
