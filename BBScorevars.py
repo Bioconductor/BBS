@@ -153,3 +153,5 @@ else:
 r_cmd_timeout = float(getenv('BBS_R_CMD_TIMEOUT', False, default_r_cmd_timeout))
 
 meat_index_file = 'meat-index.txt'
+
+is_workflow = subbuilds == "workflows"
