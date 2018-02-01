@@ -2,4 +2,4 @@
 
 . ./config.sh
 
-$BBS_HOME/BBS-run.py STAGE2 STAGE3
+$BBS_HOME/BBS-run.py STAGE2 STAGE3 BUILDVIG

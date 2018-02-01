@@ -347,7 +347,7 @@ def getSTAGE4cmd(srcpkg_path):
     ## already, using the install log from step 1):
     instpkg_dir = "%s.buildbin-libdir" % pkg
     middle = 'CMD check --library=%s --install="check:%s" --force-multiarch' % \
-             (instpkg_dir, instout_file)
+              (instpkg_dir, instout_file)
     cmd2 = '%s %s %s %s %s' % (cmd, BBSvars.r_cmd, middle, common_opts, srcpkg_path)
     ## Step 3: Move installed stuff to <pkg>.Rcheck/
     #cmd3 = 'mv %s/* %s.Rcheck/' % (instpkg_dir, pkg)
@@ -359,6 +359,12 @@ def getSTAGE4cmd(srcpkg_path):
 def getSTAGE5cmd(srcpkg_path):
     return _getSTAGE5cmd(srcpkg_path, BBSvars.STAGE5_mode, 5)
 
+def getBUILDVIGcmd(rmd_file):
+    r_cmd = '%s -q -e ' % BBSvars.r_cmd
+    cmd1 = r_cmd + '\'rmarkdown::render("%s", output_format="BiocStyle:::html_fragment")\'' % rmd_file
+    r_file = bbs.fileutils.renameFileExt(rmd_file, 'R')
+    cmd2 = r_cmd + '\'knitr::purl("%s", "%s")\'' % (rmd_file , r_file)
+    return '%s && %s' % (cmd1, cmd2)
 
 ##############################################################################
 ### Output files produced by 'R CMD build/check'.
@@ -593,6 +599,51 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
                 self.summary.status = 'OK'
             else:
                 self.summary.status = 'WARNINGS'
+            cumul_inc = 1
+        else:
+            self.summary.status = 'ERROR'
+            cumul_inc = 0
+        self._MakeSummary()
+        return cumul_inc
+    def AfterTimeout(self, maxtime_per_job):
+        self.summary.retcode = None
+        self.summary.status = 'TIMEOUT'
+        self._MakeSummary()
+
+class BuildVig_Job(bbs.jobs.QueuedJob):
+    def __init__(self, pkg, version, cmd, pkgdumps, rdir, vigs):
+        ## Required fields
+        self._name = pkg
+        self._cmd = cmd
+        self._output_file = pkgdumps.out_file
+        ## Additional fields
+        self.pkg = pkg
+        self.version = version
+        self.pkgdumps = pkgdumps
+        self.rdir = rdir
+        self.vigs = vigs
+        self.summary = Summary(pkg, version, cmd)
+    def _MakeSummary(self):
+        self.summary.startedat = self._startedat
+        self.summary.endedat = self._endedat
+        self.summary.dt = self._dt
+        self.summary.Write(self.pkgdumps.summary_file)
+        self.pkgdumps.Push(self.rdir)
+    def AfterRun(self):
+        # Avoid leaving rogue processes messing around on the build machine.
+        # self._proc.pid should be already dead but some of its children might
+        # still be alive. They need to die too. bbs.jobs.killProc() should work
+        # on a non-existing pid and it should be able to kill all the processes
+        # that were started directly or indirectly by pid.
+        # This needs to happen before calling self._MakeSummary() because
+        # these rogue processes can break the rsync command used by
+        # self.pkgdumps.Push(self.rdir) above by holding on some of the files
+        # that need to be pushed to the central build node.
+        bbs.jobs.killProc(self._proc.pid)
+        prod_files = bbs.fileutils.getVigProdFiles(self.vigs)
+        self.summary.retcode = self._retcode
+        if all(map(os.path.exists, prod_files)) and self._retcode == 0:
+            self.summary.status = 'OK'
             cumul_inc = 1
         else:
             self.summary.status = 'ERROR'

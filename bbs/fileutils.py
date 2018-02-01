@@ -70,6 +70,12 @@ def remake_dir(path):
     os.mkdir(path)
     return
 
+# create a fresh working copy of a directory
+def copy_dir(src, dst):
+   nuke_tree(dst)
+   shutil.copytree(src, dst)
+   return
+
 # Return list of regular files in dir matching regex.
 # Follows symlinks (if they are supported).
 def getMatchingFiles(dir=".", regex="", full_names=False):
@@ -98,6 +104,27 @@ def listSrcPkgFiles(dir="."):
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
     return getMatchingFiles(dir, srcpkg_regex)
 
+
+# Return a list of vignette product files
+def toList(arg):
+    if not isinstance(arg, (list, tuple)):
+        arg = [arg]
+    return arg
+
+def renameFileExt(files, exts):
+    files = toList(files)
+    exts = toList(exts)
+    res = []
+    for file in files:
+        base = os.path.splitext(file)[0]
+        for ext in exts:
+            res.append(base+'.'+ext)
+    if len(res) == 1:
+        res = res[0]
+    return res
+
+def getVigProdFiles(rmd_files):
+    return renameFileExt(rmd_files, ['html', 'R'])
 
 if __name__ == "__main__":
     sys.exit("ERROR: this Python module can't be used as a standalone script yet")

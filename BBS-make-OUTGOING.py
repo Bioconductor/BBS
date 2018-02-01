@@ -38,8 +38,17 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     dcf.close()
     if status != 'OK':
         return True
+    ## Extract Status from BUILDVIG summary (workflows only)
     if BBScorevars.is_workflow:
-        return False
+        buildvig_path = os.path.join(node_path, 'buildvig')
+        summary_file = os.path.join(buildvig_path, summary_file0 % 'buildvig')
+        try:
+            dcf = open(summary_file, 'r')
+        except IOError:
+            return True
+        status = bbs.parse.getNextDcfVal(dcf, 'Status')
+        dcf.close()
+        return status != 'OK'
     ## Extract Status from CHECK summary
     checksrc_path = os.path.join(node_path, 'checksrc')
     summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
