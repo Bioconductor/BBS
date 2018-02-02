@@ -601,8 +601,13 @@ def BUILDVIG():
     BBSvars.buildvig_rdir.RemakeMe(True)
     print "BBS> [BUILDVIG] cd BBS_MEAT_PATH"
     os.chdir(BBSvars.meat_path)
-    print "BBS> [BUILDVIG] Get list of package source directories found in current dir"
+    print "BBS> [BUILDVIG] Get list of package source directories for which srcpkg files exist"
     pkgdir_paths = extractTargetPkgListFromMeatIndex()
+    pkgdirs = map(bbs.parse.getPkgFromDir, pkgdir_paths)
+    pkgsrcs = map(bbs.parse.getPkgFromPath, bbs.fileutils.listSrcPkgFiles())
+    for pkg in pkgdirs:
+        if pkg not in pkgsrcs:
+	    pkgdir_paths.pop(pkgdirs.index(pkg))
     BUILDVIG_loop(pkgdir_paths, BBSvars.nb_cpu)
     print "BBS> [BUILDVIG] DONE at %s." % time.asctime()
     return
