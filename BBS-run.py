@@ -603,11 +603,9 @@ def BUILDVIG():
     os.chdir(BBSvars.meat_path)
     print "BBS> [BUILDVIG] Get list of package source directories for which srcpkg files exist"
     pkgdir_paths = extractTargetPkgListFromMeatIndex()
-    pkgdirs = map(bbs.parse.getPkgFromDir, pkgdir_paths)
-    pkgsrcs = map(bbs.parse.getPkgFromPath, bbs.fileutils.listSrcPkgFiles())
-    for pkg in pkgdirs:
-        if pkg not in pkgsrcs:
-	    pkgdir_paths.pop(pkgdirs.index(pkg))
+    dirs = map(bbs.parse.getPkgFromDir, pkgdir_paths)
+    tars = map(bbs.parse.getPkgFromPath, bbs.fileutils.listSrcPkgFiles())
+    pkgdir_paths = [pkgdir_paths[dirs.index(pkg)] for pkg in dirs if pkg in tars]
     BUILDVIG_loop(pkgdir_paths, BBSvars.nb_cpu)
     print "BBS> [BUILDVIG] DONE at %s." % time.asctime()
     return
