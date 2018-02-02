@@ -41,7 +41,10 @@ def make_STATUS_DB(allpkgs):
             out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            stagecmd = 'checksrc'
+            if BBScorevars.subbuilds == "workflows":
+                stagecmd = 'buildvig'
+            else:
+                stagecmd = 'checksrc'
             if skipped_is_OK:
                 status = "skipped"
             else:
