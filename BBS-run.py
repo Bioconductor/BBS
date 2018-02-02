@@ -362,6 +362,13 @@ def STAGE2():
     pkg_deps_list = make_STAGE2_pkg_deps_list(target_pkgs)
     installed_pkgs = get_installed_pkgs()
 
+    # force-install workflow packages in order to be able to rebuild their vignettes 
+    if BBScorevars.subbuilds == "workflows":
+        deps = pkg_deps_list.keys()
+        for pkg in target_pkgs:
+            if pkg not in deps:
+                pkg_deps_list[pkg] = []
+
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] cd BBS_MEAT_PATH"
     os.chdir(meat_path)
