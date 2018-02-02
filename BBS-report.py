@@ -45,7 +45,8 @@ def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
         STATUS_SUMMARY[node_id] = { 'install':  (0, 0, 0, 0, 0), \
                                     'buildsrc': (0, 0, 0, 0, 0), \
                                     'checksrc': (0, 0, 0, 0, 0), \
-                                    'buildbin': (0, 0, 0, 0, 0) }
+                                    'buildbin': (0, 0, 0, 0, 0), \
+                                    'buildvig': (0, 0, 0, 0, 0) }
     x = STATUS_SUMMARY[node_id][stagecmd]
     x0 = x[0]
     x1 = x[1]
@@ -99,15 +100,21 @@ def make_STATUS_SUMMARY(allpkgs):
 ### HTMLization
 ##############################################################################
 
+def numberOfCols(subbuild):
+    if subbuild == "bioc-longtests":
+       n = 1
+    elif subbuild == "workflows":
+       n = 2
+    else:
+       n = 5
+    return n
+
 def writeThinRowSeparator_asTR(out, tr_class=None):
     if tr_class:
         tr_class = ' class="%s"' % tr_class
     else:
         tr_class = '';
-    if BBScorevars.subbuilds == "bioc-longtests":
-        colspan = 4
-    else:
-        colspan = 8
+    colspan = numberOfCols(BBScorevars.subbuilds) + 3
     out.write('<TR%s><TD COLSPAN="%s" style="height: 4pt; background: inherit;"></TD></TR>\n' % (tr_class, colspan))
     return
 
@@ -116,7 +123,8 @@ stagecmd2label = {
     'install':  "INSTALL",
     'buildsrc': "BUILD",
     'checksrc': "CHECK",
-    'buildbin': "BUILD BIN"
+    'buildbin': "BUILD BIN",
+    'buildvig': "BUILD VIG"
 }
 
 def pkgname_to_HTML(pkg):
@@ -124,8 +132,11 @@ def pkgname_to_HTML(pkg):
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
         version_string = BBSreportutils.bioc_version
-        if BBScorevars.subbuilds == "data-experiment":
+        subbuild = BBScorevars.subbuilds
+        if subbuild == "data-experiment":
             repo = "data/experiment"
+        elif subbuild == "workflows":
+            repo = "workflows"
         else:
             repo = "bioc"
         url = "/packages/%s/%s/html/%s.html" % (version_string, repo, pkg)
@@ -295,6 +306,13 @@ def write_pkg_5stagelabels_as5TDs(out, extra_style=""):
     out.write('<TD style="width:11px;"></TD>')
     return
 
+### Produces 2 TDs (1 of the same width + 1 narrow one on the right)
+def write_pkg_2stagelabels_as2TDs(out, extra_style=""):
+    for stagecmd in ["buildsrc"]:
+        write_stagelabel_asTD(out, stagecmd, extra_style)
+    out.write('<TD style="width:11px;"></TD>')
+    return
+
 def write_pkg_propagation_status_asTD(out, pkg, node):
     status = BBSreportutils.get_propagation_status_from_db(pkg, node.hostname)
     if (status is None):
@@ -331,6 +349,20 @@ def write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref, style=None):
         out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
         out.write('</I></TD>')
     return
+
+### Produces 2 TDs
+def write_pkg_2statuses_as2TDs(out, pkg, node, leafreport_ref, style=None):
+    if BBSreportutils.is_supported(pkg, node):
+        write_pkg_status_asTD(out, pkg, node, 'buildsrc', leafreport_ref, style)
+        write_pkg_propagation_status_asTD(out, pkg, node)
+    else:
+        out.write('<TD COLSPAN="2" class="node %s"><I>' % node.hostname.replace(".", "_"))
+        sep = '...'
+        NOT_SUPPORTED_string = sep + 3 * ('NOT SUPPORTED' + sep)
+        out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
+        out.write('</I></TD>') 
+    return
+
 
 ### Used in report for longtests subbuilds
 def write_pkg_check_status_asTD(out, pkg, node, leafreport_ref, style=None):
@@ -371,10 +403,7 @@ def write_pkg_index_as2fullTRs(out, current_letter):
               (current_letter, current_letter))
     out.write('</TD></TR></TABLE>')
     out.write('</TD>')
-    if BBScorevars.subbuilds == "bioc-longtests":
-        colspan = 3
-    else:
-        colspan = 7
+    colspan = numberOfCols(BBScorevars.subbuilds) + 2
     out.write('<TD COLSPAN="%s" style="background: inherit;">' % colspan)
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
@@ -414,8 +443,11 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         extra_style = ""
     else:
         extra_style = "; width: 96px"
-    if BBScorevars.subbuilds == "bioc-longtests":
+    subbuild = BBScorevars.subbuilds
+    if subbuild == "bioc-longtests":
         write_stagelabel_asTD(out, "checksrc", extra_style)
+    elif subbuild == "workflows":
+        write_pkg_2stagelabels_as2TDs(out, extra_style)
     else:
         write_pkg_5stagelabels_as5TDs(out, extra_style)
     out.write('</TR>\n')
@@ -448,8 +480,11 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             is_first = False
         write_node_spec_asTD(out, node, '<I>%s</I>' % node.id, leafreport_ref)
         write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node), leafreport_ref)
-        if BBScorevars.subbuilds == "bioc-longtests":
+        subbuild = BBScorevars.subbuilds
+        if subbuild == "bioc-longtests":
             write_pkg_check_status_asTD(out, pkg, node, leafreport_ref)
+        elif subbuild == "workflows":
+            write_pkg_2statuses_as2TDs(out, pkg, node, leafreport_ref)
         else:
             #if leafreport_ref == None:
             #    style = None
@@ -480,8 +515,11 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TR class="summary header">')
     out.write('<TD COLSPAN="2" style="background: inherit;">SUMMARY</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
-    if BBScorevars.subbuilds == "bioc-longtests":
+    subbuild = BBScorevars.subbuilds
+    if subbuild == "bioc-longtests":
         write_stagelabel_asTD(out, "checksrc")
+    elif subbuild == "workflows":
+        write_pkg_2stagelabels_as2TDs(out)
     else:
         write_pkg_5stagelabels_as5TDs(out)
     out.write('</TR>\n')
@@ -499,8 +537,12 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
                 node_id_html = '[%s]' % node_id_html
         out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
-        if BBScorevars.subbuilds == "bioc-longtests":
+        subbuild = BBScorevars.subbuilds
+        if subbuild == "bioc-longtests":
             write_summary_TD(out, node, 'checksrc')
+        elif subbuild == "workflows":
+            write_summary_TD(out, node, 'buildsrc')
+            out.write('<TD style="width:11px;"></TD>')
         else:
             write_summary_TD(out, node, 'install')
             write_summary_TD(out, node, 'buildsrc')
@@ -548,8 +590,11 @@ def write_compactreport_header_asfullTR(out):
     out.write('<TD style="width: 50px;"></TD>')
     out.write('<TD style="text-align: left; padding-left: 12px;">Package</TD>')
     out.write('<TD style="text-align: left">Maintainer</TD>')
-    if BBScorevars.subbuilds == "bioc-longtests":
+    subbuild = BBScorevars.subbuilds
+    if subbuild == "bioc-longtests":
         write_stagelabel_asTD(out, "checksrc")
+    elif subbuild == "workflows":
+        write_pkg_2stagelabels_as2TDs(out)
     else:
         write_pkg_5stagelabels_as5TDs(out)
     out.write('</TR>\n')
@@ -578,8 +623,11 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TD>')
     maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
     out.write('<TD style="text-align: left">%s</TD>' % maintainer)
-    if BBScorevars.subbuilds == "bioc-longtests":
+    subbuild = BBScorevars.subbuilds
+    if subbuild == "bioc-longtests":
         write_pkg_check_status_asTD(out, pkg, node, leafreport_ref)
+    elif subbuild == "workflows":
+        write_pkg_2statuses_as2TDs(out, pkg, node, leafreport_ref)
     else:
         write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref)
     out.write('</TR>\n')
