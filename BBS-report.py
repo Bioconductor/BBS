@@ -105,10 +105,7 @@ def make_STATUS_SUMMARY(allpkgs):
 
 ### Does subbuild report contain package propagation status led
 def showPropagationStatus(subbuild):
-    if subbuild == "bioc-longtests":
-        return False
-    else:
-        return True
+    return subbuild != "bioc-longtests"
 
 ### Stage commands run in subbuilds
 def stageCmds(subbuild):
@@ -1438,7 +1435,7 @@ def write_glyph_and_propagation_LED_table(out):
     out.write('<TD>\n')
     write_glyph_table(out)
     out.write('</TD>')
-    if BBScorevars.subbuilds != "bioc-longtests":
+    if showPropagationStatus(BBScorevars.subbuilds):
         out.write('<TD style="padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
