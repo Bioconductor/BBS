@@ -570,7 +570,7 @@ def BUILDVIG_loop(pkgdir_paths, nb_cpu):
             print "BBS>   Can't read DESCRIPTION file!"
         else:
             #create a working copy of the package vignettes dir
-            vig_dir = pkg + '.vignettes'
+            vig_dir = os.path.join(".buildvig", pkg)
             bbs.fileutils.copy_dir(os.path.join(pkgdir_path, "vignettes"), vig_dir)
             vig_regex = '^.*\\.[Rr]md$'
             vig_files = bbs.fileutils.getMatchingFiles(vig_dir, vig_regex, True)
