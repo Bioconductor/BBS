@@ -107,7 +107,7 @@ def numberOfCols(subbuild):
     if subbuild == "bioc-longtests":
        n = 1
     elif subbuild == "workflows":
-       n = 3
+       n = 4
     else:
        n = 5
     return n
@@ -309,9 +309,9 @@ def write_pkg_5stagelabels_as5TDs(out, extra_style=""):
     out.write('<TD style="width:11px;"></TD>')
     return
 
-### Produces 3 TDs (2 of the same width + 1 narrow one on the right)
-def write_pkg_3stagelabels_as3TDs(out, extra_style=""):
-    for stagecmd in ["buildsrc", "buildvig"]:
+### Produces 4 TDs (3 of the same width + 1 narrow one on the right)
+def write_pkg_4stagelabels_as4TDs(out, extra_style=""):
+    for stagecmd in ["install", "buildsrc", "buildvig"]:
         write_stagelabel_asTD(out, stagecmd, extra_style)
     out.write('<TD style="width:11px;"></TD>')
     return
@@ -353,14 +353,15 @@ def write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref, style=None):
         out.write('</I></TD>')
     return
 
-### Produces 3 TDs
-def write_pkg_3statuses_as3TDs(out, pkg, node, leafreport_ref, style=None):
+### Produces 4 TDs
+def write_pkg_4statuses_as4TDs(out, pkg, node, leafreport_ref, style=None):
     if BBSreportutils.is_supported(pkg, node):
+        write_pkg_status_asTD(out, pkg, node, 'install', leafreport_ref, style)
         write_pkg_status_asTD(out, pkg, node, 'buildsrc', leafreport_ref, style)
         write_pkg_status_asTD(out, pkg, node, 'buildvig', leafreport_ref, style)
         write_pkg_propagation_status_asTD(out, pkg, node)
     else:
-        out.write('<TD COLSPAN="3" class="node %s"><I>' % node.hostname.replace(".", "_"))
+        out.write('<TD COLSPAN="4" class="node %s"><I>' % node.hostname.replace(".", "_"))
         sep = '...'
         NOT_SUPPORTED_string = sep + 3 * ('NOT SUPPORTED' + sep)
         out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
@@ -451,7 +452,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     if subbuild == "bioc-longtests":
         write_stagelabel_asTD(out, "checksrc", extra_style)
     elif subbuild == "workflows":
-        write_pkg_3stagelabels_as3TDs(out, extra_style)
+        write_pkg_4stagelabels_as4TDs(out, extra_style)
     else:
         write_pkg_5stagelabels_as5TDs(out, extra_style)
     out.write('</TR>\n')
@@ -488,7 +489,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         if subbuild == "bioc-longtests":
             write_pkg_check_status_asTD(out, pkg, node, leafreport_ref)
         elif subbuild == "workflows":
-            write_pkg_3statuses_as3TDs(out, pkg, node, leafreport_ref)
+            write_pkg_4statuses_as4TDs(out, pkg, node, leafreport_ref)
         else:
             #if leafreport_ref == None:
             #    style = None
@@ -523,7 +524,7 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     if subbuild == "bioc-longtests":
         write_stagelabel_asTD(out, "checksrc")
     elif subbuild == "workflows":
-        write_pkg_3stagelabels_as3TDs(out)
+        write_pkg_4stagelabels_as4TDs(out)
     else:
         write_pkg_5stagelabels_as5TDs(out)
     out.write('</TR>\n')
@@ -545,6 +546,7 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
         if subbuild == "bioc-longtests":
             write_summary_TD(out, node, 'checksrc')
         elif subbuild == "workflows":
+            write_summary_TD(out, node, 'install')
             write_summary_TD(out, node, 'buildsrc')
             write_summary_TD(out, node, 'buildvig')
             out.write('<TD style="width:11px;"></TD>')
@@ -599,7 +601,7 @@ def write_compactreport_header_asfullTR(out):
     if subbuild == "bioc-longtests":
         write_stagelabel_asTD(out, "checksrc")
     elif subbuild == "workflows":
-        write_pkg_3stagelabels_as3TDs(out)
+        write_pkg_4stagelabels_as4TDs(out)
     else:
         write_pkg_5stagelabels_as5TDs(out)
     out.write('</TR>\n')
@@ -632,7 +634,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     if subbuild == "bioc-longtests":
         write_pkg_check_status_asTD(out, pkg, node, leafreport_ref)
     elif subbuild == "workflows":
-        write_pkg_3statuses_as3TDs(out, pkg, node, leafreport_ref)
+        write_pkg_4statuses_as4TDs(out, pkg, node, leafreport_ref)
     else:
         write_pkg_5statuses_as5TDs(out, pkg, node, leafreport_ref)
     out.write('</TR>\n')
