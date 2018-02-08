@@ -1287,6 +1287,31 @@ def write_glyph_table(out):
         out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
                   (checkbox_id, checkbox_id))
         return
+
+    def write_glyph(id, msg, checkbox = False, first = False):
+        style = "" 
+        if first:
+           style += " width: 75px;"
+        out.write('<TR>\n') 
+        out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
+                  (style, status_asSPAN(id)))
+        if checkbox:
+            out.write('<TD>')
+            out.write(msg)
+            out.write('</TD>\n')
+            out.write('<TD style="text-align: right; vertical-align: middle;">')
+            write_checkbox(id.lower())
+        else:
+            out.write('<TD COLSPAN="3">')
+            out.write(msg)
+        out.write('</TD>\n')
+        if first:
+            out.write('<TD ROWSPAN="6" style="width: 85px; text-align: left; font-style: italic;">\n')
+            out.write('Use the check boxes to show only packages with the selected status types.')
+            out.write('</TD>\n')
+        out.write('</TR>\n')
+        return 
+ 
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
 
@@ -1297,104 +1322,58 @@ def write_glyph_table(out):
     out.write('</TR>\n')
 
     ## "TIMEOUT" glyph
-    out.write('<TR>\n')
-    out.write('<TD style="text-align: right; width: 75px;">%s</TD>\n' % \
-              status_asSPAN('TIMEOUT'))
-    out.write('<TD>')
+    msg = ""
     if BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<I>CHECK</I>')
+        msg += '<I>CHECK</I>'
     else:
-        out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or')
-        out.write(' <I>BUILD BIN</I>')
+        msg += '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or'
+        msg += ' <I>BUILD BIN</I>'
     timeout = int(BBScorevars.r_cmd_timeout / 60.0)
-    out.write(' of package took more than %d minutes' % timeout)
-    out.write('</TD>\n')
-    out.write('<TD style="text-align: right; vertical-align: middle;">')
-    write_checkbox("timeout")
-    out.write('</TD>\n')
-    out.write('<TD ROWSPAN="6" style="width: 85px; text-align: left; font-style: italic;">\n')
-    out.write('Use the check boxes to show only packages ')
-    out.write('with the selected status types.')
-    out.write('</TD>\n')
-    out.write('</TR>\n')
+    msg += ' of package took more than %d minutes' % timeout
+    write_glyph("TIMEOUT", msg, True, True)
 
     ## "ERROR" glyph
-    out.write('<TR>\n')
-    out.write('<TD style="text-align: right;">%s</TD>\n' % \
-              status_asSPAN('ERROR'))
-    out.write('<TD>')
+    msg = ""
     if BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<I>CHECK</I>')
-        out.write(' of package produced errors')
+        msg += '<I>CHECK</I>'
+        msg += ' of package produced errors'
     else:
-        out.write('<I>INSTALL</I>, <I>BUILD</I>, or <I>BUILD BIN</I>')
-        out.write(' of package failed,')
-        out.write(' or <I>CHECK</I> produced errors')
-    out.write('</TD>\n')
-    out.write('<TD style="text-align: right; vertical-align: middle;">')
-    write_checkbox("error")
-    out.write('</TD>\n')
-    out.write('</TR>\n')
+        msg += '<I>INSTALL</I>, <I>BUILD</I>, or <I>BUILD BIN</I>'
+        msg += ' of package failed,'
+        msg += ' or <I>CHECK</I> produced errors'
+    write_glyph("ERROR", msg, True)
 
     ## "WARNINGS" glyph
-    out.write('<TR>\n')
-    out.write('<TD style="text-align: right;">%s</TD>\n' % \
-              status_asSPAN('WARNINGS'))
-    out.write('<TD><I>CHECK</I> of package produced warnings</TD>\n')
-    out.write('<TD style="text-align: right; vertical-align: middle;">')
-    write_checkbox("warnings")
-    out.write('</TD>\n')
-    out.write('</TR>\n')
+    msg = '<I>CHECK</I> of package produced warnings'
+    write_glyph("WARNINGS", msg, True)
 
     ## "OK" glyph
-    out.write('<TR>\n')
-    out.write('<TD style="text-align: right;">%s</TD>\n' % status_asSPAN('OK'))
-    out.write('<TD>')
+    msg = ""
     if BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<I>CHECK</I>')
+        msg += '<I>CHECK</I>'
     else:
-        out.write('<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or')
-        out.write(' <I>BUILD BIN</I>')
-    out.write(' of package was OK')
-    out.write('</TD>\n')
-    out.write('<TD style="text-align: right; vertical-align: middle;">')
-    write_checkbox("ok")
-    out.write('</TD>\n')
-    out.write('</TR>\n')
+        msg += '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or'
+        msg += ' <I>BUILD BIN</I>'
+    msg += ' of package was OK'
+    write_glyph("OK", msg, True)
 
     ## "NotNeeded" glyph
     if BBScorevars.subbuilds != "bioc-longtests":
-        out.write('<TR>\n')
-        out.write('<TD style="text-align: right;">%s</TD>\n' % \
-                  status_asSPAN('NotNeeded'))
-        out.write('<TD COLSPAN="3"><I>INSTALL</I> of package was not needed')
-        out.write(' (click on glyph to see why)</TD>\n')
-        out.write('</TR>\n')
+        msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
+        write_glyph("NotNeeded", msg)
 
     ## "skipped" glyph
-    if BBScorevars.subbuilds != "bioc-longtests":
-        out.write('<TR>\n')
-        out.write('<TD style="text-align: right; vertical-align: top;">%s</TD>\n' % \
-                  status_asSPAN('skipped'))
-        out.write('<TD COLSPAN="3">')
-        out.write('<I>CHECK</I> or <I>BUILD BIN</I> of package')
-        out.write(' was skipped because the <I>BUILD</I> step failed\n')
-        out.write('</TD>\n')
-        out.write('</TR>\n')
+        msg = '<I>CHECK</I> or <I>BUILD BIN</I> of package was skipped because the <I>BUILD</I> step failed\n'
+        write_glyph("skipped", msg)
 
     ## "NA" glyph
-    out.write('<TR>\n')
-    out.write('<TD style="text-align: right; vertical-align: top;">%s</TD>\n' % \
-              status_asSPAN('NA'))
-    out.write('<TD COLSPAN="3">')
+    msg = ""
     if BBScorevars.subbuilds == "bioc-longtests":
-        out.write('<I>CHECK</I>')
+        msg += '<I>CHECK</I>'
     else:
-        out.write('<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>')
-    out.write(' result is not available because of an anomaly')
-    out.write(' in the Build System\n')
-    out.write('</TD>\n')
-    out.write('</TR>\n')
+        msg += '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
+    msg += ' result is not available because of an anomaly in the Build System\n'
+    write_glyph("NA", msg)
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="4" style="font-style: italic; border-top: solid black 1px;">')
