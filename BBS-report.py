@@ -1302,15 +1302,17 @@ def write_glyph_table(out):
             out.write('<TD style="text-align: right; vertical-align: middle;">')
             write_checkbox(id.lower())
         else:
-            out.write('<TD COLSPAN="3">')
+            out.write('<TD COLSPAN="2">')
             out.write(msg)
         out.write('</TD>\n')
         if first:
-            out.write('<TD ROWSPAN="6" style="width: 85px; text-align: left; font-style: italic;">\n')
+            out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
             out.write('Use the check boxes to show only packages with the selected status types.')
             out.write('</TD>\n')
         out.write('</TR>\n')
         return 
+
+    subbuild = BBScorevars.subbuilds
  
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
@@ -1322,56 +1324,62 @@ def write_glyph_table(out):
     out.write('</TR>\n')
 
     ## "TIMEOUT" glyph
-    msg = ""
-    if BBScorevars.subbuilds == "bioc-longtests":
-        msg += '<I>CHECK</I>'
+    if subbuild == "bioc-longtests":
+        msg = '<I>CHECK</I>'
+    elif subbuild == "workflows":
+        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD VIG</I>'
     else:
-        msg += '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or'
-        msg += ' <I>BUILD BIN</I>'
+        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     timeout = int(BBScorevars.r_cmd_timeout / 60.0)
     msg += ' of package took more than %d minutes' % timeout
     write_glyph("TIMEOUT", msg, True, True)
 
     ## "ERROR" glyph
-    msg = ""
-    if BBScorevars.subbuilds == "bioc-longtests":
-        msg += '<I>CHECK</I>'
-        msg += ' of package produced errors'
+    if subbuild == "bioc-longtests":
+        msg = '<I>CHECK</I> of package produced errors'
+    elif subbuild == "workflows":
+        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD VIG</I> of package failed'
     else:
-        msg += '<I>INSTALL</I>, <I>BUILD</I>, or <I>BUILD BIN</I>'
-        msg += ' of package failed,'
+        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
         msg += ' or <I>CHECK</I> produced errors'
     write_glyph("ERROR", msg, True)
 
     ## "WARNINGS" glyph
-    msg = '<I>CHECK</I> of package produced warnings'
-    write_glyph("WARNINGS", msg, True)
+    if subbuild != "workflows":
+        msg = '<I>CHECK</I> of package produced warnings'
+        write_glyph("WARNINGS", msg, True)
 
     ## "OK" glyph
-    msg = ""
-    if BBScorevars.subbuilds == "bioc-longtests":
-        msg += '<I>CHECK</I>'
+    if subbuild == "bioc-longtests":
+        msg = '<I>CHECK</I>'
+    elif subbuild == "workflows":
+        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD VIG</I>'
     else:
-        msg += '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or'
-        msg += ' <I>BUILD BIN</I>'
+        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     msg += ' of package was OK'
     write_glyph("OK", msg, True)
 
     ## "NotNeeded" glyph
-    if BBScorevars.subbuilds != "bioc-longtests":
-        msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
-        write_glyph("NotNeeded", msg)
+    if subbuild != "bioc-longtests":
+        if subbuild != "workflows":
+            msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
+            write_glyph("NotNeeded", msg)
 
     ## "skipped" glyph
-        msg = '<I>CHECK</I> or <I>BUILD BIN</I> of package was skipped because the <I>BUILD</I> step failed\n'
+        if subbuild == "workflows":
+            msg = '<I>BUILD VIG</I>'
+        else:  
+            msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
+        msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
         write_glyph("skipped", msg)
 
     ## "NA" glyph
-    msg = ""
-    if BBScorevars.subbuilds == "bioc-longtests":
-        msg += '<I>CHECK</I>'
+    if subbuild == "bioc-longtests":
+        msg = '<I>CHECK</I>'
+    elif subbuild == "workflows":
+        msg = '<I>BUILD</I> or <I>BUILD VIG</I>'
     else:
-        msg += '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
+        msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     msg += ' result is not available because of an anomaly in the Build System\n'
     write_glyph("NA", msg)
 
