@@ -318,18 +318,16 @@ recur <- function(pkg)
 # consulted to see what needs to be propagated (i.e. nothing if package
 # there has the same version.)
 createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
-    biocrepo=c("bioc", "data/experiment"), internalRepos)
+    biocrepo=c("bioc", "data/experiment", "workflows"), internalRepos)
 {
     if(missing(internalRepos))
         stop({"Must specify internalRepos!"})
     if(missing(biocrepo))
         stop("Must specify biocrepo!")
-    if (biocrepo == "bioc")
-    {
-        repo.name <- "BioCsoft"
-    } else {
-        repo.name <- "BioCexp"
-    }
+    repo.name <- switch(biocrepo,
+                        "bioc" = "BioCsoft",
+                        "data/experiment" = "BioCexp",
+                        "workflows" = "BioCworkflow")
     bioc.apdb <<- available.packages(
     contrib.url(biocinstallRepos()[repo.name]), type="source")
     bioc.apdf <<- as.data.frame(bioc.apdb, stringsAsFactors=FALSE)
@@ -338,7 +336,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
     # vv Not robust to new package types! vv
     pkgDirs <- c("source", "win.binary", "mac.binary",
         "mac.binary.mavericks", "mac.binary.el-capitan")
-    if (biocrepo=="data/experiment")
+    if (biocrepo!="bioc")
         pkgDirs <- "source"
     descFields <- c("Package", "Version", "Depends", "Imports", "LinkingTo",
         "License", "MD5sum", "NeedsCompilation")
@@ -394,9 +392,9 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
         pkgIndex <- file.path(online.contrib, "PACKAGES")
         if(file.exists(pkgIndex))
             unlink(pkgIndex)
-        download.file(paste0("http://bioconductor.org/packages/",
-            biocvers, "/", biocrepo, "/src/contrib/PACKAGES"),
-        destfile=pkgIndex)
+        tryCatch(download.file(paste0("http://bioconductor.org/packages/",
+                     biocvers, "/", biocrepo, "/src/contrib/PACKAGES"),
+                 destfile=pkgIndex), error = function (e) warning(e))
         biocrepo.url <<- paste0("file://", file.path(t, "biocrepo"))
         files <- dir(outgoingDir,
             pattern="\\.tar\\.gz$|\\.tgz$|\\.zip$")
@@ -449,7 +447,7 @@ getPkgVer <- function(pkg)
 
 doesReposNeedPkg <- function(pkg, type, outgoingDirPath, internalRepos)
 {
-    internalRepos <- sub("data-experiment", "data/experiment",
+    internalRepos <- sub("data-experiment", "data/experiment", "workflows",
         internalRepos, fixed=TRUE)
     contribdirs <- sprintf(
         c("src/contrib",

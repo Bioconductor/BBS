@@ -15,7 +15,7 @@ import bbs.fileutils
 import bbs.parse
 import bbs.jobs
 import BBScorevars
-
+import BBSvars
 
 def is_doing_buildbin(node_hostname):
     return BBScorevars.getNodeSpec(node_hostname, 'pkgType') != "source"
@@ -82,7 +82,11 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     fileext = BBScorevars.getNodeSpec(node_hostname, 'pkgFileExt')
     fresh_pkgs_subdir = os.path.join(BBScorevars.nodes_rdir.path, fresh_pkgs_subdir)
     manuals_dir = "../manuals"
-    if (source_node):
+    webvigs_dir = "../webvigs"
+    if BBScorevars.is_workflow:
+        print "BBS> [stage6] mkdir %s" % webvigs_dir
+        os.mkdir(webvigs_dir)    
+    elif (source_node):
         print "BBS> [stage6] mkdir %s" % manuals_dir
         os.mkdir(manuals_dir)
     print "BBS> [stage6] BEGIN copying outgoing packages from %s." % fresh_pkgs_subdir
@@ -105,7 +109,14 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
             shutil.copy(pkg_file, ".")
         else:
             print "BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pkg_file
-        if source_node:
+        if BBScorevars.is_workflow:
+             vig_dir = os.path.join(BBSvars.buildvig_rdir.path, pkg)
+             print "BBS> [stage6]   - copying %s web vignette to OUTGOING/webvigs folder ..." %  pkg
+             if os.path.exists(vig_dir):
+                 bbs.fileutils.copy_dir(vig_dir, os.path.join(webvigs_dir, pkg))
+             else:
+                print "BBS> [stage6]     SKIPPED (directory %s doesn't exist)" % vig_dir 
+        elif source_node:
             ## Get reference manual from pkg.Rcheck directory.
             pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \
                        (BBScorevars.getenv('BBS_WORK_TOPDIR'), pkg, pkg)
