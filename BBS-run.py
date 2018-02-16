@@ -663,7 +663,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE5', started_at, ended_at, dt))
     ## BUILDVIG: build HTML vignettes for inclusion on the BioC website
-    if arg1 in ["", "no-bin"] or "BUILDVIG" in sys.argv:
+    if "BUILDVIG" in sys.argv:
         started_at = bbs.jobs.currentDateString()
         t0 = time.time()
         BUILDVIG()
