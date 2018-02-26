@@ -447,7 +447,7 @@ getPkgVer <- function(pkg)
 
 doesReposNeedPkg <- function(pkg, type, outgoingDirPath, internalRepos)
 {
-    internalRepos <- sub("data-experiment", "data/experiment", "workflows",
+    internalRepos <- sub("data-experiment", "data/experiment",
         internalRepos, fixed=TRUE)
     contribdirs <- sprintf(
         c("src/contrib",
