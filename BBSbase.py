@@ -359,7 +359,7 @@ def getSTAGE4cmd(srcpkg_path):
 def getSTAGE5cmd(srcpkg_path):
     return _getSTAGE5cmd(srcpkg_path, BBSvars.STAGE5_mode, 5)
 
-def getBUILDVIGcmd(rmd_file):
+def getBUILDWEBVIGcmd(rmd_file):
     r_cmd = '%s -q -e ' % BBSvars.r_cmd
     cmd1 = r_cmd + '\'rmarkdown::render("%s", output_format="BiocStyle:::html_fragment")\'' % rmd_file
     r_file = bbs.fileutils.renameFileExt(rmd_file, 'R')
@@ -610,7 +610,7 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.summary.status = 'TIMEOUT'
         self._MakeSummary()
 
-class BuildVig_Job(bbs.jobs.QueuedJob):
+class BuildWebVig_Job(bbs.jobs.QueuedJob):
     def __init__(self, pkg, version, cmd, pkgdumps, rdir, vigs):
         ## Required fields
         self._name = pkg

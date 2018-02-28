@@ -42,7 +42,7 @@ def make_STATUS_DB(allpkgs):
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
             if BBScorevars.subbuilds == "workflows":
-                stagecmd = 'buildvig'
+                stagecmd = 'buildwebvig'
             else:
                 stagecmd = 'checksrc'
             if skipped_is_OK:

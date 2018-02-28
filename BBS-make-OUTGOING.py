@@ -38,10 +38,10 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     dcf.close()
     if status != 'OK':
         return True
-    ## Extract Status from BUILDVIG summary (workflows only)
+    ## Extract Status from BUILDWEBVIG summary (workflows only)
     if BBScorevars.is_workflow:
-        buildvig_path = os.path.join(node_path, 'buildvig')
-        summary_file = os.path.join(buildvig_path, summary_file0 % 'buildvig')
+        buildwebvig_path = os.path.join(node_path, 'buildwebvig')
+        summary_file = os.path.join(buildwebvig_path, summary_file0 % 'buildwebvig')
         try:
             dcf = open(summary_file, 'r')
         except IOError:
@@ -104,13 +104,13 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         ## Copy pkg from 'fresh_pkgs_subdir2'.
         pkg_file = "%s_%s.%s" % (pkg, version, fileext)
         pkg_file = os.path.join(fresh_pkgs_subdir, pkg_file)
-        print "BBS> [stage6]   - copying %s to OUTGOING folder..." % pkg_file
+        print "BBS> [stage6]   - copying %s to OUTGOING folder ..." % pkg_file
         if os.path.exists(pkg_file):
             shutil.copy(pkg_file, ".")
         else:
             print "BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pkg_file
         if BBScorevars.is_workflow:
-             vig_dir = os.path.join(BBSvars.buildvig_rdir.path, pkg)
+             vig_dir = os.path.join(BBSvars.buildwebvig_rdir.path, pkg)
              print "BBS> [stage6]   - copying %s web vignette to OUTGOING/webvigs folder ..." %  pkg
              if os.path.exists(vig_dir):
                  bbs.fileutils.copy_dir(vig_dir, os.path.join(webvigs_dir, pkg))

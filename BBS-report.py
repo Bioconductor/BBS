@@ -42,11 +42,11 @@ STATUS_SUMMARY = {}
 
 def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
     if not STATUS_SUMMARY.has_key(node_id):
-        STATUS_SUMMARY[node_id] = { 'install':  (0, 0, 0, 0, 0), \
-                                    'buildsrc': (0, 0, 0, 0, 0), \
-                                    'checksrc': (0, 0, 0, 0, 0), \
-                                    'buildbin': (0, 0, 0, 0, 0), \
-                                    'buildvig': (0, 0, 0, 0, 0) }
+        STATUS_SUMMARY[node_id] = { 'install':     (0, 0, 0, 0, 0), \
+                                    'buildsrc':    (0, 0, 0, 0, 0), \
+                                    'checksrc':    (0, 0, 0, 0, 0), \
+                                    'buildbin':    (0, 0, 0, 0, 0), \
+                                    'buildwebvig': (0, 0, 0, 0, 0) }
     x = STATUS_SUMMARY[node_id][stagecmd]
     x0 = x[0]
     x1 = x[1]
@@ -78,9 +78,9 @@ def make_STATUS_SUMMARY(allpkgs):
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
             ok_to_skip = status in ["TIMEOUT", "ERROR"]
-            # CHECK / BUILD VIG status
+            # CHECK / BUILD WEB VIG status
 	    if BBScorevars.subbuilds == "workflows":
-                stagecmd = 'buildvig'
+                stagecmd = 'buildwebvig'
 	    else:
                 stagecmd = 'checksrc'
             if ok_to_skip:
@@ -112,7 +112,7 @@ def stageCmds(subbuild):
     if subbuild == "bioc-longtests":
        return ['checksrc']
     elif subbuild == "workflows":
-       return ['install', 'buildsrc', 'buildvig']
+       return ['install', 'buildsrc', 'buildwebvig']
     else:
        return ['install', 'buildsrc', 'checksrc', 'buildbin']
 
@@ -135,7 +135,7 @@ stagecmd2label = {
     'buildsrc': "BUILD",
     'checksrc': "CHECK",
     'buildbin': "BUILD BIN",
-    'buildvig': "BUILD VIG"
+    'buildwebvig': "BUILD WEB VIG"
 }
 
 def pkgname_to_HTML(pkg):
@@ -1019,7 +1019,7 @@ def make_node_LeafReports(allpkgs, node):
             make_LeafReport(leafreport_ref, allpkgs)
         # CHECK leaf-report
         if BBScorevars.subbuilds == "workflows":
-            stagecmd = 'buildvig'
+            stagecmd = 'buildwebvig'
         else:
             stagecmd = 'checksrc'
         status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
@@ -1327,7 +1327,7 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg = '<I>CHECK</I>'
     elif subbuild == "workflows":
-        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD VIG</I>'
+        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I>'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     timeout = int(BBScorevars.r_cmd_timeout / 60.0)
@@ -1338,7 +1338,7 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg = '<I>CHECK</I> of package produced errors'
     elif subbuild == "workflows":
-        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD VIG</I> of package failed'
+        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I> of package failed'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
         msg += ' or <I>CHECK</I> produced errors'
@@ -1353,7 +1353,7 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg = '<I>CHECK</I>'
     elif subbuild == "workflows":
-        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD VIG</I>'
+        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I>'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     msg += ' of package was OK'
@@ -1367,7 +1367,7 @@ def write_glyph_table(out):
 
     ## "skipped" glyph
         if subbuild == "workflows":
-            msg = '<I>BUILD VIG</I>'
+            msg = '<I>BUILD WEB VIG</I>'
         else:  
             msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
         msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
@@ -1377,7 +1377,7 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg = '<I>CHECK</I>'
     elif subbuild == "workflows":
-        msg = '<I>BUILD</I> or <I>BUILD VIG</I>'
+        msg = '<I>BUILD</I> or <I>BUILD WEB VIG</I>'
     else:
         msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     msg += ' result is not available because of an anomaly in the Build System\n'
