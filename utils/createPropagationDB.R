@@ -327,9 +327,9 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
     repo.name <- switch(biocrepo,
                         "bioc" = "BioCsoft",
                         "data/experiment" = "BioCexp",
-                        "workflows" = "BioCworkflow")
+                        "workflows" = "BioCworkflows")
     bioc.apdb <<- available.packages(
-    contrib.url(biocinstallRepos()[repo.name]), type="source")
+    contrib.url(biocinstallRepos()[[repo.name]]), type="source")
     bioc.apdf <<- as.data.frame(bioc.apdb, stringsAsFactors=FALSE)
     bioc.ap <<- rownames(bioc.apdb)
 
