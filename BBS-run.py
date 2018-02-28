@@ -182,8 +182,8 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
     STAGE2_pkg_deps_list_path2 = STAGE2_pkg_deps_list_path.replace('\\', '/')
     # Use short.list=TRUE to skip installation of target packages not needed
     # by another target package for build or check.
-    Rscript = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
-    #Rscript = "source('%s');%s('%s',outfile='%s')" % \
+    #Rscript = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
+    Rscript = "source('%s');%s('%s',outfile='%s')" % \
               (script_path2, Rfunction, target_pkgs_file2,
                STAGE2_pkg_deps_list_path2)
     out_file = Rfunction + ".Rout"

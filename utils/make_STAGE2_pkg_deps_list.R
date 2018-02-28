@@ -147,18 +147,18 @@ make_STAGE2_pkg_deps_list <- function(target_pkgs_file, outfile="",
     ## Build the package deps list.
     if (short.list) {
         fields <- c("Depends", "Imports", "LinkingTo", "Suggests")
-        pkgs <- .extractAllDirectDeps(target_pkgs, available_pkgs,
-                                      fields=fields)
+        direct_deps <- .extractAllDirectDeps(target_pkgs, available_pkgs,
+                                             fields=fields)
+        ## Add in the list of packages that should be
+        ## force-installed no matter what, as indicated
+        ## by the ForceInstall: TRUE tag in
+        ## the .BBSoptions file:
+        pkgs <- union(.getPkgsToForceInstall(target_pkgs), direct_deps)
     } else {
         suggested_pkgs <- .extractAllDirectDeps(target_pkgs, available_pkgs,
                                                 fields="Suggests")
         pkgs <- union(target_pkgs, suggested_pkgs)
     }
-    ## Add in the list of packages that should be
-    ## force-installed no matter what, as indicated
-    ## by the ForceInstall: TRUE tag in
-    ## the .BBSoptions file:
-    pkgs <- unique(c(pkgs, .getPkgsToForceInstall(target_pkgs)))
     STAGE2_pkg_deps_list <- .buildPkgDepsList(pkgs, available_pkgs)
 
     ## Write the package deps list to the output file.
