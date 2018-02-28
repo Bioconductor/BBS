@@ -180,8 +180,10 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
     script_path2 = script_path.replace('\\', '/')
     target_pkgs_file2 = target_pkgs_file.replace('\\', '/')
     STAGE2_pkg_deps_list_path2 = STAGE2_pkg_deps_list_path.replace('\\', '/')
-    #Rscript = "source('%s');%s('%s',outfile='%s')" % \
+    # Use short.list=TRUE to skip installation of target packages not needed
+    # by another target package for build or check.
     Rscript = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
+    #Rscript = "source('%s');%s('%s',outfile='%s')" % \
               (script_path2, Rfunction, target_pkgs_file2,
                STAGE2_pkg_deps_list_path2)
     out_file = Rfunction + ".Rout"
@@ -361,13 +363,6 @@ def STAGE2():
     # Get 'pkg_deps_list' and 'installed_pkgs'.
     pkg_deps_list = make_STAGE2_pkg_deps_list(target_pkgs)
     installed_pkgs = get_installed_pkgs()
-
-    # force-install workflow packages in order to be able to rebuild their vignettes 
-    if BBScorevars.subbuilds == "workflows":
-        deps = pkg_deps_list.keys()
-        for pkg in target_pkgs:
-            if pkg not in deps:
-                pkg_deps_list[pkg] = []
 
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] cd BBS_MEAT_PATH"
