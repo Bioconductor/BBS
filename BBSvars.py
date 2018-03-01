@@ -36,6 +36,7 @@ work_topdir = BBScorevars.getenv('BBS_WORK_TOPDIR')
 
 r_cmd = BBScorevars.getenv('BBS_R_CMD')
 
+r_home = BBScorevars.getenv('BBS_R_HOME')
 
 ### Only needed by BBS-prerun.py
 

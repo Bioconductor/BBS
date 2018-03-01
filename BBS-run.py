@@ -241,7 +241,7 @@ def CreateREnvironFiles():
     archs = ("i386", "x64")
     for arch in archs:
         archup = arch.upper()
-        filename = "%s/etc/%s/Renviron.site" % (os.environ['BBS_R_HOME'], arch)
+        filename = "%s/etc/%s/Renviron.site" % (BBSvars.r_home, arch)
         f = open(filename, 'w')
         graphviz_install_dir = os.environ["GRAPHVIZ_INSTALL_DIR_%s" % archup]
         f.write("GRAPHVIZ_INSTALL_DIR=%s\n" % graphviz_install_dir)
