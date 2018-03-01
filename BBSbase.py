@@ -244,6 +244,18 @@ def getSTAGE2cmd(pkg, version):
 def getSTAGE3cmd(pkgdir_path):
     return _get_RCMDbuild_cmd(pkgdir_path) + ' ' + pkgdir_path
 
+### Note that 'R CMD check' installs the package in <pkg>.Rcheck. However,
+### an undocumented 'R CMD check' feature allows one to avoid this installation
+### if the package is already installed somewhere and if the output of the
+### 'R CMD INSTALL' command that led to this installation was captured in a
+### file. Typical use of this feature:
+###   R CMD INSTALL toto_0.17.31.tar.gz >toto.install-out.txt 2>&1
+###   R CMD check --install=check:toto.install-out.txt \
+###               --library=path/to/R/library \
+###               toto_0.17.31.tar.gz
+### All there is about this is a comment in tools/R/check.R at the beginning
+### of the check_install() function. A well kept secret by the R core folks.
+### Thanks to Tomas Kalibera for giving it away!
 ### 'srcpkg_path' must be a path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
@@ -254,17 +266,41 @@ def getSTAGE4cmd(srcpkg_path):
         if prepend_win != None:
             prepend = prepend_win
     if prepend != None:
-	cmd = '%s %s' % (prepend, cmd)
+        cmd = '%s %s' % (prepend, cmd)
+    common_opts = []
+    ## If the package was candidate for installation during STAGE2, there
+    ## should be a <pkg>.install-out.txt file in the current working directory
+    ## containing the log of the installation. In this case, we can avoid a
+    ## costly re-installation by using the undocumented 'R CMD check' feature
+    ## described above. This introduces 3 minor gotcha though:
+    ##   1) We now rely on an documented feature.
+    ##   2) The exact command used for CHECK is displayed on the build report.
+    ##      Not only will this command now look cryptic to the developer but
+    ##      s/he also won't be able to just copy/paste it into her/his terminal
+    ##      in order to reproduce the 'R CMD check' results from the report.
+    ##   3) This undocumented feature only works as expected if
+    ##      <pkg>.install-out.txt and R_HOME/library/pkg match i.e. if the
+    ##      latter actually contains the package installed by the command
+    ##      whose output was captured in the former. This will generally be
+    ##      the case unless the package got re-installed after its STAGE2
+    ##      installation (which could happen e.g. if another package contains
+    ##      code that calls biocLite() to install a possibly different version
+    ##      of the package). Unlikely but possible.
+    install_out = pkg + '.install-out.txt'
+    if os.path.exists(install_out):
+        r_library = os.path.join(BBSvars.r_home, 'library')
+        common_opts += ["--install=check:%s" % install_out,
+                        "--library=%s" % r_library]
     if BBScorevars.subbuilds == "bioc-longtests":
-        common_opts = ["--test-dir=longtests",
-                       "--no-stop-on-test-error",
-                       "--no-codoc",
-                       "--no-examples",
-                       "--no-manual",
-                       "--ignore-vignettes",
-                       "--check-subdirs=no"]
+        common_opts += ["--test-dir=longtests",
+                        "--no-stop-on-test-error",
+                        "--no-codoc",
+                        "--no-examples",
+                        "--no-manual",
+                        "--ignore-vignettes",
+                        "--check-subdirs=no"]
     else:
-        common_opts = ["--no-vignettes", "--timings"]
+        common_opts += ["--no-vignettes", "--timings"]
         ## Note that 64-bit machines gewurz and moscato1 give a value of
         ## 'win32' for sys.platform. This means that _noExampleArchs() may
         ## not be returning useful results if the intent is to not run
@@ -578,7 +614,7 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.pkgdumps.Push(self.rdir)
         ## Sometimes, '00install.out' is not generated (e.g. when some required
         ## packages are not available)
-	#NOT NEEDED (see above).
+        #NOT NEEDED (see above).
         #if os.path.exists(self.install_out):
         #    self.rdir.Put(self.install_out, True, True)
     def AfterRun(self):
