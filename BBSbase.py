@@ -131,9 +131,6 @@ def _get_RCMDbuild_cmd(pkgdir_path):
     cmd = "%s %s" % (cmd, ' '.join(common_opts))
     return cmd
 
-### 'srcpkg_path' must be a path to a package source tarball.
-def _getSTAGE5cmd(srcpkg_path, mode):
-
 ### During STAGE1, we need to build a "light" source tarball for each package.
 ### By "light" here we mean that we don't care about the vignette or \Sexpr
 ### directives in the man pages: trying to execute the code contained in the
