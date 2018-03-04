@@ -13,7 +13,6 @@ import os
 import re
 import subprocess
 import BBScorevars
-import BBSvars
 from bbs.dcf.dcfrecordsparser import DcfRecordParser
 
 class DcfFieldNotFoundError(Exception):
@@ -98,7 +97,8 @@ def getPackageStatusFromDir(pkg_dir):
 def _getMaintainerFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
     FNULL = open(os.devnull, 'w')
-    Rscript_cmd = os.path.join(BBSvars.r_home, "bin", "Rscript")
+    r_home = BBScorevars.getenv('BBS_R_HOME')
+    Rscript_cmd = os.path.join(r_home, "bin", "Rscript")
     script_path = os.path.join(BBScorevars.BBS_home, "utils", "getMaintainer.R")
     cmd = [Rscript_cmd, '--vanilla', script_path, desc_file]
     maintainer = subprocess.check_output(cmd, stderr=FNULL)
