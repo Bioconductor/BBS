@@ -132,45 +132,7 @@ def _get_RCMDbuild_cmd(pkgdir_path):
     return cmd
 
 ### 'srcpkg_path' must be a path to a package source tarball.
-def _getSTAGE5cmd(srcpkg_path, mode, stage):
-    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-    instpkg_dir = "%s.buildbin-libdir" % pkg
-    rcheck_dir = "%s.Rcheck" % pkg
-    if stage == 4:
-        cmd = 'rm -rf %s %s && mkdir %s %s && ' % (instpkg_dir, rcheck_dir,
-            instpkg_dir, rcheck_dir)
-    else:
-        cmd = 'rm -rf %s && mkdir %s && ' % (instpkg_dir, instpkg_dir)
-    if sys.platform == 'darwin':
-        cmd += '%s/utils/build-universal.sh %s %s %s' % \
-            (BBScorevars.BBS_home, srcpkg_path, BBSvars.r_cmd, instpkg_dir)
-        return cmd
-    if mode != "multiarch":
-        cmd += '%s CMD INSTALL --build --no-multiarch --library=%s %s' % \
-               (BBSvars.r_cmd, instpkg_dir, srcpkg_path)
-        return cmd
-    if not _BiocGreaterThanOrEqualTo(2, 7):
-        sys.exit("no multiarch capabilities for 'R CMD INSTALL' before BioC 2.7 / R 2.12")
-    if sys.platform != "win32":
-        sys.exit("BBS supports multiarch STAGE5 only on Windows for now!")
-    win_archs = _supportedWinArchs(pkg)
-    if len(win_archs) == 0:
-        return None
-    if len(win_archs) == 1:
-        middle = '--arch %s CMD INSTALL --build --no-multiarch' % win_archs[0]
-    else:
-        if stage == 5:
-            version = bbs.parse.getVersionFromPath(srcpkg_path)
-            #cmd = "cd %s.Rcheck/%s && zip -r ../../%s_%s.zip . & cd ../.." % (
-            #    pkg, pkg, pkg, version)
-            cmd = "cd %s.buildbin-libdir/%s && zip -r ../../%s_%s.zip ." % \
-                  (pkg, pkg, pkg, version) + " & cd ../.."
-            return cmd
-        elif stage == 4:
-            middle = 'CMD INSTALL --build --merge-multiarch'
-    cmd += '%s %s --library=%s %s' % \
-           (BBSvars.r_cmd, middle, instpkg_dir, srcpkg_path)
-    return cmd
+def _getSTAGE5cmd(srcpkg_path, mode):
 
 ### During STAGE1, we need to build a "light" source tarball for each package.
 ### By "light" here we mean that we don't care about the vignette or \Sexpr
@@ -254,8 +216,11 @@ def getSTAGE3cmd(pkgdir_path):
 ###               --library=path/to/R/library \
 ###               toto_0.17.31.tar.gz
 ### All there is about this is a comment in tools/R/check.R at the beginning
-### of the check_install() function. A well kept secret by the R core folks.
-### Thanks to Tomas Kalibera for giving it away!
+### of the check_install() function. Also this feature was mentioned once by
+### Uwe Ligges on the R-devel mailing list:
+###   https://stat.ethz.ch/pipermail/r-devel/2011-June/061377.html
+### and, more recently, by Tomas Kalibera in an off-list discussion about
+### 'packages writing to "library" directory during their tests' (Feb 2018).
 ### 'srcpkg_path' must be a path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
@@ -309,8 +274,9 @@ def getSTAGE4cmd(srcpkg_path):
         if sys.platform in no_example_archs:
             common_opts += ["--no-examples"]
     common_opts = ' '.join(common_opts)
+    cmd += '%s ' % BBSvars.r_cmd
     if BBSvars.STAGE4_mode != "multiarch":
-        cmd += '%s CMD check %s' % (BBSvars.r_cmd, common_opts)
+        cmd += 'CMD check %s' % common_opts
         ## Starting with R-2.12, 'R CMD check' on Windows and Mac OS X can do
         ## runtime tests on various installed sub-archs. New options have been
         ## added to provide some control on this (see 'R CMD check -h').
@@ -360,40 +326,42 @@ def getSTAGE4cmd(srcpkg_path):
     if len(win_archs) == 0:
         return None
     if len(win_archs) == 1:
-        middle = '--arch %s CMD check --no-multiarch' % win_archs[0]
-        cmd += '%s %s %s %s' % (BBSvars.r_cmd, middle, common_opts, srcpkg_path)
-        return cmd
-    ## For some rare BioC packages (e.g. Rdisop, fabia, bgx -- as of July
-    ## 2011), 'R CMD check --force-multiarch' will fail to do a bi-arch
-    ## install. My first attempt to work around this was to use
-    ## 'R CMD check --force-multiarch --install-args="--merge-multiarch"'
-    ## but, unfortunately, this didn't work ('R CMD check' tries to install
-    ## the *extracted* tarball but the --merge-multiarch option only works
-    ## on a tarball).
-    ## Thanks to Uwe Ligges for suggesting the following workaround:
-    ##   https://stat.ethz.ch/pipermail/r-devel/2011-June/061377.html
-    ## Step 1: Installation:
-    instout_file = '%s-install.out' % pkg
-    rcheck_dir = "%s.Rcheck" % pkg
-    instout_file_rcheck = os.path.join(rcheck_dir, "00install.out")
-    cmd1 = '%s >%s 2>&1 && cp %s %s ' % \
-           (_getSTAGE5cmd(srcpkg_path, "multiarch", 4), instout_file_rcheck,
-            instout_file_rcheck, instout_file)
-    ## Step 2: Check (without installation, since that happened before
-    ## already, using the install log from step 1):
-    instpkg_dir = "%s.buildbin-libdir" % pkg
-    middle = 'CMD check --library=%s --install="check:%s" --force-multiarch' % \
-              (instpkg_dir, instout_file)
-    cmd2 = '%s %s %s %s %s' % (cmd, BBSvars.r_cmd, middle, common_opts, srcpkg_path)
-    ## Step 3: Move installed stuff to <pkg>.Rcheck/
-    #cmd3 = 'mv %s/* %s.Rcheck/' % (instpkg_dir, pkg)
-    ## Step 4: Cleanup
-    #cmd4 = 'rmdir %s' % instpkg_dir
-    #return '%s && %s && %s && %s' % (cmd1, cmd2, cmd3, cmd4)
-    return '%s && %s' % (cmd1, cmd2)
+        cmd += '--arch %s ' % win_archs[0]
+    cmd += 'CMD check %s --force-multiarch %s' % (common_opts, srcpkg_path)
+    return cmd
 
 def getSTAGE5cmd(srcpkg_path):
-    return _getSTAGE5cmd(srcpkg_path, BBSvars.STAGE5_mode, 5)
+    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    instpkg_dir = "%s.buildbin-libdir" % pkg
+    cmd = 'rm -rf %s && mkdir %s && ' % (instpkg_dir, instpkg_dir)
+    if sys.platform == 'darwin':
+        cmd += '%s/utils/build-universal.sh %s %s %s' % \
+               (BBScorevars.BBS_home, srcpkg_path, BBSvars.r_cmd, instpkg_dir)
+        return cmd
+    if BBSvars.STAGE5_mode != "multiarch":
+        cmd += '%s CMD INSTALL --build --no-multiarch --library=%s %s' % \
+               (BBSvars.r_cmd, instpkg_dir, srcpkg_path)
+        return cmd
+    if not _BiocGreaterThanOrEqualTo(2, 7):
+        sys.exit("no multiarch capabilities for 'R CMD INSTALL' before BioC 2.7 / R 2.12")
+    if sys.platform != "win32":
+        sys.exit("BBS supports multiarch STAGE5 only on Windows for now!")
+    win_archs = _supportedWinArchs(pkg)
+    if len(win_archs) == 0:
+        return None
+    if len(win_archs) == 1:
+        middle = '--arch %s CMD INSTALL --build --no-multiarch' % win_archs[0]
+        cmd += '%s %s --library=%s %s' % \
+               (BBSvars.r_cmd, middle, instpkg_dir, srcpkg_path)
+        return cmd;
+    r_library = os.path.join(BBSvars.r_home, 'library')
+    instpkg_dir = os.path.join(r_library, pkg)
+    pkg_version = bbs.parse.getVersionFromPath(srcpkg_path)
+    zip_file = '%s_%s.zip' % (pkg, pkg_version)
+    cwd = os.getcwd()
+    zip_file_path = os.path.join(cwd, zip_file)
+    cmd = "cd %s && zip -r %s . && cd %s" % (instpkg_dir, zip_file_path, cwd)
+    return cmd
 
 def getBUILDWEBVIGcmd(rmd_file):
     r_cmd = '%s -q -e ' % BBSvars.r_cmd
