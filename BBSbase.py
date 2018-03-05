@@ -352,12 +352,12 @@ def getSTAGE5cmd(srcpkg_path):
                (BBSvars.r_cmd, middle, instpkg_dir, srcpkg_path)
         return cmd;
     r_library = os.path.join(BBSvars.r_home, 'library')
-    instpkg_dir = os.path.join(r_library, pkg)
     pkg_version = bbs.parse.getVersionFromPath(srcpkg_path)
     zip_file = '%s_%s.zip' % (pkg, pkg_version)
     cwd = os.getcwd()
     zip_file_path = os.path.join(cwd, zip_file)
-    cmd = "cd %s && zip -r %s . && cd %s" % (instpkg_dir, zip_file_path, cwd)
+    cmd = "cd %s && zip -r %s %s && cd %s" % \
+          (r_library, zip_file_path, pkg, cwd)
     return cmd
 
 def getBUILDWEBVIGcmd(rmd_file):
