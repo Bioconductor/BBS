@@ -331,6 +331,10 @@ def getSTAGE4cmd(srcpkg_path):
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
+### On Windows we use 'R CMD INSTALL --build' on the source tarball produced
+### at STAGE3. Note that zipping the package installation folder located in
+### R_HOME\library would avoid an extra package installation/compilation
+### but would also produce a .zip file with no vignettes in it.
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
     if sys.platform == "win32" and BBSvars.STAGE5_mode == "multiarch":
