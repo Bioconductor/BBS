@@ -17,7 +17,6 @@ library(tools)
 
 ## GLOBAL VARIABLES
 
-t <- tempdir()
 rvers <- paste(getRversion()$major,
     getRversion()$minor,
     sep=".")
@@ -39,7 +38,7 @@ cleanupDependency <- function(input)
     res <- strsplit(output, ",")[[1]]
     for (i in 1:length(nms))
     {
-        if(grepl(">=", nms[i], fixed=TRUE))
+        if (grepl(">=", nms[i], fixed=TRUE))
         {
             tmp <- gsub(".*>=", "", nms[i])
             tmp <- gsub(")", "", tmp, fixed=TRUE)
@@ -105,10 +104,10 @@ getdeps <- function(pkg, src)
     res <- c()
     for (field in fields)
     {
-        if(field %in% names &&  length(x[field]))#!is.na(x[field]))
+        if (field %in% names &&  length(x[field]))#!is.na(x[field]))
             res <- c(res, cleanupDependency(unname(x[field])[[1]]))
     }
-    if(length(res))
+    if (length(res))
         res <- tiebreaker(res)
     res <- res[res %in% getBiocPkgs()]
     if (!length(res))
@@ -151,13 +150,13 @@ makeDecision <- function(pkg)
             dep <- deps[i]
             # browser()
             row <- ap[dep,]
-            if(!length(row))
+            if (!length(row))
             {
                 assign(pkg, paste("NO: dependency", dep, "not available for type",
                     type), envir=e)
                 return()
             }
-            if(exists("ver"))
+            if (exists("ver"))
                 rm(ver)
             try({ver <- package_version(vreq)}, silent=TRUE)
             if (!exists("ver"))
@@ -229,25 +228,25 @@ shouldPackageBeAdded <- function(pkg)
 # in this partial repository.
 addPkgToPartialRepos <- function(pkg, deps, type)
 {
-    if(shouldPackageBeAdded(pkg))
+    if (shouldPackageBeAdded(pkg))
     {
         # print(paste("adding to partial repos:", pkg))
-        src.url <- paste0("file://", file.path(t, "fullrepo"))
+        src.url <- paste0("file://", file.path(tempdir(), "fullrepo"))
         src.db <- available.packages(contrib.url(src.url, type), type)
         stuffToCopy <- src.db[pkg,]
         stuffToCopy['Repository'] <- sub("fullrepo", "partialrepo",
             stuffToCopy['Repository'])
         dest.url <- paste0("file://",
-            file.path(t, "partialrepo"))
+            file.path(tempdir(), "partialrepo"))
         dest.db <- available.packages(contrib.url(dest.url, type), type)
         if (!pkg %in% dest.db[, "Package"])
         # if (!pkg %in% rownames(dest.db))
         {
             print(paste("adding to partial repos:", pkg))
             dest.db <- rbind(dest.db, stuffToCopy)
-            dest <- file.path(t, "partialrepo", contribpath)
+            dest <- file.path(tempdir(), "partialrepo", contribpath)
             write.dcf(dest.db, file.path(dest, "PACKAGES"))
-            if(file.exists(file.path(dest, "PACKAGES.gz")))
+            if (file.exists(file.path(dest, "PACKAGES.gz")))
                 file.remove(file.path(dest, "PACKAGES.gz"))
         }
         dest.db
@@ -259,8 +258,7 @@ addPkgToPartialRepos <- function(pkg, deps, type)
 # Create PACKAGES file for temporary repos
 makePackagesFile <- function(outgoingDir, type, contribpath)
 {
-    t <- tempdir()
-    fullrepo <- file.path(t, "fullrepo")
+    fullrepo <- file.path(tempdir(), "fullrepo")
     dest <- file.path(fullrepo, contribpath)
     if (file.exists(dest))
         unlink(dest, recursive=TRUE)
@@ -320,23 +318,24 @@ recur <- function(pkg)
 createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
     biocrepo=c("bioc", "data/experiment", "workflows"), internalRepos)
 {
-    if(missing(internalRepos))
-        stop({"Must specify internalRepos!"})
-    if(missing(biocrepo))
+    if (missing(internalRepos))
+        stop("Must specify internalRepos!")
+    if (missing(biocrepo))
         stop("Must specify biocrepo!")
     repo.name <- switch(biocrepo,
                         "bioc" = "BioCsoft",
                         "data/experiment" = "BioCexp",
                         "workflows" = "BioCworkflows")
     bioc.apdb <<- available.packages(
-    contrib.url(biocinstallRepos()[[repo.name]]), type="source")
+        contrib.url(biocinstallRepos()[[repo.name]]),
+        type="source")
     bioc.apdf <<- as.data.frame(bioc.apdb, stringsAsFactors=FALSE)
     bioc.ap <<- rownames(bioc.apdb)
 
     # vv Not robust to new package types! vv
     pkgDirs <- c("source", "win.binary", "mac.binary",
         "mac.binary.mavericks", "mac.binary.el-capitan")
-    if (biocrepo!="bioc")
+    if (biocrepo != "bioc")
         pkgDirs <- "source"
     descFields <- c("Package", "Version", "Depends", "Imports", "LinkingTo",
         "License", "MD5sum", "NeedsCompilation")
@@ -344,12 +343,11 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
 
     # remove me later:
     tf <- file.path(tempdir(), "mytempfile")
-    if(file.exists(tf))
+    if (file.exists(tf))
         file.remove(tf)
 
 
-    t <- tempdir()
-    partialrepo <<- file.path(t, "partialrepo")
+    partialrepo <<- file.path(tempdir(), "partialrepo")
     partialrepo.url <<- paste0("file://", partialrepo)
     contribdirs <- sprintf(
         c("src/contrib",
@@ -368,7 +366,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
         dir.create(contrib, recursive=TRUE)
     overall <<- new.env(parent=emptyenv())
 
-    for (i in 1:length(outgoingDirs))
+    for (i in seq_along(outgoingDirs))
     {
         outgoingDir <<- outgoingDirs[i]
         if (!file.exists(outgoingDir))
@@ -377,25 +375,24 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
             next
         }
 
-
-
-        contribpath <<- contribdirs[i]
-        type <<- pkgtypes[i]
+        contribpath <<- contribdirs[[i]]
+        type <<- pkgtypes[[i]]
 
         fullrepo.apdb <<- makePackagesFile(outgoingDir, type, contribpath)
         fullrepo.df <<- as.data.frame(fullrepo.apdb, stringsAsFactors=FALSE)
-        online.contrib <- file.path(t, "biocrepo",
-            contribpath)
-        if(file.exists(online.contrib))
+        online.contrib <- file.path(tempdir(), "biocrepo", contribpath)
+        if (file.exists(online.contrib))
             unlink(online.contrib, recursive=TRUE)
         dir.create(online.contrib, recursive=TRUE)
         pkgIndex <- file.path(online.contrib, "PACKAGES")
-        if(file.exists(pkgIndex))
+        if (file.exists(pkgIndex))
             unlink(pkgIndex)
         tryCatch(download.file(paste0("http://bioconductor.org/packages/",
-                     biocvers, "/", biocrepo, "/src/contrib/PACKAGES"),
-                 destfile=pkgIndex), error = function (e) warning(e))
-        biocrepo.url <<- paste0("file://", file.path(t, "biocrepo"))
+                                      biocvers, "/", biocrepo,
+                                      "/src/contrib/PACKAGES"),
+                               destfile=pkgIndex),
+                 error=function(e) warning(e))
+        biocrepo.url <<- paste0("file://", file.path(tempdir(), "biocrepo"))
         files <- dir(outgoingDir,
             pattern="\\.tar\\.gz$|\\.tgz$|\\.zip$")
         dir.pkgs <<- unlist(lapply(files,
@@ -423,7 +420,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
         for(type in names(o))
         {
             status <- o[[type]][[pkg]]
-            if(!length(status)) next
+            if (!length(status)) next
 
             if (status == "RemoveMe")
             {
@@ -462,7 +459,7 @@ doesReposNeedPkg <- function(pkg, type, outgoingDirPath, internalRepos)
         pattern=paste0("^", pkg, "_"))
     destFile <- dir(file.path(internalRepos, contribdirs[ind]),
         pattern=paste0("^", pkg, "_"))
-    if(!length(destFile))
+    if (!length(destFile))
     {
         return("YES, package does not exist in internal repository.")
     }
@@ -513,7 +510,7 @@ copyPropagatableFiles <- function(srcDir, fileExt, propagationDb, destDir=".")
     {
         # simulate cp --verbose output
         fullDestDir <- file.path(destDir, contribpaths[srcType])
-        if(!file.exists(file.path(fullDestDir, file)))
+        if (!file.exists(file.path(fullDestDir, file)))
             cat(sprintf("‘%s‘ -> ‘%s‘\n", file.path(srcDir, file),
                 file.path(fullDestDir, file)))
         # Currently ignoring the result of the copy operation.
