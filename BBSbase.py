@@ -108,16 +108,16 @@ def _supportedWinArchs(pkg):
     return archs
 
 def _get_RINSTALL_cmd0(win_archs=None):
-    cmd = BBSvars.r_cmd
+    cmd0 = BBSvars.r_cmd
     if win_archs != None and len(win_archs) == 1:
-        cmd += ' --arch %s' % win_archs[0]
-    cmd += ' CMD INSTALL'
+        cmd0 += ' --arch %s' % win_archs[0]
+    cmd0 += ' CMD INSTALL'
     if win_archs != None and len(win_archs) >= 1:
         if len(win_archs) == 1:
-            cmd += ' --no-multiarch'
+            cmd0 += ' --no-multiarch'
         else:
-            cmd += ' --merge-multiarch'
-    return cmd
+            cmd0 += ' --merge-multiarch'
+    return cmd0
 
 ### 'srcpkg_path' must be the path to a package source tarball.
 def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
@@ -126,11 +126,11 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
     if sys.platform != "darwin":
         ## Generate the command for Windows or Linux. Note that this command
         ## is never needed nor used on Linux.
-        cmd = _get_RINSTALL_cmd0(win_archs)
-        cmd = '%s --build --library=%s %s' % (cmd, pkg_instdir, srcpkg_path)
+        cmd0 = _get_RINSTALL_cmd0(win_archs)
+        cmd = '%s --build --library=%s %s' % (cmd0, pkg_instdir, srcpkg_path)
     else:
-        cmd = '%s/utils/build-universal.sh' % BBScorevars.BBS_home
-        cmd = '%s %s %s %s' % (cmd, srcpkg_path, BBSvars.r_cmd, pkg_instdir)
+        cmd0 = '%s/utils/build-universal.sh' % BBScorevars.BBS_home
+        cmd = '%s %s %s %s' % (cmd0, srcpkg_path, BBSvars.r_cmd, pkg_instdir)
     cmd = 'rm -rf %s && mkdir %s && %s' % (pkg_instdir, pkg_instdir, cmd)
     return cmd
 
@@ -283,7 +283,7 @@ def getSTAGE4cmd(srcpkg_path):
             win_archs = _supportedWinArchs(pkg)
         else:
             win_archs = []
-    cmd = _get_Rcheck_cmd0(win_archs)
+    cmd0 = _get_Rcheck_cmd0(win_archs)
     common_opts = []
     ## If the package was candidate for installation during STAGE2, there
     ## should be a <pkg>.install-out.txt file in the current working directory
@@ -326,7 +326,7 @@ def getSTAGE4cmd(srcpkg_path):
         if sys.platform in no_example_archs:
             common_opts += ["--no-examples"]
     common_opts = ' '.join(common_opts)
-    cmd += ' %s %s' % (common_opts, srcpkg_path)
+    cmd = '%s %s %s' % (cmd0, common_opts, srcpkg_path)
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
