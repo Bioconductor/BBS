@@ -107,8 +107,35 @@ def _supportedWinArchs(pkg):
         archs.append("x64")
     return archs
 
-### 'pkgdir_path' must be a path to a package source tree.
-def _get_RCMDbuild_cmd(pkgdir_path):
+def _get_RINSTALL_cmd0(win_archs=None):
+    cmd = BBSvars.r_cmd
+    if win_archs != None and len(win_archs) == 1:
+        cmd += ' --arch %s' % win_archs[0]
+    cmd += ' CMD INSTALL'
+    if win_archs != None and len(win_archs) >= 1:
+        if len(win_archs) == 1:
+            cmd += ' --no-multiarch'
+        else:
+            cmd += ' --merge-multiarch'
+    return cmd
+
+### 'srcpkg_path' must be the path to a package source tarball.
+def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
+    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    pkg_instdir = "%s.buildbin-libdir" % pkg
+    if sys.platform != "darwin":
+        ## Generate the command for Windows or Linux. Note that this command
+        ## is never needed nor used on Linux.
+        cmd = _get_RINSTALL_cmd0(win_archs)
+        cmd = '%s --build --library=%s %s' % (cmd, pkg_instdir, srcpkg_path)
+    else:
+        cmd = '%s/utils/build-universal.sh' % BBScorevars.BBS_home
+        cmd = '%s %s %s %s' % (cmd, srcpkg_path, BBSvars.r_cmd, pkg_instdir)
+    cmd = 'rm -rf %s && mkdir %s && %s' % (pkg_instdir, pkg_instdir, cmd)
+    return cmd
+
+### 'pkgdir_path' must be the path to a package source tree.
+def _get_Rbuild_cmd(pkgdir_path):
     arch = ""
     if sys.platform == "win32":
         win_archs = _supportedWinArchs(pkgdir_path)
@@ -131,6 +158,18 @@ def _get_RCMDbuild_cmd(pkgdir_path):
     cmd = "%s %s" % (cmd, ' '.join(common_opts))
     return cmd
 
+def _get_Rcheck_cmd0(win_archs=None):
+    cmd = BBSvars.r_cmd
+    if win_archs != None and len(win_archs) == 1:
+        cmd += ' --arch %s' % win_archs[0]
+    cmd += ' CMD check'
+    if win_archs != None:
+        if len(win_archs) <= 1:
+            cmd += ' --no-multiarch'
+        else:
+            cmd += ' --force-multiarch'
+    return cmd
+
 ### During STAGE1, we need to build a "light" source tarball for each package.
 ### By "light" here we mean that we don't care about the vignette or \Sexpr
 ### directives in the man pages: trying to execute the code contained in the
@@ -143,7 +182,7 @@ def _get_RCMDbuild_cmd(pkgdir_path):
 ### \Sexpr. So, for now, we build the "light" source tarball "by hand" i.e.
 ### we just use 'tar zcf'.
 def getSTAGE1cmd(pkgdir_path):
-    #cmd = _get_RCMDbuild_cmd(pkgdir_path) + ' --no-build-vignettes ' + pkgdir_path
+    #cmd = _get_Rbuild_cmd(pkgdir_path) + ' --no-build-vignettes ' + pkgdir_path
     key = 'BBS_TAR_CMD'
     tar_cmd = os.environ[key]
     srcpkg_file = bbs.parse.getSrcPkgFileFromDir(pkgdir_path)
@@ -172,36 +211,48 @@ def getSTAGE2cmdForNonTargetPkg(pkg):
     return Rscript2syscmd(Rscript)
 
 def getSTAGE2cmd(pkg, version):
-    cmd = '%s CMD INSTALL %s' % (BBSvars.r_cmd, pkg)
     prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RbuildPrepend')
-    if sys.platform == "win32":
+    if sys.platform != "win32":
+        cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
+    else:
         prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'RbuildPrepend.win')
         if prepend_win != None:
             prepend = prepend_win
         win_archs = _supportedWinArchs(pkg)
-        if _mustRunSTAGE2InMultiarchMode() and len(win_archs) == 2:
+        if _mustRunSTAGE2InMultiarchMode() and len(win_archs) >= 2:
+            ## Here is what Dan's commit message says about why BBS uses this
+            ## very long and complicated compound command to install packages
+            ## in multiarch mode on Windows during STAGE2 (see
+            ## 'git show 87822fb346e04b4301d0c2efd7ec1a2a8762e93a'):
+            ##   Install STAGE2 target pkgs to zip+libdir first, then install
+            ##   zip. This mitigates the problem where the INSTALL times out
+            ##   after installing only one architecture. Now, if the install
+            ##   times out, it has only failed to install a package to a
+            ##   temporary libdir, and the previous installation is still
+            ##   intact (or pkg is not installed at all), so dependent packages
+            ##   will not complain about the timed-out package being only
+            ##   available for one architecture.
+            ##   We still need to figure out why mzR in particular times out
+            ##   during INSTALL. When run manually (admittedly not during
+            ##   peak load times) the install takes ~ 5-6 minutes, even when
+            ##   done via the build system.
             curl_cmd = BBScorevars.getenv('BBS_CURL_CMD')
             srcpkg_file = pkg + '_' + version + '.tar.gz'
             srcpkg_url = BBScorevars.Central_rdir.url + '/src/contrib/' + \
                          srcpkg_file
-            zipfile = srcpkg_file.replace(".tar.gz", ".zip")
-            cmd = 'rm -rf %s.buildbin-libdir' % pkg + ' && ' + \
-                  'mkdir %s.buildbin-libdir ' % pkg + ' && ' + \
-                  '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
-                  '%s CMD INSTALL --build --library=%s.buildbin-libdir --merge-multiarch %s' % \
-                  (BBSvars.r_cmd, pkg, srcpkg_file) + ' && ' + \
-                  '%s CMD INSTALL %s ' % (BBSvars.r_cmd,
-                    zipfile)  + ' && ' + \
-                  'rm %s %s' % (srcpkg_file, zipfile)
+            zip_file = srcpkg_file.replace(".tar.gz", ".zip")
+            cmd = '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
+                  _get_BuildBinPkg_cmd(srcpkg_file, win_archs) + ' && ' + \
+                  '%s %s' % (_get_RINSTALL_cmd0(), zip_file) + ' && ' + \
+                  'rm %s %s' % (srcpkg_file, zip_file)
         else:
-            cmd = '%s --arch %s CMD INSTALL --no-multiarch %s' % \
-                  (BBSvars.r_cmd, win_archs[0], pkg)
+            cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
 def getSTAGE3cmd(pkgdir_path):
-    return _get_RCMDbuild_cmd(pkgdir_path) + ' ' + pkgdir_path
+    return _get_Rbuild_cmd(pkgdir_path) + ' ' + pkgdir_path
 
 ### Note that 'R CMD check' installs the package in <pkg>.Rcheck. However,
 ### an undocumented 'R CMD check' feature allows one to avoid this installation
@@ -218,17 +269,21 @@ def getSTAGE3cmd(pkgdir_path):
 ###   https://stat.ethz.ch/pipermail/r-devel/2011-June/061377.html
 ### and, more recently, by Tomas Kalibera in an off-list discussion about
 ### 'packages writing to "library" directory during their tests' (Feb 2018).
-### 'srcpkg_path' must be a path to a package source tarball.
+### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-    cmd = ''
     prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend')
-    if sys.platform == "win32":
+    if sys.platform != "win32":
+        win_archs = None
+    else:
         prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend.win')
         if prepend_win != None:
             prepend = prepend_win
-    if prepend != None:
-        cmd = '%s %s' % (prepend, cmd)
+        if BBSvars.STAGE4_mode == "multiarch":
+            win_archs = _supportedWinArchs(pkg)
+        else:
+            win_archs = []
+    cmd = _get_Rcheck_cmd0(win_archs)
     common_opts = []
     ## If the package was candidate for installation during STAGE2, there
     ## should be a <pkg>.install-out.txt file in the current working directory
@@ -263,102 +318,26 @@ def getSTAGE4cmd(srcpkg_path):
                         "--check-subdirs=no"]
     else:
         common_opts += ["--no-vignettes", "--timings"]
-        ## Note that 64-bit machines gewurz and moscato1 give a value of
-        ## 'win32' for sys.platform. This means that _noExampleArchs() may
-        ## not be returning useful results if the intent is to not run
-        ## examples for a particular Windows sub-architecture.
+        ## Note that sys.platform is set to 'win32' on 64-bit Windows. This
+        ## means that _noExampleArchs() may not be returning useful results
+        ## if the intent is to not run examples for a particular Windows
+        ## sub-architecture.
         no_example_archs = _noExampleArchs(pkg)
         if sys.platform in no_example_archs:
             common_opts += ["--no-examples"]
     common_opts = ' '.join(common_opts)
-    cmd += '%s ' % BBSvars.r_cmd
-    if BBSvars.STAGE4_mode != "multiarch":
-        cmd += 'CMD check %s' % common_opts
-        ## Starting with R-2.12, 'R CMD check' on Windows and Mac OS X can do
-        ## runtime tests on various installed sub-archs. New options have been
-        ## added to provide some control on this (see 'R CMD check -h').
-        ## In particular:
-        ##   --multiarch       do runtime tests on all installed sub-archs
-        ##   --no-multiarch    do runtime tests only on the main
-        ##                     sub-architecture
-        ##   --force-multiarch run tests on all sub-archs even for packages
-        ##                     with no compiled code
-        ## Problems:
-        ##   - The default (--multiarch) won't do runtime tests on all
-        ##     sub-archs if the package has no native code. So for example a
-        ##     package like AnnotationDbi can show up green on the build report
-        ##     even though it wouldn't load for 'arch=ppc' because RSQLite is
-        ##     not installed for this arch. Then a package like Biostrings or
-        ##     XDE that depends on AnnotationDbi will show up red on the build
-        ##     report because it *does* have native code (and no configure
-        ##     script) so 'R CMD check' will actually try to load it for
-        ##     'arch=ppc'... and will fail!
-        ##     One way to avoid this problem would be to install all the
-        ##     packages with native code for all sub-archs but AFAIK
-        ##     'R CMD INSTALL' (and consequently install.packages()) still
-        ##     doesn't allow this for packages with a configure script.
-        ##   - Using --force-multiarch would help produce more consistent check
-        ##     results by having AnnotationDbi show up red too but we would
-        ##     still have the issue that there is no easy way to get RSQLite
-        ##     installed for all sub-archs. Anyway, --force-multiarch is not
-        ##     even an option right now because: (1) it's broken on packages
-        ##     with a configure script, and (2) it would put so much load on
-        ##     our Mac OS X build machine (pelham) that a build run would
-        ##     probably take more than 12h.
-        ##   - So for now (Sep 9, 2010) we just turn off multiarch runtime
-        ##     testing.
-        ##   - UPDATE: May 10, 2011 - Explicitely turning off multiarch runtime
-        ##     testing on Windows too.
-        ##   - UPDATE: March 18, 2015: Packages are now only built on a single
-        ##     architecture for Mac (x86_64), so --no-multiarch has no effect.
-        ##     removing it from Mac builds.
-        if sys.platform == "win32" and _BiocGreaterThanOrEqualTo(2, 7):
-            cmd += ' --no-multiarch'
-        return cmd + ' ' + srcpkg_path
-    if not _BiocGreaterThanOrEqualTo(2, 7):
-        sys.exit("no multiarch capabilities for 'R CMD check' before BioC 2.7 / R 2.12")
-    if sys.platform != "win32":
-        sys.exit("BBS supports multiarch STAGE4 only on Windows for now!")
-    win_archs = _supportedWinArchs(pkg)
-    if len(win_archs) == 0:
-        return None
-    if len(win_archs) == 1:
-        cmd += '--arch %s ' % win_archs[0]
-    cmd += 'CMD check %s --force-multiarch %s' % (common_opts, srcpkg_path)
+    cmd += ' %s %s' % (common_opts, srcpkg_path)
+    if prepend != None:
+        cmd = '%s %s' % (prepend, cmd)
     return cmd
 
+### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
-    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-    instpkg_dir = "%s.buildbin-libdir" % pkg
-    cmd = 'rm -rf %s && mkdir %s && ' % (instpkg_dir, instpkg_dir)
-    if sys.platform == 'darwin':
-        cmd += '%s/utils/build-universal.sh %s %s %s' % \
-               (BBScorevars.BBS_home, srcpkg_path, BBSvars.r_cmd, instpkg_dir)
-        return cmd
-    if BBSvars.STAGE5_mode != "multiarch":
-        cmd += '%s CMD INSTALL --build --no-multiarch --library=%s %s' % \
-               (BBSvars.r_cmd, instpkg_dir, srcpkg_path)
-        return cmd
-    if not _BiocGreaterThanOrEqualTo(2, 7):
-        sys.exit("no multiarch capabilities for 'R CMD INSTALL' before BioC 2.7 / R 2.12")
-    if sys.platform != "win32":
-        sys.exit("BBS supports multiarch STAGE5 only on Windows for now!")
-    win_archs = _supportedWinArchs(pkg)
-    if len(win_archs) == 0:
-        return None
-    if len(win_archs) == 1:
-        middle = '--arch %s CMD INSTALL --build --no-multiarch' % win_archs[0]
-        cmd += '%s %s --library=%s %s' % \
-               (BBSvars.r_cmd, middle, instpkg_dir, srcpkg_path)
-        return cmd;
-    r_library = os.path.join(BBSvars.r_home, 'library')
-    pkg_version = bbs.parse.getVersionFromPath(srcpkg_path)
-    zip_file = '%s_%s.zip' % (pkg, pkg_version)
-    cwd = os.getcwd()
-    zip_file_path = os.path.join(cwd, zip_file)
-    cmd = "cd %s && zip -r %s %s && cd %s" % \
-          (r_library, zip_file_path, pkg, cwd)
-    return cmd
+    if sys.platform == "win32" and BBSvars.STAGE5_mode == "multiarch":
+        win_archs = _supportedWinArchs(pkg)
+    else:
+        win_archs = None
+    return _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
 
 def getBUILDWEBVIGcmd(rmd_file):
     r_cmd = '%s -q -e ' % BBSvars.r_cmd
