@@ -212,11 +212,11 @@ def getSTAGE2cmdForNonTargetPkg(pkg):
     return Rscript2syscmd(Rscript)
 
 def getSTAGE2cmd(pkg, version):
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RbuildPrepend')
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'INSTALLprepend')
     if sys.platform != "win32":
         cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
     else:
-        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'RbuildPrepend.win')
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'INSTALLprepend.win')
         if prepend_win != None:
             prepend = prepend_win
         win_archs = _supportedWinArchs(pkg)
@@ -252,8 +252,17 @@ def getSTAGE2cmd(pkg, version):
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
+### 'pkgdir_path' must be the path to a package source tree.
 def getSTAGE3cmd(pkgdir_path):
-    return _get_Rbuild_cmd(pkgdir_path) + ' ' + pkgdir_path
+    prepend = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'BUILDprepend')
+    if sys.platform == "win32":
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'BUILDprepend.win')
+        if prepend_win != None:
+            prepend = prepend_win
+    cmd =  _get_Rbuild_cmd(pkgdir_path) + ' ' + pkgdir_path
+    if prepend != None:
+        cmd = '%s %s' % (prepend, cmd)
+    return cmd
 
 ### Note that 'R CMD check' installs the package in <pkg>.Rcheck. However,
 ### an undocumented 'R CMD check' feature allows one to avoid this installation
@@ -273,11 +282,11 @@ def getSTAGE3cmd(pkgdir_path):
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend')
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend')
     if sys.platform != "win32":
         win_archs = None
     else:
-        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'RcheckPrepend.win')
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend.win')
         if prepend_win != None:
             prepend = prepend_win
         if BBSvars.STAGE4_mode == "multiarch":
@@ -338,12 +347,19 @@ def getSTAGE4cmd(srcpkg_path):
 ### but would also produce a .zip file with no vignettes in it.
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
-    if sys.platform == "win32" and BBSvars.STAGE5_mode == "multiarch":
-        pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-        win_archs = _supportedWinArchs(pkg)
-    else:
-        win_archs = None
-    return _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
+    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'BUILDBINprepend')
+    win_archs = None
+    if sys.platform == "win32":
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'BUILDBINprepend.win')
+        if prepend_win != None:
+            prepend = prepend_win
+        if BBSvars.STAGE5_mode == "multiarch":
+            win_archs = _supportedWinArchs(pkg)
+    cmd = _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
+    if prepend != None:
+        cmd = '%s %s' % (prepend, cmd)
+    return cmd
 
 def getBUILDWEBVIGcmd(rmd_file):
     r_cmd = '%s -q -e ' % BBSvars.r_cmd
