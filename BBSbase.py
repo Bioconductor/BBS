@@ -96,8 +96,9 @@ def _noExampleArchs(pkg):
 # to explain the above.
     return archs
 
-def _supportedWinArchs(pkg):
-    unsupported = _getPkgFieldFromMeatIndex(pkg, 'UnsupportedPlatforms')
+### 'pkgdir_path' must be the path to a package source tree.
+def _supportedWinArchs(pkgdir_path):
+    unsupported = _getPkgFieldFromMeatIndex(pkgdir_path, 'UnsupportedPlatforms')
     archs = []
     if "win" in unsupported:
         return archs
@@ -338,6 +339,7 @@ def getSTAGE4cmd(srcpkg_path):
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
     if sys.platform == "win32" and BBSvars.STAGE5_mode == "multiarch":
+        pkg = bbs.parse.getPkgFromPath(srcpkg_path)
         win_archs = _supportedWinArchs(pkg)
     else:
         win_archs = None
