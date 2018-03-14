@@ -5,12 +5,14 @@ How to set up a Windows Server 2012 machine for the daily builds
 
 General information and tips:
 
-(a) How to edit an environment variable:
+(a) Open the Task Manager with CTRL+Shift+Esc
+
+(b) How to edit an environment variable:
 
   Always from a *personal administrator account* (see below about this):
 
     Windows start menu -> This PC -> right-click on This PC -> Properties
-    -> Advanced system settings -> Environment Variables... 
+    -> Advanced system settings -> Environment Variables...
 
   Always go to *System variables* (at the bottom) to add new variables or edit
   existing variables. Do not add or edit user variables (at the top).
@@ -55,22 +57,22 @@ From the Administrator account
 
     pip install nbconvert
 
-** Install Python modules numpy, scipy, sklearn, h5py and pandas 
+** Install Python modules numpy, scipy, sklearn, h5py and pandas
 
   scipy is a dependency of sklearn and must be installed before
   sklearn will work properly. For whatever reason, `pip install sklearn`
-  completes successfully even if scipy is not installed. When sklearn 
+  completes successfully even if scipy is not installed. When sklearn
   is loaded (imported) and scipy is not present it breaks.
- 
+
   All modules are needed by BiocSklearn and numpy is also needed by DChIPRep.
 
   In a PowerShell Window:
 
     pip install numpy
     pip install scipy
-    pip install sklearn 
-    pip install h5py 
-    pip install pandas 
+    pip install sklearn
+    pip install h5py
+    pip install pandas
 
 Note that installing Python from one of the personal administrator accounts
 below seems to cause problems (e.g. trying to upgrade to the latest pip
@@ -93,7 +95,7 @@ should be performed from the Administrator account.
 
   Username: hpages
   Full name: Hervé Pagès
- 
+
   Username: aoles
   Full name: Andrzej Oleś
 
@@ -275,7 +277,7 @@ interactively on a Windows build machine.
 ** Install R in bbs-3.4-bioc
 
   1. Download the CRAN Windows binary that matches the BioC version to build.
-     (https://cran.rstudio.com/bin/windows/base/) 
+     (https://cran.rstudio.com/bin/windows/base/)
 
      When running the installer:
 
@@ -469,7 +471,7 @@ From a personal administrator account
       'If the running task does not end when requested force it to stop'
   Then click OK on bottom right (requires biocbuild password)
 
-** [NOT MANDATORY BUT HIGHLY RECOMMENDED] Schedule a daily server reboot
+** [NOT MANDATORY BUT HIGHLY RECOMMENDED] Schedule daily server reboot
 
   Leftover processes from the previous builds often get in the way of the next
   builds, causing catastrophic build failures. Until BBS does a better job at
@@ -513,6 +515,27 @@ From a personal administrator account
   - Tab Settings:
       nothing should be checked
   Then click OK on bottom right
+
+** [NOT MANDATORY BUT HIGHLY RECOMMENDED] Install system updates before daily
+  reboot
+
+  Open Control Panel.
+  Click on System and Security.
+  Click on Windows Update.
+  On the left panel click on Change Settings.
+  - Important updates:
+      Make sure "Install updates automatically (recommended)" is selected.
+      Click on Updates will be automatically installed during the maintenance
+      window.
+      Change the time for "Run maintenance tasks daily at" to 1:00 PM (default
+      is 2:00 AM).
+      Check "Allow scheduled maintenance to wake up my computer at the
+      scheduled time".
+      Then click OK on bottom.
+  - Recommended updates:
+      Check "Give me recommended updates the same way I receive important
+      updates".
+  Then click OK on bottom.
 
 
 ===============================================================================
