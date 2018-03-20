@@ -491,7 +491,7 @@ def STAGE4():
     print "BBS> [STAGE4] Get list of srcpkg files found in current dir"
     srcpkg_paths = bbs.fileutils.listSrcPkgFiles()
     #CheckLocalSrcpkgFiles(srcpkg_paths)
-    STAGE4_loop(srcpkg_paths, BBSvars.nb_cpu)
+    STAGE4_loop(srcpkg_paths, BBSvars.check_nb_cpu)
     print "BBS> [STAGE4] DONE at %s." % time.asctime()
     return
 

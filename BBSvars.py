@@ -81,5 +81,8 @@ STAGE2_mode = BBScorevars.getenv('BBS_STAGE2_MODE', False)
 STAGE4_mode = BBScorevars.getenv('BBS_STAGE4_MODE', False)
 STAGE5_mode = BBScorevars.getenv('BBS_STAGE5_MODE', False)
 
-nb_cpu = int(BBScorevars.getenv('BBS_NB_CPU', False, "1"))
+nb_cpu = BBScorevars.getenv('BBS_NB_CPU', False, "1")
+check_nb_cpu = BBScorevars.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
+nb_cpu = int(nb_cpu)
+check_nb_cpu = int(check_nb_cpu)
 
