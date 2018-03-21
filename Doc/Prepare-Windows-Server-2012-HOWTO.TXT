@@ -74,6 +74,14 @@ From the Administrator account
     pip install h5py
     pip install pandas
 
+** Install Python module h5pyd 
+
+  This module is needed by rhdf5client.
+
+  In a PowerShell Window:
+
+    pip install h5pyd 
+
 Note that installing Python from one of the personal administrator accounts
 below seems to cause problems (e.g. trying to upgrade to the latest pip
 with the above command raises an error). This is why all the above steps
