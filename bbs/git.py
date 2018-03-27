@@ -16,6 +16,7 @@
 import sys
 import os
 import jobs
+import fileutils
 
 def _create_clone(clone_path, repo_url, branch=None, depth=None):
     try:
