@@ -74,7 +74,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
             return retcode
         print ""
     os.chdir(old_cwd)
-    return
+    return 0
 
 def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None):
     if os.path.exists(clone_path):
