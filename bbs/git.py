@@ -81,9 +81,9 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         retcode = _update_clone(clone_path, repo_url, branch, snapshot_date)
         if retcode == 0:
             return
-        print "bbs.git.update_git_clone> _update_clone() failed " +
+        print "bbs.git.update_git_clone> _update_clone() failed " + \
               "with error code %d!" % retcode
-        print "bbs.git.update_git_clone> --> will try to re-create " +
+        print "bbs.git.update_git_clone> --> will try to re-create " + \
               "the git clone from scratch ..."
         print ""
         print "bbs.git.update_git_clone> rm -r %s" % clone_path
