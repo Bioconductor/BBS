@@ -190,7 +190,8 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     bbs.git.update_git_clone(BBSvars.manifest_clone_path,
                              BBSvars.manifest_git_repo_url,
                              manifest_git_branch,
-                             1)
+                             depth=1,
+                             recreate_if_update_fails=True)
     ## iterate over manifest to update pkg dirs
     pkgs = bbs.manifest.read(BBSvars.manifest_path)
     i = 0
@@ -205,8 +206,9 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
         bbs.git.update_git_clone(pkg_git_clone,
                                  pkg_git_repo_url,
                                  git_branch,
-                                 1,
-                                 snapshot_date)
+                                 depth=1,
+                                 snapshot_date=snapshot_date,
+                                 recreate_if_update_fails=True)
     print "BBS> -------------------------------------------------------------"
     print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="

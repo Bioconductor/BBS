@@ -84,7 +84,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     os.chdir(old_cwd)
     return 0
 
-def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None):
+def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None, recreate_if_update_fails=False):
     if os.path.exists(clone_path):
         retcode = _update_clone(clone_path, repo_url, branch, snapshot_date)
         if retcode == 0:
@@ -92,7 +92,9 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         print ""
         print "bbs.git.update_git_clone> _update_clone() failed " + \
               "with error code %d!" % retcode
-        print "bbs.git.update_git_clone> --> will try to re-create " + \
+        if not recreate_if_update_fails:
+            sys.exit("bbs.git.update_git_clone> EXIT")
+        print "bbs.git.update_git_clone> ==> will try to re-create " + \
               "git clone from scratch ..."
         print "bbs.git.update_git_clone> rm -r %s" % clone_path
         fileutils.nuke_tree(clone_path)
