@@ -17,31 +17,38 @@ import sys
 import os
 import jobs
 
-def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None):
+def _create_clone(clone_path, repo_url, branch=None, depth=None):
     try:
         git_cmd = os.environ['BBS_GIT_CMD']
     except KeyError:
         git_cmd = 'git'
-    if not os.path.exists(clone_path):
-        cmd = '%s clone' % git_cmd
-        if branch != None:
-            cmd += ' --branch %s' % branch
-        if depth != None:
-            cmd += ' --depth %s' % depth
-        cmd = '%s %s %s' % (cmd, repo_url, clone_path)
-        print "bbs.git.update_git_clone> %s" % cmd
-        jobs.doOrDie(cmd)
-        print ""
-        return
+    cmd = '%s clone' % git_cmd
+    if branch != None:
+        cmd += ' --branch %s' % branch
+    if depth != None:
+        cmd += ' --depth %s' % depth
+    cmd = '%s %s %s' % (cmd, repo_url, clone_path)
+    print "bbs.git._create_clone> %s" % cmd
+    jobs.doOrDie(cmd)
+    print ""
+    return
+
+def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
+    try:
+        git_cmd = os.environ['BBS_GIT_CMD']
+    except KeyError:
+        git_cmd = 'git'
     old_cwd = os.getcwd()
-    print "bbs.git.update_git_clone> cd %s" % clone_path
+    print "bbs.git._update_clone> cd %s" % clone_path
     os.chdir(clone_path)
     print ""
     if branch != None:
         ## checkout branch
         cmd = '%s checkout %s' % (git_cmd, branch)
-        print "bbs.git.update_git_clone> %s" % cmd
-        jobs.doOrDie(cmd)
+        print "bbs.git._update_clone> %s" % cmd
+        retcode = jobs.call(cmd)
+        if retcode != 0:
+            return retcode
         print ""
     if snapshot_date == None:
         cmd = '%s pull' % git_cmd
@@ -49,8 +56,10 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         ## we fetch instead of pull so we can then merge up to snapshot
         ## date (see below)
         cmd = '%s fetch' % git_cmd
-    print "bbs.git.update_git_clone> %s" % cmd
-    jobs.doOrDie(cmd)
+    print "bbs.git._update_clone> %s" % cmd
+    retcode = jobs.call(cmd)
+    if retcode != 0:
+        return retcode
     print ""
     if snapshot_date != None:
         ## Andrzej: merge only up to snapshot date
@@ -59,10 +68,28 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         ## simple 'git merge' for now...
         #cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
         cmd = '%s merge' % git_cmd
-        print "bbs.git.update_git_clone> %s" % cmd
-        jobs.doOrDie(cmd)
+        print "bbs.git._update_clone> %s" % cmd
+        retcode = jobs.call(cmd)
+        if retcode != 0:
+            return retcode
         print ""
     os.chdir(old_cwd)
+    return
+
+def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None):
+    if os.path.exists(clone_path):
+        retcode = _update_clone(clone_path, repo_url, branch, snapshot_date)
+        if retcode == 0:
+            return
+        print "bbs.git.update_git_clone> _update_clone() failed " +
+              "with error code %d!" % retcode
+        print "bbs.git.update_git_clone> --> will try to re-create " +
+              "the git clone from scratch ..."
+        print ""
+        print "bbs.git.update_git_clone> rm -r %s" % clone_path
+        fileutils.nuke_tree(clone_path)
+        print ""
+    _create_clone(clone_path, repo_url, branch, depth)
     return
 
 if __name__ == "__main__":
