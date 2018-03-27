@@ -94,7 +94,6 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
               "with error code %d!" % retcode
         print "bbs.git.update_git_clone> --> will try to re-create " + \
               "git clone from scratch ..."
-        print ""
         print "bbs.git.update_git_clone> rm -r %s" % clone_path
         fileutils.nuke_tree(clone_path)
         print ""
