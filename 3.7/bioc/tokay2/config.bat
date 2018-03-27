@@ -11,7 +11,7 @@ set BBS_RSAKEY=C:\Users\biocbuild\.BBS\id_rsa
 set BBS_WORK_TOPDIR=C:\Users\biocbuild\bbs-3.7-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=12
-set BBS_CHECK_NB_CPU=22
+set BBS_CHECK_NB_CPU=24
 
 set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
