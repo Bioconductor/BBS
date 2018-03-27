@@ -49,6 +49,8 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         print "bbs.git._update_clone> %s" % cmd
         retcode = jobs.call(cmd)
         if retcode != 0:
+            print "bbs.git._update_clone> cd %s" % old_cwd
+            os.chdir(old_cwd)
             return retcode
         print ""
     if snapshot_date == None:
@@ -60,6 +62,8 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     print "bbs.git._update_clone> %s" % cmd
     retcode = jobs.call(cmd)
     if retcode != 0:
+        print "bbs.git._update_clone> cd %s" % old_cwd
+        os.chdir(old_cwd)
         return retcode
     print ""
     if snapshot_date != None:
@@ -72,8 +76,11 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         print "bbs.git._update_clone> %s" % cmd
         retcode = jobs.call(cmd)
         if retcode != 0:
+            print "bbs.git._update_clone> cd %s" % old_cwd
+            os.chdir(old_cwd)
             return retcode
         print ""
+    print "bbs.git._update_clone> cd %s" % old_cwd
     os.chdir(old_cwd)
     return 0
 
