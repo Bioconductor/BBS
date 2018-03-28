@@ -81,17 +81,23 @@ def update_data_experiment(git_branch=None, skip=None):
                                   git_branch, skip)
     return
 
+def update_workflows(git_branch=None, skip=None):
+    pkg_dir = os.path.join(home, 'git.bioconductor.org', 'workflows')
+    update_packages_from_manifest(pkg_dir, 'workflows.txt',
+                                  git_branch, skip)
+    return
+
 if __name__ == '__main__':
     usage_msg = 'Usage:\n' + \
         '    update_bioc_git_repos.py\n' + \
         'or:\n' + \
-        '    update_bioc_git_repos.py [manifest|software|data-experiment]\n' + \
+        '    update_bioc_git_repos.py [manifest|software|data-experiment|workflows]\n' + \
         'or:\n' + \
-        '    update_bioc_git_repos.py [manifest|software|data-experiment] [master|RELEASE_3_5]\n' + \
+        '    update_bioc_git_repos.py [manifest|software|data-experiment|workflows] [master|RELEASE_3_6]\n' + \
         'or:\n' + \
-        '    update_bioc_git_repos.py [software|data-experiment] <skip>\n' + \
+        '    update_bioc_git_repos.py [software|data-experiment|workflows] <skip>\n' + \
         'or:\n' + \
-        '    update_bioc_git_repos.py [software|data-experiment] [master|RELEASE_3_5] <skip>'
+        '    update_bioc_git_repos.py [software|data-experiment|workflows] [master|RELEASE_3_6] <skip>'
     argc = len(sys.argv)
     git_branch = skip = None
     if argc == 1:
@@ -122,6 +128,8 @@ if __name__ == '__main__':
         update_software(git_branch, skip)
     elif what == 'data-experiment':
         update_data_experiment(git_branch, skip)
+    elif what == 'workflows':
+        update_workflows(git_branch, skip)
     else:
         sys.exit(usage_msg)
 
