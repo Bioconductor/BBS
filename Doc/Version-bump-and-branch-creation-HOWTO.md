@@ -11,8 +11,9 @@ changes to all the packages in the release, **in this order**:
 * **Second version bump**: bump x.y.z version to odd y **in the `master` branch**
 
 For example, for the BioC 3.6 release, we need to do this for all the
-packages listed in the `software.txt` and `data-experiment.txt` files
-of the `RELEASE_3_6` branch of the `manifest` repo.
+packages listed in the `software.txt`, `data-experiment.txt`, and
+`workflows.txt` files of the `RELEASE_3_6` branch of the `manifest`
+repo.
 
 This needs to be done before the BioC 3.6 software builds start for
 the software packages, and before the BioC 3.6 data-experiment builds
@@ -67,10 +68,10 @@ in sections **C.**, **D.**, and **E.**.
       mkdir git.bioconductor.org
 
 * Populate `git.bioconductor.org` with git clones of the `manifest` repo
-  and of all the package repos (software and data-experiment). This takes
-  about 3h so is worth doing in advance e.g. a couple of days before the
-  release. It will save time when doing **C.**, **D.**, and **E.** below
-  on the day prior to the release:
+  and all the package repos (software, data-experiment, and workflows).
+  This takes about 3h so is worth doing in advance e.g. a couple of days
+  before the release. It will save time when doing **C.**, **D.**, and **E.**
+  below on the day prior to the release:
 
       export BBS_HOME="$HOME/BBS"
       export PYTHONPATH="$BBS_HOME/bbs"
@@ -83,6 +84,9 @@ in sections **C.**, **D.**, and **E.**.
 
       # clone data-experiment package repos (takes approx. 1h45)
       time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
+
+      # clone workflow package repos (takes approx. 4 min)
+      time $BBS_HOME/utils/update_bioc_git_repos.py workflows master
 
 * Make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
@@ -110,24 +114,28 @@ in sections **C.**, **D.**, and **E.**.
 
       # software packages
       cd ~/git.bioconductor.org/software
-      ~/BBS/utils/bump_pkg_versions.sh bad
+      $BBS_HOME/utils/bump_pkg_versions.sh bad
 
       # data-experiment packages
       cd ~/git.bioconductor.org/data-experiment
-      ~/BBS/utils/bump_pkg_versions.sh bad
+      $BBS_HOME/utils/bump_pkg_versions.sh bad
+
+      # workflow packages
+      cd ~/git.bioconductor.org/workflows
+      $BBS_HOME/utils/bump_pkg_versions.sh bad
 
 
 ## C. Version bumps and branch creation for software packages
 
 Perform these steps on the day prior to the release. They must be completed
 before the software builds get kicked off (see **A. Introduction**). The full
-procedure should take about 2 hours. Make sure to reserve enough time.
+procedure should take about 2.5 hours. Make sure to reserve enough time.
 
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
 
 Announce or ask a team member to announce on the bioc-devel mailing list
 that people must stop committing/pushing changes to the BioC git server
-(git.bioconductor.org) for the next 2 hours.
+(git.bioconductor.org) for the next 2.5 hours.
 
 ### C2. Login to the machine where you've performed the preliminary steps
 
@@ -185,13 +193,13 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     cd $WORKING_DIR
 
     # dry-run
-    ~/BBS/utils/bump_pkg_versions.sh test even
+    $BBS_HOME/utils/bump_pkg_versions.sh test even
 
     # if everything looks OK
-    ~/BBS/utils/bump_pkg_versions.sh even
+    $BBS_HOME/utils/bump_pkg_versions.sh even
 
     # remove the DESCRIPTION.original files
-    ~/BBS/utils/bump_pkg_versions.sh clean
+    $BBS_HOME/utils/bump_pkg_versions.sh clean
 
 ### C7. Commit first version bump
 
@@ -250,13 +258,13 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     cd $WORKING_DIR
 
     # dry-run
-    ~/BBS/utils/bump_pkg_versions.sh test odd
+    $BBS_HOME/utils/bump_pkg_versions.sh test odd
 
     # if everything looks OK
-    ~/BBS/utils/bump_pkg_versions.sh odd
+    $BBS_HOME/utils/bump_pkg_versions.sh odd
 
     # remove the DESCRIPTION.original files
-    ~/BBS/utils/bump_pkg_versions.sh clean
+    $BBS_HOME/utils/bump_pkg_versions.sh clean
 
 ### C10. Commit second version bump
 
@@ -281,9 +289,9 @@ Same as step C7 above EXCEPT that commit message now is:
       echo ""
       echo ">>> push all changes for package $pkg"
       git -C $pkg push --all
-    done > push.log 2>&1
+    done > push.out 2>&1
 
-Open `push.log` in an editor and search for errors. A typical error is
+Open `push.out` in an editor and search for errors. A typical error is
 `Error: duplicate commits` (happened for affyPLM and Rdisop first time I
 tested this). Report these errors to `gitolite` experts Nitesh and Martin.
 
@@ -304,22 +312,38 @@ Timings (approx.):
 * **C11**: 5 min
 
 
-## E. Finishing up
+## E. Version bumps and branch creation for workflow packages
 
-### E1. Enable push access to new `RELEASE_3_6` branch
+Repeat steps C4 to C11 above **but for C4 define the environment variables
+as follow**:
+
+    export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
+    export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/workflows.txt"
+
+Timings (approx.):
+
+* **C7**: < 1 min
+* **C8**: < 10 sec
+* **C10**: < 10 sec
+* **C11**: < 1 min
+
+
+## F. Finishing up
+
+### F1. Enable push access to new `RELEASE_3_6` branch
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`). Ask a team member
 who is familiar with `gitolite` (Nitesh and Martin at the moment) to help with
 this.
 
-### E2. Tell people that committing/pushing to the BioC git server can resume
+### F2. Tell people that committing/pushing to the BioC git server can resume
 
 Announce or ask a team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
-### E3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_6` on main BioC 3.6 builder
+### F3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_6` on main BioC 3.6 builder
 
 DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.6 builds grab the
 `RELEASE_3_6` branch of all packages instead of their `master` branch.
@@ -344,7 +368,7 @@ with
 
 in `~/BBS/3.6/config.bat`
 
-Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.6-bioc/` and
-from `~/bbs-3.6-data-experiment/`. They'll get automatically re-created and
-re-populated when the builds start.
+Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.6-bioc/`,
+`~/bbs-3.6-data-experiment/`, and `~/bbs-3.6-workflows/`. They'll get
+automatically re-created and re-populated when the builds start.
 
