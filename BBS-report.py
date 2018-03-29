@@ -402,7 +402,7 @@ def statuses2classes(statuses):
     ## doesn't have any OK in 'statuses' (e.g. if it's unsupported on all
     ## platforms).
     if classes == "":
-        classes = "ok"
+        classes = " ok"
     return classes
 
 ### Produces full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
@@ -412,7 +412,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     else:
         classes = "odd"
     statuses = BBSreportutils.get_distinct_statuses_from_db(pkg)
-    classes += " " + statuses2classes(statuses)
+    classes += statuses2classes(statuses)
     out.write('<TR class="%s header">' % classes)
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left">Hostname</TD>')
@@ -553,7 +553,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     else:
         classes = "odd"
     statuses = BBSreportutils.get_distinct_statuses_from_db(pkg, [node])
-    classes += " " + statuses2classes(statuses)
+    classes += statuses2classes(statuses)
     out.write('<TR class="%s">' % classes)
     out.write('<TD class="header" style="text-align: right;"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left; padding-left: 12px;">')

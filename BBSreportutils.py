@@ -102,7 +102,7 @@ def get_distinct_statuses_from_db(pkg, nodes=None):
     for node in nodes:
         if not is_supported(pkg, node):
             continue
-        stagecmds = ['install', 'buildsrc', 'checksrc']
+        stagecmds = ['install', 'buildsrc', 'buildwebvig', 'checksrc']
         if is_doing_buildbin(node):
             stagecmds.append('buildbin')
         for stagecmd in stagecmds:
