@@ -951,6 +951,9 @@ Everything in this section must be done from the biocbuild account.
     sudo cpan install File::Copy::Recursive
 
   Modify the PATH and DYLD_LIBRARY_PATH variables:
+ 
+  The /etc/profile file has read only permissions (factory settings). To save
+  changes you will need to force save, e.g., with `vi` this is `!w`.
 
     sudo vi /etc/profile
     export PATH=$PATH:/usr/local/ensembl-vep
