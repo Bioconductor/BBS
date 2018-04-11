@@ -316,7 +316,10 @@ in _this_ order
 
 - Branch annotations
 
-- Confirm Archive/ folder is working for new release
+- Confirm Archive/ folder is working for new release.
+  The relevant script is BBS/utils/list.old.packages.R
+  which depends on BiocInstaller::useDevel() to determine if
+  archiving should happen.
 
 - Build AMIs for new release and devel
 
