@@ -479,7 +479,7 @@ Everything in this section should be done from the biocbuild account.
 
   Install with:
 
-    sudo installer -pkg pandoc-1.19.2.1-osx.pkg -target /
+    sudo installer -pkg pandoc-2.1-macOS.pkg -target /
 
 
 G. Add crontab entries for daily builds
