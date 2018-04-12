@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================
-# Local settings for toluca2
+# Local settings for merida1
 # ==========================
 
 
