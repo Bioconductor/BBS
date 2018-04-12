@@ -1,4 +1,0 @@
-http://bioconductor.org/packages/BBS_BIOC_VERSION/bioc
-http://bioconductor.org/packages/BBS_BIOC_VERSION/data/annotation
-http://bioconductor.org/packages/BBS_BIOC_VERSION/extra
-http://cran.fhcrc.org
