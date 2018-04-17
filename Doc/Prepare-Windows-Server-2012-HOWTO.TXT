@@ -610,7 +610,7 @@ From a personal administrator account
   command as appropriate.
  
   cd C:/extsoft
-  rsync --timeout=60 -rcvp --delete cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
+  rsync --timeout=60 -rcvp --delete --chmod=ugo=rwX   cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
 
   The location of these binaries is set using macro EXT_LIBS with default 
   setting $(LOCAL_SOFT). $(LOCAL_SOFT) defaults to $(R_HOME)/extsoft which 
