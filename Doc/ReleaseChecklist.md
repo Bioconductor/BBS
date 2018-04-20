@@ -124,6 +124,8 @@ in _this_ order
 
 - OrgDb and TxDb packages posted to the devel repo
 
+- After OrgDb and TxDb are in devel repo, add to annotationhub
+
 - Update NEWS files
 
 <a name="oneweek"></a>
