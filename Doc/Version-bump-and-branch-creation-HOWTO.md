@@ -137,6 +137,19 @@ Announce or ask a team member to announce on the bioc-devel mailing list
 that people must stop committing/pushing changes to the BioC git server
 (git.bioconductor.org) for the next 2.5 hours.
 
+
+In the gitolite-admin/conf/packages.conf file,
+
+Comment out the most recent `RELEASE_X_Y` line for all the packages. Using
+vim, it is possible with a one liner,
+
+       :g/RW RELEASE_X_Y/s/^/#
+
+NOTE: RELEASE_X_Y is going to be the current RELEASE. (eg: RELEASE_3_6)
+
+Once the packages.conf is updated, push to gitolite-admin on the git server
+to make the changes apply.
+
 ### C2. Login to the machine where you've performed the preliminary steps
 
 Make sure to use the `-A` flag to enable forwarding of the authentication
