@@ -413,7 +413,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         classes = "odd"
     statuses = BBSreportutils.get_distinct_statuses_from_db(pkg)
     classes += statuses2classes(statuses)
-    out.write('<TR class="%s header">' % classes)
+    out.write('<TR id="%s" class="%s header">' % (pkg, classes))
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left">Hostname</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
@@ -426,7 +426,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
     for node in BBSreportutils.NODES:
-        out.write('<TR class="%s">' % classes)
+        out.write('<TR id="%s" class="%s">' % (pkg, classes))
         if is_first:
             pkgname_html = pkgname_to_HTML(pkg)
             version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
