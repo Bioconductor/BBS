@@ -19,15 +19,12 @@ This needs to be done before the BioC 3.7 software builds start for
 the software packages, and before the BioC 3.7 data-experiment builds
 start for the data-experiment packages.
 
-Look for the prerun jobs in the crontab for the `biocbuild` user on the
-main BioC 3.7 builder to get the times the software and data-experiment
-builds get kicked off. According to this crontab, the last software and
-data-experiment builds preceding the official release will get kicked off
-on Mon Oct 30 at 17:00 EST and on Tue Oct 31 at 9:35 am EST, respectively.
-Make sure to check this again a couple of days before the release as we
-sometimes make small adjustments to the crontabs on the build machines.
-Also be sure to translate to your local time if you are not on the East
-Coast.
+Look for the prerun jobs in the crontab for the `biocbuild` user on the main
+BioC 3.7 builder to get the times the software and data-experiment builds get
+kicked off. Make sure to check the crontab again a couple of days before the
+release as we sometimes make small adjustments to the crontabs on the build
+machines.  Also be sure to translate to your local time if you are not on the
+East Coast.
 
 
 ## B. Preliminary steps
@@ -36,7 +33,7 @@ These steps should be performed typically a couple of days before the steps
 in sections **C.**, **D.**, and **E.**.
 
 * Update this document to reflect the BioC version to be released i.e.
-  replace all occurrences of `3.*` and `RELEASE_3_*` with appropriate
+  replace all occurrences of `3.7` and `RELEASE_3_7` with appropriate
   version. This will avoid potentially disastrous mistakes when
   copying/pasting/executing commands from this document.
 
