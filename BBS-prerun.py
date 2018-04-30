@@ -187,7 +187,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     print "BBS>   manifest_git_branch: %s" % manifest_git_branch
     print "BBS> -------------------------------------------------------------"
     print ""
-    bbs.git.update_git_clone(BBSvars.manifest_clone_path,
+    bbs.gitclone.update_git_clone(BBSvars.manifest_clone_path,
                              BBSvars.manifest_git_repo_url,
                              manifest_git_branch,
                              depth=1,
@@ -203,7 +203,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
         print ""
         pkg_git_clone = os.path.join(MEAT0_path, pkg)
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
-        bbs.git.update_git_clone(pkg_git_clone,
+        bbs.gitclone.update_git_clone(pkg_git_clone,
                                  pkg_git_repo_url,
                                  git_branch,
                                  depth=1,
