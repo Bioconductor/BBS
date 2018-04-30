@@ -282,6 +282,16 @@ Same as step C7 above EXCEPT that commit message now is:
 
     commit_msg="bump x.y.z versions to odd y after creation of RELEASE_3_7 branch"
 
+Last sanity check before pushing in C11:
+
+master: This should show an even bump, and then an odd version bump
+
+	git log master -n 2
+
+RELEASE_3_7: This should show an even bump.
+
+	git log RELEASE_3_7 -n 2
+
 ### C11. Push all the changes
 
     cd $WORKING_DIR
@@ -304,7 +314,6 @@ Same as step C7 above EXCEPT that commit message now is:
 Open `push.out` in an editor and search for errors. A typical error is
 `Error: duplicate commits` (happened for affyPLM and Rdisop first time I
 tested this). Report these errors to `gitolite` experts Nitesh and Martin.
-
 
 ## D. Version bumps and branch creation for data-experiment packages
 
@@ -346,6 +355,16 @@ This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`). Ask a team member
 who is familiar with `gitolite` (Nitesh and Martin at the moment) to help with
 this.
+
+Check with a non super user if push access is enabled. (Nitesh can do
+this currently with ni41435 account, and the dummy package
+BiocGenerics_test).
+
+Check,
+
+	git push
+	git checkout RELEASE_3_7
+	git pull
 
 ### F2. Tell people that committing/pushing to the BioC git server can resume
 
