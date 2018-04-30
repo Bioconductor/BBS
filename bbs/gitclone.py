@@ -10,7 +10,7 @@
 ###
 ### Last modification: Jul 11, 2017
 ###
-### git module
+### gitclone module
 ###
 
 import sys
