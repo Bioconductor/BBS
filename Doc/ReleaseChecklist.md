@@ -251,7 +251,11 @@ in _this_ order
 
 - rsync on master
 
-  UPDATE the /etc/rsyncd.conf on master.bioconductor.org. 
+  UPDATE the /etc/rsyncd.conf on master.bioconductor.org and
+  restart rsync.
+
+      sudo systemctl restart rsync
+
   Test rsync is still working as expected with commands from:
   http://www.bioconductor.org/about/mirrors/mirror-how-to/.
 
