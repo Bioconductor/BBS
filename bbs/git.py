@@ -10,7 +10,7 @@
 ###
 ### Last modification: Jul 11, 2017
 ###
-### gitclone module
+### git module
 ###
 
 import sys
@@ -90,13 +90,13 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         if retcode == 0:
             return
         print ""
-        print "bbs.gitclone.update_git_clone> _update_clone() failed " + \
+        print "bbs.git.update_git_clone> _update_clone() failed " + \
               "with error code %d!" % retcode
         if not recreate_if_update_fails:
-            sys.exit("bbs.gitclone.update_git_clone> EXIT")
-        print "bbs.gitclone.update_git_clone> ==> will try to re-create " + \
+            sys.exit("bbs.git.update_git_clone> EXIT")
+        print "bbs.git.update_git_clone> ==> will try to re-create " + \
               "git clone from scratch ..."
-        print "bbs.gitclone.update_git_clone> rm -r %s" % clone_path
+        print "bbs.git.update_git_clone> rm -r %s" % clone_path
         fileutils.nuke_tree(clone_path)
         print ""
     _create_clone(clone_path, repo_url, branch, depth)
