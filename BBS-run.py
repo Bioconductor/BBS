@@ -233,7 +233,7 @@ def CallRfunctionFromSTAGE2Script(Rfunction, out_file=None):
     Rscript = "source('%s');%s()" % (script_path, Rfunction)
     if out_file == None:
         out_file = '%s.Rout' % Rfunction
-    bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), out_file) # ignore retcode
+    bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), out_file, 3600.0) # ignore retcode
     print "BBS> [%s] END." % Rfunction
     return
 
