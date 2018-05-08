@@ -8,9 +8,9 @@
 ###   Andrzej Oleś <andrzej.oles@embl.de>
 ###   Hervé Pagès <hpages@fredhutch.org>
 ###
-### Last modification: Jul 11, 2017
+### Last modification: May 08, 2018
 ###
-### git module
+### gitutils module
 ###
 
 import sys
@@ -29,7 +29,7 @@ def _create_clone(clone_path, repo_url, branch=None, depth=None):
     if depth != None:
         cmd += ' --depth %s' % depth
     cmd = '%s %s %s' % (cmd, repo_url, clone_path)
-    print "bbs.git._create_clone> %s" % cmd
+    print "bbs.gitutils._create_clone> %s" % cmd
     jobs.doOrDie(cmd)
     print ""
     return
@@ -40,16 +40,16 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     except KeyError:
         git_cmd = 'git'
     old_cwd = os.getcwd()
-    print "bbs.git._update_clone> cd %s" % clone_path
+    print "bbs.gitutils._update_clone> cd %s" % clone_path
     os.chdir(clone_path)
     print ""
     if branch != None:
         ## checkout branch
         cmd = '%s checkout %s' % (git_cmd, branch)
-        print "bbs.git._update_clone> %s" % cmd
+        print "bbs.gitutils._update_clone> %s" % cmd
         retcode = jobs.call(cmd)
         if retcode != 0:
-            print "bbs.git._update_clone> cd %s" % old_cwd
+            print "bbs.gitutils._update_clone> cd %s" % old_cwd
             os.chdir(old_cwd)
             return retcode
         print ""
@@ -59,10 +59,10 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         ## we fetch instead of pull so we can then merge up to snapshot
         ## date (see below)
         cmd = '%s fetch' % git_cmd
-    print "bbs.git._update_clone> %s" % cmd
+    print "bbs.gitutils._update_clone> %s" % cmd
     retcode = jobs.call(cmd)
     if retcode != 0:
-        print "bbs.git._update_clone> cd %s" % old_cwd
+        print "bbs.gitutils._update_clone> cd %s" % old_cwd
         os.chdir(old_cwd)
         return retcode
     print ""
@@ -73,14 +73,14 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         ## simple 'git merge' for now...
         #cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
         cmd = '%s merge' % git_cmd
-        print "bbs.git._update_clone> %s" % cmd
+        print "bbs.gitutils._update_clone> %s" % cmd
         retcode = jobs.call(cmd)
         if retcode != 0:
-            print "bbs.git._update_clone> cd %s" % old_cwd
+            print "bbs.gitutils._update_clone> cd %s" % old_cwd
             os.chdir(old_cwd)
             return retcode
         print ""
-    print "bbs.git._update_clone> cd %s" % old_cwd
+    print "bbs.gitutils._update_clone> cd %s" % old_cwd
     os.chdir(old_cwd)
     return 0
 
@@ -90,13 +90,13 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         if retcode == 0:
             return
         print ""
-        print "bbs.git.update_git_clone> _update_clone() failed " + \
+        print "bbs.gitutils.update_git_clone> _update_clone() failed " + \
               "with error code %d!" % retcode
         if not recreate_if_update_fails:
-            sys.exit("bbs.git.update_git_clone> EXIT")
-        print "bbs.git.update_git_clone> ==> will try to re-create " + \
+            sys.exit("bbs.gitutils.update_git_clone> EXIT")
+        print "bbs.gitutils.update_git_clone> ==> will try to re-create " + \
               "git clone from scratch ..."
-        print "bbs.git.update_git_clone> rm -r %s" % clone_path
+        print "bbs.gitutils.update_git_clone> rm -r %s" % clone_path
         fileutils.nuke_tree(clone_path)
         print ""
     _create_clone(clone_path, repo_url, branch, depth)

@@ -5,7 +5,7 @@ import sys
 import os
 
 import manifest
-import git
+import gitutils
 
 gitserver = 'git.bioconductor.org'
 
@@ -27,7 +27,7 @@ def update_packages(pkg_dir, pkgs, git_branch=None, skip=None):
         print ''
         pkg_git_clone = os.path.join(pkg_dir, pkg)
         pkg_git_repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-        git.update_git_clone(pkg_git_clone, pkg_git_repo_url, git_branch)
+        gitutils.update_git_clone(pkg_git_clone, pkg_git_repo_url, git_branch)
     return
 
 def update_packages_in_current_working_dir(git_branch=None, skip=None):
@@ -56,7 +56,7 @@ def update_manifest(git_branch=None):
     print 'BBS> ----------------------------------------------------------'
     print 'BBS> [update_manifest] branch: %s' % git_branch
     print ''
-    git.update_git_clone(manifest_git_clone,
+    gitutils.update_git_clone(manifest_git_clone,
                          manifest_git_repo_url,
                          git_branch)
     return
