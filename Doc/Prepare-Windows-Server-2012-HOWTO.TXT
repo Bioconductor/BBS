@@ -349,6 +349,9 @@ interactively on a Windows build machine.
     biocLite("IRanges", type="source")
     biocLite("Biobase", type="source")
     biocLite("zlibbioc", type="source")
+
+  Install BiocCheck for the Single Package Builder:
+
     biocLite("BiocCheck")
 
   Quit R (do NOT save the workspace image)
