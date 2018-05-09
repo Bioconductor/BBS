@@ -340,6 +340,11 @@ in _this_ order
 - Remove packages from package.conf that have been defunct and removed fro
   latest release
 
+- Update GenomeInfoDB/inst/extdata/dataFiles/genomeMappingTbl.csv mapping table
+  for any new ensembl or UCSC entries. 
+  https://genome.ucsc.edu/FAQ/FAQreleases.html
+  http://useast.ensembl.org/info/website/archives/assembly.html
+
 - Update Bioconductor GitHub repositories
 
   Push packages with "core-package tag from git.bioconductor.org to github.
