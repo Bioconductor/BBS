@@ -337,6 +337,9 @@ in _this_ order
 
 - ID packages for deprecation in BioC 3.7
 
+- Remove packages from package.conf that have been defunct and removed fro
+  latest release
+
 - Update Bioconductor GitHub repositories
 
   Push packages with "core-package tag from git.bioconductor.org to github.
