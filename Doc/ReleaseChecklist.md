@@ -340,10 +340,14 @@ in _this_ order
 - Remove packages from package.conf that have been defunct and removed fro
   latest release
 
-- Update GenomeInfoDB/inst/extdata/dataFiles/genomeMappingTbl.csv mapping table
+- Update static data in Bioconductor packages GenomeInfoDB and UniProt.ws
+  Update GenomeInfoDB/inst/extdata/dataFiles/genomeMappingTbl.csv mapping table
   for any new ensembl or UCSC entries. 
   https://genome.ucsc.edu/FAQ/FAQreleases.html
   http://useast.ensembl.org/info/website/archives/assembly.html
+  Update UniProt.ws/inst/extdata/  keytypes.txt and speclist.txt
+  Will need to checkout github branch remove_static_files branch for code to
+  generate these files (in  R/ code).
 
 - Update Bioconductor GitHub repositories
 
