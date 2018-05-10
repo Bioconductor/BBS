@@ -349,6 +349,8 @@ in _this_ order
   Will need to checkout github branch remove_static_files branch for code to
   generate these files (in  R/ code).
 
+- reach out to packages with malformated NEWS files for correction
+
 - Update Bioconductor GitHub repositories
 
   Push packages with "core-package tag from git.bioconductor.org to github.
