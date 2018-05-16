@@ -215,3 +215,22 @@ Other `systemctl` commands:
     systemctl start xvfb
     systemctl stop xvfb
     systemctl restart xvfb
+
+vi) Testing
+
+In one terminal log into the server as the biocbuild user and another
+log in as a sudo user. 
+
+Run the test script as biocbuild: 
+
+    cd /home/biocbuild/sandbox
+    ./testX11.sh
+
+As the sudo user, kill the service
+
+    sudo systemctl stop xvfb
+
+then as the biocbuild user run the script again and it should fail:
+
+    ./testX11.sh
+
