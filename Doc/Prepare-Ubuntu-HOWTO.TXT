@@ -208,13 +208,13 @@ to run and create the necessary service units for Xvfb 'on the fly'.
 After the reboot the service should be running and can now be managed via the 
 `systemctl` tool as well as `service`:
 
-    systemctl status xvfb
+    sudo systemctl status xvfb
 
 Other `systemctl` commands:
 
-    systemctl start xvfb
-    systemctl stop xvfb
-    systemctl restart xvfb
+    sudo systemctl start xvfb
+    sudo systemctl stop xvfb
+    sudo systemctl restart xvfb
 
 vi) Testing
 
