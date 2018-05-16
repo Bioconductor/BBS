@@ -4,7 +4,6 @@
 
 . $BBS_HOME/utils/clean-before-run.sh
 
-VIRTUALX_OUTPUT_FILE="$BBS_WORK_TOPDIR/log/virtual-X.out"
 $BBS_HOME/BBS-run.py no-bin
 
 # We have to use brute force because some R processes might still be running
