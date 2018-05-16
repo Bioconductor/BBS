@@ -51,7 +51,7 @@ export JAGS_MODULES=/usr/local/lib/JAGS/modules-3
 
 5) Run Xvfb as service:
 
-* Test files
+i) Test files
 
 As the biocbuild user, create two test files:
 
@@ -75,8 +75,7 @@ Add these contents to textX11.sh with the appropriate version of BioC:
 
 Perform the remainder of steps as a sudo user:
 
-* init.d script
-
+ii) init.d script
 
 Create /etc/init.d/xvfb with these contents:
 
@@ -128,7 +127,7 @@ Change permissions on /etc/init.d/xvfb:
 
     sudo chmod 744 /etc/init.d/xvfb
 
-* Create runlevel symlinks from /etc/rc.d/ to /etc/init.d/xvfb
+iii) Create runlevel symlinks from /etc/rc.d/ to /etc/init.d/xvfb
 
 Install a few packages with management tools:
 
@@ -145,7 +144,7 @@ system service, by starting when the device boots and stopping at shutdown,
 as configured by 'Default-Start' and 'Default-Stop' in the header of the
 /etc/init.d/xvfb script. 
 
-* Set DISPLAY variable in /etc/profile.d
+iv) Set DISPLAY variable in /etc/profile.d
 
     cd /etc/profile.d
     sudo vim xvfb.sh
@@ -170,7 +169,7 @@ Output should look like this:
     vobencha@malbec2:~$ echo $DISPLAY
     :1.0
 
-* Enable the Xvfb service 
+v) Enable the Xvfb service 
 
 We are using the System V init style to set-up Xvfb. At this point we can
 manage the service by invoking the script directly
