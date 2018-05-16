@@ -7,14 +7,14 @@
 Based on preparing george2 in December 2012
 
 
-Packages to install with apt-get:
+1) Packages to install with apt-get:
 
     libnetcdf-dev libhdf5-serial-dev sqlite ibfftw3-dev libfftw3-doc
     libopenbabel-dev fftw3 fftw3-dev pkg-config xfonts-100dpi xfonts-75dpi
     libopenmpi-dev openmpi-bin mpi-default-bin openmpi-common
     libexempi3 openmpi-checkpoint python-mpi4py texlive-science biblatex
 
-Software to build manually (in /usr/local/src unless otherwise noted:)
+2) Software to build manually (in /usr/local/src unless otherwise noted:)
     GAPS
     GAPS-JAGS
     variant_effect_predictor (see ensemblVEP README)
@@ -22,8 +22,7 @@ Software to build manually (in /usr/local/src unless otherwise noted:)
     libSBML (./configure --enable-layout)
     ROOT (./configure --prefix=/usr/local/root)
 
----    
-CoGAPS note: CoGAPS uses a different version of JAGS than other packages.
+3) CoGAPS note: CoGAPS uses a different version of JAGS than other packages.
 JAGS 2.1.0 and GAPSJAGS should be installed in /usr/local/GAPS-JAGS and 
 the following environment variables set:
 
@@ -38,10 +37,8 @@ set:
 export JAGS_INCLUDE=/usr/local/include/JAGS
 export JAGS_LIB=/usr/local/lib
 export JAGS_MODULES=/usr/local/lib/JAGS/modules-3 
----
 
-
-Other:
+4) Other:
     Edit /etc/texmf/texmf.cnf and set shell_escape = t
     Add 
     export R_TEXI2DVICMD=/home/biocbuild/BBS/utils/ourtexi2dvi
@@ -50,4 +47,172 @@ Other:
     Be sure
     /usr/share/texmf-texlive/tex/latex/algorithms/algorithm.sty
     and algorithmic.sty
-    are present. Then run sudo texhash. 
+    are present. Then run sudo texhash.
+
+5) Run Xvfb as service:
+
+* Test files
+
+As the biocbuild user, create two test files:
+
+    touch /home/biocbuild/sandbox/testX11.R
+    touch /home/biocbuild/sandbox/testX11.sh
+
+Add these contents to testX11.R:
+
+    set.seed(1)
+    x = rnorm(100)
+    png("fig2.png", type="Xlib")
+    plot(x)
+    dev.off()
+ 
+    print("SUCCESS!")
+
+Add these contents to textX11.sh with the appropriate version of BioC:
+
+    #!/bin/bash
+    echo "source('testX11.R')" | /home/biocbuild/bbs-3.8-bioc/R/bin/R --slave
+
+Perform the remainder of steps as a sudo user:
+
+* init.d script
+
+
+Create /etc/init.d/xvfb with these contents:
+
+    #! /bin/sh
+ 
+    ### BEGIN INIT INFO
+    # Provides:          Xvfb 
+    # Required-Start:    $remote_fs $syslog
+    # Required-Stop:     $remote_fs $syslog
+    # Default-Start:     2 3 4 5
+    # Default-Stop:      0 1 6 
+    # Short-Description: Loads X Virtual Frame Buffer
+    # Description:       This file should be used to construct scripts to be
+    #                    placed in /etc/init.d. 
+    #
+    #                    A virtual X server is needed to non-interactively run 
+    #                    'R CMD build' and 'R CMD check on some BioC packages. 
+    #                    The DISPLAY variable is set in /etc/profile.d/xvfb.sh. 
+    ### END INIT INFO
+ 
+    XVFB=/usr/bin/Xvfb
+    XVFBARGS=":1 -screen 0 800x600x16"
+    PIDFILE=/var/run/xvfb.pid
+    case "$1" in
+      start)
+        echo -n "Starting virtual X frame buffer: Xvfb"
+        start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+        echo "."
+        ;;
+      stop)
+        echo -n "Stopping virtual X frame buffer: Xvfb"
+        start-stop-daemon --stop --quiet --pidfile $PIDFILE
+        sleep 2
+        rm -f $PIDFILE
+        echo "."
+        ;;
+      restart)
+        $0 stop
+        $0 start
+        ;;
+      *)
+            echo "Usage: /etc/init.d/xvfb {start|stop|restart}"
+            exit 1
+    esac
+ 
+    exit 0
+
+Change permissions on /etc/init.d/xvfb:
+
+    sudo chmod 744 /etc/init.d/xvfb
+
+* Create runlevel symlinks from /etc/rc.d/ to /etc/init.d/xvfb
+
+Install a few packages with management tools:
+
+    sudo apt-get install init-system-helpers
+    sudo apt-get install sysv-rc sysv-rc-conf
+
+Create the symlinks:
+
+    sudo update-rc.d /etc/init.d/xvfb defaults
+
+This will create one or more symlinks in /etc/rc.d/ which automatically 
+execute at boot time and shutdown. This makes the application behave as a 
+system service, by starting when the device boots and stopping at shutdown, 
+as configured by 'Default-Start' and 'Default-Stop' in the header of the
+/etc/init.d/xvfb script. 
+
+* Set DISPLAY variable in /etc/profile.d
+
+    cd /etc/profile.d
+    sudo vim xvfb.sh
+
+Add these contents to xvfb.sh:
+
+    ## Set DISPLAY environment variable for use with Xvfb.
+    ## See /etc/init.d/xvfb for start / stop configuration.
+ 
+    export DISPLAY=:1.0 
+
+Change permissions:
+
+    sudo chmod 644 /etc/profile.d/xvfb.sh
+
+Log out of the server and log back on. Check the DISPLAY variable is set:
+
+    echo $DISPLAY
+
+Output should look like this:
+
+    vobencha@malbec2:~$ echo $DISPLAY
+    :1.0
+
+* Enable the Xvfb service 
+
+We are using the System V init style to set-up Xvfb. At this point we can
+manage the service by invoking the script directly
+
+    sudo /etc/init.d/xvfb start
+    sudo /etc/init.d/xvfb stop 
+    sudo /etc/init.d/xvfb restart 
+
+or via the `service` tool:
+
+    sudo service xvfb start
+    sudo service xvfb stop 
+    sudo service xvfb restart 
+
+Instead of System V, we could have used systemd. Where System V uses the 
+`system` command as a management tool for controlling the init system,
+systemd uses `systemctl`.
+
+https://www.dynacont.net/documentation/linux/Useful_SystemD_commands/
+
+Compatibility of systemd with System V rc scripts is achieved with a 
+conversion program named `systemd-sysv-generator`. This program is in 
+/usr/lib/systemd/system-generators/ and is run automatically by systemd early 
+in the bootstrap process at every boot and again every time that systemd is 
+instructed to re-load its configuration.
+
+This program is a generator which creates service unit files on the fly in
+/run/systemd/ and other locations used by generators. If the
+systemd-sysv-generator does not find an existing native systemd service unit 
+it generates the service units that run the System V rc scripts from 
+/etc/init.d.
+
+All this to say that we need to reboot the server for the generator scripts 
+to run and create the necessary service units for Xvfb 'on the fly'.
+
+After the reboot the service should be running and can now be managed via the 
+`systemctl` tool as well as `service`:
+
+    systemctl status xvfb
+
+Other `systemctl` commands:
+
+    systemctl start xvfb
+    systemctl stop xvfb
+    systemctl restart xvfb
