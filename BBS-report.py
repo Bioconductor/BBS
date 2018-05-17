@@ -475,7 +475,8 @@ def write_summary_TD(out, node, stagecmd):
     out.write('<TD>%s</TD>' % html)
     return
 
-### Produces full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
+### Produces full TRs (normally 8 TDs each, only 7 for the workflow subbuilds,
+### and only 4 for the longtests subbuilds)
 def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TR class="summary header">')
     out.write('<TD COLSPAN="2" style="background: inherit;">SUMMARY</TD>')
