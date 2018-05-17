@@ -112,7 +112,7 @@ def stageCmds(subbuild):
     if subbuild == "bioc-longtests":
        return ['checksrc']
     elif subbuild == "workflows":
-       return ['install', 'buildsrc', 'buildwebvig']
+       return ['install', 'buildsrc']
     else:
        return ['install', 'buildsrc', 'checksrc', 'buildbin']
 
