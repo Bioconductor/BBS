@@ -40,6 +40,10 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     if status != 'OK':
         return True
 
+    ## workflows exit here
+    if BBScorevars.is_workflow:
+        return status != 'OK'
+
     ## Extract Status from CHECK summary
     checksrc_path = os.path.join(node_path, 'checksrc')
     summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
