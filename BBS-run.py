@@ -549,64 +549,6 @@ def STAGE5():
     print "BBS> [STAGE5] DONE at %s." % time.asctime()
     return
 
-
-##############################################################################
-## BUILDWEBVIG: Build HTML vignettes for inclusion on the BioC website.
-##############################################################################
-
-def BUILDWEBVIG_loop(pkgdir_paths, nb_cpu):
-    total = len(pkgdir_paths)
-    job_queue = []
-    for pkgdir_path in pkgdir_paths:
-        try:
-            pkg = bbs.parse.getPkgFromDir(pkgdir_path)
-            version = bbs.parse.getVersionFromDir(pkgdir_path)
-        except IOError:
-            print "BBS>   Can't read DESCRIPTION file!"
-        else:
-            #create a working copy of the package vignettes dir
-            vig_dir = os.path.join(".buildwebvig", pkg)
-            bbs.fileutils.copy_dir(os.path.join(pkgdir_path, "vignettes"), vig_dir)
-            vig_regex = '^.*\\.[Rr]md$'
-            vig_files = bbs.fileutils.getMatchingFiles(vig_dir, vig_regex, True)
-            pkgdumps_prefix = pkg + '.buildwebvig'
-            cmd = ' && '.join(map(BBSbase.getBUILDWEBVIGcmd, vig_files))
-            pkgdumps = BBSbase.PkgDumps(vig_dir, pkgdumps_prefix)
-            job = BBSbase.BuildWebVig_Job(pkg, version, cmd,
-                                          pkgdumps, BBSvars.buildwebvig_rdir,
-                                          vig_files)
-            job_queue.append(job)
-    nb_jobs = len(job_queue)
-    print "BBS> BEGIN BUILDWEBVIG loop."
-    t0 = time.time()
-    bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
-                             BBScorevars.r_cmd_timeout, True)
-    dt = time.time() - t0
-    print "BBS> END BUILDWEBVIG loop."
-    print "BBS> -------------------------------------------------------------"
-    print "BBS> BUILDWEBVIG SUMMARY:"
-    print "BBS>   o Working dir: %s" % os.getcwd()
-    print "BBS>   o %d pkg(s) in working dir" % total
-    print "BBS>   o %d pkg(s) queued and processed" % nb_jobs
-    print "BBS>   o Total time: %.2f seconds" % dt
-    print "BBS> -------------------------------------------------------------"
-    return
-
-def BUILDWEBVIG():
-    print "BBS> [BUILDWEBVIG] STARTING BUILDWEBVIG at %s..." % time.asctime()
-    BBSvars.buildwebvig_rdir.RemakeMe(True)
-    print "BBS> [BUILDWEBVIG] cd BBS_MEAT_PATH"
-    os.chdir(BBSvars.meat_path)
-    print "BBS> [BUILDWEBVIG] Get list of package source directories for which srcpkg files exist"
-    pkgdir_paths = extractTargetPkgListFromMeatIndex()
-    dirs = map(bbs.parse.getPkgFromDir, pkgdir_paths)
-    tars = map(bbs.parse.getPkgFromPath, bbs.fileutils.listSrcPkgFiles())
-    pkgdir_paths = [pkgdir_paths[dirs.index(pkg)] for pkg in dirs if pkg in tars]
-    BUILDWEBVIG_loop(pkgdir_paths, BBSvars.nb_cpu)
-    print "BBS> [BUILDWEBVIG] DONE at %s." % time.asctime()
-    return
-
-
 ##############################################################################
 ## MAIN SECTION
 ##############################################################################
@@ -658,12 +600,4 @@ if __name__ == "__main__":
         dt = time.time() - t0
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE5', started_at, ended_at, dt))
-    ## BUILDWEBVIG: build HTML vignettes for inclusion on the BioC website
-    if "BUILDWEBVIG" in sys.argv:
-        started_at = bbs.jobs.currentDateString()
-        t0 = time.time()
-        BUILDWEBVIG()
-        dt = time.time() - t0
-        ended_at = bbs.jobs.currentDateString()
-        ticket.append(('BUILDWEBVIG', started_at, ended_at, dt))
     writeEndOfRunTicket(ticket)

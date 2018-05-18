@@ -3,7 +3,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: May 13, 2011
+### Last modification: May 17, 2018
 ###
 
 import sys
@@ -75,7 +75,6 @@ install_rdir = Node_rdir.subdir('install')
 buildsrc_rdir = Node_rdir.subdir('buildsrc')
 checksrc_rdir = Node_rdir.subdir('checksrc')
 buildbin_rdir = Node_rdir.subdir('buildbin')
-buildwebvig_rdir = Node_rdir.subdir('buildwebvig')
 
 STAGE2_mode = BBScorevars.getenv('BBS_STAGE2_MODE', False)
 STAGE4_mode = BBScorevars.getenv('BBS_STAGE4_MODE', False)
