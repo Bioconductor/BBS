@@ -15,7 +15,7 @@ export BBS_MEAT0_TYPE=3
 # Needed only if BBS_MEAT0_TYPE is 3
 export BBS_BIOC_MANIFEST_GIT_REPO_URL="https://git.bioconductor.org/admin/manifest"
 export BBS_BIOC_MANIFEST_GIT_BRANCH="RELEASE_3_7"
-export BBS_BIOC_MANIFEST_CLONE_PATH="/home/biocbuild/bbs-3.7-bioc/manifest"
+export BBS_BIOC_MANIFEST_CLONE_PATH="$BBS_WORK_TOPDIR/manifest"
 
 # Needed if BBS_MEAT0_TYPE is 1 or 3
 export BBS_BIOC_MANIFEST_FILE="workflows.txt"
@@ -23,7 +23,7 @@ export BBS_BIOC_MANIFEST_FILE="workflows.txt"
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="malbec2.bioconductor.org"
 export BBS_MEAT0_RUSER="biocbuild"
-export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.7-workflows/MEAT0"
+export BBS_MEAT0_RDIR="$BBS_WORK_TOPDIR/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
 export BBS_UPDATE_MEAT0=1
