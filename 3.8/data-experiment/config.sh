@@ -23,7 +23,7 @@ export BBS_BIOC_MANIFEST_FILE="data-experiment.txt"
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="malbec1.bioconductor.org"
 export BBS_MEAT0_RUSER="biocbuild"
-export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.8-data-experiment/MEAT0"
+export BBS_MEAT0_RDIR="$BBS_WORK_TOPDIR/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
 export BBS_UPDATE_MEAT0=1
