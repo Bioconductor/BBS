@@ -297,10 +297,10 @@ Everything in this section must be done from the biocbuild account.
  
   (i) Create plist file
  
-  The plist file in /System/Library/LaunchDaemons specifies how the 
+  The plist file in /Library/LaunchDaemons specifies how the 
   application is called and when it's started.
 
-    cd /System/Library/LaunchDaemons
+    cd /Library/LaunchDaemons
     vim local.xvfb.plist
 
   Paste these contents into local.xvfb.plist:
