@@ -287,7 +287,7 @@ Everything in this section must be done from the biocbuild account.
 
 ** Run Xvfb as service:
 
-  Xvfb is run as system daemon controlled by launchd. We run this as a daemon
+  Xvfb is run as global daemon controlled by launchd. We run this as a daemon
   instead of an agent because agents are run on behalf of the logged in user
   while a daemon runs in the background on behalf of the root user (or any user
   you specify with the 'UserName' key).
@@ -297,8 +297,8 @@ Everything in this section must be done from the biocbuild account.
  
   (i) Create plist file
  
-  The plist file in /Library/LaunchDaemons specifies how the 
-  application is called and when it's started.
+  The plist files in /Library/LaunchDaemons specify how applications are
+  called and when they are started. We'll call our plist "local.xvfb.plist".
 
     cd /Library/LaunchDaemons
     vim local.xvfb.plist
@@ -332,23 +332,31 @@ Everything in this section must be done from the biocbuild account.
   </dict>
   </plist>
 
-  NOTE: The 'KeepAlive' key will restart the service if it is killed.
-  When testing the set up, you should set 'KeepAlive' to 'false' so 
-  you can manually start/stop the service. Once you are done testing,
-  set 'KeepAlive' back to 'true'.
+  NOTE: The 'KeepAlive' key means the system will try to restart the service if
+  it is killed.  When testing the set up, you should set 'KeepAlive' to 'false'
+  so you can manually start/stop the service. Once you are done testing, set
+  'KeepAlive' back to 'true'.
 
   (ii) Logs
 
   stdout and stderror logs are output to /var/log/xvfb as indicated in the
   plist file. Logs are rotated with newsyslog and the config is in 
-  /etc/newsyslog.d/xvfb.conf.
+  /etc/newsyslog.d/.
+ 
+  Create xvfb.conf.
+
+    sudo vim /etc/newsyslog.d/xvfb.conf
+
+  Add these contents:
+
+    # logfilename          [owner:group]    mode count size when  flags [/pid_file] [sig_num]
+    /var/log/xvfb/xvfb.stderror.log         644  5     5120 *     JN
+    /var/log/xvfb/xvfb.stdout.log           644  5     5120 *     JN
 
   At the time of this writing, logs were rotated when they reached a file
-  size of 5MB.
+  size of 5MB. Once the xvfb.conf file is in place, simulate a rotation:
 
-  Once the xvfb.conf file is in place, simulate a rotation:
-
-    newsyslog -nvv
+    sudo newsyslog -nvv
 
   (iii) Export global variable `DISPLAY`
 
