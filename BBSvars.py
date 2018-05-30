@@ -54,7 +54,7 @@ if MEAT0_type == 3:  # git-based builds
     manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE')
     manifest_path = os.path.join(manifest_clone_path, manifest_file)
     git_branch = BBScorevars.getenv('BBS_BIOC_GIT_BRANCH')
-    vcsmeta_file = 'gitlog/git-log.txt'
+    vcsmeta_file = 'GITLOG0/git-log.txt'
 
 update_MEAT0 = int(BBScorevars.getenv('BBS_UPDATE_MEAT0', False, "0")) != 0
 
@@ -85,3 +85,13 @@ check_nb_cpu = BBScorevars.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
 nb_cpu = int(nb_cpu)
 check_nb_cpu = int(check_nb_cpu)
 
+GITLOG_rdir = bbs.rdir.RemoteDir('BBS_GITLOG_RDIR',
+                None,
+                BBScorevars.getenv('BBS_GITLOG_RDIR'),
+                BBScorevars.getenv('BBS_GITLOG_RHOST', False),
+                BBScorevars.getenv('BBS_GITLOG_RUSER', False),
+                BBScorevars.ssh_cmd,
+                BBScorevars.rsync_cmd,
+                BBScorevars.rsync_rsh_cmd)
+
+gitlog_path = BBScorevars.getenv('BBS_GITLOG_PATH')

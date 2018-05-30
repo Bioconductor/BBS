@@ -173,10 +173,10 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
     print "BBS> [make_STAGE2_pkg_deps_list]",
     print "Calling %s() defined in %s to make %s file ..." % \
           (Rfunction, script_path, STAGE2_pkg_deps_list_path),
-    # Backslahes in the paths injected in 'Rscript' will be seen as escape
+    # Backslashes in the paths injected in 'Rscript' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
-    # contain backslahes.
+    # contain backslashes.
     script_path2 = script_path.replace('\\', '/')
     target_pkgs_file2 = target_pkgs_file.replace('\\', '/')
     STAGE2_pkg_deps_list_path2 = STAGE2_pkg_deps_list_path.replace('\\', '/')
@@ -340,6 +340,10 @@ def STAGE2():
             srcpkg_filepath = os.path.join(meat_path, srcpkg_file)
             BBSbase.Untar(srcpkg_filepath, meat_path)
             os.remove(srcpkg_filepath)
+
+    print "BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog"
+    gitlog_path = BBSvars.gitlog_path
+    BBSvars.GITLOG0_dir.syncLocalDir(gitlog_path, True)
 
     print "BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp"
     STAGE2_tmp = os.path.join(BBSvars.work_topdir, "STAGE2_tmp")

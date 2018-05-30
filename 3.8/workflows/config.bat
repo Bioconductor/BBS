@@ -30,6 +30,14 @@ set BBS_UPDATE_MEAT0=1
 @rem Local meat copy
 set BBS_MEAT_PATH=%BBS_WORK_TOPDIR%\meat
 
+@rem Where are the gitlog files stored by prerun (stage1)
+export BBS_GITLOG0_RHOST=%BBS_MEAT0_RHOST%
+export BBS_GITLOG0_RUSER=%BBS_MEAT0_RUSER%
+export BBS_GITLOG0_RDIR=/home/biocbuild/bbs-3.8-workflows/GITLOG0
+
+@rem Local gitlog copy
+export BBS_GITLOG_PATH=%BBS_WORK_TOPDIR%\gitlog
+
 
 set wd1=%cd%
 cd ..
