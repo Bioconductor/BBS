@@ -85,7 +85,7 @@ check_nb_cpu = BBScorevars.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
 nb_cpu = int(nb_cpu)
 check_nb_cpu = int(check_nb_cpu)
 
-GITLOG_rdir = bbs.rdir.RemoteDir('BBS_GITLOG0_RDIR',
+GITLOG0_rdir = bbs.rdir.RemoteDir('BBS_GITLOG0_RDIR',
                 None,
                 BBScorevars.getenv('BBS_GITLOG0_RDIR'),
                 BBScorevars.getenv('BBS_GITLOG0_RHOST', False),
