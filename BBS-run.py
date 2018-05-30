@@ -343,7 +343,7 @@ def STAGE2():
 
     print "BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog"
     gitlog_path = BBSvars.gitlog_path
-    BBSvars.GITLOG0_rdir.syncLocalDir(gitlog_path, True)
+    BBSvars.GITLOG_rdir.syncLocalDir(gitlog_path, True)
 
     print "BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp"
     STAGE2_tmp = os.path.join(BBSvars.work_topdir, "STAGE2_tmp")
