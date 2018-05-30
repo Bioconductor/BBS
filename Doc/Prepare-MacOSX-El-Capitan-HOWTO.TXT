@@ -60,8 +60,6 @@ account that should exist at this point).
 
     system_profiler SPSoftwareDataType
 
-  Finally see IMPORTANT NOTE AFTER A REBOOT in "Install XQuartz" section below.
-
 ** Create biocbuild account
 
     sudo dscl . -create /Users/biocbuild
@@ -137,7 +135,6 @@ From now on everything must be done from the biocbuild account.
     sudo softwareupdate -iva
 
   and reboot the machine.
-  Finally see IMPORTANT NOTE AFTER A REBOOT in "Install XQuartz" section below.
 
 - Check the kernel version (should be Darwin 15 for OS X El Capitan):
 
@@ -192,7 +189,7 @@ Everything in this section must be done from the biocbuild account.
 ** Install the Command Line Developer Tools
 
   The Command Line Developer Tools is a subset of Xcode that includes Apple
-  LLVM compiler (with Clang front-end), linker, Make, and other developper
+  LLVM compiler (with Clang front-end), linker, Make, and other developer
   tools that enable Unix-style development at the command line. It's all
   that is needed to install/compile R packages with native code in them (note
   that it even includes the svn and git clients).
@@ -288,18 +285,162 @@ Everything in this section must be done from the biocbuild account.
     which Xvfb        # should be /opt/X11/bin/Xvfb
     ls -l /usr/X11R6  # should be a symlink to /opt/X11
 
-    Xvfb
+** Run Xvfb as service:
 
-  If the above gives fatal server error "Cannot establish any listening
-  sockets", then try to start the virtual X server as root with 'sudo Xvfb'
-  first (it's totally quiet so if nothing happens that means it's running).
-  Then stop it with CTRL+C, then try to start it again as biocbuild. Now it
-  should work. So CTRL+C again.
+  Xvfb is run as global daemon controlled by launchd. We run this as a daemon
+  instead of an agent because agents are run on behalf of the logged in user
+  while a daemon runs in the background on behalf of the root user (or any user
+  you specify with the 'UserName' key).
+ 
+    man launchd
+    man launchctl
+ 
+  (i) Create plist file
+ 
+  The plist files in /Library/LaunchDaemons specify how applications are
+  called and when they are started. We'll call our plist "local.xvfb.plist".
 
-  IMPORTANT NOTE AFTER A REBOOT: For whatever reason, after a reboot the
-  system will go back to a state where biocbuild cannot start the virtual X
-  server. So make sure to 'sudo Xvfb' followed by CTRL+C after each reboot
-  so biocbuild can start Xvfb (the build system needs that).
+    cd /Library/LaunchDaemons
+    vim local.xvfb.plist
+
+  Paste these contents into local.xvfb.plist:
+
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+  <dict>
+          <key>KeepAlive</key>
+          <true/>
+          <key>Label</key>
+          <string>local.xvfb</string>
+          <key>ProgramArguments</key>
+          <array>
+                  <string>/opt/X11/bin/Xvfb</string>
+                  <string>:1</string>
+                  <string>-screen</string>
+                  <string>0</string>
+                  <string>800x600x16</string>
+          </array>
+          <key>RunAtLoad</key>
+          <true/>
+          <key>ServiceDescription</key>
+          <string>Xvfb Virtual X Server</string>
+          <key>StandardOutPath</key>
+          <string>/var/log/xvfb/xvfb.stdout.log</string>
+          <key>StandardErrorPath</key>
+          <string>/var/log/xvfb/xvfb.stderror.log</string>
+  </dict>
+  </plist>
+
+  NOTE: The 'KeepAlive' key means the system will try to restart the service if
+  it is killed.  When testing the set up, you should set 'KeepAlive' to 'false'
+  so you can manually start/stop the service. Once you are done testing, set
+  'KeepAlive' back to 'true'.
+
+  (ii) Logs
+
+  stdout and stderror logs are output to /var/log/xvfb as indicated in the
+  plist file. Logs are rotated with newsyslog and the config is in 
+  /etc/newsyslog.d/.
+ 
+  Create xvfb.conf.
+
+    sudo vim /etc/newsyslog.d/xvfb.conf
+
+  Add these contents:
+
+    # logfilename          [owner:group]    mode count size when  flags [/pid_file] [sig_num]
+    /var/log/xvfb/xvfb.stderror.log         644  5     5120 *     JN
+    /var/log/xvfb/xvfb.stdout.log           644  5     5120 *     JN
+
+  At the time of this writing, logs were rotated when they reached a file
+  size of 5MB. Once the xvfb.conf file is in place, simulate a rotation:
+
+    sudo newsyslog -nvv
+
+  (iii) Export global variable `DISPLAY`
+
+    sudo vim /etc/profile
+
+  Add this line to /etc/profile:
+
+    export DISPLAY=:1.0
+
+  Log out and log back in as biocbuild to confirm $DISPLAY is defined:
+
+    echo $DISPLAY
+
+  (vi) Load the service 
+
+    sudo launchctl load xvfb.plist
+
+  xvfb should appear in the list of loaded services:
+
+    sudo launchctl list|grep xvfb
+
+  If a PID is assigned that means the daemon is running. The service is
+  scheduled to start on boot so at this point there probably is no PID 
+  assigned (service is loaded but not started).
+
+  (v) Test starting / stopping the service 
+
+  NOTE: For testing, set 'KeepAlive' to 'false' in the plist file. Once
+  testing is done, reset the key to 'true'.
+
+  The 'RunAtLoad' directive in the plist file says to start the service
+  at boot. To test the service without a re-boot use the 'start' and
+  'stop' commands with the service label.
+
+
+    sudo launchctl start local.xvfb
+
+  Check the service has started with either of these commands:
+
+    sudo launchctl list|grep xvfb
+    ps aux|grep -v grep|grep Xvfb
+
+  Stop the service:
+
+    sudo launchctl stop local.xvfb 
+
+  If you have problems starting the service set the log level to debug
+  and check (or tail) the log file:
+
+    sudo launchctl log level debug
+    sudo tail -f /var/log/xvfb/xvfb.stderror.log &
+
+  Try to start the job again:
+
+    sudo launchctl start local.xvfb
+
+  (vi) Reboot
+
+  Reboot the server and confirm the service came up:
+
+    ps aux|grep -v grep|grep Xvfb
+
+  (vii) Kill the process
+
+  When 'KeepAlive' is set to 'true' in the plist file, the service will
+  be restarted if killed with 
+
+    sudo kill -9 <PID>
+
+  If you really need to kill the service, change 'KeepAlive' to 'false'
+  in the plist, then kill the process.
+
+  (viii) Testing X11 from R
+
+  There are two scripts in /Users/biocbuild/sandbox for testing:
+
+    merida2:sandbox biocbuild$ ls testX11*
+    testX11.R	testX11.sh
+
+  Running the shell script when the Xvfb service is running should
+  result in output of "SUCCESS!":
+
+    merida2:sandbox biocbuild$ ./testX11.sh 
+    [1] "SUCCESS!"
 
 ** Install Homebrew
 

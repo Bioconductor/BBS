@@ -36,14 +36,4 @@ echo ""
 echo "Updating $BIOC_VERSION/workflows repo with source packages..."
 update_repo "$SRC_CONTRIB" "source" "tar.gz"
 
-WEBVIGS_DEST="$REPOS_ROOT/webvigs"
-WEBVIGS_SRC="$BBS_OUTGOING_DIR/webvigs"
-echo "Updating $BIOC_VERSION/workflows with web vignettes..."
-for i in `ls $WEBVIGS_SRC`;
-do
-    # use rsync instead of cp in order to delete any previous build artifacts
-    rsync -a --delete $WEBVIGS_SRC/$i $WEBVIGS_DEST
-done
-
-
 exit 0

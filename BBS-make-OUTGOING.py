@@ -24,6 +24,7 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     nodes_path = BBScorevars.nodes_rdir.path
     node_path = os.path.join(nodes_path, node_id)
     summary_file0 = "%s.%%s-summary.dcf" % pkg
+
     ## Extract Status from summary file.
     buildsrc_path = os.path.join(node_path, 'buildsrc')
     summary_file = os.path.join(buildsrc_path, summary_file0 % 'buildsrc')
@@ -38,17 +39,11 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     dcf.close()
     if status != 'OK':
         return True
-    ## Extract Status from BUILDWEBVIG summary (workflows only)
+
+    ## workflows exit here
     if BBScorevars.is_workflow:
-        buildwebvig_path = os.path.join(node_path, 'buildwebvig')
-        summary_file = os.path.join(buildwebvig_path, summary_file0 % 'buildwebvig')
-        try:
-            dcf = open(summary_file, 'r')
-        except IOError:
-            return True
-        status = bbs.parse.getNextDcfVal(dcf, 'Status')
-        dcf.close()
         return status != 'OK'
+
     ## Extract Status from CHECK summary
     checksrc_path = os.path.join(node_path, 'checksrc')
     summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
@@ -62,6 +57,7 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         return True
     if not is_doing_buildbin(node_hostname):
         return False
+
     ## Extract Status from BUILD BIN summary
     buildbin_path = os.path.join(node_path, 'buildbin')
     summary_file = os.path.join(buildbin_path, summary_file0 % 'buildbin')
@@ -81,11 +77,12 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     node_hostname = node_id.split("-")[0]
     fileext = BBScorevars.getNodeSpec(node_hostname, 'pkgFileExt')
     fresh_pkgs_subdir = os.path.join(BBScorevars.nodes_rdir.path, fresh_pkgs_subdir)
+
+    ## Workflow packages do not have manuals/ because we do not run 
+    ## `R CMD check`.
     manuals_dir = "../manuals"
-    webvigs_dir = "../webvigs"
     if BBScorevars.is_workflow:
-        print "BBS> [stage6] mkdir %s" % webvigs_dir
-        os.mkdir(webvigs_dir)    
+        pass
     elif (source_node):
         print "BBS> [stage6] mkdir %s" % manuals_dir
         os.mkdir(manuals_dir)
@@ -109,15 +106,10 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
             shutil.copy(pkg_file, ".")
         else:
             print "BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pkg_file
+        ## Get reference manual from pkg.Rcheck directory.
         if BBScorevars.is_workflow:
-             vig_dir = os.path.join(BBSvars.buildwebvig_rdir.path, pkg)
-             print "BBS> [stage6]   - copying %s web vignette to OUTGOING/webvigs folder ..." %  pkg
-             if os.path.exists(vig_dir):
-                 bbs.fileutils.copy_dir(vig_dir, os.path.join(webvigs_dir, pkg))
-             else:
-                print "BBS> [stage6]     SKIPPED (directory %s doesn't exist)" % vig_dir 
+            pass
         elif source_node:
-            ## Get reference manual from pkg.Rcheck directory.
             pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \
                        (BBScorevars.getenv('BBS_WORK_TOPDIR'), pkg, pkg)
             print "BBS> [stage6]   - copying %s manual to OUTGOING/manuals folder..." % pkg

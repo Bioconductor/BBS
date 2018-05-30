@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Apr 23, 2010
+### Last modification: May 18, 2018
 ###
 
 import sys
@@ -45,8 +45,7 @@ def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
         STATUS_SUMMARY[node_id] = { 'install':     (0, 0, 0, 0, 0), \
                                     'buildsrc':    (0, 0, 0, 0, 0), \
                                     'checksrc':    (0, 0, 0, 0, 0), \
-                                    'buildbin':    (0, 0, 0, 0, 0), \
-                                    'buildwebvig': (0, 0, 0, 0, 0) }
+                                    'buildbin':    (0, 0, 0, 0, 0) }
     x = STATUS_SUMMARY[node_id][stagecmd]
     x0 = x[0]
     x1 = x[1]
@@ -69,27 +68,29 @@ def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
 def make_STATUS_SUMMARY(allpkgs):
     for pkg in allpkgs:
         for node in BBSreportutils.supported_nodes(pkg):
+
             # INSTALL status
             stagecmd = 'install'
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+
             # BUILD status
             stagecmd = 'buildsrc'
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
             ok_to_skip = status in ["TIMEOUT", "ERROR"]
-            # CHECK / BUILD WEB VIG status
-	    if BBScorevars.subbuilds == "workflows":
-                stagecmd = 'buildwebvig'
-	    else:
+
+            # CHECK status
+            if BBScorevars.subbuilds != "workflows":
                 stagecmd = 'checksrc'
-            if ok_to_skip:
-                status = "skipped"
-            else:
-                status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-            update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+                if ok_to_skip:
+                    status = "skipped"
+                else:
+                    status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+                update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+
+            # BUILD BIN status
             if BBSreportutils.is_doing_buildbin(node):
-                # BUILD BIN status
                 stagecmd = 'buildbin'
                 if ok_to_skip:
                     status = "skipped"
@@ -112,7 +113,7 @@ def stageCmds(subbuild):
     if subbuild == "bioc-longtests":
        return ['checksrc']
     elif subbuild == "workflows":
-       return ['install', 'buildsrc', 'buildwebvig']
+       return ['install', 'buildsrc']
     else:
        return ['install', 'buildsrc', 'checksrc', 'buildbin']
 
@@ -134,8 +135,7 @@ stagecmd2label = {
     'install':  "INSTALL",
     'buildsrc': "BUILD",
     'checksrc': "CHECK",
-    'buildbin': "BUILD BIN",
-    'buildwebvig': "BUILD WEB VIG"
+    'buildbin': "BUILD BIN"
 }
 
 def pkgname_to_HTML(pkg):
@@ -1006,34 +1006,41 @@ def make_node_LeafReports(allpkgs, node):
     print "BBS> [make_node_LeafReports] Node %s: BEGIN ..." % node.id
     sys.stdout.flush()
     for pkg in BBSreportutils.supported_pkgs(node):
+
         # INSTALL leaf-report
         stagecmd = "install"
         status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
         if status != "skipped":
-            leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
+            leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, 
+                                                 stagecmd)
             make_LeafReport(leafreport_ref, allpkgs)
+
         # BUILD leaf-report
         stagecmd = "buildsrc"
         status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
         if not status in ["skipped", "NA"]:
-            leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
+            leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, 
+                                                 stagecmd)
             make_LeafReport(leafreport_ref, allpkgs)
+
         # CHECK leaf-report
-        if BBScorevars.subbuilds == "workflows":
-            stagecmd = 'buildwebvig'
-        else:
+        if BBScorevars.subbuilds != "workflows":
             stagecmd = 'checksrc'
-        status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-        if not status in ["skipped", "NA"]:
-            leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
-            make_LeafReport(leafreport_ref, allpkgs)
+            status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+            if not status in ["skipped", "NA"]:
+                leafreport_ref = LeafReportReference(pkg, node.hostname, 
+                                                     node.id, stagecmd)
+                make_LeafReport(leafreport_ref, allpkgs)
+
+        # BUILD BIN leaf-report
         if BBSreportutils.is_doing_buildbin(node):
-            # BUILD BIN leaf-report
             stagecmd = "buildbin"
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             if not status in ["skipped", "NA"]:
-                leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, stagecmd)
+                leafreport_ref = LeafReportReference(pkg, node.hostname, 
+                                                     node.id, stagecmd)
                 make_LeafReport(leafreport_ref, allpkgs)
+
     print "BBS> [make_node_LeafReports] Node %s: END." % node.id
     sys.stdout.flush()
     return

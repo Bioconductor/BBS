@@ -122,6 +122,19 @@ in sections **C.**, **D.**, and **E.**.
       $BBS_HOME/utils/bump_pkg_versions.sh bad
 
 
+* Find packages with duplicate commits by using the script
+
+    https://github.com/Bioconductor/bioc_git_transition/blob/master/misc/detect_duplicate_commits.py
+
+    # software packages
+    cd ~/git.bioconductor.org/software
+
+    # Check last 100 commits in each package
+    for package in ./*
+    do
+        python /path/detect_duplicate_commits.py package 100
+    done
+
 ## C. Version bumps and branch creation for software packages
 
 Perform these steps on the day prior to the release. They must be completed

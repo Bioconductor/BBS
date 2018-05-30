@@ -311,10 +311,12 @@ recur <- function(pkg)
 # outgoingDirPath is a directory that normally contains under it
 # source, win.binary, mac.binary, mac.binary.mavericks, and
 # mac.binary.el-capitan directories.
-# biocrepo should be either "bioc" (for software packages) or
-# "data/experiment" for experiment data packages. internalRepos is
-# consulted to see what needs to be propagated (i.e. nothing if package
-# there has the same version.)
+# biocrepo should be one of 
+#  "bioc" for software packages
+#  "data/experiment" for experiment data packages
+#  "workflows" for workflow packages
+# internalRepos is consulted to see what needs to be propagated 
+# (i.e. nothing if package there has the same version.)
 createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
     biocrepo=c("bioc", "data/experiment", "workflows"), internalRepos)
 {

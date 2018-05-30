@@ -2,4 +2,4 @@
 
 . ./config.sh
 
-$BBS_HOME/BBS-run.py STAGE2 STAGE3 BUILDWEBVIG
+$BBS_HOME/BBS-run.py STAGE2 STAGE3

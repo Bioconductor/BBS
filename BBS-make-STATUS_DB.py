@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Feb 5, 2015
+### Last modification: May 18, 2018
 ###
 
 import sys
@@ -31,27 +31,29 @@ def make_STATUS_DB(allpkgs):
     out = open(BBSreportutils.STATUS_DB_file, 'w')
     for pkg in allpkgs:
         for node in BBSreportutils.supported_nodes(pkg):
+
             # INSTALL status
             stagecmd = 'install'
             status = get_status_from_summary_file(pkg, node.id, stagecmd)
             out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+
             # BUILD status
             stagecmd = 'buildsrc'
             status = get_status_from_summary_file(pkg, node.id, stagecmd)
             out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
+
             # CHECK status
-            if BBScorevars.subbuilds == "workflows":
-                stagecmd = 'buildwebvig'
-            else:
+            if BBScorevars.subbuilds != "workflows":
                 stagecmd = 'checksrc'
-            if skipped_is_OK:
-                status = "skipped"
-            else:
-                status = get_status_from_summary_file(pkg, node.id, stagecmd)
-            out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+                if skipped_is_OK:
+                    status = "skipped"
+                else:
+                    status = get_status_from_summary_file(pkg, node.id, stagecmd)
+                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+
+            # BUILD BIN status
             if BBSreportutils.is_doing_buildbin(node):
-                # BUILD BIN status
                 stagecmd = 'buildbin'
                 if skipped_is_OK:
                     status = "skipped"
