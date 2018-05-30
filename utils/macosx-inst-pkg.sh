@@ -132,6 +132,29 @@ fix_dylib_links()
         echo "install_name_tool -change \"$old_dylib\" \"$new_dylib\" \"$so_file\""
         install_name_tool -change "$old_dylib" "$new_dylib" "$so_file"
     done
+    ## 4th fix: Edit link to liblzma.5.dylib so that the library will also be
+    ## searched in /usr/lib on the user machine at load time.
+    ## In the end, this was not needed (see
+    ## https://support.bioconductor.org/p/109172/#109510), and it was not
+    ## solving the problem anyway because liblzma.5.dylib in /usr/lib and
+    ## /usr/local/opt/xz/lib are incompatible. Keeping the code around in case
+    ## we need to use this trick for another library but THE TRICK WILL WORK
+    ## ONLY IF THE COMPATBILITY VERSION OF THE LIBRARY IS THE SAME AT THE
+    ## VARIOUS RPATH LOCATIONS!
+    #extra_rpath="/usr/lib"
+    #dylib_paths=`otool -L $so_file | grep "liblzma\..*dylib" | cut -d ' ' -f 1`
+    #for dylib_path in $dylib_paths; do
+    #    dylib_dirname=`dirname "$dylib_path"`
+    #    if [ "$dylib_dirname" != "$extra_rpath" ] && [ "$dylib_dirname" != "@rpath" ]; then
+    #        dylib_rpath="@rpath/`basename \"$dylib_path\"`"
+    #        echo "install_name_tool -change \"$dylib_path\" \"$dylib_rpath\" \"$so_file\""
+    #        install_name_tool -change "$dylib_path" "$dylib_rpath" "$so_file"
+    #        echo "install_name_tool -add_rpath \"$dylib_dirname\" \"$so_file\""
+    #        install_name_tool -add_rpath "$dylib_dirname" "$so_file"
+    #        echo "install_name_tool -add_rpath \"$extra_rpath\" \"$so_file\""
+    #        install_name_tool -add_rpath "$extra_rpath" "$so_file"
+    #    fi
+    #done
 }
 
 echo ">>>>>>> "
