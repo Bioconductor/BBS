@@ -40,3 +40,7 @@ updateNonTargetPkgs <- function()
         update.packages(repos=non_target_repos, ask=FALSE, type="source")
 }
 
+injectDESCRIPTION <- function()
+{
+    ## TBD 
+}

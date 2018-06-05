@@ -357,7 +357,7 @@ def STAGE2():
       BBScorevars.subbuilds == "bioc"):
         CreateREnvironFiles()
 
-    # Try to update all installed packages
+    # Try to update all installed packages.
     CallRfunctionFromSTAGE2Script("updateNonTargetPkgs",
                                   "updateNonTargetPkgs1.Rout")
 
@@ -367,6 +367,11 @@ def STAGE2():
     # Get 'pkg_deps_list' and 'installed_pkgs'.
     pkg_deps_list = make_STAGE2_pkg_deps_list(target_pkgs)
     installed_pkgs = get_installed_pkgs()
+
+    # Inject additional fields into DESCRIPTION (must come after
+    # 'target_pkgs.txt' has been created on disk).
+    CallRfunctionFromSTAGE2Script("injectDESCRIPTION",
+                                  "injectDESCRIPTION.Rout")
 
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] cd BBS_MEAT_PATH"
