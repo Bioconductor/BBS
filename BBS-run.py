@@ -368,11 +368,6 @@ def STAGE2():
     pkg_deps_list = make_STAGE2_pkg_deps_list(target_pkgs)
     installed_pkgs = get_installed_pkgs()
 
-    # Inject additional fields into DESCRIPTION (must come after
-    # 'target_pkgs.txt' has been created on disk).
-    CallRfunctionFromSTAGE2Script("injectDESCRIPTION",
-                                  "injectDESCRIPTION.Rout")
-
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] cd BBS_MEAT_PATH"
     os.chdir(meat_path)
