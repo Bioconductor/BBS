@@ -130,9 +130,9 @@ def getVigProdFiles(rmd_files):
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     # git-log
     dcf = open(gitlog_file, 'r')
-    git_url = getNextDcfVal(dcf, 'URL')
-    git_last_commit = getNextDcfVal(dcf, 'Last Commit')
-    git_last_commit_date = getNextDcfVal(dcf, 'Last Changed Date')
+    git_url = parse.getNextDcfVal(dcf, 'URL')
+    git_last_commit = parse.getNextDcfVal(dcf, 'Last Commit')
+    git_last_commit_date = parse.getNextDcfVal(dcf, 'Last Changed Date')
     dcf.close()
     if git_url == None:
         raise DcfFieldNotFoundError(gitlog_file, 'URL')
