@@ -373,7 +373,18 @@ def STAGE2():
     print "BBS> [STAGE2] Injecting fields into DESCRIPTION"
     os.chdir(meat_path)
     for pkg in target_pkgs:
-        injectDESCRIPTION(pkg)
+
+        gitlog_file = os.path.join(BBSvars.gitlog_path, "git-log-%s.txt" % pkg)
+        if not os.path.exists(gitlog_file):
+            print "BBS> %s file does not exist --> skipping." % gitlog_file
+            continue 
+
+        desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
+        if not os.path.exists(desc_file):
+            print "BBS> %s file does not exist --> skipping." % desc_file
+            continue 
+
+        bbs.fileutils.injectFieldsInDESCRIPTION(desc_file, gitlog_file, pkg)
 
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] Re-install supporting packages"
