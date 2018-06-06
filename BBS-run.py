@@ -368,8 +368,15 @@ def STAGE2():
     pkg_deps_list = make_STAGE2_pkg_deps_list(target_pkgs)
     installed_pkgs = get_installed_pkgs()
 
-    # Then re-install the supporting packages.
+    # Inject additional fields into DESCRIPTION.
     print "BBS> [STAGE2] cd BBS_MEAT_PATH"
+    print "BBS> [STAGE2] Injecting fields into DESCRIPTION"
+    os.chdir(meat_path)
+    for pkg in target_pkgs:
+        injectDESCRIPTION(pkg)
+
+    # Then re-install the supporting packages.
+    print "BBS> [STAGE2] Re-install supporting packages"
     os.chdir(meat_path)
     BBSvars.install_rdir.RemakeMe(True)
     STAGE2_loop(target_pkgs, pkg_deps_list, installed_pkgs, BBSvars.nb_cpu)

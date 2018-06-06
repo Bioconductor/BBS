@@ -14,9 +14,10 @@ import sys
 import re
 import shutil
 import string
+import parse
 
 # Equivalent to 'du -sb <path>'
-# WARNING: Result will not be acurate on Windows when <path> is (or contains)
+# WARNING: Result will not be accurate on Windows when <path> is (or contains)
 # a shortcut
 def total_size(path):
     if not os.path.exists(path):
@@ -104,7 +105,6 @@ def listSrcPkgFiles(dir="."):
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
     return getMatchingFiles(dir, srcpkg_regex)
 
-
 # Return a list of vignette product files
 def toList(arg):
     if not isinstance(arg, (list, tuple)):
@@ -126,6 +126,48 @@ def renameFileExt(files, exts):
 def getVigProdFiles(rmd_files):
     return renameFileExt(rmd_files, ['html', 'R'])
 
+# Inject fields into DESCRIPTION
+def injectDESCRIPTION(pkg_dir):
+    gitlog = os.path.join(BBSvars.gitlog_path, "git-log-%s.txt" % pkg_dir)
+    if not os.path.exists(gitlog):
+        print "BBS> %s file does not exist --> skipping." % gitlog
+        return
+
+    desc = os.path.join(BBSvars.meat_path, pkg_dir, 'DESCRIPTION'))
+    if not os.path.exists(desc):
+        print "BBS> %s file does not exist --> skipping." % desc
+        return
+
+    # git-log
+    dcf = open(gitlog, 'r')
+    git_url = getNextDcfVal(dcf, 'URL')
+    git_last_commit = getNextDcfVal(dcf, 'Last Commit')
+    git_last_commit_date = getNextDcfVal(dcf, 'Last Changed Date')
+    dcf.close()
+    if git_url == None:
+        raise DcfFieldNotFoundError(gitlog, 'URL')
+    if git_last_commit == None:
+        raise DcfFieldNotFoundError(gitlog, 'Last Commit')
+    if git_last_commit_date == None:
+        raise DcfFieldNotFoundError(gitlog, 'Last Changed Date')
+
+    # DESCRIPTION
+    # remove existing 'git' fields
+    dcf = open(desc, 'r')
+    lines = dcf.readlines()
+    dcf.close()
+    dcf = open(desc, 'w')
+    p = re.compile('git_url|git_last_commit|git_last_commit_date')
+    for line in lines:
+        if not p.match(line):
+            dcf.write(line)
+    dcf.close()
+    # append new 'git' fields
+    dcf = open(desc, 'a')
+    dcf.write("git_url: %s\n" % git_url)
+    dcf.write("git_last_commit: %s\n" % git_last_commit)
+    dcf.write("git_last_commit_date: %s\n" % git_last_commit_date)
+    dcf.close()
+
 if __name__ == "__main__":
     sys.exit("ERROR: this Python module can't be used as a standalone script yet")
-
