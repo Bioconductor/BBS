@@ -368,23 +368,23 @@ def STAGE2():
     pkg_deps_list = make_STAGE2_pkg_deps_list(target_pkgs)
     installed_pkgs = get_installed_pkgs()
 
-    # Inject additional fields into DESCRIPTION.
+    ## Inject additional fields into DESCRIPTION.
     print "BBS> [STAGE2] cd BBS_MEAT_PATH"
-    print "BBS> [STAGE2] Injecting fields into DESCRIPTION"
-    os.chdir(meat_path)
-    for pkg in target_pkgs:
+    #print "BBS> [STAGE2] Injecting fields into DESCRIPTION"
+    #os.chdir(meat_path)
+    #for pkg in target_pkgs:
 
-        gitlog_file = os.path.join(BBSvars.gitlog_path, "git-log-%s.txt" % pkg)
-        if not os.path.exists(gitlog_file):
-            print "BBS> %s file does not exist --> skipping." % gitlog_file
-            continue 
+    #    gitlog_file = os.path.join(BBSvars.gitlog_path, "git-log-%s.txt" % pkg)
+    #    if not os.path.exists(gitlog_file):
+    #        print "BBS> %s file does not exist --> skipping." % gitlog_file
+    #        continue 
 
-        desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
-        if not os.path.exists(desc_file):
-            print "BBS> %s file does not exist --> skipping." % desc_file
-            continue 
+    #    desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
+    #    if not os.path.exists(desc_file):
+    #        print "BBS> %s file does not exist --> skipping." % desc_file
+    #        continue 
 
-        bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
+    #    bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
 
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] Re-install supporting packages"

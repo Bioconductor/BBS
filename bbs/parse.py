@@ -229,17 +229,20 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
         raise DcfFieldNotFoundError(gitlog_file, 'Last Changed Date')
 
     # DESCRIPTION
-    # remove existing 'git' fields
+    # Not all DESCRIPTION files have a newline at the end of the last 
+    # line. This results in a mangled append of the 'git' fields. To avoid 
+    # this, we strip newlines when reading the file and explicitly write a
+    # newline to each row.
     dcf = open(desc_file, 'r')
-    lines = dcf.readlines()
+    lines = dcf.read().splitlines()
     dcf.close()
     dcf = open(desc_file, 'w')
     p = re.compile('git_url|git_branch|git_last_commit|git_last_commit_date')
     for line in lines:
         if not p.match(line):
-            dcf.write(line)
+            dcf.write(line + '\n')
     dcf.close()
-    # append new 'git' fields
+
     dcf = open(desc_file, 'a')
     dcf.write("git_url: %s\n" % git_url)
     dcf.write("git_branch: %s\n" % git_branch)
