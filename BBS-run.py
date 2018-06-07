@@ -384,7 +384,7 @@ def STAGE2():
             print "BBS> %s file does not exist --> skipping." % desc_file
             continue 
 
-        bbs.fileutils.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
+        bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
 
     # Then re-install the supporting packages.
     print "BBS> [STAGE2] Re-install supporting packages"
