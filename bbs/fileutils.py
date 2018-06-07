@@ -126,38 +126,5 @@ def renameFileExt(files, exts):
 def getVigProdFiles(rmd_files):
     return renameFileExt(rmd_files, ['html', 'R'])
 
-# Inject fields into DESCRIPTION
-def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
-    # git-log
-    dcf = open(gitlog_file, 'r')
-    git_url = parse.getNextDcfVal(dcf, 'URL')
-    git_last_commit = parse.getNextDcfVal(dcf, 'Last Commit')
-    git_last_commit_date = parse.getNextDcfVal(dcf, 'Last Changed Date')
-    dcf.close()
-    if git_url == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'URL')
-    if git_last_commit == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'Last Commit')
-    if git_last_commit_date == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'Last Changed Date')
-
-    # DESCRIPTION
-    # remove existing 'git' fields
-    dcf = open(desc_file, 'r')
-    lines = dcf.readlines()
-    dcf.close()
-    dcf = open(desc_file, 'w')
-    p = re.compile('git_url|git_last_commit|git_last_commit_date')
-    for line in lines:
-        if not p.match(line):
-            dcf.write(line)
-    dcf.close()
-    # append new 'git' fields
-    dcf = open(desc_file, 'a')
-    dcf.write("git_url: %s\n" % git_url)
-    dcf.write("git_last_commit: %s\n" % git_last_commit)
-    dcf.write("git_last_commit_date: %s\n" % git_last_commit_date)
-    dcf.close()
-
 if __name__ == "__main__":
     sys.exit("ERROR: this Python module can't be used as a standalone script yet")

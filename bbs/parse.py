@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Jan 17, 2008
+### Last modification: June 7, 2018
 ###
 ### parse module
 ###
@@ -210,6 +210,42 @@ def getVersionFromPath(srcpkg_path):
     version = m.group(2)
     return version
 
+# Inject fields into DESCRIPTION
+def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
+    # git-log
+    dcf = open(gitlog_file, 'r')
+    git_url = parse.getNextDcfVal(dcf, 'URL')
+    git_branch = parse.getNextDcfVal(dcf, 'Branch')
+    git_last_commit = parse.getNextDcfVal(dcf, 'Last Commit')
+    git_last_commit_date = parse.getNextDcfVal(dcf, 'Last Changed Date')
+    dcf.close()
+    if git_url == None:
+        raise DcfFieldNotFoundError(gitlog_file, 'URL')
+    if git_branch == None:
+        raise DcfFieldNotFoundError(gitlog_file, 'Branch')
+    if git_last_commit == None:
+        raise DcfFieldNotFoundError(gitlog_file, 'Last Commit')
+    if git_last_commit_date == None:
+        raise DcfFieldNotFoundError(gitlog_file, 'Last Changed Date')
+
+    # DESCRIPTION
+    # remove existing 'git' fields
+    dcf = open(desc_file, 'r')
+    lines = dcf.readlines()
+    dcf.close()
+    dcf = open(desc_file, 'w')
+    p = re.compile('git_url|git_branch|git_last_commit|git_last_commit_date')
+    for line in lines:
+        if not p.match(line):
+            dcf.write(line)
+    dcf.close()
+    # append new 'git' fields
+    dcf = open(desc_file, 'a')
+    dcf.write("git_url: %s\n" % git_url)
+    dcf.write("git_branch: %s\n" % git_branch)
+    dcf.write("git_last_commit: %s\n" % git_last_commit)
+    dcf.write("git_last_commit_date: %s\n" % git_last_commit_date)
+    dcf.close()
 
 ##############################################################################
 # Some utilities for parsing the tail of install.packages(), 'R CMD build',
