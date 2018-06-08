@@ -14,7 +14,6 @@ import sys
 import re
 import shutil
 import string
-import parse
 
 # Equivalent to 'du -sb <path>'
 # WARNING: Result will not be accurate on Windows when <path> is (or contains)
