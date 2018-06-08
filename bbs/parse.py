@@ -11,6 +11,7 @@
 
 import os
 import re
+import time
 import subprocess
 import BBScorevars
 from bbs.dcf.dcfrecordsparser import DcfRecordParser
@@ -229,10 +230,9 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
         raise DcfFieldNotFoundError(gitlog_file, 'Last Changed Date')
 
     # DESCRIPTION
-    # Not all DESCRIPTION files have a newline at the end of the last 
+    # Not all DESCRIPTION files have a EOL character at the end of the last 
     # line. This results in a mangled append of the 'git' fields. To avoid 
-    # this, we strip newlines when reading the file and explicitly write a
-    # newline to each row.
+    # this, they are stripped when reading followed by an explicit write.
     dcf = open(desc_file, 'r')
     lines = dcf.read().splitlines()
     dcf.close()
@@ -248,6 +248,7 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf.write("git_branch: %s\n" % git_branch)
     dcf.write("git_last_commit: %s\n" % git_last_commit)
     dcf.write("git_last_commit_date: %s\n" % git_last_commit_date)
+    dcf.write("Date/Publication: %s\n" % time.strftime("%Y-%m-%d"))
     dcf.close()
 
 ##############################################################################
