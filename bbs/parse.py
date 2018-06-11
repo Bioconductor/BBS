@@ -230,17 +230,20 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
         raise DcfFieldNotFoundError(gitlog_file, 'Last Changed Date')
 
     # DESCRIPTION
-    # Not all DESCRIPTION files have a EOL character at the end of the last 
-    # line. This results in a mangled append of the 'git' fields. To avoid 
-    # this, they are stripped when reading followed by an explicit write.
+    # We need to handle the following cases:
+    # - no EOL character at the end of the last line 
+    # - blank line at the end of the file
     dcf = open(desc_file, 'r')
     lines = dcf.read().splitlines()
     dcf.close()
     dcf = open(desc_file, 'w')
     p = re.compile('git_url|git_branch|git_last_commit|git_last_commit_date')
     for line in lines:
-        if not p.match(line):
-            dcf.write(line + '\n')
+        if not line.strip():
+            continue
+        else:
+            if not p.match(line):
+                dcf.write(line + '\n')
     dcf.close()
 
     dcf = open(desc_file, 'a')
