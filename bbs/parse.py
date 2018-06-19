@@ -230,14 +230,14 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
         raise DcfFieldNotFoundError(gitlog_file, 'Last Changed Date')
 
     # DESCRIPTION
-    # We need to handle the following cases:
+    # Handle the following cases:
     # - no EOL character at the end of the last line 
     # - blank line at the end of the file
     dcf = open(desc_file, 'r')
     lines = dcf.read().splitlines()
     dcf.close()
     dcf = open(desc_file, 'w')
-    p = re.compile('git_url|git_branch|git_last_commit|git_last_commit_date')
+    p = re.compile('git_url|git_branch|git_last_commit|git_last_commit_date|Date/Publication')
     for line in lines:
         if not line.strip():
             continue
