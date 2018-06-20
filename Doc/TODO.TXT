@@ -7,3 +7,5 @@
 PACKAGES.gz, and PACKAGES.rds files. Use tools::write_PACKAGES.
 
 * annotation push script only push packages that have changed
+
+* move stats.bioconductor.org to scheduled instance (vs on-demand)
