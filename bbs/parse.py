@@ -233,11 +233,13 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     # Handle the following cases:
     # - no EOL character at the end of the last line 
     # - blank line at the end of the file
+    target_keys = ['git_url', 'git_branch', 'git_last_commit',
+                   'git_last_commit_date', 'Date/Publication']
     dcf = open(desc_file, 'r')
     lines = dcf.read().splitlines()
     dcf.close()
     dcf = open(desc_file, 'w')
-    p = re.compile('git_url|git_branch|git_last_commit|git_last_commit_date|Date/Publication')
+    p = re.compile(':|'.join(target_keys) + ':')
     for line in lines:
         if not line.strip():
             continue
@@ -247,10 +249,10 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf.close()
 
     dcf = open(desc_file, 'a')
-    dcf.write("git_url: %s\n" % git_url)
-    dcf.write("git_branch: %s\n" % git_branch)
-    dcf.write("git_last_commit: %s\n" % git_last_commit)
-    dcf.write("git_last_commit_date: %s\n" % git_last_commit_date)
+    dcf.write("git_url: %s\n" % target_keys[0])
+    dcf.write("git_branch: %s\n" % target_keys[1])
+    dcf.write("git_last_commit: %s\n" % target_keys[2])
+    dcf.write("git_last_commit_date: %s\n" % target_keys[3])
     dcf.write("Date/Publication: %s\n" % time.strftime("%Y-%m-%d"))
     dcf.close()
 
