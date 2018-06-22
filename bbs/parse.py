@@ -249,11 +249,11 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf.close()
 
     dcf = open(desc_file, 'a')
-    dcf.write("git_url: %s\n" % target_keys[0])
-    dcf.write("git_branch: %s\n" % target_keys[1])
-    dcf.write("git_last_commit: %s\n" % target_keys[2])
-    dcf.write("git_last_commit_date: %s\n" % target_keys[3])
-    dcf.write("Date/Publication: %s\n" % time.strftime("%Y-%m-%d"))
+    dcf.write(target_keys[0] + ': %s\n' % git_url)
+    dcf.write(target_keys[1] + ': %s\n' % git_branch)
+    dcf.write(target_keys[2] + ': %s\n' % git_last_commit)
+    dcf.write(target_keys[3] + ': %s\n' % git_last_commit_date)
+    dcf.write('Date/Publication: %s\n' % time.strftime("%Y-%m-%d"))
     dcf.close()
 
 ##############################################################################
