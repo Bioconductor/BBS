@@ -374,7 +374,7 @@ def STAGE2():
     os.chdir(meat_path)
     for pkg in target_pkgs:
 
-        gitlog_file = os.path.join(BBSvars.gitlog_path, "git-log-%s.txt" % pkg)
+        gitlog_file = os.path.join(BBSvars.gitlog_path, "git-log-%s.dcf" % pkg)
         if not os.path.exists(gitlog_file):
             print "BBS> %s file does not exist --> skipping." % gitlog_file
             continue 

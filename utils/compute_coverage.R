@@ -46,7 +46,7 @@ manifestFilePath <- function() {
 packages <- getPkgListFromManifest(manifestFilePath())
 
 get_git_commit <- function(pkg) {
-  file <- file.path(bbs_workdir, "gitlog", paste0("git-log-", pkg, ".txt"))
+  file <- file.path(bbs_workdir, "gitlog", paste0("git-log-", pkg, ".dcf"))
   if (file.exists(file)) {
       dcf <- read.dcf(file)
       id <- dcf[,"Last Commit"]

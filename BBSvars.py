@@ -54,7 +54,7 @@ if MEAT0_type == 3:  # git-based builds
     manifest_file = BBScorevars.getenv('BBS_BIOC_MANIFEST_FILE')
     manifest_path = os.path.join(manifest_clone_path, manifest_file)
     git_branch = BBScorevars.getenv('BBS_BIOC_GIT_BRANCH')
-    vcsmeta_file = 'gitlog/git-log.txt'
+    vcsmeta_file = 'gitlog/git-log.dcf'
 
 update_MEAT0 = int(BBScorevars.getenv('BBS_UPDATE_MEAT0', False, "0")) != 0
 
