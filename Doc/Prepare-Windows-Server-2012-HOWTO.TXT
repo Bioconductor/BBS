@@ -607,22 +607,44 @@ From a personal administrator account
 
   Create the extsoft directory:
 
-  mkdir C:/extsoft
+      mkdir C:/extsoft
 
   Download the files using the rsync command from the rsync-extsoft macro 
   from the src/gnuwin32/Makefile. Change the 'major.minor' version in the
   command as appropriate.
  
-  cd C:/extsoft
-  rsync --timeout=60 -rcvp --delete --chmod=ugo=rwX   cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
+      cd C:/extsoft
+      rsync --timeout=60 -rcvp --delete --chmod=ugo=rwX   cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
 
-  The location of these binaries is set using macro EXT_LIBS with default 
-  setting $(LOCAL_SOFT). $(LOCAL_SOFT) defaults to $(R_HOME)/extsoft which 
-  is not our install location so we need to modify the i386 and x64
-  Makefiles.
+  The location of these binaries is set using macro EXT_LIBS. The  default 
+  setting of EXT_LIBS is $(LOCAL_SOFT) which defaults to $(R_HOME)/extsoft.
+  This is not where we have installed the binaries so the i386 and x64
+  Makefiles need to be modified .
 
   From the biocbuild account, go to C:\Users\biocbuild\bbs-3.7-bioc and
   set variable LOCAL_SOFT to C:/extsoft in R\etc\{i386,x64}\Makeconf
+
+     (a) R\etc\i386\Makeconf
+
+       From C:\Users\biocbuild\bbs-3.4-bioc:
+
+       - cd R\etc\i386
+       - vi Makeconf
+           replace line
+             #LOCALSOFT
+           with
+             LOCALSOFT = C:/extsoft
+
+     (b) R\etc\x64\Makeconf
+
+       From C:\Users\biocbuild\bbs-3.4-bioc:
+
+       - cd R\etc\x64
+       - vi Makeconf
+           replace line
+             #LOCALSOFT
+           with
+             LOCALSOFT = C:/extsoft
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile a package that uses the GSL
