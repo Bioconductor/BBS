@@ -292,6 +292,11 @@ in _this_ order
   -- Add "Disallow: /packages/XX/" to the web site's robots.txt file
      where XX is the new devel version (one higher than the version)
      that was just released.
+ 
+  -- Bioc 3.8 release only: remove conditional to generate package landing pages
+     for release vs devel (biocLite vs BiocManager)
+
+  -- Update http://bioconductor.org/install/ for BiocManager
 
 - biocLite() sanity check
 
