@@ -138,3 +138,35 @@ function toggle(theClass) {
         location.hash = "#show=" + on.join(",");
 }
 
+function setPackagesVisible(){
+    var i,j;
+
+    var urlstring = window.location.href
+    var url = new URL(urlstring);
+    var pkgstring = url.searchParams.get("packages");
+
+    // Skip if no packages are selected
+    if (pkgstring == null || pkgstring == "" || pkgstring == "/") {
+	return;
+    }
+
+    // At the beginning of the summary report html is some strange code
+    // to always add a trailling slash. Remove it from parameter
+    pkgstring = pkgstring.replace(/\/+$/, "");
+    var pkgs = pkgstring.split(",");
+
+    // Hide all packages
+    var trs = document.querySelectorAll('html>body>table>tbody>tr');
+    for (i = 0; i < trs.length; ++i) {
+	trs[i].style.display = "none";
+    }
+
+    // Only show selected ones
+    for (j in pkgs) {
+	var pkgselector = "[data-pkg=" + pkgs[j] + "]";
+	var trs = document.querySelectorAll(pkgselector);
+	for (i = 0; i < trs.length; ++i) {
+	    trs[i].style.display = "table-row";
+	}
+    }
+}

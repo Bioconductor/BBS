@@ -413,7 +413,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         classes = "odd"
     statuses = BBSreportutils.get_distinct_statuses_from_db(pkg)
     classes += statuses2classes(statuses)
-    out.write('<TR class="%s header">' % classes)
+    out.write('<TR class="%s header" data-pkg="%s">' % (classes, pkg))
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left">Hostname</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
@@ -426,7 +426,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
     for node in BBSreportutils.NODES:
-        out.write('<TR class="%s">' % classes)
+        out.write('<TR class="%s"> data-pkg="%s"' % (classes, pkg))
         if is_first:
             pkgname_html = pkgname_to_HTML(pkg)
             version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
@@ -613,6 +613,8 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     out.write('<script language="javascript">\n')
     out.write('if (!/\.html$|\/$|#/.test(window.location.href))\n')
     out.write('  window.location.href = window.location.href + "/";\n')
+    out.write('// Support ?packages=xcms,mzR,CAMERA URL parameter\n')
+    out.write('window.onload = setPackagesVisible();\n')
     out.write('</script>\n')
     out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
     title = BBSreportutils.report_title
