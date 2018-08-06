@@ -84,7 +84,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     os.chdir(old_cwd)
     return 0
 
-def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None, recreate_if_update_fails=False):
+def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None, reclone_if_update_fails=False):
     if os.path.exists(clone_path):
         retcode = _update_clone(clone_path, repo_url, branch, snapshot_date)
         if retcode == 0:
@@ -92,7 +92,7 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         print ""
         print "bbs.gitutils.update_git_clone> _update_clone() failed " + \
               "with error code %d!" % retcode
-        if not recreate_if_update_fails:
+        if not reclone_if_update_fails:
             sys.exit("bbs.gitutils.update_git_clone> EXIT")
         print "bbs.gitutils.update_git_clone> ==> will try to re-create " + \
               "git clone from scratch ..."
