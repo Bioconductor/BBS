@@ -38,6 +38,7 @@ set BBS_GITLOG_RDIR=/home/biocbuild/public_html/BBS/3.7/bioc/gitlog
 @rem Local gitlog copy
 set BBS_GITLOG_PATH=%BBS_WORK_TOPDIR%\gitlog
 
+
 set wd1=%cd%
 cd ..
 call config.bat

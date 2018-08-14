@@ -39,6 +39,7 @@ export BBS_GITLOG_RDIR="/home/biocbuild/public_html/BBS/3.8/bioc/gitlog"
 # Local gitlog copy
 export BBS_GITLOG_PATH="$BBS_WORK_TOPDIR/gitlog"
 
+
 wd1=$(pwd)
 cd ..
 . ./config.sh

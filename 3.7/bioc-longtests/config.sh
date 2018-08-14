@@ -31,6 +31,14 @@ export BBS_UPDATE_MEAT0=1
 # Local meat copy
 export BBS_MEAT_PATH="$BBS_WORK_TOPDIR/meat"
 
+# Where are the gitlog files stored by prerun (stage1)
+export BBS_GITLOG_RHOST=$BBS_MEAT0_RHOST
+export BBS_GITLOG_RUSER=$BBS_MEAT0_RUSER
+export BBS_GITLOG_RDIR="/home/biocbuild/public_html/BBS/3.7/bioc/gitlog"
+
+# Local gitlog copy
+export BBS_GITLOG_PATH="$BBS_WORK_TOPDIR/gitlog"
+
 
 wd1=$(pwd)
 cd ..
