@@ -334,25 +334,24 @@ interactively on a Windows build machine.
   3. See "Install Ripley's bundle of pre-compiled external software used by
      some packages" below for other edits to do to R/etc/{i386,x64}/Makeconf
 
-  4. Install BiocInstaller and switch to devel mode (for devel builds only)
+  4. Install BiocManager
 
-     Start R (with R/bin/R from C:\Users\biocbuild\bbs-3.4-bioc), install BiocInstaller and
-     switch to devel mode with:
+     Start R (with R/bin/R from C:\Users\biocbuild\bbs-3.4-bioc) and install 
+     BiocManager:
 
-       source("https://bioconductor.org/biocLite.R")
-       useDevel()  # only for devel builds
+       install.packages("BiocManager")
 
   TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
   with:
 
-    library(BiocInstaller)
-    biocLite("IRanges", type="source")
-    biocLite("Biobase", type="source")
-    biocLite("zlibbioc", type="source")
+    install.packages("BiocManager")
+    BiocManager::install("IRanges", type="source")
+    BiocManager::install("Biobase", type="source")
+    BiocManager::install("zlibbioc", type="source")
 
   Install BiocCheck for the Single Package Builder:
 
-    biocLite("BiocCheck")
+    BiocManager::install("BiocCheck")
 
   Quit R (do NOT save the workspace image)
 

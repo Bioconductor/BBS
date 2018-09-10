@@ -88,7 +88,7 @@ C. Back to malbec2 to run the scripts
   Run the crontab entry by hand. Monitor ~/cron.log/3.7/prepare-repos* log
   file.
 
-2. Test biocLite() to see if it finds the new repo.
+2. Test BiocManager::install() to see if it finds the new repo.
 
 D. Update bioconductor.org/config.yaml to build landing pages for 3.7.
    Uncomment 'data/annotation':

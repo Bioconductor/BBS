@@ -568,12 +568,12 @@ Then start R again and try to install a few packages *from source*:
   install.packages("minqa", type="source", repos='http://cran.us.r-project.org')
 
   # Bioconductor packages
-  source("http://bioconductor.org/biocLite.R")
+  # install.packages("BiocManager")
   ## ONLY if release and devel are using the same version of R:
   #useDevel()
-  biocLite("BiocCheck", type="source")
-  biocLite("rtracklayer", type="source")
-  biocLite("VariantAnnotation", type="source")
+  BiocManager::install("BiocCheck", type="source")
+  BiocManager::install("rtracklayer", type="source")
+  BiocManager::install("VariantAnnotation", type="source")
 
 Quit R and check that rtracklayer got statically linked against the openssl
 libraries with:
@@ -737,8 +737,8 @@ Everything in this section must be done from the biocbuild account.
   If you have time, you can also try to install the mzR package but be aware
   that this takes much longer:
 
-    library(BiocInstaller)
-    biocLite("mzR", type="source")  # takes between 7-10 min
+    install.packages("BiocManager")
+    BiocManager::install("mzR", type="source")  # takes between 7-10 min
 
 ** Install FFTW system library
 
@@ -762,8 +762,8 @@ Everything in this section must be done from the biocbuild account.
 
   TESTING: Try to install the GLAD package *from source*:
 
-    library(BiocInstaller)
-    biocLite("GLAD", type="source")
+    install.packages("BiocManager")
+    BiocManager::install("GLAD", type="source")
 
 ** Install GTK2
 
@@ -828,8 +828,8 @@ Everything in this section must be done from the biocbuild account.
 
   Then try to install the flowWorkspace package *from source*:
 
-    library(BiocInstaller)
-    biocLite("flowWorkspace", type="source")
+    install.packages("BiocManager")
+    BiocManager::install("flowWorkspace", type="source")
 
 ** Install Open Babel
 
@@ -848,8 +848,8 @@ Everything in this section must be done from the biocbuild account.
 
   Then try to install the ChemmineOB package *from source*:
 
-    library(BiocInstaller)
-    biocLite("ChemmineOB", type="source")
+    install.packages("BiocManager")
+    BiocManager::install("ChemmineOB", type="source")
 
 ** Install numpy + scipy + pandas + sklearn + h5py
 
@@ -955,8 +955,8 @@ Everything in this section must be done from the biocbuild account.
 
   TESTING: Try to install the rsbml package *from source*:
 
-    library(BiocInstaller)
-    biocLite("rsbml", type="source")
+    install.packages("BiocManager")
+    BiocManager::install("rsbml", type="source")
 
 ** Install Clustal Omega
 
@@ -1006,8 +1006,8 @@ Everything in this section must be done from the biocbuild account.
   effect. Then try to run the getReads example in the GoogleGenomics package:
 
     ## Install the package if not already installed.
-    #library(BiocInstaller)
-    #biocLite("GoogleGenomics", type="source")
+    #install.packages("BiocManager")
+    #BiocManager::install("GoogleGenomics", type="source")
 
     ## Run the getReads example.
     library(GoogleGenomics)
@@ -1184,8 +1184,8 @@ Everything in this section must be done from the biocbuild account.
 
   Then try to install the xps package *from source*:
 
-    library(BiocInstaller)
-    biocLite("xps", type="source")
+    install.packages("BiocManager")
+    BiocManager::install("xps", type="source")
 
 ** Install ImageMagick
 

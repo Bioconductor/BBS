@@ -350,7 +350,8 @@ Linux master builder. The build report was created and posted on the website.
 
 The second part of this process is called the "propagation pipe" and involves
 moving build products from the master builder to the website. The products are
-the package tarballs and binaries that will become available via `biocLite()`
+the package tarballs and binaries that will become available via
+`BiocManager::install()`
 as well as information used to build the landing pages. These steps are
 performed by the *biocadmin* user and involve the master builder only.
 
@@ -380,7 +381,7 @@ the repository (in devel).
 The *prepare* script does not move files around but just populates other parts
 of our internal repository which will later be moved to the web site. Most
 importantly this includes the package indexes (`PACKAGES` and `PACKAGES.gz`)
-which tell install.packages() and biocLite() and friends which packages can be
+which tell install.packages() and BiocManager::install() and friends which packages can be
 installed.  There's also a `VIEWS` file which is used to build parts of our web
 site (especially the package landing pages). From each built package we also
 extract vignettes (built documents, source documents, and Stangled R source),
@@ -390,4 +391,5 @@ that we want to link to on the package landing page.
 #### push
 
 Finally the *push* script uses *rsync* to copy the internal repository to our
-web site, which is where users go when they install a package via `biocLite()`.
+web site, which is where users go when they install a package via
+`BiocManager::install()`.

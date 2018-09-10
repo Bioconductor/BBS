@@ -108,7 +108,7 @@ in _this_ order
   Note about Simlinks to old devel:
 
   Until the next devel builds are running, we want symlinks pointing to the old
-  devel builds so that the BiocInstaller package will work. This includes the
+  devel builds so that the BiocManager package will work. This includes the
   software, data/annotation, and data/experiment repositories.  Remove these
   symlinks when the builds start running.
 
@@ -116,7 +116,7 @@ in _this_ order
 
 - Confirm build report for new devel builds is intact
 
-- Think about chaning BiocInstaller and the /developers/howto/useDevel web
+- Think about chaning BiocManager and the /developers/howto/useDevel web
   page. Modify any R/BioC versions if necessary.
 
 - Update AMI and docker for the release being frozen, e.g., 3.5. Do this
@@ -190,34 +190,9 @@ in _this_ order
 
 - Confirm defunct packages have been removed from the 3.7 manifest.
 
-- BiocInstaller
+- BiocManager
 
-  -- If a new R is released today, modify the biocLite.R script (which lives 
-     in the BiocInstaller package in inst/scripts)to make sure the next devel 
-     version of R is properly identified.
-
-  -- Change R/zzz.R of the BiocInstaller package to indicate new 
-     BioC version number.
-
-  -- Change DESCRIPTION file of BiocInstaller to depend on latest devel
-     version of R (if that is appropriate).
-
-  -- Modify inst/scripts/BiocInstaller.dcf to change relavant variables.
-
-  OLD NOTE: Make sure that the BiocInstaller package is manually pushed out
-  to the new devel repos. It has to be manually pushed out because
-  otherwise it will fail its unit test because it is testing to make
-  sure that BiocInstaller is in the devel repos. A chicken-and-egg situation.
-
-  NEW NOTE: I'm not sure the unit test refered to above still exits.
-  Reguardless, the key idea is that the correct version of BiocInstaller MUST 
-  be on master by the time the release is announced. If this is not the case, 
-  users tying to biocLite() with the new devel will not get the correct 
-  packages. BiocInstaller can get to master by successfully completing a
-  build cycle or by manually droping the tarball in 
-  /home/biocadmin/PACKAGES/3.7/bioc/src/contrib.
-  The permissions on the tarball must be correct and there can only be one 
-  version of the tarball in the repository.
+  TODO: Enter BiocManager-specific notes (if any) for Release 3.8.
 
 - Run the builds ...
 
@@ -225,11 +200,6 @@ in _this_ order
   in the release announcement. (biocViews:::getPackageNEWS.R()).
   Verify that there are no <NA>s in output. Collate package descriptions
   with biocViews:::getPackageDescriptions().
-
-- Edit inst/scripts/BiocInstaller.dcf in BiocInstaller to change
-  relevant variables. This will automatically push soon after being
-  committed.
-
 
 <a name="d"></a>
 ## Release day (D):
@@ -245,10 +215,8 @@ in _this_ order
   will break and landing pages will not be generated.
  
   After a release you should let the no-longer-release version build one last
-  time so package landing pages won't say "release version" (and also so the
-  BiocInstaller landing page will reflect the version of the package that you
-  will push out manually--see the "Modify BiocInstaller..." step below).
-
+  time so package landing pages won't say "release version".
+  
 - rsync on master
 
   UPDATE the /etc/rsyncd.conf on master.bioconductor.org and
@@ -294,16 +262,16 @@ in _this_ order
      that was just released.
  
   -- Bioc 3.8 release only: remove conditional to generate package landing pages
-     for release vs devel (biocLite vs BiocManager)
+     for release vs devel (BiocManager)
 
   -- Update http://bioconductor.org/install/ for BiocManager
 
-- biocLite() sanity check
+- BiocManager::install() sanity check
 
-  Was biocLite.R updated properly? With a fresh R devel (make sure
-  BiocInstaller is not installed), source biocLite.R and make sure the
-  appropriate version is installed. Of course, do the same with release.  **
-  really do this! with R-devel too if appropriate! **
+  Was BiocManager installed / updated properly? With a fresh R devel and
+  release
+
+      install.packages("BiocManager")
 
 - Finalize release announcement
 
@@ -329,7 +297,7 @@ in _this_ order
 
 - Confirm Archive/ folder is working for new release.
   The relevant script is BBS/utils/list.old.packages.R
-  which depends on BiocInstaller::useDevel() to determine if
+  which depends on BiocManagerto determine if
   archiving should happen.
 
 - Build AMIs for new release and devel

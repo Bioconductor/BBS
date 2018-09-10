@@ -148,13 +148,8 @@ This sets the C/C++ compilation flags appropriately for the build system, e.g.,
 
 Run R and install Bioconductor:
 
-    source("https://bioconductor.org/biocLite.R")
-
-
-If you are on a devel build machine (and not running
-R-devel), do this:
-
-    useDevel()
+    install.packages("BiocManager")
+    BiocManager::install()
 
 <a name="testing"></a>
 ### Testing
@@ -213,18 +208,19 @@ R="$HOME/bin/R-$R_VERSION"
     total 0
     lrwxrwxrwx 1 biocadmin biocadmin 27 Oct 23 11:44 R-3.5 -> /home/biocadmin/R-3.5/bin/R
 
-- Start R and download biocLite:
+- Start R and install BiocManager:
 
     ./bin/R-3.5
-    source("https://bioconductor.org/biocLite.R");
+    install.packages("BiocManager")
 
 - Install the packages in /home/biocbuild/pkgs_to_install/ + knitr and
   knitcitations:
 
     biocadmin@malbec2:~$ ls pkgs_to_install/
-    BiocInstaller  biocViews  DynDoc  graph  README
+    BiocManager  biocViews  DynDoc  graph  README
 
-    biocLite(c('biocViews','DynDoc','graph', 'knitr', 'knitcitations'))
+    install.packages("BiocManager")
+    BiocManager::install(c('biocViews','DynDoc','graph', 'knitr', 'knitcitations'))
 
 <a name="mac-and-windows"></a>
 ## Updating R on Mac OSX and Windows:
