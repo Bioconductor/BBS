@@ -1,6 +1,6 @@
 
-if (!require(BiocInstaller))
-  source("http://bioconductor.org/biocLite.R")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager", repos="https://cran.rstudio.com")
 
 deps <- c("httr", "yaml", "R.utils")
 
@@ -8,7 +8,7 @@ for (dep in deps)
 {
     if (!do.call(require, list(dep)))
     {
-        biocLite(dep)
+        BiocManager::install(dep)
         do.call(library, list(dep))
     }
 }
@@ -41,7 +41,7 @@ getMirrors <- function()
         unlist(unname(x[names(x)=="mirror_url"]))
     }))
     mirrors <- sub("http:", "https:", mirrors, TRUE)
-    mirrors <- paste0(mirrors, "packages/", biocVersion(), "/", "bioc")
+    mirrors <- paste0(mirrors, "packages/", BiocManager::version(), "/", "bioc")
     mirrors <- c(defaultMirror(), mirrors)
     names(mirrors) <- mirrors
     mirrors

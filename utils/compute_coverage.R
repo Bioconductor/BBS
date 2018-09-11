@@ -4,13 +4,13 @@
 
 suppressMessages({
 
-    if(!require("BiocInstaller", quietly=TRUE))
-        stop("BiocInstaller not installed!")
+    if (!requireNamespace("BiocManager", quietly = TRUE))
+        install.packages("BiocManager", repos="https://cran.rstudio.com")
 
     reqs <- c("covr", "futile.logger", "R.utils")
     for(x in reqs) {
         if(!do.call(require, list(package=x, quietly=TRUE))) {
-            biocLite(x)
+            BiocManager::install(x)
             do.call(require, list(package=x, quietly=TRUE))
         }
     }

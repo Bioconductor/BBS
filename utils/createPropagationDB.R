@@ -9,10 +9,9 @@
 # unit tests.
 
 
-if (!require(BiocInstaller))
-{
-    source("http://bioconductor.org/biocLite.R")
-}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager", repos="https://cran.rstudio.com")
+
 library(tools)
 
 ## GLOBAL VARIABLES
@@ -20,7 +19,7 @@ library(tools)
 rvers <- paste(getRversion()$major,
     getRversion()$minor,
     sep=".")
-biocvers <- BiocInstaller::biocVersion()
+biocvers <- BiocManager::version()
 
 
 # Takes as input the value of an Imports, Depends,
@@ -329,7 +328,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
                         "data/experiment" = "BioCexp",
                         "workflows" = "BioCworkflows")
     bioc.apdb <<- available.packages(
-        contrib.url(biocinstallRepos()[[repo.name]]),
+        contrib.url(BiocManager::repositories()[[repo.name]]),
         type="source")
     bioc.apdf <<- as.data.frame(bioc.apdb, stringsAsFactors=FALSE)
     bioc.ap <<- rownames(bioc.apdb)

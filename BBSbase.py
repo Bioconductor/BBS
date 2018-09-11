@@ -311,8 +311,8 @@ def getSTAGE4cmd(srcpkg_path):
     ##      whose output was captured in the former. This will generally be
     ##      the case unless the package got re-installed after its STAGE2
     ##      installation (which could happen e.g. if another package contains
-    ##      code that calls biocLite() to install a possibly different version
-    ##      of the package). Unlikely but possible.
+    ##      code that calls BiocManager::install() to install a possibly 
+    ##      different version of the package). Unlikely but possible.
     install_out = pkg + '.install-out.txt'
     if os.path.exists(install_out):
         r_library = os.path.join(BBSvars.r_home, 'library')

@@ -59,9 +59,13 @@ list.old.pkgs <- function(path=".", suffix=".tar.gz")
 ###
 manage.old.pkgs <- function(path=".", suffix=".tar.gz")
 {
+    if (!requireNamespace("BiocManager", quietly = TRUE))
+        install.packages("BiocManager", repos="https://cran.rstudio.com")
+
     oldpkgs <- list.old.pkgs(path, suffix)
-    library(BiocInstaller)
-    if (!isDevel()) {
+    map <- BiocManager:::.version_map()
+    version <- map[map$BiocStatus == BiocManager::version()]
+    if (version == "release") {
         for (pkg in oldpkgs) {
             path <- paste0("./Archive/", strsplit(pkg, "_")[[1]][1], "/")
             if (!dir.exists(path))

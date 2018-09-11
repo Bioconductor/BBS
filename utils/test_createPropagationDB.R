@@ -4,16 +4,15 @@
 # ...or from the OS command line with:
 # R -e "RUnit::runTestFile('test_createPropagationDB.R')"
 
-if(!require(BiocInstaller))
-    source("http://bioconductor.org/biocLite.R")
-
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager", repos="https://cran.rstudio.com")
 
 deps <- c("RUnit", "devtools", "BiocGenerics")
 
 for (dep in deps)
 {
     if(!suppressPackageStartupMessages(do.call(require, list(package=dep))))
-        biocLite(dep, suppressUpdates=TRUE)
+        BiocManager::install(dep, suppressUpdates=TRUE)
 }
 
 source("createPropagationDB.R")
@@ -23,7 +22,7 @@ source("createPropagationDB.R")
     unitTestHome <<- file.path(tempdir(), "unitTestHome")
     if (file.exists(unitTestHome))
         unlink(unitTestHome, recursive=TRUE)
-    dir.create(unitTestHome)    
+    dir.create(unitTestHome)
 }
 
 .tearDown <- function()
@@ -147,7 +146,7 @@ test_binPkg0 <- function()
     macbindir <- file.path(unitTestHome, "mac.binary")
     dir.create(macbindir)
     dir.create(file.path(unitTestHome, "bin", "macosx", "contrib",
-        BiocInstaller:::BIOC_VERSION), recursive=TRUE)
+        BiocManager::version()), recursive=TRUE)
     pkgdir <- file.path(macbindir, "myMacPkg")
     .create(pkgdir)
     .buildbinpkg("myMacPkg", macbindir, "mac.binary")
@@ -161,10 +160,10 @@ test_binPkg0 <- function()
 test_impossibleDepDoesNotPropagate_win <- function()
 {
     dir.create(file.path(unitTestHome, "bin", "macosx", "mavericks", "el-capitan", "contrib",
-        BiocInstaller:::BIOC_VERSION), recursive=TRUE)
+        BiocManager::version()), recursive=TRUE)
 
     dir.create(file.path(unitTestHome, "bin", "windows", "contrib",
-        BiocInstaller:::BIOC_VERSION), recursive=TRUE)
+        BiocManager::version()), recursive=TRUE)
     outfile <- file.path(unitTestHome, "propagationdb.txt")
     windir <- file.path(unitTestHome, "win.binary")
     dir.create(windir)

@@ -178,15 +178,12 @@ iex ".\$env:R_INSTALLER /DIR=$r_basedir /noicons /verysilent"
 # biocbuild user should MANUALLY add R to their user path
 # or we could try and figure out how to script it, for bonus points
 
-# install BiocInstaller as biocbuild
+# install BiocManager as biocbuild
 # this will prompt for the biocbuild password;
 # not sure if it can be made non-interactive
-#iex "$r -e `"source('http://bioconductor.org/biocLite.R')`""
-Start-Process $r -Credential biocbuild -ArgumentList "-e `"source('http://bioconductor.org/biocLite.R')`""
-
-# useDevel() if appropriate; this will prompt (again?)
-# for biocbuild's password
-if ($env:USE_DEVEL -eq "TRUE") {Start-Process $r -Credential biocbuild -ArgumentList "-e BiocInstaller::useDevel()"}
+#iex "$r -e `"install.packages("BiocManager")`""
+Start-Process $r -Credential biocbuild -ArgumentList "-e
+`"install.packages("BiocManager")`""
 
 # TODO (?) maybe all the stuff that needs to run as biocbuild
 # could be put in its own script and that script could be run
