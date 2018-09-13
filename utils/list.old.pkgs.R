@@ -64,8 +64,9 @@ manage.old.pkgs <- function(path=".", suffix=".tar.gz")
 
     oldpkgs <- list.old.pkgs(path, suffix)
     map <- BiocManager:::.version_map()
-    version <- map[map$BiocStatus == BiocManager::version()]
-    if (version == "release") {
+    status <- as.character(map$BiocStatus)
+    version <- status[map$Bioc == BiocManager::version()]
+    if (length(version) == 1L && version == "release") {
         for (pkg in oldpkgs) {
             path <- paste0("./Archive/", strsplit(pkg, "_")[[1]][1], "/")
             if (!dir.exists(path))
