@@ -449,8 +449,7 @@ def STAGE3():
     target_pkgs = extractTargetPkgListFromMeatIndex()
     meat_path = BBSvars.meat_path
     if BBScorevars.subbuilds == "bioc-longtests":
-        if not os.path.exists(meat_path):
-            os.mkdir(meat_path)
+        bbs.fileutils.remake_dir(meat_path)
         os.chdir(meat_path)
         for pkg in target_pkgs:
             rdir = BBSvars.MEAT0_rdir.subdir(pkg)
