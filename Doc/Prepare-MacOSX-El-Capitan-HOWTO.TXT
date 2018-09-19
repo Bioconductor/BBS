@@ -568,9 +568,9 @@ Then start R again and try to install a few packages *from source*:
   install.packages("minqa", type="source", repos='http://cran.us.r-project.org')
 
   # Bioconductor packages
-  # library(BiocManager)
+  library(BiocManager)
   ## ONLY if release and devel are using the same version of R:
-  #useDevel()
+  BiocManager::install(version="devel")
   BiocManager::install("BiocCheck", type="source")
   BiocManager::install("rtracklayer", type="source")
   BiocManager::install("VariantAnnotation", type="source")
