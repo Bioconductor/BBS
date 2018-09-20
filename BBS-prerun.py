@@ -209,28 +209,28 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     print "BBS>   manifest_git_branch: %s" % manifest_git_branch
     print "BBS> -------------------------------------------------------------"
     print ""
-    #bbs.gitutils.update_git_clone(BBSvars.manifest_clone_path,
-    #                         BBSvars.manifest_git_repo_url,
-    #                         manifest_git_branch,
-    #                         depth=1,
-    #                         reclone_if_update_fails=True)
-    ### iterate over manifest to update pkg dirs
-    #pkgs = bbs.manifest.read(BBSvars.manifest_path)
-    #i = 0
-    #for pkg in pkgs:
-    #    i = i + 1
-    #    print "BBS> ----------------------------------------------------------"
-    #    print "BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
-    #          (i, len(pkgs), pkg, git_branch)
-    #    print ""
-    #    pkg_git_clone = os.path.join(MEAT0_path, pkg)
-    #    pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
-    #    bbs.gitutils.update_git_clone(pkg_git_clone,
-    #                             pkg_git_repo_url,
-    #                             git_branch,
-    #                             depth=1,
-    #                             snapshot_date=snapshot_date,
-    #                             reclone_if_update_fails=True)
+    bbs.gitutils.update_git_clone(BBSvars.manifest_clone_path,
+                             BBSvars.manifest_git_repo_url,
+                             manifest_git_branch,
+                             depth=1,
+                             reclone_if_update_fails=True)
+    ## iterate over manifest to update pkg dirs
+    pkgs = bbs.manifest.read(BBSvars.manifest_path)
+    i = 0
+    for pkg in pkgs:
+        i = i + 1
+        print "BBS> ----------------------------------------------------------"
+        print "BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
+              (i, len(pkgs), pkg, git_branch)
+        print ""
+        pkg_git_clone = os.path.join(MEAT0_path, pkg)
+        pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
+        bbs.gitutils.update_git_clone(pkg_git_clone,
+                                 pkg_git_repo_url,
+                                 git_branch,
+                                 depth=1,
+                                 snapshot_date=snapshot_date,
+                                 reclone_if_update_fails=True)
     print "BBS> -------------------------------------------------------------"
     print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="
