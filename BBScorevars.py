@@ -154,4 +154,6 @@ r_cmd_timeout = float(getenv('BBS_R_CMD_TIMEOUT', False, default_r_cmd_timeout))
 
 meat_index_file = 'meat-index.dcf'
 
+skipped_index_file = 'skipped-index.dcf'
+
 is_workflow = subbuilds == "workflows"

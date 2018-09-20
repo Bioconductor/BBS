@@ -72,6 +72,12 @@ def get_pkgs_from_meat_index(node_hostname=None, node_id=None):
     rodata['rostream'].close()
     return pkgs
 
+def get_pkgs_from_skipped_index(node_hostname=None, node_id=None):
+    rodata = open_rodata(BBScorevars.skipped_index_file)
+    pkgs = get_pkgs(rodata['rostream'], node_hostname, node_id)
+    rodata['rostream'].close()
+    return pkgs
+
 def get_pkg_field_from_meat_index(pkg, field):
     rodata = open_rodata(BBScorevars.meat_index_file)
     val = bbs.parse.getPkgFieldFromDCF(rodata['rostream'], pkg, field, rodata['desc'])

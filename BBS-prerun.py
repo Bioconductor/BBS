@@ -41,8 +41,11 @@ def build_meat_index(pkgs, meat_path):
     print "BBS> [build_meat_index] Start building the meat index for " + \
           "the %s packages in the manifest" % len(pkgs)
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
+    skipped_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.skipped_index_file)
     out = open(meat_index_path, 'w')
     nout = 0
+    skipped = open(skipped_index_path, 'w')
+    nskipped = 0
     for pkg in pkgs:
         pkgdir_path = os.path.join(meat_path, pkg)
         if BBScorevars.subbuilds == "bioc-longtests" and \
@@ -58,9 +61,15 @@ def build_meat_index(pkgs, meat_path):
                 maintainer = bbs.parse._getMaintainerFromDir(pkgdir_path)
         except IOError:
             print "BBS>   Missing DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path
+            skipped.write('Package: %s\n' % pkg)
+            skipped.write('\n')
+            nskipped = nskipped + 1
             continue
         except (bbs.parse.DcfFieldNotFoundError, bbs.dcf.dcfrecordsparser.DCFParseError):
             print "BBS>   Bad DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path
+            skipped.write('Package: %s\n' % pkg)
+            skipped.write('\n')
+            nskipped = nskipped + 1
             continue
         if package != pkg:
             desc_file = bbs.parse.getDescFile(pkgdir_path)
@@ -89,12 +98,19 @@ def build_meat_index(pkgs, meat_path):
         out.write('\n')
         nout = nout + 1
     out.close()
+    skipped.close()
+    print "BBS> [build_meat_index] %s pkgs were skipped (out of %s)" % (nskipped, len(pkgs))
     print "BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs))
     return meat_index_path
 
 def writeAndUploadMeatIndex(pkgs, meat_path):
     meat_index_path = build_meat_index(pkgs, meat_path)
     BBScorevars.Central_rdir.Put(meat_index_path, True, True)
+    return
+
+def uploadSkippedIndex(work_topdir):
+    skipped_index_path = os.path.join(work_topdir, BBScorevars.skipped_index_file)
+    BBScorevars.Central_rdir.Put(skipped_index_path, True, True)
     return
 
 def update_svnlog():
@@ -143,8 +159,14 @@ def writeAndUploadVcsMeta(snapshot_date):
             bbs.jobs.doOrDie(cmd)
         update_svnlog()
     if vcs == 'git':
-        ## Create git-log file for each package
-        for pkg in pkgs:
+        ## Create git-log file for each package in meat-index.dcf and
+        ## skipped-index.dcf
+        skipped_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.skipped_index_file)
+        dcf = open(skipped_index_path, 'r')
+        skipped_pkgs = bbs.parse.readPkgsFromDCF(dcf)
+        dcf.close()
+        all_pkgs = pkgs + skipped_pkgs
+        for pkg in all_pkgs:
             pkgdir_path = os.path.join(MEAT0_path, pkg)
             git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgdir_path)
             gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
@@ -187,28 +209,28 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     print "BBS>   manifest_git_branch: %s" % manifest_git_branch
     print "BBS> -------------------------------------------------------------"
     print ""
-    bbs.gitutils.update_git_clone(BBSvars.manifest_clone_path,
-                             BBSvars.manifest_git_repo_url,
-                             manifest_git_branch,
-                             depth=1,
-                             reclone_if_update_fails=True)
-    ## iterate over manifest to update pkg dirs
-    pkgs = bbs.manifest.read(BBSvars.manifest_path)
-    i = 0
-    for pkg in pkgs:
-        i = i + 1
-        print "BBS> ----------------------------------------------------------"
-        print "BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
-              (i, len(pkgs), pkg, git_branch)
-        print ""
-        pkg_git_clone = os.path.join(MEAT0_path, pkg)
-        pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
-        bbs.gitutils.update_git_clone(pkg_git_clone,
-                                 pkg_git_repo_url,
-                                 git_branch,
-                                 depth=1,
-                                 snapshot_date=snapshot_date,
-                                 reclone_if_update_fails=True)
+    #bbs.gitutils.update_git_clone(BBSvars.manifest_clone_path,
+    #                         BBSvars.manifest_git_repo_url,
+    #                         manifest_git_branch,
+    #                         depth=1,
+    #                         reclone_if_update_fails=True)
+    ### iterate over manifest to update pkg dirs
+    #pkgs = bbs.manifest.read(BBSvars.manifest_path)
+    #i = 0
+    #for pkg in pkgs:
+    #    i = i + 1
+    #    print "BBS> ----------------------------------------------------------"
+    #    print "BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
+    #          (i, len(pkgs), pkg, git_branch)
+    #    print ""
+    #    pkg_git_clone = os.path.join(MEAT0_path, pkg)
+    #    pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
+    #    bbs.gitutils.update_git_clone(pkg_git_clone,
+    #                             pkg_git_repo_url,
+    #                             git_branch,
+    #                             depth=1,
+    #                             snapshot_date=snapshot_date,
+    #                             reclone_if_update_fails=True)
     print "BBS> -------------------------------------------------------------"
     print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="
@@ -239,6 +261,7 @@ def writeAndUploadMeatInfo(work_topdir):
     pkgs = bbs.manifest.read(manifest_path)
     writeAndUploadMeatIndex(pkgs, MEAT0_path)
     writeAndUploadVcsMeta(snapshot_date)
+    uploadSkippedIndex(work_topdir)
     return
 
 ##############################################################################

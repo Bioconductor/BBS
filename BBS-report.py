@@ -337,6 +337,7 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
 
 def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
     subbuild = BBScorevars.subbuilds
+    skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if BBSreportutils.is_supported(pkg, node):
         for stagecmd in stageCmds(subbuild):
             if stagecmd == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
@@ -348,9 +349,13 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
     else:
         out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
                    (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
-        sep = '...'
-        NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
-        out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
+        if pkg in skipped_pkgs:
+            msg = 'BAD DESCRIPTION FILE'
+            out.write('<SPAN style="text-align: center" class="ERROR">&nbsp;%s&nbsp;</SPAN>' % msg)
+        else:
+            sep = '...'
+            NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
+            out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
         out.write('</I></TD>')
     return
 
@@ -397,7 +402,7 @@ def statuses2classes(statuses):
     if "WARNINGS" in statuses:
         classes += " warnings"
     ## A package is tagged with the "ok" class if it's not tagged with any of
-    ## the "timeout", "error" or "warnings" class. Note that this means that
+    ## the "timeout", "error" or "warnings". Note that this means that 
     ## a package could end up being tagged with the "ok" class even if it
     ## doesn't have any OK in 'statuses' (e.g. if it's unsupported on all
     ## platforms).
@@ -429,9 +434,14 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         out.write('<TR class="%s">' % classes)
         if is_first:
             pkgname_html = pkgname_to_HTML(pkg)
-            version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
-            maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
-            status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+            if statuses:
+                version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
+                maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
+                status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+            else:
+                version = ''
+                maintainer = ''
+                status = ''
             if status == "Deprecated":
                 strike = '<s>'
                 strike_close = '</s>'
@@ -445,6 +455,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             #out.write('<B><SPAN style="font-size: larger;">%s</SPAN>&nbsp;%s</B><BR>' % (pkgname_html, version))
             out.write('<B>%s%s%s&nbsp;%s</B>' % (strike, pkgname_html, strike_close, version))
             out.write('<BR>%s' % maintainer)
+
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
                 out.write('<BR>')
                 write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
@@ -554,12 +565,23 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     else:
         classes = "odd"
     statuses = BBSreportutils.get_distinct_statuses_from_db(pkg, [node])
-    classes += statuses2classes(statuses)
+    skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
+    if pkg in skipped_pkgs:
+        classes += ' error'
+    else: 
+        classes += statuses2classes(statuses)
     out.write('<TR class="%s">' % classes)
     out.write('<TD class="header" style="text-align: right;"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left; padding-left: 12px;">')
-    version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
-    status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+
+    if statuses:
+        version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
+        status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+        maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
+    else:
+        version = ''
+        status = ''
+        maintainer = ''
     if status == "Deprecated":
         strike = "<s>"
         strike_close = "</s>"
@@ -568,7 +590,6 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
         strike_close = ""
     out.write('%s<B>%s</B>%s&nbsp;<B>%s</B>' % (strike, pkgname_to_HTML(pkg), strike_close, version))
     out.write('</TD>')
-    maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
     out.write('<TD style="text-align: left">%s</TD>' % maintainer)
     write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
     out.write('</TR>\n')
@@ -1551,13 +1572,19 @@ print "BBS> [stage8] cd %s/" % report_path
 os.chdir(report_path)
 print "BBS> [stage8] get %s from %s/" % (BBScorevars.meat_index_file, BBScorevars.Central_rdir.label)
 BBScorevars.Central_rdir.Get(BBScorevars.meat_index_file)
+print "BBS> [stage8] get %s from %s/" % (BBScorevars.skipped_index_file, BBScorevars.Central_rdir.label)
+BBScorevars.Central_rdir.Get(BBScorevars.skipped_index_file)
 print "BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBScorevars.Central_rdir.label)
 BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
 
-allpkgs = BBSreportutils.get_pkgs_from_meat_index()
+meat_pkgs = BBSreportutils.get_pkgs_from_meat_index()
+skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
+all_pkgs = meat_pkgs + skipped_pkgs
+allpkgs = sorted(all_pkgs, key=str.lower)
 make_STATUS_SUMMARY(allpkgs)
+
 print "BBS> [stage8] cp %s %s/" % (css_file, report_path)
 shutil.copy(css_file, report_path)
 if bgimg_file:
