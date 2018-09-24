@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: May 18, 2018
+### Last modification: September 24, 2018
 ###
 
 import sys
@@ -350,8 +350,8 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
         out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
                    (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
         if pkg in skipped_pkgs:
-            msg = 'BAD DESCRIPTION FILE'
-            out.write('<SPAN style="text-align: center" class="ERROR">&nbsp;%s&nbsp;</SPAN>' % msg)
+            msg = 'BadDescription'
+            out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
         else:
             sep = '...'
             NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
@@ -1401,6 +1401,10 @@ def write_glyph_table(out):
             msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
         msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
         write_glyph("skipped", msg)
+
+    ## "BadDescription" glyph
+    msg = 'Malformed or missing DESCRIPTION file'
+    write_glyph("BadDescription", msg)
 
     ## "NA" glyph
     if subbuild == "bioc-longtests":

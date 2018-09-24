@@ -171,6 +171,9 @@ SPAN.NotNeeded {
 SPAN.skipped, SPAN.NA {
     font-weight: bold;
 }
+SPAN.BadDescription {
+    font-weight: bold;
+}
 
 .TIMEOUT,
 TABLE.summary TD.summary.TIMEOUT {
