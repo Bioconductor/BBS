@@ -347,16 +347,19 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
         if showPropagationStatus(subbuild):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
-        out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
-                   (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
         if pkg in skipped_pkgs:
-            msg = 'BadDescription'
+            out.write('<TD COLSPAN="%s" class="node %s">' % \
+                     (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
+            msg = 'ERROR'
             out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
+            out.write('(Bad DESCRIPTION file)</TD>')
         else:
+            out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
+                     (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
             sep = '...'
             NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
             out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
-        out.write('</I></TD>')
+            out.write('</I></TD>')
     return
 
 def write_abc_dispatcher(out, href="", current_letter=None,
@@ -1373,6 +1376,9 @@ def write_glyph_table(out):
         msg += ' or <I>CHECK</I> produced errors'
     write_glyph("ERROR", msg, True)
 
+    ## "ERROR (Bad DESCRIPTION file)" glyph
+    write_glyph("ERROR", '(Bad DESCRIPTION file)')
+
     ## "WARNINGS" glyph
     if subbuild != "workflows":
         msg = '<I>CHECK</I> of package produced warnings'
@@ -1401,10 +1407,6 @@ def write_glyph_table(out):
             msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
         msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
         write_glyph("skipped", msg)
-
-    ## "BadDescription" glyph
-    msg = 'Malformed or missing DESCRIPTION file'
-    write_glyph("BadDescription", msg)
 
     ## "NA" glyph
     if subbuild == "bioc-longtests":
