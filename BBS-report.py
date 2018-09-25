@@ -420,7 +420,11 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     else:
         classes = "odd"
     statuses = BBSreportutils.get_distinct_statuses_from_db(pkg)
-    classes += statuses2classes(statuses)
+    skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
+    if pkg in skipped_pkgs:
+        classes += ' error'
+    else: 
+        classes += statuses2classes(statuses)
     out.write('<TR class="%s header">' % classes)
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left">Hostname</TD>')
