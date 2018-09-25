@@ -1371,17 +1371,15 @@ def write_glyph_table(out):
     write_glyph("TIMEOUT", msg, True, True)
 
     ## "ERROR" glyph
+    msg = '(Bad DESCRIPTION file) or '
     if subbuild == "bioc-longtests":
-        msg = '<I>CHECK</I> of package produced errors'
+        msg += '<I>CHECK</I> of package produced errors'
     elif subbuild == "workflows":
-        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I> of package failed'
+        msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I> of package failed'
     else:
-        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
+        msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
         msg += ' or <I>CHECK</I> produced errors'
     write_glyph("ERROR", msg, True)
-
-    ## "ERROR (Bad DESCRIPTION file)" glyph
-    write_glyph("ERROR", '(Bad DESCRIPTION file)')
 
     ## "WARNINGS" glyph
     if subbuild != "workflows":
