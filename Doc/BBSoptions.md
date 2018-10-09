@@ -40,15 +40,16 @@ to build foo during STAGE3 will be
 
 ## RunLongTests
 
-TRUE or FALSE flag to trigger running of long tests, default is FALSE. To
+TRUE or FALSE flag to trigger running of long tests. The default is FALSE. To
 enable long tests set the field to TRUE:
 
     RunLongTests: TRUE
 
 ## UnsupportedPlatforms
 
-Comma separated list of platforms not supported, default is empty string.
-Possible values are win, win32, win64, mac or the name of a build node. 
+Comma separated list of platforms not supported. Default is an empty
+string.  Possible values are win, win32, win64, mac or the name of a build
+node. 
 
     UnsupportedPlatforms: win32, mac
 
@@ -58,8 +59,8 @@ or
 
 ## NoExamplesOnPlatforms
 
-Comma separated list of platforms where examples should not be run, default
-is empty string. Possible values are win, win32, win64, mac, linux2. 
+Comma separated list of platforms where examples should not be run. Default
+is an empty string. Possible values are win, win32, win64, mac, linux2. 
 
     NoExamplesOnPlatforms: win, mac
 
@@ -67,9 +68,13 @@ is empty string. Possible values are win, win32, win64, mac, linux2.
 
 Notify package maintainer of build failures or warnings.
 
-- Alert can be TRUE or FALSE, default is FALSE.
+- Alert enables AlertOn and AlertTo. Possible values are TRUE and FALSE. The
+  default is FALSE. To enable alerts,
 
-- AlertOn turns on/off WARNINGS and ERRORS. The default value is ERROR.
+        Alert: TRUE 
+
+- AlertOn specifies which type of failure should trigger an alert. The
+  default is ERROR.
 
   - To receive an alert in case of any warning on any platform:
 
@@ -85,7 +90,7 @@ Notify package maintainer of build failures or warnings.
 
         AlertOn: malbec1.ERROR, mac.WARNINGS
 
-- AlertTo specifies who to send the alert message to.
+- AlertTo specifies who should receive the alert message.
 
   The default value is the email address of the Maintainer found in
   the DESCRIPTION file of the package. More than one address can be
