@@ -51,7 +51,7 @@ def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
     x1 = x[1]
     x2 = x[2]
     x3 = x[3]
-    x4 = x[4]
+    #x4 = x[4]
     if status == "TIMEOUT":
         x0 += 1
     if status == "ERROR":
