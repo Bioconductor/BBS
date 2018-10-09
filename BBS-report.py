@@ -1363,7 +1363,7 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg = '<I>CHECK</I>'
     elif subbuild == "workflows":
-        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I>'
+        msg = '<I>INSTALL</I> or <I>BUILD</I>'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     timeout = int(BBScorevars.r_cmd_timeout / 60.0)
@@ -1375,7 +1375,7 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg += '<I>CHECK</I> of package produced errors'
     elif subbuild == "workflows":
-        msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I> of package failed'
+        msg += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
     else:
         msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
         msg += ' or <I>CHECK</I> produced errors'
@@ -1390,23 +1390,20 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg = '<I>CHECK</I>'
     elif subbuild == "workflows":
-        msg = '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD WEB VIG</I>'
+        msg = '<I>INSTALL</I> or <I>BUILD</I>'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     msg += ' of package was OK'
     write_glyph("OK", msg, True)
 
     ## "NotNeeded" glyph
-    #if subbuild != "bioc-longtests":
+    if subbuild != "bioc-longtests":
     #    if subbuild != "workflows":
     #        msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
     #        write_glyph("NotNeeded", msg)
 
     ## "skipped" glyph
-        if subbuild == "workflows":
-            msg = '<I>BUILD WEB VIG</I>'
-        else:  
-            msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
+        msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
         msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
         write_glyph("skipped", msg)
 
@@ -1414,7 +1411,7 @@ def write_glyph_table(out):
     if subbuild == "bioc-longtests":
         msg = '<I>CHECK</I>'
     elif subbuild == "workflows":
-        msg = '<I>BUILD</I> or <I>BUILD WEB VIG</I>'
+        msg = '<I>BUILD</I>'
     else:
         msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     msg += ' result is not available because of an anomaly in the Build System\n'
