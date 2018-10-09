@@ -1,6 +1,6 @@
 # .BBSoptions
 
-The .BBSoptions file allows modification to the default build behavior on a
+The .BBSoptions file allows deviations from the default build behavior on a
 per-package basis. The file is optional and if included should be located at
 the root of the package directory.
 
@@ -40,11 +40,14 @@ to build foo during STAGE3 will be
 
 ## RunLongTests
 
-TRUE or FALSE flag to trigger running of long tests. Default is FALSE.
+TRUE or FALSE flag to trigger running of long tests, default is FALSE. To
+enable long tests set the field to TRUE:
+
+    RunLongTests: TRUE
 
 ## UnsupportedPlatforms
 
-Comma separated list of platforms not supported, default is an empty string.
+Comma separated list of platforms not supported, default is empty string.
 Possible values are win, win32, win64, mac or the name of a build node. 
 
     UnsupportedPlatforms: win32, mac
@@ -56,7 +59,7 @@ or
 ## NoExamplesOnPlatforms
 
 Comma separated list of platforms where examples should not be run, default
-is an empty string. Possible values are win, win32, win64, mac, linux2. 
+is empty string. Possible values are win, win32, win64, mac, linux2. 
 
     NoExamplesOnPlatforms: win, mac
 
@@ -66,18 +69,20 @@ Notify package maintainer of build failures or warnings.
 
 - Alert can be TRUE or FALSE, default is FALSE.
 
-- AlertOn turns on/off WARNINGS and ERRORS. 
+- AlertOn turns on/off WARNINGS and ERRORS. The default value is ERROR.
 
-  The default value is ERROR.
   - To receive an alert in case of any warning on any platform:
+
         AlertOn: WARNINGS
 
   - To receive an alert in case of any error on any platform or any warning
     on Windows:
+
         AlertOn: ERROR, win.WARNINGS
 
   - To receive an alert in case of any error on malbec1 or any warning on
     Mac OS X
+
         AlertOn: malbec1.ERROR, mac.WARNINGS
 
 - AlertTo specifies who to send the alert message to.
@@ -86,15 +91,15 @@ Notify package maintainer of build failures or warnings.
   the DESCRIPTION file of the package. More than one address can be
   specified, e.g.,
 
-    AlertTo: userone@domain.org, user.two@domain.net
+      AlertTo: userone@domain.org, user.two@domain.net
 
 ## ForceInstall (Deprecated)
 
 This field was used to forcibly install packages that no other package
 required. It addressed the situation where a data/experiment package
-depends on a software package (or visa versa) and nothing else 
-would trigger the installation of the software package
-(i.e., no other software package depended on it).
+depends on a software package (or vice versa) and nothing else 
+would trigger the installation of the software package, i.e., no other 
+software package depended on it.
 
 As of commit b47942af5ada41e6ba9b70463c97bd79356eaff4 all target packages
 are installed and this field is no longer used.
