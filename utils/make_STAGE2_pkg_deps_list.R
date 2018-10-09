@@ -3,18 +3,17 @@
 ### file
 ### -------------------------------------------------------------------------
 
+## As of commit b47942af5ada41e6ba9b70463c97bd79356eaff4
+## the BBS installs all target packages during STAGE2
+## and doesn't try to skip installation of those not
+## needed by another target package for build or check.
+## 
+## This change means it's no longer necessary to add this line to .BBSoptions:
+##   ForceInstall: TRUE
 
-## If a data/experiment package depends on a software
-## package and nothing else is going to trigger
-## the installation of that software package,
-## (i.e. no other software packages depend on it),
-## then you can manually trigger it by putting
-## ForceInstall: TRUE
-## in the optional .BBSoptions file in the root
-## of the software package's directory. The following
-## function takes the list of target packages and spits out
-## the ones that have this tag, and therefore should
-## be installed no matter what.
+## This function takes the list of target packages and spits out
+## the ones that have the `ForceInstall: TRUE` tag, and therefore 
+## should be installed no matter what.
 .getPkgsToForceInstall <- function(pkgs)
 {
     meatDir <- Sys.getenv("BBS_MEAT_PATH")
