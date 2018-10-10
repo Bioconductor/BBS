@@ -26,7 +26,8 @@ is defined).
   - [After Building](#after-building)
   - [Testing](#testing)
   - [First build cycle after a fresh R install](#first-cycle)
-  - [Flushing](#flushing)
+  - [Flushing AnnotationHub and ExperimentHub cache](#flushing-hubs)
+  - [Flushing the build pipe](#flushing)
 - [R for biocadmin](#biocadmin)
 - [Updating R on Mac OSX and Windows](mac-and-windows)
 
@@ -171,8 +172,20 @@ Note that, when using a freshly built R, the builds take longer because all
 the dependencies need to be re-installed (this is done automatically during
 STAGE2).
 
+<a name="flushing-hubs"></a>
+### Flushing AnnotationHub and ExperimentHub cache
+
+When R is updated, the cache for AnnotationHub and ExperimentHub should be
+refreshed. This is done by removing all of .AnnotationHub/,
+.AnnotationHubData/, .ExperimentHub/ and .ExperimentHubData/ that are
+present in /home/biocbuild/.
+
+Removing these directories means all packages using these resources
+will have to re-download the files. This also contributes to an increased
+runtime for the builds.
+
 <a name="flushing"></a>
-### Flushing
+### Flushing the build pipe
 
 Historically we used to 'flush' the whole build pipe by removing all current
 packages. (I don't think this is done anymore as of BioC 3.5) When that is

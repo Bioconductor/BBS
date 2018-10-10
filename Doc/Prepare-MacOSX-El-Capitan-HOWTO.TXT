@@ -1313,3 +1313,7 @@ Perform the following steps from the biocbuild account:
                  "RMySQL", "RPostgreSQL", "V8", "udunits2")
        install.packages(pkgs, repos='http://cran.us.r-project.org')
 
+  6) Refresh the cache for AnnotationHub and ExperimentHub 
+
+     Remove all of .AnnotationHub/, .AnnotationHubData/, .ExperimentHub/ and
+     .ExperimentHubData/ present in C:\Users\biocbuild\.

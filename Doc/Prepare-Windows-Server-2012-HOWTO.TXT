@@ -355,6 +355,13 @@ interactively on a Windows build machine.
 
   Quit R (do NOT save the workspace image)
 
+  5. NOTE: Updating R
+  
+     When R is updated, the cache for AnnotationHub and ExperimentHub should
+     be refreshed. This is done by removing all of .AnnotationHub/,
+     .AnnotationHubData/, .ExperimentHub/ and .ExperimentHubData/ present
+     in C:\Users\biocbuild\.
+
 ** Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
 
   The command below will open an editor. Put EnableWrite18=t in it, save and
