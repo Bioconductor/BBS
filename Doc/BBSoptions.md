@@ -59,6 +59,9 @@ or
 
 ## NoExamplesOnPlatforms
 
+This field was created for a single special case. This field is NOT
+recommended - use 'UnsupportedPlatforms' instead.
+
 Comma separated list of platforms where examples should not be run. Default
 is an empty string. Possible values are win, win32, win64, mac, linux2. 
 
@@ -66,7 +69,8 @@ is an empty string. Possible values are win, win32, win64, mac, linux2.
 
 ## Alert / AlertOn / AlertTo 
 
-Notify package maintainer of build failures or warnings.
+These are not yet implemented but could be if there was a need. Notify package
+maintainer of build failures or warnings.
 
 - Alert enables AlertOn and AlertTo. Possible values are TRUE and FALSE. The
   default is FALSE. To enable alerts,
