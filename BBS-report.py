@@ -60,9 +60,9 @@ def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
         x2 += 1
     if status == "OK":
         x3 += 1
-    #if status == "NotNeeded":
-    #    x4 += 1
-    STATUS_SUMMARY[node_id][stagecmd] = (x0, x1, x2, x3)
+    if status == "NotNeeded":
+        x4 += 1
+    STATUS_SUMMARY[node_id][stagecmd] = (x0, x1, x2, x3, x4)
     return
 
 def make_STATUS_SUMMARY(allpkgs):
@@ -486,8 +486,8 @@ def write_summary_TD(out, node, stagecmd):
     if stagecmd == 'checksrc':
         html += '<TD class="summary %s">%d</TD>' % ("WARNINGS", stats[2])
     html += '<TD class="summary %s">%d</TD>' % ("OK", stats[3])
-    #if stagecmd == 'install':
-    #    html += '<TD class="summary %s">%d</TD>' % ("NotNeeded", stats[4])
+    if stagecmd == 'install':
+        html += '<TD class="summary %s">%d</TD>' % ("NotNeeded", stats[4])
     html += '</TR></TABLE>'
     #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stagecmd, html))
     out.write('<TD>%s</TD>' % html)
@@ -1016,15 +1016,15 @@ def make_LeafReport(leafreport_ref, allpkgs):
     #    write_compactreport_asTABLE(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
 
     status = BBSreportutils.get_status_from_db(pkg, node_id, stagecmd)
-    #if stagecmd == "install" and status == "NotNeeded":
-    #    out.write('<HR>\n')
-    #    out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
-    #    out.write('REASON FOR NOT INSTALLING: no other package that will ')
-    #    out.write('be built and checked on this platform needs %s' % pkg)
-    #    out.write('</DIV>\n')
-    #else:
-    write_Summary_asHTML(out, node_hostname, pkg, node_id, stagecmd)
-    write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd)
+    if stagecmd == "install" and status == "NotNeeded":
+        out.write('<HR>\n')
+        out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
+        out.write('REASON FOR NOT INSTALLING: no other package that will ')
+        out.write('be built and checked on this platform needs %s' % pkg)
+        out.write('</DIV>\n')
+    else:
+        write_Summary_asHTML(out, node_hostname, pkg, node_id, stagecmd)
+        write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -1398,9 +1398,9 @@ def write_glyph_table(out):
 
     ## "NotNeeded" glyph
     if subbuild != "bioc-longtests":
-    #    if subbuild != "workflows":
-    #        msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
-    #        write_glyph("NotNeeded", msg)
+        if subbuild != "workflows":
+            msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
+            write_glyph("NotNeeded", msg)
 
     ## "skipped" glyph
         msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
