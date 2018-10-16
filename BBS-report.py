@@ -1397,10 +1397,10 @@ def write_glyph_table(out):
     write_glyph("OK", msg, True)
 
     ## "NotNeeded" glyph
-    if subbuild != "bioc-longtests":
-        if subbuild != "workflows":
-            msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
-            write_glyph("NotNeeded", msg)
+    #if subbuild != "bioc-longtests":
+    #    if subbuild != "workflows":
+    #        msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
+    #        write_glyph("NotNeeded", msg)
 
     ## "skipped" glyph
         msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
