@@ -563,9 +563,9 @@ Then start R again and try to install a few packages *from source*:
 
   # CRAN packages
   # contains C++ code:
-  install.packages("Rcpp", type="source", repos='http://cran.us.r-project.org')
+  install.packages("Rcpp", type="source", repos='http://cran.r-project.org')
   # contains Fortran code
-  install.packages("minqa", type="source", repos='http://cran.us.r-project.org')
+  install.packages("minqa", type="source", repos='http://cran.r-project.org')
 
   # Bioconductor packages
   library(BiocManager)
@@ -663,7 +663,7 @@ Everything in this section must be done from the biocbuild account.
   TESTING: Try to install the rJava package:
 
     # install the CRAN binary
-    install.packages("rJava", repos='http://cran.us.r-project.org')
+    install.packages("rJava", repos='http://cran.r-project.org')
     library(rJava)
     .jinit()
     .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
@@ -1299,19 +1299,19 @@ Perform the following steps from the biocbuild account:
      TESTING: Try to install the rJava package:
 
        # install the CRAN binary
-       install.packages("rJava", repos='http://cran.us.r-project.org')
+       install.packages("rJava", repos='http://cran.r-project.org')
 
      See "Install Java" previously in this file for more testing.
 
   4) TESTING: Try to install the RGtk2 package *from source*:
 
-       install.packages("RGtk2", type="source", repos='http://cran.us.r-project.org')
+       install.packages("RGtk2", type="source", repos='http://cran.r-project.org')
 
   5) Install the following package binaries:
 
        pkgs <- c("Cairo", "tkrplot", "sysfonts", "rphast", "rtfbs",
                  "RMySQL", "RPostgreSQL", "V8", "udunits2")
-       install.packages(pkgs, repos='http://cran.us.r-project.org')
+       install.packages(pkgs, repos='http://cran.r-project.org')
 
   6) Refresh the cache for AnnotationHub and ExperimentHub 
 
