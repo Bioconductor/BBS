@@ -402,7 +402,7 @@ Announce or ask a team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
-### F3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_8` on main BioC 3.7 builder
+### F3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_8` on main BioC 3.8 builder
 
 DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.8 builds grab the
 `RELEASE_3_8` branch of all packages instead of their `master` branch.
