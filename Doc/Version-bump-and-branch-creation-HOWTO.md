@@ -132,6 +132,12 @@ in sections **C.**, **D.**, and **E.**.
         python /path/detect_duplicate_commits.py package 100
     done
 
+* Anyone involved in the "bump and branch" procedure should temporarily
+  be added to the 'admin' group in gitolite-admin/conf/gitolite.conf. 
+  Membership in this group enables the creation of a new branch and
+  'pushing' to any branch regardless of inactivated (commented out) lines 
+  in gitolite-admin/conf/packages.conf.
+ 
 ## C. Version bumps and branch creation for software packages
 
 Perform these steps on the day prior to the release. They must be completed
@@ -149,20 +155,23 @@ Announce or ask a team member to announce on the bioc-devel mailing list
 that people must stop committing/pushing changes to the BioC git server
 (git.bioconductor.org) for the next 2.5 hours.
 
+### C2. Modify packages.conf to block all commits
 
-In the gitolite-admin/conf/packages.conf file,
+The RELEASE_3_7 lines in gitolite-admin/conf/packages.conf were commented
+out when the release builds were frozen. At this point, only the "master"
+lines are still active. 
 
-Comment out the most recent `RELEASE_X_Y` line for all the packages. Using
-vim, it is possible with a one liner,
+Deactivate all push access by commenting out the "master" lines in 
+gitolite-admin/conf/packages.conf. 
 
-       :g/RW RELEASE_X_Y/s/^/#
+Using vim, it is possible with a one liner,
 
-NOTE: RELEASE_X_Y is going to be the current RELEASE. (eg: RELEASE_3_8)
+       :g/RW master/s/^/#
 
 Once the packages.conf is updated, push to gitolite-admin on the git server
 to make the changes apply.
 
-### C2. Login to the machine where you've performed the preliminary steps
+### C3. Login to the machine where you've performed the preliminary steps
 
 Make sure to use the `-A` flag to enable forwarding of the authentication
 agent connection e.g.:
@@ -171,7 +180,7 @@ agent connection e.g.:
 
 See **B. Preliminary steps** above for the details.
 
-### C3. Checkout/update the `RELEASE_3_8` branch of the `manifest` repo
+### C4. Checkout/update the `RELEASE_3_8` branch of the `manifest` repo
 
     cd ~/git.bioconductor.org/manifest
     git pull --all
@@ -179,7 +188,7 @@ See **B. Preliminary steps** above for the details.
     git branch
     git status
 
-### C4. Set the `WORKING_DIR` and `MANIFEST_FILE` environment variables
+### C5. Set the `WORKING_DIR` and `MANIFEST_FILE` environment variables
 
 Point `WORKING_DIR` to the folder containing the software packages:
 
@@ -193,7 +202,7 @@ be the file from the `RELEASE_3_8` branch of the `manifest` repo:
 
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
 
-### C5. Make sure all package git clones are up-to-date
+### C6. Make sure all package git clones are up-to-date
 
 Go to the working folder:
 
@@ -211,7 +220,7 @@ should take 15-20 minutes:
     export PYTHONPATH="$BBS_HOME/bbs"
     time $BBS_HOME/utils/update_bioc_git_repos.py
 
-### C6. First version bump (to even y)
+### C7. First version bump (to even y)
 
 This will modify the DESCRIPTION files only. It won't commit anything.
 
@@ -230,7 +239,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
 
-### C7. Commit first version bump
+### C8. Commit first version bump
 
     commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_8 branch"
 
@@ -258,7 +267,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
       git -C $pkg log -n 1
     done
  
-### C8. Branch creation
+### C9. Branch creation
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
@@ -280,7 +289,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
       fi
     done
 
-### C9. Second version bump (to odd y)
+### C10. Second version bump (to odd y)
 
 This will modify the DESCRIPTION files only. It won't commit anything.
 
@@ -299,7 +308,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
 
-### C10. Commit second version bump
+### C11. Commit second version bump
 
 Same as step C7 above EXCEPT that commit message now is:
 
@@ -315,7 +324,7 @@ RELEASE_3_8: This should show an even bump.
 
 	git log RELEASE_3_8 -n 2
 
-### C11. Push all the changes
+### C12. Push all the changes
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
@@ -375,11 +384,14 @@ Timings (approx.):
 ### F1. Enable push access to new `RELEASE_3_8` branch
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
-repo (`git clone git@git.bioconductor.org:gitolite-admin`). Ask a team member
-who is familiar with `gitolite` (Nitesh and Martin at the moment) to help with
-this.
+repo (`git clone git@git.bioconductor.org:gitolite-admin`). 
 
-Check with a non super user if push access is enabled. (Nitesh can do
+- If not done already, replace all instances of `RELEASE_3_7` with
+`RELEASE_3_8`.
+
+- Uncomment all `RELEASE_3_8` and `master` lines.
+
+- Test that a non-super user can push access is enabled. (Nitesh can do
 this currently with ni41435 account, and the dummy package
 BiocGenerics_test).
 
