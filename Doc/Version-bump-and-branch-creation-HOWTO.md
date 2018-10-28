@@ -138,10 +138,10 @@ Perform these steps on the day prior to the release. They must be completed
 before the software builds get kicked off (see **A. Introduction**). The full
 procedure should take about 2.5 hours. Make sure to reserve enough time.
 
-NOTE: For the Oct 2018 release, BiocVersion will not get the first
-version bump, only the second. The package should be 3.8 in the new 
-release and 3.9 in the new devel. It will also need special treatment
-in Spring 2019 to go from 3.9 to 4.0.
+NOTE: For the Oct 2018 release, BiocVersion will not get the first version
+bump, only the second. The package should be `3.8.0` in the RELEASE_3_8 branch
+and `3.9.0` in the new master branch. The package will also need special
+treatment in Spring 2019 to go from `3.9.*` to `4.0.0`.
 
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
 
@@ -213,14 +213,9 @@ should take 15-20 minutes:
 
 ### C6. First version bump (to even y)
 
-NOTE: BiocVersion should not have this first bump in the Oct 2018 release.
-      The version should stay at 3.9.
-
 This will modify the DESCRIPTION files only. It won't commit anything.
 
     cd $WORKING_DIR
-
-    # Remove BiocVersion from the software manifest
 
     # dry-run
     $BBS_HOME/utils/bump_pkg_versions.sh test even
@@ -228,10 +223,12 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # if everything looks OK
     $BBS_HOME/utils/bump_pkg_versions.sh even
 
+    # ** IMPORTANT **
+    # Manually correct the version in the BiocVersion DESCRIPTION to 3.8.0.
+    # The BiocVersion package must be 3.8.0 in the RELEASE_3_8 branch.
+
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
-
-    # Confirm BiocVersion stayed at 3.8
 
 ### C7. Commit first version bump
 
@@ -239,9 +236,6 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-
-    # Confirm BiocVersion is not in pkgs_in_manifest
-    grep BiocVersion pkgs_in_manifest
 
     # stage DESCRIPTION for commit
     time for pkg in $pkgs_in_manifest; do
@@ -268,9 +262,6 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-
-    # Confirm BiocVersion is in pkgs_in_manifest
-    grep BiocVersion pkgs_in_manifest
 
     # create the RELEASE_3_8 branch and change back to master
     time for pkg in $pkgs_in_manifest; do
@@ -301,7 +292,9 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # if everything looks OK
     $BBS_HOME/utils/bump_pkg_versions.sh odd
 
-    # Confirm BiocVersion was bumped to 3.9
+    # ** IMPORTANT **
+    # Manually correct the version in the BiocVersion DESCRIPTION to 3.9.0.
+    # The BiocVersion package must be 3.9.0 in the master branch.
 
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
