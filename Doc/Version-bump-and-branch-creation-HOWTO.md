@@ -118,19 +118,29 @@ in sections **C.**, **D.**, and **E.**.
       cd ~/git.bioconductor.org/workflows
       $BBS_HOME/utils/bump_pkg_versions.sh bad
 
+* Clone (or update) the `bioc_git_transition` git repo:
 
-* Find packages with duplicate commits by using the script
+      # clone
+      git clone https://github.com/Bioconductor/bioc_git_transition
+      # update
+      cd ~/bioc_git_transition
+      git pull
 
-    https://github.com/Bioconductor/bioc_git_transition/blob/master/misc/detect_duplicate_commits.py
+* Find packages with duplicate commits
+
+      # Local copy of bioc_git_transition
+      export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
 
       # software packages
-      cd ~/git.bioconductor.org/software
+      cd $WORKING_DIR
+      pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
       # Check last 100 commits in each package
-      for package in ./*
-      do
-          python /path/detect_duplicate_commits.py package 100
-      done
+      for pkg in $pkgs_in_manifest; do
+        echo ""
+        echo ">>> check $pkg package for duplicate commits"
+        python $BIOC_GIT_TRANSITION/misc/detect_duplicate_commits.py $pkg 100
+      done > duplicatecommits.out 2>&1
 
 * Anyone involved in the "bump and branch" procedure should temporarily
   be added to the 'admin' group in gitolite-admin/conf/gitolite.conf. 
