@@ -104,8 +104,13 @@ in sections **C.**, **D.**, and **E.**.
       cd ~/git.bioconductor.org/software/affy
       git push  # should display 'Everything up-to-date'
 
-* Find (and fix) packages with problematic versions:
-
+* Find (and fix) packages with problematic versions: (NOTE: need to
+  declare env variable `MANIFEST_FILE` before this is done. Since
+  there is a change of location from `~/git.bioconductor.org` to
+  `~/sandbox/git.bioconductor.org`
+  
+  `export MANIFEST_FILE="$HOME/sandbox/git.bioconductor.org/manifest/software.txt"`
+  
       # software packages
       cd ~/git.bioconductor.org/software
       $BBS_HOME/utils/bump_pkg_versions.sh bad
