@@ -123,14 +123,14 @@ in sections **C.**, **D.**, and **E.**.
 
     https://github.com/Bioconductor/bioc_git_transition/blob/master/misc/detect_duplicate_commits.py
 
-    # software packages
-    cd ~/git.bioconductor.org/software
+      # software packages
+      cd ~/git.bioconductor.org/software
 
-    # Check last 100 commits in each package
-    for package in ./*
-    do
-        python /path/detect_duplicate_commits.py package 100
-    done
+      # Check last 100 commits in each package
+      for package in ./*
+      do
+          python /path/detect_duplicate_commits.py package 100
+      done
 
 * Anyone involved in the "bump and branch" procedure should temporarily
   be added to the 'admin' group in gitolite-admin/conf/gitolite.conf. 
@@ -349,7 +349,7 @@ tested this). Report these errors to `gitolite` experts Nitesh and Martin.
 
 ## D. Version bumps and branch creation for data-experiment packages
 
-Repeat steps C4 to C11 above **but for C4 define the environment variables
+Repeat steps C5 to C12 above **but for C4 define the environment variables
 as follow**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
@@ -357,26 +357,26 @@ as follow**:
 
 Timings (approx.):
 
-* **C7**: 11 min for `stage DESCRIPTION`, 15 sec for `commit`
-* **C8**: 10 sec
-* **C10**: < 1 sec for `stage DESCRIPTION`, < 2 sec for `commit`
-* **C11**: 5 min
+* **C8**: 11 min for `stage DESCRIPTION`, 15 sec for `commit`
+* **C9**: 10 sec
+* **C11**: < 1 sec for `stage DESCRIPTION`, < 2 sec for `commit`
+* **C12**: 5 min
 
 
 ## E. Version bumps and branch creation for workflow packages
 
-Repeat steps C4 to C11 above **but for C4 define the environment variables
-as follow**:
+Repeat steps C5 to C12 above **but for C5 define the environment variables
+as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/workflows.txt"
 
 Timings (approx.):
 
-* **C7**: < 1 min
-* **C8**: < 10 sec
-* **C10**: < 10 sec
-* **C11**: < 1 min
+* **C8**: < 1 min
+* **C9**: < 10 sec
+* **C11**: < 10 sec
+* **C12**: < 1 min
 
 
 ## F. Finishing up
