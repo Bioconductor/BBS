@@ -132,8 +132,9 @@ in sections **C.**, **D.**, and **E.**.
       export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
 
       # software packages
-      cd $WORKING_DIR
+      export WORKING_DIR="$HOME/git.bioconductor.org/software"
       export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
+      cd $WORKING_DIR
       pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
       # Check last 10 commits in each package
