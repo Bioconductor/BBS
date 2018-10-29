@@ -128,6 +128,11 @@ in sections **C.**, **D.**, and **E.**.
 
 * Find packages with duplicate commits
 
+Historically the GIT-SVN mirror was the primary source of duplicate commits. Since the 
+transition to git, we should not be seeing many new duplicates. Additionally, there is a gitolite hook to prevent any new duplicate commits from getting through.
+
+This check for duplicates can probably be removed at the next release in Sprint 2019.
+
       # Local copy of bioc_git_transition
       export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
 
@@ -336,7 +341,16 @@ RELEASE_3_8: This should show an even bump.
 
 	git log RELEASE_3_8 -n 2
 
-### C12. Push all the changes
+### C12. Disable hooks
+Log on to `git.bioconductor.org` as the `git` user.
+
+- Comment out the hook lines in packages.conf.
+
+- Remove the `pre-receive.h00-pre-receive-hook-software` file from each package's hook directory, e.g., /home/git/repositories/packages/<PACKAGE>.git/hooks
+    
+    rm -rf ~/repositories.packages/*.git/hooks/pre-receive.h00-pre-receive-hook-software
+
+### C13. Push all the changes
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
@@ -361,23 +375,23 @@ tested this). Report these errors to `gitolite` experts Nitesh and Martin.
 
 ## D. Version bumps and branch creation for data-experiment packages
 
-Repeat steps C5 to C12 above **but for C4 define the environment variables
-as follow**:
+Repeat steps C5 to C13 above **but for C5 define the environment variables
+as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-experiment.txt"
 
 Timings (approx.):
 
-* **C8**: 11 min for `stage DESCRIPTION`, 15 sec for `commit`
-* **C9**: 10 sec
-* **C11**: < 1 sec for `stage DESCRIPTION`, < 2 sec for `commit`
-* **C12**: 5 min
+* **C7**: 11 min for `stage DESCRIPTION`, 15 sec for `commit`
+* **C8**: 10 sec
+* **C10**: < 1 sec for `stage DESCRIPTION`, < 2 sec for `commit`
+* **C11**: 5 min
 
 
 ## E. Version bumps and branch creation for workflow packages
 
-Repeat steps C5 to C12 above **but for C5 define the environment variables
+Repeat steps C5 to C13 above **but for C5 define the environment variables
 as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
@@ -385,10 +399,10 @@ as follows**:
 
 Timings (approx.):
 
-* **C8**: < 1 min
-* **C9**: < 10 sec
-* **C11**: < 10 sec
-* **C12**: < 1 min
+* **C7**: < 1 min
+* **C8**: < 10 sec
+* **C10**: < 10 sec
+* **C11**: < 1 min
 
 
 ## F. Finishing up
@@ -402,6 +416,10 @@ repo (`git clone git@git.bioconductor.org:gitolite-admin`).
 `RELEASE_3_8`.
 
 - Uncomment all `RELEASE_3_8` and `master` lines.
+
+- Uncomment all hook lines.
+
+- Run `gitolite setup` from /home/git/repositories to re-enable the hooks.
 
 - Test that a non-super user can push access is enabled. (Nitesh can do
 this currently with ni41435 account, and the dummy package
