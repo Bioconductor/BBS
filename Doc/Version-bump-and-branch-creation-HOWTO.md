@@ -133,13 +133,14 @@ in sections **C.**, **D.**, and **E.**.
 
       # software packages
       cd $WORKING_DIR
+      export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
       pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-      # Check last 100 commits in each package
+      # Check last 10 commits in each package
       for pkg in $pkgs_in_manifest; do
         echo ""
         echo ">>> check $pkg package for duplicate commits"
-        python $BIOC_GIT_TRANSITION/misc/detect_duplicate_commits.py $pkg 100
+        python $BIOC_GIT_TRANSITION/misc/detect_duplicate_commits.py $pkg 10
       done > duplicatecommits.out 2>&1
 
 * Anyone involved in the "bump and branch" procedure should temporarily
