@@ -128,10 +128,12 @@ in sections **C.**, **D.**, and **E.**.
 
 * Find packages with duplicate commits
 
-Historically the GIT-SVN mirror was the primary source of duplicate commits. Since the 
-transition to git, we should not be seeing many new duplicates. Additionally, there is a gitolite hook to prevent any new duplicate commits from getting through.
-
-This check for duplicates can probably be removed at the next release in Sprint 2019.
+Historically the GIT-SVN mirror was the primary source of duplicate commits.
+Since the transition to git, we should not be seeing many new duplicates.
+Additionally, we've implemented a gitolite hook to prevent any new duplicate
+commits from getting through. For these reasons, this check for duplicates is
+becoming obsolete and can probably be removed at the next release in Sprint
+2019.
 
       # Local copy of bioc_git_transition
       export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
@@ -256,6 +258,10 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
 
+    # check `y` is even and not greater than 99
+    export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
+    python $BIOC_GIT_TRANSITION/misc/detect_bad_version.py . even
+
 ### C8. Commit first version bump
 
     commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_8 branch"
@@ -324,6 +330,10 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
+
+    # check `y` is odd and not greater than 99
+    export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
+    python $BIOC_GIT_TRANSITION/misc/detect_bad_version.py . odd 
 
 ### C11. Commit second version bump
 
