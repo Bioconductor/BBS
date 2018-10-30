@@ -337,7 +337,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
 ### C11. Commit second version bump
 
-Same as step C7 above EXCEPT that commit message now is:
+Same as step C8 above EXCEPT that commit message now is:
 
     commit_msg="bump x.y.z versions to odd y after creation of RELEASE_3_8 branch"
 
@@ -345,19 +345,21 @@ Last sanity check before pushing in C11:
 
 master: This should show an even bump, and then an odd version bump
 
-	git log master -n 2
+        git log master -n 2
 
 RELEASE_3_8: This should show an even bump.
 
-	git log RELEASE_3_8 -n 2
+        git log RELEASE_3_8 -n 2
 
 ### C12. Disable hooks
 Log on to `git.bioconductor.org` as the `git` user.
 
 - Comment out the hook lines in packages.conf.
 
-- Remove the `pre-receive.h00-pre-receive-hook-software` file from each package's hook directory, e.g., /home/git/repositories/packages/<PACKAGE>.git/hooks
-    
+- Remove the `pre-receive.h00-pre-receive-hook-software` file from the
+  hook/ directory in each package, e.g., 
+  /home/git/repositories/packages/<PACKAGE>.git/hooks
+ 
     rm -rf ~/repositories.packages/*.git/hooks/pre-receive.h00-pre-receive-hook-software
 
 ### C13. Push all the changes
