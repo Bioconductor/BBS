@@ -429,8 +429,6 @@ repo (`git clone git@git.bioconductor.org:gitolite-admin`).
 
 - Uncomment all `RELEASE_3_8` and `master` lines.
 
-- Uncomment all hook lines.
-
 - Run `gitolite setup` from /home/git/repositories to re-enable the hooks.
 
 - Test that a non-super user can push access is enabled. (Nitesh can do
