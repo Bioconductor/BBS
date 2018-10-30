@@ -476,3 +476,20 @@ Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.8-bioc/`,
 `~/bbs-3.8-data-experiment/`, and `~/bbs-3.8-workflows/`. They'll get
 automatically re-created and re-populated when the builds start.
 
+### F4. Update all core bioconductor packages hosted on github/Bioconductor organization
+
+The code to update all packages is in,
+https://github.com/Bioconductor/GitContribution.git, in the branch
+`core_team_package_to_github`, in the script
+`core_package_transition_to_github.R`.
+
+You need to set up your github account credentials(API key) for this
+script to run (Nitesh/Martin have this setup on their machine
+already).
+
+The specific function which needs to be run is
+
+	clone_and_push_git_repo(package_name, release="RELEASE_3_8")
+	
+This function will push the `RELEASE_3_8` branch to github and sync
+the packages on github.
