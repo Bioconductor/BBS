@@ -481,15 +481,32 @@ automatically re-created and re-populated when the builds start.
 The code to update all packages is in,
 https://github.com/Bioconductor/GitContribution.git, in the branch
 `core_team_package_to_github`, in the script
-`core_package_transition_to_github.R`.
+`update_packages.R`.
 
 You need to set up your github account credentials(API key) for this
 script to run (Nitesh/Martin have this setup on their machine
 already).
 
+The API keys need to be setup as options in the ~/.Rprofile,
+
+	options(
+		git_contributions_github_user="ntu***",
+		git_contributions_github_auth=readLines("~/git0Auth.txt")
+	)
+	
+The `git0Auth.txt` file can be obtained from the github
+https://github.com/settings/tokens. This will work only if the user
+has admin access to the Bioconductor organization on github.
+
 The specific function which needs to be run is
 
-	clone_and_push_git_repo(package_name, release="RELEASE_3_8")
+	update_all_packages()
+	
+which runs, the function (this essentially does all the work).Be sure
+to edit the release version in the function.
+	
+	clone_and_push_git_repo(package, release="RELEASE_3_8")
+
 	
 This function will push the `RELEASE_3_8` branch to github and sync
 the packages on github.
