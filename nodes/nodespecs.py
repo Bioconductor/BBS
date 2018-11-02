@@ -16,7 +16,7 @@ allnodes = {
                    "x86_64-linux-gnu",
                    "source",
                    "utf_8"),
-    'malbec2':    ("Linux (Ubuntu 16.04.1 LTS)",
+    'malbec2':    ("Linux (Ubuntu 18.04.1 LTS)",
                    "x86_64",
                    "x86_64-linux-gnu",
                    "source",
