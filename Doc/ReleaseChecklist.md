@@ -143,6 +143,16 @@ in _this_ order
 
 - Packages and workflows clean of errors and warnings
 
+- Selectively flush the repositories
+
+  Flush the staging repos on the master Linux builders and on
+  master.bioconductor.org of packages NOT included in the manifests.  This
+  should get rid of renamed or deprecated packages. A full flush of all
+  packages is a bad idea because, without fail, multiple low-level packages
+  will fail to build on release day. This causes problems in the CRAN as well
+  as the Bioconductor repos.
+
+
 <a name="d-2"></a>
 ## Day before we branch (D-2):
 
@@ -165,6 +175,11 @@ in _this_ order
 
 - Modify the /about/removed-packages/. Link to the last good landing page
   of each package.
+
+- Branch annotations
+  Annotaions for the new devel can be branched on or before this day.
+  It is important they are branched before the release because the 
+  symlinks cause problems for CRAN rsyncing their mirrors.
 
 <a name="d-1"></a>
 ## Day we branch (D-1):
@@ -292,8 +307,6 @@ in _this_ order
 
 <a name="d+"></a>
 ## Week after the Release (D+):
-
-- Branch annotations
 
 - Confirm Archive/ folder is working for new release.
   The relevant script is BBS/utils/list.old.packages.R
