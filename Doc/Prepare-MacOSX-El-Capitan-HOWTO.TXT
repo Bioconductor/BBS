@@ -542,22 +542,10 @@ account.
 
 TESTING: Start the virtual X server, start R, and check X11:
 
-  # From the shell
-  . ~/BBS/utils/start-virtual-X.sh
-
-  # If the above gives fatal server error "Cannot establish any listening
-  # sockets", then try to manually start the virtual X server as root with
-  # 'sudo Xvfb' first, then stop it with CTRL+C, then try to source the
-  # start-virtual-X.sh script again. See "Install XQuartz" previously in
-  # this file for more information about this.
-
   # From R
   capabilities()[["X11"]]  # should be TRUE
   X11()                    # nothing visible should happen
   q("no")
-
-  # From the shell
-  . ~/BBS/utils/stop-virtual-X.sh
 
 Then start R again and try to install a few packages *from source*:
 
@@ -566,8 +554,11 @@ Then start R again and try to install a few packages *from source*:
   install.packages("Rcpp", type="source", repos='http://cran.r-project.org')
   # contains Fortran code
   install.packages("minqa", type="source", repos='http://cran.r-project.org')
+  # always good to have; try this even if CRAN binaries are not available
+  install.packages("devtools", type="source", repos='http://cran.r-project.org')
 
   # Bioconductor packages
+  install.packages("BiocManager", type="source", repos='http://cran.r-project.org')
   library(BiocManager)
   ## ONLY if release and devel are using the same version of R:
   BiocManager::install(version="devel")
