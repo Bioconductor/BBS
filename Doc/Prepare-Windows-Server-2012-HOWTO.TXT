@@ -309,6 +309,15 @@ interactively on a Windows build machine.
            with
              BINPREF = C:/Rtools/mingw_$(WIN)/bin/
 
+           # Toolchains < rtools40 do not fully support C++14.
+           # Once we upgrade to rtools40 this work-around is not necessary.
+           replace lines
+             CXX14 = 
+             CXXSTD =
+           with
+             CXX14 = $(BINPREF)g++ $(MULTI_ARCH) 
+             CXX14STD = -std=gnu++14
+
      (b) R\etc\x64\Makeconf
 
        From C:\Users\biocbuild\bbs-3.4-bioc:
@@ -320,6 +329,13 @@ interactively on a Windows build machine.
              BINPREF ?= c:/Rtools/mingw_64/bin/
            with
              BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+
+           replace lines
+             CXX14 = 
+             CXXSTD =
+           with
+             CXX14 = $(BINPREF)g++ $(MULTI_ARCH) 
+             CXX14STD = -std=gnu++14
 
      (c) R\etc\Rprofile.site
 

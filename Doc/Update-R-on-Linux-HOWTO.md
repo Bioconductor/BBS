@@ -149,7 +149,7 @@ This sets the C/C++ compilation flags appropriately for the build system, e.g.,
 
 Run R and install Bioconductor:
 
-    install.packages("BiocManager")
+    install.packages("BiocManager", repos="https://cran.r-project.org")
     BiocManager::install()
 
 <a name="testing"></a>
