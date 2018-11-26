@@ -313,7 +313,7 @@ interactively on a Windows build machine.
            # Once we upgrade to rtools40 this work-around is not necessary.
            replace lines
              CXX14 = 
-             CXXSTD =
+             CXX14STD =
            with
              CXX14 = $(BINPREF)g++ $(MULTI_ARCH) 
              CXX14STD = -std=gnu++14
@@ -332,7 +332,7 @@ interactively on a Windows build machine.
 
            replace lines
              CXX14 = 
-             CXXSTD =
+             CXX14STD =
            with
              CXX14 = $(BINPREF)g++ $(MULTI_ARCH) 
              CXX14STD = -std=gnu++14
