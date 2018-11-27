@@ -310,7 +310,7 @@ interactively on a Windows build machine.
              BINPREF = C:/Rtools/mingw_$(WIN)/bin/
 
            # Toolchains < rtools40 do not fully support C++14.
-           # Once we upgrade to rtools40 this work-around is not necessary.
+           # Once we upgrade to rtools40 this work-around should be removed.
            replace lines
              CXX14 = 
              CXX14STD =
@@ -330,6 +330,8 @@ interactively on a Windows build machine.
            with
              BINPREF = C:/Rtools/mingw_$(WIN)/bin/
 
+           # Toolchains < rtools40 do not fully support C++14.
+           # Once we upgrade to rtools40 this work-around should be removed.
            replace lines
              CXX14 = 
              CXX14STD =
