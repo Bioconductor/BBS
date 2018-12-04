@@ -6,7 +6,7 @@ configure a virtual machine running El Capitan OS X 10.11.6.
 Table of Contents:
 ===================
 
-- [Set-up](#setup)
+- [Terminology and Documentation](#terminology)
 - [Host](#host)
   - [User Accounts](#host-user-accounts) 
   - [Hostname](#host-hostname) 
@@ -22,25 +22,25 @@ Table of Contents:
   - [Install Parallels Tools](#guest-parallels-tools)
   - [Power management settings](#guest-power-management)
 
-<a name="setup"></a>
-## Set-up 
+<a name="terminology"></a>
+## Terminology and Documentation 
 ---------------------------------------------
 
 * Terminology
 
-The 'Host' refers to the Mac Pro machine running as the hypervisor. At the time this 
-was written, the Host was running Mojave 10.14.1.
+The 'Host' refers to the Mac Pro machine running as the hypervisor. At the time
+this was written, the Host was running Mojave 10.14.1.
 
-The 'Guest' refers to the virtual machine running on the Host, managed by Parallels 
-Desktop. The OS X to be installed on the Guest is El Capitan 10.11.6.
+The 'Guest' refers to the virtual machine running on the Host, managed by
+Parallels Desktop. The OS X to be installed on the Guest is El Capitan 10.11.6.
 
 Parallels Desktop 14 for Mac Business Edition (14.1.0) was used to configure
 this VM. The licence was purchased Oct 14, 2018 and is good for one year
 (expires Oct 14, 2019).
 
-* Parallels Desktop Business Edition References
+* Parallels Desktop documentation 
 
-[Parallels Desktop Business Edition](https://download.parallels.com/desktop/v10/docs/en_US/Parallels%20Desktop%20Business%20Edition%20Administrator's%20Guide.pdf)
+[Parallels Desktop Business Edition Reference](https://download.parallels.com/desktop/v10/docs/en_US/Parallels%20Desktop%20Business%20Edition%20Administrator's%20Guide.pdf)
 
 There are 2 command line utilities worth noting, `prlsrvctl` and `prlctl`. 
 
@@ -53,7 +53,7 @@ installing a license.
 utility supports creating and administering virtual machines, installing
 Parallels Tools, getting statistics, and generating problem reports.
 
-* Mac OS X CLI Reference
+* Mac OS X CLI documentation
 
 [Mac OS X Server Command-Line Administration](https://www.apple.com/server/docs/Command_Line.pdf)
 
@@ -64,44 +64,48 @@ Parallels Tools, getting statistics, and generating problem reports.
 
 <a name="host-user-accounts"></a>
 ### User Accounts 
----------------------------------------------
 
 These instructions assume a pristine Mac Pro with no existing user accounts. Connect a monitor and start the machine ...
 
 * Create accounts
 
-i) Create your personal account
+The Host should have an `administrator` account and 1 or 2 other Admin users.
+Order of creation doesn't matter. `administrator` is the user that Parallels
+will run as. The other Admin serve as a backups that can sudo to
+`administrator` in the case of a lost password, account corruption etc.
+
+Create your personal account:
 
 As part of the set-up process, there will be a prompt to create the first user
 account. By default this account will be in the Admin group. Here I created my
 personal account `vobencha`.
 
-ii) Create `administrator` and other Admin users
+Create `administrator` and other Admin users
 
-From your personal account, create the `administrator` account and
-at least one other Admin user. The VM will run as the 'administrator'
-user and there should be at least 2 other Admin accounts that can
-sudo to `administrator` in the case of a lost password, account corruption etc.
+From your personal account, create the `administrator` account and one other
+Admin user.
 
-Create the users:
+  - Open System Preferences
+  - Go to Users and Groups
+  - Unlock to make changes
+  - Add the new account
+  - Click 'Allow user to administer this computer'
 
-- Open System Preferences
-- Go to Users and Groups
-- Unlock to make changes
-- Add the new account
-- Click 'Allow user to administer this computer'
-- Add the password for the 'administrator' user in the Google Credentials doc
+Add the password for the `administrator` user to the Google Credentials doc.
 
-* Install the appropriate devteam member public keys in the `administrator` account.
+* Public keys
 
-This account should not be confused with the `biocbuild` user on the VM which
-is accessable by all devteam members. The `administrator` account on the host
-(macHV2) is the account that creates, runs and destroys the VM and should
-have limited access. Please use with catution.
+Install the appropriate devteam member public keys in the `administrator`
+account.
 
-  TESTING: Logout and try to login again as administrator. 
+This account should not be confused with the `administrator` user on the VM
+which is accessible by all devteam members. The `administrator` account on the
+host (macHV2) is the account that creates, runs and destroys the VM and should
+have limited access.
 
-* Install personal public keys in the personal accounts created
+    TESTING: Logout and try to login again as administrator. 
+
+Install the appropriate personal public keys in the personal accounts created.
 
 The remainder of the set-up should be performed as the `administrator` user.
 
