@@ -58,6 +58,8 @@ Parallels Tools, getting statistics, and generating problem reports.
 [Mac OS X Server Command-Line Administration](https://www.apple.com/server/docs/Command_Line.pdf)
 
 
+These instructions assume a pristine Mac Pro with no existing user accounts. Connect a monitor and start the machine ...
+
 <a name="host"></a>
 ## Host
 ---------------------------------------------
@@ -65,35 +67,31 @@ Parallels Tools, getting statistics, and generating problem reports.
 <a name="host-user-accounts"></a>
 ### User Accounts 
 
-These instructions assume a pristine Mac Pro with no existing user accounts. Connect a monitor and start the machine ...
-
-* Create accounts
-
 The Host should have an `administrator` account and 1 or 2 other Admin users.
 Order of creation doesn't matter. `administrator` is the user that Parallels
-will run as. The other Admin serve as a backups that can sudo to
+will run as. The other Admin accounts serve as a backups that can sudo to
 `administrator` in the case of a lost password, account corruption etc.
 
-Create your personal account:
+i) Create your personal account:
 
 As part of the set-up process, there will be a prompt to create the first user
 account. By default this account will be in the Admin group. Here I created my
 personal account `vobencha`.
 
-Create `administrator` and other Admin users
+ii) Create `administrator` and other Admin users:
 
 From your personal account, create the `administrator` account and one other
 Admin user.
 
-  - Open System Preferences
-  - Go to Users and Groups
+  - Open 'System Preferences'
+  - Go to 'Users and Groups'
   - Unlock to make changes
   - Add the new account
   - Click 'Allow user to administer this computer'
 
 Add the password for the `administrator` user to the Google Credentials doc.
 
-* Public keys
+iii) Public keys
 
 Install the appropriate devteam member public keys in the `administrator`
 account.
