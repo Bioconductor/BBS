@@ -114,13 +114,11 @@ The remainder of the set-up should be performed as the `administrator` user.
 Set the hostname to `macHV2` to represent the hypervisor for the 2-series builds.
 
 From a terminal window:
-
     sudo scutil --set ComputerName macHV2
     sudo scutil --set LocalHostName macHV2
     sudo scutil --set HostName macHV2.bioconductor.org
 
   TESTING:
-
     scutil --get ComputerName
     scutil --get LocalHostName
     scutil --get HostName
@@ -130,26 +128,21 @@ From a terminal window:
 ### Network
 ---------------------------------------------
 
-There are 2 physical ports on the Mac Pro. We'll use port 1 (Ethernet 1) for the Host, macHV2
-and port 2 (Ethernet 2) for the Guest, celaya2.
+There are 2 physical ports on the Mac Pro. We'll use port 1 (Ethernet 1) for
+the Host, macHV2 and port 2 (Ethernet 2) for the Guest, celaya2.
 
-* Some userful commands
-
-List network services:
+0) Discover Host network services:
 
     sudo networksetup -listallhardwareports
     sudo networksetup -listallnetworkservices
 
-* Assign static IP (override DHCP):
-
-The IP, subnet and router information came from RPCI. 
+i) Assign static IP (override DHCP):
 
     # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
-  Val home network:
+    # if Val home network:
     sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
-
-  RPCI network:
-    sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
+    # else if RPCI network:
+    sudo networksetup -setmanual 'Ethernet 1' 172.29.0.2 255.255.255.0 172.29.0.254 
 
   TESTING:
 
@@ -159,22 +152,21 @@ To clear the setting and go back to DHCP if necessary:
 
     sudo systemsetup -setdhcp 'Ethernet 1'
 
-* Assign DNS servers:
+ii) Assign DNS servers:
 
-  Val home network:
+    # if Val home network:
     sudo networksetup -setdnsservers 'Ethernet 1' 192.168.1.1 8.8.8.8
     sudo networksetup -setsearchdomains 'Ethernet 1' robench.org
-
-  RPCI network:
-    #sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 8.8.8.8
-    #sudo networksetup -setsearchdomains 'Ethernet 1' bioconductor.org
+    # else if RPCI network:
+    #sudo networksetup -setdnsservers 'Ethernet 1' 8.8.8.8 8.8.4.4
+    #sudo networksetup -setsearchdomains 'Ethernet 1' roswellpark.org
 
   TESTING:
 
     networksetup -getdnsservers 'Ethernet 1'
     ping www.bioconductor.org
 
-** Apply all software updates and reboot
+iii) Apply all software updates and reboot
 
     softwareupdate -l         # list all software updates
     sudo softwareupdate -ia   # install them all (if appropriate)
@@ -239,7 +231,6 @@ To list all power management capabilities in use:
 
 <a name="host-ssh"></a>
 ### Enable SSH
----------------------------------------------
 
 * Enable SSH:
 
@@ -251,19 +242,14 @@ Set to 'on' and confirm the change:
 
     sudo systemsetup -setremotelogin on
     sudo systemsetup -getremotelogin
-    
-* Confirm remote events are off:
+ 
+<a name="host-remote-events"></a>
+### Turn off remote events 
 
+Confirm remote events are off:
     sudo systemsetup -getremoteappleevents
     sudo systemsetup -setremoteappleevents off
 
-<a name="host-xcode"></a>
-### Install Xcode
----------------------------------------------
-
-* FIXME
-
-Should we install Xcode on the Host ...?
 
 <a name="host-parallels"></a>
 ### Parallels Desktop 
