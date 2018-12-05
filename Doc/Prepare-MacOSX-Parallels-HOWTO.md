@@ -6,11 +6,12 @@ configure a virtual machine running El Capitan OS X 10.11.6.
 Table of Contents:
 ===================
 
-- [Terminology and Documentation](#terminology)
+- [Terminology and References](#terminology)
 - [Host](#host)
   - [User Accounts](#host-user-accounts) 
   - [Hostname](#host-hostname) 
   - [Network](#host-network) 
+  - [Firewall](#host-firewall) 
   - [Power management settings](#host-power-management)
   - [Enable SSH](#host-ssh) 
   - [Install Xcode](#host-xcode) 
@@ -23,10 +24,10 @@ Table of Contents:
   - [Power management settings](#guest-power-management)
 
 <a name="terminology"></a>
-## Terminology and Documentation 
+## Terminology and References 
 ---------------------------------------------
 
-* Terminology
+### Terminology
 
 The 'Host' refers to the Mac Pro machine running as the hypervisor. At the time
 this was written, the Host was running Mojave 10.14.1.
@@ -38,7 +39,7 @@ Parallels Desktop 14 for Mac Business Edition (14.1.0) was used to configure
 this VM. The licence was purchased Oct 14, 2018 and is good for one year
 (expires Oct 14, 2019).
 
-* Parallels Desktop documentation 
+### Parallels Desktop documentation 
 
 [Parallels Desktop Business Edition Reference](https://download.parallels.com/desktop/v10/docs/en_US/Parallels%20Desktop%20Business%20Edition%20Administrator's%20Guide.pdf)
 
@@ -53,7 +54,7 @@ installing a license.
 utility supports creating and administering virtual machines, installing
 Parallels Tools, getting statistics, and generating problem reports.
 
-* Mac OS X CLI documentation
+### Mac OS X CLI documentation
 
 [Mac OS X Server Command-Line Administration](https://www.apple.com/server/docs/Command_Line.pdf)
 
@@ -114,11 +115,13 @@ The remainder of the set-up should be performed as the `administrator` user.
 Set the hostname to `macHV2` to represent the hypervisor for the 2-series builds.
 
 From a terminal window:
+
     sudo scutil --set ComputerName macHV2
     sudo scutil --set LocalHostName macHV2
     sudo scutil --set HostName macHV2.bioconductor.org
 
   TESTING:
+
     scutil --get ComputerName
     scutil --get LocalHostName
     scutil --get HostName
@@ -126,12 +129,11 @@ From a terminal window:
 
 <a name="host-network"></a>
 ### Network
----------------------------------------------
 
 There are 2 physical ports on the Mac Pro. We'll use port 1 (Ethernet 1) for
 the Host, macHV2 and port 2 (Ethernet 2) for the Guest, celaya2.
 
-0) Discover Host network services:
+List Host network services:
 
     sudo networksetup -listallhardwareports
     sudo networksetup -listallnetworkservices
@@ -148,25 +150,145 @@ i) Assign static IP (override DHCP):
 
     sudo ifconfig
 
-To clear the setting and go back to DHCP if necessary:
+To clear settings and go back to DHCP if necessary:
 
     sudo systemsetup -setdhcp 'Ethernet 1'
 
-ii) Assign DNS servers:
+ii) Assign the DNS servers:
 
     # if Val home network:
     sudo networksetup -setdnsservers 'Ethernet 1' 192.168.1.1 8.8.8.8
     sudo networksetup -setsearchdomains 'Ethernet 1' robench.org
     # else if RPCI network:
-    #sudo networksetup -setdnsservers 'Ethernet 1' 8.8.8.8 8.8.4.4
-    #sudo networksetup -setsearchdomains 'Ethernet 1' roswellpark.org
+    sudo networksetup -setdnsservers 'Ethernet 1' 8.8.8.8 8.8.4.4
+    sudo networksetup -setsearchdomains 'Ethernet 1' roswellpark.org
 
   TESTING:
 
     networksetup -getdnsservers 'Ethernet 1'
     ping www.bioconductor.org
 
-iii) Apply all software updates and reboot
+<a name="host-firewall"></a>
+### Firewall 
+
+Mac OSX 10.14.1 Mojave uses the Packet Filter (PF) firewall which is OpenBSD's 
+system for filtering TCP/IP traffic and doing Network Address Translation.
+
+The main PF configuration file is /etc/pf.conf which defines the main ruleset.
+
+The firewall is disabled by default.
+
+    macHV2:~ administrator$ sudo pfctl -s info
+    Password:
+    No ALTQ support in kernel
+    ALTQ related functions disabled
+    Status: Disabled
+
+Commands to enable and disable the firewall manually:
+
+    sudo pfctl -e
+    sudo pfctl -d
+
+There are three files to be aware of:
+
+  - /etc/pf.conf
+  The main configuration file. Rules can be included here, and anchors 
+  or ruleset files can also be referenced.
+  - /etc/pf.conf/anchors/com.apple
+  The main anchor point referenced in pf.conf.
+  - /System/Library/LaunchDaemons/com.apple.pfctl.plist
+  Runs "pfctl -f /etc/pf.conf" at startup.
+
+Rules could be added to com.apple or a new file could be referenced 
+in pf.conf but these files are susceptible to being overwritten during an OS 
+update. To avoid this, we will create a new file for each of these three.
+
+i) New configuration file
+
+Create the new config file:
+
+    sudo vim /etc/pf.anchors/newpf.conf
+
+Add these contents:
+
+    anchor "newpf.rules"
+    load anchor "newpf.rules" from "/etc/pf.anchors/newpf.rules"
+
+ii) New anchor file
+
+Create the new rules file:
+
+    sudo vim /etc/pf.anchors/newpf.rules
+
+Add these contents:
+
+    # INTERFACES
+    # check if ext_if matches the network card name (sudo ifconfig)
+    ext_if="en0"
+ 
+    # BLOCK INGOING by default
+    block in on $ext_if
+ 
+    # ALLOW SSH from any IP
+    pass in on $ext_if proto { tcp, udp } from any to $ext_if port 22
+ 
+    # ALLOW OUTGOING
+    pass out all keep state
+
+iii) Testing
+
+Confirm the configuration file is correct:
+
+    sudo pfctl -nvf /etc/pf.anchors/newpf.conf
+
+If there are no errors, enable the rules in the config:
+
+  sudo pfctl -evf /etc/pf.anchors/newpf.conf
+
+Confirm all rules were applied:
+
+    sudo pfctl -a newpf.rules -s rules
+
+Once everything looks good, go to the next step to enable the new rules to be
+run at startup.
+
+vi) New plist to be run by launchd on startup
+
+Create the plist file:
+
+    sudo vim /Library/LaunchDaemons/pf.plist
+
+The command we want run at startup is `pfctl -ef /etc/newpf.conf`.
+Confirm the location of `pfctl` (`which pfctl`) and modify the following
+contents as appropriate. This example assumes the location is `/sbin/pfctl`.
+
+Add these contents:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple Computer/DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+      <key>Label</key>
+      <string>pf.plist</string>
+      <key>Program</key>
+      <string>/sbin/pfctl</string>
+      <key>ProgramArguments</key>
+      <array>
+      <string>/sbin/pfctl</string>
+      <string>-e</string>
+      <string>-f</string>
+      <string>/etc/pf.anchors/newpf.conf</string>
+      </array>
+      <key>RunAtLoad</key>
+      <true />
+    </dict>
+    </plist>
+
+Reboot the machine and confirm the rule set was applied at startup:
+
+    sudo reboot
+
+iv) Apply all software updates and reboot
 
     softwareupdate -l         # list all software updates
     sudo softwareupdate -ia   # install them all (if appropriate)
@@ -174,9 +296,8 @@ iii) Apply all software updates and reboot
 
 <a name="host-power-management"></a>
 ### Power management settings
----------------------------------------------
 
-* Prevent the Host from sleeping and enable auto-restart:
+#### Prevent the Host from sleeping and enable auto-restart:
 
 `pmset` manages power management settings such as idle sleep timing, wake on
 access, automatic restart on power loss etc. Set `displaysleep`, `disksleep`
@@ -232,8 +353,6 @@ To list all power management capabilities in use:
 <a name="host-ssh"></a>
 ### Enable SSH
 
-* Enable SSH:
-
 Remote login will be set to 'off':
 
     sudo systemsetup -getremotelogin
@@ -246,14 +365,13 @@ Set to 'on' and confirm the change:
 <a name="host-remote-events"></a>
 ### Turn off remote events 
 
-Confirm remote events are off:
+Set remote events to 'off':
+
     sudo systemsetup -getremoteappleevents
     sudo systemsetup -setremoteappleevents off
 
-
 <a name="host-parallels"></a>
 ### Parallels Desktop 
----------------------------------------------
 
 <a name="parallels-install"></a>
 #### Install
@@ -264,16 +382,14 @@ this VM. The licence was purchased Oct 14, 2018 and is good for one year
 
 As the `administrator` user ...
 
-* Purchase and download Parallels Desktop for Business from the Apple Store.
+i) Purchase and download Parallels Desktop for Business from the Apple Store.
 
-* Register the licence.
+ii) Register the licence.
+    Each licence can be installed on one machine only.
 
-Each licence can be installed on one machine only.
+iii) Choose a default location for VM files:
 
-* Choose a default location for VM files:
-
-Go to Preferences -> Virtual machine folder and set this field:
-
+    Go to Preferences -> Virtual machine folder and set this field:
     Virtual machines folder: /Users/administrator/parallels
 
 NOTE: To share VMs across user accounts, the VM files must be in a shared
@@ -281,7 +397,8 @@ location with the appropriate permissions. When a VM is shared from
 one user to another it must be temporarily suspended before the next user can
 access it. This type of sharing isn't applicable to our situation. The
 VMs will only be run as the `administrator` user so, for now at least, the
-VM files will be in the `administrator` home directory.
+VM files will be in the `administrator` home directory and not a shared
+location.
 
 * Disable automatic updates
 
@@ -565,13 +682,9 @@ when idle or when windows close.
 
     prlctl set celaya2 --autostart start-host --pause-idle off --on-window-close keep-running
 
-Prioritize Guest over Host?
-
-    prlctl set celays2 --faster-vm on
-
 This command is run from a terminal window inside the VM:
 
-Prevent the Host from sleeping and enable auto-restart:
+Prevent the Guest from sleeping and enable auto-restart:
 
     sudo pmset -a displaysleep 0 disksleep 0 sleep 0 autorestart 1
 
