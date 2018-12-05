@@ -20,7 +20,13 @@ Table of Contents:
     - [Configure and create the VM](#parallels-configure-and-create) 
 - [Guest](#guest)
   - [Install Parallels Tools](#guest-parallels-tools)
+  - [User Accounts](#guest-user-accounts) 
+  - [Hostname](#guest-hostname) 
+  - [Network](#guest-network) 
+  - [Firewall](#guest-firewall) 
   - [Power management settings](#guest-power-management)
+  - [Enable SSH](#host-ssh) 
+- [Next Steps](#next-steps)
 
 <a name="terminology"></a>
 ## Terminology and References 
@@ -449,54 +455,56 @@ This takes some time. Total size is ~ 6 GB.
 
 Next Parallels will make a bootable image file (.hdd) from the files in the .app directory.
 
-* Click on the Parallels desktop Icon to bring up the Installation Assistant. Skip
-the Windows installation if it prompts for one.
+* Click on the Parallels desktop Icon to bring up the Installation Assistant.
+  Skip the Windows installation if it prompts for one.
 
-* Click on 'Install Windows or another OS from a DVD or image file' 
- -> Choose manually
- -> Select a file ...
+* Click on 'Install Windows or another OS from a DVD or image file'   
+  -> Choose manually  
+  -> Select a file ...  
 
-* Under 'Locations' choose OSX 10.11 Install Disk
-  -> remove file filters so all files are select-able
+* Under 'Locations' choose OSX 10.11 Install Disk  
+  -> remove file filters so all files are select-able  
   -> select Install OS X El Capitan
 
 * Parallels will prompt that it needs to make a bootable disk image file.
   Click 'Continue'. Name the image ElCapitan-bootable-image-<date> and
   save the file to /Users/administrator/Parallels.
 
-Once the bootable image is made you can continue with configuration
-and installation or do it later. The output of this step is the
-/Users/administrator/Parallels/ElCapitan-bootable-image-<date>.hdd file
-that can be used to configure new VMs.
+  Once the bootable image is made you can continue with configuration and
+  installation or do it later. The output of this step is the
+  /Users/administrator/Parallels/ElCapitan-bootable-image-<date>.hdd file that
+  can be used to configure new VMs.
 
 * Remove the USB key
 
-Using the Finder or the desktop icon, eject the USB and then physically remove
-it from the machine. This step prevents accidental writes to the USB
-key in future steps.
+  Using the Finder or the desktop icon, eject the USB and then physically
+  remove it from the machine. This step prevents accidental writes to the USB
+  key in future steps.
 
 <a name="parallels-configure-and-create"></a>
 #### Configure and create the VM
 
-Click on the Parallels Desktop icon
-  -> Create new VM
-  -> Install Windows or another OS froma  DVD or image file
-  -> Choose manually
+##### Initiate creation 
+
+Click on the Parallels Desktop icon  
+  -> Create new VM  
+  -> Install Windows or another OS from a DVD or image file  
+  -> Choose manually  
   -> Select a file ...
 
-Remove file filters so all files are select-able
+Remove file filters so all files are select-able  
   -> choose /Users/administrator/Parallels/ElCapitan-bootable-image-<date>.hdd
 
-A page will come up with 'Unable to detect operating system'
-  -> Continue
-  -> Select operating system 'macOS'
-  -> Name the VM (celaya2 in this case)
-  -> Save in /Users/administrator/Parallels
-  -> Unclick 'Create alias on Mac desktop'
-  -> Click 'Customize setting before installation'
+A page will come up with 'Unable to detect operating system'  
+  -> Continue  
+  -> Select operating system 'macOS'  
+  -> Name the VM (celaya2 in this case)  
+  -> Save in /Users/administrator/Parallels  
+  -> Unclick 'Create alias on Mac desktop'  
+  -> Click 'Customize setting before installation'  
   -> Click 'Create'
 
-* Customize settings:
+##### Customize settings
 
 i) General tab 
 
@@ -521,28 +529,25 @@ Leave all other defaults.
 
 iii) Hardware tab
 
-CPU and Memory:
-  Set processors to 23 (we have 12 real; 24 virtual total)
-  Set Memory to 58000 MB
+CPU and Memory:  
+  Set processors to 23 (we have 12 real; 24 virtual total)  
+  Set Memory to 58000 MB  
     Parallels has a limit on the amount of memory it wants to allocate per VM
     based on the memory of the Host. This Mac Pro has 64 GB RAM and it seems
     Parallels doesn't want to allocate more than 57-58 GB. If a warning pops up
-    suggesting the optimal memory range, allow it to optimize by clicking 'change'
-    and you'll end up around 57252 MB.
+    suggesting the optimal memory range, allow it to optimize by clicking
+    'change' and you'll end up around 57252 MB.  
   Keep all defaults in 'Advanced Settings'
 
-Network:
-TODO
-
-Hard Disk 1:
-  Advanced Settings -> properties 
-    Increase disk size to 800 GB
-    Do NOT select 'Split the disk image into 2 GB files'
-    Leave 'Expanding disk' checked
+Hard Disk 1:  
+  Advanced Settings -> properties  
+    Increase disk size to 800 GB  
+    Do NOT select 'Split the disk image into 2 GB files'  
+    Leave 'Expanding disk' checked  
     Click 'Apply'
 
-Hard Disk 2:
-  This is the bootable image (.hdd) we are using to launch the VM.
+Hard Disk 2:  
+  This is the bootable image (.hdd) we are using to launch the VM.  
   Leave it as is.
 
 iv) Security tab 
@@ -553,61 +558,59 @@ v) Backup tab
 
 No change.
 
+Close the configuration window and click 'Continue'. Ignore any prompts 
+(i.e., click 'Close') for Parallels to access the camera and microphone. The
+machine will boot.
 
-* Close the configuration window and click 'Continue'.
+##### Customize installation
 
-* Ignore prompts (i.e., click 'Close') for access to the camera and microphone.
-
-* Machine will boot
-
-A screen will come up prompting the set up the installation of OS X:
-
--> click continue
+A screen will come up prompting the set up the installation of OS X:  
+-> click continue  
 -> accept terms
 
-A screen will come up asking which disk on which to install OS X: 
-
+A screen will come up asking which disk on which to install OS X:  
 -> Choose 'Macintosh HD'
 
-NOTE:  The other option here is 'Install OS X El Capitan'. That is the bootable disk image (.hdd) we 
-used to create the VM. Do not select this.
+NOTE:  The other option here is 'Install OS X El Capitan'. That is the bootable
+disk image (.hdd) we used to create the VM. Do not select this.
 
-* Installation takes about 13 minutes
+Installation takes about 13 minutes
 
-* Set up
+##### Final set up
 
 A series of set-up screens will come up:
 
-- Choose the country
-- Choose the keyboard configuration
-- Transfer Information to This Mac 
-  -> Don't transfer any information now
-- Enable Location Services
-  -> Do not enable this (default is unselected)
-- Don't sign in with your Apple ID
-- Agree to terms and conditions
-- When prompted to create a user account, create `administrator`.
-Use the same `administrator` password as the other build machines and record this in the Google Credentials doc.
-- Select New York EST time zone
-- Diagnositcs & Usage
-  -> Deselect 'Send diagnostics & usage data to Apple'
-  -> Deselect 'Share crash data with app developers'
+  - Choose the country
+  - Choose the keyboard configuration
+  - Transfer Information to This Mac  
+    -> Don't transfer any information now
+  - Enable Location Services  
+    -> Do not enable this (default is unselected)
+  - Don't sign in with your Apple ID
+  - Agree to terms and conditions
+  - When prompted to create a user account, create `administrator`.  Use the
+    same `administrator` password as the other build machines and record this
+    in the Google Credentials doc.
+  - Select New York EST time zone
+  - Diagnostics & Usage  
+    -> Deselect 'Send diagnostics & usage data to Apple'  
+    -> Deselect 'Share crash data with app developers'
 
-* Detach boot image file
+Once set up is complete, detach the boot image file. This image can be used to
+launch new VMs so don't put it in the trash (last step).
 
-Once set up is complete, detach the boot image file. This image can be used to launch
-new VMs so don't put it in the trash (last step).
+Detach boot image file:
 
-- Stop the VM
-  Go to Parallels -> Control Center. Select celaya2 -> Actions -> Stop.
-- Select the gear icon in celaya2. 
-- Select the Hardware tab -> Hard Disk 2
-- The .hdd file should be listed in the 'Source' field
-- Unlock the settings if locked
-- Disconnect .hdd file by clicking the minus '-'
-- Select 'Keep files'. Don't move them to the trash.
+  - Stop the VM  
+    Go to Parallels -> Control Center. Select celaya2 -> Actions -> Stop.  
+  - Select the gear icon in celaya2.  
+  - Select the Hardware tab -> Hard Disk 2  
+  - The .hdd file should be listed in the 'Source' field  
+  - Unlock the settings if locked  
+  - Disconnect .hdd file by clicking the minus '-'  
+  - Select 'Keep files'. Don't move them to the trash.
 
-* Status check
+##### Status check
 
 From a terminal on the Host, check the status of the VM:
 
@@ -630,64 +633,32 @@ installed in the VM as a single package when Parallels Tools is installed.
 Parallels Tools are located on disk images that are installed with Parallels
 Desktop. There is a separate image for each supported guest OS, located here:
 
-macHV2:~ administrator$ ls -l /Applications/Parallels\ Desktop.app/Contents/Resources/Tools/
-total 299088
--rw-r--r--  1 root  wheel       802 Nov 14 16:03 Autounattend.vbs
--rw-r--r--  1 root  wheel     17634 Nov 14 16:03 Autounattend.xml
--rw-r--r--  1 root  wheel   9494664 Nov 14 16:03 PTIAgent.exe
--rw-r--r--  1 root  wheel     90248 Nov 14 16:03 igt.exe
--rw-r--r--  1 root  wheel  68413440 Nov 14 16:03 prl-tools-lin.iso
--rw-r--r--  1 root  wheel  29208576 Nov 14 16:03 prl-tools-mac.iso
--rw-r--r--  1 root  wheel   9873408 Nov 14 16:03 prl-tools-win.iso
--rw-r--r--  1 root  wheel  36015745 Nov 14 16:03 prl-tools-win.tar.gz
-drwxrwxr-x  6 root  wheel       192 Nov 14 16:03 prl_tg
+    macHV2:~ administrator$ ls -l /Applications/Parallels\ Desktop.app/Contents/Resources/Tools/
+    total 299088
+    -rw-r--r--  1 root  wheel       802 Nov 14 16:03 Autounattend.vbs
+    -rw-r--r--  1 root  wheel     17634 Nov 14 16:03 Autounattend.xml
+    -rw-r--r--  1 root  wheel   9494664 Nov 14 16:03 PTIAgent.exe
+    -rw-r--r--  1 root  wheel     90248 Nov 14 16:03 igt.exe
+    -rw-r--r--  1 root  wheel  68413440 Nov 14 16:03 prl-tools-lin.iso
+    -rw-r--r--  1 root  wheel  29208576 Nov 14 16:03 prl-tools-mac.iso
+    -rw-r--r--  1 root  wheel   9873408 Nov 14 16:03 prl-tools-win.iso
+    -rw-r--r--  1 root  wheel  36015745 Nov 14 16:03 prl-tools-win.tar.gz
+    drwxrwxr-x  6 root  wheel       192 Nov 14 16:03 prl_tg
 
-Start the VM by going to Parallels -> Control Center. Select celaya -> Actions -> Start.
-- Click on the yellow triangle with exclaimation point at the top right of the menu bar.
-- Follow the prompts to install Parallels Tools.
-- Installation requires a reboot of the VM. When the prompt comes up, click 'restart'.
-- If a 'Parallels Tools' icon was left on the VM desktop, click on the icon and eject the disk.
+Start the VM by going to Parallels -> Control Center. Select celaya -> 
+Actions -> Start.
+  - Click on the yellow triangle with exclaimnation point at the top right 
+    of the menu bar.  
+  - Follow the prompts to install Parallels Tools.  
+  - Installation requires a reboot of the VM. When the prompt comes up, 
+    click 'restart'.  
+  - If a 'Parallels Tools' icon was left on the VM desktop, click on the icon 
+    and eject the disk.  
 
-Alternatively, the tools can be installed on the Guest from a terminal window on the Host
-using the `prlctl` command:
+Alternatively, the tools can be installed on the Guest from a terminal window
+on the Host using the `prlctl` command:
 
     prlctl installtools celaya2
-
-<a name="guest-power-management"></a>
-## Power Management settings
-
-This command is run from the terminal on the Host (no sudo needed). It instructs
-Parallels to start the VM when the host starts up, i.e., on reboot, prevents pause
-when idle or when windows close. 
-
-    prlctl set celaya2 --autostart start-host --pause-idle off --on-window-close keep-running
-
-This command is run from a terminal window inside the VM:
-
-Prevent the Guest from sleeping and enable auto-restart:
-
-    sudo pmset -a displaysleep 0 disksleep 0 sleep 0 autorestart 1
-
-<a name="guest-ssh"></a>
-## Enable SSH 
-
-Open a terminal window in the VM. By default, 'remotelogin' is set to 'off'. Set it to 'on':
-
-    celaya2:~ administrator$ sudo systemsetup -getremotelogin
-    Remote Login: Off
-    celaya2:~ administrator$ sudo systemsetup -setremotelogin on
-
-Confirm remote events are off:
-
-    celaya2:~ administrator$ sudo systemsetup -getremotelogin
-    Remote Login: On
-
-Confirm remote apple events are off:
-
-These should be off by default.
-
-    celaya2:~ administrator$ sudo systemsetup -getremoteappleevents
-    Remote Apple Events: Off
 
 
 <a name="guest-user-accounts"></a>
@@ -900,6 +871,44 @@ Set the static IP, subnet mask and router:
     sudo softwareupdate -ia   # install them all (if appropriate)
     sudo reboot               # reboot
 
+<a name="guest-power-management"></a>
+## Power Management settings
+
+This command is run from the terminal on the Host (no sudo needed). It
+instructs Parallels to start the VM when the host starts up, i.e., on reboot,
+prevents pause when idle or when windows close. 
+
+    prlctl set celaya2 --autostart start-host --pause-idle off --on-window-close keep-running
+
+We also need to run a command from within the VM that prevents the Guest from
+sleeping and enables auto-restart.  Open a terminal window inside the VM and
+run
+
+    sudo pmset -a displaysleep 0 disksleep 0 sleep 0 autorestart 1
+
+<a name="guest-ssh"></a>
+## Enable SSH 
+
+Open a terminal window in the VM. By default, 'remotelogin' is set to 'off'. Set it to 'on':
+
+    celaya2:~ administrator$ sudo systemsetup -getremotelogin
+    Remote Login: Off
+    celaya2:~ administrator$ sudo systemsetup -setremotelogin on
+
+Confirm remote events are off:
+
+    celaya2:~ administrator$ sudo systemsetup -getremotelogin
+    Remote Login: On
+
+Confirm remote apple events are off:
+
+These should be off by default.
+
+    celaya2:~ administrator$ sudo systemsetup -getremoteappleevents
+    Remote Apple Events: Off
+
+<a name="next-steps"></a>
+## Next Steps 
 ------------------------------------------------------------------------------
 
 If Parallels is already installed and configured, go to the
