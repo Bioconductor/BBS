@@ -14,7 +14,6 @@ Table of Contents:
   - [Firewall](#host-firewall) 
   - [Power management settings](#host-power-management)
   - [Enable SSH](#host-ssh) 
-  - [Install Xcode](#host-xcode) 
   - [Parallels Desktop](#host-parallels) 
     - [Install](#parallels-install) 
     - [Create a boot Image](#parallels-create-boot-image) 
@@ -58,12 +57,12 @@ Parallels Tools, getting statistics, and generating problem reports.
 
 [Mac OS X Server Command-Line Administration](https://www.apple.com/server/docs/Command_Line.pdf)
 
-
-These instructions assume a pristine Mac Pro with no existing user accounts. Connect a monitor and start the machine ...
-
 <a name="host"></a>
 ## Host
 ---------------------------------------------
+
+These instructions assume a pristine Mac Pro with no existing user accounts.
+Connect a monitor and start the machine ...
 
 <a name="host-user-accounts"></a>
 ### User Accounts 
@@ -110,7 +109,6 @@ The remainder of the set-up should be performed as the `administrator` user.
 
 <a name="host-hostname"></a>
 ### Hostname
----------------------------------------------
 
 Set the hostname to `macHV2` to represent the hypervisor for the 2-series builds.
 
@@ -167,6 +165,12 @@ ii) Assign the DNS servers:
 
     networksetup -getdnsservers 'Ethernet 1'
     ping www.bioconductor.org
+
+iii) Apply all software updates and reboot
+
+    softwareupdate -l         # list all software updates
+    sudo softwareupdate -ia   # install them all (if appropriate)
+    sudo reboot               # reboot
 
 <a name="host-firewall"></a>
 ### Firewall 
@@ -288,47 +292,24 @@ Reboot the machine and confirm the rule set was applied at startup:
 
     sudo reboot
 
-iv) Apply all software updates and reboot
-
-    softwareupdate -l         # list all software updates
-    sudo softwareupdate -ia   # install them all (if appropriate)
-    sudo reboot               # reboot
-
 <a name="host-power-management"></a>
 ### Power management settings
 
-#### Prevent the Host from sleeping and enable auto-restart:
-
 `pmset` manages power management settings such as idle sleep timing, wake on
-access, automatic restart on power loss etc. Set `displaysleep`, `disksleep`
-and `sleep` to zero (FALSE) and `autorestart` to one (TRUE):
+access, automatic restart on power loss etc.
+
+To see all power management capabilities:
+
+    pmset -g cap
+
+Set `displaysleep`, `disksleep` and `sleep` to zero (FALSE) and `autorestart`
+to one (TRUE):
 
     sudo pmset -a displaysleep 0 disksleep 0 sleep 0 autorestart 1
 
-To list all power management capabilities:
+Confirm the changes by listing the capabilities in use:
 
-    macHV2:CommandLineTools administrator$ pmset -g cap
-    Capabilities for AC Power:
-     displaysleep
-     disksleep
-     sleep
-     womp
-     autorestart
-     gpuswitch
-     standby
-     standbydelayhigh
-     standbydelaylow
-     highstandbythreshold
-     powernap
-     ttyskeepawake
-     hibernatemode
-     hibernatefile
-     autopoweroff
-     autopoweroffdelay
-
-To list all power management capabilities in use:
-
-    macHV2:CommandLineTools administrator$ pmset -g
+    macHV2:~ administrator$ pmset -g
     System-wide power settings:
     Currently in use:
      standby              1
@@ -400,7 +381,7 @@ VMs will only be run as the `administrator` user so, for now at least, the
 VM files will be in the `administrator` home directory and not a shared
 location.
 
-* Disable automatic updates
+vi) Disable automatic updates
 
 Go to Preferences -> Virtual machine folder and set these fields:
 
@@ -412,21 +393,20 @@ updates can cause unexpected problems that are difficult to track down.
 
 <a name="parallels-el-capitan-files"></a>
 #### Prepare El Capitan files
----------------------------------------------
 
 The El Capitan files are on a UBS key purchased from Amazon.
 
-* Insert the USB key
+i) Insert the USB key
 
-* View the contents in /Volumes
+ii) View the contents in /Volumes
 
     macHV2:~ administrator$ ls -l /Volumes/
     total 0
     lrwxr-xr-x   1 root           wheel    1 Nov 22 15:37 Macintosh HD -> /
     drwxrwxr-x@ 21 administrator  staff  782 Jan  1  2016 OS X 10.11 Install Disk - 10.11.6
-    
+
     cd /Volumes/OS X 10.11 Install Disk - 10.11.6
-     
+
     macHV2:~ administrator$ ls -l /Volumes/OS\ X\ 10.11\ Install\ Disk\ -\ 10.11.6/
     total 72
     -rw-r--r--@ 1 administrator  staff  34542 Jul 18 07:14 ElCapitanBackground.png
@@ -437,7 +417,7 @@ The El Capitan files are on a UBS key purchased from Amazon.
     -rw-r--r--@ 1 administrator  staff      0 Jul 18 07:14 mach_kernel
     drwxr-xr-x@ 3 administrator  staff    102 Jul 18 07:14 usr
 
-* Make a backup of the USB files
+iii) Make a backup of the USB files
 
     cd /Users/administrator/Parallels
     mkdir el-capitan-usb-backup 
