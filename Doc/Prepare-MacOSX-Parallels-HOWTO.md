@@ -12,8 +12,9 @@ Table of Contents:
   - [Hostname](#host-hostname) 
   - [Network](#host-network) 
   - [Firewall](#host-firewall) 
-  - [Power management settings](#host-power-management)
+  - [Power Management Settings](#host-power-management)
   - [Enable SSH](#host-ssh) 
+  - [Remote Events and Timezone](#host-remote-events) 
   - [Parallels Desktop](#host-parallels) 
     - [Install](#parallels-install) 
     - [Create a boot Image](#parallels-create-boot-image) 
@@ -24,9 +25,10 @@ Table of Contents:
   - [Hostname](#guest-hostname) 
   - [Network](#guest-network) 
   - [Firewall](#guest-firewall) 
-  - [Power management settings](#guest-power-management)
+  - [Power Management Settings](#guest-power-management)
   - [Enable SSH](#host-ssh) 
-- [Next Steps](#next-steps)
+  - [Remote Events and Timezone](#guest-remote-events) 
+- [Configure VM Guest as build machine](#configure-vm-guest-as-build-machine)
 
 <a name="terminology"></a>
 ## Terminology and References 
@@ -107,7 +109,9 @@ which is accessible by all devteam members. The `administrator` account on the
 host (macHV2) is the account that creates, runs and destroys the VM and should
 have limited access.
 
-    TESTING: Logout and try to login again as administrator. 
+Testing: 
+
+    Logout and try to login again as administrator. 
 
 Install the appropriate personal public keys in the personal accounts created.
 
@@ -124,7 +128,7 @@ From a terminal window:
     sudo scutil --set LocalHostName macHV2
     sudo scutil --set HostName macHV2.bioconductor.org
 
-  TESTING:
+Testing:
 
     scutil --get ComputerName
     scutil --get LocalHostName
@@ -136,6 +140,8 @@ From a terminal window:
 
 There are 2 physical ports on the Mac Pro. We'll use port 1 (Ethernet 1) for
 the Host, macHV2 and port 2 (Ethernet 2) for the Guest, celaya2.
+
+Open a terminal window on the VM.
 
 List Host network services:
 
@@ -150,7 +156,7 @@ i) Assign static IP (override DHCP):
     # else if RPCI network:
     sudo networksetup -setmanual 'Ethernet 1' 172.29.0.2 255.255.255.0 172.29.0.254 
 
-  TESTING:
+Testing:
 
     sudo ifconfig
 
@@ -167,7 +173,7 @@ ii) Assign the DNS servers:
     sudo networksetup -setdnsservers 'Ethernet 1' 8.8.8.8 8.8.4.4
     sudo networksetup -setsearchdomains 'Ethernet 1' roswellpark.org
 
-  TESTING:
+Testing:
 
     networksetup -getdnsservers 'Ethernet 1'
     ping www.bioconductor.org
@@ -181,10 +187,16 @@ iii) Apply all software updates and reboot
 <a name="host-firewall"></a>
 ### Firewall 
 
-Mac OSX 10.14.1 Mojave uses the Packet Filter (PF) firewall which is OpenBSD's 
-system for filtering TCP/IP traffic and doing Network Address Translation.
+No firewall is enabled on macHV2. The information that follows is FYI only
+in case at some future point we decide to enable it.
 
-The main PF configuration file is /etc/pf.conf which defines the main ruleset.
+Mac OSX 10.14.1 Mojave has 2 firewalls: Application Firewall and Packet Filter
+(PF).  Both are disabled by default. Should we decide to enable a firewall in
+the future, this should probably be done at the system/machine level and not
+the application level so it's Packet Filter we are concerned with.
+
+Packet Filter (PF) is OpenBSD's system for filtering TCP/IP traffic and doing
+Network Address Translation.
 
 The firewall is disabled by default.
 
@@ -194,109 +206,32 @@ The firewall is disabled by default.
     ALTQ related functions disabled
     Status: Disabled
 
-Commands to enable and disable the firewall manually:
-
-    sudo pfctl -e
-    sudo pfctl -d
-
 There are three files to be aware of:
 
   - /etc/pf.conf
-  The main configuration file. Rules can be included here, and anchors 
-  or ruleset files can also be referenced.
+  The main configuration file which defines the main rule set.
+
   - /etc/pf.conf/anchors/com.apple
-  The main anchor point referenced in pf.conf.
+  The main ruleset loads sub rulesets defined in/etc/pf.anchors/com.apple
+  using anchor.
+
   - /System/Library/LaunchDaemons/com.apple.pfctl.plist
-  Runs "pfctl -f /etc/pf.conf" at startup.
+  The launchd configuration file for PF.
 
-Rules could be added to com.apple or a new file could be referenced 
-in pf.conf but these files are susceptible to being overwritten during an OS 
-update. To avoid this, we will create a new file for each of these three.
+NOTE: Firewall rules could be added to com.apple or a new file could be
+referenced in pf.conf, however, these files are susceptible to being
+overwritten during an OS update. To avoid this, a new file should be created
+for each of these three.
 
-i) New configuration file
-
-Create the new config file:
-
-    sudo vim /etc/pf.anchors/newpf.conf
-
-Add these contents:
-
-    anchor "newpf.rules"
-    load anchor "newpf.rules" from "/etc/pf.anchors/newpf.rules"
-
-ii) New anchor file
-
-Create the new rules file:
-
-    sudo vim /etc/pf.anchors/newpf.rules
-
-Add these contents:
-
-    # INTERFACES
-    # check if ext_if matches the network card name (sudo ifconfig)
-    ext_if="en0"
- 
-    # BLOCK INGOING by default
-    block in on $ext_if
- 
-    # ALLOW SSH from any IP
-    pass in on $ext_if proto { tcp, udp } from any to $ext_if port 22
- 
-    # ALLOW OUTGOING
-    pass out all keep state
-
-iii) Testing
-
-Confirm the configuration file is correct:
-
-    sudo pfctl -nvf /etc/pf.anchors/newpf.conf
-
-If there are no errors, enable the rules in the config:
-
-  sudo pfctl -evf /etc/pf.anchors/newpf.conf
-
-Confirm all rules were applied:
-
-    sudo pfctl -a newpf.rules -s rules
-
-Once everything looks good, go to the next step to enable the new rules to be
-run at startup.
-
-vi) New plist to be run by launchd on startup
-
-Create the plist file:
-
-    sudo vim /Library/LaunchDaemons/pf.plist
-
-The command we want run at startup is `pfctl -ef /etc/newpf.conf`.
-Confirm the location of `pfctl` (`which pfctl`) and modify the following
-contents as appropriate. This example assumes the location is `/sbin/pfctl`.
-
-Add these contents:
-
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple Computer/DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
-    <dict>
-      <key>Label</key>
-      <string>pf.plist</string>
-      <key>Program</key>
-      <string>/sbin/pfctl</string>
-      <key>ProgramArguments</key>
-      <array>
-      <string>/sbin/pfctl</string>
-      <string>-e</string>
-      <string>-f</string>
-      <string>/etc/pf.anchors/newpf.conf</string>
-      </array>
-      <key>RunAtLoad</key>
-      <true />
-    </dict>
-    </plist>
-
-Reboot the machine and confirm the rule set was applied at startup:
-
-    sudo reboot
+NOTE: PF is not only disabled by default but it is silenced at startup. To
+enable the service to start when the machine is rebooted you need to disable
+System Integrity Protection(SIP). To disable SIP you must boot the machine into
+recovery mode which I believe requires a monitor and Apple keyboard. Once
+SIP is disabled, modify /System/Library/LaunchDaemons/com.apple.pfctl.plist to
+include the '-e' enable flag then re-enable SIP. It is not enough to just
+include a plist in /Library/LaunchDaemons that tries to enable the service at
+startup because it till conflict with the file in 
+/System/Library/LaunchDaemons.
 
 <a name="host-power-management"></a>
 ### Power management settings
@@ -350,12 +285,18 @@ Set to 'on' and confirm the change:
     sudo systemsetup -getremotelogin
  
 <a name="host-remote-events"></a>
-### Turn off remote events 
+### Remote Events and Timezone
 
-Set remote events to 'off':
+Confirm remote events are 'off' (should be off by default):
 
     sudo systemsetup -getremoteappleevents
     sudo systemsetup -setremoteappleevents off
+
+Confirm timezone is Eastern Standard Time:
+
+    date
+    sudo systemsetup -listtimezones
+    sudo systemsetup -settimezone America/New_York
 
 <a name="host-parallels"></a>
 ### Parallels Desktop 
@@ -688,7 +629,7 @@ From a terminal window:
     sudo scutil --set LocalHostName celaya2 
     sudo scutil --set HostName celaya2.bioconductor.org
 
-  TESTING:
+Testing:
 
     scutil --get ComputerName
     scutil --get LocalHostName
@@ -701,7 +642,7 @@ From a terminal window:
 ### Network
 ---------------------------------------------
 
-* Bridge networking 
+#### Bridge networking 
 
 Bridge networking allows the VM to access the local network and Internet
 through one of the network adapters installed on the Host. The VM Guest will be
@@ -828,7 +769,7 @@ Confirm net0 is bridged to en1:
       sound0 (+) output='Default' mixer='Mute'
       ...
 
-* Assign static IP:
+#### Assign static IP:
 
 The IP, subnet and router information came from RPCI. 
 
@@ -847,11 +788,11 @@ Set the static IP, subnet mask and router:
     # else if RPCI network:
     sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
 
-  TESTING:
+Testing:
 
     sudo ifconfig
 
-* Assign DNS servers:
+#### Assign DNS servers:
 
     # if Val home network:
     sudo networksetup -setdnsservers 'Ethernet' 192.168.1.1 8.8.8.8
@@ -860,16 +801,22 @@ Set the static IP, subnet mask and router:
     #sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 8.8.8.8
     #sudo networksetup -setsearchdomains 'Ethernet 1' bioconductor.org
 
-  TESTING:
+Testing:
 
     networksetup -getdnsservers 'Ethernet'
     ping celaya2.bioconductor.org
 
-** Apply all software updates and reboot
+Apply all software updates and reboot
 
     softwareupdate -l         # list all software updates
     sudo softwareupdate -ia   # install them all (if appropriate)
     sudo reboot               # reboot
+
+<a name="guest-firewall"></a>
+### Firewall 
+
+No firewall is enabled on `celaya2`. See the section on Firewalls for the
+Host for additional details.
 
 <a name="guest-power-management"></a>
 ## Power Management settings
@@ -900,16 +847,23 @@ Confirm remote events are off:
     celaya2:~ administrator$ sudo systemsetup -getremotelogin
     Remote Login: On
 
-Confirm remote apple events are off:
+<a name="guest-remote-events"></a>
+## Remote Events and Timezone
 
-These should be off by default.
+Confirm remote events are 'off' (should be off by default):
 
-    celaya2:~ administrator$ sudo systemsetup -getremoteappleevents
-    Remote Apple Events: Off
+    sudo systemsetup -getremoteappleevents
+    sudo systemsetup -setremoteappleevents off
 
-<a name="next-steps"></a>
-## Next Steps 
+Confirm timezone is Eastern Standard Time:
+
+    date
+    sudo systemsetup -listtimezones
+    sudo systemsetup -settimezone America/New_York
+
+<a name="configure-vm-guest-as-build-machine"></a>
+## Configure VM Guest as build machine
 ------------------------------------------------------------------------------
 
-If Parallels is already installed and configured, go to the
+Configure the VM Guest as a build machine by following instructions in 
 [Prepare-Mac-OSX-El-Capitan-HOWTO.TXT](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT). 
