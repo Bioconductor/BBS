@@ -314,9 +314,11 @@ interactively on a Windows build machine.
            replace lines
              CXX14 = 
              CXX14STD =
+             CXX14FLAGS =
            with
              CXX14 = $(BINPREF)g++ $(MULTI_ARCH) 
              CXX14STD = -std=gnu++14
+             CXX14FLAGS = -O2 -Wall $(DEBUGFLAG) -mtune=generic
 
      (b) R\etc\x64\Makeconf
 
@@ -335,9 +337,11 @@ interactively on a Windows build machine.
            replace lines
              CXX14 = 
              CXX14STD =
+             CXX14FLAGS =
            with
              CXX14 = $(BINPREF)g++ $(MULTI_ARCH) 
              CXX14STD = -std=gnu++14
+             CXX14FLAGS = -O2 -Wall $(DEBUGFLAG) -mtune=generic
 
      (c) R\etc\Rprofile.site
 
