@@ -74,6 +74,9 @@ def build_meat_index(pkgs, meat_path):
         if package != pkg:
             desc_file = bbs.parse.getDescFile(pkgdir_path)
             print "BBS>   Unexpected 'Package: %s' in '%s'. Skip it!" % (package, desc_file)
+            skipped.write('Package: %s\n' % pkg)
+            skipped.write('\n')
+            nskipped = nskipped + 1
             continue
         out.write('Package: %s\n' % pkg)
         out.write('Version: %s\n' % version)
