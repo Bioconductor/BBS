@@ -352,7 +352,7 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
                      (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
             msg = 'ERROR'
             out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
-            out.write('(Bad DESCRIPTION file)</TD>')
+            out.write(' (Bad DESCRIPTION file)</TD>')
         else:
             out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
                      (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
