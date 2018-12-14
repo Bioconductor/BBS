@@ -106,7 +106,7 @@ account.
 
 This account should not be confused with the `administrator` user on the VM
 which is accessible by all devteam members. The `administrator` account on the
-host (macHV2) is the account that creates, runs and destroys the VM and should
+host (machv2) is the account that creates, runs and destroys the VM and should
 have limited access.
 
 Testing: 
@@ -120,13 +120,13 @@ The remainder of the set-up should be performed as the `administrator` user.
 <a name="host-hostname"></a>
 ### Hostname
 
-Set the hostname to `macHV2` to represent the hypervisor for the 2-series builds.
+Set the hostname to `machv2` to represent the hypervisor for the 2-series builds.
 
 From a terminal window:
 
-    sudo scutil --set ComputerName macHV2
-    sudo scutil --set LocalHostName macHV2
-    sudo scutil --set HostName macHV2.bioconductor.org
+    sudo scutil --set ComputerName machv2
+    sudo scutil --set LocalHostName machv2
+    sudo scutil --set HostName machv2.bioconductor.org
 
 Testing:
 
@@ -139,7 +139,7 @@ Testing:
 ### Network
 
 There are 2 physical ports on the Mac Pro. We'll use port 1 (Ethernet 1) for
-the Host, macHV2 and port 2 (Ethernet 2) for the Guest, celaya2.
+the Host, machv2 and port 2 (Ethernet 2) for the Guest, celaya2.
 
 Open a terminal window on the VM.
 
@@ -148,13 +148,61 @@ List Host network services:
     sudo networksetup -listallhardwareports
     sudo networksetup -listallnetworkservices
 
-i) Assign static IP (override DHCP):
+ sudo networksetup -listallnetworkservices
+
+i) Disable Wi-Fi, Bluetooth PAN and Thunderbolt Bridge services
+
+By default all services are enabled:
+
+    machv2:~ administrator$  sudo networksetup -listallnetworkservices
+    Password:
+    An asterisk (*) denotes that a network service is disabled.
+    Ethernet 1
+    Ethernet 2
+    Wi-Fi
+    Bluetooth PAN
+    Thunderbolt Bridge
+
+Disable Wi-Fi, Bluetooth PAN and Thunderbolt Bridge:
+
+    machv2:~ administrator$  sudo networksetup -setnetworkserviceenabled Wi-Fi off 
+    machv2:~ administrator$  sudo networksetup -setnetworkserviceenabled 'Bluetooth PAN' off
+    machv2:~ administrator$  sudo networksetup -setnetworkserviceenabled 'Thunderbolt Bridge' off
+
+Confirm:
+
+    macHV2:~ administrator$  sudo networksetup -listallnetworkservices
+    Password:
+    An asterisk (*) denotes that a network service is disabled.
+    Ethernet 1
+    Ethernet 2
+    *Wi-Fi
+    *Bluetooth PAN
+    *Thunderbolt Bridge
+
+ii) Order network services
+
+Ethernet 1 should have priority but just to be sure:
+
+    sudo -ordernetworkservices 'Ethernet 1' 'Ethernet 2'
+    sudo networksetup -listnetworkserviceorder
+
+iii) Assign static IPs (override DHCP):
+
+  We assign a static IP for Ethernet 1 and Ethernet 2.
+  The IP associated with Ethernet 1 will be the one in DNS associated with
+  machv2.bioconductor.org. The second IP is necessary to enable bridge
+  networking for the VM. The VM will have it's own IP separate from
+  the one assigned here, this one is just a placeholder to ensure an
+  active network.
 
     # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
     # if Val home network:
     sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
+    sudo networksetup -setmanual 'Ethernet 2' 192.168.1.103 255.255.255.0 192.168.1.1
     # else if RPCI network:
     sudo networksetup -setmanual 'Ethernet 1' 172.29.0.2 255.255.255.0 172.29.0.254 
+    sudo networksetup -setmanual 'Ethernet 2' ****** 255.255.255.0 172.29.0.254 
 
 Testing:
 
@@ -164,7 +212,9 @@ To clear settings and go back to DHCP if necessary:
 
     sudo systemsetup -setdhcp 'Ethernet 1'
 
-ii) Assign the DNS servers:
+iv) Assign the DNS servers:
+
+This is only done for Ethernet 1:
 
     # if Val home network:
     sudo networksetup -setdnsservers 'Ethernet 1' 192.168.1.1 8.8.8.8
@@ -178,7 +228,7 @@ Testing:
     networksetup -getdnsservers 'Ethernet 1'
     ping www.bioconductor.org
 
-iii) Apply all software updates and reboot
+v) Apply all software updates and reboot
 
     softwareupdate -l         # list all software updates
     sudo softwareupdate -ia   # install them all (if appropriate)
@@ -187,8 +237,8 @@ iii) Apply all software updates and reboot
 <a name="host-firewall"></a>
 ### Firewall 
 
-No firewall is enabled on macHV2. The information that follows is FYI only
-in case at some future point we decide to enable it.
+No firewall is enabled on machv2. The information that follows is for
+reference if at some future point we decide to enable it.
 
 Mac OSX 10.14.1 Mojave has 2 firewalls: Application Firewall and Packet Filter
 (PF).  Both are disabled by default. Should we decide to enable a firewall in
@@ -200,7 +250,7 @@ Network Address Translation.
 
 The firewall is disabled by default.
 
-    macHV2:~ administrator$ sudo pfctl -s info
+    machv2:~ administrator$ sudo pfctl -s info
     Password:
     No ALTQ support in kernel
     ALTQ related functions disabled
@@ -250,7 +300,7 @@ to one (TRUE):
 
 Confirm the changes by listing the capabilities in use:
 
-    macHV2:~ administrator$ pmset -g
+    machv2:~ administrator$ pmset -g
     System-wide power settings:
     Currently in use:
      standby              1
@@ -347,14 +397,14 @@ i) Insert the USB key
 
 ii) View the contents in /Volumes
 
-    macHV2:~ administrator$ ls -l /Volumes/
+    machv2:~ administrator$ ls -l /Volumes/
     total 0
     lrwxr-xr-x   1 root           wheel    1 Nov 22 15:37 Macintosh HD -> /
     drwxrwxr-x@ 21 administrator  staff  782 Jan  1  2016 OS X 10.11 Install Disk - 10.11.6
 
     cd /Volumes/OS X 10.11 Install Disk - 10.11.6
 
-    macHV2:~ administrator$ ls -l /Volumes/OS\ X\ 10.11\ Install\ Disk\ -\ 10.11.6/
+    machv2:~ administrator$ ls -l /Volumes/OS\ X\ 10.11\ Install\ Disk\ -\ 10.11.6/
     total 72
     -rw-r--r--@ 1 administrator  staff  34542 Jul 18 07:14 ElCapitanBackground.png
     drwxr-xr-x  3 administrator  staff    102 Aug 31  2016 Install OS X El Capitan.app
@@ -372,9 +422,9 @@ iii) Make a backup of the USB files
 The .app directory is the important one but we'll make a full copy of the USB:
 
     cd /Volumes
-    macHV2:Volumes administrator$ ls
+    machv2:Volumes administrator$ ls
     Macintosh HD                      OS X 10.11 Install Disk - 10.11.6
-    macHV2:Volumes administrator$ cp -r OS\ X\ 10.11\ Install\ Disk\ -\ 10.11.6 /Users/administrator/Parallels/el-capitan-usb-backup/
+    machv2:Volumes administrator$ cp -r OS\ X\ 10.11\ Install\ Disk\ -\ 10.11.6 /Users/administrator/Parallels/el-capitan-usb-backup/
     cp: OS X 10.11 Install Disk - 10.11.6/.Spotlight-V100: unable to copy extended attributes to /Users/administrator/Parallels/el-capitan-usb-backup/OS X 10.11 Install Disk - 10.11.6/.Spotlight-V100: Operation not permitted
     cp: OS X 10.11 Install Disk - 10.11.6/.Spotlight-V100: Operation not permitted
     cp: OS X 10.11 Install Disk - 10.11.6/.Trashes: unable to copy extended attributes to /Users/administrator/Parallels/el-capitan-usb-backup/OS X 10.11 Install Disk - 10.11.6/.Trashes: Permission denied
@@ -382,7 +432,7 @@ The .app directory is the important one but we'll make a full copy of the USB:
 
 This takes some time. Total size is ~ 6 GB.
 
-    macHV2:Parallels administrator$ du -hs /Users/administrator/Parallels/el-capitan-usb-backup/OS\ X\ 10.11\ Install\ Disk\ -\ 10.11.6/*
+    machv2:Parallels administrator$ du -hs /Users/administrator/Parallels/el-capitan-usb-backup/OS\ X\ 10.11\ Install\ Disk\ -\ 10.11.6/*
      36K	/Users/administrator/Parallels/el-capitan-usb-backup/OS X 10.11 Install Disk - 10.11.6/ElCapitanBackground.png
     5.8G	/Users/administrator/Parallels/el-capitan-usb-backup/OS X 10.11 Install Disk - 10.11.6/Install OS X El Capitan.app
     4.0K	/Users/administrator/Parallels/el-capitan-usb-backup/OS X 10.11 Install Disk - 10.11.6/Library
@@ -574,7 +624,7 @@ installed in the VM as a single package when Parallels Tools is installed.
 Parallels Tools are located on disk images that are installed with Parallels
 Desktop. There is a separate image for each supported guest OS, located here:
 
-    macHV2:~ administrator$ ls -l /Applications/Parallels\ Desktop.app/Contents/Resources/Tools/
+    machv2:~ administrator$ ls -l /Applications/Parallels\ Desktop.app/Contents/Resources/Tools/
     total 299088
     -rw-r--r--  1 root  wheel       802 Nov 14 16:03 Autounattend.vbs
     -rw-r--r--  1 root  wheel     17634 Nov 14 16:03 Autounattend.xml
@@ -650,7 +700,7 @@ treated as an independent computer on the network instead of sharing the same
 network connection as the Host.  
 
 There are 2 physical ports on the Mac Pro. The first port (Ethernet 1) is used
-for the Host, macHV2, and the second (Ethernet 2) will be used for the Guest,
+for the Host, machv2, and the second (Ethernet 2) will be used for the Guest,
 celaya2. Configuration can be done from the GUI in the running VM or from a terminal in the Host.
 
 -- Option 1: From the VM Guest
@@ -668,7 +718,7 @@ We need to get the name of the physical adapter on the Mac Pro that the VM adapt
 
 List the network adapters associated with the virtual networks:
 
-    macHV2:Library administrator$ networksetup listnetworkserviceorder
+    machv2:~ administrator$ networksetup -listnetworkserviceorder
     An asterisk (*) denotes that a network service is disabled.
     (1) Ethernet 1
     (Hardware Port: Ethernet 1, Device: en0)
@@ -676,18 +726,18 @@ List the network adapters associated with the virtual networks:
     (2) Ethernet 2
     (Hardware Port: Ethernet 2, Device: en1)
     
-    (3) Wi-Fi
+    (*) Wi-Fi
     (Hardware Port: Wi-Fi, Device: en2)
     
-    (4) Bluetooth PAN
+    (*) Bluetooth PAN
     (Hardware Port: Bluetooth PAN, Device: en9)
     
-    (5) Thunderbolt Bridge
+    (*) Thunderbolt Bridge
     (Hardware Port: Thunderbolt Bridge, Device: bridge0)
 
-A simliar (sometimes useful) command with 'Type' included:
+A similar (sometimes useful) command with 'Type' included:
 
-    macHV2:Library administrator$ prlsrvctl net list
+    machv2:~ administrator$ prlsrvctl net list
     Network ID        Type      Bound To
     Shared            shared  vnic0 
     NAT server:
@@ -695,7 +745,12 @@ A simliar (sometimes useful) command with 'Type' included:
     Host-Only         host-only  vnic1
     Ethernet 1 (en0)  bridged   en0
     Ethernet 2 (en1)  bridged   en1
-    Wi-Fi (en2)       bridged   en2
+    en5 (en5)         bridged   en5
+    en6 (en6)         bridged   en6
+    en3 (en3)         bridged   en3
+    en4 (en4)         bridged   en4
+    en7 (en7)         bridged   en7
+    en8 (en8)         bridged   en8
     vnic0 (vnic0)     bridged   vnic0
     vnic1 (vnic1)     bridged   vnic1
     Default           bridged   FF:FF:FF:FF:FF:FF
@@ -708,10 +763,10 @@ To connect the VM to the 'Ethernet 2 (en1)' network we need to know the name of
 the network adapter on the VM.  Use `prlctl list` to see the networking on the
 VM. 
 
-This output was truncated but the important thing to note is the networking on 'net0'
-adapter of the VM. By default it will say 'shared': 
+This output was truncated but the important thing to note is the networking on
+'net0' adapter of the VM. By default it will say 'shared': 
 
-    macHV2:Library administrator$ prlctl list celaya2 -i
+    machv2:Library administrator$ prlctl list celaya2 -i
     INFO
     ID: {1652f656-55be-4fc6-9078-a6260b8fd095}
     Name: celaya2
@@ -738,17 +793,17 @@ Stop the VM:
 
 Attach the net0 network adapter in the Guest to the en1 adapter in the Host:
 
-    macHV2:Library administrator$ prlctl set celaya2 --device-set net0 --type bridged --iface en1
+    machv2:Library administrator$ prlctl set celaya2 --device-set net0 --type bridged --iface en1
     Configure net0 (+) type=bridged iface='Ethernet 2' mac=001C42B43DED card=e1000
-    
+ 
     Configured net0 (+) type=bridged iface='Ethernet 2' mac=001C42B43DED card=e1000
-    
-    
+ 
+ 
     The VM has been successfully configured.
 
 Confirm net0 is bridged to en1:
 
-    macHV2:Library administrator$ prlctl list celaya2 -i
+    machv2:Library administrator$ prlctl list celaya2 -i
     INFO
     ID: {1652f656-55be-4fc6-9078-a6260b8fd095}
     Name: celaya2
@@ -865,5 +920,8 @@ Confirm timezone is Eastern Standard Time:
 ## Configure VM Guest as build machine
 ------------------------------------------------------------------------------
 
-Configure the VM Guest as a build machine by following instructions in 
-[Prepare-Mac-OSX-El-Capitan-HOWTO.TXT](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT). 
+Follow instructions in 
+[Prepare-Mac-OSX-El-Capitan-HOWTO.TXT](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT) to configure the VM Guest
+as a build machine.
+
+Start with Section B since the user accounts have already been set up.
