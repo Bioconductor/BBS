@@ -1211,11 +1211,29 @@ def make_NodeInfo_page(Node_rdir, node):
 
     out.write('<HR>\n')
 
+    out.write('<H2>C++98 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus98_vars = ['CXX98', 'CXX98FLAGS', 'CXX98PICFLAGS', 'CXX98STD']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus98_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX98')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
     out.write('<H2>C++11 compiler</H2>\n')
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus11_vars = ['CXX1X', 'CXX1XFLAGS', 'CXX1XPICFLAGS', 'CXX1XSTD']
+    Cplusplus11_vars = ['CXX11', 'CXX11FLAGS', 'CXX11PICFLAGS', 'CXX11STD']
     write_Rconfig_table_from_file(out, Node_rdir, Cplusplus11_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX1X')
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX11')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>C++14 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus14_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX14')
     out.write('</DIV>\n')
 
     out.write('<HR>\n')

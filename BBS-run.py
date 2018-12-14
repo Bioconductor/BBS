@@ -53,10 +53,18 @@ def writeRconfig():
     appendRconfigValue(file, 'MAKE', True)
     C_vars = ['CC', 'CFLAGS', 'CPICFLAGS', 'CPP']
     Cplusplus_vars = ['CXX', 'CXXFLAGS', 'CXXPICFLAGS', 'CXXCPP']
-    Cplusplus11_vars = ['CXX1X', 'CXX1XFLAGS', 'CXX1XPICFLAGS', 'CXX1XSTD']
+    Cplusplus98_vars = ['CXX98', 'CXX98FLAGS', 'CXX98PICFLAGS', 'CXX98STD']
+    Cplusplus11_vars = ['CXX11', 'CXX11FLAGS', 'CXX11PICFLAGS', 'CXX11STD']
+    Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
     Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
     Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
-    vars = C_vars + Cplusplus_vars + Cplusplus11_vars + Fortran77_vars + Fortran9x_vars
+    vars = C_vars + \
+           Cplusplus_vars + \
+           Cplusplus98_vars + \
+           Cplusplus11_vars + \
+           Cplusplus14_vars + \
+           Fortran77_vars + \
+           Fortran9x_vars
     for var in vars:
         appendRconfigValue(file, var)
     return
@@ -89,7 +97,9 @@ def makeNodeInfo():
                     'R-instpkgs.txt', 60.0, True) # ignore retcode
     writeSysCommandVersion('CC')
     writeSysCommandVersion('CXX')
-    writeSysCommandVersion('CXX1X')
+    writeSysCommandVersion('CXX98')
+    writeSysCommandVersion('CXX11')
+    writeSysCommandVersion('CXX14')
     writeSysCommandVersion('F77')
     writeSysCommandVersion('FC')
     print "BBS>   cd BBS_WORK_TOPDIR"
