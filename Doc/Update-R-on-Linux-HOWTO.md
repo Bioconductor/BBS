@@ -226,14 +226,14 @@ R="$HOME/bin/R-$R_VERSION"
     ./bin/R-3.5
     install.packages("BiocManager")
 
-- Install the packages in /home/biocbuild/pkgs_to_install/ + knitr and
-  knitcitations:
+- Install the packages in /home/biocadmin/pkgs_to_install/ + knitr and
+  knitcitations and commonmark (for R >= 3.6):
 
     biocadmin@malbec2:~$ ls pkgs_to_install/
     BiocManager  biocViews  DynDoc  graph  README
 
     install.packages("BiocManager")
-    BiocManager::install(c('biocViews','DynDoc','graph', 'knitr', 'knitcitations'))
+    BiocManager::install(c('biocViews','DynDoc','graph', 'knitr', 'knitcitations', 'commonmark'))
 
 <a name="mac-and-windows"></a>
 ## Updating R on Mac OSX and Windows:
