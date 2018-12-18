@@ -207,9 +207,9 @@ iii) Assign static IPs (override DHCP):
 
     # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
     # Val home network:
-    sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
-    sudo networksetup -setmanual 'Ethernet 2' 192.168.1.103 255.255.255.0 192.168.1.1
-    # else if RPCI network:
+    #sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
+    #sudo networksetup -setmanual 'Ethernet 2' 192.168.1.103 255.255.255.0 192.168.1.1
+    # RPCI network:
     sudo networksetup -setmanual 'Ethernet 1' 172.29.0.2 255.255.255.0 172.29.0.254 
     sudo networksetup -setmanual 'Ethernet 2' 172.29.0.13 255.255.255.0 172.29.0.254 
 
@@ -232,11 +232,15 @@ Assign DNS servers:
 This is only done for Ethernet 1.
 
     # Val home network:
-    sudo networksetup -setdnsservers 'Ethernet 1' 192.168.1.1 8.8.8.8
-    sudo networksetup -setsearchdomains 'Ethernet 1' robench.org
+    #sudo networksetup -setdnsservers 'Ethernet 1' 192.168.1.1 8.8.8.8
+    #sudo networksetup -setsearchdomains 'Ethernet 1' robench.org
     # RPCI network:
     sudo networksetup -setdnsservers 'Ethernet 1' 8.8.8.8 8.8.4.4
     sudo networksetup -setsearchdomains 'Ethernet 1' roswellpark.org
+
+    FIXME: Is this necessary?
+    #sudo networksetup -setdnsservers 'Ethernet 2' 8.8.8.8 8.8.4.4
+    #sudo networksetup -setsearchdomains 'Ethernet 2' roswellpark.org
 
 Testing:
 
@@ -855,9 +859,9 @@ Set the static IP, subnet mask and router:
 
     # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
     # Val home network:
-    sudo networksetup -setmanual 'Ethernet' 192.168.1.102 255.255.255.0 192.168.1.1
+    #sudo networksetup -setmanual 'Ethernet' 192.168.1.102 255.255.255.0 192.168.1.1
     # RPCI network:
-    sudo networksetup -setmanual 'Ethernet 1' 172.29.0.12 255.255.255.0 172.29.0.254 
+    sudo networksetup -setmanual 'Ethernet' 172.29.0.12 255.255.255.0 172.29.0.254 
 
 Testing:
 
@@ -872,11 +876,11 @@ List DNS servers:
 Assign DNS servers:
 
     # Val home network:
-    sudo networksetup -setdnsservers 'Ethernet' 192.168.1.1 8.8.8.8
-    sudo networksetup -setsearchdomains 'Ethernet' robench.org
+    #sudo networksetup -setdnsservers 'Ethernet' 192.168.1.1 8.8.8.8
+    #sudo networksetup -setsearchdomains 'Ethernet' robench.org
     # RPCI network:
-    #sudo networksetup -setdnsservers 'Ethernet' 8.8.8.8 8.8.4.4
-    #sudo networksetup -setsearchdomains 'Ethernet' roswellpark.org
+    sudo networksetup -setdnsservers 'Ethernet' 8.8.8.8 8.8.4.4
+    sudo networksetup -setsearchdomains 'Ethernet' roswellpark.org
 
 Testing:
 
@@ -944,27 +948,33 @@ Confirm timezone is Eastern Standard Time:
 
 One of the system requirements for configuring the VM as a builder is
 to install libsbml. This used to be available via brew and it was installed
-in /usr/local/Cellar. They have sinced dropped it and I downloaded it from
-SourceForge and it was installed in /usr/local/lib and /usr/local/bin. 
+in /usr/local/Cellar. They have since dropped it. For this installation,
+it was downloaded from SourceForge and was installed in /usr/local/lib and 
+/usr/local/bin. 
 
 Everything I've read indicates that /usr/local should not a SIP protected area, 
 however, that was not my experience. The runtime linker could not find
 the /usr/local/lib/libsbml.5.dynlib.
 
-I tried adding the path to /etc/profile DYLD_LIBRARY_PATH but the dynamic 
-link editor dyld ignores environment variables when launching protected 
-processes. Again, I wouldn't think /usr/local/lib would have been a protected
-area but it is.
+I tried adding the path to /etc/profile DYLD_LIBRARY_PATH but these variables
+were ignored when launching protected processes.
 
 There may be another way around this but for the time being I've disabled
-SIP on celaya2 so I could add the path to /etc/profile DYLD_LIBRARY_PATH.
+SIP on celaya2 so the path could be added to /etc/profile DYLD_LIBRARY_PATH.
 
 To disable SIP you must boot into recovery mode. A monitor, keyboard and 
 mouse are necessary. Follow instructions here:
 
 https://kb.parallels.com/en/116526
 
+Once in recovery mode:
 
+    csrutil disable
+    reboot
+
+The machine should reboot into "regular" mode with SIP disabled:
+
+    csrutil status
 
 <a name="configure-vm-guest-as-build-machine"></a>
 ## Configure VM Guest as build machine
