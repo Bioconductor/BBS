@@ -248,7 +248,7 @@ Everything in this section must be done from the biocbuild account.
 
   Download with:
 
-    curl -O http://coudert.name/software/gfortran-6.1-ElCapitan.dmg
+    curl -OL https://github.com/fxcoudert/gfortran-for-macOS/releases/download/6.1/gfortran-6.1-ElCapitan.dmg 
 
   Install with:
 
@@ -278,12 +278,12 @@ Everything in this section must be done from the biocbuild account.
     sudo installer -pkg /Volumes/XQuartz-2.7.11/XQuartz.pkg -target /
     sudo hdiutil detach /Volumes/XQuartz-2.7.11
     cd /usr/local/include
-    ln -s /opt/X11/include/X11
+    ln -s /opt/X11/include/X11 X11
 
   TESTING:
 
     which Xvfb        # should be /opt/X11/bin/Xvfb
-    ls -l /usr/X11R6  # should be a symlink to /opt/X11
+    ls -l /usr/X11    # should be a symlink to /opt/X11
 
 ** Run Xvfb as service:
 
@@ -301,7 +301,7 @@ Everything in this section must be done from the biocbuild account.
   called and when they are started. We'll call our plist "local.xvfb.plist".
 
     cd /Library/LaunchDaemons
-    vim local.xvfb.plist
+    sudo vim local.xvfb.plist
 
   Paste these contents into local.xvfb.plist:
 
@@ -353,8 +353,8 @@ Everything in this section must be done from the biocbuild account.
     /var/log/xvfb/xvfb.stderror.log         644  5     5120 *     JN
     /var/log/xvfb/xvfb.stdout.log           644  5     5120 *     JN
 
-  At the time of this writing, logs were rotated when they reached a file
-  size of 5MB. Once the xvfb.conf file is in place, simulate a rotation:
+  These instructions rotate logs when they reached a file size of 5MB. Once 
+  the xvfb.conf file is in place, simulate a rotation:
 
     sudo newsyslog -nvv
 
@@ -372,7 +372,7 @@ Everything in this section must be done from the biocbuild account.
 
   (vi) Load the service 
 
-    sudo launchctl load xvfb.plist
+    sudo launchctl load local.xvfb.plist
 
   xvfb should appear in the list of loaded services:
 
@@ -452,8 +452,15 @@ Everything in this section must be done from the biocbuild account.
 
     brew doctor
 
-  You might see warnings but most of them can be ignored. The warning (1st in
-  the list of warnings) about some directories under /usr/local/ not being
+  You might see warnings related to the OS being too old for current 
+  support. Most of these can be ignored, e.g., 
+ 
+    ==> You are using macOS 10.11.
+    ==> We (and Apple) do not provide support for this old version.
+    This installation may not succeed.
+    After installation, you will encounter build failures and other breakages.
+
+  The warning about some directories under /usr/local/ not being
   writable needs to be addressed though. This can be done with:
 
     sudo chown -R biocbuild:admin /usr/local
@@ -512,6 +519,7 @@ Everything in this section must be done from the biocbuild account.
 
 ** Create bbs-3.5-bioc directory structure
 
+    cd /Users/biocbuild
     mkdir bbs-3.5-bioc
     cd bbs-3.5-bioc
     mkdir NodeInfo log meat
@@ -533,7 +541,7 @@ This must be done from the biocbuild account.
 Download and install with:
 
   cd /Users/biocbuild/Downloads
-  curl -O https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan.pkg
+  curl -LO https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan.pkg
   sudo installer -pkg R-devel-el-capitan.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
@@ -583,6 +591,10 @@ Everything in this section should be done from the biocbuild account.
 ** Install MacTeX
 
     https://tug.org/mactex/mactex-download.html
+
+    cd /Users/biocbuild/Downloads
+    curl -O ftp://ftp.tug.org/historic/systems/mactex/2016/mactex-20161009.pkg 
+
 
   Install with:
 
@@ -639,13 +651,13 @@ Everything in this section must be done from the biocbuild account.
   Visit https://www.java.com/en/download/faq/develop.xml, then click on the
   "JDK downloads" link, then on the big Java DOWNLOAD button, then pick up
   the Java SE Development Kit for Mac OS X. It's a big (> 220 MB) .dmg file
-  named something like jdk-8u111-macosx-x64.dmg
+  named something like jdk-8u191-macosx-x64.dmg
 
   Install with:
 
-    sudo hdiutil attach jdk-8u111-macosx-x64.dmg
-    sudo installer -pkg "/Volumes/JDK 8 Update 111/JDK 8 Update 111.pkg" -target /
-    sudo hdiutil detach "/Volumes/JDK 8 Update 111"
+    sudo hdiutil attach jdk-8u191-macosx-x64.dmg
+    sudo installer -pkg "/Volumes/JDK 8 Update 191/JDK 8 Update 191.pkg" -target /
+    sudo hdiutil detach "/Volumes/JDK 8 Update 191"
 
   Then reconfigure R to use this new Java installation:
 
@@ -710,15 +722,15 @@ Everything in this section must be done from the biocbuild account.
     install.packages("Cairo", contriburl=contriburl)
     library(Cairo)
 
-** Install NetCDF and HDF5 system libray
+** Install NetCDF and HDF5 system library
 
   Download and install with:
 
-    curl -O http://r.research.att.com/libs/netcdf-4.3.3.1-darwin.13-x86_64.tar.gz
-    curl -O http://r.research.att.com/libs/hdf5-1.8.14-darwin.13-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/netcdf-4.4.1.1-darwin.15-x86_64.tar.gz
+    curl -O http://r.research.att.com/libs/hdf5-1.10.0-1-darwin.15-x86_64.tar.gz
 
-    sudo tar fvxz netcdf-4.3.3.1-darwin.13-x86_64.tar.gz -C /
-    sudo tar fvxz hdf5-1.8.14-darwin.13-x86_64.tar.gz -C /
+    sudo tar fvxz netcdf-4.4.1.1-darwin.15-x86_64.tar.gz -C /
+    sudo tar fvxz hdf5-1.10.0-1-darwin.15-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the ncdf4 package *from source*:
@@ -735,8 +747,8 @@ Everything in this section must be done from the biocbuild account.
 
   Download and install with:
 
-    curl -O http://r.research.att.com/libs/fftw-3.3.4-darwin.13-x86_64.tar.gz
-    sudo tar fvxz fftw-3.3.4-darwin.13-x86_64.tar.gz -C /
+    curl -O http://r.research.att.com/libs/fftw-3.3.6-2-darwin.15-x86_64.tar.gz 
+    sudo tar fvxz fftw-3.3.6-2-darwin.15-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the fftwtools package *from source*:
@@ -747,8 +759,8 @@ Everything in this section must be done from the biocbuild account.
 
   Download and install with:
 
-    curl -O http://r.research.att.com/libs/gsl-1.16-darwin.13-x86_64.tar.gz
-    sudo tar fvxz gsl-1.16-darwin.13-x86_64.tar.gz -C /
+    curl -O http://r.research.att.com/libs/gsl-1.16-darwin.15-x86_64.tar.gz 
+    sudo tar fvxz gsl-1.16-darwin.15-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
   TESTING: Try to install the GLAD package *from source*:
@@ -859,12 +871,50 @@ Everything in this section must be done from the biocbuild account.
     scipy.__version__    # 0.13.0b1 (version shipped with Mac OS X)
 
   However this numpy is too old for pandas and this scipy is too old for
-  sklearn so we must install more recent versions. All the modules will get
-  installed in /Library/Python/2.7/site-packages/
+  sklearn so we must install more recent versions. All new modules will
+  be installed in /Library/Python/2.7/site-packages/.
 
-    sudo easy_install-2.7 pip  # easy_install-2.7 is shipped with Mac OS X
+  We need to make sure the new modules can be found by python. Previously
+  this was accomplished with the
+  /Library/Python/2.7/site-packages/easy-install.pth file deposited when
+  we installed pip with `easy_install`:
+
+      sudo easy_install-2.7 pip
+
+  In early 2018, Python.org sites stopped support for TLS versions 1.0 and
+  1.1. This means we can't use the `easy_install` command above. To get pip for
+  Mac OS X version <= 10.12 pip must be upgraded as follows:
+
+    curl https://bootstrap.pypa.io/get-pip.py | sudo python
+
+  For more details see
+
+    https://stackoverflow.com/questions/49748063/pip-install-fails-for-every-package-could-not-find-a-version-that-satisfies/49748494#49748494
+
+  With this new installation approach we no longer get the .pth file so we
+  need to create our own.
+
+  Create the path-modifier.pth file:
+
+    sudo vi /Library/Python/2.7/site-packages/path-modifier.pth
+
+  Add these contents:
+
+    import sys; sys.__plen = len(sys.path)
+    /Library/Python/2.7/site-packages
+    import sys; new=sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p=getattr(sys,'__egginsert',0); sys.path[p:p]=new; sys.__egginsert = p+len(new)
+
+
+  Confirm /Library/Python/2.7/site-packages is first on the search path:
+
+    python -c "import sys; print('\n'.join(sys.path))"
+
+  Once pip is installed and path-modifier.pth is in place, install
+  the newer module versions:
+
     sudo -H pip install --ignore-installed numpy
     sudo -H pip install --ignore-installed scipy
+    sudo -H pip install --ignore-installed six 
     sudo -H pip install pandas
     sudo -H pip install sklearn
     sudo -H pip install h5py
@@ -872,15 +922,15 @@ Everything in this section must be done from the biocbuild account.
   Check the installed versions with:
 
     import numpy
-    numpy.__version__    # 1.13.3 (on 11/30/2017)
+    numpy.__version__    # 1.15.4 (on 12/12/2018)
     import scipy
-    scipy.__version__    # 1.0.0  (on 11/30/2017)
+    scipy.__version__    # 1.1.0  (on 12/12/2018)
     import pandas
-    pandas.__version__   # 0.21.0 (on 11/30/2017)
+    pandas.__version__   # 0.23.4 (on 12/12/2018)
     import sklearn
-    sklearn.__version__  # 0.19.1 (on 11/30/2017)
+    sklearn.__version__  # 0.20.1 (on 12/12/2018)
     import h5py
-    h5py.__version__     # 2.7.1  (on 11/30/2017)
+    h5py.__version__     # 2.8.0  (on 12/12/2018)
 
   IMPORTANT NOTE: Do NOT install pip via Homebrew. Homebrew only provides
   pip via 'brew install python' which should be avoided because it leads to
@@ -895,6 +945,7 @@ Everything in this section must be done from the biocbuild account.
 
   This module is needed by the rhdf5client package.
 
+    sudo -H pip install pkgconfig 
     sudo -H pip install h5pyd
 
 ** Install Python 3 + Jupyter + nbconvert + jupyter_client
@@ -937,12 +988,32 @@ Everything in this section must be done from the biocbuild account.
   Then logout and login again so that the changes to /etc/profile take
   effect.
 
-  Finally install libSBML with:
+  Finally install libSBML. As of December 2018, Homebrew was no longer 
+  offering libsbml so we download it from SourceForge.
+ 
+  Download with:
 
-    brew install homebrew/science/libsbml
+    curl -LO https://sourceforge.net/projects/sbml/files/libsbml/5.13.0/stable/Mac%20OS%20X/libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
 
-  See "Install Homebrew" previously in this file if you get errors about
-  /usr/local/bin or other directories under /usr/local not being writable.
+  Install with:
+
+    sudo hdiutil attach libsbml-5.13.0-libxml2-macosx-elcapitan.dmg 
+    sudo installer -pkg "/Volumes/libsbml-5.13.0-libxml2/libSBML-5.13.0-libxml2-elcapitan.pkg" -target /
+    sudo hdiutil detach "/Volumes/libsbml-5.13.0-libxml2" 
+    sudo chown -R biocbuild:admin /usr/local
+
+Modify /usr/local/lib/pkgconfig/libsbml.pc:
+
+    cd /usr/local/lib/pkgconfig
+    cp libsbml.pc libsbml.pc.original
+
+Modify these lines:
+
+    prefix=/usr/local/share/libsbml
+    libdir=/usr/local/lib
+    includedir=/usr/local/include
+
+libsbml.pc
 
   TESTING: Try to install the rsbml package *from source*:
 
