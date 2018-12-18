@@ -28,6 +28,7 @@ Table of Contents:
   - [Power Management Settings](#guest-power-management)
   - [Enable SSH](#host-ssh) 
   - [Remote Events and Timezone](#guest-remote-events) 
+  - [Disable System Integrity Protection (SIP)](#guest-disable-sip) 
 - [Configure VM Guest as build machine](#configure-vm-guest-as-build-machine)
 
 <a name="terminology"></a>
@@ -182,27 +183,35 @@ Confirm:
 
 ii) Order network services
 
-Ethernet 1 should have priority but just to be sure:
+Ethernet 1 should have priority:
+
+    sudo networksetup -listnetworkserviceorder
+    sudo -ordernetworkservices 'Ethernet 1' 'Ethernet 2'
+
+If Ethernet 1 is not first, then order and confirm:
 
     sudo -ordernetworkservices 'Ethernet 1' 'Ethernet 2'
     sudo networksetup -listnetworkserviceorder
 
 iii) Assign static IPs (override DHCP):
 
-  We assign a static IP for Ethernet 1 and Ethernet 2.
+  A static IP will be assigned for both Ethernet 1 and Ethernet 2.
   The IP associated with Ethernet 1 will be the one in DNS associated with
   machv2.bioconductor.org. The second IP is necessary to enable bridge
   networking for the VM. The VM will have it's own IP separate from
   the one assigned here, this one is just a placeholder to ensure an
-  active network.
+  active network. Depending on how the network is configured, if no static
+  IP is assigned to Ethernet 2, this port will consult DNS and get a 
+  (potentially) different IP each time. This could cause problems with SSH
+  or other means of accessing machv2.
 
     # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
-    # if Val home network:
+    # Val home network:
     sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
     sudo networksetup -setmanual 'Ethernet 2' 192.168.1.103 255.255.255.0 192.168.1.1
     # else if RPCI network:
     sudo networksetup -setmanual 'Ethernet 1' 172.29.0.2 255.255.255.0 172.29.0.254 
-    sudo networksetup -setmanual 'Ethernet 2' ****** 255.255.255.0 172.29.0.254 
+    sudo networksetup -setmanual 'Ethernet 2' 172.29.0.13 255.255.255.0 172.29.0.254 
 
 Testing:
 
@@ -214,12 +223,18 @@ To clear settings and go back to DHCP if necessary:
 
 iv) Assign the DNS servers:
 
-This is only done for Ethernet 1:
+List DNS servers:
 
-    # if Val home network:
+    scutil --dns
+
+Assign DNS servers:
+
+This is only done for Ethernet 1.
+
+    # Val home network:
     sudo networksetup -setdnsservers 'Ethernet 1' 192.168.1.1 8.8.8.8
     sudo networksetup -setsearchdomains 'Ethernet 1' robench.org
-    # else if RPCI network:
+    # RPCI network:
     sudo networksetup -setdnsservers 'Ethernet 1' 8.8.8.8 8.8.4.4
     sudo networksetup -setsearchdomains 'Ethernet 1' roswellpark.org
 
@@ -697,11 +712,12 @@ Testing:
 Bridge networking allows the VM to access the local network and Internet
 through one of the network adapters installed on the Host. The VM Guest will be
 treated as an independent computer on the network instead of sharing the same
-network connection as the Host.  
+network connection as the Host.
 
-There are 2 physical ports on the Mac Pro. The first port (Ethernet 1) is used
-for the Host, machv2, and the second (Ethernet 2) will be used for the Guest,
-celaya2. Configuration can be done from the GUI in the running VM or from a terminal in the Host.
+There are 2 physical ports on the Mac Pro. The first port, Ethernet 1, is used
+for the Host and the second port, Ethernet 2, will be used for bridge
+networking the Guest VM.  Configuration can be done from the GUI in the running
+VM or from a terminal in the Host.
 
 -- Option 1: From the VM Guest
 
@@ -838,10 +854,10 @@ Query VM for network adapter name:
 Set the static IP, subnet mask and router:
 
     # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
-    # if Val home network:
+    # Val home network:
     sudo networksetup -setmanual 'Ethernet' 192.168.1.102 255.255.255.0 192.168.1.1
-    # else if RPCI network:
-    sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
+    # RPCI network:
+    sudo networksetup -setmanual 'Ethernet 1' 172.29.0.12 255.255.255.0 172.29.0.254 
 
 Testing:
 
@@ -849,12 +865,18 @@ Testing:
 
 #### Assign DNS servers:
 
-    # if Val home network:
+List DNS servers:
+
+    scutil --dns
+
+Assign DNS servers:
+
+    # Val home network:
     sudo networksetup -setdnsservers 'Ethernet' 192.168.1.1 8.8.8.8
     sudo networksetup -setsearchdomains 'Ethernet' robench.org
-    # else if RPCI network:
-    #sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 8.8.8.8
-    #sudo networksetup -setsearchdomains 'Ethernet 1' bioconductor.org
+    # RPCI network:
+    #sudo networksetup -setdnsservers 'Ethernet' 8.8.8.8 8.8.4.4
+    #sudo networksetup -setsearchdomains 'Ethernet' roswellpark.org
 
 Testing:
 
@@ -915,6 +937,34 @@ Confirm timezone is Eastern Standard Time:
     date
     sudo systemsetup -listtimezones
     sudo systemsetup -settimezone America/New_York
+
+
+<a name="guest-disable-sip"></a>
+## Disable System Integrity Protection (SIP)
+
+One of the system requirements for configuring the VM as a builder is
+to install libsbml. This used to be available via brew and it was installed
+in /usr/local/Cellar. They have sinced dropped it and I downloaded it from
+SourceForge and it was installed in /usr/local/lib and /usr/local/bin. 
+
+Everything I've read indicates that /usr/local should not a SIP protected area, 
+however, that was not my experience. The runtime linker could not find
+the /usr/local/lib/libsbml.5.dynlib.
+
+I tried adding the path to /etc/profile DYLD_LIBRARY_PATH but the dynamic 
+link editor dyld ignores environment variables when launching protected 
+processes. Again, I wouldn't think /usr/local/lib would have been a protected
+area but it is.
+
+There may be another way around this but for the time being I've disabled
+SIP on celaya2 so I could add the path to /etc/profile DYLD_LIBRARY_PATH.
+
+To disable SIP you must boot into recovery mode. A monitor, keyboard and 
+mouse are necessary. Follow instructions here:
+
+https://kb.parallels.com/en/116526
+
+
 
 <a name="configure-vm-guest-as-build-machine"></a>
 ## Configure VM Guest as build machine
