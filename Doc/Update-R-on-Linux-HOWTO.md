@@ -160,9 +160,8 @@ at startup:
 
   ~/bbs-3.*-bioc/R/bin/R
 
-
-FIXME: What testing is relevant on Linux? Same as on Mac after an
-       R update? (section 'I' in Prepare-MacOSX-ElCapitan-HOWTO.TXT)
+Install a few packages from source, e.g., IRanges, VariantAnnotation,
+BiocCheck, zlibbioc, etc.
 
 
 <a name="first-cycle"></a>
