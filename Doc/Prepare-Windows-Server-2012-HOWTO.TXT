@@ -659,9 +659,9 @@ From a personal administrator account
        - cd R\etc\i386
        - vi Makeconf
            replace line
-             #LOCALSOFT
+             #LOCAL_SOFT
            with
-             LOCALSOFT = C:/extsoft
+             LOCAL_SOFT = C:/extsoft
 
      (b) R\etc\x64\Makeconf
 
@@ -670,9 +670,9 @@ From a personal administrator account
        - cd R\etc\x64
        - vi Makeconf
            replace line
-             #LOCALSOFT
+             #LOCAL_SOFT
            with
-             LOCALSOFT = C:/extsoft
+             LOCAL_SOFT = C:/extsoft
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile a package that uses the GSL
