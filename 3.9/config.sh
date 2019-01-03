@@ -48,4 +48,4 @@ export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_
 #export _R_CHECK_TIMINGS_="0"
 export _R_CHECK_EXECUTABLES_=false
 export _R_CHECK_EXECUTABLES_EXCLUSIONS_=false
-
+export R_KEEP_PKG_SOURCE=yes

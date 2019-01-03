@@ -282,7 +282,8 @@ def getSTAGE3cmd(pkgdir_path):
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend')
+    checkOpts = ' ' + bbs.parse.getCheckOptions(pkg)
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend') + checkOpts
     if sys.platform != "win32":
         win_archs = None
     else:
