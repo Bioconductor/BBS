@@ -283,13 +283,17 @@ def getSTAGE3cmd(pkgdir_path):
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
     checkOpts = ' ' + bbs.parse.getCheckOptions(pkg)
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend') + checkOpts
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend')
+    if prepend != None:
+        prepend = prepend + checkOpts
+    else:
+        prepend = checkOpts
     if sys.platform != "win32":
         win_archs = None
     else:
         prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend.win')
         if prepend_win != None:
-            prepend = prepend_win
+            prepend = prepend_win + checkOpts
         if BBSvars.STAGE4_mode == "multiarch":
             win_archs = _supportedWinArchs(pkg)
         else:
