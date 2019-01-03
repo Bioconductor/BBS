@@ -60,7 +60,7 @@ allnodes = {
                    "x86_64",
                    "x86_64-apple-darwin15.6.0",
                    "mac.binary.el-capitan",
-                   "utf-8")
+                   "utf-8"),
     'celaya2':    ("OS X 10.11.6 El Capitan",
                    "x86_64",
                    "x86_64-apple-darwin15.6.0",
