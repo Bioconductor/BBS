@@ -128,12 +128,6 @@ def getMaintainerEmailFromDir(pkg_dir):
         raise DcfFieldNotFoundError(getDescFile(pkg_dir), 'Maintainer email')
     return email
 
-def getCheckOptions(pkg):
-    opt1 = '_R_CHECK_LENGTH_1_CONDITION_=package:' + pkg + '&&'
-    opt2 = '_R_CHECK_LENGTH_1_LOGIC2_=package:' + pkg + '&&'
-    all_opts = opt1 + ' ' + opt2 
-    return all_opts 
-
 def getBBSoptionFromDir(pkg_dir, key):
     try:
         option_file = os.path.join(pkg_dir, '.BBSoptions')
