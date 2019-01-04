@@ -129,8 +129,8 @@ def getMaintainerEmailFromDir(pkg_dir):
     return email
 
 def getCheckOptions(pkg):
-    opt1 = '_R_CHECK_LENGTH_1_CONDITION_=package:' + pkg + ',verbose'
-    opt2 = '_R_CHECK_LENGTH_1_LOGIC2_=package:' + pkg + ',verbose'
+    opt1 = '_R_CHECK_LENGTH_1_CONDITION_=package:' + pkg + '&&'
+    opt2 = '_R_CHECK_LENGTH_1_LOGIC2_=package:' + pkg + '&&'
     all_opts = opt1 + ' ' + opt2 
     return all_opts 
 
