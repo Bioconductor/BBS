@@ -474,7 +474,8 @@ Everything in this section must be done from the biocbuild account.
   See "Install Homebrew" previously in this file if you get errors about
   /usr/local/bin or other directories under /usr/local not being writable.
 
-  Then in /etc/profile add the following line:
+  Then in /etc/profile add the following line, modifying '1.0.2k' with
+  the version installed:
 
     export OPENSSL_LIBS="/usr/local/Cellar/openssl/1.0.2k/lib/libssl.a /usr/local/Cellar/openssl/1.0.2k/lib/libcrypto.a"
 

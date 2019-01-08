@@ -71,7 +71,8 @@ Parallels Tools, getting statistics, and generating problem reports.
 ---------------------------------------------
 
 These instructions assume a pristine Mac Pro with no existing user accounts.
-Connect a monitor and start the machine ...
+A monitor is necessary to create the initial user accounts and it's
+useful for most other actions documented here. 
 
 <a name="host-user-accounts"></a>
 ### User Accounts 
