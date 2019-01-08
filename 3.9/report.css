@@ -436,3 +436,13 @@ TABLE.mainrep .even .merida2 {
     background: #B9C;
 }
 
+/* celaya2 */
+DIV.celaya2,
+TR.celaya2 TD,
+TABLE.mainrep .celaya2,
+TABLE.mainrep .odd .celaya2 {
+    background: #DBE;
+}
+TABLE.mainrep .even .celaya2 {
+    background: #B9C;
+}
