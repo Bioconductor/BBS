@@ -365,7 +365,8 @@ Confirm timezone is Eastern Standard Time:
 
 Parallels Desktop 14 for Mac Business Edition (14.1.0) was used to configure
 this VM. The licence was purchased Oct 14, 2018 and is good for one year
-(expires Oct 14, 2019).
+(expires Oct 14, 2019). Username and password for the account are in the
+Credentials Google Doc.
 
 As the `administrator` user ...
 

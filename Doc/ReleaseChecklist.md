@@ -177,7 +177,7 @@ in _this_ order
   of each package.
 
 - Branch annotations
-  Annotaions for the new devel can be branched on or before this day.
+  Annotations for the new devel can be branched on or before this day.
   It is important they are branched before the release because the 
   symlinks cause problems for CRAN rsyncing their mirrors.
 
@@ -246,7 +246,14 @@ in _this_ order
 
   The mirror instructions on the website will be updated 
   automatically when config.yaml is updated.
- 
+
+  The apache config files need to updated by hand. Add a new
+  (copy-paste) section at the top for the new release number in
+  these 2 files:
+
+    /etc/apache2/sites-available/000-default.conf
+    /etc/apache2/sites-available/default-ssl.conf
+
   Test the mirrors with commands from:
   http://www.bioconductor.org/about/mirrors/mirror-how-to/.
 
