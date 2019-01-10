@@ -16,8 +16,8 @@ merida1 (Mac worker)
 merida2 (Mac worker)  
 
 Eventually we want to host both Mac builders inside the RPCI DMZ and close out
-the MacStadium account. There is currently one Mac builder in the DMZ, celaya2,
-and 2 builders in MacStadium.
+the MacStadium account. There is currently one Mac builder in the DMZ and two
+in MacStadium.
 
 ## IPs
 
@@ -42,7 +42,7 @@ we would have to hard code IPs instead of using the hostname.  Once the
 MacStadium machines are gone, we no longer need the public IPs for the master
 builders and the hosts files on the workers can be cleaned up.
 
-## Route53 DNS
+## AWS Route53 DNS
 
 Currently the DNS entries in Route53 resolve to the private IPs for the
 workers inside the DMZ and public IPs for masters.
@@ -51,18 +51,18 @@ Once we no longer have MacStadium machines, the master builders can also
 resolve to their private IPs since nothing from outside the DMZ should 
 need to access them. When that happens, make these DNS changes in Route53:
 
-Name: malbec1.bioconductor.org
-Type: A
-Value: 172.29.0.3 
+Name: malbec1.bioconductor.org  
+Type: A  
+Value: 172.29.0.3  
 
-Name: malbec2.bioconductor.org
-Type: A
-Value: 172.29.0.4
+Name: malbec2.bioconductor.org  
+Type: A  
+Value: 172.29.0.4  
 
-## hosts file on workers
+## hosts files
 
-And the hosts files on the Windows and Mac builders can be cleaned up
-by removing the entry that points to the private IP.
+Once Route53 is modified to resolve the master builders to their private IPs,
+the hosts files on the workers can be cleaned up.
 
 On the '1' series workers, remove this line from the hosts file:
 
