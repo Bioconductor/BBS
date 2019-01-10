@@ -206,10 +206,6 @@ iii) Assign static IPs (override DHCP):
   (potentially) different IP each time. This could cause problems with SSH
   or other means of accessing machv2.
 
-    # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
-    # Val home network:
-    #sudo networksetup -setmanual 'Ethernet 1' 192.168.1.101 255.255.255.0 192.168.1.1
-    #sudo networksetup -setmanual 'Ethernet 2' 192.168.1.103 255.255.255.0 192.168.1.1
     # RPCI network:
     sudo networksetup -setmanual 'Ethernet 1' 172.29.0.2 255.255.255.0 172.29.0.254 
     sudo networksetup -setmanual 'Ethernet 2' 172.29.0.13 255.255.255.0 172.29.0.254 
@@ -232,16 +228,9 @@ Assign DNS servers:
 
 This is only done for Ethernet 1.
 
-    # Val home network:
-    #sudo networksetup -setdnsservers 'Ethernet 1' 192.168.1.1 8.8.8.8
-    #sudo networksetup -setsearchdomains 'Ethernet 1' robench.org
     # RPCI network:
     sudo networksetup -setdnsservers 'Ethernet 1' 8.8.8.8 8.8.4.4
     sudo networksetup -setsearchdomains 'Ethernet 1' roswellpark.org
-
-    FIXME: Is this necessary?
-    #sudo networksetup -setdnsservers 'Ethernet 2' 8.8.8.8 8.8.4.4
-    #sudo networksetup -setsearchdomains 'Ethernet 2' roswellpark.org
 
 Testing:
 
@@ -858,9 +847,6 @@ Query VM for network adapter name:
 
 Set the static IP, subnet mask and router:
 
-    # sudo networksetup -setmanual SERVICE IP SUBNET ROUTER
-    # Val home network:
-    #sudo networksetup -setmanual 'Ethernet' 192.168.1.102 255.255.255.0 192.168.1.1
     # RPCI network:
     sudo networksetup -setmanual 'Ethernet' 172.29.0.12 255.255.255.0 172.29.0.254 
 
@@ -876,9 +862,6 @@ List DNS servers:
 
 Assign DNS servers:
 
-    # Val home network:
-    #sudo networksetup -setdnsservers 'Ethernet' 192.168.1.1 8.8.8.8
-    #sudo networksetup -setsearchdomains 'Ethernet' robench.org
     # RPCI network:
     sudo networksetup -setdnsservers 'Ethernet' 8.8.8.8 8.8.4.4
     sudo networksetup -setsearchdomains 'Ethernet' roswellpark.org
@@ -893,6 +876,21 @@ Apply all software updates and reboot
     softwareupdate -l         # list all software updates
     sudo softwareupdate -ia   # install them all (if appropriate)
     sudo reboot               # reboot
+
+#### Allow worker to talk to master Linux builder
+
+As of January 2019, we still had build machines in MacStadium that needed to 
+talk to the master Linux builders on a public IP. Because of this, the
+DNS entries for the master Linux builders resolve to the public IP. This
+worker, celaya2, is going to live in the RPCI DMZ and needs to talk
+to the master builder on the RPCI private IP. This is accomplished by
+adding this line to /etc/hosts:
+
+    172.29.0.4   malbec2.bioconductor.org malbec2 
+
+Once we no longer have machines in MacStadium, the Route53 DNS entry for
+the master Linux builders can be modified to point to the private IP and
+we can remove the line above from the hosts file.
 
 <a name="guest-firewall"></a>
 ### Firewall 
