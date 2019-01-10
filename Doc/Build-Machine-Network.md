@@ -4,20 +4,20 @@ As of January 2019, we have build machines in both the RPCI DMZ and MacStadium:
 
 RPCI DMZ:
 
-malbec1 (Linux master)
-malbec2 (Linux master)
-tokay1  (Windows worker)
-tokay2  (Windows worker)
-celaya2 (Mac worker)
+malbec1 (Linux master)  
+malbec2 (Linux master)  
+tokay1  (Windows worker)  
+tokay2  (Windows worker)  
+celaya2 (Mac worker)  
 
 MacStadium:
 
-merida1 (Mac worker)
-merida2 (Mac worker)
+merida1 (Mac worker)  
+merida2 (Mac worker)  
 
-The goal is to host both Mac builders inside the RPCI DMZ and close out
-our account with MacStadium. We currently have one new Mac builder in
-the DMZ, celaya2, and 2 builders in MacStadium.
+Eventually we want to host both Mac builders inside the RPCI DMZ and close out
+the MacStadium account. There is currently one Mac builder in the DMZ, celaya2,
+and 2 builders in MacStadium.
 
 ## IPs
 
