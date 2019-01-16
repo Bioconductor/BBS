@@ -663,19 +663,35 @@ on the Host using the `prlctl` command:
 
 
 <a name="guest-user-accounts"></a>
-## User accounts 
+## User Accounts
 
-When fully configured as a build machine, the VM will have 3 users: administrator, biocbuild
-and pkgbuild. This could be done as part of the next HOWTO but it is straightforward to 
-create these now when you have the monitor hooked up.
+### Create accounts
+
+When fully configured as a build machine, the VM will have 3 users: 
+administrator, biocbuild and pkgbuild. This could be done as part of 
+the next HOWTO but it is straightforward to create these now when you 
+have the monitor hooked up.
 
 Go to System Preferences -> Users and Groups:
-- Create a `biocbuild` account with Admin prividledges.
-- Create a `pkgbuild` account with Standard priviledges. 
+- Create a `biocbuild` account with Admin privileges.
+- Create a `pkgbuild` account with Standard privileges. 
 
-From a terminal window in either the Host or Guest, add the approprate SSH keys
+From a terminal window in either the Host or Guest, add the appropriate SSH keys
 to the admin, biocbuild and pkgbuild users. Record who is in what group in the
 Google Credentials Doc.
+
+### Add pkgbuild to the com.apple.access_ssh group
+
+Add the pkgbuild user to the com.apple.access_ssh group. At the time this
+machine was configured, this was not done automatically for non-Admin users.
+Log into celaya2 and run this from the command line:
+
+    sudo dseditgroup -o edit -a pkgbuild -t user com.apple.access_ssh
+
+Confirm pkgbuild was added to the group by logging in as pkgbuild or
+becoming pkgbuild from one of the other Admin users. Then run
+
+    groups
 
 <a name="guest-hostname"></a>
 ### Hostname
