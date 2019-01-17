@@ -48,8 +48,14 @@ Currently the DNS entries in Route53 resolve to the private IPs for the
 workers inside the DMZ and public IPs for masters.
 
 Once we no longer have MacStadium machines, the master builders can also
-resolve to their private IPs since nothing from outside the DMZ should 
-need to access them. When that happens, make these DNS changes in Route53:
+resolve to their private IPs if nothing from outside the DMZ is accessing
+them. If off-site persons have requested direct access to the malbecs, then
+they may be using the public IP. This would need to be confirmed with
+RPCI IT, i.e., holes in the firewall for specific IPs that are not build 
+machines.
+
+If no external persons are accessing the public IPs, the following changes
+can be made in Route53:
 
 Name: malbec1.bioconductor.org  
 Type: A  
@@ -61,8 +67,8 @@ Value: 172.29.0.4
 
 ## hosts files
 
-Once Route53 is modified to resolve the master builders to their private IPs,
-the hosts files on the workers can be cleaned up.
+If Route53 is modified to resolve the master builders to their private IPs,
+the hosts files on the workers can also be cleaned up.
 
 On the '1' series workers, remove this line from the hosts file:
 
