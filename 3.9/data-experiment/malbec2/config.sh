@@ -25,7 +25,8 @@ cd ..
 . ./config.sh
 cd "$wd0"
 
-# Overwrite BBS_CENTRAL_RHOST value set in ../../config.sh
+# Overwrite values set in ../config.sh and ../../config.sh
+export BBS_MEAT0_RHOST="localhost"
 export BBS_CENTRAL_RHOST="localhost"
 
 
