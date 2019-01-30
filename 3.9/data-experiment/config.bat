@@ -5,6 +5,13 @@
 
 set BBS_SUBBUILDS=data-experiment
 
+
+set wd1=%cd%
+cd ..
+call config.bat
+cd %wd1%
+
+
 @rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)
 @rem   2: CRAN-style local repo containing .tar.gz pkgs
@@ -20,8 +27,8 @@ set BBS_BIOC_MANIFEST_CLONE_PATH=%BBS_WORK_TOPDIR%\manifest
 set BBS_BIOC_MANIFEST_FILE=data-experiment.txt
 
 @rem Where is the fresh meat to be stored by prerun (stage1)
-set BBS_MEAT0_RHOST=malbec2.bioconductor.org
-set BBS_MEAT0_RUSER=biocbuild
+set BBS_MEAT0_RHOST=%BBS_CENTRAL_RHOST%
+set BBS_MEAT0_RUSER=%BBS_CENTRAL_RUSER%
 set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.9-data-experiment/MEAT0
 
 @rem Triggers a MEAT0 update at beginning of prerun (stage1)
@@ -31,14 +38,10 @@ set BBS_UPDATE_MEAT0=1
 set BBS_MEAT_PATH=%BBS_WORK_TOPDIR%\meat
 
 @rem Where are the gitlog files stored by prerun (stage1)
-set BBS_GITLOG_RHOST=%BBS_MEAT0_RHOST%
-set BBS_GITLOG_RUSER=%BBS_MEAT0_RUSER%
-set BBS_GITLOG_RDIR=/home/biocbuild/public_html/BBS/3.9/data-experiment/gitlog
+set BBS_GITLOG_RHOST=%BBS_CENTRAL_RHOST%
+set BBS_GITLOG_RUSER=%BBS_CENTRAL_RUSER%
+set BBS_GITLOG_RDIR=%BBS_CENTRAL_RDIR%\gitlog
 
 @rem Local gitlog copy
 set BBS_GITLOG_PATH=%BBS_WORK_TOPDIR%\gitlog
 
-set wd1=%cd%
-cd ..
-call config.bat
-cd %wd1%

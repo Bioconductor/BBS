@@ -1,10 +1,17 @@
 #!/bin/bash
-# ==================================================================================
+# =============================================================================
 # Settings shared by all the Unix nodes involved in the 3.9-workflows subbuilds
-# ==================================================================================
+# =============================================================================
 
 
 export BBS_SUBBUILDS="workflows"
+
+
+wd1=$(pwd)
+cd ..
+. ./config.sh
+cd "$wd1"
+
 
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)
@@ -21,8 +28,8 @@ export BBS_BIOC_MANIFEST_CLONE_PATH="$BBS_WORK_TOPDIR/manifest"
 export BBS_BIOC_MANIFEST_FILE="workflows.txt"
 
 # Where is the fresh meat to be stored by prerun (stage1)
-export BBS_MEAT0_RHOST="malbec2.bioconductor.org"
-export BBS_MEAT0_RUSER="biocbuild"
+export BBS_MEAT0_RHOST=$BBS_CENTRAL_RHOST
+export BBS_MEAT0_RUSER=$BBS_CENTRAL_RUSER
 export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.9-workflows/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
@@ -32,14 +39,10 @@ export BBS_UPDATE_MEAT0=1
 export BBS_MEAT_PATH="$BBS_WORK_TOPDIR/meat"
 
 # Where are the gitlog files stored by prerun (stage1)
-export BBS_GITLOG_RHOST=$BBS_MEAT0_RHOST
-export BBS_GITLOG_RUSER=$BBS_MEAT0_RUSER
-export BBS_GITLOG_RDIR="/home/biocbuild/public_html/BBS/3.9/workflows/gitlog"
+export BBS_GITLOG_RHOST=$BBS_CENTRAL_RHOST
+export BBS_GITLOG_RUSER=$BBS_CENTRAL_RUSER
+export BBS_GITLOG_RDIR="$BBS_CENTRAL_RDIR/gitlog"
 
 # Local gitlog copy
 export BBS_GITLOG_PATH="$BBS_WORK_TOPDIR/gitlog"
 
-wd1=$(pwd)
-cd ..
-. ./config.sh
-cd "$wd1"

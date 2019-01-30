@@ -25,11 +25,12 @@ cd ..
 . ./config.sh
 cd "$wd0"
 
-# Overwrite values set in ../config.sh and ../../config.sh
-export BBS_MEAT0_RHOST="localhost"
+
+
+# Overwrite values set in ../../config.sh and ../config.sh
 export BBS_CENTRAL_RHOST="localhost"
-
-
+export BBS_MEAT0_RHOST="localhost"
+export BBS_GITLOG_RHOST="localhost"
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
 # stage8 (BBS-report.py)

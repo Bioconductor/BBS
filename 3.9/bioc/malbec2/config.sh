@@ -25,11 +25,12 @@ cd ..
 . ./config.sh
 cd "$wd0"
 
-# Overwrite values set in ../config.sh and ../../config.sh
-export BBS_MEAT0_RHOST="localhost"
+
+
+# Overwrite values set in ../../config.sh and ../config.sh
 export BBS_CENTRAL_RHOST="localhost"
-
-
+export BBS_MEAT0_RHOST="localhost"
+export BBS_GITLOG_RHOST="localhost"
 
 # Needed only on the node performing stage6 (must be run on the
 # BBS_CENTRAL_RHOST machine).
