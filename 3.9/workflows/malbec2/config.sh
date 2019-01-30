@@ -25,6 +25,9 @@ cd ..
 . ./config.sh
 cd "$wd0"
 
+# Overwrite BBS_CENTRAL_RHOST value set in ../../config.sh
+export BBS_CENTRAL_RHOST="localhost"
+
 
 
 # Needed only on the node performing stage6 (must be run on the

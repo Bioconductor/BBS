@@ -25,6 +25,9 @@ cd ..
 . ./config.sh
 cd "$wd0"
 
+# Overwrite BBS_CENTRAL_RHOST value set in ../../config.sh
+export BBS_CENTRAL_RHOST="localhost"
+
 
 
 # Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and

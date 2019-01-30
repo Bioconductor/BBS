@@ -71,7 +71,7 @@ class RemoteDir:
         return f
 
     def get_full_remote_path(self):
-        if self.host == None:
+        if self.host == None or self.host == 'localhost':
             # self is a local dir
             return self.path
         # self is a remote dir
@@ -96,7 +96,7 @@ class RemoteDir:
             dest_file.close()
             src_file.close()
             return
-        if self.host == None:
+        if self.host == None or self.host == 'localhost':
             # self is a local dir
             src_path = "%s/%s" % (self.path, src_path)
             cmd = "%s %s %s" % (self.rsync_cmd, src_path, dest_path)
@@ -108,15 +108,15 @@ class RemoteDir:
         return
 
     def _Call(self, remote_cmd):
-        if self.host != None:
+        if self.host == None or self.host == 'localhost':
+            # self is a local dir => local execution
+            cmd = remote_cmd
+        else:
             # self is a remote dir => remote execution
             if self.user != None:
                 cmd = self.ssh_cmd + " " + self.user + "@" + self.host + " '" + remote_cmd + "'"
             else:
                 cmd = self.ssh_cmd + " " + self.host + " '" + remote_cmd + "'"
-        else:
-            # self is a local dir => local execution
-            cmd = remote_cmd
         return jobs.call(cmd)
 
     def MakeMe(self, verbose=False):
@@ -186,7 +186,7 @@ class RemoteDir:
             ## This works better but requires Cygwin.
             cmd = "chmod +r " + src_path
             jobs.runJob(cmd, None, 60.0, verbose)
-        if self.host == None:
+        if self.host == None or self.host == 'localhost':
             # self is a local dir
             cmd = "%s %s %s" % (self.rsync_cmd, src_path, self.path)
         else:
@@ -194,10 +194,10 @@ class RemoteDir:
             cmd = "%s %s %s" % (self.rsync_rsh_cmd, src_path, self.get_full_remote_path())
         maxtime = 120.0 + fileutils.total_size(src_path) / bandwidth_in_bytes_per_sec
         if verbose:
-            if self.host != None:
-                action = "Putting"
-            else:
+            if self.host == None or self.host == 'localhost':
                 action = "Copying"
+            else:
+                action = "Putting"
             print "BBS>   %s %s in %s/:" % (action, src_path, self.label)
         jobs.tryHardToRunJob(cmd, 5, None, maxtime, 30.0, failure_is_fatal, verbose)
         return
@@ -215,7 +215,7 @@ class RemoteDir:
             os.mkdir(local_dir)
         oldcwd = os.getcwd()
         os.chdir(local_dir)
-        if self.host == None:
+        if self.host == None or self.host == 'localhost':
             # self is a local dir too
             cmd = "%s -rlptz %s/ %s" % (self.rsync_cmd, self.path, '.')
         else:
