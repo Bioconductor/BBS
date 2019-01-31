@@ -336,7 +336,7 @@ def STAGE1_loop(pkgdir_paths, dest_rdir, nb_cpu):
     nb_jobs = len(job_queue)
     t0 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
-                                           600.0, True)
+                                           900.0, True)
     dt = time.time() - t0
     print "BBS> [STAGE1_loop] END loop."
     print "BBS> -------------------------------------------------------------"
@@ -363,7 +363,11 @@ def makeTargetRepo(rdir):
     dcf = open(meat_index_path, 'r')
     pkgdir_paths = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
-    STAGE1_loop(pkgdir_paths, rdir, BBSvars.nb_cpu)
+    ## STAGE1 will run 'tar zcf' commands to generate the no-vignettes source
+    ## tarballs. Running too many concurrent 'tar zcf' commands seems harmful
+    ## so we limit the nb of cpus to 2.
+    #STAGE1_loop(pkgdir_paths, rdir, BBSvars.nb_cpu)
+    STAGE1_loop(pkgdir_paths, rdir, 2)
     MakeReposPACKAGES(rdir)
     print "BBS> [makeTargetRepo] DONE."
     return
