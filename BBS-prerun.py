@@ -234,9 +234,11 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
                                  depth=1,
                                  snapshot_date=snapshot_date,
                                  reclone_if_update_fails=True)
+        print ""
     print "BBS> -------------------------------------------------------------"
     print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="
+    print ""
     return
 
 def update_MEAT0(MEAT0_path):
