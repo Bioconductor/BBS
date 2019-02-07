@@ -298,10 +298,10 @@ DIV.malbec1,
 TR.malbec1 TD,
 TABLE.mainrep .malbec1,
 TABLE.mainrep .odd .malbec1 {
-    background: #BBD;
+    background: #ACC;
 }
 TABLE.mainrep .even .malbec1 {
-    background: #99B;
+    background: #8AA;
 }
 
 /* malbec2 */
@@ -309,43 +309,10 @@ DIV.malbec2,
 TR.malbec2 TD,
 TABLE.mainrep .malbec2,
 TABLE.mainrep .odd .malbec2 {
-    background: #BBD;
+    background: #ACC;
 }
 TABLE.mainrep .even .malbec2 {
-    background: #99B;
-}
-
-/* linux1_bioconductor_org */
-DIV.linux1_bioconductor_org,
-TR.linux1_bioconductor_org TD,
-TABLE.mainrep .linux1_bioconductor_org,
-TABLE.mainrep .odd .linux1_bioconductor_org {
-    background: #BCD;
-}
-TABLE.mainrep .even .linux1_bioconductor_org {
-    background: #9AB;
-}
-
-/* gewurz */
-DIV.gewurz,
-TR.gewurz TD,
-TABLE.mainrep .gewurz,
-TABLE.mainrep .odd .gewurz {
-    background: #EBA;
-}
-TABLE.mainrep .even .gewurz {
-    background: #C98;
-}
-
-/* windows1_bioconductor_org */
-DIV.windows1_bioconductor_org,
-TR.windows1_bioconductor_org TD,
-TABLE.mainrep .windows1_bioconductor_org,
-TABLE.mainrep .odd .windows1_bioconductor_org {
-    background: #EBA;
-}
-TABLE.mainrep .even .windows1_bioconductor_org {
-    background: #C98;
+    background: #8AA;
 }
 
 /* tokay1 */
@@ -353,10 +320,10 @@ DIV.tokay1,
 TR.tokay1 TD,
 TABLE.mainrep .tokay1,
 TABLE.mainrep .odd .tokay1 {
-    background: #DB9;
+    background: #DBB;
 }
 TABLE.mainrep .even .tokay1 {
-    background: #B97;
+    background: #B99;
 }
 
 /* tokay2 */
@@ -364,65 +331,21 @@ DIV.tokay2,
 TR.tokay2 TD,
 TABLE.mainrep .tokay2,
 TABLE.mainrep .odd .tokay2 {
-    background: #DB9;
+    background: #DBB;
 }
 TABLE.mainrep .even .tokay2 {
-    background: #B97;
+    background: #B99;
 }
 
-/* moscato1 */
-DIV.moscato1,
-TR.moscato1 TD,
-TABLE.mainrep .moscato1,
-TABLE.mainrep .odd .moscato1 {
-    background: #EBA;
+/* merida1 */
+DIV.merida2,
+TR.merida2 TD,
+TABLE.mainrep .merida2,
+TABLE.mainrep .odd .merida2 {
+    background: #BBF;
 }
-TABLE.mainrep .even .moscato1 {
-    background: #C98;
-}
-
-/* moscato2 */
-DIV.moscato2,
-TR.moscato2 TD,
-TABLE.mainrep .moscato2,
-TABLE.mainrep .odd .moscato2 {
-    background: #EBA;
-}
-TABLE.mainrep .even .moscato2 {
-    background: #C98;
-}
-
-/* toluca2 */
-DIV.toluca2,
-TR.toluca2 TD,
-TABLE.mainrep .toluca2,
-TABLE.mainrep .odd .toluca2 {
-    background: #DBE;
-}
-TABLE.mainrep .even .toluca2 {
-    background: #B9C;
-}
-
-/* veracruz2 */
-DIV.veracruz2,
-TR.veracruz2 TD,
-TABLE.mainrep .veracruz2,
-TABLE.mainrep .odd .veracruz2 {
-    background: #DBE;
-}
-TABLE.mainrep .even .veracruz2 {
-    background: #B9C;
-}
-
-/* veracruz1 */
-DIV.veracruz1,
-TR.veracruz1 TD,
-TABLE.mainrep .veracruz1,
-TABLE.mainrep .odd .veracruz1 {
-    background: #DBE;
-}
-TABLE.mainrep .even .veracruz1 {
-    background: #B9C;
+TABLE.mainrep .even .merida2 {
+    background: #99D;
 }
 
 /* merida2 */
@@ -430,10 +353,10 @@ DIV.merida2,
 TR.merida2 TD,
 TABLE.mainrep .merida2,
 TABLE.mainrep .odd .merida2 {
-    background: #DBE;
+    background: #BBF;
 }
 TABLE.mainrep .even .merida2 {
-    background: #B9C;
+    background: #99D;
 }
 
 /* celaya2 */
@@ -441,8 +364,9 @@ DIV.celaya2,
 TR.celaya2 TD,
 TABLE.mainrep .celaya2,
 TABLE.mainrep .odd .celaya2 {
-    background: #DBE;
+    background: #BBF;
 }
 TABLE.mainrep .even .celaya2 {
-    background: #B9C;
+    background: #99D;
 }
+
