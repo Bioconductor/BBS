@@ -134,7 +134,10 @@ def get_vcs_meta(pkg, key):
         raise bbs.parse.DcfFieldNotFoundError(file, key)
     return val
 
-def get_leafreport_rURL(pkg, node_id, stagecmd):
+def get_leafreport_rel_path(pkg, node_id, stagecmd):
+    return os.path.join(pkg, "%s-%s.html" % (node_id, stagecmd))
+
+def get_leafreport_rel_url(pkg, node_id, stagecmd):
     return "%s/%s-%s.html" % (pkg, node_id, stagecmd)
 
 

@@ -61,13 +61,18 @@ class RemoteDir:
                          self.ssh_cmd, self.rsync_cmd, self.rsync_rsh_cmd)
 
     def WOpen(self, file, catch_HTTPerrors=False):
-        file_url = self.url + '/' + file
-        if not catch_HTTPerrors:
-            return urllib2.urlopen(file_url)
-        try:
-            f = urllib2.urlopen(file_url)
-        except urllib2.HTTPError:
-            return None
+        if self.host == None or self.host == 'localhost':
+            # self is a local dir
+            filepath = os.path.join(self.path, file)
+            f = open(filepath, "r")
+        else:
+            # self is a remote dir accessible via HTTP
+            file_url = self.url + '/' + file
+            try:
+                f = urllib2.urlopen(file_url)
+            except urllib2.HTTPError:
+                if catch_HTTPerrors:
+                    return None
         return f
 
     def get_full_remote_path(self):
@@ -98,7 +103,7 @@ class RemoteDir:
             return
         if self.host == None or self.host == 'localhost':
             # self is a local dir
-            src_path = "%s/%s" % (self.path, src_path)
+            src_path = os.path.join(self.path, src_path)
             cmd = "%s %s %s" % (self.rsync_cmd, src_path, dest_path)
         else:
             # self is a remote dir

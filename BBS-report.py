@@ -289,7 +289,7 @@ def write_pkg_status_asTD(out, pkg, node, stagecmd, leafreport_ref, style=None):
             pkgdir = "."
         else:
             pkgdir = pkg
-        leafreport_rURL = BBSreportutils.get_leafreport_rURL(pkgdir, node.id, stagecmd)
+        leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkgdir, node.id, stagecmd)
         status_html = '<A href="%s">%s</A>' % (leafreport_rURL, status_asSPAN(status))
         if leafreport_ref != None \
            and pkg == leafreport_ref.pkg \
@@ -682,7 +682,7 @@ def write_motd_asTABLE(out):
 def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     pkg = leafreport_ref.pkg
     page_title = 'Results for %s' % pkg
-    out_rURL = '%s/index.html' % pkg
+    out_rURL = os.path.join(pkg, 'index.html')
     out = open(out_rURL, 'w')
 
     write_HTML_header(out, page_title, '../report.css')
@@ -993,7 +993,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     node_id = leafreport_ref.node_id
     stagecmd = leafreport_ref.stagecmd
     page_title = '%s report for %s on %s' % (stagecmd2label[stagecmd], pkg, node_id)
-    out_rURL = BBSreportutils.get_leafreport_rURL(pkg, node_id, stagecmd)
+    out_rURL = BBSreportutils.get_leafreport_rel_path(pkg, node_id, stagecmd)
     out = open(out_rURL, 'w')
 
     write_HTML_header(out, page_title, '../report.css')
