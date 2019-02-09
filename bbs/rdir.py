@@ -64,7 +64,11 @@ class RemoteDir:
         if self.host == None or self.host == 'localhost':
             # self is a local dir
             filepath = os.path.join(self.path, file)
-            f = open(filepath, "r")
+            try:
+                f = open(filepath, "r")
+            except IOError:
+                if catch_HTTPerrors:
+                    return None
         else:
             # self is a remote dir accessible via HTTP
             file_url = self.url + '/' + file
