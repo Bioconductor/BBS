@@ -69,14 +69,16 @@ class RemoteDir:
             except IOError:
                 if catch_HTTPerrors:
                     return None
+                raise Exception('unable to open file %s' % filepath)
         else:
             # self is a remote dir accessible via HTTP
-            file_url = self.url + '/' + file
+            fileurl = self.url + '/' + file
             try:
-                f = urllib2.urlopen(file_url)
+                f = urllib2.urlopen(fileurl)
             except urllib2.HTTPError:
                 if catch_HTTPerrors:
                     return None
+                raise Exception('unable to open url %s' % fileurl)
         return f
 
     def get_full_remote_path(self):
