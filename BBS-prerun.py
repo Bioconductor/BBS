@@ -78,7 +78,7 @@ def build_meat_index(pkgs, meat_path):
             skipped.write('\n')
             nskipped = nskipped + 1
             continue
-        if not bb.parse.versionIsValid(version):
+        if not bbs.parse.versionIsValid(version):
             desc_file = bbs.parse.getDescFile(pkgdir_path)
             print "BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % (version, desc_file)
             skipped.write('Package: %s\n' % pkg)
