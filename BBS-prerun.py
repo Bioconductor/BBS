@@ -78,6 +78,13 @@ def build_meat_index(pkgs, meat_path):
             skipped.write('\n')
             nskipped = nskipped + 1
             continue
+        if not validVersion(version):
+            desc_file = bbs.parse.getDescFile(pkgdir_path)
+            print "BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % (version, desc_file)
+            skipped.write('Package: %s\n' % pkg)
+            skipped.write('\n')
+            nskipped = nskipped + 1
+            continue
         out.write('Package: %s\n' % pkg)
         out.write('Version: %s\n' % version)
         out.write('Maintainer: %s\n' % maintainer)
@@ -100,8 +107,8 @@ def build_meat_index(pkgs, meat_path):
             out.write('AlertTo: %s\n' % alert_to)
         out.write('\n')
         nout = nout + 1
-    out.close()
     skipped.close()
+    out.close()
     print "BBS> [build_meat_index] %s pkgs were skipped (out of %s)" % (nskipped, len(pkgs))
     print "BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs))
     return meat_index_path

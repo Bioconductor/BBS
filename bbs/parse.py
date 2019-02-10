@@ -86,6 +86,12 @@ def getVersionFromDir(pkg_dir):
         raise DcfFieldNotFoundError(desc_file, 'Version')
     return version
 
+def validVersion(version_string):
+    version_regex = '^[0-9]+([.-][0-9]+)*$'
+    p = re.compile(version_regex)
+    m = p.match(version_string)
+    return m != None
+
 def getPackageStatusFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
     dcf = open(desc_file, 'r')
