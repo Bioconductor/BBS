@@ -86,7 +86,7 @@ def getVersionFromDir(pkg_dir):
         raise DcfFieldNotFoundError(desc_file, 'Version')
     return version
 
-def validVersion(version_string):
+def versionIsValid(version_string):
     version_regex = '^[0-9]+([.-][0-9]+)*$'
     p = re.compile(version_regex)
     m = p.match(version_string)
