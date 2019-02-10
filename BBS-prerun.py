@@ -40,6 +40,7 @@ def remakeCentralRdir(Central_rdir):
 def build_meat_index(pkgs, meat_path):
     print "BBS> [build_meat_index] Start building the meat index for " + \
           "the %s packages in the manifest" % len(pkgs)
+    sys.stdout.flush()
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
     skipped_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.skipped_index_file)
     out = open(meat_index_path, 'w')
@@ -61,12 +62,14 @@ def build_meat_index(pkgs, meat_path):
                 maintainer = bbs.parse._getMaintainerFromDir(pkgdir_path)
         except IOError:
             print "BBS>   Missing DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path
+            sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
             continue
         except (bbs.parse.DcfFieldNotFoundError, bbs.dcf.dcfrecordsparser.DCFParseError):
             print "BBS>   Bad DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path
+            sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
@@ -74,6 +77,7 @@ def build_meat_index(pkgs, meat_path):
         if package != pkg:
             desc_file = bbs.parse.getDescFile(pkgdir_path)
             print "BBS>   Unexpected 'Package: %s' in '%s'. Skip it!" % (package, desc_file)
+            sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
@@ -81,6 +85,7 @@ def build_meat_index(pkgs, meat_path):
         if not bbs.parse.versionIsValid(version):
             desc_file = bbs.parse.getDescFile(pkgdir_path)
             print "BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % (version, desc_file)
+            sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
@@ -111,6 +116,7 @@ def build_meat_index(pkgs, meat_path):
     out.close()
     print "BBS> [build_meat_index] %s pkgs were skipped (out of %s)" % (nskipped, len(pkgs))
     print "BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs))
+    sys.stdout.flush()
     return meat_index_path
 
 def writeAndUploadMeatIndex(pkgs, meat_path):
