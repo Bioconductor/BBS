@@ -246,6 +246,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     print "BBS> END update_git_MEAT0()"
     print "BBS> =============================================================="
     print ""
+    sys.stdout.flush()
     return
 
 def update_MEAT0(MEAT0_path):
