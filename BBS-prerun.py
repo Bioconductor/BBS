@@ -38,7 +38,7 @@ def remakeCentralRdir(Central_rdir):
 ##############################################################################
 
 def build_meat_index(pkgs, meat_path):
-    print "BBS> [build_meat_index] Start building the meat index for " + \
+    print "BBS> [build_meat_index] START building the meat index for " + \
           "the %s packages in the manifest" % len(pkgs)
     sys.stdout.flush()
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
@@ -114,6 +114,8 @@ def build_meat_index(pkgs, meat_path):
         nout = nout + 1
     skipped.close()
     out.close()
+    print "BBS> [build_meat_index] DONE building the meat index for " + \
+          "the %s packages in the manifest" % len(pkgs)
     print "BBS> [build_meat_index] %s pkgs were skipped (out of %s)" % (nskipped, len(pkgs))
     print "BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs))
     sys.stdout.flush()
@@ -147,7 +149,9 @@ def update_svnlog():
     svninfo_dir = os.path.join(BBSvars.work_topdir, "svninfo")
     shutil.copy(logfilename, svninfo_dir)
 
-def writeAndUploadVcsMeta(snapshot_date):
+def collect_vcs_meta(snapshot_date):
+    print "BBS> [collect_vcs_meta] START collecting vcs meta data..."
+    sys.stdout.flush()
     vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
     vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
@@ -198,6 +202,8 @@ def writeAndUploadVcsMeta(snapshot_date):
             cmd = '(%s) >%s' % (cmd, gitlog_file)
             bbs.jobs.doOrDie(cmd)
     BBScorevars.Central_rdir.Put(vcsmeta_dir, True, True)
+    print "BBS> [collect_vcs_meta] DONE collecting vcs meta data."
+    sys.stdout.flush()
     return
 
 def update_svn_MEAT0(MEAT0_path, snapshot_date):
@@ -279,7 +285,7 @@ def writeAndUploadMeatInfo(work_topdir):
     print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
     pkgs = bbs.manifest.read(manifest_path)
     writeAndUploadMeatIndex(pkgs, MEAT0_path)
-    writeAndUploadVcsMeta(snapshot_date)
+    collect_vcs_meta(snapshot_date)
     uploadSkippedIndex(work_topdir)
     return
 
