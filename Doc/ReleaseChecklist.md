@@ -60,8 +60,6 @@ in _this_ order
 
 - Announce contributed annotation deadline
 
-- Start building workflows on devel
-
 - Start building annotations
 
 <a name="threeweeks"></a>
@@ -172,9 +170,6 @@ in _this_ order
   ~biocbuild/BBS/3.6/bioc/ and ~biocbuild/BBS/3.6/data-experiment/ folders.
   For now, packages must still be built off their master branch so do NOT 
   touch the BBS_BIOC_GIT_BRANCH variable!
-
-- Modify the /about/removed-packages/. Link to the last good landing page
-  of each package.
 
 - Branch annotations
   Annotations for the new devel can be branched on or before this day.
