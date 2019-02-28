@@ -4,8 +4,9 @@
 import sys
 import os
 
-import manifest
-import gitutils
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+import bbs.manifest
+import bbs.gitutils
 
 gitserver = 'git.bioconductor.org'
 
@@ -27,7 +28,7 @@ def update_packages(pkg_dir, pkgs, git_branch=None, skip=None):
         print ''
         pkg_git_clone = os.path.join(pkg_dir, pkg)
         pkg_git_repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-        gitutils.update_git_clone(pkg_git_clone, pkg_git_repo_url, git_branch)
+        bbs.gitutils.update_git_clone(pkg_git_clone, pkg_git_repo_url, git_branch)
     return
 
 def update_packages_in_current_working_dir(git_branch=None, skip=None):
@@ -38,7 +39,7 @@ def update_packages_in_current_working_dir(git_branch=None, skip=None):
         print 'defined and set to:'
         print 'BBS>     %s' % manifest_path
         print 'BBS> ==> Using %s as manifest file...' % manifest_path
-        pkgs = manifest.read(manifest_path)
+        pkgs = bbs.manifest.read(manifest_path)
         print 'BBS> Nb of packages listed in manifest file: %d' % len(pkgs)
     else:
         print 'NOT defined (or is set to '
@@ -56,16 +57,16 @@ def update_manifest(git_branch=None):
     print 'BBS> ----------------------------------------------------------'
     print 'BBS> [update_manifest] branch: %s' % git_branch
     print ''
-    gitutils.update_git_clone(manifest_git_clone,
-                         manifest_git_repo_url,
-                         git_branch)
+    bbs.gitutils.update_git_clone(manifest_git_clone,
+                                  manifest_git_repo_url,
+                                  git_branch)
     return
 
 def update_packages_from_manifest(pkg_dir, manifest_file,
                                   git_branch=None, skip=None):
     update_manifest(git_branch)
     manifest_path = os.path.join(manifest_git_clone, manifest_file)
-    pkgs = manifest.read(manifest_path)
+    pkgs = bbs.manifest.read(manifest_path)
     update_packages(pkg_dir, pkgs, git_branch, skip)
     return
 

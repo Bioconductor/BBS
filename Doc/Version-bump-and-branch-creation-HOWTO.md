@@ -70,7 +70,6 @@ in sections **C.**, **D.**, and **E.**.
   below on the day prior to the release:
 
       export BBS_HOME="$HOME/BBS"
-      export PYTHONPATH="$BBS_HOME/bbs"
 
       # clone `manifest` repo
       $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_8
@@ -236,7 +235,6 @@ Update the git clones of all the packages listed in `$MANIFEST_FILE`. This
 should take 15-20 minutes:
 
     export BBS_HOME="$HOME/BBS"
-    export PYTHONPATH="$BBS_HOME/bbs"
     time $BBS_HOME/utils/update_bioc_git_repos.py
 
 ### C7. First version bump (to even y)

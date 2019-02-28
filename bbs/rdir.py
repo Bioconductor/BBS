@@ -17,8 +17,8 @@ import os
 ### Error 404) but urllib2.urlopen() does (raises an urllib2.HTTPError object)
 import urllib2
 
-import fileutils
-import jobs
+import bbs.fileutils
+import bbs.jobs
 
 
 ### Expected bandwidth (in kilobits/s) for transferring data back and forth
@@ -115,7 +115,7 @@ class RemoteDir:
             # self is a remote dir
             src_path = "%s/%s" % (self.get_full_remote_path(), src_path)
             cmd = "%s %s %s" % (self.rsync_rsh_cmd, src_path, dest_path)
-        jobs.tryHardToRunJob(cmd, 5, None, 60.0, 20.0, True, verbose)
+        bbs.jobs.tryHardToRunJob(cmd, 5, None, 60.0, 20.0, True, verbose)
         return
 
     def _Call(self, remote_cmd):
@@ -128,7 +128,7 @@ class RemoteDir:
                 cmd = self.ssh_cmd + " " + self.user + "@" + self.host + " '" + remote_cmd + "'"
             else:
                 cmd = self.ssh_cmd + " " + self.host + " '" + remote_cmd + "'"
-        return jobs.call(cmd)
+        return bbs.jobs.call(cmd)
 
     def MakeMe(self, verbose=False):
         if verbose:
@@ -196,21 +196,21 @@ class RemoteDir:
             #os.chmod(src_path, 0644) # This doesn't work
             ## This works better but requires Cygwin.
             cmd = "chmod +r " + src_path
-            jobs.runJob(cmd, None, 60.0, verbose)
+            bbs.jobs.runJob(cmd, None, 60.0, verbose)
         if self.host == None or self.host == 'localhost':
             # self is a local dir
             cmd = "%s %s %s" % (self.rsync_cmd, src_path, self.path)
         else:
             # self is a remote dir
             cmd = "%s %s %s" % (self.rsync_rsh_cmd, src_path, self.get_full_remote_path())
-        maxtime = 120.0 + fileutils.total_size(src_path) / bandwidth_in_bytes_per_sec
+        maxtime = 120.0 + bbs.fileutils.total_size(src_path) / bandwidth_in_bytes_per_sec
         if verbose:
             if self.host == None or self.host == 'localhost':
                 action = "Copying"
             else:
                 action = "Putting"
             print "BBS>   %s %s in %s/:" % (action, src_path, self.label)
-        jobs.tryHardToRunJob(cmd, 5, None, maxtime, 30.0, failure_is_fatal, verbose)
+        bbs.jobs.tryHardToRunJob(cmd, 5, None, maxtime, 30.0, failure_is_fatal, verbose)
         return
 
     def Mput(self, paths, failure_is_fatal=True, verbose=False):
@@ -234,7 +234,7 @@ class RemoteDir:
             cmd = "%s -rlptz %s/ %s" % (self.rsync_rsh_cmd, self.get_full_remote_path(), '.')
         if verbose:
             print "BBS>   Syncing local '%s' with %s" % (local_dir, self.label)
-        jobs.tryHardToRunJob(cmd, 3, None, 1800.0, 60.0, True, verbose)
+        bbs.jobs.tryHardToRunJob(cmd, 3, None, 1800.0, 60.0, True, verbose)
         ## Workaround a strange problem observed so far on Windows Server
         ## 2008 R2 Enterprise (64-bit) only. After running rsync (from Cygwin)
         ## on this machine to sync a local folder, the local filesystem seems
@@ -247,7 +247,7 @@ class RemoteDir:
         ## to make 'tar' work again on it.
         if sys.platform == "win32":
             cmd = "chmod a+r . -R"  # from Cygwin (or Rtools)
-            jobs.runJob(cmd, None, 300.0, verbose)
+            bbs.jobs.runJob(cmd, None, 300.0, verbose)
         os.chdir(oldcwd)
         return
 

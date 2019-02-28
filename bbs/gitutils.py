@@ -15,8 +15,9 @@
 
 import sys
 import os
-import jobs
-import fileutils
+
+import bbs.jobs
+import bbs.fileutils
 
 def _create_clone(clone_path, repo_url, branch=None, depth=None):
     try:
@@ -30,7 +31,7 @@ def _create_clone(clone_path, repo_url, branch=None, depth=None):
         cmd += ' --depth %s' % depth
     cmd = '%s %s %s' % (cmd, repo_url, clone_path)
     print "bbs.gitutils._create_clone> %s" % cmd
-    jobs.doOrDie(cmd)
+    bbs.jobs.doOrDie(cmd)
     print ""
     return
 
@@ -47,7 +48,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         ## checkout branch
         cmd = '%s checkout %s' % (git_cmd, branch)
         print "bbs.gitutils._update_clone> %s" % cmd
-        retcode = jobs.call(cmd)
+        retcode = bbs.jobs.call(cmd)
         if retcode != 0:
             print "bbs.gitutils._update_clone> cd %s" % old_cwd
             os.chdir(old_cwd)
@@ -60,7 +61,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         ## date (see below)
         cmd = '%s fetch' % git_cmd
     print "bbs.gitutils._update_clone> %s" % cmd
-    retcode = jobs.call(cmd)
+    retcode = bbs.jobs.call(cmd)
     if retcode != 0:
         print "bbs.gitutils._update_clone> cd %s" % old_cwd
         os.chdir(old_cwd)
@@ -74,7 +75,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         #cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
         cmd = '%s merge' % git_cmd
         print "bbs.gitutils._update_clone> %s" % cmd
-        retcode = jobs.call(cmd)
+        retcode = bbs.jobs.call(cmd)
         if retcode != 0:
             print "bbs.gitutils._update_clone> cd %s" % old_cwd
             os.chdir(old_cwd)
@@ -97,7 +98,7 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         print "bbs.gitutils.update_git_clone> ==> will try to re-create " + \
               "git clone from scratch ..."
         print "bbs.gitutils.update_git_clone> rm -r %s" % clone_path
-        fileutils.nuke_tree(clone_path)
+        bbs.fileutils.nuke_tree(clone_path)
         print ""
     _create_clone(clone_path, repo_url, branch, depth)
     return
