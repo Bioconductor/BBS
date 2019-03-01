@@ -388,7 +388,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
         pkgIndex <- file.path(online.contrib, "PACKAGES")
         if (file.exists(pkgIndex))
             unlink(pkgIndex)
-        tryCatch(download.file(paste0("http://bioconductor.org/packages/",
+        tryCatch(download.file(paste0("http://master.bioconductor.org/packages/",
                                       biocvers, "/", biocrepo,
                                       "/src/contrib/PACKAGES"),
                                destfile=pkgIndex),
