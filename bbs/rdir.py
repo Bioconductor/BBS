@@ -30,6 +30,12 @@ import bbs.jobs
 bandwidth_in_kbps = 800.0  # 100 kilobytes per sec
 bandwidth_in_bytes_per_sec = bandwidth_in_kbps * 1000.0 / 8.0
 
+class WOpenError(Exception):
+    def __init__(self, file):
+        self.file = file
+    def __str__(self):
+        return "Unable to open file %s" % self.file
+
 class RemoteDir:
 
     # When passed None to the 'host' arg, then degrades to a local dir (and
@@ -60,25 +66,25 @@ class RemoteDir:
                          self.host, self.user,
                          self.ssh_cmd, self.rsync_cmd, self.rsync_rsh_cmd)
 
-    def WOpen(self, file, catch_HTTPerrors=False):
+    def WOpen(self, file, return_None_on_error=False):
         if self.host == None or self.host == 'localhost':
             # self is a local dir
             filepath = os.path.join(self.path, file)
             try:
                 f = open(filepath, "r")
             except IOError:
-                if catch_HTTPerrors:
+                if return_None_on_error:
                     return None
-                raise Exception('unable to open file %s' % filepath)
+                raise WOpenError(filepath)
         else:
             # self is a remote dir accessible via HTTP
             fileurl = self.url + '/' + file
             try:
                 f = urllib2.urlopen(fileurl)
             except urllib2.HTTPError:
-                if catch_HTTPerrors:
+                if return_None_on_error:
                     return None
-                raise Exception('unable to open url %s' % fileurl)
+                raise WOpenError(fileurl)
         return f
 
     def get_full_remote_path(self):

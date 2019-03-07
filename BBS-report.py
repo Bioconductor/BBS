@@ -32,11 +32,11 @@ class LeafReportReference:
         self.node_id = node_id
         self.stagecmd = stagecmd
 
-def wopen_leafreport_input_file(pkg, node_id, stagecmd, filename, catch_HTTPerrors=False):
+def wopen_leafreport_input_file(pkg, node_id, stagecmd, filename, return_None_on_error=False):
     if pkg:
         filename = "%s.%s-%s" % (pkg, stagecmd, filename)
     rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stagecmd))
-    return rdir.WOpen(filename, catch_HTTPerrors=catch_HTTPerrors)
+    return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
 
 STATUS_SUMMARY = {}
 
@@ -767,7 +767,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         out.write('<HR>\n<H3>Command output</H3>\n')
     try:
         f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    except urllib2.HTTPError:
+    except WOpenError:
         out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
         out.write('is not available. We apologize for the inconvenience.')
@@ -791,7 +791,7 @@ def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
     filename = '00install.out'
     filepath = os.path.join(Rcheck_dir, filename)
     f = wopen_leafreport_input_file(None, node_id, "checksrc", filepath,
-                                    catch_HTTPerrors=True)
+                                    return_None_on_error=True)
     if f != None:
         write_filepath_asHTML(out, Rcheck_dir, filename)
         write_file_asHTML(out, f, node_hostname)
@@ -1157,7 +1157,7 @@ def write_Rconfig_table_from_file(out, Node_rdir, vars):
 
 def write_SysCommandVersion_from_file(out, Node_rdir, var):
     filename = 'NodeInfo/%s-version.txt' % var
-    f = Node_rdir.WOpen(filename, catch_HTTPerrors=True)
+    f = Node_rdir.WOpen(filename, return_None_on_error=True)
     if f == None:
         return
     cmd = get_Rconfig_value_from_file(Node_rdir, var)

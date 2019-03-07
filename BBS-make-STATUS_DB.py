@@ -20,7 +20,7 @@ def get_status_from_summary_file(pkg, node_id, stagecmd):
     rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stagecmd))
     try:
         status = BBSreportutils.WReadDcfVal(rdir, file, 'Status')
-    except urllib2.HTTPError:
+    except WOpenError:
         if stagecmd == "install":
             return "NotNeeded"
         return "NA"
