@@ -14,10 +14,10 @@ import shutil
 import re
 import fnmatch
 import string
-import urllib2
 
 import bbs.fileutils
 import bbs.parse
+import bbs.rdir
 import bbs.jobs
 import bbs.html
 import BBScorevars
@@ -767,7 +767,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
         out.write('<HR>\n<H3>Command output</H3>\n')
     try:
         f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
-    except WOpenError:
+    except bbs.rdir.WOpenError:
         out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
         out.write('is not available. We apologize for the inconvenience.')
