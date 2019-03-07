@@ -33,9 +33,10 @@ def make_STATUS_DB(allpkgs):
         for node in BBSreportutils.supported_nodes(pkg):
 
             # INSTALL status
-            stagecmd = 'install'
-            status = get_status_from_summary_file(pkg, node.id, stagecmd)
-            out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+            if BBScorevars.subbuilds != "bioc-longtests":
+                stagecmd = 'install'
+                status = get_status_from_summary_file(pkg, node.id, stagecmd)
+                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
 
             # BUILD status
             stagecmd = 'buildsrc'
