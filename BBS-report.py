@@ -70,20 +70,21 @@ def make_STATUS_SUMMARY(allpkgs):
         for node in BBSreportutils.supported_nodes(pkg):
 
             # INSTALL status
-            stagecmd = 'install'
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-            update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+            if BBScorevars.subbuilds != "bioc-longtests":
+                stagecmd = 'install'
+                status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+                update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
 
             # BUILD status
             stagecmd = 'buildsrc'
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
-            ok_to_skip = status in ["TIMEOUT", "ERROR"]
+            skipped_is_OK = status in ["TIMEOUT", "ERROR"]
 
             # CHECK status
             if BBScorevars.subbuilds != "workflows":
                 stagecmd = 'checksrc'
-                if ok_to_skip:
+                if skipped_is_OK:
                     status = "skipped"
                 else:
                     status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
@@ -92,7 +93,7 @@ def make_STATUS_SUMMARY(allpkgs):
             # BUILD BIN status
             if BBSreportutils.is_doing_buildbin(node):
                 stagecmd = 'buildbin'
-                if ok_to_skip:
+                if skipped_is_OK:
                     status = "skipped"
                 else:
                     status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
