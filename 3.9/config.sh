@@ -49,3 +49,4 @@ export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_
 export _R_CHECK_EXECUTABLES_=false
 export _R_CHECK_EXECUTABLES_EXCLUSIONS_=false
 export _R_CHECK_LENGTH_1_CONDITION_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
+export _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
