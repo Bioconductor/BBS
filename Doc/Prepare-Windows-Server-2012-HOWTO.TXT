@@ -340,6 +340,14 @@ interactively on a Windows build machine.
      BiocManager:
 
        install.packages("BiocManager")
+       
+     Check to make sure the right version of BiocManager is installed for the version of R.
+     If necessary set the BiocVersion. 
+     
+       library(BiocManager)
+       # if necessary
+       BiocManager::install(version="devel")
+      
 
   TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
   with:
@@ -360,7 +368,7 @@ interactively on a Windows build machine.
      When R is updated, the cache for AnnotationHub and ExperimentHub should
      be refreshed. This is done by removing all of .AnnotationHub/,
      .AnnotationHubData/, .ExperimentHub/ and .ExperimentHubData/ present
-     in C:\Users\biocbuild\ and C:\Users\biobuild\Documents.
+     in C:\Users\biocbuild\ and C:\Users\biobuild\Documents\AppData\.
 
 ** Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
 
