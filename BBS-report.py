@@ -109,10 +109,10 @@ def make_STATUS_SUMMARY(allpkgs):
 def showPropagationStatus(subbuild):
     return subbuild != "bioc-longtests"
 
-### Stage commands run in subbuilds
+### Stages to display (as columns in HTML table) for subbuilds
 def stageCmds(subbuild):
     if subbuild == "bioc-longtests":
-       return ['checksrc']
+       return ['checksrc']  # we run 'buildsrc' but don't display it
     elif subbuild == "workflows":
        return ['install', 'buildsrc']
     else:
@@ -406,7 +406,7 @@ def statuses2classes(statuses):
     if "WARNINGS" in statuses:
         classes += " warnings"
     ## A package is tagged with the "ok" class if it's not tagged with any of
-    ## the "timeout", "error" or "warnings". Note that this means that 
+    ## the "timeout", "error" or "warnings". Note that this means that
     ## a package could end up being tagged with the "ok" class even if it
     ## doesn't have any OK in 'statuses' (e.g. if it's unsupported on all
     ## platforms).
@@ -424,7 +424,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if pkg in skipped_pkgs:
         classes += ' error'
-    else: 
+    else:
         classes += statuses2classes(statuses)
     out.write('<TR class="%s header">' % classes)
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
@@ -576,7 +576,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if pkg in skipped_pkgs:
         classes += ' error'
-    else: 
+    else:
         classes += statuses2classes(statuses)
     out.write('<TR class="%s">' % classes)
     out.write('<TD class="header" style="text-align: right;"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
@@ -1037,18 +1037,21 @@ def make_node_LeafReports(allpkgs, node):
     for pkg in BBSreportutils.supported_pkgs(node):
 
         # INSTALL leaf-report
-        stagecmd = "install"
-        status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-        if status != "skipped":
-            leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, 
-                                                 stagecmd)
-            make_LeafReport(leafreport_ref, allpkgs)
+        if BBScorevars.subbuilds != "bioc-longtests":
+            stagecmd = "install"
+            status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+            if status != "skipped":
+                leafreport_ref = LeafReportReference(pkg,
+                                                     node.hostname, node.id,
+                                                     stagecmd)
+                make_LeafReport(leafreport_ref, allpkgs)
 
         # BUILD leaf-report
         stagecmd = "buildsrc"
         status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
         if not status in ["skipped", "NA"]:
-            leafreport_ref = LeafReportReference(pkg, node.hostname, node.id, 
+            leafreport_ref = LeafReportReference(pkg,
+                                                 node.hostname, node.id,
                                                  stagecmd)
             make_LeafReport(leafreport_ref, allpkgs)
 
@@ -1057,8 +1060,9 @@ def make_node_LeafReports(allpkgs, node):
             stagecmd = 'checksrc'
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             if not status in ["skipped", "NA"]:
-                leafreport_ref = LeafReportReference(pkg, node.hostname, 
-                                                     node.id, stagecmd)
+                leafreport_ref = LeafReportReference(pkg,
+                                                     node.hostname, node.id,
+                                                     stagecmd)
                 make_LeafReport(leafreport_ref, allpkgs)
 
         # BUILD BIN leaf-report
@@ -1066,8 +1070,9 @@ def make_node_LeafReports(allpkgs, node):
             stagecmd = "buildbin"
             status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
             if not status in ["skipped", "NA"]:
-                leafreport_ref = LeafReportReference(pkg, node.hostname, 
-                                                     node.id, stagecmd)
+                leafreport_ref = LeafReportReference(pkg,
+                                                     node.hostname, node.id,
+                                                     stagecmd)
                 make_LeafReport(leafreport_ref, allpkgs)
 
     print "BBS> [make_node_LeafReports] Node %s: END." % node.id
@@ -1344,10 +1349,10 @@ def write_glyph_table(out):
         return
 
     def write_glyph(id, msg, checkbox = False, first = False):
-        style = "" 
+        style = ""
         if first:
            style += " width: 75px;"
-        out.write('<TR>\n') 
+        out.write('<TR>\n')
         out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
                   (style, status_asSPAN(id)))
         if checkbox:
@@ -1365,10 +1370,10 @@ def write_glyph_table(out):
             out.write('Use the check boxes to show only packages with the selected status types.')
             out.write('</TD>\n')
         out.write('</TR>\n')
-        return 
+        return
 
     subbuild = BBScorevars.subbuilds
- 
+
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
 
