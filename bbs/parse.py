@@ -17,19 +17,20 @@ import BBScorevars
 from bbs.dcf.dcfrecordsparser import DcfRecordParser
 
 class DcfFieldNotFoundError(Exception):
-    def __init__(self, file, field):
-        self.file = file
+    def __init__(self, filepath, field):
+        self.filepath = filepath
         self.field = field
     def __str__(self):
-        return "\n  Can't extract '%s' from DCF file '%s'\n  Is the file readable?" % (self.field, self.file)
+        return "Field '%s' not found in DCF file '%s'" % \
+               (self.field, self.filepath)
 
-# Get the next field/value pair from a DCF file.
-# The field value starts at the first non-whitespace character following
-# the ":". Where it ends depends on the value of the full_line arg:
-#   - if full_line is True: it ends at the end of the line,
-#   - if full_line is False: it ends at the first whitespace following
-#     the start of the value.
-#   - if the value is empty, return ""
+### Get the next field/value pair from a DCF file.
+### The field value starts at the first non-whitespace character following
+### the ":". Where it ends depends on the value of the full_line arg:
+###   - if full_line is True: it ends at the end of the line,
+###   - if full_line is False: it ends at the first whitespace following
+###     the start of the value.
+###   - if the value is empty, return ""
 def getNextDcfFieldVal(dcf, full_line=False):
     if full_line:
         val_regex = '\\S.*'
@@ -45,15 +46,14 @@ def getNextDcfFieldVal(dcf, full_line=False):
             return (field, val)
     return None
 
-# Get the next value of the field specified by the user from a DCF file.
-def getNextDcfVal(dcf, field, full_line=False):
+### Get the next value of the field specified by the user from a DCF file.
+def getNextDcfVal(dcf, field, full_line=False)
     if full_line:
         val_regex = '\\S.*'
     else:
         val_regex = '\\S+'
     regex = '%s\\s*:\\s*(%s)' % (field, val_regex)
     p = re.compile(regex)
-    val = None
     for line in dcf:
         if not line.startswith(field + ":"):
             continue
@@ -62,8 +62,8 @@ def getNextDcfVal(dcf, field, full_line=False):
             val = m.group(1)
         else:
             val = ""
-        break
-    return val;
+        return val
+    return None
 
 def getDescFile(pkg_dir):
     return os.path.join(pkg_dir, 'DESCRIPTION')
@@ -191,15 +191,15 @@ def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
             pkgs.append(pkg)
     return pkgs
 
-# Return the name of the srcpkg file that would result
-# from building the pkg found at pkg_dir.
+### Return the name of the srcpkg file that would result
+### from building the pkg found at pkg_dir.
 def getSrcPkgFileFromDir(pkg_dir):
     pkg = getPkgFromDir(pkg_dir)
     version = getVersionFromDir(pkg_dir)
     srcpkg_file = pkg + '_' + version + '.tar.gz'
     return srcpkg_file
 
-# srcpkg_path must be a path to a package source tarball (.tar.gz file).
+### srcpkg_path must be a path to a package source tarball (.tar.gz file).
 def getPkgFromPath(srcpkg_path):
     srcpkg_file = os.path.basename(srcpkg_path)
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
@@ -208,7 +208,7 @@ def getPkgFromPath(srcpkg_path):
     pkg = m.group(1)
     return pkg
 
-# srcpkg_path must be a path to a srcpkg file (.tar.gz file).
+### srcpkg_path must be a path to a srcpkg file (.tar.gz file).
 def getVersionFromPath(srcpkg_path):
     srcpkg_file = os.path.basename(srcpkg_path)
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
@@ -217,7 +217,7 @@ def getVersionFromPath(srcpkg_path):
     version = m.group(2)
     return version
 
-# Inject fields into DESCRIPTION
+### Inject fields into DESCRIPTION
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     # git-log
     dcf = open(gitlog_file, 'r')
@@ -263,9 +263,9 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf.close()
 
 ##############################################################################
-# Some utilities for parsing the tail of install.packages(), 'R CMD build',
-# and 'R CMD check' output.
-#
+### Some utilities for parsing the tail of install.packages(), 'R CMD build',
+### and 'R CMD check' output.
+###
 
 def readFileTail(filename, n):
     last_lines = n * [None]
@@ -292,9 +292,9 @@ def readFileTail(filename, n):
             i = 0
     return tail
 
-# Assume 'out_file' is a file containing the output of 'R CMD INSTALL' or
-# 'install.packages()'.
-# Only parse the last 12 lines of the output file.
+### Assume 'out_file' is a file containing the output of 'R CMD INSTALL' or
+### 'install.packages()'.
+### Only parse the last 12 lines of the output file.
 def installPkgWasOK(out_file, pkg):
     tail = readFileTail(out_file, 12)
     # We're looking for bad news instead of good news. That's because there is
@@ -320,9 +320,9 @@ def installPkgWasOK(out_file, pkg):
             return False
     return True
 
-# Assume 'out_file' is a file containing the output of install.packages().
-# Extract the name of the locking package from the last 12 lines of the output
-# file.
+### Assume 'out_file' is a file containing the output of install.packages().
+### Extract the name of the locking package from the last 12 lines of the output
+### file.
 def extractLockingPackage(out_file):
     tail = readFileTail(out_file, 12)
     regex = r'^Try removing .*/00LOCK-([\w\.]*)'
@@ -333,9 +333,9 @@ def extractLockingPackage(out_file):
             return m.group(1)
     return None
 
-# Assume 'out_file' is a file containing the output of 'R CMD check'.
-# Only parse the last 6 lines of the output file.
-# Return a string!
+### Assume 'out_file' is a file containing the output of 'R CMD check'.
+### Only parse the last 6 lines of the output file.
+### Return a string!
 def countWARNINGs(out_file):
     tail = readFileTail(out_file, 6)
     regex = '^WARNING: There (was|were) (\\d+) (warning|warnings)|^Status: (\\d+) WARNING'

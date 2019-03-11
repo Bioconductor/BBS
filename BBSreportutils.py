@@ -92,13 +92,16 @@ def get_status(dcf, pkg, node_id, stagecmd):
 def get_propagation_status_from_db(pkg, node_id):
     rodata = open_rodata(PROPAGATE_STATUS_DB_file)
     status = get_status(rodata['rostream'], pkg, 
-      map_outgoing_node_to_package_type(node_id), 'propagate')
+    map_outgoing_node_to_package_type(node_id), 'propagate')
     return(status)
 
 def get_status_from_db(pkg, node_id, stagecmd):
     rodata = open_rodata(STATUS_DB_file)
     status = get_status(rodata['rostream'], pkg, node_id, stagecmd)
     rodata['rostream'].close()
+    if status == None:
+        sys.exit("'%s' status for package %s on %s not found in %s" %
+                 (stagecmd, pkg, node_id, STATUS_DB_file))
     return status
 
 def get_distinct_statuses_from_db(pkg, nodes=None):
