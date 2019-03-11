@@ -47,7 +47,7 @@ def getNextDcfFieldVal(dcf, full_line=False):
     return None
 
 ### Get the next value of the field specified by the user from a DCF file.
-def getNextDcfVal(dcf, field, full_line=False)
+def getNextDcfVal(dcf, field, full_line=False):
     if full_line:
         val_regex = '\\S.*'
     else:
