@@ -18,6 +18,33 @@ import BBSvars
 import BBScorevars
 
 
+## Report title.
+if BBScorevars.subbuilds == "bioc-longtests":
+    REPORT_TITLE = "Long tests"
+elif BBScorevars.subbuilds == "workflows":
+    REPORT_TITLE = "Workflows build"
+else:
+    if len(NODES) != 1:
+        REPORT_TITLE = "Multiple platform build/check"
+    else:
+        REPORT_TITLE = "Build/check"
+REPORT_TITLE += " report for "
+if BBScorevars.subbuilds == "cran":
+    REPORT_TITLE += "CRAN"
+else:
+    bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
+    REPORT_TITLE += "BioC %s" % bioc_version
+    if BBScorevars.subbuilds == "data-experiment":
+        REPORT_TITLE += " experimental data"
+
+## Stages to display on report (as columns in HTML table).
+if BBScorevars.subbuilds == "bioc-longtests":
+    STAGES_TO_DISPLAY = ['checksrc']  # we run 'buildsrc' but don't display it
+elif BBScorevars.subbuilds == "workflows":
+    STAGES_TO_DISPLAY = ['install', 'buildsrc']
+else:
+    STAGES_TO_DISPLAY = ['install', 'buildsrc', 'checksrc', 'buildbin']
+
 STATUS_DB_file = 'STATUS_DB.txt'
 PROPAGATE_STATUS_DB_file = '../PROPAGATE_STATUS_DB.txt'
 
@@ -111,9 +138,9 @@ def get_distinct_statuses_from_db(pkg, nodes=None):
     for node in nodes:
         if not is_supported(pkg, node):
             continue
-        stagecmds = ['install', 'buildsrc', 'checksrc']
-        if is_doing_buildbin(node):
-            stagecmds.append('buildbin')
+        stagecmds = STAGES_TO_DISPLAY
+        if 'buildbin' in stagecmds and not is_doing_buildbin(node):
+            stagecmds.remove('buildbin')
         for stagecmd in stagecmds:
             status = get_status_from_db(pkg, node.id, stagecmd)
             if status != "skipped" and status not in statuses:
@@ -203,22 +230,4 @@ def supported_nodes(pkg):
         if is_supported(pkg, node):
             nodes.append(node)
     return nodes
-
-if BBScorevars.subbuilds == "bioc-longtests":
-    report_title = "Long tests"
-elif BBScorevars.subbuilds == "workflows":
-    report_title = "Workflows build"
-else:
-    if len(NODES) != 1:
-        report_title = "Multiple platform build/check"
-    else:
-        report_title = "Build/check"
-report_title += " report for "
-if BBScorevars.subbuilds == "cran":
-    report_title += "CRAN"
-else:
-    bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
-    report_title += "BioC %s" % bioc_version
-    if BBScorevars.subbuilds == "data-experiment":
-        report_title += " experimental data"
 

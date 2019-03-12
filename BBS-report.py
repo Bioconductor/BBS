@@ -109,18 +109,9 @@ def make_STATUS_SUMMARY(allpkgs):
 def showPropagationStatus(subbuild):
     return subbuild != "bioc-longtests"
 
-### Stages to display (as columns in HTML table) for subbuilds
-def stageCmds(subbuild):
-    if subbuild == "bioc-longtests":
-       return ['checksrc']  # we run 'buildsrc' but don't display it
-    elif subbuild == "workflows":
-       return ['install', 'buildsrc']
-    else:
-       return ['install', 'buildsrc', 'checksrc', 'buildbin']
-
 ### Number of colums in the report
 def numberOfCols(subbuild):
-    return len(stageCmds(subbuild)) + showPropagationStatus(subbuild)
+    return len(BBSreportutils.STAGES_TO_DISPLAY) + showPropagationStatus(subbuild)
 
 def writeThinRowSeparator_asTR(out, tr_class=None):
     if tr_class:
@@ -313,7 +304,7 @@ def write_stagelabel_asTD(out, stagecmd, extra_style=""):
 
 def write_pkg_stagelabels_asTDs(out, extra_style=""):
     subbuild = BBScorevars.subbuilds
-    for stagecmd in stageCmds(subbuild):
+    for stagecmd in BBSreportutils.STAGES_TO_DISPLAY:
         write_stagelabel_asTD(out, stagecmd, extra_style)
     if showPropagationStatus(subbuild):
         out.write('<TD style="width:11px;"></TD>')
@@ -340,7 +331,7 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
     subbuild = BBScorevars.subbuilds
     skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if BBSreportutils.is_supported(pkg, node):
-        for stagecmd in stageCmds(subbuild):
+        for stagecmd in BBSreportutils.STAGES_TO_DISPLAY:
             if stagecmd == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD class="node %s"></TD>' % node.hostname.replace(".", "_"))
             else:
@@ -517,7 +508,7 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
         out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
         subbuild = BBScorevars.subbuilds
-        for stagecmd in stageCmds(subbuild):
+        for stagecmd in BBSreportutils.STAGES_TO_DISPLAY:
             if stagecmd == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD></TD>')
             else:
@@ -644,7 +635,7 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     out.write('  window.location.href = window.location.href + "/";\n')
     out.write('</script>\n')
     out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
-    title = BBSreportutils.report_title
+    title = BBSreportutils.REPORT_TITLE
     if page_title:
         title += " - " + page_title
     out.write('<TITLE>%s</TITLE>\n' % title)
@@ -660,7 +651,7 @@ def write_goback_asHTML(out, href, current_letter=None):
     out.write(' style="width: 100%; background: #BBB;"><TR>')
     out.write('<TD style="text-align: left; padding-left: 5px; vertical-align: middle;">')
     out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % \
-              (href, BBSreportutils.report_title))
+              (href, BBSreportutils.REPORT_TITLE))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
         out.write('<TD>')
@@ -691,7 +682,7 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    out.write('<H1>%s</H1>\n' % BBSreportutils.report_title)
+    out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
     out.write('<H2>%s</H2>\n' % page_title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
@@ -1002,7 +993,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    #out.write('<H1>%s</H1>\n' % BBSreportutils.report_title)
+    #out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
     out.write('<H2>%s</H2>\n' % page_title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
@@ -1102,7 +1093,7 @@ def write_BioC_mainpage_top_asHTML(out):
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
-    out.write('<H1>%s</H1>\n' % BBSreportutils.report_title)
+    out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
@@ -1117,7 +1108,7 @@ def write_BioC_mainpage_top_asHTML(out):
 def write_CRAN_mainpage_top_asHTML(out):
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY>\n')
-    out.write('<H1>%s</H1>\n' % BBSreportutils.report_title)
+    out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
@@ -1508,7 +1499,7 @@ def write_node_report(node, allpkgs):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    #out.write('<H1>%s</H1>\n' % BBSreportutils.report_title)
+    #out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
     out.write('<H2>%s</H2>\n' % page_title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()

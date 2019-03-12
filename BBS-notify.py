@@ -82,9 +82,9 @@ def send_notification(pkg):
     else:
         to_addrs = [maintainer_email]
     subject = "%s problems reported in the %s" % \
-              (pkg, BBSreportutils.report_title)
+              (pkg, BBSreportutils.REPORT_TITLE)
     msg = "%s\nHi %s maintainer,\n\n" % (msg_head, pkg) \
-        + "According to the %s,\n" % BBSreportutils.report_title \
+        + "According to the %s,\n" % BBSreportutils.REPORT_TITLE \
         + "the %s package has the following problem(s):\n\n" % pkg \
         + "%s\n%s\n%s" % ('\n'.join(problem_descs), msg_tail, msg_footnote)
     if arg1 == "":
