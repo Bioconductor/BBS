@@ -18,6 +18,74 @@ import BBSvars
 import BBScorevars
 
 
+##############################################################################
+###
+### The NODES db (in memory)
+###
+##############################################################################
+
+class Node:
+
+    def __init__(self, hostname, id, os_html, arch, platform, buildbin, pkgs):
+        self.hostname = hostname
+        self.id = id
+        self.os_html = os_html
+        self.arch = arch
+        self.platform = platform
+        self.buildbin = buildbin # boolean
+        self.pkgs = pkgs # list of pkg names
+
+### A list of Node objects
+NODES = []
+
+def fancyname_has_a_bin_suffix(fancyname):
+    ns = fancyname.split(":")
+    if ns[0] == "" or len(ns) > 2 or (len(ns) == 2 and ns[1] != "bin"):
+        sys.exit("don't know what to report for '%s' => EXIT." % fancyname)
+    return len(ns) == 2
+
+def set_NODES(fancynames_in_one_string):
+    fancynames = fancynames_in_one_string.split(' ')
+    for fancyname in fancynames:
+        if fancyname == "":
+            continue
+        id = fancyname.split(":")[0]
+        hostname = id.split("-")[0]
+        os_html = BBScorevars.getNodeSpec(hostname, 'OS').replace(' ', '&nbsp;')
+        arch = BBScorevars.getNodeSpec(hostname, 'Arch')
+        platform = BBScorevars.getNodeSpec(hostname, 'Platform')
+        buildbin = fancyname_has_a_bin_suffix(fancyname)
+        pkgs = get_pkgs_from_meat_index(hostname, id)
+        node = Node(hostname, id, os_html, arch, platform, buildbin, pkgs)
+        NODES.append(node)
+    if len(NODES) == 0:
+        sys.exit("nothing to report (no nodes) => EXIT.")
+    return
+
+def is_doing_buildbin(node):
+    return node.buildbin
+
+def supported_pkgs(node):
+    return node.pkgs
+
+def is_supported(pkg, node):
+    return pkg in supported_pkgs(node)
+
+def supported_nodes(pkg):
+    nodes = []
+    for node in NODES:
+        if is_supported(pkg, node):
+            nodes.append(node)
+    return nodes
+
+
+##############################################################################
+###
+### REPORT_TITLE
+### STAGES_TO_DISPLAY
+###
+##############################################################################
+
 ## Report title.
 if BBScorevars.subbuilds == "bioc-longtests":
     REPORT_TITLE = "Long tests"
@@ -45,12 +113,17 @@ elif BBScorevars.subbuilds == "workflows":
 else:
     STAGES_TO_DISPLAY = ['install', 'buildsrc', 'checksrc', 'buildbin']
 
+
+##############################################################################
+
 STATUS_DB_file = 'STATUS_DB.txt'
 PROPAGATE_STATUS_DB_file = '../PROPAGATE_STATUS_DB.txt'
 
 ### Can be 'local' or the URL where to download the data from
 data_source = 'local'
 
+
+##############################################################################
 
 def map_package_type_to_outgoing_node(package_type):
     map = {}
@@ -73,7 +146,6 @@ def map_outgoing_node_to_package_type(node):
     if (not node in map):
         return None
     return(map[node])
-
 
 ### Open read-only data stream ('local' or 'published')
 def open_rodata(file):
@@ -169,65 +241,4 @@ def get_leafreport_rel_path(pkg, node_id, stagecmd):
 
 def get_leafreport_rel_url(pkg, node_id, stagecmd):
     return "%s/%s-%s.html" % (pkg, node_id, stagecmd)
-
-
-##############################################################################
-###
-### The NODES db (in memory)
-###
-##############################################################################
-
-class Node:
-
-    def __init__(self, hostname, id, os_html, arch, platform, buildbin, pkgs):
-        self.hostname = hostname
-        self.id = id
-        self.os_html = os_html
-        self.arch = arch
-        self.platform = platform
-        self.buildbin = buildbin # boolean
-        self.pkgs = pkgs # list of pkg names
-
-### A list of Node objects
-NODES = []
-
-def fancyname_has_a_bin_suffix(fancyname):
-    ns = fancyname.split(":")
-    if ns[0] == "" or len(ns) > 2 or (len(ns) == 2 and ns[1] != "bin"):
-        sys.exit("don't know what to report for '%s' => EXIT." % fancyname)
-    return len(ns) == 2
-
-def set_NODES(fancynames_in_one_string):
-    fancynames = fancynames_in_one_string.split(' ')
-    for fancyname in fancynames:
-        if fancyname == "":
-            continue
-        id = fancyname.split(":")[0]
-        hostname = id.split("-")[0]
-        os_html = BBScorevars.getNodeSpec(hostname, 'OS').replace(' ', '&nbsp;')
-        arch = BBScorevars.getNodeSpec(hostname, 'Arch')
-        platform = BBScorevars.getNodeSpec(hostname, 'Platform')
-        buildbin = fancyname_has_a_bin_suffix(fancyname)
-        pkgs = get_pkgs_from_meat_index(hostname, id)
-        node = Node(hostname, id, os_html, arch, platform, buildbin, pkgs)
-        NODES.append(node)
-    if len(NODES) == 0:
-        sys.exit("nothing to report (no nodes) => EXIT.")
-    return
-
-def is_doing_buildbin(node):
-    return node.buildbin
-
-def supported_pkgs(node):
-    return node.pkgs
-
-def is_supported(pkg, node):
-    return pkg in supported_pkgs(node)
-
-def supported_nodes(pkg):
-    nodes = []
-    for node in NODES:
-        if is_supported(pkg, node):
-            nodes.append(node)
-    return nodes
 
