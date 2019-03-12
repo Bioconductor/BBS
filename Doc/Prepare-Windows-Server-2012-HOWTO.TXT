@@ -341,25 +341,25 @@ interactively on a Windows build machine.
 
        install.packages("BiocManager")
        
-     Check to make sure the right version of BiocManager is installed for the version of R.
-     If necessary set the BiocVersion. 
+     Check that BiocManager is pointing to the correct version of Bioconductor:
      
-       library(BiocManager)
-       # if necessary
-       BiocManager::install(version="devel")
-      
+       library(BiocManager)  # This displays the version of Bioconductor
+                             # that BiocManager is pointing at.
+       ## If BiocManager is pointing to release instead of devel, change this
+       ## with:
+       install(version="devel")
 
   TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
   with:
 
-    install.packages("BiocManager")
-    BiocManager::install("IRanges", type="source")
-    BiocManager::install("Biobase", type="source")
-    BiocManager::install("zlibbioc", type="source")
+    library(BiocManager)
+    install("IRanges", type="source")
+    install("Biobase", type="source")
+    install("zlibbioc", type="source")
 
   Install BiocCheck for the Single Package Builder:
 
-    BiocManager::install("BiocCheck")
+    install("BiocCheck")
 
   Quit R (do NOT save the workspace image)
 
