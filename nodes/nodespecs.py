@@ -11,12 +11,12 @@
 # OS version, etc. can be obtained programmatically
 
 allnodes = {
-    'malbec1':    ("Linux (Ubuntu 16.04.1 LTS)",
+    'malbec1':    ("Linux (Ubuntu 16.04.6 LTS)",
                    "x86_64",
                    "x86_64-linux-gnu",
                    "source",
                    "utf_8"),
-    'malbec2':    ("Linux (Ubuntu 18.04.1 LTS)",
+    'malbec2':    ("Linux (Ubuntu 18.04.2 LTS)",
                    "x86_64",
                    "x86_64-linux-gnu",
                    "source",
