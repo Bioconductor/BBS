@@ -40,7 +40,7 @@ set BBS_MEAT_PATH=%BBS_WORK_TOPDIR%\meat
 @rem Where are the gitlog files stored by prerun (stage1)
 set BBS_GITLOG_RHOST=%BBS_CENTRAL_RHOST%
 set BBS_GITLOG_RUSER=%BBS_CENTRAL_RUSER%
-set BBS_GITLOG_RDIR=%BBS_CENTRAL_RDIR%\gitlog
+set BBS_GITLOG_RDIR=%BBS_CENTRAL_RDIR%/gitlog
 
 @rem Local gitlog copy
 set BBS_GITLOG_PATH=%BBS_WORK_TOPDIR%\gitlog
