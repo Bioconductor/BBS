@@ -26,27 +26,27 @@ import BBSreportutils
 
 
 class LeafReportReference:
-    def __init__(self, pkg, node_hostname, node_id, stagecmd):
+    def __init__(self, pkg, node_hostname, node_id, stage):
         self.pkg = pkg
         self.node_hostname = node_hostname
         self.node_id = node_id
-        self.stagecmd = stagecmd
+        self.stage = stage
 
-def wopen_leafreport_input_file(pkg, node_id, stagecmd, filename, return_None_on_error=False):
+def wopen_leafreport_input_file(pkg, node_id, stage, filename, return_None_on_error=False):
     if pkg:
-        filename = "%s.%s-%s" % (pkg, stagecmd, filename)
-    rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stagecmd))
+        filename = "%s.%s-%s" % (pkg, stage, filename)
+    rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
     return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
 
 STATUS_SUMMARY = {}
 
-def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
+def update_STATUS_SUMMARY(pkg, node_id, stage, status):
     if not STATUS_SUMMARY.has_key(node_id):
         STATUS_SUMMARY[node_id] = { 'install':     (0, 0, 0, 0, 0), \
                                     'buildsrc':    (0, 0, 0, 0, 0), \
                                     'checksrc':    (0, 0, 0, 0, 0), \
                                     'buildbin':    (0, 0, 0, 0, 0) }
-    x = STATUS_SUMMARY[node_id][stagecmd]
+    x = STATUS_SUMMARY[node_id][stage]
     x0 = x[0]
     x1 = x[1]
     x2 = x[2]
@@ -62,7 +62,7 @@ def update_STATUS_SUMMARY(pkg, node_id, stagecmd, status):
         x3 += 1
     if status == "NotNeeded":
         x4 += 1
-    STATUS_SUMMARY[node_id][stagecmd] = (x0, x1, x2, x3, x4)
+    STATUS_SUMMARY[node_id][stage] = (x0, x1, x2, x3, x4)
     return
 
 def make_STATUS_SUMMARY(allpkgs):
@@ -71,33 +71,33 @@ def make_STATUS_SUMMARY(allpkgs):
 
             # INSTALL status
             if BBScorevars.subbuilds != "bioc-longtests":
-                stagecmd = 'install'
-                status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-                update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+                stage = 'install'
+                status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+                update_STATUS_SUMMARY(pkg, node.id, stage, status)
 
             # BUILD status
-            stagecmd = 'buildsrc'
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-            update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+            stage = 'buildsrc'
+            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+            update_STATUS_SUMMARY(pkg, node.id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
 
             # CHECK status
             if BBScorevars.subbuilds != "workflows":
-                stagecmd = 'checksrc'
+                stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-                update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+                    status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+                update_STATUS_SUMMARY(pkg, node.id, stage, status)
 
             # BUILD BIN status
             if BBSreportutils.is_doing_buildbin(node):
-                stagecmd = 'buildbin'
+                stage = 'buildbin'
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
-                update_STATUS_SUMMARY(pkg, node.id, stagecmd, status)
+                    status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+                update_STATUS_SUMMARY(pkg, node.id, stage, status)
     return
 
 
@@ -111,7 +111,7 @@ def showPropagationStatus(subbuild):
 
 ### Number of colums in the report
 def numberOfCols(subbuild):
-    return len(BBSreportutils.STAGES_TO_DISPLAY) + showPropagationStatus(subbuild)
+    return len(BBSreportutils.stages_to_display()) + showPropagationStatus(subbuild)
 
 def writeThinRowSeparator_asTR(out, tr_class=None):
     if tr_class:
@@ -121,14 +121,6 @@ def writeThinRowSeparator_asTR(out, tr_class=None):
     colspan = numberOfCols(BBScorevars.subbuilds) + 3
     out.write('<TR%s><TD COLSPAN="%s" style="height: 4pt; background: inherit;"></TD></TR>\n' % (tr_class, colspan))
     return
-
-### From internal stage command to stage HTML label
-stagecmd2label = {
-    'install':  "INSTALL",
-    'buildsrc': "BUILD",
-    'checksrc': "CHECK",
-    'buildbin': "BUILD BIN"
-}
 
 def pkgname_to_HTML(pkg):
     if BBScorevars.subbuilds == "cran":
@@ -271,9 +263,9 @@ def write_node_spec_asTD(out, node, spec_html, leafreport_ref):
 def status_asSPAN(status):
     return '<SPAN class="%s">&nbsp;%s&nbsp;</SPAN>' % (status, status)
 
-def write_pkg_status_asTD(out, pkg, node, stagecmd, leafreport_ref, style=None):
-    #print "  %s %s %s" % (pkg, node.id, stagecmd)
-    status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
+    #print "  %s %s %s" % (pkg, node.id, stage)
+    status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
     if status in ["skipped", "NA"]:
         status_html = status_asSPAN(status)
     else:
@@ -281,31 +273,31 @@ def write_pkg_status_asTD(out, pkg, node, stagecmd, leafreport_ref, style=None):
             pkgdir = "."
         else:
             pkgdir = pkg
-        leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkgdir, node.id, stagecmd)
+        leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkgdir, node.id, stage)
         status_html = '<A href="%s">%s</A>' % (leafreport_rURL, status_asSPAN(status))
         if leafreport_ref != None \
            and pkg == leafreport_ref.pkg \
            and node.id == leafreport_ref.node_id \
-           and stagecmd == leafreport_ref.stagecmd:
+           and stage == leafreport_ref.stage:
             status_html = '[%s]' % status_html
     if style == None:
         style = ""
     else:
         style = ' style="%s"' % style
-    out.write('<TD class="status %s %s"%s>%s</TD>' % (node.hostname, stagecmd, style, status_html))
+    out.write('<TD class="status %s %s"%s>%s</TD>' % (node.hostname, stage, style, status_html))
     return
 
-def write_stagelabel_asTD(out, stagecmd, extra_style=""):
-    out.write('<TD class="stagecmd %s" style="text-align: center%s">' % \
-              (stagecmd, extra_style))
-    out.write(stagecmd2label[stagecmd])
+def write_stagelabel_asTD(out, stage, extra_style=""):
+    out.write('<TD class="stage %s" style="text-align: center%s">' % \
+              (stage, extra_style))
+    out.write(BBSreportutils.stage_label(stage))
     out.write('</TD>')
     return
 
 def write_pkg_stagelabels_asTDs(out, extra_style=""):
     subbuild = BBScorevars.subbuilds
-    for stagecmd in BBSreportutils.STAGES_TO_DISPLAY:
-        write_stagelabel_asTD(out, stagecmd, extra_style)
+    for stage in BBSreportutils.stages_to_display():
+        write_stagelabel_asTD(out, stage, extra_style)
     if showPropagationStatus(subbuild):
         out.write('<TD style="width:11px;"></TD>')
     return
@@ -331,11 +323,11 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
     subbuild = BBScorevars.subbuilds
     skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if BBSreportutils.is_supported(pkg, node):
-        for stagecmd in BBSreportutils.STAGES_TO_DISPLAY:
-            if stagecmd == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
+        for stage in BBSreportutils.stages_to_display():
+            if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD class="node %s"></TD>' % node.hostname.replace(".", "_"))
             else:
-                write_pkg_status_asTD(out, pkg, node, stagecmd, leafreport_ref, style)
+                write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style)
         if showPropagationStatus(subbuild):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
@@ -470,18 +462,18 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         out.write('</TR>\n')
     return
 
-def write_summary_TD(out, node, stagecmd):
-    stats = STATUS_SUMMARY[node.id][stagecmd]
+def write_summary_TD(out, node, stage):
+    stats = STATUS_SUMMARY[node.id][stage]
     html = '<TABLE class="summary"><TR>'
     html += '<TD class="summary %s">%d</TD>' % ("TIMEOUT", stats[0])
     html += '<TD class="summary %s">%d</TD>' % ("ERROR", stats[1])
-    if stagecmd == 'checksrc':
+    if stage == 'checksrc':
         html += '<TD class="summary %s">%d</TD>' % ("WARNINGS", stats[2])
     html += '<TD class="summary %s">%d</TD>' % ("OK", stats[3])
-    if stagecmd == 'install':
+    if stage == 'install':
         html += '<TD class="summary %s">%d</TD>' % ("NotNeeded", stats[4])
     html += '</TR></TABLE>'
-    #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stagecmd, html))
+    #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stage, html))
     out.write('<TD>%s</TD>' % html)
     return
 
@@ -508,11 +500,11 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
         out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
         subbuild = BBScorevars.subbuilds
-        for stagecmd in BBSreportutils.STAGES_TO_DISPLAY:
-            if stagecmd == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
+        for stage in BBSreportutils.stages_to_display():
+            if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD></TD>')
             else:
-                write_summary_TD(out, node, stagecmd)
+                write_summary_TD(out, node, stage)
         if showPropagationStatus(subbuild):
             out.write('<TD style="width:11px;"></TD>')
         out.write('</TR>\n')
@@ -696,9 +688,9 @@ def make_PkgReportLandingPage(leafreport_ref, allpkgs):
     out.close()
     return
 
-def write_Summary_asHTML(out, node_hostname, pkg, node_id, stagecmd):
+def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<HR>\n<H3>Summary</H3>\n')
-    dcf = wopen_leafreport_input_file(pkg, node_id, stagecmd, "summary.dcf")
+    dcf = wopen_leafreport_input_file(pkg, node_id, stage, "summary.dcf")
     out.write('<DIV class="%s hscrollable">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
@@ -752,13 +744,13 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     out.write('</DIV>')
     return pattern_detected
 
-def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd):
-    if stagecmd == "checksrc" and BBScorevars.subbuilds == "bioc-longtests":
+def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
+    if stage == "checksrc" and BBScorevars.subbuilds == "bioc-longtests":
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
     try:
-        f = wopen_leafreport_input_file(pkg, node_id, stagecmd, "out.txt")
+        f = wopen_leafreport_input_file(pkg, node_id, stage, "out.txt")
     except bbs.rdir.WOpenError:
         out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
@@ -966,13 +958,13 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     os.chdir(old_cwd)
     return
 
-def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd):
-    if stagecmd != "checksrc":
-        write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd)
+def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stage):
+    if stage != "checksrc":
+        write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
         return
     if BBScorevars.subbuilds == "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
-    write_Command_output_asHTML(out, node_hostname, pkg, node_id, stagecmd)
+    write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
     write_Installation_output_asHTML(out, node_hostname, pkg, node_id)
     if BBScorevars.subbuilds != "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
@@ -983,9 +975,9 @@ def make_LeafReport(leafreport_ref, allpkgs):
     pkg = leafreport_ref.pkg
     node_hostname = leafreport_ref.node_hostname
     node_id = leafreport_ref.node_id
-    stagecmd = leafreport_ref.stagecmd
-    page_title = '%s report for %s on %s' % (stagecmd2label[stagecmd], pkg, node_id)
-    out_rURL = BBSreportutils.get_leafreport_rel_path(pkg, node_id, stagecmd)
+    stage = leafreport_ref.stage
+    page_title = '%s report for %s on %s' % (BBSreportutils.stage_label(stage), pkg, node_id)
+    out_rURL = BBSreportutils.get_leafreport_rel_path(pkg, node_id, stage)
     out = open(out_rURL, 'w')
 
     write_HTML_header(out, page_title, '../report.css')
@@ -1007,16 +999,16 @@ def make_LeafReport(leafreport_ref, allpkgs):
     #else:
     #    write_compactreport_asTABLE(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
 
-    status = BBSreportutils.get_status_from_db(pkg, node_id, stagecmd)
-    if stagecmd == "install" and status == "NotNeeded":
+    status = BBSreportutils.get_status_from_db(pkg, node_id, stage)
+    if stage == "install" and status == "NotNeeded":
         out.write('<HR>\n')
         out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
         out.write('REASON FOR NOT INSTALLING: no other package that will ')
         out.write('be built and checked on this platform needs %s' % pkg)
         out.write('</DIV>\n')
     else:
-        write_Summary_asHTML(out, node_hostname, pkg, node_id, stagecmd)
-        write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stagecmd)
+        write_Summary_asHTML(out, node_hostname, pkg, node_id, stage)
+        write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stage)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -1029,41 +1021,41 @@ def make_node_LeafReports(allpkgs, node):
 
         # INSTALL leaf-report
         if BBScorevars.subbuilds != "bioc-longtests":
-            stagecmd = "install"
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+            stage = "install"
+            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
             if status != "skipped":
                 leafreport_ref = LeafReportReference(pkg,
                                                      node.hostname, node.id,
-                                                     stagecmd)
+                                                     stage)
                 make_LeafReport(leafreport_ref, allpkgs)
 
         # BUILD leaf-report
-        stagecmd = "buildsrc"
-        status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+        stage = "buildsrc"
+        status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
         if not status in ["skipped", "NA"]:
             leafreport_ref = LeafReportReference(pkg,
                                                  node.hostname, node.id,
-                                                 stagecmd)
+                                                 stage)
             make_LeafReport(leafreport_ref, allpkgs)
 
         # CHECK leaf-report
         if BBScorevars.subbuilds != "workflows":
-            stagecmd = 'checksrc'
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+            stage = 'checksrc'
+            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
                                                      node.hostname, node.id,
-                                                     stagecmd)
+                                                     stage)
                 make_LeafReport(leafreport_ref, allpkgs)
 
         # BUILD BIN leaf-report
         if BBSreportutils.is_doing_buildbin(node):
-            stagecmd = "buildbin"
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stagecmd)
+            stage = "buildbin"
+            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
                                                      node.hostname, node.id,
-                                                     stagecmd)
+                                                     stage)
                 make_LeafReport(leafreport_ref, allpkgs)
 
     print "BBS> [make_node_LeafReports] Node %s: END." % node.id

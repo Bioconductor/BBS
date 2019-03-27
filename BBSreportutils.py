@@ -82,7 +82,7 @@ def supported_nodes(pkg):
 ##############################################################################
 ###
 ### REPORT_TITLE
-### STAGES_TO_DISPLAY
+### stages_to_display()
 ###
 ##############################################################################
 
@@ -106,12 +106,21 @@ else:
         REPORT_TITLE += " experimental data"
 
 ## Stages to display on report (as columns in HTML table).
-if BBScorevars.subbuilds == "bioc-longtests":
-    STAGES_TO_DISPLAY = ['checksrc']  # we run 'buildsrc' but don't display it
-elif BBScorevars.subbuilds == "workflows":
-    STAGES_TO_DISPLAY = ['install', 'buildsrc']
-else:
-    STAGES_TO_DISPLAY = ['install', 'buildsrc', 'checksrc', 'buildbin']
+def stages_to_display():
+    if BBScorevars.subbuilds == "bioc-longtests":
+        return ['checksrc']  # we run 'buildsrc' but don't display it
+    if BBScorevars.subbuilds == "workflows":
+        return ['install', 'buildsrc']
+    return ['install', 'buildsrc', 'checksrc', 'buildbin']
+
+def stage_label(stage):
+    stage2label = {
+        'install':  "INSTALL",
+        'buildsrc': "BUILD",
+        'checksrc': "CHECK",
+        'buildbin': "BUILD BIN"
+    }
+    return stage2label[stage]
 
 
 ##############################################################################
@@ -133,7 +142,7 @@ def map_package_type_to_outgoing_node(package_type):
         key = seg.split(":")[0]
         value = seg.split(":")[1].split("/")[0]
         map[key] = value
-    return(map[package_type])
+    return map[package_type]
 
 def map_outgoing_node_to_package_type(node):
     map = {}
@@ -145,7 +154,7 @@ def map_outgoing_node_to_package_type(node):
         map[anode] = pkgtype
     if (not node in map):
         return None
-    return(map[node])
+    return map[node]
 
 ### Open read-only data stream ('local' or 'published')
 def open_rodata(file):
@@ -183,8 +192,8 @@ def get_pkg_field_from_meat_index(pkg, field):
     rodata['rostream'].close()
     return val
 
-def get_status(dcf, pkg, node_id, stagecmd):
-    key = '%s#%s#%s' % (pkg, node_id, stagecmd)
+def get_status(dcf, pkg, node_id, stage):
+    key = '%s#%s#%s' % (pkg, node_id, stage)
     status = bbs.parse.getNextDcfVal(dcf, key, full_line=True)
     return status
 
@@ -194,13 +203,13 @@ def get_propagation_status_from_db(pkg, node_id):
     map_outgoing_node_to_package_type(node_id), 'propagate')
     return(status)
 
-def get_status_from_db(pkg, node_id, stagecmd):
+def get_status_from_db(pkg, node_id, stage):
     rodata = open_rodata(STATUS_DB_file)
-    status = get_status(rodata['rostream'], pkg, node_id, stagecmd)
+    status = get_status(rodata['rostream'], pkg, node_id, stage)
     rodata['rostream'].close()
     if status == None:
         raise Exception("'%s' status for package %s on %s not found in %s" %
-                        (stagecmd, pkg, node_id, STATUS_DB_file))
+                        (stage, pkg, node_id, STATUS_DB_file))
     return status
 
 def get_distinct_statuses_from_db(pkg, nodes=None):
@@ -210,11 +219,11 @@ def get_distinct_statuses_from_db(pkg, nodes=None):
     for node in nodes:
         if not is_supported(pkg, node):
             continue
-        stagecmds = STAGES_TO_DISPLAY
-        if 'buildbin' in stagecmds and not is_doing_buildbin(node):
-            stagecmds.remove('buildbin')
-        for stagecmd in stagecmds:
-            status = get_status_from_db(pkg, node.id, stagecmd)
+        stages = stages_to_display()
+        if 'buildbin' in stages and not is_doing_buildbin(node):
+            stages.remove('buildbin')
+        for stage in stages:
+            status = get_status_from_db(pkg, node.id, stage)
             if status != "skipped" and status not in statuses:
                 statuses.append(status)
     return statuses
@@ -236,9 +245,9 @@ def get_vcs_meta(pkg, key):
         raise bbs.parse.DcfFieldNotFoundError(file, key)
     return val
 
-def get_leafreport_rel_path(pkg, node_id, stagecmd):
-    return os.path.join(pkg, "%s-%s.html" % (node_id, stagecmd))
+def get_leafreport_rel_path(pkg, node_id, stage):
+    return os.path.join(pkg, "%s-%s.html" % (node_id, stage))
 
-def get_leafreport_rel_url(pkg, node_id, stagecmd):
-    return "%s/%s-%s.html" % (pkg, node_id, stagecmd)
+def get_leafreport_rel_url(pkg, node_id, stage):
+    return "%s/%s-%s.html" % (pkg, node_id, stage)
 

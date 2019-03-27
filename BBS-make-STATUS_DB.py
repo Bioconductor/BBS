@@ -15,13 +15,13 @@ import bbs.rdir
 import BBScorevars
 import BBSreportutils
 
-def get_status_from_summary_file(pkg, node_id, stagecmd):
-    file = "%s.%s-summary.dcf" % (pkg, stagecmd)
-    rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stagecmd))
+def get_status_from_summary_file(pkg, node_id, stage):
+    file = "%s.%s-summary.dcf" % (pkg, stage)
+    rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
     try:
         status = BBSreportutils.WReadDcfVal(rdir, file, 'Status')
     except bbs.rdir.WOpenError:
-        if stagecmd == "install":
+        if stage == "install":
             return "NotNeeded"
         return "NA"
     return status
@@ -34,33 +34,33 @@ def make_STATUS_DB(allpkgs):
 
             # INSTALL status
             if BBScorevars.subbuilds != "bioc-longtests":
-                stagecmd = 'install'
-                status = get_status_from_summary_file(pkg, node.id, stagecmd)
-                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+                stage = 'install'
+                status = get_status_from_summary_file(pkg, node.id, stage)
+                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
 
             # BUILD status
-            stagecmd = 'buildsrc'
-            status = get_status_from_summary_file(pkg, node.id, stagecmd)
-            out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+            stage = 'buildsrc'
+            status = get_status_from_summary_file(pkg, node.id, stage)
+            out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
 
             # CHECK status
             if BBScorevars.subbuilds != "workflows":
-                stagecmd = 'checksrc'
+                stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = get_status_from_summary_file(pkg, node.id, stagecmd)
-                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+                    status = get_status_from_summary_file(pkg, node.id, stage)
+                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
 
             # BUILD BIN status
             if BBSreportutils.is_doing_buildbin(node):
-                stagecmd = 'buildbin'
+                stage = 'buildbin'
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = get_status_from_summary_file(pkg, node.id, stagecmd)
-                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stagecmd, status))
+                    status = get_status_from_summary_file(pkg, node.id, stage)
+                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
     out.close()
     print "BBS> [make_STATUS_DB] END"
     return
