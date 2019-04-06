@@ -1061,6 +1061,9 @@ libsbml.pc
 
 ** Set up GoogleGenomics package to authenticate for Google Genomics API
 
+  APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the
+  GoogleGenomics package, which is now officially deprecated)
+
   In /etc/profile add
 
     export GOOGLE_API_KEY=AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4
@@ -1102,6 +1105,10 @@ libsbml.pc
   Download mysql-8.0.0-dmr-osx10.11-x86_64.dmg from:
 
     https://downloads.mysql.com/archives/community/
+
+  e.g. with:
+
+    curl -O https://downloads.mysql.com/archives/get/file/mysql-8.0.0-dmr-osx10.11-x86_64.dmg
 
   Install with:
 
@@ -1207,15 +1214,15 @@ libsbml.pc
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ../root
     cmake --build . -- -j4  # takes about 10-15 min (> 45 min without -j4)
 
-  Try to start a ROOT interactive session:
-
-    source bin/thisroot.sh
-    root  # then quit the session with .q
-
   Install with:
 
     sudo cmake --build . --target install
     sudo chown -R biocbuild:admin /usr/local
+
+  Try to start a ROOT interactive session:
+
+    source bin/thisroot.sh
+    root  # then quit the session with .q
 
   #Installing a ROOT 6 pre-compiled binary for OS X 10.11.
   #WARNING: Don't do this! As of Apr 2017, xps can still not be compiled
@@ -1251,6 +1258,9 @@ libsbml.pc
     BiocManager::install("xps", type="source")
 
 ** Install ImageMagick
+
+  APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
+  package, which is now officially deprecated)
 
   WARNING: Don't do 'brew install imagemagick'. This will install the jpeg-8d
   lib on top of the previously installed jpeg-9 lib!!!
@@ -1312,17 +1322,17 @@ libsbml.pc
 
   Download with:
 
-    curl -O http://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.3.4-MacOSX.dmg
+    curl -O https://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.4.11-MacOSX.dmg
 
   Install with:
 
-    sudo hdiutil attach ViennaRNA-2.3.4-MacOSX.dmg
-    sudo installer -pkg "/Volumes/ViennaRNA 2.3.4/ViennaRNA Package 2.3.4 Installer.pkg" -target /
-    sudo hdiutil detach "/Volumes/ViennaRNA 2.3.4"
+    sudo hdiutil attach ViennaRNA-2.4.11-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.4.11/ViennaRNA Package 2.4.11 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.4.11"
 
   TESTING:
 
-    which RNAfold
+    which RNAfold  # /usr/local/bin/RNAfold
 
   Then try to build the GeneGA package:
 
