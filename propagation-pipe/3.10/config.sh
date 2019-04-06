@@ -1,9 +1,9 @@
 #!/bin/bash
 # ==============================================================
-# Settings shared by all scripts in manage-BioC-repos/3.4 folder
+# Settings shared by all scripts in propagation-pipe/3.10 folder
 # ==============================================================
 
-BIOC_VERSION="3.4"
-R_VERSION="3.3"
+BIOC_VERSION="3.10"
+R_VERSION="3.6"
 R="$HOME/bin/R-$R_VERSION"
-BACKGROUND_COLOR="#E0C266"
+BACKGROUND_COLOR="#c090c0"

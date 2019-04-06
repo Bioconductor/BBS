@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd "$HOME/manage-BioC-repos/3.4"
+cd "$HOME/propagation-pipe/3.10"
 
 . ./config.sh
 . ./prepareRepos-data-experiment.config
