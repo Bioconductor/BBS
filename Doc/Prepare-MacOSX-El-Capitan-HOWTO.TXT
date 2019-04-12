@@ -855,9 +855,9 @@ Everything in this section must be done from the biocbuild account.
     library(BiocManager)
     BiocManager::install("ChemmineOB", type="source")
 
-** Install numpy + scipy + pandas + sklearn + h5py
+** Install Python modules numpy + scipy + pandas + sklearn + h5py
 
-  These Python modules are needed by the BiocSklearn package.
+  These modules are needed by the BiocSklearn package.
 
   numpy and scipy are part of the Python installation shipped with Mac OS X
   so are already installed in:
@@ -942,14 +942,20 @@ Everything in this section must be done from the biocbuild account.
     cd ~/bbs-3.5-bioc/meat
     R CMD build BiocSklearn
 
-** Install h5pyd
+** Install Python module h5pyd
 
   This module is needed by the rhdf5client package.
 
     sudo -H pip install pkgconfig 
     sudo -H pip install h5pyd
 
-** Install Python 3 + Jupyter + nbconvert + jupyter_client
+** Install Python module mofapy
+
+  This module is needed by the MOFA package.
+
+    sudo -H pip install mofapy
+
+** Install Python 3 and modules nbconvert + jupyter_client
 
   Install Python 3 + Jupyter + pip3 with:
 
@@ -963,7 +969,7 @@ Everything in this section must be done from the biocbuild account.
     pip3 install nbconvert
     pip3 install jupyter_client
 
-  TESTING: Install the nbconvertR package *from source* and try to run the
+  TESTING: Install CRAN package nbconvertR *from source* and try to run the
   example in the man page for nbconvert():
 
     install.packages("nbconvertR", type="source")

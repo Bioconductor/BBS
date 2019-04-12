@@ -24,6 +24,15 @@ From the Administrator account
 ** Install Google Chrome
 
 ** Install Python 2.7 (for all users)
+
+  Do NOT install Python from one of the personal administrator accounts that
+  we will create later (in the "Create personal administrator accounts"
+  subsection below). This seems to cause problems e.g. trying to upgrade to
+  the latest pip with the command shown in the "Upgrade to the latest pip"
+  subsection below raises an error. So it's important to perform all the
+  Python related steps described in this "From the Administrator account"
+  section from the Administrator account.
+
   - using Windows x86-64 MSI installer from
       https://www.python.org/downloads/release/python-2712/
   - make sure 'Add python.exe to Path' is selected
@@ -49,14 +58,6 @@ From the Administrator account
     pip install pywin32-220.1-cp27-cp27m-win_amd64.whl
     pip install psutil-4.3.0-cp27-cp27m-win_amd64.whl
 
-** Install Python module nbconvert
-
-  This module is needed by CRAN package nbconvertR.
-
-  In a PowerShell Window:
-
-    pip install nbconvert
-
 ** Install Python modules numpy, scipy, sklearn, h5py and pandas
 
   scipy is a dependency of sklearn and must be installed before
@@ -64,7 +65,8 @@ From the Administrator account
   completes successfully even if scipy is not installed. When sklearn
   is loaded (imported) and scipy is not present it breaks.
 
-  All modules are needed by BiocSklearn and numpy is also needed by DChIPRep.
+  All modules are needed by the BiocSklearn package and numpy is also needed
+  by the DChIPRep package.
 
   In a PowerShell Window:
 
@@ -76,16 +78,27 @@ From the Administrator account
 
 ** Install Python module h5pyd 
 
-  This module is needed by rhdf5client.
+  This module is needed by the rhdf5client package.
 
   In a PowerShell Window:
 
-    pip install h5pyd 
+    pip install h5pyd
 
-Note that installing Python from one of the personal administrator accounts
-below seems to cause problems (e.g. trying to upgrade to the latest pip
-with the above command raises an error). This is why all the above steps
-should be performed from the Administrator account.
+** Install Python module mofapy
+
+  This module is needed by the MOFA package.
+
+  In a PowerShell Window:
+
+    pip install mofapy
+
+** Install Python module nbconvert
+
+  This module is needed by CRAN package nbconvertR.
+
+  In a PowerShell Window:
+
+    pip install nbconvert
 
 ** Create personal administrator accounts:
 
