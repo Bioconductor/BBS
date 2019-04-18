@@ -10,8 +10,8 @@
 
 rm -r "$REPOS_ROOT"/html "$REPOS_ROOT"/index.html "$REPOS_ROOT"/REPOSITORY "$REPOS_ROOT"/repository-detail.css "$REPOS_ROOT"/SYMBOLS "$REPOS_ROOT"/VIEWS "$REPOS_ROOT"/vignettes
 
-R_SCRIPT="library('biocViews')"
-R_SCRIPT="$R_SCRIPT; install.packages('BiocManager', repos='https://cran.rstudio.com')"
+R_SCRIPT="library(biocViews)"
+R_SCRIPT="$R_SCRIPT; if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cran.rstudio.com')"
 R_SCRIPT="$R_SCRIPT; subview <- '$SUBVIEW'"
 R_SCRIPT="$R_SCRIPT; backgroundColor <- '$BACKGROUND_COLOR'"
 R_SCRIPT="$R_SCRIPT; htmlDir <- '$HTML_DIR'"
