@@ -1,7 +1,7 @@
 #!/bin/bash
-# =============================================================================
-# Settings shared by all the Unix nodes involved in the 3.9-workflows subbuilds
-# =============================================================================
+# ==============================================================================
+# Settings shared by all the Unix nodes involved in the 3.10-workflows subbuilds
+# ==============================================================================
 
 
 export BBS_SUBBUILDS="workflows"
@@ -21,7 +21,7 @@ export BBS_MEAT0_TYPE=3
 
 # Needed only if BBS_MEAT0_TYPE is 3
 export BBS_BIOC_MANIFEST_GIT_REPO_URL="https://git.bioconductor.org/admin/manifest"
-export BBS_BIOC_MANIFEST_GIT_BRANCH="RELEASE_3_9"
+export BBS_BIOC_MANIFEST_GIT_BRANCH="RELEASE_3_10"
 export BBS_BIOC_MANIFEST_CLONE_PATH="$BBS_WORK_TOPDIR/manifest"
 
 # Needed if BBS_MEAT0_TYPE is 1 or 3
@@ -30,7 +30,7 @@ export BBS_BIOC_MANIFEST_FILE="workflows.txt"
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST=$BBS_CENTRAL_RHOST
 export BBS_MEAT0_RUSER=$BBS_CENTRAL_RUSER
-export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.9-workflows/MEAT0"
+export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.10-workflows/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
 export BBS_UPDATE_MEAT0=1
