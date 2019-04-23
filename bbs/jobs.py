@@ -478,7 +478,7 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
 
 def _writeSlotStates(slots, file):
     f = open(file, 'w')
-    for slot in len(slots):
+    for slot in range(len(slots)):
         f.write("SLOT %s/%s:" % (slot + 1, len(slots)))
         job = slots[slot]
         if job != None:
