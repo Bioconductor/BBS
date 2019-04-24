@@ -485,7 +485,7 @@ def STAGE3():
             rdir.syncLocalDir(local_dir, True)
     else:
         os.chdir(meat_path)
-    job_queue = prepare_STAGE3_job_queue(pkgdir_paths)
+    job_queue = prepare_STAGE3_job_queue(target_pkgs)
     STAGE3_loop(job_queue, BBSvars.nb_cpu)
     print "BBS> [STAGE3] DONE at %s." % time.asctime()
     return
