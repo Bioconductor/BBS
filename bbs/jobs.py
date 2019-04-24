@@ -489,7 +489,7 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
 
 def _writeSlotsState(slots, job0, slot0, file):
     f = open(file, 'w')
-    f.write("Job about to be assigned or removed from SLOT %s:\n" % slot0 + 1)
+    f.write("Job about to be assigned or removed from SLOT %s:\n" % (slot0 + 1))
     f.write("  - name: %s\n" % job0._name)
     f.write("  - command: %s\n" % job0._cmd)
     f.write("  - output file: %s\n" % job0._output_file)
