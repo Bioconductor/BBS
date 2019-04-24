@@ -601,7 +601,7 @@ def processJobQueue(job_queue, nb_slots=1,
             if verbose:
                 _logActionOnQueuedJob("SKIP", job, nb_jobs, 1, job_deps)
             processed_jobs.append(job._name)
-    close(slotevents_logfile)
+    slotevents_logfile.close()
     if verbose:
         print
         print "bbs.jobs.processJobQueue> Finished."
