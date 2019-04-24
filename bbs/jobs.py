@@ -487,9 +487,13 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
             print "bbs.jobs.processJobQueue> %s" % msg
     return 1
 
-def _writeSlotsState(slots, job0, slot0, file):
+def _writeSlotsState(slots, job0, slot0, file, is_removal=False):
     f = open(file, 'w')
-    f.write("Job about to be assigned or removed from SLOT %s:\n" % (slot0 + 1))
+    if is_removal:
+        when = 'just finished'
+    else:
+        when = 'about to start'
+    f.write("Job %s on SLOT %s:\n" % (when, slot0 + 1))
     f.write("  - name: %s\n" % job0._name)
     f.write("  - command: %s\n" % job0._cmd)
     f.write("  - output file: %s\n" % job0._output_file)
@@ -577,7 +581,7 @@ def processJobQueue(job_queue, nb_slots=1,
             nb_busy_slots -= 1
             slots_state_file = job._name + '.' + job_queue._name + \
                                '-slots-state-right-after-end.txt'
-            _writeSlotsState(slots, job, slot, slots_state_file)
+            _writeSlotsState(slots, job, slot, slots_state_file, True)
         # Slot 'slot' is available
         while True:
             job_rank = len(processed_jobs) + nb_busy_slots
