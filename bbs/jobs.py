@@ -487,24 +487,20 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
             print "bbs.jobs.processJobQueue> %s" % msg
     return 1
 
-def _writeSlotsState(slots, job0, slot0, file, is_removal=False):
-    f = open(file, 'w')
-    if is_removal:
-        when = 'just finished'
-    else:
-        when = 'about to start'
-    f.write("Job %s on SLOT %s:\n" % (when, slot0 + 1))
-    f.write("  - name: %s\n" % job0._name)
-    f.write("  - command: %s\n" % job0._cmd)
-    f.write("  - output file: %s\n" % job0._output_file)
-    f.write("\n")
+def _logSlotEvent(logfile, event_type, job0, slot0, slots):
+    date = bbs.jobs.currentDateString()
+    logfile.write("%s event on SLOT %s/%s on %s:\n" % \
+                  (event_type, slot0 + 1, len(slots), date))
+    logfile.write("  - job name: %s\n" % job0._name)
+    logfile.write("  - job command: %s\n" % job0._cmd)
+    logfile.write("  - job output file: %s\n" % job0._output_file)
+    logfile.write("\n")
     for slot in range(len(slots)):
-        f.write("SLOT %s/%s:" % (slot + 1, len(slots)))
+        logfile.write("SLOT %s:" % slot + 1)
         job = slots[slot]
         if job != None:
-            f.write(" %s\t%s\t%s" % (job._name, job._cmd, job._output_file))
-        f.write("\n")
-    f.close()
+            logfile.write(" %s" % job._name)
+        logfile.write("\n")
     return
 
 def _logSummaryOfJobsWithUnprocessedDeps(job_queue):
@@ -543,6 +539,7 @@ def processJobQueue(job_queue, nb_slots=1,
         print "bbs.jobs.processJobQueue>",
         print "%d jobs in the queue. Start processing them using %d slots" % \
               (nb_jobs, nb_slots)
+    slotevents_logfile = open(job_queue._name + '-slotevents.log', 'w')
     processed_jobs = []
     nb_busy_slots = 0
     slots = nb_slots * [None]
@@ -579,9 +576,7 @@ def processJobQueue(job_queue, nb_slots=1,
             processed_jobs.append(job._name)
             slots[slot] = None
             nb_busy_slots -= 1
-            slots_state_file = job._name + '.' + job_queue._name + \
-                               '-slots-state-right-after-end.txt'
-            _writeSlotsState(slots, job, slot, slots_state_file, True)
+            _logSlotEvent(slotevents_logfile, 'REMOVE', job, slot, slots)
         # Slot 'slot' is available
         while True:
             job_rank = len(processed_jobs) + nb_busy_slots
@@ -596,18 +591,17 @@ def processJobQueue(job_queue, nb_slots=1,
                 break
             job._rank = job_rank
             if job._cmd != None:
-                slots_state_file = job._name + '.' + job_queue._name + \
-                                   '-slots-state-just-before-start.txt'
-                _writeSlotsState(slots, job, slot, slots_state_file)
                 job._slot = slot
                 slots[slot] = _runQueuedJob(job, verbose, nb_jobs, nb_slots,
                                             job_deps)
                 nb_busy_slots += 1
+                _logSlotEvent(slotevents_logfile, 'ASSIGN', job, slot, slots)
                 break
             # SKIP the job
             if verbose:
                 _logActionOnQueuedJob("SKIP", job, nb_jobs, 1, job_deps)
             processed_jobs.append(job._name)
+    close(slotevents_logfile)
     if verbose:
         print
         print "bbs.jobs.processJobQueue> Finished."
