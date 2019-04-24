@@ -496,7 +496,7 @@ def _logSlotEvent(logfile, event_type, job0, slot0, slots):
     logfile.write("  - job output file: %s\n" % job0._output_file)
     logfile.write("\n")
     for slot in range(len(slots)):
-        logfile.write("SLOT %s:" % slot + 1)
+        logfile.write("SLOT %s:" % (slot + 1))
         job = slots[slot]
         if job != None:
             logfile.write(" %s" % job._name)
