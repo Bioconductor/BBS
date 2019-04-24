@@ -266,13 +266,14 @@ def CreateREnvironFiles():
         f.write("GRAPHVIZ_INSTALL_SUBMINOR=%s\n" % graphviz_install_subminor)
         f.close()
 
-def STAGE2_loop(target_pkgs, pkg_deps_list, installed_pkgs, nb_cpu):
-    print "BBS> Preparing STAGE2 job queue ...",
-    job_queue = []
+def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
+    print "BBS> Preparing STAGE2 job queue ... ",
+    stage = 'install'
+    jobs = []
     nb_target_pkgs_in_queue = nb_skipped_pkgs = 0
     for pkg in pkg_deps_list.keys():
         version = None
-        pkgdumps_prefix = pkg + '.install'
+        pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(None, pkgdumps_prefix)
         if pkg in target_pkgs:
             try:
@@ -289,10 +290,9 @@ def STAGE2_loop(target_pkgs, pkg_deps_list, installed_pkgs, nb_cpu):
                 cmd = BBSbase.getSTAGE2cmdForNonTargetPkg(pkg)
         job = BBSbase.InstallPkg_Job(pkg, version, cmd,
                                      pkgdumps, BBSvars.install_rdir)
-        job_queue.append(job)
-    nb_jobs = len(job_queue)
+        jobs.append(job)
+    nb_jobs = len(jobs)
     print "OK"
-
     nb_not_needed = len(target_pkgs) - nb_target_pkgs_in_queue
     nb_non_target_pkgs_in_queue = nb_jobs - nb_target_pkgs_in_queue
     nb_non_target_pkgs_to_install = nb_non_target_pkgs_in_queue - \
@@ -317,12 +317,19 @@ def STAGE2_loop(target_pkgs, pkg_deps_list, installed_pkgs, nb_cpu):
     print "BBS> |                               dep=FALSE, ...)"
     print "BBS> | Total nb of packages to install: %d" % nb_pkgs_to_install
     print "BBS>"
+    job_queue = bbs.jobs.JobQueue(stage, jobs, pkg_deps_list)
+    job_queue._nb_pkgs_to_install = nb_pkgs_to_install
+    return job_queue
+
+def STAGE2_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE2 loop."
     t0 = time.time()
-    nb_installed = bbs.jobs.processJobQueue(job_queue, pkg_deps_list, nb_cpu,
+    nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                             BBScorevars.r_cmd_timeout, True)
     dt = time.time() - t0
     print "BBS> END STAGE2 loop."
+    nb_jobs = len(job_queue._jobs)
+    nb_pkgs_to_install = job_queue._nb_pkgs_to_install
     nb_failures = nb_pkgs_to_install - nb_installed
     print "BBS> -------------------------------------------------------------"
     print "BBS> STAGE2 SUMMARY:"
@@ -400,7 +407,9 @@ def STAGE2():
     print "BBS> [STAGE2] Re-install supporting packages"
     os.chdir(meat_path)
     BBSvars.install_rdir.RemakeMe(True)
-    STAGE2_loop(target_pkgs, pkg_deps_list, installed_pkgs, BBSvars.nb_cpu)
+    job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list,
+                                         installed_pkgs)
+    STAGE2_loop(job_queue, BBSvars.nb_cpu)
 
     print "BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp"
     os.chdir(STAGE2_tmp)
@@ -417,9 +426,10 @@ def STAGE2():
 ## STAGE3: Build the srcpkg files.
 ##############################################################################
 
-def STAGE3_loop(pkgdir_paths, nb_cpu):
-    total = len(pkgdir_paths)
-    job_queue = []
+def prepare_STAGE3_job_queue(pkgdir_paths):
+    print "BBS> Preparing STAGE3 job queue ... ",
+    stage = 'buildsrc'
+    jobs = []
     for pkgdir_path in pkgdir_paths:
         try:
             pkg = bbs.parse.getPkgFromDir(pkgdir_path)
@@ -429,22 +439,30 @@ def STAGE3_loop(pkgdir_paths, nb_cpu):
             print "BBS>   Can't read DESCRIPTION file!"
         else:
             cmd = BBSbase.getSTAGE3cmd(pkgdir_path)
-            pkgdumps_prefix = pkg + '.buildsrc'
+            pkgdumps_prefix = pkg + '.' + stage
             pkgdumps = BBSbase.PkgDumps(srcpkg_file, pkgdumps_prefix)
             job = BBSbase.BuildPkg_Job(pkg, version, cmd,
                                        pkgdumps, BBSvars.buildsrc_rdir)
-            job_queue.append(job)
-    nb_jobs = len(job_queue)
+            jobs.append(job)
+    print "OK"
+    job_queue = bbs.jobs.JobQueue(stage, jobs, None)
+    job_queue._total = len(pkgdir_paths)
+    return job_queue
+
+def STAGE3_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE3 loop."
     t0 = time.time()
-    nb_products = bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
+    nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBScorevars.r_cmd_timeout, True)
     dt = time.time() - t0
     print "BBS> END STAGE3 loop."
+    nb_jobs = len(job_queue._jobs)
+    total = job_queue._total
     print "BBS> -------------------------------------------------------------"
     print "BBS> STAGE3 SUMMARY:"
     print "BBS>   o Working dir: %s" % os.getcwd()
-    print "BBS>   o %d pkg(s) listed in file BBS_CENTRAL_BASEURL/%s" % (total, BBScorevars.meat_index_file)
+    print "BBS>   o %d pkg(s) listed in file BBS_CENTRAL_BASEURL/%s" % \
+          (total, BBScorevars.meat_index_file)
     print "BBS>   o %d pkg dir(s) queued and processed" % nb_jobs
     print "BBS>   o %d srcpkg file(s) produced" % nb_products
     print "BBS>   o Total time: %.2f seconds" % dt
@@ -467,7 +485,8 @@ def STAGE3():
             rdir.syncLocalDir(local_dir, True)
     else:
         os.chdir(meat_path)
-    STAGE3_loop(target_pkgs, BBSvars.nb_cpu)
+    job_queue = prepare_STAGE3_job_queue(pkgdir_paths)
+    STAGE3_loop(job_queue, BBSvars.nb_cpu)
     print "BBS> [STAGE3] DONE at %s." % time.asctime()
     return
 
@@ -483,9 +502,10 @@ def CheckLocalSrcpkgFiles(srcpkg_files):
     sys.exit("IMPLEMENT ME!")
     return
 
-def STAGE4_loop(srcpkg_paths, nb_cpu):
-    total = len(srcpkg_paths)
-    job_queue = []
+def prepare_STAGE4_job_queue(srcpkg_paths):
+    print "BBS> Preparing STAGE4 job queue ... ",
+    stage = 'checksrc'
+    jobs = []
     for srcpkg_path in srcpkg_paths:
         cmd = BBSbase.getSTAGE4cmd(srcpkg_path)
         if cmd == None:
@@ -493,18 +513,25 @@ def STAGE4_loop(srcpkg_paths, nb_cpu):
         pkg = bbs.parse.getPkgFromPath(srcpkg_path)
         version = bbs.parse.getVersionFromPath(srcpkg_path)
         check_dir = pkg + '.Rcheck'
-        pkgdumps_prefix = pkg + '.checksrc'
+        pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(check_dir, pkgdumps_prefix)
         job = BBSbase.CheckSrc_Job(pkg, version, cmd,
                                    pkgdumps, BBSvars.checksrc_rdir)
-        job_queue.append(job)
-    nb_jobs = len(job_queue)
+        jobs.append(job)
+    print "OK"
+    job_queue = bbs.jobs.JobQueue(stage, jobs, None)
+    job_queue._total = len(srcpkg_paths)
+    return job_queue
+
+def STAGE4_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE4 loop."
     t0 = time.time()
-    bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
+    bbs.jobs.processJobQueue(job_queue, nb_cpu,
                              BBScorevars.r_cmd_timeout, True)
     dt = time.time() - t0
     print "BBS> END STAGE4 loop."
+    nb_jobs = len(job_queue._jobs)
+    total = job_queue._total
     print "BBS> -------------------------------------------------------------"
     print "BBS> STAGE4 SUMMARY:"
     print "BBS>   o Working dir: %s" % os.getcwd()
@@ -522,7 +549,8 @@ def STAGE4():
     print "BBS> [STAGE4] Get list of srcpkg files found in current dir"
     srcpkg_paths = bbs.fileutils.listSrcPkgFiles()
     #CheckLocalSrcpkgFiles(srcpkg_paths)
-    STAGE4_loop(srcpkg_paths, BBSvars.check_nb_cpu)
+    job_queue = prepare_STAGE4_job_queue(srcpkg_paths)
+    STAGE4_loop(job_queue, BBSvars.check_nb_cpu)
     print "BBS> [STAGE4] DONE at %s." % time.asctime()
     return
 
@@ -531,9 +559,10 @@ def STAGE4():
 ## STAGE5: Build the binpkg files.
 ##############################################################################
 
-def STAGE5_loop(srcpkg_paths, nb_cpu):
-    total = len(srcpkg_paths)
-    job_queue = []
+def prepare_STAGE5_job_queue(srcpkg_paths):
+    print "BBS> Preparing STAGE5 job queue ... ",
+    stage = 'buildbin'
+    jobs = []
     for srcpkg_path in srcpkg_paths:
         cmd = BBSbase.getSTAGE5cmd(srcpkg_path)
         if cmd == None:
@@ -542,18 +571,25 @@ def STAGE5_loop(srcpkg_paths, nb_cpu):
         version = bbs.parse.getVersionFromPath(srcpkg_path)
         fileext = BBScorevars.getNodeSpec(BBSvars.node_hostname, 'pkgFileExt')
         binpkg_file = "%s_%s.%s" % (pkg, version, fileext)
-        pkgdumps_prefix = pkg + '.buildbin'
+        pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(binpkg_file, pkgdumps_prefix)
         job = BBSbase.BuildPkg_Job(pkg, version, cmd,
                                    pkgdumps, BBSvars.buildbin_rdir)
-        job_queue.append(job)
-    nb_jobs = len(job_queue)
+        jobs.append(job)
+    print "OK"
+    job_queue = bbs.jobs.JobQueue(stage, jobs, None)
+    job_queue._total = len(srcpkg_paths)
+    return job_queue
+
+def STAGE5_loop(srcpkg_paths, nb_cpu):
     print "BBS> BEGIN STAGE5 loop."
     t0 = time.time()
-    nb_products = bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
+    nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBScorevars.r_cmd_timeout, True)
     dt = time.time() - t0
     print "BBS> END STAGE5 loop."
+    nb_jobs = len(job_queue._jobs)
+    total = job_queue._total
     print "BBS> -------------------------------------------------------------"
     print "BBS> STAGE5 SUMMARY:"
     print "BBS>   o Working dir: %s" % os.getcwd()
@@ -572,11 +608,8 @@ def STAGE5():
     print "BBS> [STAGE5] Get list of srcpkg files found in current dir"
     srcpkg_paths = bbs.fileutils.listSrcPkgFiles()
     #CheckLocalSrcpkgFiles(srcpkg_paths)
-    ## The infamous "R.INSTALL clash" present in R < 2.5.0 used to prevent
-    ## parallelization of STAGE5 but this is not the case anymore (starting
-    ## with R >= 2.5.0).
-    #STAGE5_loop(srcpkg_paths, 1)
-    STAGE5_loop(srcpkg_paths, BBSvars.nb_cpu)
+    job_queue = prepare_STAGE5_job_queue(srcpkg_paths)
+    STAGE5_loop(job_queue, BBSvars.nb_cpu)
     print "BBS> [STAGE5] DONE at %s." % time.asctime()
     return
 

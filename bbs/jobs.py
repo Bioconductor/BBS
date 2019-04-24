@@ -313,9 +313,9 @@ def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.
 ### these methods.
 class QueuedJob:
     def __init__(self, name, cmd, output_file):
-        self._name = name                # the job name
-        self._cmd = cmd                  # the command to execute (or None)
-        self._output_file = output_file  # where to capture std out and err
+        self._name = name                # Job name.
+        self._cmd = cmd                  # Command to execute (or None).
+        self._output_file = output_file  # Where to capture std out and err.
     def RerunMe(self):
         False
     def AfterRun(self):
@@ -327,6 +327,15 @@ class QueuedJob:
     def AfterTimeout(self, maxtime_per_job):
         pass
 
+class JobQueue:
+    def __init__(self, name, jobs, job_deps):
+        self._name = name          # Queue name e.g. 'buildsrc' etc...
+        self._jobs = jobs          # List of QueuedJob objects.
+        self._job_deps = job_deps  # None or a dict with 1 entry per job.
+                                   # Each entry lists the deps of the job
+                                   # i.e. which other jobs in the queue
+                                   # must be processed before this job.
+
 def _unprocessedDeps(deps, processed_jobs):
     unprocessed_deps = []
     for dep in deps:
@@ -334,14 +343,16 @@ def _unprocessedDeps(deps, processed_jobs):
             unprocessed_deps.append(dep)
     return unprocessed_deps
 
-def _getNextJobToProcess(job_queue, job_deps, processed_jobs, nb_busy_slots):
+def _getNextJobToProcess(job_queue, processed_jobs, nb_busy_slots):
+    jobs = job_queue._jobs
+    job_deps = job_queue._job_deps
     if job_deps == None:
         job_rank = len(processed_jobs) + nb_busy_slots
-        job = job_queue[job_rank]
+        job = jobs[job_rank]
         return job
     # Look for a job in the queue that is waiting to be processed (i.e. has
     # no '_rank' attribute) and for which all deps have already been processed.
-    for job in job_queue:
+    for job in jobs:
         if hasattr(job, '_rank'):
             continue
         unprocessed_deps = _unprocessedDeps(job_deps[job._name], processed_jobs)
@@ -357,7 +368,7 @@ def _getNextJobToProcess(job_queue, job_deps, processed_jobs, nb_busy_slots):
     # However, if 'nb_busy_slots' == 0, that means the unprocessed deps are
     # circular deps or deps on unknown packages. In that case we return the
     # first waiting job in the queue and we attach the unprocessed deps to it:
-    for job in job_queue:
+    for job in jobs:
         if hasattr(job, '_rank'):
             continue
         unprocessed_deps = _unprocessedDeps(job_deps[job._name], processed_jobs)
@@ -476,9 +487,9 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
             print "bbs.jobs.processJobQueue> %s" % msg
     return 1
 
-def _writeSlotStates(slots, job0, slot0, file):
+def _writeSlotsState(slots, job0, slot0, file):
     f = open(file, 'w')
-    f.write("Job about to be assigned or removed from SLOT %s:\n" % slot0)
+    f.write("Job about to be assigned or removed from SLOT %s:\n" % slot0 + 1)
     f.write("  - name: %s\n" % job0._name)
     f.write("  - command: %s\n" % job0._cmd)
     f.write("  - output file: %s\n" % job0._output_file)
@@ -492,16 +503,18 @@ def _writeSlotStates(slots, job0, slot0, file):
     f.close()
     return
 
-def _logSummaryOfJobsWithUnprocessedDeps(job_queue, job_deps):
+def _logSummaryOfJobsWithUnprocessedDeps(job_queue):
     print "bbs.jobs.processJobQueue> %s" % \
           "Jobs with unprocessed deps at time of processing:"
+    jobs = job_queue._jobs
+    job_deps = job_queue._job_deps
     i = 0
-    for job in job_queue:
+    for job in jobs:
         unprocessed_deps = job._unprocessed_deps
         if len(unprocessed_deps) == 0:
             continue
         i += 1
-        msg = "JOB %s (%d/%d)" % (job._name, job._rank+1, len(job_queue))
+        msg = "JOB %s (%d/%d)" % (job._name, job._rank+1, len(jobs))
         print "bbs.jobs.processJobQueue>   %s" % msg
         print "bbs.jobs.processJobQueue>     Deps:",
         print job_deps[job._name]
@@ -514,15 +527,13 @@ def _logSummaryOfJobsWithUnprocessedDeps(job_queue, job_deps):
         print "bbs.jobs.processJobQueue>   %s" % None
     return
 
-### Process the list of jobs passed in 'job_queue' in parallel.
+### Process 'job_queue' (a JobQueue object) in parallel.
 ### Will run at most 'nb_slots' jobs simultaneously.
-### The 'job_queue' arg must be a list of QueuedJob objects.
-### The 'job_deps' arg must be None or a dict with 1 entry per job listing the
-### deps for each job i.e. which jobs must be processed before a given job can
-### be processed.
-def processJobQueue(job_queue, job_deps, nb_slots=1,
+def processJobQueue(job_queue, nb_slots=1,
                     maxtime_per_job=3600.0, verbose=False):
-    nb_jobs = len(job_queue)
+    jobs = job_queue._jobs
+    job_deps = job_queue._job_deps
+    nb_jobs = len(jobs)
     if verbose:
         print
         print "bbs.jobs.processJobQueue>",
@@ -564,7 +575,9 @@ def processJobQueue(job_queue, job_deps, nb_slots=1,
             processed_jobs.append(job._name)
             slots[slot] = None
             nb_busy_slots -= 1
-            _writeSlotStates(slots, job, slot, job._name + '.slot-states-right-after-end.txt')
+            slots_state_file = job._name + '.' + job_queue._name + \
+                               '-slots-state-right-after-end.txt'
+            _writeSlotsState(slots, job, slot, slots_state_file)
         # Slot 'slot' is available
         while True:
             job_rank = len(processed_jobs) + nb_busy_slots
@@ -572,15 +585,16 @@ def processJobQueue(job_queue, job_deps, nb_slots=1,
                 # All the jobs are either already processed or currently being
                 # processed.
                 break
-            job = _getNextJobToProcess(job_queue, job_deps, processed_jobs,
-                                       nb_busy_slots)
+            job = _getNextJobToProcess(job_queue, processed_jobs, nb_busy_slots)
             # 'job == None' means we couldn't get a job to process now but
             # we should wait and try again later.
             if job == None:
                 break
             job._rank = job_rank
             if job._cmd != None:
-                _writeSlotStates(slots, job, slot, job._name + '.slot-states-just-before-start.txt')
+                slots_state_file = job._name + '.' + job_queue._name + \
+                                   '-slots-state-just-before-start.txt'
+                _writeSlotsState(slots, job, slot, slots_state_file)
                 job._slot = slot
                 slots[slot] = _runQueuedJob(job, verbose, nb_jobs, nb_slots,
                                             job_deps)
@@ -594,7 +608,7 @@ def processJobQueue(job_queue, job_deps, nb_slots=1,
         print
         print "bbs.jobs.processJobQueue> Finished."
         if job_deps != None:
-            _logSummaryOfJobsWithUnprocessedDeps(job_queue, job_deps)
+            _logSummaryOfJobsWithUnprocessedDeps(job_queue)
         print
     return cumul
 

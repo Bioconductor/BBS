@@ -335,13 +335,10 @@ def MakeReposPACKAGES(rdir):
 ## Make the target-repo and populate it with the no-vignettes srcpkg files.
 ##############################################################################
 
-# TODO: Merge STAGE1_loop() and STAGE3_loop() (from BBS-run.py)
-# into one single function
-
-def STAGE1_loop(pkgdir_paths, dest_rdir, nb_cpu):
-    print "BBS> [STAGE1_loop] BEGIN loop."
-    total = len(pkgdir_paths)
-    job_queue = []
+def prepare_STAGE1_job_queue(pkgdir_paths, dest_rdir):
+    print "BBS> Preparing STAGE1 job queue ... ",
+    stage = 'buildnovig'
+    jobs = []
     for pkgdir_path in pkgdir_paths:
         try:
             pkg = bbs.parse.getPkgFromDir(pkgdir_path)
@@ -351,20 +348,28 @@ def STAGE1_loop(pkgdir_paths, dest_rdir, nb_cpu):
             print "BBS>   Can't read DESCRIPTION file!"
         else:
             cmd = BBSbase.getSTAGE1cmd(pkgdir_path)
-            pkgdumps_prefix = pkg + '.buildnovig'
+            pkgdumps_prefix = pkg + '.' + stage;
             pkgdumps = BBSbase.PkgDumps(srcpkg_file, pkgdumps_prefix)
             job = BBSbase.BuildPkg_Job(pkg, version, cmd, pkgdumps, dest_rdir)
-            job_queue.append(job)
-    nb_jobs = len(job_queue)
+            jobs.append(job)
+    print "OK"
+    job_queue = bbs.jobs.JobQueue(stage, jobs, None)
+    job_queue._total = len(pkgdir_paths)
+    return job_queue
+
+def STAGE1_loop(job_queue, nb_cpu):
+    print "BBS> BEGIN STAGE1 loop."
     t0 = time.time()
-    nb_products = bbs.jobs.processJobQueue(job_queue, None, nb_cpu,
-                                           900.0, True)
+    nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu, 900.0, True)
     dt = time.time() - t0
-    print "BBS> [STAGE1_loop] END loop."
+    print "BBS> END STAGE1 loop."
+    nb_jobs = len(job_queue._jobs)
+    total = job_queue._total
     print "BBS> -------------------------------------------------------------"
     print "BBS> STAGE1 SUMMARY:"
     print "BBS>     o Working dir: %s" % os.getcwd()
-    print "BBS>     o %d pkg(s) listed in file %s" % (total, BBScorevars.meat_index_file)
+    print "BBS>     o %d pkg(s) listed in file %s" % \
+          (total, BBScorevars.meat_index_file)
     print "BBS>     o %d pkg dir(s) queued and processed" % nb_jobs
     print "BBS>     o %d srcpkg file(s) produced" % nb_products
     print "BBS>     o Total time: %.2f seconds" % dt
@@ -385,11 +390,12 @@ def makeTargetRepo(rdir):
     dcf = open(meat_index_path, 'r')
     pkgdir_paths = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
+    job_queue = prepare_STAGE1_job_queue(pkgdir_paths, rdir)
     ## STAGE1 will run 'tar zcf' commands to generate the no-vignettes source
     ## tarballs. Running too many concurrent 'tar zcf' commands seems harmful
     ## so we limit the nb of cpus to 2.
-    #STAGE1_loop(pkgdir_paths, rdir, BBSvars.nb_cpu)
-    STAGE1_loop(pkgdir_paths, rdir, 2)
+    #STAGE1_loop(job_queue, BBSvars.nb_cpu)
+    STAGE1_loop(job_queue, 2)
     MakeReposPACKAGES(rdir)
     print "BBS> [makeTargetRepo] DONE."
     return
