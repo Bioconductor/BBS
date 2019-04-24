@@ -488,7 +488,7 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
     return 1
 
 def _logSlotEvent(logfile, event_type, job0, slot0, slots):
-    date = bbs.jobs.currentDateString()
+    date = currentDateString()
     logfile.write("%s event on SLOT %s/%s on %s:\n" % \
                   (event_type, slot0 + 1, len(slots), date))
     logfile.write("  - job name: %s\n" % job0._name)
