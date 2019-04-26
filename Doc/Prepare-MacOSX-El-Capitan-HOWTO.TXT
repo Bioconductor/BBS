@@ -955,6 +955,12 @@ Everything in this section must be done from the biocbuild account.
 
     sudo -H pip install mofapy
 
+** Install Python module cwltool
+
+  This module is needed by the Rcwl package.
+
+    sudo -H pip install cwltool
+
 ** Install Python 3 and modules nbconvert + jupyter_client
 
   Install Python 3 + Jupyter + pip3 with:
