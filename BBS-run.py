@@ -581,7 +581,7 @@ def prepare_STAGE5_job_queue(srcpkg_paths):
     job_queue._total = len(srcpkg_paths)
     return job_queue
 
-def STAGE5_loop(srcpkg_paths, nb_cpu):
+def STAGE5_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE5 loop."
     t0 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
