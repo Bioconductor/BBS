@@ -502,7 +502,7 @@ def _logSlotEvent(logfile, event_type, job0, slot0, slots):
         job = slots[slot]
         if job != None:
             dt = job._t2 - job._t1
-            logfile.write(" %s [pid=%d] [StartedAt: %s (%.1f seconds ago)]" % (job._name, job._proc.pid, job._startedat, dt))
+            logfile.write(" %s [pid=%d / StartedAt: %s / %.1f seconds ago]" % (job._name, job._proc.pid, job._startedat, dt))
         logfile.write("\n")
     return
 
