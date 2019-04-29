@@ -323,10 +323,10 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
 
 def STAGE2_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE2 loop."
-    t0 = time.time()
+    t1 = time.time()
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                             BBScorevars.r_cmd_timeout, True)
-    dt = time.time() - t0
+    dt = time.time() - t1
     print "BBS> END STAGE2 loop."
     nb_jobs = len(job_queue._jobs)
     nb_pkgs_to_install = job_queue._nb_pkgs_to_install
@@ -451,10 +451,10 @@ def prepare_STAGE3_job_queue(pkgdir_paths):
 
 def STAGE3_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE3 loop."
-    t0 = time.time()
+    t1 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBScorevars.r_cmd_timeout, True)
-    dt = time.time() - t0
+    dt = time.time() - t1
     print "BBS> END STAGE3 loop."
     nb_jobs = len(job_queue._jobs)
     total = job_queue._total
@@ -525,10 +525,10 @@ def prepare_STAGE4_job_queue(srcpkg_paths):
 
 def STAGE4_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE4 loop."
-    t0 = time.time()
+    t1 = time.time()
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
                              BBScorevars.r_cmd_timeout, True)
-    dt = time.time() - t0
+    dt = time.time() - t1
     print "BBS> END STAGE4 loop."
     nb_jobs = len(job_queue._jobs)
     total = job_queue._total
@@ -583,10 +583,10 @@ def prepare_STAGE5_job_queue(srcpkg_paths):
 
 def STAGE5_loop(job_queue, nb_cpu):
     print "BBS> BEGIN STAGE5 loop."
-    t0 = time.time()
+    t1 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBScorevars.r_cmd_timeout, True)
-    dt = time.time() - t0
+    dt = time.time() - t1
     print "BBS> END STAGE5 loop."
     nb_jobs = len(job_queue._jobs)
     total = job_queue._total
@@ -635,33 +635,33 @@ if __name__ == "__main__":
     ## STAGE2: preinstall dependencies
     if arg1 in ["", "no-bin"] or "STAGE2" in sys.argv:
         started_at = bbs.jobs.currentDateString()
-        t0 = time.time()
+        t1 = time.time()
         STAGE2()
-        dt = time.time() - t0
+        dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE2', started_at, ended_at, dt))
     ## STAGE3: build source packages
     if arg1 in ["", "no-bin"] or "STAGE3" in sys.argv:
         started_at = bbs.jobs.currentDateString()
-        t0 = time.time()
+        t1 = time.time()
         STAGE3()
-        dt = time.time() - t0
+        dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE3', started_at, ended_at, dt))
     ## STAGE4: check source packages
     if arg1 in ["", "no-bin"] or "STAGE4" in sys.argv:
         started_at = bbs.jobs.currentDateString()
-        t0 = time.time()
+        t1 = time.time()
         STAGE4()
-        dt = time.time() - t0
+        dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE4', started_at, ended_at, dt))
     ## STAGE5: build bin packages
     if arg1 == "" or "STAGE5" in sys.argv:
         started_at = bbs.jobs.currentDateString()
-        t0 = time.time()
+        t1 = time.time()
         STAGE5()
-        dt = time.time() - t0
+        dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE5', started_at, ended_at, dt))
     writeEndOfRunTicket(ticket)

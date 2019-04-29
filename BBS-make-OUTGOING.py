@@ -157,7 +157,7 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
     ## Loop on list of supported pkgs
     pkgs0 = set(pkgs1 + pkgs2)
     nb_products = 0
-    t0 = time.time()
+    t1 = time.time()
     for pkg in pkgs0:
         dcf = open(meat_index_file, 'r')
         version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBScorevars.meat_index_file)
@@ -185,7 +185,7 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
         syscmd = '%s/utils/merge-win-bin-pkgs.sh %s %s %s %s cleanup' % (BBScorevars.BBS_home, pkg, version, fresh_pkgs_subdir1, fresh_pkgs_subdir2)
         bbs.jobs.doOrDie(syscmd)
         nb_products += 1
-    dt = time.time() - t0
+    dt = time.time() - t1
     print "BBS> [stage6] END making outgoing bi-arch packages from %s and %s." % (fresh_pkgs_subdir1, fresh_pkgs_subdir2)
     print "BBS> -------------------------------------------------------------"
     print "BBS> [stage6] MERGE(%s, %s) SUMMARY:" % (node1_id, node2_id)

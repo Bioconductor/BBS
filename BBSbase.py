@@ -458,7 +458,7 @@ class InstallPkg_Job(bbs.jobs.QueuedJob):
     def _MakeSummary(self):
         self.summary.startedat = self._startedat
         self.summary.endedat = self._endedat
-        self.summary.dt = self._dt
+        self.summary.dt = self._t2 - self._t1
         self.summary.Write(self.pkgdumps.summary_file)
         self.pkgdumps.Push(self.rdir)
     def AfterRun(self):
@@ -492,7 +492,7 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
     def _MakeSummary(self):
         self.summary.startedat = self._startedat
         self.summary.endedat = self._endedat
-        self.summary.dt = self._dt
+        self.summary.dt = self._t2 - self._t1
         pkg_file = self.pkgdumps.product_path
         if os.path.exists(pkg_file):
             pkg_file_size = bbs.fileutils.human_readable_size(bbs.fileutils.total_size(pkg_file), True)
@@ -548,7 +548,7 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
     def _MakeSummary(self):
         self.summary.startedat = self._startedat
         self.summary.endedat = self._endedat
-        self.summary.dt = self._dt
+        self.summary.dt = self._t2 - self._t1
         check_dir = self.pkgdumps.product_path
         if os.path.exists(check_dir):
             # Before we push the .Rcheck/ folder to the central node, we

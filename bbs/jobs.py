@@ -233,7 +233,7 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
         out = None
     else:
         out = open(stdout, 'w')
-    t0 = time.time()
+    t1 = time.time()
     ## IMPORTANT: Because of shell=True, Popen() starts (at least) 2
     ## subprocesses:
     ## - on Unix: a shell AND the command passed in cmd,
@@ -251,7 +251,7 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
     nloop = 0
     timeout = False
     while proc.poll() == None:
-        dt = time.time() - t0
+        dt = time.time() - t1
         if dt > maxtime:
             timeout = True
             break
@@ -261,7 +261,7 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
             sys.stdout.write(".")
             sys.stdout.flush()
     if verbose:
-        dt = time.time() - t0
+        dt = time.time() - t1
         sys.stdout.write("] = %.2f seconds / " % dt)
     if timeout:
         retcode = None
@@ -421,8 +421,8 @@ def _writeRunHeader(out, cmd, nb_runs):
 def _runQueuedJob(job, verbose, nb_jobs, nb_slots, job_deps):
     if verbose:
         _logActionOnQueuedJob("START", job, nb_jobs, nb_slots, job_deps)
-    job._startedat = currentDateString()
-    job._t0 = time.time()
+    job._t1 = job._t2 = time.time()
+    job._startedat = dateString(time.localtime(job._t1))
     job._output = open(job._output_file, 'w')
     job._nb_runs = 1
     _writeRunHeader(job._output, job._cmd, job._nb_runs)
@@ -457,9 +457,10 @@ def _rerunQueuedJob(job, verbose, nb_jobs, nb_slots):
 ### Returns 0 if job is still running, 1 if it returned in time, and -1 if
 ### it timed out.
 def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
-    job._dt = time.time() - job._t0
+    job._t2 = time.time()
+    dt = job._t2 - job._t1
     if job._proc.poll() == None:
-        if job._dt < maxtime_per_job:
+        if dt < maxtime_per_job:
             return 0
         killProc(job._proc.pid)
         if verbose:
@@ -469,7 +470,7 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
                 print
                 msg = "KILL JOB %s (%d/%d)" % (job._name, job._rank+1, nb_jobs)
                 msg += " ON SLOT %s/%s" % (job._slot+1, nb_slots)
-                msg += " after %.2f seconds" % job._dt
+                msg += " after %.2f seconds" % dt
                 print "bbs.jobs.processJobQueue> %s" % msg
         return -1
     job._retcode = job._proc.wait()
@@ -483,7 +484,7 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
             print
             msg = "DONE JOB %s (%d/%d)" % (job._name, job._rank+1, nb_jobs)
             msg += " ON SLOT %s/%s" % (job._slot+1, nb_slots)
-            msg += " after %.2f seconds [retcode=%d]" % (job._dt, job._retcode)
+            msg += " after %.2f seconds [retcode=%d]" % (dt, job._retcode)
             print "bbs.jobs.processJobQueue> %s" % msg
     return 1
 
@@ -500,7 +501,8 @@ def _logSlotEvent(logfile, event_type, job0, slot0, slots):
         logfile.write("SLOT %s:" % (slot + 1))
         job = slots[slot]
         if job != None:
-            logfile.write(" %s" % job._name)
+            dt = job._t2 - job._t1
+            logfile.write(" %s [pid=%d] [StartedAt: %s (%.1f seconds ago)]" % (job._name, job._proc.pid, job._startedat, dt))
         logfile.write("\n")
     return
 
@@ -569,10 +571,10 @@ def processJobQueue(job_queue, nb_slots=1,
                     slots[slot] = _rerunQueuedJob(job, verbose,
                                                   nb_jobs, nb_slots)
                     continue
-                job._endedat = currentDateString()
+                job._endedat = dateString(time.localtime(job._t2))
                 cumul += job.AfterRun()
             else: # timed out
-                job._endedat = currentDateString()
+                job._endedat = dateString(time.localtime(job._t2))
                 job.AfterTimeout(maxtime_per_job)
             processed_jobs.append(job._name)
             slots[slot] = None
