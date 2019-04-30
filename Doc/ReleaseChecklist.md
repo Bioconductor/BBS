@@ -60,7 +60,10 @@ in _this_ order
 
 - Announce contributed annotation deadline
 
-- Start building annotations
+- Start building annotations (update R on the annotation EC2 instance)
+
+- Update AnnotationForge and GenomeInfoDbData data files in preparation for nonstandard 
+  orgdb generation
 
 <a name="threeweeks"></a>
 ## Three weeks before the release:
