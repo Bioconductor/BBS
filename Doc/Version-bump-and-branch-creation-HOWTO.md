@@ -96,7 +96,7 @@ in sections **C.**, **D.**, and **E.**.
       git config --global user.email "you@example.com"
       git config --global user.name "Your Name"
 
-      # also make sure to set push.default to matching 
+      # also make sure to set push.default to matching
       git config --global push.default matching
 
       # check config file again
@@ -155,11 +155,12 @@ in sections **C.**, **D.**, and **E.**.
     ```
 
 * Anyone involved in the "bump and branch" procedure should temporarily
-  be added to the 'admin' group in gitolite-admin/conf/gitolite.conf. 
+  be added to the `admin` group in `gitolite-admin/conf/gitolite.conf`.
   Membership in this group enables the creation of a new branch and
-  'pushing' to any branch regardless of inactivated (commented out) lines 
-  in gitolite-admin/conf/packages.conf.
- 
+  _pushing_ to any branch regardless of inactivated (commented out) lines
+  in `gitolite-admin/conf/packages.conf`.
+
+
 ## C. Version bumps and branch creation for software packages
 
 Perform these steps on the day prior to the release. They must be completed
@@ -387,6 +388,7 @@ Log on to git.bioconductor.org as the `git` user.
 Open `push.out` in an editor and search for errors. A typical error is
 `Error: duplicate commits` (happened for affyPLM and Rdisop first time I
 tested this). Report these errors to `gitolite` experts Nitesh and Martin.
+
 
 ## D. Version bumps and branch creation for data-experiment packages
 
