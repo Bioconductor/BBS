@@ -4,7 +4,7 @@
 ## A. Introduction
 
 On the day prior to the release, we need to make and push the following
-changes to all the packages in the release, **in this order**:
+changes to all the packages that go in the release, **in this order**:
 
 * **First version bump**: bump x.y.z version to even y **in the `master` branch**
 * **Branch creation**: create the release branch
@@ -14,6 +14,9 @@ For example, for the BioC 3.9 release, we need to do this for all the
 packages listed in the `software.txt`, `data-experiment.txt`, and
 `workflows.txt` files of the `RELEASE_3_9` branch of the `manifest`
 repo.
+
+Note that there is one exception: the BiocVersion package (software package).
+Section **C.** below provides more information about this.
 
 This needs to be done before the BioC 3.9 builds start for software,
 workflows and data-experiment packages.
@@ -127,28 +130,29 @@ in sections **C.**, **D.**, and **E.**.
 
 * Find packages with duplicate commits
 
-Historically the GIT-SVN mirror was the primary source of duplicate commits.
-Since the transition to git, we should not be seeing many new duplicates.
-Additionally, we've implemented a gitolite hook to prevent any new duplicate
-commits from getting through. For these reasons, this check for duplicates is
-becoming obsolete and can probably be removed at the next release in Sprint
-2019.
+    Historically the GIT-SVN mirror was the primary source of duplicate commits.
+    Since the transition to git, we should not be seeing many new duplicates.
+    Additionally, we've implemented a gitolite hook to prevent any new
+    duplicate commits from getting through. For these reasons, this check for
+    duplicates is becoming obsolete and can probably be removed at the next
+    release in Spring 2019.
+    ```
+    # Local copy of bioc_git_transition
+    export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
+    
+    # software packages
+    export WORKING_DIR="$HOME/git.bioconductor.org/software"
+    export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
+    cd $WORKING_DIR
+    pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-      # Local copy of bioc_git_transition
-      export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
-
-      # software packages
-      export WORKING_DIR="$HOME/git.bioconductor.org/software"
-      export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
-      cd $WORKING_DIR
-      pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-
-      # Check last 10 commits in each package
-      for pkg in $pkgs_in_manifest; do
+    # Check last 10 commits in each package
+    for pkg in $pkgs_in_manifest; do
         echo ""
         echo ">>> check $pkg package for duplicate commits"
         python $BIOC_GIT_TRANSITION/misc/detect_duplicate_commits.py $pkg 10
-      done > duplicatecommits.out 2>&1
+    done > duplicatecommits.out 2>&1
+    ```
 
 * Anyone involved in the "bump and branch" procedure should temporarily
   be added to the 'admin' group in gitolite-admin/conf/gitolite.conf. 
@@ -162,7 +166,10 @@ Perform these steps on the day prior to the release. They must be completed
 before the software builds get kicked off (see **A. Introduction**). The full
 procedure should take about 2.5 hours. Make sure to reserve enough time.
 
-NOTE: BiocVersion needs special treatment because its version must always match the version of the branch it's in. This means that it only needs the second bump. So it will remain at `3.9.*` in the RELEASE_3_9 branch and will be set to `3.10.0` in the new master branch.
+NOTE: BiocVersion needs special treatment because its version must always
+match the version of the branch it's in. This means that it only needs the
+second bump. So it will remain at `3.9.*` in the RELEASE_3_9 branch and will
+be set to `3.10.0` in the new master branch.
 
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
 
@@ -172,19 +179,19 @@ that people must stop committing/pushing changes to the BioC git server
 
 ### C2. Modify packages.conf to block all commits
 
-The RELEASE_3_7 lines in gitolite-admin/conf/packages.conf were commented
-out when the release builds were frozen. At this point, only the "master"
+The `RELEASE_3_7` lines in `gitolite-admin/conf/packages.conf` were commented
+out when the release builds were frozen. At this point, only the `master`
 lines are still active. 
 
-Deactivate all push access by commenting out the "master" lines in 
-gitolite-admin/conf/packages.conf. 
+Deactivate all push access by commenting out the `master` lines in
+`gitolite-admin/conf/packages.conf`.
 
 Using vim, it is possible with a one liner,
 
        :g/RW master/s/^/#
 
-Once the packages.conf is updated, push to gitolite-admin on the git server
-to make the changes apply.
+Once `packages.conf` is updated, push to `gitolite-admin` on the git server
+to make the changes effective.
 
 ### C3. Login to the machine where you've performed the preliminary steps
 
@@ -347,15 +354,16 @@ RELEASE_3_9: This should show an even bump.
         git log RELEASE_3_9 -n 2
 
 ### C12. Disable hooks
-Log on to `git.bioconductor.org` as the `git` user.
+Log on to git.bioconductor.org as the `git` user.
 
-- Comment out the hook lines in packages.conf.
+- Comment out the hook lines in `packages.conf`.
 
 - Remove the `pre-receive.h00-pre-receive-hook-software` file from the
-  hook/ directory in each package, e.g., 
-  /home/git/repositories/packages/<PACKAGE>.git/hooks
- 
+  `hook/` directory in each package, e.g.,
+  `/home/git/repositories/packages/<PACKAGE>.git/hooks`
+    ```
     rm -rf ~/repositories.packages/*.git/hooks/pre-receive.h00-pre-receive-hook-software
+    ```
 
 ### C13. Push all the changes
 
