@@ -39,11 +39,11 @@ in sections **C.**, **D.**, and **E.**.
   version. This will avoid potentially disastrous mistakes when
   copying/pasting/executing commands from this document.
 
-* Choose a Linux machine with enough disk space to clone all the software
-  and experiment packages (as of Oct 24, 2017, total size of all the clones
-  is about 90G). The machine needs to have the `git` client and Python.
-  The procedure described here doesn't require `sudo` privileges. Make
-  sure to pick up a machine that has fast and reliable internet access.
+* Choose a Linux machine with enough disk space to clone all the software,
+  data-experiment, and workflow packages (as of Oct 24, 2017, total size of
+  all the clones is about 90G). The machine needs to have the `git` client
+  and Python. The procedure described here doesn't require `sudo` privileges.
+  Make sure to pick up a machine that has fast and reliable internet access.
   The Linux build machines are a good choice. If you want to use one of
   them, use your personal account or the `biocadmin` account. Do NOT use
   the `biocbuild` account to not interfere with the builds. Using a Mac
@@ -69,8 +69,8 @@ in sections **C.**, **D.**, and **E.**.
 * Populate `git.bioconductor.org` with git clones of the `manifest` repo
   and all the package repos (software, data-experiment, and workflows).
   This takes about 3h so is worth doing in advance e.g. a couple of days
-  before the release. It will save time when doing **C.**, **D.**, and **E.**
-  below on the day prior to the release:
+  before the release. It will save time when performing the steps described
+  in sections **C.**, **D.**, and **E.** below on the day prior to the release.
 
       export BBS_HOME="$HOME/BBS"
 
@@ -78,13 +78,13 @@ in sections **C.**, **D.**, and **E.**.
       $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_9
 
       # clone software package repos (takes approx. 1h10)
-      time $BBS_HOME/utils/update_bioc_git_repos.py software master
+      time $BBS_HOME/utils/update_bioc_git_repos.py software master RELEASE_3_9
 
       # clone data-experiment package repos (takes approx. 1h45)
-      time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master
+      time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master RELEASE_3_9
 
       # clone workflow package repos (takes approx. 4 min)
-      time $BBS_HOME/utils/update_bioc_git_repos.py workflows master
+      time $BBS_HOME/utils/update_bioc_git_repos.py workflows master RELEASE_3_9
 
 * Make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
