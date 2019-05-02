@@ -40,9 +40,10 @@ in sections **C.**, **D.**, and **E.**.
   copying/pasting/executing commands from this document.
 
 * Choose a Linux machine with enough disk space to clone all the software,
-  data-experiment, and workflow packages (as of Oct 24, 2017, total size of
-  all the clones is about 90G). The machine needs to have the `git` client
-  and Python. The procedure described here doesn't require `sudo` privileges.
+  data-experiment, and workflow packages (as of May 2, 2019, the total size
+  of all the package clones is about 108G). The machine needs to have the
+  `git` client and Python. The procedure described here doesn't require
+  `sudo` privileges.
   Make sure to pick up a machine that has fast and reliable internet access.
   The Linux build machines are a good choice. If you want to use one of
   them, use your personal account or the `biocadmin` account. Do NOT use
@@ -68,7 +69,7 @@ in sections **C.**, **D.**, and **E.**.
 
 * Populate `git.bioconductor.org` with git clones of the `manifest` repo
   and all the package repos (software, data-experiment, and workflows).
-  This takes about 3h so is worth doing in advance e.g. a couple of days
+  This takes more than 3h so is worth doing in advance e.g. a couple of days
   before the release. It will save time when performing the steps described
   in sections **C.**, **D.**, and **E.** below on the day prior to the release.
 
@@ -77,10 +78,10 @@ in sections **C.**, **D.**, and **E.**.
       # clone `manifest` repo
       $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_9
 
-      # clone software package repos (takes approx. 1h10)
+      # clone software package repos (takes approx. 1h20)
       time $BBS_HOME/utils/update_bioc_git_repos.py software master RELEASE_3_9
 
-      # clone data-experiment package repos (takes approx. 1h45)
+      # clone data-experiment package repos (takes approx. 1h50)
       time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master RELEASE_3_9
 
       # clone workflow package repos (takes approx. 4 min)
@@ -261,7 +262,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
 
-    # check `y` is even and not greater than 99
+    # check 'y' is even and not greater than 99
     export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
     python $BIOC_GIT_TRANSITION/misc/detect_bad_version.py . even
 
@@ -334,7 +335,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
 
-    # check `y` is odd and not greater than 99
+    # check 'y' is odd and not greater than 99
     export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
     python $BIOC_GIT_TRANSITION/misc/detect_bad_version.py . odd 
 
