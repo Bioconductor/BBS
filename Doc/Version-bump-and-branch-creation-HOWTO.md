@@ -188,6 +188,12 @@ lines are still active.
 Deactivate all push access by commenting out the `master` lines in
 `gitolite-admin/conf/packages.conf`.
 
+NOTE: Do not change the branch from RELEASE_3_7 to RELEASE_3_8, it is
+not a good solution. Maintainers now will be able to push their own
+RELEASE_3_8 branch before we are able to create it at release
+time. This issue reflects the issue
+https://stat.ethz.ch/pipermail/bioc-devel/2019-May/015048.html.
+
 Using vim, it is possible with a one liner,
 
        :g/RW master/s/^/#
