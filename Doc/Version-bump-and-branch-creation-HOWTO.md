@@ -181,7 +181,7 @@ that people must stop committing/pushing changes to the BioC git server
 
 ### C2. Modify packages.conf to block all commits
 
-The `RELEASE_3_7` lines in `gitolite-admin/conf/packages.conf` were commented
+The `RELEASE_3_8` lines in `gitolite-admin/conf/packages.conf` were commented
 out when the release builds were frozen. At this point, only the `master`
 lines are still active. 
 
@@ -274,7 +274,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
 ### C8. Commit first version bump
 
-    commit_msg="bump x.y.z versions to even y prior to creation of RELEASE_3_9 branch"
+    commit_msg="bump x.y.z version to even y prior to creation of RELEASE_3_9 branch"
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
@@ -349,19 +349,10 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
 Same as step C8 above EXCEPT that commit message now is:
 
-    commit_msg="bump x.y.z versions to odd y after creation of RELEASE_3_9 branch"
-
-Last sanity check before pushing in C11:
-
-master: This should show an even bump, and then an odd version bump
-
-        git log master -n 2
-
-RELEASE_3_9: This should show an even bump.
-
-        git log RELEASE_3_9 -n 2
+    commit_msg="bump x.y.z version to odd y after creation of RELEASE_3_9 branch"
 
 ### C12. Disable hooks
+
 Log on to git.bioconductor.org as the `git` user.
 
 - Comment out the hook lines in `packages.conf`.
@@ -370,10 +361,20 @@ Log on to git.bioconductor.org as the `git` user.
   `hook/` directory in each package, e.g.,
   `/home/git/repositories/packages/<PACKAGE>.git/hooks`
     ```
-    rm -rf ~/repositories.packages/*.git/hooks/pre-receive.h00-pre-receive-hook-software
+    rm -rf ~/repositories/packages/*.git/hooks/pre-receive.h00-pre-receive-hook-software
     ```
 
 ### C13. Push all the changes
+
+Last sanity check before pushing:
+
+    cd <some package>
+    ## master: This should show the even bump, followed by the odd bump
+    git log master -n 2
+    ## RELEASE_3_9: This should show the even bump only
+    git log RELEASE_3_9 -n 1
+
+Push:
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
@@ -381,14 +382,14 @@ Log on to git.bioconductor.org as the `git` user.
     # dry-run push (takes 20-30 min, not worth it!)
     #for pkg in $pkgs_in_manifest; do
     #  echo ""
-    #  echo ">>> push all changes for package $pkg (dry-run)"
+    #  echo ">>> pushing all changes for package $pkg (dry-run)"
     #  git -C $pkg push --all --dry-run
     #done
 
     # if everything looks OK (takes approx. 25 min)
     time for pkg in $pkgs_in_manifest; do
       echo ""
-      echo ">>> push all changes for package $pkg"
+      echo ">>> pushing all changes for package $pkg"
       git -C $pkg push --all
     done > push.out 2>&1
 
@@ -405,12 +406,13 @@ as follows**:
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-experiment.txt"
 
-Timings (approx.):
+Approx. timings (on malbec1):
 
-* **C7**: 11 min for `stage DESCRIPTION`, 15 sec for `commit`
-* **C8**: 10 sec
-* **C10**: < 1 sec for `stage DESCRIPTION`, < 2 sec for `commit`
-* **C11**: 5 min
+* **Commit first version bump**: 21 sec for `stage DESCRIPTION`, 41 sec
+  for `commit`
+* **Branch creation**: 40 sec
+* **Commit second version bump**: < 1 sec for `stage DESCRIPTION`, 28 sec for `commit`
+* **Push all the changes**: 43 min
 
 
 ## E. Version bumps and branch creation for workflow packages
@@ -421,12 +423,12 @@ as follows**:
     export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/workflows.txt"
 
-Timings (approx.):
+Approx. timings (on malbec1):
 
-* **C7**: < 1 min
-* **C8**: < 10 sec
-* **C10**: < 10 sec
-* **C11**: < 1 min
+* **Commit first version bump**: < 1 min
+* **Branch creation**: < 10 sec
+* **Commit second version bump**: < 10 sec
+* **Push all the changes**: < 2 min
 
 
 ## F. Finishing up
@@ -436,7 +438,7 @@ Timings (approx.):
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`). 
 
-- If not done already, replace all instances of `RELEASE_3_7` with
+- If not done already, replace all instances of `RELEASE_3_8` with
 `RELEASE_3_9`.
 
 - Uncomment all `RELEASE_3_9` and `master` lines.
