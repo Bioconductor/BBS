@@ -406,7 +406,7 @@ as follows**:
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-experiment.txt"
 
-Approx. timings (on malbec1):
+Approx. timings (on malbec2):
 
 * **Commit first version bump**: 21 sec for `stage DESCRIPTION`, 41 sec
   for `commit`
@@ -423,7 +423,7 @@ as follows**:
     export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/workflows.txt"
 
-Approx. timings (on malbec1):
+Approx. timings (on malbec2):
 
 * **Commit first version bump**: < 1 min
 * **Branch creation**: < 10 sec
