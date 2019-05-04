@@ -172,7 +172,7 @@ malbec1 -> tokay1
 
 There were several attempts to modify firewall rules to make https work via the
 normal channels. These were unsuccessful and the alternative solution was to
-modify the /etc/hosts file on the DMZ builders. The modification overrides the
+modify the `/etc/hosts` file on the DMZ builders. The modification overrides the
 DNS lookup (for this machine) such that .bioconductor.org now maps to the
 private IP instead of the public IP. As a result, traffic no longer goes
 through the firewall but instead occurs directly between the two machines which
@@ -322,7 +322,7 @@ This script performs STAGE7a (don't think there is a 7b):
     a4#tokay1#install: NotNeeded
 
 After the STATUS_DB.txt is created the script calls 
-BBS/utils/createPropagationDB.R which creates the PROPAGATE_STATUS_DB.txt file. 
+`BBS/utils/createPropagationDB.R` which creates the PROPAGATE_STATUS_DB.txt file. 
 This file identifies which packages and what format, e.g., source or binary,
 will be pushed to the website.
 
@@ -344,7 +344,7 @@ experiment data builds though they run at different times.
 
 ### Propagation Pipeline
 
-The steps discussed so far complete the 'Run' portion of the builds. All
+The steps discussed so far complete the `Run` portion of the builds. All
 nodes have finished building and build products have been deposited on the
 Linux master builder. The build report was created and posted on the website.
 
@@ -368,8 +368,8 @@ The `cron` job above runs three scripts, to *update*, *prepare*, and *push*.
 #### update 
 
 The *update* script moves the build products that can be propagated from 
-/home/biobuild/public_html/BBS/X.Y/REPO/OUTGOING/ into
-/home/biocadmin/PACKAGES/X.Y/REPO/ where `X.Y` is the version of
+`/home/biobuild/public_html/BBS/X.Y/REPO/OUTGOING/` into
+`/home/biocadmin/PACKAGES/X.Y/REPO/` where `X.Y` is the version of
 Bioconductor and `REPO` is the type of package, e.g., bioc or data.
 
 If a package has been updated, with an appropriate version bump, the older
