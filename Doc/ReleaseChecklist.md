@@ -1,4 +1,4 @@
-# Pre-release Activities 
+# Pre-release Activities
 
 ## Table of Contents
 - [Testing R versions](#rversions)
@@ -45,33 +45,43 @@ in _this_ order
 <a name="sixweeks"></a>
 ## Six weeks before the release:
 
+- Start building annotations (update R on the annotation EC2 instance)
+
+- Update AnnotationForge and GenomeInfoDbData data files in preparation for nonstandard
+  orgdb generation
+
+- db0 packages posted to the devel repo
+
 - Draft release schedule.
 
 - Divide package ranges
 
-- Start contacting maintainers about errors
+- Start contacting maintainers about errors including bad NEWS files
+
+- Create slack channel on dev-team slack
+
+- Announce new package submission deadline
+
+- Announce release schedule
+
+- OrgDb and TxDb packages posted to the devel repo
+
+- After OrgDb and TxDb are in devel repo, add to annotationhub
 
 <a name="fourweeks"></a>
 ## Four weeks before the release:
-
-- Announce release schedule
 
 - Announce deprecated / defunct packages
 
 - Announce contributed annotation deadline
 
-- Start building annotations (update R on the annotation EC2 instance)
-
-- Update AnnotationForge and GenomeInfoDbData data files in preparation for nonstandard 
-  orgdb generation
+- Update GenmeInfoDb mapping table between UCSC and ensembl
 
 <a name="threeweeks"></a>
 ## Three weeks before the release:
 
-- The day before we stop the release builds, update remove-packages.md in the 
+- The day before we stop the release builds, update remove-packages.md in the
   current release, e.g., 3.5.
-
-- db0 packages posted to the devel repo
 
 - Deadline for new package submissions
 
@@ -99,7 +109,11 @@ in _this_ order
 
 - Install latest biocViews on biocadmin account on to-be-release master builder.
 
-- Create the software and experimental data manifest files for new devel
+- Create the manifest files for new devel and remove the deprecated packages
+  BEFORE the first build.
+
+- Remove packages from package.conf that have been defunct and removed from
+  last release
 
 - Start setting up new devel builders and repositories.
 
@@ -123,36 +137,12 @@ in _this_ order
 - Update AMI and docker for the release being frozen, e.g., 3.5. Do this
   before we branch so r-release is still pointing at 3.5 instead of 3.6.
 
-- OrgDb and TxDb packages posted to the devel repo
-
-- After OrgDb and TxDb are in devel repo, add to annotationhub
-
 - Update NEWS files
 
 <a name="oneweek"></a>
 ## One week before the release:
 
-- Deprecated packages
-
-  Remove from the manifest of the to-be-released version of BioC all packages
-  which were deprecated in a previous release cycle 
-  (grep -i deprecated */R/zzz.R).
-
-- Add OrgDb and TxDb packages to AnnotationHub
-
-- Deadline for NEWS files to be updated
-
 - Packages and workflows clean of errors and warnings
-
-- Selectively flush the repositories
-
-  Flush the staging repos on the master Linux builders and on
-  master.bioconductor.org of packages NOT included in the manifests.  This
-  should get rid of renamed or deprecated packages. A full flush of all
-  packages is a bad idea because, without fail, multiple low-level packages
-  will fail to build on release day. This causes problems in the CRAN as well
-  as the Bioconductor repos.
-
 
 <a name="d-2"></a>
 ## Day before we branch (D-2):
@@ -160,10 +150,10 @@ in _this_ order
 - Manifest file for the release branch
 
   Create the manifest file for the release branch, e.g., "RELEASE_3_6".
-  Up to this point and until we branch tomorrow, both 3.6 and the new devel 
+  Up to this point and until we branch tomorrow, both 3.6 and the new devel
   should be using the "master" manifest.
 
-  NOTE: Branch creation must be done after all packages for 3.6 have been 
+  NOTE: Branch creation must be done after all packages for 3.6 have been
   added to the manifest.
 
   NOTE: As part of the bump and branch process tomorrow, the
@@ -171,13 +161,9 @@ in _this_ order
   modified to point to the correct manifest.
   This variable is defined in the config.sh and config.bat files located in the
   ~biocbuild/BBS/3.6/bioc/ and ~biocbuild/BBS/3.6/data-experiment/ folders.
-  For now, packages must still be built off their master branch so do NOT 
+  For now, packages must still be built off their master branch so do NOT
   touch the BBS_BIOC_GIT_BRANCH variable!
 
-- Branch annotations
-  Annotations for the new devel can be branched on or before this day.
-  It is important they are branched before the release because the 
-  symlinks cause problems for CRAN rsyncing their mirrors.
 
 <a name="d-1"></a>
 ## Day we branch (D-1):
@@ -203,9 +189,7 @@ in _this_ order
 
 - Confirm defunct packages have been removed from the 3.7 manifest.
 
-- BiocManager
-
-  TODO: Enter BiocManager-specific notes (if any) for Release 3.8.
+- BiocManager: Update R version dependency in devel version of BiocVersion.
 
 - Run the builds ...
 
@@ -225,11 +209,12 @@ in _this_ order
   /packages. NOTE: If there is no annotation branch, that line under
   'devel_repos' must be commented out; if any of annotation, experiment data or
   software are not available (and a simlink makes them unavailable) the script
-  will break and landing pages will not be generated.
- 
+  will break and landing pages will not be generated. If using symlinks, mark as
+  unavailable or else will destroy symlinked directory!
+
   After a release you should let the no-longer-release version build one last
   time so package landing pages won't say "release version".
-  
+
 - rsync on master
 
   UPDATE the /etc/rsyncd.conf on master.bioconductor.org and
@@ -240,9 +225,9 @@ in _this_ order
   Test rsync is still working as expected with commands from:
   http://www.bioconductor.org/about/mirrors/mirror-how-to/.
 
-- mirrors
+- mirrors/enable archiving for bioc in apache config
 
-  The mirror instructions on the website will be updated 
+  The mirror instructions on the website will be updated
   automatically when config.yaml is updated.
 
   The apache config files need to updated by hand. Add a new
@@ -267,7 +252,7 @@ in _this_ order
      and **/layouts/_release_announcements.html**). Put today's
      date at the top of the web version of the release
      announcement.
- 
+
   -- Add the last release version to the list of 'Previous Versions'
      (layouts/_bioc_older_packages.html). **DON'T FORGET THIS!**
 
@@ -275,14 +260,9 @@ in _this_ order
 
   -- Update number of packages on main index page
 
-  -- Update symlinks ("release" and "devel") under /checkReports
-
   -- Add "Disallow: /packages/XX/" to the web site's robots.txt file
      where XX is the new devel version (one higher than the version)
      that was just released.
- 
-  -- Bioc 3.8 release only: remove conditional to generate package landing pages
-     for release vs devel (BiocManager)
 
   -- Update http://bioconductor.org/install/ for BiocManager
 
@@ -298,15 +278,13 @@ in _this_ order
   -- compare number of packages in announcement with manifest file
 
 - Once the build report posts and products are pushed to master
-  confirm landing pages have updated versions 
+  confirm landing pages have updated versions
 
 - Announce the release
 
 - Tweet a link to the release announcement
 
 - Update Wikipedia page for Bioconductor
-
-- Update RSS feed
 
 - Go for a beer.
 
@@ -326,14 +304,11 @@ in _this_ order
 
 - Update SPB and clean sqlite file
 
-- ID packages for deprecation in BioC 3.7
-
-- Remove packages from package.conf that have been defunct and removed fro
-  latest release
+- ID packages for deprecation
 
 - Update static data in Bioconductor packages GenomeInfoDB and UniProt.ws
   Update GenomeInfoDB/inst/extdata/dataFiles/genomeMappingTbl.csv mapping table
-  for any new ensembl or UCSC entries. 
+  for any new ensembl or UCSC entries.
   https://genome.ucsc.edu/FAQ/FAQreleases.html
   http://useast.ensembl.org/info/website/archives/assembly.html
   Update UniProt.ws/inst/extdata/  keytypes.txt and speclist.txt
