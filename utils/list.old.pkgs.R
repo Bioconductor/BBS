@@ -57,13 +57,18 @@ list.old.pkgs <- function(path=".", suffix=".tar.gz")
 ###
 ### Move old package versions to Archive/ in release and remove them in devel.
 ###
-manage.old.pkgs <- function(path=".", suffix=".tar.gz")
+manage.old.pkgs <- function(path=".", suffix=".tar.gz", bioc_version=NA)
 {
     if (!requireNamespace("BiocManager", quietly = TRUE))
         install.packages("BiocManager", repos="https://cran.rstudio.com")
 
     oldpkgs <- list.old.pkgs(path, suffix)
-    if (BiocManager::version() == BiocManager:::.version_bioc("release")) {
+    if (identical(bioc_version, NA)) {
+        bioc_version <- Sys.getenv("BIOC_VERSION")
+        if (bioc_version == "")
+            bioc_version <- BiocManager::version()
+    }
+    if (bioc_version == BiocManager:::.version_bioc("release")) {
         for (pkg in oldpkgs) {
             path <- paste0("./Archive/", strsplit(pkg, "_")[[1]][1], "/")
             if (!dir.exists(path))

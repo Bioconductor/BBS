@@ -23,8 +23,8 @@ update_repo()
 	if [ "$?" != "0" ]; then
 		exit 1
 	fi
-        echo "$PROPAGATION_R_SCRIPT; copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT') " | $R --slave
-	echo "$R_SCRIPT; manage.old.pkgs(suffix='.$fileext') " | $R --slave
+        echo "$PROPAGATION_R_SCRIPT; copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT')" | $R --slave
+	echo "$R_SCRIPT; manage.old.pkgs(suffix='.$fileext', bioc_version='$BIOC_VERSION')" | $R --slave
 }
 
 echo ""
