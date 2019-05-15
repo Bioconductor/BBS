@@ -294,7 +294,8 @@ in _this_ order
 - Confirm Archive/ folder is working for new release.
   The relevant script is BBS/utils/list.old.packages.R
   which depends on BiocManagerto determine if
-  archiving should happen.
+  archiving should happen. Example location to look
+  `biocadmin@malbec2:~$ ls PACKAGES/3.9/bioc/src/contrib/Archive/`
 
 - Build AMIs for new release and devel
 
