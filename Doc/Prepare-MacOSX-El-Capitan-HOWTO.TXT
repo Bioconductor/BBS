@@ -1152,24 +1152,21 @@ libsbml.pc
  
   http://www.ensembl.org/info/docs/tools/vep/script/vep_download.html#installer
  
+  Move to location:
+    cd /usr/local/
+    
   Download script:
  
-    cd /Downloads
-    mkdir tmp
-    curl -L -O https://github.com/Ensembl/ensembl-vep/archive/release/88.zip
+    git clone https://github.com/Ensembl/ensembl-vep.git
+  
+  Get correct branch (substitute 96 with desired version):
  
-  Unzip the file:
- 
-    cd /Downloads/tmp/ 
-    unzip ensembl-vep-release-88.zip
+    cd /ensembl-vep 
+    git pull
+    git checkout release/96
 
-  Move unzipped folder to /usr/local/
- 
-    mv ensembl-vep-release-88 /usr/local/
- 
-  Remove old vep folder or rename it as vep.old/. Run the installer script:
- 
-    cd /usr/local/ensembl-vep-release-88
+  Run the installer script:
+
     sudo perl INSTALL.pl
  
   You may need to install the File::Copy::Recursive perl module:
@@ -1189,6 +1186,14 @@ libsbml.pc
  
     echo $PATH
     echo $DYLD_LIBRARY_PATH
+    PERL5LIB=/usr/local/ensembl-vep perl -e "use Bio::DB::HTS"
+    PERL5LIB=/usr/local/ensembl-vep perl -e "use Bio::DB::HTS::Tabix"
+    
+  If the above fails and it is not able to be found. The /usr/local/ensembl-vep/HTS.bundle is 
+  a binary linked to /usr/local/lib/libhts.1.dylib. The perl Install.pl script may create 
+  this bundle in /usr/local/ensembl-vep/htslib/ and not in /usr/local/lib. Create a symlink:
+     
+     /usr/local/lib/libhts.1.dylib -> /usr/local/ensembl-vep/htslib/libhts.1.dylib
 
 ** Install ROOT
 
