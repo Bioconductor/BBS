@@ -504,6 +504,7 @@ def _logSlotEvent(logfile, event_type, job0, slot0, slots):
             dt = job._t2 - job._t1
             logfile.write(" %s [pid=%d / StartedAt: %s / %.1f seconds ago]" % (job._name, job._proc.pid, job._startedat, dt))
         logfile.write("\n")
+    logfile.flush()
     return
 
 def _logSummaryOfJobsWithUnprocessedDeps(job_queue):
@@ -542,7 +543,7 @@ def processJobQueue(job_queue, nb_slots=1,
         print "bbs.jobs.processJobQueue>",
         print "%d jobs in the queue. Start processing them using %d slots" % \
               (nb_jobs, nb_slots)
-    slotevents_logfile = open(job_queue._name + '-slotevents.log', 'w')
+    slotevents_logfile = open(job_queue._name + '-slot-events.log', 'w')
     processed_jobs = []
     nb_busy_slots = 0
     slots = nb_slots * [None]
