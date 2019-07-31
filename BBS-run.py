@@ -76,8 +76,9 @@ def writeRconfig():
 def writeSysCommandVersion(var):
     file = '%s-version.txt' % var
     cmd = getRconfigValue(var)
-    syscmd = '%s --version >%s 2>&1' % (cmd, file)
-    bbs.jobs.call(syscmd) # ignore retcode
+    if cmd.strip():
+        syscmd = '%s --version >%s 2>&1' % (cmd, file)
+        bbs.jobs.call(syscmd) # ignore retcode
     return
 
 def makeNodeInfo():
