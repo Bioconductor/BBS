@@ -312,37 +312,41 @@ interactively on a Windows build machine.
 
      (a) R\etc\i386\Makeconf
 
-       From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.4-bioc:
 
-       - cd R\etc\i386
-       - cp Makeconf Makeconf.original
-       - vi Makeconf
-           replace line
-             BINPREF ?= c:/Rtools/mingw_32/bin/
-           with
-             BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+        - cd R\etc\i386
+        - cp Makeconf Makeconf.original
+        - vi Makeconf
+            replace line
+              BINPREF ?= c:/Rtools/mingw_32/bin/
+            with
+              BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+        - Save and quit vi. Then see your changes with:
+            C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
 
      (b) R\etc\x64\Makeconf
 
-       From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.4-bioc:
 
-       - cd R\etc\x64
-       - cp Makeconf Makeconf.original
-       - vi Makeconf
-           replace line
-             BINPREF ?= c:/Rtools/mingw_64/bin/
-           with
-             BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+        - cd R\etc\x64
+        - cp Makeconf Makeconf.original
+        - vi Makeconf
+            replace line
+              BINPREF ?= c:/Rtools/mingw_64/bin/
+            with
+              BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+        - Save and quit vi. Then see your changes with:
+            C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
 
      (c) R\etc\Rprofile.site
 
-       From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.4-bioc:
 
-       - cd R\etc
-       - cp Rprofile.site Rprofile.site.original
-       - vi Rprofile.site
-           add the following line at bottom
-             Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
+        - cd R\etc
+        - cp Rprofile.site Rprofile.site.original
+        - vi Rprofile.site
+            add the following line at bottom
+              Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
 
   3. See "Install Ripley's bundle of pre-compiled external software used by
      some packages" below for other edits to do to R/etc/{i386,x64}/Makeconf
@@ -623,14 +627,14 @@ From a personal administrator account
 ** Install Ripley's bundle of pre-compiled external software used by some
   packages
 
-  NOTE: In the past we installed localXYZ.zip and spatialXYZ.zip from 
+  NOTE: In the past we installed localXYZ.zip and spatialXYZ.zip from:
 
-  https://www.stats.ox.ac.uk/pub/Rtools/libs.html
+      https://www.stats.ox.ac.uk/pub/Rtools/libs.html
 
   That software was compiled using the recommended toolchain for R 2.14.2 to
   3.2.4 so we have since moved on to the extsoft/ repository located here:
 
-  https://cran.r-project.org/bin/windows/extsoft/
+      https://cran.r-project.org/bin/windows/extsoft/
 
   Create the extsoft directory:
 
@@ -641,7 +645,7 @@ From a personal administrator account
   command as appropriate.
  
       cd C:/extsoft
-      rsync --timeout=60 -rcvp --delete --chmod=ugo=rwX   cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
+      rsync --timeout=60 -rcvp --delete --chmod=ugo=rwX cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
 
   The location of these binaries is set using macro EXT_LIBS. The  default 
   setting of EXT_LIBS is $(LOCAL_SOFT) which defaults to $(R_HOME)/extsoft.
@@ -653,25 +657,45 @@ From a personal administrator account
 
      (a) R\etc\i386\Makeconf
 
-       From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.4-bioc:
 
-       - cd R\etc\i386
-       - vi Makeconf
-           replace line
-             #LOCAL_SOFT
-           with
-             LOCAL_SOFT = C:/extsoft
+        - cd R\etc\i386
+        - vi Makeconf
+            replace line
+              #LOCAL_SOFT
+            with
+              LOCAL_SOFT = C:/extsoft
+        - Save and quit vi. Then see your changes with:
+            C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+          You should see the following:
+            < BINPREF ?= c:/Rtools/mingw_32/bin/
+            ---
+            > BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+            31c31
+            < #LOCAL_SOFT
+            ---
+            > LOCAL_SOFT = C:/extsoft
 
      (b) R\etc\x64\Makeconf
 
-       From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.4-bioc:
 
-       - cd R\etc\x64
-       - vi Makeconf
-           replace line
-             #LOCAL_SOFT
-           with
-             LOCAL_SOFT = C:/extsoft
+        - cd R\etc\x64
+        - vi Makeconf
+            replace line
+              #LOCAL_SOFT
+            with
+              LOCAL_SOFT = C:/extsoft
+        - Save and quit vi. Then see your changes with:
+            C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+          You should see the following:
+            < BINPREF ?= c:/Rtools/mingw_64/bin/
+            ---
+            > BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+            31c31
+            < #LOCAL_SOFT
+            ---
+            > LOCAL_SOFT = C:/extsoft
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile a package that uses the GSL
@@ -685,6 +709,22 @@ From a personal administrator account
   Also try to compile a package that uses netCDF (also provided by extsoft/):
 
       ..\R\bin\R CMD INSTALL mzR
+
+** Install libcurl
+
+  Download curl-7.40.0.zip from:
+
+      https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/
+
+  and extract it to C:/extsoft. Choose "Skip these files" when asked if you
+  want to replace or skip the files with the same names (these are the libz.a
+  files located in lib\i386\ and lib\x64\, respectively).
+
+  TESTING: From the biocbuild account try to compile Rhtslib e.g. open a
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.7-bioc\meat (this folder
+  will be automatically created after the 1st build run), then:
+
+      ..\R\bin\R CMD INSTALL Rhtslib
 
 ** Install Ghostscript
 
