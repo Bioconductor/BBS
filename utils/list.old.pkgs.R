@@ -68,7 +68,29 @@ manage.old.pkgs <- function(path=".", suffix=".tar.gz", bioc_version=NA)
         if (bioc_version == "")
             bioc_version <- BiocManager::version()
     }
-    if (bioc_version == BiocManager:::.version_bioc("release")) {
+
+    ## BiocManager:::.version_bioc() will query
+    ## https://bioconductor.org/config.yaml but we want to query
+    ## https://master.bioconductor.org/config.yaml instead. This is more
+    ## robust because it does not go thru the Amazon CloudFront.
+    ## Unfortunately BiocManager:::.version_bioc() doesn't let us specify
+    ## the URL we want to query so we re-implement our own version_bioc()
+    version_bioc <- function(type, config=NULL) {
+        map <- BiocManager:::.version_map_get(config)
+        ## BiocManager:::.version_map_get() will only issue a warning
+        ## but won't actually fail if it cannot access the URL specified
+        ## in 'config'. Instead it will return a 0-row data.frame so we
+        ## check for this.
+        stopifnot(nrow(map) != 0L,
+                  identical(colnames(map),
+                            colnames(BiocManager:::.VERSION_MAP_SENTINEL)))
+        map$Bioc[map$BiocStatus == type]
+    }
+
+    bioc_release_version <- version_bioc("release",
+                 config="https://master.bioconductor.org/config.yaml")
+
+    if (bioc_version == bioc_release_version) {
         for (pkg in oldpkgs) {
             path <- paste0("./Archive/", strsplit(pkg, "_")[[1]][1], "/")
             if (!dir.exists(path))
