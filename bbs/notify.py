@@ -64,7 +64,10 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
     if mode == "do-it":
         print("(NOW SENDING!)", end=" ")
         sys.stdout.flush()
-        server.sendmail(from_addr, to_addrs, msg)
+        try:
+            server.sendmail(from_addr, to_addrs, msg)
+        except smtplib.SMTPDataError:
+            print "FAILED!",
     server.quit()
     print("DONE")
     sys.stdout.flush()
