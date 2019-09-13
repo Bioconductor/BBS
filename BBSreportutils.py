@@ -169,7 +169,7 @@ def get_pkgs(dcf, node_hostname=None, node_id=None):
         pkgs = bbs.parse.readPkgsFromDCF(dcf, node_id, pkgType)
     else:
         pkgs = bbs.parse.readPkgsFromDCF(dcf)
-        pkgs.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+        pkgs.sort(key=str.lower)
     return pkgs
 
 def get_pkgs_from_meat_index(node_hostname=None, node_id=None):

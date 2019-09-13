@@ -802,7 +802,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     unpaired2 = []
     test2filename2 = build_test2filename_dict(tests_dir2, unpaired2)
     testnames1 = test2filename1.keys()
-    testnames1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    testnames1.sort(key=str.lower)
     ## Paired tests.
     for testname in testnames1:
         if test2filename2.has_key(testname):
@@ -826,7 +826,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
             del test2filename2[testname]
     ## Test output files in 'tests_dir1' that didn't get paired.
     unpaired1 += test2filename1.values()
-    unpaired1.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    unpaired1.sort(key=str.lower)
     for filename in unpaired1:
         out.write('<TR>\n')
         filepath = os.path.join(tests_dir1, filename)
@@ -840,7 +840,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         out.write('</TR>\n')
     ## Test output files in 'tests_dir2' that didn't get paired.
     unpaired2 += test2filename2.values()
-    unpaired2.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    unpaired2.sort(key=str.lower)
     for filename in unpaired2:
         out.write('<TR>\n')
         out.write('<TD></TD>\n')
@@ -861,7 +861,7 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
         m = p.match(filename)
         if m != None:
              filenames.append(filename)
-    filenames.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    filenames.sort(key=str.lower)
     for filename in filenames:
         filepath = os.path.join(tests_dir, filename)
         write_filepath_asHTML(out, Rcheck_dir, filepath)
@@ -1593,8 +1593,8 @@ BBSreportutils.set_NODES(report_nodes)
 
 meat_pkgs = BBSreportutils.get_pkgs_from_meat_index()
 skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
-all_pkgs = meat_pkgs + skipped_pkgs
-allpkgs = sorted(all_pkgs, key=str.lower)
+allpkgs = meat_pkgs + skipped_pkgs
+allpkgs.sort(key=str.lower)
 make_STATUS_SUMMARY(allpkgs)
 
 print("BBS> [stage8] cp %s %s/" % (css_file, report_path))
