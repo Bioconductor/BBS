@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -60,7 +60,7 @@ def nuke_tree(dir):
             for file in files:
                 filename = os.path.join(path, file)
                 if not os.access(filename, os.W_OK):
-                    os.chmod(filename, 0777)
+                    os.chmod(filename, 0o777)
     shutil.rmtree(dir, ignore_errors=True)
     return
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -38,8 +38,8 @@ def remakeCentralRdir(Central_rdir):
 ##############################################################################
 
 def build_meat_index(pkgs, meat_path):
-    print "BBS> [build_meat_index] START building the meat index for " + \
-          "the %s packages in the manifest" % len(pkgs)
+    print("BBS> [build_meat_index] START building the meat index for " + \
+          "the %s packages in the manifest" % len(pkgs))
     sys.stdout.flush()
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
     skipped_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.skipped_index_file)
@@ -61,14 +61,14 @@ def build_meat_index(pkgs, meat_path):
             else:
                 maintainer = bbs.parse._getMaintainerFromDir(pkgdir_path)
         except IOError:
-            print "BBS>   Missing DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path
+            print("BBS>   Missing DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path)
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
             continue
         except (bbs.parse.DcfFieldNotFoundError, bbs.dcf.dcfrecordsparser.DCFParseError):
-            print "BBS>   Bad DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path
+            print("BBS>   Bad DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path)
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
@@ -76,7 +76,7 @@ def build_meat_index(pkgs, meat_path):
             continue
         if package != pkg:
             desc_file = bbs.parse.getDescFile(pkgdir_path)
-            print "BBS>   Unexpected 'Package: %s' in '%s'. Skip it!" % (package, desc_file)
+            print("BBS>   Unexpected 'Package: %s' in '%s'. Skip it!" % (package, desc_file))
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
@@ -84,7 +84,7 @@ def build_meat_index(pkgs, meat_path):
             continue
         if not bbs.parse.versionIsValid(version):
             desc_file = bbs.parse.getDescFile(pkgdir_path)
-            print "BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % (version, desc_file)
+            print("BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % (version, desc_file))
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
@@ -114,10 +114,10 @@ def build_meat_index(pkgs, meat_path):
         nout = nout + 1
     skipped.close()
     out.close()
-    print "BBS> [build_meat_index] DONE building the meat index for " + \
-          "the %s packages in the manifest" % len(pkgs)
-    print "BBS> [build_meat_index] %s pkgs were skipped (out of %s)" % (nskipped, len(pkgs))
-    print "BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs))
+    print("BBS> [build_meat_index] DONE building the meat index for " + \
+          "the %s packages in the manifest" % len(pkgs))
+    print("BBS> [build_meat_index] %s pkgs were skipped (out of %s)" % (nskipped, len(pkgs)))
+    print("BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs)))
     sys.stdout.flush()
     return meat_index_path
 
@@ -150,7 +150,7 @@ def update_svnlog():
     shutil.copy(logfilename, svninfo_dir)
 
 def collect_vcs_meta(snapshot_date):
-    print "BBS> [collect_vcs_meta] START collecting vcs meta data..."
+    print("BBS> [collect_vcs_meta] START collecting vcs meta data...")
     sys.stdout.flush()
     vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
     vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
@@ -202,14 +202,14 @@ def collect_vcs_meta(snapshot_date):
             cmd = '(%s) >%s' % (cmd, gitlog_file)
             bbs.jobs.doOrDie(cmd)
     BBScorevars.Central_rdir.Put(vcsmeta_dir, True, True)
-    print "BBS> [collect_vcs_meta] DONE collecting vcs meta data."
+    print("BBS> [collect_vcs_meta] DONE collecting vcs meta data.")
     sys.stdout.flush()
     return
 
 def update_svn_MEAT0(MEAT0_path, snapshot_date):
     vcs_cmd = os.environ['BBS_SVN_CMD']
     cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (vcs_cmd, MEAT0_path)
-    print "BBS> [update_svn_MEAT0] %s (at %s)" % (cmd, snapshot_date)
+    print("BBS> [update_svn_MEAT0] %s (at %s)" % (cmd, snapshot_date))
     bbs.jobs.doOrDie(cmd)
     return
 
@@ -223,14 +223,14 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
         git_branch = BBSvars.git_branch
     if manifest_git_branch == None:
         manifest_git_branch = BBSvars.manifest_git_branch
-    print "BBS> ============================================================="
-    print "BBS> BEGIN update_git_MEAT0()"
-    print "BBS>   MEAT0_path: %s" % MEAT0_path
-    print "BBS>   snapshot_date: %s" % snapshot_date
-    print "BBS>   git_branch: %s" % git_branch
-    print "BBS>   manifest_git_branch: %s" % manifest_git_branch
-    print "BBS> -------------------------------------------------------------"
-    print ""
+    print("BBS> =============================================================")
+    print("BBS> BEGIN update_git_MEAT0()")
+    print("BBS>   MEAT0_path: %s" % MEAT0_path)
+    print("BBS>   snapshot_date: %s" % snapshot_date)
+    print("BBS>   git_branch: %s" % git_branch)
+    print("BBS>   manifest_git_branch: %s" % manifest_git_branch)
+    print("BBS> -------------------------------------------------------------")
+    print()
     bbs.gitutils.update_git_clone(BBSvars.manifest_clone_path,
                              BBSvars.manifest_git_repo_url,
                              manifest_git_branch,
@@ -241,10 +241,10 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     i = 0
     for pkg in pkgs:
         i = i + 1
-        print "BBS> ----------------------------------------------------------"
-        print "BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
-              (i, len(pkgs), pkg, git_branch)
-        print ""
+        print("BBS> ----------------------------------------------------------")
+        print("BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
+              (i, len(pkgs), pkg, git_branch))
+        print()
         pkg_git_clone = os.path.join(MEAT0_path, pkg)
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
         bbs.gitutils.update_git_clone(pkg_git_clone,
@@ -253,24 +253,24 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
                                  depth=1,
                                  snapshot_date=snapshot_date,
                                  reclone_if_update_fails=True)
-        print ""
-    print "BBS> -------------------------------------------------------------"
-    print "BBS> END update_git_MEAT0()"
-    print "BBS> =============================================================="
-    print ""
+        print()
+    print("BBS> -------------------------------------------------------------")
+    print("BBS> END update_git_MEAT0()")
+    print("BBS> ==============================================================")
+    print()
     sys.stdout.flush()
     return
 
 def update_MEAT0(MEAT0_path):
-    print "BBS>"
+    print("BBS>")
     snapshot_date = bbs.jobs.currentDateString()
     if BBSvars.update_MEAT0 == 1:
         update_script = os.path.join(MEAT0_path, 'update-BBS-meat.sh')
         if os.path.exists(update_script):
-            print "BBS> [update_MEAT0] cd BBS_MEAT0_RDIR"
+            print("BBS> [update_MEAT0] cd BBS_MEAT0_RDIR")
             os.chdir(MEAT0_path)
             cmd = update_script
-            print "BBS> [update_MEAT0] %s (at %s)" % (cmd, snapshot_date)
+            print("BBS> [update_MEAT0] %s (at %s)" % (cmd, snapshot_date))
             bbs.jobs.doOrDie(cmd)
         elif BBSvars.MEAT0_type == 1:
             update_svn_MEAT0(MEAT0_path, snapshot_date)
@@ -282,7 +282,7 @@ def writeAndUploadMeatInfo(work_topdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     snapshot_date = update_MEAT0(MEAT0_path)
     manifest_path = BBSvars.manifest_path
-    print "BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path
+    print("BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path)
     pkgs = bbs.manifest.read(manifest_path)
     writeAndUploadMeatIndex(pkgs, MEAT0_path)
     collect_vcs_meta(snapshot_date)
@@ -306,19 +306,19 @@ def extractSrcPkgTarballs(dest_dir):
 
 ### Get the CRAN packages from cobra (NOT currently used)
 def GetCranPkgs(work_topdir):
-    print "BBS> [prerun:get-cran-pkgs] cd BBS_WORK_TOPDIR"
+    print("BBS> [prerun:get-cran-pkgs] cd BBS_WORK_TOPDIR")
     os.chdir(work_topdir)
     pkgs_dir = "pkgs"
     if os.path.exists(pkgs_dir):
-        print "BBS> [prerun:get-cran-pkgs] rm -r %s" % pkgs_dir
+        print("BBS> [prerun:get-cran-pkgs] rm -r %s" % pkgs_dir)
         bbs.fileutils.nuke_tree(pkgs_dir)
-    print "BBS> [prerun:get-cran-pkgs] Download CRAN packages to BBS_WORK_TOPDIR/pkgs"
+    print("BBS> [prerun:get-cran-pkgs] Download CRAN packages to BBS_WORK_TOPDIR/pkgs")
     cmd = "/usr/bin/rsync -ae ssh webadmin@cobra:'/extra/www/cran-mirror/src/contrib/*.tar.gz' %s" % pkgs_dir
     bbs.jobs.doOrDie(cmd)
     os.chdir(pkgs_dir)
     srcpkg_files = bbs.fileutils.listSrcPkgFiles()
     for srcpkg_file in srcpkg_files:
-        print "BBS> [prerun:get-cran-pkgs] tar zxf %s" % srcpkg_file
+        print("BBS> [prerun:get-cran-pkgs] tar zxf %s" % srcpkg_file)
         BBSbase.Untar(srcpkg_file)
     return
 
@@ -336,7 +336,7 @@ def MakeReposPACKAGES(rdir):
 ##############################################################################
 
 def prepare_STAGE1_job_queue(pkgdir_paths, dest_rdir):
-    print "BBS> Preparing STAGE1 job queue ... ",
+    print("BBS> Preparing STAGE1 job queue ... ", end=" ")
     stage = 'buildnovig'
     jobs = []
     for pkgdir_path in pkgdir_paths:
@@ -345,47 +345,47 @@ def prepare_STAGE1_job_queue(pkgdir_paths, dest_rdir):
             version = bbs.parse.getVersionFromDir(pkgdir_path)
             srcpkg_file = bbs.parse.getSrcPkgFileFromDir(pkgdir_path)
         except IOError:
-            print "BBS>   Can't read DESCRIPTION file!"
+            print("BBS>   Can't read DESCRIPTION file!")
         else:
             cmd = BBSbase.getSTAGE1cmd(pkgdir_path)
             pkgdumps_prefix = pkg + '.' + stage;
             pkgdumps = BBSbase.PkgDumps(srcpkg_file, pkgdumps_prefix)
             job = BBSbase.BuildPkg_Job(pkg, version, cmd, pkgdumps, dest_rdir)
             jobs.append(job)
-    print "OK"
+    print("OK")
     job_queue = bbs.jobs.JobQueue(stage, jobs, None)
     job_queue._total = len(pkgdir_paths)
     return job_queue
 
 def STAGE1_loop(job_queue, nb_cpu):
-    print "BBS> BEGIN STAGE1 loop."
+    print("BBS> BEGIN STAGE1 loop.")
     t1 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu, 900.0, True)
     dt = time.time() - t1
-    print "BBS> END STAGE1 loop."
+    print("BBS> END STAGE1 loop.")
     nb_jobs = len(job_queue._jobs)
     total = job_queue._total
-    print "BBS> -------------------------------------------------------------"
-    print "BBS> STAGE1 SUMMARY:"
-    print "BBS>     o Working dir: %s" % os.getcwd()
-    print "BBS>     o %d pkg(s) listed in file %s" % \
-          (total, BBScorevars.meat_index_file)
-    print "BBS>     o %d pkg dir(s) queued and processed" % nb_jobs
-    print "BBS>     o %d srcpkg file(s) produced" % nb_products
-    print "BBS>     o Total time: %.2f seconds" % dt
-    print "BBS> -------------------------------------------------------------"
+    print("BBS> -------------------------------------------------------------")
+    print("BBS> STAGE1 SUMMARY:")
+    print("BBS>     o Working dir: %s" % os.getcwd())
+    print("BBS>     o %d pkg(s) listed in file %s" % \
+          (total, BBScorevars.meat_index_file))
+    print("BBS>     o %d pkg dir(s) queued and processed" % nb_jobs)
+    print("BBS>     o %d srcpkg file(s) produced" % nb_products)
+    print("BBS>     o Total time: %.2f seconds" % dt)
+    print("BBS> -------------------------------------------------------------")
     return
 
 def makeTargetRepo(rdir):
-    print "BBS> [makeTargetRepo] STARTING makeTargetRepo..."
-    print "BBS> [makeTargetRepo] mkdir %s" % rdir.label
+    print("BBS> [makeTargetRepo] STARTING makeTargetRepo...")
+    print("BBS> [makeTargetRepo] mkdir %s" % rdir.label)
     rdir.MakeMe()
     #FIXME: The 2 lines below don't seem to be able to remove anything!
-    print "BBS> [makeTargetRepo] rm -f %s/*" % rdir.label
+    print("BBS> [makeTargetRepo] rm -f %s/*" % rdir.label)
     rdir.Call('rm -f *')
-    print "BBS> [makeTargetRepo] cd BBS_MEAT_PATH"
+    print("BBS> [makeTargetRepo] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
-    print "BBS> [makeTargetRepo] Get list of pkgs from %s" % BBScorevars.meat_index_file
+    print("BBS> [makeTargetRepo] Get list of pkgs from %s" % BBScorevars.meat_index_file)
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
     dcf = open(meat_index_path, 'r')
     pkgdir_paths = bbs.parse.readPkgsFromDCF(dcf)
@@ -397,7 +397,7 @@ def makeTargetRepo(rdir):
     #STAGE1_loop(job_queue, BBSvars.nb_cpu)
     STAGE1_loop(job_queue, 2)
     MakeReposPACKAGES(rdir)
-    print "BBS> [makeTargetRepo] DONE."
+    print("BBS> [makeTargetRepo] DONE.")
     return
 
 
@@ -406,14 +406,14 @@ def makeTargetRepo(rdir):
 ##############################################################################
 
 if __name__ == "__main__":
-    print
-    print
-    print
-    print "BBS> =============================================================="
-    print "BBS> =============================================================="
-    print "BBS> %s" % time.asctime()
-    print "BBS> =============================================================="
-    print
+    print()
+    print()
+    print()
+    print("BBS> ==============================================================")
+    print("BBS> ==============================================================")
+    print("BBS> %s" % time.asctime())
+    print("BBS> ==============================================================")
+    print()
     argc = len(sys.argv)
     if argc > 1:
         arg1 = sys.argv[1]
@@ -425,36 +425,36 @@ if __name__ == "__main__":
 
     subtask = "make-central-rdir"
     if arg1 == "" or arg1 == subtask:
-        print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
+        print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         remakeCentralRdir(Central_rdir)
-        print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
+        print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "upload-meat-info"
     if (arg1 == "" or arg1 == subtask) and (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
-        print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
+        print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         writeAndUploadMeatInfo(work_topdir)
-        print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
+        print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "create-local-meat-dir"
     if (arg1 == "" or arg1 == subtask) and (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
-        print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
+        print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         ## Using rsync is better than "svn export": (1) it's incremental,
         ## (2) it works remotely, (3) it works with "nested working copies
         ## (like we have for the data-experiment MEAT0) and, (4) it's even
         ## slightly faster!
         BBSvars.MEAT0_rdir.syncLocalDir(BBSvars.meat_path, True)
-        print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
+        print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "extract-meat"
     if (arg1 == "" or arg1 == subtask) and BBSvars.MEAT0_type == 2:
-        print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
+        print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         pkgs = extractSrcPkgTarballs(meat_path)
         writeAndUploadMeatIndex(pkgs, meat_path)
-        print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
+        print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "make-target-repo"
     if arg1 == "" or arg1 == subtask:
-        print "BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime())
+        print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         Contrib_rdir = Central_rdir.subdir('src/contrib')
         makeTargetRepo(Contrib_rdir)
-        print "BBS> [prerun] DONE %s at %s." % (subtask, time.asctime())
+        print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))

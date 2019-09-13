@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -264,7 +264,7 @@ def status_asSPAN(status):
     return '<SPAN class="%s">&nbsp;%s&nbsp;</SPAN>' % (status, status)
 
 def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
-    #print "  %s %s %s" % (pkg, node.id, stage)
+    #print("  %s %s %s" % (pkg, node.id, stage))
     status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
     if status in ["skipped", "NA"]:
         status_html = status_asSPAN(status)
@@ -1015,7 +1015,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     return
 
 def make_node_LeafReports(allpkgs, node):
-    print "BBS> [make_node_LeafReports] Node %s: BEGIN ..." % node.id
+    print("BBS> [make_node_LeafReports] Node %s: BEGIN ..." % node.id)
     sys.stdout.flush()
     for pkg in BBSreportutils.supported_pkgs(node):
 
@@ -1058,17 +1058,17 @@ def make_node_LeafReports(allpkgs, node):
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs)
 
-    print "BBS> [make_node_LeafReports] Node %s: END." % node.id
+    print("BBS> [make_node_LeafReports] Node %s: END." % node.id)
     sys.stdout.flush()
     return
 
 def make_all_LeafReports(allpkgs):
-    print "Current working dir '%s'" % os.getcwd()
+    print("Current working dir '%s'" % os.getcwd())
     for pkg in allpkgs:
         try:
             os.mkdir(pkg)
         except:
-            print "mkdir failed in make_all_LeaveReports '%s'" % pkg
+            print("mkdir failed in make_all_LeaveReports '%s'" % pkg)
             continue
         leafreport_ref = LeafReportReference(pkg, None, None, None)
         make_PkgReportLandingPage(leafreport_ref, allpkgs)
@@ -1481,7 +1481,7 @@ def write_glyph_and_propagation_LED_table(out):
 ##############################################################################
 
 def write_node_report(node, allpkgs):
-    print "BBS> [write_node_report] Node %s: BEGIN ..." % node.id
+    print("BBS> [write_node_report] Node %s: BEGIN ..." % node.id)
     sys.stdout.flush()
     node_index_file = '%s-index.html' % node.id
     out = open(node_index_file, 'w')
@@ -1505,7 +1505,7 @@ def write_node_report(node, allpkgs):
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
-    print "BBS> [write_node_report] Node %s: END." % node.id
+    print("BBS> [write_node_report] Node %s: END." % node.id)
     sys.stdout.flush()
     return node_index_file
 
@@ -1539,21 +1539,21 @@ def write_mainpage_asHTML(out, allpkgs):
     return
 
 def make_BioC_MainReport(allpkgs):
-    print "BBS> [make_BioC_MainReport] BEGIN ..."
+    print("BBS> [make_BioC_MainReport] BEGIN ...")
     sys.stdout.flush()
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs)
     out.close()
-    print "BBS> [make_BioC_MainReport] END."
+    print("BBS> [make_BioC_MainReport] END.")
     sys.stdout.flush()
     return
 
 def make_CRAN_MainReport(allpkgs):
-    print "BBS> [make_CRAN_MainReport] BEGIN ..."
+    print("BBS> [make_CRAN_MainReport] BEGIN ...")
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs)
     out.close()
-    print "BBS> [make_CRAN_MainReport] END."
+    print("BBS> [make_CRAN_MainReport] END.")
     sys.stdout.flush()
     return
 
@@ -1562,7 +1562,7 @@ def make_CRAN_MainReport(allpkgs):
 ### MAIN SECTION
 ##############################################################################
 
-print "BBS> [stage8] STARTING stage8 at %s..." % time.asctime()
+print("BBS> [stage8] STARTING stage8 at %s..." % time.asctime())
 
 report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
 report_path = BBScorevars.getenv('BBS_REPORT_PATH')
@@ -1578,15 +1578,15 @@ else:
 
 no_alphabet_dispatch = arg1 == "no-alphabet-dispatch"
 
-print "BBS> [stage8] remake_dir %s" % report_path
+print("BBS> [stage8] remake_dir %s" % report_path)
 bbs.fileutils.remake_dir(report_path)
-print "BBS> [stage8] cd %s/" % report_path
+print("BBS> [stage8] cd %s/" % report_path)
 os.chdir(report_path)
-print "BBS> [stage8] get %s from %s/" % (BBScorevars.meat_index_file, BBScorevars.Central_rdir.label)
+print("BBS> [stage8] get %s from %s/" % (BBScorevars.meat_index_file, BBScorevars.Central_rdir.label))
 BBScorevars.Central_rdir.Get(BBScorevars.meat_index_file)
-print "BBS> [stage8] get %s from %s/" % (BBScorevars.skipped_index_file, BBScorevars.Central_rdir.label)
+print("BBS> [stage8] get %s from %s/" % (BBScorevars.skipped_index_file, BBScorevars.Central_rdir.label))
 BBScorevars.Central_rdir.Get(BBScorevars.skipped_index_file)
-print "BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBScorevars.Central_rdir.label)
+print("BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBScorevars.Central_rdir.label))
 BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
@@ -1597,18 +1597,18 @@ all_pkgs = meat_pkgs + skipped_pkgs
 allpkgs = sorted(all_pkgs, key=str.lower)
 make_STATUS_SUMMARY(allpkgs)
 
-print "BBS> [stage8] cp %s %s/" % (css_file, report_path)
+print("BBS> [stage8] cp %s %s/" % (css_file, report_path))
 shutil.copy(css_file, report_path)
 if bgimg_file:
-    print "BBS> [stage8] cp %s %s/" % (bgimg_file, report_path)
+    print("BBS> [stage8] cp %s %s/" % (bgimg_file, report_path))
     shutil.copy(bgimg_file, report_path)
 if js_file:
-    print "BBS> [stage8] cp %s %s/" % (js_file, report_path)
+    print("BBS> [stage8] cp %s %s/" % (js_file, report_path))
     shutil.copy(js_file, report_path)
 for color in ["Red", "Green", "Blue"]:
     icon = "%s/images/120px-%s_Light_Icon.svg.png" % (os.getenv("BBS_HOME"), color)
     shutil.copy(icon, report_path)
-print "BBS> [stage8] Generating report for nodes: %s" % report_nodes
+print("BBS> [stage8] Generating report for nodes: %s" % report_nodes)
 if arg1 != "skip-leaf-reports":
     make_all_LeafReports(allpkgs)
 make_all_NodeReports(allpkgs)
@@ -1617,6 +1617,6 @@ if BBScorevars.subbuilds != "cran":
 else: # "cran" subbuilds
     make_CRAN_MainReport(allpkgs)
 
-print "BBS> [stage8] DONE at %s." % time.asctime()
+print("BBS> [stage8] DONE at %s." % time.asctime())
 
 #from IPython.core.debugger import Tracer;Tracer()()

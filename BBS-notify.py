@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -10,7 +10,7 @@
 import sys
 import time
 
-import bbs.email
+import bbs.notify
 
 import BBScorevars
 import BBSreportutils
@@ -47,7 +47,7 @@ def send_notification(pkg):
     if package_status == 'Deprecated':
         return
     maintainer_email = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'MaintainerEmail')
-    #print "%s %s %s %s" % (pkg, version, maintainer, maintainer_email)
+    #print("%s %s %s %s" % (pkg, version, maintainer, maintainer_email))
     #key = 'Last Changed Date'
     #last_changed_date = BBSreportutils.get_vcs_meta(pkg, key)
     #key = 'Last Changed Rev'
@@ -88,14 +88,14 @@ def send_notification(pkg):
         + "the %s package has the following problem(s):\n\n" % pkg \
         + "%s\n%s\n%s" % ('\n'.join(problem_descs), msg_tail, msg_footnote)
     if arg1 == "":
-        print "###########################################################"
-        print "maintainer_email: %s\n" % maintainer_email
-        print "subject: %s\n" % subject
-        print msg
-        print ""
-    print "BBS> Notifying maintainer(s) of %s:" % pkg
+        print("###########################################################")
+        print("maintainer_email: %s\n" % maintainer_email)
+        print("subject: %s\n" % subject)
+        print(msg)
+        print()
+    print("BBS> Notifying maintainer(s) of %s:" % pkg)
     sys.stdout.flush()
-    bbs.email.sendtextmail(from_addr, to_addrs, subject, msg)
+    bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg)
     return
 
 def send_notifications(allpkgs):
@@ -104,15 +104,15 @@ def send_notifications(allpkgs):
     return
 
 def send_BioC_notifications(allpkgs):
-    print "BBS> [send_BioC_notifications] BEGIN..."
+    print("BBS> [send_BioC_notifications] BEGIN...")
     send_notifications(allpkgs)
-    print "BBS> [send_BioC_notifications] END."
+    print("BBS> [send_BioC_notifications] END.")
     return
 
 def send_CRAN_notifications(allpkgs):
-    print "BBS> [send_CRAN_notifications] BEGIN..."
+    print("BBS> [send_CRAN_notifications] BEGIN...")
     send_notifications(allpkgs)
-    print "BBS> [send_CRAN_notifications] END."
+    print("BBS> [send_CRAN_notifications] END.")
     return
 
 
@@ -120,7 +120,7 @@ def send_CRAN_notifications(allpkgs):
 ### MAIN SECTION
 ##############################################################################
 
-print "BBS> [stage9] STARTING stage9 at %s..." % time.asctime()
+print("BBS> [stage9] STARTING stage9 at %s..." % time.asctime())
 
 BBSreportutils.data_source = BBScorevars.getenv('BBS_PUBLISHED_REPORT_URL')
 notify_nodes = BBScorevars.getenv('BBS_NOTIFY_NODES')
@@ -132,17 +132,17 @@ else:
     arg1 = ""
 
 if arg1 != "":
-    bbs.email.mode = "do-it"
+    bbs.notify.mode = "do-it"
     if arg1 != "do-it":
-        bbs.email.redirect_to_addr = arg1
+        bbs.notify.redirect_to_addr = arg1
 
 BBSreportutils.set_NODES(notify_nodes)
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
-print "BBS> [stage9] Notifying package maintainers for nodes: %s" % notify_nodes
+print("BBS> [stage9] Notifying package maintainers for nodes: %s" % notify_nodes)
 if BBScorevars.subbuilds in ["bioc", "data-experiment"]:
     send_BioC_notifications(allpkgs)
 else: # "cran" subbuilds
     send_CRAN_notifications(allpkgs)
 
-print "BBS> [stage9] DONE at %s." % time.asctime()
+print("BBS> [stage9] DONE at %s." % time.asctime())
 

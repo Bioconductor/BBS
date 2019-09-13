@@ -1,12 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Jan 17, 2008
+### Last modification: Sep 12, 2019
 ###
-### email module
+### notify module
 ###
 
 import sys
@@ -31,19 +31,19 @@ user_agent = 'Thunderbird 2.0.0.6 (Macintosh/20070728)'
 errors_to = 'devteam-bioc@fhcrc.org'
 
 # Test this with:
-#   import bbs.email
+#   import bbs.notify
 #   from_addr = 'turlututu'
 #   to_addrs = ['hpages@fhcrc.org', 'herve.pages@laposte.net']
 #   subject = 'test2'
 #   msg = 'OOOH'
-#   bbs.email.sendtextmail(from_addr, to_addrs, subject, msg)
-#   bbs.email.mode = "do-it"
-#   bbs.email.sendtextmail(from_addr, to_addrs, subject, msg)
+#   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg)
+#   bbs.notify.mode = "do-it"
+#   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg)
 def sendtextmail(from_addr, to_addrs, subject, msg):
     if redirect_to_addr != None:
         to_addrs = [redirect_to_addr]
     to = ', '.join(to_addrs)
-    print "BBS>   About to send email to '%s'..." % to,
+    print("BBS>   About to send email to '%s'..." % to, end=" ")
     sys.stdout.flush()
     msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, user_agent, from_addr, errors_to, msg)
     #with open("email_config.yaml", 'r') as stream:
@@ -62,11 +62,11 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
 
     #server.set_debuglevel(1)
     if mode == "do-it":
-        print "(NOW SENDING!)",
+        print("(NOW SENDING!)", end=" ")
         sys.stdout.flush()
         server.sendmail(from_addr, to_addrs, msg)
     server.quit()
-    print "DONE"
+    print("DONE")
     sys.stdout.flush()
     return
 
@@ -127,7 +127,7 @@ def createhtmlmail(html, text, from_addr, to_addrs, subject):
 	writer.lastpart()
 	msg = out.getvalue()
 	out.close()
-	#print msg
+	#print(msg)
 	return msg
 
 # Test this with:
@@ -136,8 +136,8 @@ def createhtmlmail(html, text, from_addr, to_addrs, subject):
 #   subject='test3'
 #   html_msg='<HTML><BODY style="background: #49A"><H1>OOOH</H1></BODY></HTML>'
 #   text_msg='OOOH'
-#   import bbs.email
-#   bbs.email.sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg)
+#   import bbs.notify
+#   bbs.notify.sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg)
 def sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg):
     msg = createhtmlmail(html_msg, text_msg, from_addr, to_addrs, subject)
 

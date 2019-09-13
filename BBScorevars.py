@@ -25,7 +25,7 @@ class Debug:
     def Print(self, msg):
         if not self.is_on:
             return
-        print "%s%s" % (self.ps, msg)
+        print("%s%s" % (self.ps, msg))
         sys.stdout.flush()
         return
     def Begin(self, f, args=[]):
@@ -55,11 +55,11 @@ def getenv(name, is_required=True, default=None):
     if name in os.environ and os.environ[name] != "":
         val = os.environ[name]
     elif is_required:
-        print "BBScorevars ERROR: Environment variable %s" % name,
+        print("BBScorevars ERROR: Environment variable %s" % name, end=" ")
         if not name in os.environ:
-            print "not found!"
+            print("not found!")
         else:
-            print "is an empty string!"
+            print("is an empty string!")
         sys.exit("==> EXIT")
     else:
         val = default
@@ -75,7 +75,7 @@ else:
     running_user = getenv('USER')
 user = getenv('BBS_USER', False, running_user)
 if user != running_user:
-    print "BBScorevars ERROR: BBS running as user '%s', '%s' expected!" % (running_user, user)
+    print("BBScorevars ERROR: BBS running as user '%s', '%s' expected!" % (running_user, user))
     sys.exit("==> EXIT")
 
 
@@ -87,8 +87,8 @@ if user != running_user:
 
 BBS_home = getenv('BBS_HOME')
 
-sys.path.append(os.path.join(BBS_home, "nodes"))
-import nodespecs
+#sys.path.append(os.path.join(BBS_home, "nodes"))
+import nodes.nodespecs
 
 pkgType2FileExt = {
     'source': "tar.gz",
@@ -101,7 +101,7 @@ pkgType2FileExt = {
 }
 
 def getNodeSpec(node_hostname, key):
-    spec = nodespecs.allnodes[node_hostname.lower()]
+    spec = nodes.nodespecs.allnodes[node_hostname.lower()]
     if key == 'OS':
         return spec[0]
     if key == 'Arch':

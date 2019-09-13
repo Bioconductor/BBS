@@ -1,6 +1,6 @@
 import unittest
 import tempfile
-import urllib2
+import urllib.request
 import re
 import time
 
@@ -278,7 +278,7 @@ if __name__ == '__main__':
         f.write("A: a1\nB: a long\n value\n\nA: a2\nB: B2")
         f.close()
         url = "file://%s" % t[1]
-        urlobj = urllib2.urlopen(url)
+        urlobj = urllib.request.urlopen(url)
         c = DcfRecordsParser(urlobj)
         res0 = c.getNextDcfVal("A", True)
         assert res0 == "a1", self.m(res0, "a1")
@@ -293,7 +293,7 @@ if __name__ == '__main__':
 
     def test_withARealFile(self):
         url = "http://bioconductor.org/packages/2.11/bioc/src/contrib/PACKAGES"
-        urlobj = urllib2.urlopen(url)
+        urlobj = urllib.request.urlopen(url)
         c = DcfRecordsParser(urlobj)
         while True:
             res0 = c.getNextDcfVal("Package")
@@ -347,7 +347,7 @@ if __name__ == '__main__':
       def test1(self):
           print()
           url = "http://bioconductor.org/packages/2.11/bioc/src/contrib/PACKAGES"
-          urlobj = urllib2.urlopen(url)
+          urlobj = urllib.request.urlopen(url)
           start_time = time.time()
           c = DcfRecordsParser(urlobj)
           while True:
@@ -361,7 +361,7 @@ if __name__ == '__main__':
           elapsed_time0 = time.time() - start_time
           print("test1: elapsed_time0: %.6f" % elapsed_time0)
 
-          urlobj = urllib2.urlopen(url)
+          urlobj = urllib.request.urlopen(url)
           start_time = time.time()
           OLDgetNextDcfVal(urlobj, "Package")
           while True:

@@ -9,9 +9,7 @@
 import sys
 import os
 import string
-### urllib.urlopen() doesn't raise an error when the object is not found (HTTP
-### Error 404) but urllib2.urlopen() does (raises an urllib2.HTTPError object)
-import urllib2 
+import urllib.request
 
 import bbs.parse
 import BBSvars
@@ -161,7 +159,7 @@ def open_rodata(file):
     if data_source == 'local':
         return { 'rostream': open(file, 'r'), 'desc': file }
     url = '%s/%s' % (data_source, file)
-    return { 'rostream': urllib2.urlopen(url), 'desc': url }
+    return { 'rostream': urllib.request.urlopen(url), 'desc': url }
 
 ### If 'node_hostname' is specified, then returns only the packages that are
 ### supported on this node (and the returned list is unsorted).

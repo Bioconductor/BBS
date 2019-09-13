@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -16,8 +15,9 @@
 import sys
 import os
 
-import bbs.jobs
-import bbs.fileutils
+sys.path.insert(0, os.path.dirname(__file__))
+import jobs
+import fileutils
 
 def _create_clone(clone_path, repo_url, branch=None, depth=None):
     try:
@@ -30,9 +30,9 @@ def _create_clone(clone_path, repo_url, branch=None, depth=None):
     if depth != None:
         cmd += ' --depth %s' % depth
     cmd = '%s %s %s' % (cmd, repo_url, clone_path)
-    print "bbs.gitutils._create_clone> %s" % cmd
-    bbs.jobs.doOrDie(cmd)
-    print ""
+    print("bbs.gitutils._create_clone> %s" % cmd)
+    jobs.doOrDie(cmd)
+    print()
     return
 
 def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
@@ -41,32 +41,32 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     except KeyError:
         git_cmd = 'git'
     old_cwd = os.getcwd()
-    print "bbs.gitutils._update_clone> cd %s" % clone_path
+    print("bbs.gitutils._update_clone> cd %s" % clone_path)
     os.chdir(clone_path)
-    print ""
+    print()
     if branch != None:
         ## checkout branch
         cmd = '%s checkout %s' % (git_cmd, branch)
-        print "bbs.gitutils._update_clone> %s" % cmd
-        retcode = bbs.jobs.call(cmd)
+        print("bbs.gitutils._update_clone> %s" % cmd)
+        retcode = jobs.call(cmd)
         if retcode != 0:
-            print "bbs.gitutils._update_clone> cd %s" % old_cwd
+            print("bbs.gitutils._update_clone> cd %s" % old_cwd)
             os.chdir(old_cwd)
             return retcode
-        print ""
+        print()
     if snapshot_date == None:
         cmd = '%s pull' % git_cmd
     else:
         ## we fetch instead of pull so we can then merge up to snapshot
         ## date (see below)
         cmd = '%s fetch' % git_cmd
-    print "bbs.gitutils._update_clone> %s" % cmd
-    retcode = bbs.jobs.call(cmd)
+    print("bbs.gitutils._update_clone> %s" % cmd)
+    retcode = jobs.call(cmd)
     if retcode != 0:
-        print "bbs.gitutils._update_clone> cd %s" % old_cwd
+        print("bbs.gitutils._update_clone> cd %s" % old_cwd)
         os.chdir(old_cwd)
         return retcode
-    print ""
+    print()
     if snapshot_date != None:
         ## Andrzej: merge only up to snapshot date
         ##          (see https://stackoverflow.com/a/8223166/2792099)
@@ -74,14 +74,14 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         ## simple 'git merge' for now...
         #cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
         cmd = '%s merge' % git_cmd
-        print "bbs.gitutils._update_clone> %s" % cmd
-        retcode = bbs.jobs.call(cmd)
+        print("bbs.gitutils._update_clone> %s" % cmd)
+        retcode = jobs.call(cmd)
         if retcode != 0:
-            print "bbs.gitutils._update_clone> cd %s" % old_cwd
+            print("bbs.gitutils._update_clone> cd %s" % old_cwd)
             os.chdir(old_cwd)
             return retcode
-        print ""
-    print "bbs.gitutils._update_clone> cd %s" % old_cwd
+        print()
+    print("bbs.gitutils._update_clone> cd %s" % old_cwd)
     os.chdir(old_cwd)
     return 0
 
@@ -90,16 +90,16 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_dat
         retcode = _update_clone(clone_path, repo_url, branch, snapshot_date)
         if retcode == 0:
             return
-        print ""
-        print "bbs.gitutils.update_git_clone> _update_clone() failed " + \
-              "with error code %d!" % retcode
+        print()
+        print("bbs.gitutils.update_git_clone> _update_clone() failed " +
+              "with error code %d!" % retcode)
         if not reclone_if_update_fails:
             sys.exit("bbs.gitutils.update_git_clone> EXIT")
-        print "bbs.gitutils.update_git_clone> ==> will try to re-create " + \
-              "git clone from scratch ..."
-        print "bbs.gitutils.update_git_clone> rm -r %s" % clone_path
-        bbs.fileutils.nuke_tree(clone_path)
-        print ""
+        print("bbs.gitutils.update_git_clone> ==> will try to re-create " +
+              "git clone from scratch ...")
+        print("bbs.gitutils.update_git_clone> rm -r %s" % clone_path)
+        fileutils.nuke_tree(clone_path)
+        print()
     _create_clone(clone_path, repo_url, branch, depth)
     return
 

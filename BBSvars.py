@@ -66,7 +66,7 @@ hostname0 = bbs.jobs.getHostname()
 node_hostname = BBScorevars.getenv('BBS_NODE_HOSTNAME', False, hostname0)
 ### Check that 'node_hostname' matches the effective hostname:
 if node_hostname.lower() != hostname0.lower():
-    print "BBSvars ERROR: Found hostname '%s', '%s' expected!" % (hostname0, node_hostname)
+    print("BBSvars ERROR: Found hostname '%s', '%s' expected!" % (hostname0, node_hostname))
     sys.exit("==> EXIT")
 
 node_id = BBScorevars.getenv('BBS_NODE_ID', False, node_hostname)

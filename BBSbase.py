@@ -376,7 +376,7 @@ class PkgDumps:
              and os.path.exists(self.out_file) \
              and os.path.exists(self.summary_file)
         if verbose and OK:
-            print "BBS>   Found output files",
+            print("BBS>   Found output files", end=" ")
         return OK
     def Push(self, rdir):
         if self.product_path == None:

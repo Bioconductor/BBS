@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -16,6 +16,8 @@ import errno
 import subprocess
 import signal
 import datetime
+import time
+import socket
 if sys.platform == "win32":
     import psutil
     #import win32api
@@ -26,12 +28,11 @@ if sys.platform == "win32":
     #    except:
     #        if i == 9:
     #            sys.exit("BBS>   FATAL ERROR: GetObject('winmgmts:') failed 10 times => EXIT.")
-    #        print "BBS>   GetObject('winmgmts:') failed. ",
-    #        print "Trying again in 1 sec."
+    #        print("BBS>   GetObject('winmgmts:') failed. ", end=" ")
+    #        print("Trying again in 1 sec.")
     #        win32api.Sleep(long(1000))
     #    else:
     #        break
-import time
 
 
 ##############################################################################
@@ -101,9 +102,9 @@ if False:
             return None
         return processes[0]
     def printProcProperties(proc):
-        print "BBS>     Process properties for PID %d:" % proc.ProcessID
+        print("BBS>     Process properties for PID %d:" % proc.ProcessID)
         for prop in proc.Properties_:
-            print "BBS>     | - %s: %s" % (prop.Name, prop.Value)
+            print("BBS>     | - %s: %s" % (prop.Name, prop.Value))
         return
     # Parents are listed *after* all their children in the returned list.
     # Returns None if 'pid' is an invalid process id.
@@ -201,9 +202,9 @@ def killProc(pid):
         proc = psutil.Process(pid)
         proc.kill()
     except psutil.NoSuchProcess:
-        print "BBS>     No such process %s."  % pid
+        print("BBS>     No such process %s."  % pid)
     except psutil.AccessDenied:
-        print "BBS>     Access denied (pid=%s)."  % pid
+        print("BBS>     Access denied (pid=%s)."  % pid)
     except TypeError:
         sys.exit("BBS>     pid must be an integer! (got %s)" % pid)
 
@@ -219,16 +220,16 @@ def killProc(pid):
                 except psutil.NoSuchProcess:
                     print("BBS>         Grandkid process %s does not exist." % grandkid.pid)
                 except psutil.AccessDenied:
-                    print "BBS>         Access denied (pid=%s)."  % grandkid.pid
+                    print("BBS>         Access denied (pid=%s)."  % grandkid.pid)
         except psutil.NoSuchProcess:
-            print "BBS>       Child process %s does not exist." % child.pid
+            print("BBS>       Child process %s does not exist." % child.pid)
         except psutil.AccessDenied:
-            print "BBS>       Access denied (pid=%s)."  % child.pid
+            print("BBS>       Access denied (pid=%s)."  % child.pid)
 
 ### What if cmd is not found, can't be started or crashes?
 def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
     if verbose:
-        print "BBS>   runJob(): " + cmd
+        print("BBS>   runJob(): " + cmd)
     if stdout == None:
         out = None
     else:
@@ -266,7 +267,7 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
     if timeout:
         retcode = None
         if verbose:
-            print "TIMEOUT!"
+            print("TIMEOUT!")
         ## killProc() raises an OSError if passed an invalid process ID.
         ## Note that this could very well happen if the process terminates
         ## after the last call to proc.poll() and before we call
@@ -280,9 +281,9 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
         if verbose:
             sys.stdout.write("retcode = %d / " % retcode)
             if retcode != 0:
-                print "ERROR!"
+                print("ERROR!")
             else:
-                print "OK"
+                print("OK")
     if stdout != None:
         out.close()
     return retcode
@@ -296,7 +297,7 @@ def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.
     if failure_is_fatal:
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         sys.exit("%d failed attempts => EXIT at %s." % (nb_attempts, now))
-    print "%d failed attempts => never mind, let's keep going..." % nb_attempts
+    print("%d failed attempts => never mind, let's keep going..." % nb_attempts)
     return retcode
 
 ### Objects passed to the processJobQueue() function must be QueuedJob objects.
@@ -379,17 +380,17 @@ def _getNextJobToProcess(job_queue, processed_jobs, nb_busy_slots):
     sys.exit("BBS>   FATAL ERROR in _getNextJobToProcess(): Unexpectedly reached end of function.")
 
 def _logActionOnQueuedJob(action, job, nb_jobs, nb_slots, job_deps=None):
-    print
+    print()
     msg = "%s JOB %s (%d/%d)" % (action, job._name, job._rank+1, nb_jobs)
     if nb_slots != 1:
         msg += " ON SLOT %s/%s" % (job._slot+1, nb_slots)
-    print "bbs.jobs.processJobQueue> %s" % msg
+    print("bbs.jobs.processJobQueue> %s" % msg)
     if job_deps != None:
-        print "bbs.jobs.processJobQueue>   Deps:",
-        print job_deps[job._name]
-        print "bbs.jobs.processJobQueue>   Unprocessed deps:",
-        print job._unprocessed_deps
-    print "bbs.jobs.processJobQueue>   Command: %s" % job._cmd
+        print("bbs.jobs.processJobQueue>   Deps:", end=" ")
+        print(job_deps[job._name])
+        print("bbs.jobs.processJobQueue>   Unprocessed deps:", end=" ")
+        print(job._unprocessed_deps)
+    print("bbs.jobs.processJobQueue>   Command: %s" % job._cmd)
 
 def _writeRunHeader(out, cmd, nb_runs):
     if nb_runs != 1:
@@ -465,27 +466,27 @@ def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
         killProc(job._proc.pid)
         if verbose:
             if nb_slots == 1:
-                print "/TIMEOUT!]"
+                print("/TIMEOUT!]")
             else:
-                print
+                print()
                 msg = "KILL JOB %s (%d/%d)" % (job._name, job._rank+1, nb_jobs)
                 msg += " ON SLOT %s/%s" % (job._slot+1, nb_slots)
                 msg += " after %.2f seconds" % dt
-                print "bbs.jobs.processJobQueue> %s" % msg
+                print("bbs.jobs.processJobQueue> %s" % msg)
         return -1
     job._retcode = job._proc.wait()
     if verbose:
         if nb_slots == 1:
             if job._retcode == 0:
-                print "/OK]"
+                print("/OK]")
             else:
-                print "/ERROR!/retcode=%d]" % job._retcode
+                print("/ERROR!/retcode=%d]" % job._retcode)
         else:
-            print
+            print()
             msg = "DONE JOB %s (%d/%d)" % (job._name, job._rank+1, nb_jobs)
             msg += " ON SLOT %s/%s" % (job._slot+1, nb_slots)
             msg += " after %.2f seconds [retcode=%d]" % (dt, job._retcode)
-            print "bbs.jobs.processJobQueue> %s" % msg
+            print("bbs.jobs.processJobQueue> %s" % msg)
     return 1
 
 def _logSlotEvent(logfile, event_type, job0, slot0, slots):
@@ -508,8 +509,8 @@ def _logSlotEvent(logfile, event_type, job0, slot0, slots):
     return
 
 def _logSummaryOfJobsWithUnprocessedDeps(job_queue):
-    print "bbs.jobs.processJobQueue> %s" % \
-          "Jobs with unprocessed deps at time of processing:"
+    print("bbs.jobs.processJobQueue> %s" % \
+          "Jobs with unprocessed deps at time of processing:")
     jobs = job_queue._jobs
     job_deps = job_queue._job_deps
     i = 0
@@ -519,16 +520,16 @@ def _logSummaryOfJobsWithUnprocessedDeps(job_queue):
             continue
         i += 1
         msg = "JOB %s (%d/%d)" % (job._name, job._rank+1, len(jobs))
-        print "bbs.jobs.processJobQueue>   %s" % msg
-        print "bbs.jobs.processJobQueue>     Deps:",
-        print job_deps[job._name]
-        print "bbs.jobs.processJobQueue>     Unprocessed deps:",
-        print job._unprocessed_deps
-        print "bbs.jobs.processJobQueue>     Command: %s" % job._cmd
+        print("bbs.jobs.processJobQueue>   %s" % msg)
+        print("bbs.jobs.processJobQueue>     Deps:", end=" ")
+        print(job_deps[job._name])
+        print("bbs.jobs.processJobQueue>     Unprocessed deps:", end=" ")
+        print(job._unprocessed_deps)
+        print("bbs.jobs.processJobQueue>     Command: %s" % job._cmd)
     if i != 0:
-        print "bbs.jobs.processJobQueue>   Total = %d" % i
+        print("bbs.jobs.processJobQueue>   Total = %d" % i)
     else:
-        print "bbs.jobs.processJobQueue>   %s" % None
+        print("bbs.jobs.processJobQueue>   %s" % None)
     return
 
 ### Process 'job_queue' (a JobQueue object) in parallel.
@@ -539,10 +540,10 @@ def processJobQueue(job_queue, nb_slots=1,
     job_deps = job_queue._job_deps
     nb_jobs = len(jobs)
     if verbose:
-        print
-        print "bbs.jobs.processJobQueue>",
-        print "%d jobs in the queue. Start processing them using %d slots" % \
-              (nb_jobs, nb_slots)
+        print()
+        print("bbs.jobs.processJobQueue>", end=" ")
+        print("%d jobs in the queue. Start processing them using %d slots" % \
+              (nb_jobs, nb_slots))
     slotevents_logfile = open(job_queue._name + '-slot-events.log', 'w')
     processed_jobs = []
     nb_busy_slots = 0
@@ -607,11 +608,11 @@ def processJobQueue(job_queue, nb_slots=1,
             processed_jobs.append(job._name)
     slotevents_logfile.close()
     if verbose:
-        print
-        print "bbs.jobs.processJobQueue> Finished."
+        print()
+        print("bbs.jobs.processJobQueue> Finished.")
         if job_deps != None:
             _logSummaryOfJobsWithUnprocessedDeps(job_queue)
-        print
+        print()
     return cumul
 
 
@@ -625,9 +626,9 @@ def getHostname():
         if "USERDNSDOMAIN" in os.environ:
             computername += "." + os.environ['USERDNSDOMAIN'].lower()
         return computername
-    hostname = getCmdOutput('hostname')
-    if hostname[-1] == '\n':
-        hostname = hostname[0:-1]
+    hostname = socket.gethostname()
+    #if hostname[-1] == '\n':
+    #    hostname = hostname[0:-1]
     hostname = hostname.lower()
     hostname = hostname.replace(".local", "")
     hostname = hostname.replace(".fhcrc.org", "")

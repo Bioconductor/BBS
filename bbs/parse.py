@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -9,11 +9,15 @@
 ### parse module
 ###
 
+import sys
 import os
 import re
 import time
 import subprocess
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import BBScorevars
+
 from bbs.dcf.dcfrecordsparser import DcfRecordParser
 
 class DcfFieldNotFoundError(Exception):
@@ -149,11 +153,11 @@ def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
     while pkg2 != pkg:
         pkg2 = getNextDcfVal(dcf, 'Package', False)
         if pkg2 == None:
-            print "ERROR: Can't find package '%s' in DCF file '%s'!" % (pkg, data_desc)
+            print("ERROR: Can't find package '%s' in DCF file '%s'!" % (pkg, data_desc))
             raise DcfFieldNotFoundError(data_desc, 'Package')
     val = getNextDcfVal(dcf, field, True)
     if val == None:
-        print "ERROR: Can't find field '%s' for package '%s' in DCF file '%s'!" % (field, pkg, data_desc)
+        print("ERROR: Can't find field '%s' for package '%s' in DCF file '%s'!" % (field, pkg, data_desc))
         raise DcfFieldNotFoundError(data_desc, field)
     return val
 

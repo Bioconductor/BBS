@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
@@ -27,7 +27,7 @@ def get_status_from_summary_file(pkg, node_id, stage):
     return status
 
 def make_STATUS_DB(allpkgs):
-    print "BBS> [make_STATUS_DB] BEGIN..."
+    print("BBS> [make_STATUS_DB] BEGIN...")
     out = open(BBSreportutils.STATUS_DB_file, 'w')
     for pkg in allpkgs:
         for node in BBSreportutils.supported_nodes(pkg):
@@ -62,7 +62,7 @@ def make_STATUS_DB(allpkgs):
                     status = get_status_from_summary_file(pkg, node.id, stage)
                 out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
     out.close()
-    print "BBS> [make_STATUS_DB] END"
+    print("BBS> [make_STATUS_DB] END")
     return
 
 
@@ -70,11 +70,11 @@ def make_STATUS_DB(allpkgs):
 ### MAIN SECTION
 ##############################################################################
 
-print "BBS> [stage7a] STARTING stage7a at %s..." % time.asctime()
+print("BBS> [stage7a] STARTING stage7a at %s..." % time.asctime())
 
 central_rdir_path = BBScorevars.Central_rdir.path
 if central_rdir_path != None:
-    print "BBS> [stage7a] cd %s/" % central_rdir_path
+    print("BBS> [stage7a] cd %s/" % central_rdir_path)
     os.chdir(central_rdir_path)
 
 report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
@@ -82,5 +82,5 @@ BBSreportutils.set_NODES(report_nodes)
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
 make_STATUS_DB(allpkgs)
 
-print "BBS> [stage7a] DONE at %s." % time.asctime()
+print("BBS> [stage7a] DONE at %s." % time.asctime())
 
