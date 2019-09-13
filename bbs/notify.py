@@ -35,7 +35,8 @@ redirect_to_addr = None
 #   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg)
 def sendtextmail(from_addr, to_addrs, subject, msg):
 
-    with open("email_config.yaml", 'r') as stream:
+    config_path = os.path.expanduser(os.path.join("~", "email_config.yaml"))
+    with open(config_path, 'r') as stream:
         config = yaml.load(stream)
 
     if redirect_to_addr != None:
@@ -137,7 +138,8 @@ def createhtmlmail(html, text, from_addr, to_addrs, subject):
 def sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg):
     msg = createhtmlmail(html_msg, text_msg, from_addr, to_addrs, subject)
 
-    with open("email_config.yaml", 'r') as stream:
+    config_path = os.path.expanduser(os.path.join("~", "email_config.yaml"))
+    with open(config_path, 'r') as stream:
         config = yaml.load(stream)
 
     server = smtplib.SMTP(config['smtp_host'], config['smtp_port'])
