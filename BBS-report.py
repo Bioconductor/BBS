@@ -663,7 +663,7 @@ def write_motd_asTABLE(out):
     out.write('</TABLE>\n')
     return
 
-def make_PkgReportLandingPage(leafreport_ref, allpkgs):
+def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
     pkg = leafreport_ref.pkg
     page_title = 'Results for %s' % pkg
     out_rURL = os.path.join(pkg, 'index.html')
@@ -1063,7 +1063,10 @@ def make_node_LeafReports(allpkgs, node):
     return
 
 def make_all_LeafReports(allpkgs):
-    print("Current working dir '%s'" % os.getcwd())
+    print("BBS> [make_all_LeafReports] Current working dir '%s'" % os.getcwd())
+    print("BBS> [make_all_LeafReports] Creating report package subfolders " + \
+          "and populating them with the index.html files ...", end=" ")
+    sys.stdout.flush()
     for pkg in allpkgs:
         try:
             os.mkdir(pkg)
@@ -1071,7 +1074,9 @@ def make_all_LeafReports(allpkgs):
             print("mkdir failed in make_all_LeaveReports '%s'" % pkg)
             continue
         leafreport_ref = LeafReportReference(pkg, None, None, None)
-        make_PkgReportLandingPage(leafreport_ref, allpkgs)
+        make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs)
+    print("DONE")
+    sys.stdout.flush()
     for node in BBSreportutils.NODES:
         make_node_LeafReports(allpkgs, node)
     return
