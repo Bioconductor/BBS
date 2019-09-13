@@ -59,7 +59,10 @@ def getNextDcfVal(dcf, field, full_line=False):
     regex = '%s\\s*:\\s*(%s)' % (field, val_regex)
     p = re.compile(regex)
     for line in dcf:
-        line = line.decode()
+        try:
+            line = line.decode()
+        except AttributeError:
+            pass
         if not line.startswith(field + ":"):
             continue
         m = p.match(line)
