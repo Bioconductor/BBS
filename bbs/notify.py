@@ -67,7 +67,7 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
         try:
             server.sendmail(from_addr, to_addrs, msg)
         except smtplib.SMTPDataError:
-            print "FAILED!",
+            print("FAILED!", end=" ")
     server.quit()
     print("DONE")
     sys.stdout.flush()
