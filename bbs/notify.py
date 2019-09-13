@@ -12,7 +12,7 @@
 import sys
 import os
 import smtplib
-#import yaml
+import yaml
 
 # On Linux, it seems that from_addr0 must point to the current user or
 # nothing is sent (and no error is raised neither)
@@ -24,12 +24,6 @@ except KeyError:
 mode = "dry-run" # the default!
 redirect_to_addr = None
 
-#smtp_host = 'mx.fhcrc.org'
-smtp_host = 'email-smtp.us-east-1.amazonaws.com'
-smtp_port = 25
-user_agent = 'Thunderbird 2.0.0.6 (Macintosh/20070728)'
-errors_to = 'devteam-bioc@fhcrc.org'
-
 # Test this with:
 #   import bbs.notify
 #   from_addr = 'turlututu'
@@ -40,25 +34,24 @@ errors_to = 'devteam-bioc@fhcrc.org'
 #   bbs.notify.mode = "do-it"
 #   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg)
 def sendtextmail(from_addr, to_addrs, subject, msg):
+
+    with open("email_config.yaml", 'r') as stream:
+        config = yaml.load(stream)
+
     if redirect_to_addr != None:
         to_addrs = [redirect_to_addr]
     to = ', '.join(to_addrs)
     print("BBS>   About to send email to '%s'..." % to, end=" ")
     sys.stdout.flush()
-    msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, user_agent, from_addr, errors_to, msg)
-    #with open("email_config.yaml", 'r') as stream:
-    #  config = yaml.load(stream)
-    #server = smtplib.SMTP(config['hostname'], config['port'])
-    server = smtplib.SMTP(smtp_host, smtp_port)
+    msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, config['user_agent'], from_addr, config['errors_to'], msg)
+    server = smtplib.SMTP(config['smtp_host'], config['smtp_port'])
     server.ehlo()
     #if config['use_tls']:
     if True:
         server.starttls()
         server.ehlo()
 
-    #if 'username' in config and 'password' in config:
-    #  server.login(config['username'], config['password'])
-    server.login('AKIAJN7IBLJV7PSFAR4Q', 'ApA1P4ouE6voVLLxzeK3LtSlIUul1VwjWe77+1+vJgoN')
+    server.login(config['smtp_user'], config['smtp_password'])
 
     #server.set_debuglevel(1)
     if mode == "do-it":
@@ -145,16 +138,15 @@ def sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg):
     msg = createhtmlmail(html_msg, text_msg, from_addr, to_addrs, subject)
 
     with open("email_config.yaml", 'r') as stream:
-      config = yaml.load(stream)
+        config = yaml.load(stream)
 
-    server = smtplib.SMTP(config['hostname'], config['port'])
+    server = smtplib.SMTP(config['smtp_host'], config['smtp_port'])
     server.ehlo()
     if config['use_tls']:
-      server.starttls()
-      server.ehlo()
+        server.starttls()
+        server.ehlo()
 
-    if 'username' in config and 'password' in config:
-      server.login(config['username'], config['password'])
+    server.login(config['smtp_user'], config['smtp_password'])
 
 
     #server.set_debuglevel(1)
