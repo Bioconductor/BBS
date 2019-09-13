@@ -26,14 +26,14 @@ redirect_to_addr = None
 
 # Test this with:
 #   import bbs.notify
-#   from_addr = 'turlututu'
-#   to_addrs = ['hpages@fhcrc.org', 'herve.pages@laposte.net']
-#   subject = 'test2'
-#   msg = 'OOOH'
-#   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg)
+#   from_addr = 'devteam-bioc@bioconductor.org'
+#   to_addrs = ['hpages@fredhutch.org']
+#   subject = 'TEST'
+#   msg_body = 'hi'
+#   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg_body)
 #   bbs.notify.mode = "do-it"
-#   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg)
-def sendtextmail(from_addr, to_addrs, subject, msg):
+#   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg_body)
+def sendtextmail(from_addr, to_addrs, subject, msg_body):
 
     config_path = os.path.expanduser(os.path.join("~", ".BBS", "smtp_config.yaml"))
     with open(config_path, 'r') as stream:
@@ -50,7 +50,7 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
     to = ', '.join(to_addrs)
     print("BBS>   About to send email to '%s'..." % to, end=" ")
     sys.stdout.flush()
-    msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, config['user_agent'], from_addr, config['errors_to'], msg)
+    msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, config['user_agent'], from_addr, config['errors_to'], msg_body)
 
     #server.set_debuglevel(1)
     if mode == "do-it":
@@ -126,12 +126,12 @@ def createhtmlmail(html, text, from_addr, to_addrs, subject):
 	return msg
 
 # Test this with:
-#   from_addr='turlututu'
-#   to_addrs=['hpages@fhcrc.org', 'herve.pages@laposte.net']
+#   import bbs.notify
+#   from_addr = 'devteam-bioc@bioconductor.org'
+#   to_addrs = ['hpages@fredhutch.org']
 #   subject='test3'
 #   html_msg='<HTML><BODY style="background: #49A"><H1>OOOH</H1></BODY></HTML>'
 #   text_msg='OOOH'
-#   import bbs.notify
 #   bbs.notify.sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg)
 def sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg):
     msg = createhtmlmail(html_msg, text_msg, from_addr, to_addrs, subject)
