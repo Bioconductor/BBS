@@ -38,6 +38,12 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
     config_path = os.path.expanduser(os.path.join("~", "smtp_config.yaml"))
     with open(config_path, 'r') as stream:
         config = yaml.load(stream)
+    server = smtplib.SMTP(config['host'], config['port'])
+    server.ehlo()
+    if config['use_tls']:
+        server.starttls()
+        server.ehlo()
+    server.login(config['user'], config['password'])
 
     if redirect_to_addr != None:
         to_addrs = [redirect_to_addr]
@@ -45,14 +51,6 @@ def sendtextmail(from_addr, to_addrs, subject, msg):
     print("BBS>   About to send email to '%s'..." % to, end=" ")
     sys.stdout.flush()
     msg = 'From: %s\nTo: %s\nSubject: %s\nUser-Agent: %s\nMIME-Version: 1.0\nSender: %s\nErrors-To: %s\n\n%s' % (from_addr, to, subject, config['user_agent'], from_addr, config['errors_to'], msg)
-    server = smtplib.SMTP(config['smtp_host'], config['smtp_port'])
-    server.ehlo()
-    #if config['use_tls']:
-    if True:
-        server.starttls()
-        server.ehlo()
-
-    server.login(config['smtp_user'], config['smtp_password'])
 
     #server.set_debuglevel(1)
     if mode == "do-it":
@@ -141,15 +139,12 @@ def sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg):
     config_path = os.path.expanduser(os.path.join("~", "smtp_config.yaml"))
     with open(config_path, 'r') as stream:
         config = yaml.load(stream)
-
-    server = smtplib.SMTP(config['smtp_host'], config['smtp_port'])
+    server = smtplib.SMTP(config['host'], config['port'])
     server.ehlo()
     if config['use_tls']:
         server.starttls()
         server.ehlo()
-
-    server.login(config['smtp_user'], config['smtp_password'])
-
+    server.login(config['user'], config['password'])
 
     #server.set_debuglevel(1)
     server.sendmail(from_addr, to_addrs, msg)
