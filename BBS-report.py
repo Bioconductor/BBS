@@ -1613,7 +1613,7 @@ if js_file:
 for color in ["Red", "Green", "Blue"]:
     icon = "%s/images/120px-%s_Light_Icon.svg.png" % (os.getenv("BBS_HOME"), color)
     shutil.copy(icon, report_path)
-print("BBS> [stage8] Generating report for nodes: %s" % report_nodes)
+print("BBS> [stage8] Will generate HTML report for nodes: %s" % report_nodes)
 if arg1 != "skip-leaf-reports":
     make_all_LeafReports(allpkgs)
 make_all_NodeReports(allpkgs)
