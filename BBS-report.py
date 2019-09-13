@@ -41,7 +41,7 @@ def wopen_leafreport_input_file(pkg, node_id, stage, filename, return_None_on_er
 STATUS_SUMMARY = {}
 
 def update_STATUS_SUMMARY(pkg, node_id, stage, status):
-    if not STATUS_SUMMARY.has_key(node_id):
+    if node_id not in STATUS_SUMMARY:
         STATUS_SUMMARY[node_id] = { 'install':     (0, 0, 0, 0, 0), \
                                     'buildsrc':    (0, 0, 0, 0, 0), \
                                     'checksrc':    (0, 0, 0, 0, 0), \
@@ -789,7 +789,7 @@ def build_test2filename_dict(dirpath, dups):
         m = p.match(filename)
         if m != None:
             testname = m.group(1)
-            if test2filename.has_key(testname):
+            if testname in test2filename:
                 dups.append(filename)
             else:
                 test2filename[testname] = filename
@@ -805,7 +805,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     testnames1.sort(key=str.lower)
     ## Paired tests.
     for testname in testnames1:
-        if test2filename2.has_key(testname):
+        if testname in test2filename2:
             out.write('<TR>\n')
             filepath = os.path.join(tests_dir1, test2filename1[testname])
             out.write('<TD>\n')
