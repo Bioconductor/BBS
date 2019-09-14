@@ -729,6 +729,11 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
         if i > 99999:
             out.write('... [output truncated]\n')
             break
+        if isinstance(line, bytes):
+            try:
+                line = line.decode()  # utf-8 encoding is used by default
+            except UnicodeEncodeError:
+                line = line.decode("iso8859")  # typical Windows encoding
         if pattern != None and regex.match(line):
             pattern_detected = True
         #try:
@@ -797,7 +802,6 @@ def build_test2filename_dict(dirpath, dups):
 
 def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
                                    tests_dir1, tests_dir2):
-    encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
     unpaired1 = []
     test2filename1 = build_test2filename_dict(tests_dir1, unpaired1)
     unpaired2 = []
@@ -811,14 +815,18 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
             filepath = os.path.join(tests_dir1, test2filename1[testname])
             out.write('<TD>\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
-            f = open(filepath, "r", encoding=encoding)
+            # Encoding is unknown so open in binary mode.
+            # write_file_asHTML() will try to decode.
+            f = open(filepath, "rb")
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
             filepath = os.path.join(tests_dir2, test2filename2[testname])
             out.write('<TD style="padding-left: 18px;">\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
-            f = open(filepath, "r", encoding=encoding)
+            # Encoding is unknown so open in binary mode.
+            # write_file_asHTML() will try to decode.
+            f = open(filepath, "rb")
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
@@ -833,7 +841,9 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         filepath = os.path.join(tests_dir1, filename)
         out.write('<TD>\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
-        f = open(filepath, "r", encoding=encoding)
+        # Encoding is unknown so open in binary mode.
+        # write_file_asHTML() will try to decode.
+        f = open(filepath, "rb")
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
@@ -848,7 +858,9 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         filepath = os.path.join(tests_dir2, filename)
         out.write('<TD style="padding-left: 18px;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
-        f = open(filepath, "r", encoding=encoding)
+        # Encoding is unknown so open in binary mode.
+        # write_file_asHTML() will try to decode.
+        f = open(filepath, "rb")
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
@@ -856,7 +868,6 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     return
 
 def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
-    encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
     p = re.compile('(.*)\.Rout.*')
     filenames = []
     for filename in os.listdir(tests_dir):
@@ -867,7 +878,9 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
     for filename in filenames:
         filepath = os.path.join(tests_dir, filename)
         write_filepath_asHTML(out, Rcheck_dir, filepath)
-        f = open(filepath, "r", encoding=encoding)
+        # Encoding is unknown so open in binary mode.
+        # write_file_asHTML() will try to decode.
+        f = open(filepath, "rb")
         write_file_asHTML(out, f, node_hostname)
         f.close()
     return
