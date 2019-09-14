@@ -806,8 +806,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     test2filename1 = build_test2filename_dict(tests_dir1, unpaired1)
     unpaired2 = []
     test2filename2 = build_test2filename_dict(tests_dir2, unpaired2)
-    testnames1 = test2filename1.keys()
-    testnames1.sort(key=str.lower)
+    testnames1 = sorted(test2filename1.keys(), key=str.lower)
     ## Paired tests.
     for testname in testnames1:
         if testname in test2filename2:
