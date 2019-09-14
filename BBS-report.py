@@ -732,7 +732,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
         if isinstance(line, bytes):
             try:
                 line = line.decode()  # utf-8 encoding is used by default
-            except UnicodeEncodeError:
+            except UnicodeDecodeError:
                 line = line.decode("iso8859")  # typical Windows encoding
         if pattern != None and regex.match(line):
             pattern_detected = True
