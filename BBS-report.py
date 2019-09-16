@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: September 24, 2018
+### Last modification: Sep 16, 2019
 ###
 
 import sys
@@ -729,11 +729,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
         if i > 99999:
             out.write('... [output truncated]\n')
             break
-        if isinstance(line, bytes):
-            try:
-                line = line.decode()  # utf-8 encoding is used by default
-            except UnicodeDecodeError:
-                line = line.decode("iso8859")  # typical Windows encoding
+        line = bbs.parse.bytes2str(line)
         if pattern != None and regex.match(line):
             pattern_detected = True
         #try:
@@ -815,7 +811,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
             out.write('<TD>\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             # Encoding is unknown so open in binary mode.
-            # write_file_asHTML() will try to decode.
+            # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
             f = open(filepath, "rb")
             write_file_asHTML(out, f, node_hostname)
             f.close()
@@ -824,7 +820,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
             out.write('<TD style="padding-left: 18px;">\n')
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             # Encoding is unknown so open in binary mode.
-            # write_file_asHTML() will try to decode.
+            # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
             f = open(filepath, "rb")
             write_file_asHTML(out, f, node_hostname)
             f.close()
@@ -841,7 +837,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         out.write('<TD>\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         # Encoding is unknown so open in binary mode.
-        # write_file_asHTML() will try to decode.
+        # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
         f = open(filepath, "rb")
         write_file_asHTML(out, f, node_hostname)
         f.close()
@@ -858,7 +854,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         out.write('<TD style="padding-left: 18px;">\n')
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         # Encoding is unknown so open in binary mode.
-        # write_file_asHTML() will try to decode.
+        # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
         f = open(filepath, "rb")
         write_file_asHTML(out, f, node_hostname)
         f.close()
@@ -878,7 +874,7 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
         filepath = os.path.join(tests_dir, filename)
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         # Encoding is unknown so open in binary mode.
-        # write_file_asHTML() will try to decode.
+        # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
         f = open(filepath, "rb")
         write_file_asHTML(out, f, node_hostname)
         f.close()
@@ -1130,7 +1126,7 @@ def write_CRAN_mainpage_top_asHTML(out):
 def read_Rversion(Node_rdir):
     filename = 'NodeInfo/R-version.txt'
     f = Node_rdir.WOpen(filename)
-    Rversion = f.readline()
+    Rversion = bytes2str(f.readline())
     f.close()
     Rversion = Rversion.replace('R version ', '')
     Rversion_html = Rversion.replace(' ', '&nbsp;')
@@ -1173,7 +1169,7 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var):
     out.write('<P><B>Compiler version</B> (\'%s\' output):</P>\n' % syscmd)
     out.write('<PRE style="margin-left: 12px;">\n')
     for line in f:
-        out.write(line)
+        out.write(bbs.parse.bytes2str(line))
     f.close()
     out.write('</PRE>\n')
     return
@@ -1295,7 +1291,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
     f = Node_rdir.WOpen(filename)
     nline = 0
     for line in f:
-        out.write(line)
+        out.write(bbs.parse.bytes2str(line))
         nline += 1
     f.close()
     out.write('</PRE>\n')

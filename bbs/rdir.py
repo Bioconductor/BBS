@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: June 22, 2011
+### Last modification: Sep 16, 2019
 ###
 ###
 ###
@@ -65,12 +65,15 @@ class RemoteDir:
                          self.host, self.user,
                          self.ssh_cmd, self.rsync_cmd, self.rsync_rsh_cmd)
 
+    # Open local or remote file in binary mode.
     def WOpen(self, file, return_None_on_error=False):
         if self.host == None or self.host == 'localhost':
             # self is a local dir
             filepath = os.path.join(self.path, file)
             try:
-                f = open(filepath, "r")
+                # urllib.request.urlopen() below opens the URL in binary mode
+                # so we do the same here.
+                f = open(filepath, 'rb')
             except IOError:
                 if return_None_on_error:
                     return None

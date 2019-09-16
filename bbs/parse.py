@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: June 7, 2018
+### Last modification: Sep 16, 2019
 ###
 ### parse module
 ###
@@ -28,6 +28,15 @@ class DcfFieldNotFoundError(Exception):
         return "Field '%s' not found in DCF file '%s'" % \
                (self.field, self.filepath)
 
+def bytes2str(line):
+    if isinstance(line, str):
+        return line
+    try:
+        line = line.decode()  # decode() uses utf-8 encoding by default
+    except UnicodeDecodeError:
+        line = line.decode("iso8859")  # typical Windows encoding
+    return line
+
 ### Get the next field/value pair from a DCF file.
 ### The field value starts at the first non-whitespace character following
 ### the ":". Where it ends depends on the value of the full_line arg:
@@ -43,6 +52,7 @@ def getNextDcfFieldVal(dcf, full_line=False):
     regex = '([A-Za-z0-9_.-]+)\\s*:\\s*(%s)' % val_regex
     p = re.compile(regex)
     for line in dcf:
+        line = bytes2str(line)
         m = p.match(line)
         if m:
             field = m.group(1)
@@ -59,10 +69,7 @@ def getNextDcfVal(dcf, field, full_line=False):
     regex = '%s\\s*:\\s*(%s)' % (field, val_regex)
     p = re.compile(regex)
     for line in dcf:
-        try:
-            line = line.decode()
-        except AttributeError:
-            pass
+        line = bytes2str(line)
         if not line.startswith(field + ":"):
             continue
         m = p.match(line)
