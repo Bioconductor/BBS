@@ -262,6 +262,7 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf = open(desc_file, 'w')
     p = re.compile(':|'.join(target_keys) + ':')
     for line in lines:
+        line = bytes2str(line)
         if not line.strip():
             continue
         else:
@@ -287,6 +288,7 @@ def readFileTail(filename, n):
     f = open(filename, 'rb')
     nb_lines = i = 0
     for line in f:
+        line = bytes2str(line)
         nb_lines += 1
         if n != 0:
             last_lines[i] = line
