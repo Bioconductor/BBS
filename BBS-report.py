@@ -812,7 +812,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             # Encoding is unknown so open in binary mode.
             # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
-            f = open(filepath, "rb")
+            f = open(filepath, 'rb')
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
@@ -821,7 +821,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
             write_filepath_asHTML(out, Rcheck_dir, filepath)
             # Encoding is unknown so open in binary mode.
             # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
-            f = open(filepath, "rb")
+            f = open(filepath, 'rb')
             write_file_asHTML(out, f, node_hostname)
             f.close()
             out.write('</TD>\n')
@@ -838,7 +838,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         # Encoding is unknown so open in binary mode.
         # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
-        f = open(filepath, "rb")
+        f = open(filepath, 'rb')
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
@@ -855,7 +855,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         # Encoding is unknown so open in binary mode.
         # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
-        f = open(filepath, "rb")
+        f = open(filepath, 'rb')
         write_file_asHTML(out, f, node_hostname)
         f.close()
         out.write('</TD>\n')
@@ -875,7 +875,7 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
         write_filepath_asHTML(out, Rcheck_dir, filepath)
         # Encoding is unknown so open in binary mode.
         # write_file_asHTML() will try to decode with bbs.parse.bytes2str()
-        f = open(filepath, "rb")
+        f = open(filepath, 'rb')
         write_file_asHTML(out, f, node_hostname)
         f.close()
     return
@@ -912,12 +912,13 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     return
 
 def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
-    f = open(filepath, "r")
+    f = open(filepath, 'rb')
     write_filepath_asHTML(out, Rcheck_dir, filepath)
     out.write('<DIV class="%s hscrollable">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     for line in f:
+        line = bbs.parse.bytes2str(line)
         out.write('<TR><TD>')
         out.write(line.replace('\t', '</TD><TD style="text-align: right;">'))
         out.write('</TD><TR>\n')
@@ -1126,7 +1127,7 @@ def write_CRAN_mainpage_top_asHTML(out):
 def read_Rversion(Node_rdir):
     filename = 'NodeInfo/R-version.txt'
     f = Node_rdir.WOpen(filename)
-    Rversion = bytes2str(f.readline())
+    Rversion = bbs.parse.bytes2str(f.readline())
     f.close()
     Rversion = Rversion.replace('R version ', '')
     Rversion_html = Rversion.replace(' ', '&nbsp;')

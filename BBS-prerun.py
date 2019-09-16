@@ -142,7 +142,7 @@ def update_svnlog():
             revision = line.split(" ")[1]
             break
     logfilename = os.path.join(BBSvars.work_topdir, "svnlog.txt")
-    logfile = open(logfilename, "a+")
+    logfile = open(logfilename, 'a+')
     date = time.strftime("%Y-%m-%d")
     logfile.write("%s\t%s\n" % (date, revision))
     logfile.close()
@@ -157,7 +157,7 @@ def collect_vcs_meta(snapshot_date):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     ## Get list of packages
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
-    dcf = open(meat_index_path, 'r')
+    dcf = open(meat_index_path, 'rb')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     ## Create top-level metadata file
@@ -182,7 +182,7 @@ def collect_vcs_meta(snapshot_date):
         ## Create git-log file for each package in meat-index.dcf and
         ## skipped-index.dcf
         skipped_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.skipped_index_file)
-        dcf = open(skipped_index_path, 'r')
+        dcf = open(skipped_index_path, 'rb')
         skipped_pkgs = bbs.parse.readPkgsFromDCF(dcf)
         dcf.close()
         all_pkgs = pkgs + skipped_pkgs
@@ -387,7 +387,7 @@ def makeTargetRepo(rdir):
     os.chdir(BBSvars.meat_path)
     print("BBS> [makeTargetRepo] Get list of pkgs from %s" % BBScorevars.meat_index_file)
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
-    dcf = open(meat_index_path, 'r')
+    dcf = open(meat_index_path, 'rb')
     pkgdir_paths = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
     job_queue = prepare_STAGE1_job_queue(pkgdir_paths, rdir)

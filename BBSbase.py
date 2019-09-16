@@ -32,7 +32,7 @@ def Untar(tarball, dir=None, verbose=False):
         ## This method doesn't restore the file permissions on Windows!
         if dir != None:
             sys.exit("ERROR in Untar(): dir != None is not supported")
-        tar = tarfile.open(tarball, mode="r:gz")
+        tar = tarfile.open(tarball, mode='r:gz')
         for tarinfo in tar:
             tar.extract(tarinfo)
         tar.close()

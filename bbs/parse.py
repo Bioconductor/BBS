@@ -85,7 +85,7 @@ def getDescFile(pkg_dir):
 
 def getPkgFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
-    dcf = open(desc_file, 'r')
+    dcf = open(desc_file, 'rb')
     pkg = getNextDcfVal(dcf, 'Package')
     dcf.close()
     if pkg == None:
@@ -94,7 +94,7 @@ def getPkgFromDir(pkg_dir):
 
 def getVersionFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
-    dcf = open(desc_file, 'r')
+    dcf = open(desc_file, 'rb')
     version = getNextDcfVal(dcf, 'Version')
     dcf.close()
     if version == None:
@@ -109,7 +109,7 @@ def versionIsValid(version_string):
 
 def getPackageStatusFromDir(pkg_dir):
     desc_file = getDescFile(pkg_dir)
-    dcf = open(desc_file, 'r')
+    dcf = open(desc_file, 'rb')
     version = getNextDcfVal(dcf, 'PackageStatus')
     dcf.close()
     if version == None:
@@ -123,7 +123,7 @@ def _getMaintainerFromDir(pkg_dir):
     Rscript_cmd = os.path.join(r_home, "bin", "Rscript")
     script_path = os.path.join(BBScorevars.BBS_home, "utils", "getMaintainer.R")
     cmd = [Rscript_cmd, '--vanilla', script_path, desc_file]
-    maintainer = subprocess.check_output(cmd, stderr=FNULL)
+    maintainer = bytes2str(subprocess.check_output(cmd, stderr=FNULL))
     if maintainer == 'NA':
         raise DcfFieldNotFoundError(desc_file, 'Maintainer')
     return maintainer
@@ -152,7 +152,7 @@ def getMaintainerEmailFromDir(pkg_dir):
 def getBBSoptionFromDir(pkg_dir, key):
     try:
         option_file = os.path.join(pkg_dir, '.BBSoptions')
-        dcf = open(option_file, 'r')
+        dcf = open(option_file, 'rb')
         val = getNextDcfVal(dcf, key, True)
         dcf.close()
     except IOError:
@@ -235,7 +235,7 @@ def getVersionFromPath(srcpkg_path):
 ### Inject fields into DESCRIPTION
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     # git-log
-    dcf = open(gitlog_file, 'r')
+    dcf = open(gitlog_file, 'rb')
     git_url = getNextDcfVal(dcf, 'URL')
     git_branch = getNextDcfVal(dcf, 'Branch')
     git_last_commit = getNextDcfVal(dcf, 'Last Commit')
@@ -256,7 +256,7 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     # - blank line at the end of the file
     target_keys = ['git_url', 'git_branch', 'git_last_commit',
                    'git_last_commit_date', 'Date/Publication']
-    dcf = open(desc_file, 'r')
+    dcf = open(desc_file, 'rb')
     lines = dcf.read().splitlines()
     dcf.close()
     dcf = open(desc_file, 'w')
@@ -284,7 +284,7 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
 
 def readFileTail(filename, n):
     last_lines = n * [None]
-    f = open(filename, 'r')
+    f = open(filename, 'rb')
     nb_lines = i = 0
     for line in f:
         nb_lines += 1

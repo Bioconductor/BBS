@@ -157,7 +157,7 @@ def map_outgoing_node_to_package_type(node):
 ### Open read-only data stream ('local' or 'published')
 def open_rodata(file):
     if data_source == 'local':
-        return { 'rostream': open(file, 'r'), 'desc': file }
+        return { 'rostream': open(file, 'rb'), 'desc': file }
     url = '%s/%s' % (data_source, file)
     return { 'rostream': urllib.request.urlopen(url), 'desc': url }
 

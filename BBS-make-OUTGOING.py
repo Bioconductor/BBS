@@ -25,14 +25,14 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     node_path = os.path.join(nodes_path, node_id)
     summary_file0 = "%s.%%s-summary.dcf" % pkg
 
-    ## Extract Status from summary file.
+    ## Extract Status from BUILD summary.
     buildsrc_path = os.path.join(node_path, 'buildsrc')
     summary_file = os.path.join(buildsrc_path, summary_file0 % 'buildsrc')
     ## Could happen that summary file is not available (because the node
     ## where that file is coming from didn't finish to build yet or failed
     ## to send the file back).
     try:
-        dcf = open(summary_file, 'r')
+        dcf = open(summary_file, 'rb')
     except IOError:
         return True
     status = bbs.parse.getNextDcfVal(dcf, 'Status')
@@ -44,11 +44,11 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     if BBScorevars.is_workflow:
         return status != 'OK'
 
-    ## Extract Status from CHECK summary
+    ## Extract Status from CHECK summary.
     checksrc_path = os.path.join(node_path, 'checksrc')
     summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
     try:
-        dcf = open(summary_file, 'r')
+        dcf = open(summary_file, 'rb')
     except IOError:
         return True
     status = bbs.parse.getNextDcfVal(dcf, 'Status')
@@ -58,11 +58,11 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     if not is_doing_buildbin(node_hostname):
         return False
 
-    ## Extract Status from BUILD BIN summary
+    ## Extract Status from BUILD BIN summary.
     buildbin_path = os.path.join(node_path, 'buildbin')
     summary_file = os.path.join(buildbin_path, summary_file0 % 'buildbin')
     try:
-        dcf = open(summary_file, 'r')
+        dcf = open(summary_file, 'rb')
     except IOError:
         return True
     status = bbs.parse.getNextDcfVal(dcf, 'Status')
@@ -89,13 +89,13 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     print("BBS> [stage6] BEGIN copying outgoing packages from %s." % fresh_pkgs_subdir)
     pkgType = BBScorevars.getNodeSpec(node_hostname, 'pkgType')
     meat_index_file = os.path.join(BBScorevars.Central_rdir.path, BBScorevars.meat_index_file)
-    dcf = open(meat_index_file, 'r')
+    dcf = open(meat_index_file, 'rb')
     pkgs = bbs.parse.readPkgsFromDCF(dcf, node_id, pkgType)
     dcf.close()
     for pkg in pkgs:
         if pkgMustBeRejected(node_hostname, node_id, pkg):
             continue
-        dcf = open(meat_index_file, 'r')
+        dcf = open(meat_index_file, 'rb')
         version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBScorevars.meat_index_file)
         dcf.close()
         ## Copy pkg from 'fresh_pkgs_subdir2'.
@@ -148,10 +148,10 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
     print("BBS> [stage6] BEGIN making outgoing bi-arch packages from %s and %s." % (fresh_pkgs_subdir1, fresh_pkgs_subdir2))
     ## Get lists of supported pkgs for node1 and node2
     meat_index_file = os.path.join(BBScorevars.Central_rdir.path, BBScorevars.meat_index_file)
-    dcf = open(meat_index_file, 'r')
+    dcf = open(meat_index_file, 'rb')
     pkgs1 = bbs.parse.readPkgsFromDCF(dcf, node1_id, pkgType1)
     dcf.close()
-    dcf = open(meat_index_file, 'r')
+    dcf = open(meat_index_file, 'rb')
     pkgs2 = bbs.parse.readPkgsFromDCF(dcf, node2_id, pkgType2)
     dcf.close()
     ## Loop on list of supported pkgs
@@ -159,7 +159,7 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
     nb_products = 0
     t1 = time.time()
     for pkg in pkgs0:
-        dcf = open(meat_index_file, 'r')
+        dcf = open(meat_index_file, 'rb')
         version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBScorevars.meat_index_file)
         dcf.close()
         binpkg_file = "%s_%s.%s" % (pkg, version, fileext)
