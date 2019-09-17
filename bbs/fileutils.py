@@ -93,7 +93,7 @@ def getMatchingFiles(dir=".", regex="", full_names=False):
             matching_files.append(full_name)
         else:
             matching_files.append(file)
-    matching_files.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+    matching_files.sort(key=str.lower)
     return matching_files
 
 # Return the list of srcpkg files found in dir (.tar.gz file).
