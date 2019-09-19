@@ -259,15 +259,14 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf = open(desc_file, 'rb')
     lines = dcf.read().splitlines()
     dcf.close()
-    dcf = open(desc_file, 'w')
+    dcf = open(desc_file, 'w', encoding="utf-8")
     p = re.compile(':|'.join(target_keys) + ':')
     for line in lines:
         line = bytes2str(line)
-        if not line.strip():
+        if not line.strip():  # drop empty lines
             continue
-        else:
-            if not p.match(line):
-                dcf.write(line + '\n')
+        if not p.match(line):
+            dcf.write(line + '\n')
     dcf.close()
 
     dcf = open(desc_file, 'a')
