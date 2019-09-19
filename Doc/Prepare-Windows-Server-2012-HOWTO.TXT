@@ -23,19 +23,30 @@ From the Administrator account
 
 ** Install Google Chrome
 
-** Install Python 2.7 (for all users)
+** Install Python 3 (for all users)
 
-  Do NOT install Python from one of the personal administrator accounts that
-  we will create later (in the "Create personal administrator accounts"
-  subsection below). This seems to cause problems e.g. trying to upgrade to
-  the latest pip with the command shown in the "Upgrade to the latest pip"
-  subsection below raises an error. So it's important to perform all the
-  Python related steps described in this "From the Administrator account"
-  section from the Administrator account.
+  Download the Latest Python 3 Release from:
 
-  - using Windows x86-64 MSI installer from
-      https://www.python.org/downloads/release/python-2712/
-  - make sure 'Add python.exe to Path' is selected
+    https://www.python.org/downloads/windows/
+
+  (Choose the "Windows x86-64 executable installer".)
+
+  When running the installer:
+  - Select "Add Python 3.7 to PATH" then click on "Customize installation".
+  - In the "Optional Features" screen, click Next without changing anything.
+  - In "Advanced Options" choose "Install for all users" and change install
+    location from C:\Program Files\Python37 to C:\Python37, then click on
+    "Install".
+
+  ALSO: You need to explicitly associate .py files with Python by:
+  - Double-clicking on a .py file.
+  - A popup window will ask you: How do you want to open this type of file
+    (.py)? Click on "More options".
+  - Check the "Use this app for all .py files" box then scroll all the way
+    down and click on "Look for another app on this PC". This opens the File
+    Explorer.
+  - In the File Explorer find the python file in C:\Python37 and double-click
+    on it.
 
 ** Upgrade to the latest pip
 
@@ -43,62 +54,36 @@ From the Administrator account
 
     python -m pip install --upgrade pip
 
-** Install Python modules pywin32 and psutil
+** Install Python module psutil
 
-  These modules are needed by BBS.
+  This module is needed by BBS.
 
-  Download latest 64-bit version of these modules for Python 2.7 from
-  Christoph Gohlke's "Unofficial Windows Binaries for Python Extension
-  Packages" page at http://www.lfd.uci.edu/~gohlke/pythonlibs/
-    pywin32: pywin32-220.1-cp27-cp27m-win_amd64.whl
-    psutil: psutil-4.3.0-cp27-cp27m-win_amd64.whl
+    pip install psutil
 
-  Then, in a PowerShell Window:
-
-    pip install pywin32-220.1-cp27-cp27m-win_amd64.whl
-    pip install psutil-4.3.0-cp27-cp27m-win_amd64.whl
-
-** Install Python modules numpy, scipy, sklearn, h5py and pandas
-
-  scipy is a dependency of sklearn and must be installed before
-  sklearn will work properly. For whatever reason, `pip install sklearn`
-  completes successfully even if scipy is not installed. When sklearn
-  is loaded (imported) and scipy is not present it breaks.
-
-  All modules are needed by the BiocSklearn package and numpy is also needed
-  by the DChIPRep package.
+** Install Python modules needed by some CRAN/Bioconductor packages:
 
   In a PowerShell Window:
 
-    pip install numpy
-    pip install scipy
-    pip install sklearn
-    pip install h5py
-    pip install pandas
-
-** Install Python module h5pyd 
-
-  This module is needed by the rhdf5client package.
-
-  In a PowerShell Window:
-
+    pip install numpy scipy sklearn h5py pandas mofapy
+    pip install tensorflow tensorflow_probability
     pip install h5pyd
-
-** Install Python module mofapy
-
-  This module is needed by the MOFA package.
-
-  In a PowerShell Window:
-
-    pip install mofapy
-
-** Install Python module nbconvert
-
-  This module is needed by CRAN package nbconvertR.
-
-  In a PowerShell Window:
-
+    pip install cwltool
     pip install nbconvert
+
+  Notes:
+  - scipy is needed by Bioconductor package MOFA but also by the sklearn
+    module (when sklearn is imported and scipy is not present, the former
+    breaks). However, for some reason, `pip install sklearn` does not
+    install scipy and completes successfully even if scipy is not installed.
+  - numpy, sklearn, h5py, and pandas are needed by Bioconductor packages
+    BiocSklearn and MOFA, and numpy is also needed by Bioconductor package
+    DChIPRep.
+  - mofapy is needed by Bioconductor package MOFA.
+  - tensorflow is needed by Bioconductor packages scAlign and netReg.
+  - tensorflow_probability is needed by netReg.
+  - h5pyd is needed by Bioconductor package rhdf5client.
+  - cwltool is needed by Bioconductor package Rcwl.
+  - nbconvert is needed by CRAN package nbconvertR.
 
 ** Create personal administrator accounts:
 
@@ -117,11 +102,8 @@ From the Administrator account
   Username: hpages
   Full name: Hervé Pagès
 
-  Username: aoles
-  Full name: Andrzej Oleś
-
-  Username: gwargula
-  Full name: Gregory Wargula
+  Username: lshepherd
+  Full name: Lori Shepherd
 
   For all these accounts:
     [x] User must change password at next logon
@@ -283,19 +265,19 @@ interactively on a Windows build machine.
 
   If malbec1 not in DNS, replace with 172.29.0.3
 
-** Create and populate the bbs-3.4-bioc folder
+** Create and populate the bbs-3.10-bioc folder
 
   From C:\Users\biocbuild, proceed as follow
 
-  - mkdir bbs-3.4-bioc
-  - cd bbs-3.4-bioc
+  - mkdir bbs-3.10-bioc
+  - cd bbs-3.10-bioc
   - mkdir log
   - mkdir NodeInfo
   - chmod 755 NodeInfo
   - mkdir tmp
   - mkdir tmpdir
 
-** Install R in bbs-3.4-bioc
+** Install R in bbs-3.10-bioc
 
   1. Download the CRAN Windows binary that matches the BioC version to build.
      (https://cran.rstudio.com/bin/windows/base/)
@@ -303,7 +285,7 @@ interactively on a Windows build machine.
      When running the installer:
 
      - Ignore warning about the current user not being an admin
-     - Select destination location C:\Users\biocbuild\bbs-3.4-bioc\R
+     - Select destination location C:\Users\biocbuild\bbs-3.10-bioc\R
      - Don't create a Start Menu Folder
      - Don't create a desktop icon
 
@@ -312,7 +294,7 @@ interactively on a Windows build machine.
 
      (a) R\etc\i386\Makeconf
 
-        From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.10-bioc:
 
         - cd R\etc\i386
         - cp Makeconf Makeconf.original
@@ -326,7 +308,7 @@ interactively on a Windows build machine.
 
      (b) R\etc\x64\Makeconf
 
-        From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.10-bioc:
 
         - cd R\etc\x64
         - cp Makeconf Makeconf.original
@@ -340,7 +322,7 @@ interactively on a Windows build machine.
 
      (c) R\etc\Rprofile.site
 
-        From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.10-bioc:
 
         - cd R\etc
         - cp Rprofile.site Rprofile.site.original
@@ -353,13 +335,13 @@ interactively on a Windows build machine.
 
   4. Install BiocManager
 
-     Start R (with R/bin/R from C:\Users\biocbuild\bbs-3.4-bioc) and install 
+     Start R (with R/bin/R from C:\Users\biocbuild\bbs-3.10-bioc) and install
      BiocManager:
 
        install.packages("BiocManager")
-       
+
      Check that BiocManager is pointing to the correct version of Bioconductor:
-     
+
        library(BiocManager)  # This displays the version of Bioconductor
                              # that BiocManager is pointing at.
        ## If BiocManager is pointing to release instead of devel, change this
@@ -381,7 +363,7 @@ interactively on a Windows build machine.
   Quit R (do NOT save the workspace image)
 
   5. NOTE: Updating R
- 
+
      When R is updated, the cache for AnnotationHub and ExperimentHub should
      be refreshed. This is done by removing all of .AnnotationHub/,
      .AnnotationHubData/, .ExperimentHub/ and .ExperimentHubData/ present
@@ -488,7 +470,7 @@ From a personal administrator account
     already done)
   Right-click on the BBS folder -> choose Create Task
   - Tab General:
-      Name: bbs-3.4-bioc
+      Name: bbs-3.10-bioc
       In Security options:
         Use TOKAY1\biocbuild account to run the task
         Run whether user is logged on or not
@@ -504,9 +486,9 @@ From a personal administrator account
       New Action
       Action: Start a program
       In Settings:
-        Program/script: C:\Users\biocbuild\BBS\3.4-RPCI\bioc\tokay1\run.bat
-        Add arguments: >>C:\Users\biocbuild\bbs-3.4-bioc\log\tokay1.log 2>&1
-        Start in: C:\Users\biocbuild\BBS\3.4-RPCI\bioc\tokay1
+        Program/script: C:\Users\biocbuild\BBS\3.10\bioc\tokay1\run.bat
+        Add arguments: >>C:\Users\biocbuild\bbs-3.10-bioc\log\tokay1.log 2>&1
+        Start in: C:\Users\biocbuild\BBS\3.10\bioc\tokay1
   - Tab Conditions:
       nothing to do (keep all the defaults)
   - Tab Settings:
@@ -611,7 +593,7 @@ From a personal administrator account
   if you were already logged on) try to load the rJava package for the
   2 archs (this package will be automatically installed after the 1st build
   run but cannot be loaded if Java is not found on the system) e.g. open a
-  PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc, then
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc, then
 
     - start R in 64-bit mode with
         R\bin\R --arch x64
@@ -640,24 +622,24 @@ From a personal administrator account
 
       mkdir C:/extsoft
 
-  Download the files using the rsync command from the rsync-extsoft macro 
+  Download the files using the rsync command from the rsync-extsoft macro
   from the src/gnuwin32/Makefile. Change the 'major.minor' version in the
   command as appropriate.
- 
+
       cd C:/extsoft
       rsync --timeout=60 -rcvp --delete --chmod=ugo=rwX cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
 
-  The location of these binaries is set using macro EXT_LIBS. The  default 
+  The location of these binaries is set using macro EXT_LIBS. The default
   setting of EXT_LIBS is $(LOCAL_SOFT) which defaults to $(R_HOME)/extsoft.
   This is not where we have installed the binaries so the i386 and x64
   Makefiles need to be modified .
 
-  From the biocbuild account, go to C:\Users\biocbuild\bbs-3.7-bioc and
+  From the biocbuild account, go to C:\Users\biocbuild\bbs-3.10-bioc and
   set variable LOCAL_SOFT to C:/extsoft in R\etc\{i386,x64}\Makeconf
 
      (a) R\etc\i386\Makeconf
 
-        From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.10-bioc:
 
         - cd R\etc\i386
         - vi Makeconf
@@ -678,7 +660,7 @@ From a personal administrator account
 
      (b) R\etc\x64\Makeconf
 
-        From C:\Users\biocbuild\bbs-3.4-bioc:
+        From C:\Users\biocbuild\bbs-3.10-bioc:
 
         - cd R\etc\x64
         - vi Makeconf
@@ -700,7 +682,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile a package that uses the GSL
   (provided by extsoft/) e.g. open a PowerShell window, cd to
-  C:\Users\biocbuild\bbs-3.7-bioc\meat (this folder will be automatically
+  C:\Users\biocbuild\bbs-3.10-bioc\meat (this folder will be automatically
   created after the 1st build run), then:
 
       ..\R\bin\R CMD INSTALL GLAD
@@ -721,7 +703,7 @@ From a personal administrator account
   files located in lib\i386\ and lib\x64\, respectively).
 
   TESTING: From the biocbuild account try to compile Rhtslib e.g. open a
-  PowerShell window, cd to C:\Users\biocbuild\bbs-3.7-bioc\meat (this folder
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this folder
   will be automatically created after the 1st build run), then:
 
       ..\R\bin\R CMD INSTALL Rhtslib
@@ -738,7 +720,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build a package that uses Ghostscript
   for its vignette e.g. open a PowerShell window, cd to
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  C:\Users\biocbuild\bbs-3.10-bioc\meat (this folder will be automatically
   created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
@@ -761,7 +743,7 @@ From a personal administrator account
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build a package that uses Perl e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this
   folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build COHCAP
@@ -779,7 +761,7 @@ From a personal administrator account
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to load the rjags package e.g. open a
-  PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this folder
   will be automatically created after the 1st build run), start R (with
   ..\R\bin\R), then:
 
@@ -798,7 +780,7 @@ From a personal administrator account
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile the flowWorkspace package e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this
   folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL flowWorkspace
@@ -812,11 +794,11 @@ From a personal administrator account
   biocbuild account. That's because the compilation process described in
   ChemmineOB/INSTALL needs to access stuff under
 
-    c:/Users/biocbuild/bbs-3.4-bioc/R/library/zlibbioc/
+    c:/Users/biocbuild/bbs-3.10-bioc/R/library/zlibbioc/
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile the ChemmineOB package e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this
   folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL ChemmineOB
@@ -841,7 +823,7 @@ From a personal administrator account
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile the rsbml package e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this
   folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL rsbml
@@ -856,7 +838,7 @@ From a personal administrator account
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build a package that uses Clustal Omega
-  e.g. open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat
+  e.g. open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat
   (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build LowMACA
@@ -871,7 +853,7 @@ From a personal administrator account
 
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to build the ImmuneSpaceR package e.g.
-  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc\meat (this
+  open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this
   folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build ImmuneSpaceR
@@ -886,7 +868,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to run the getReads example in the
   GoogleGenomics package e.g. open a PowerShell window, cd to
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  C:\Users\biocbuild\bbs-3.10-bioc\meat (this folder will be automatically
   created after the 1st build run), then:
 
   1) Install the GoogleGenomics package if it's not already installed (check
@@ -912,7 +894,7 @@ From a personal administrator account
   TESTING: From the biocbuild account (log out and on again from this account
   if you were already logged on) try to compile the HilbertVisGUI package
   for the x64 arch only e.g. open a PowerShell window, cd to
-  C:\Users\biocbuild\bbs-3.4-bioc\meat (this folder will be automatically
+  C:\Users\biocbuild\bbs-3.10-bioc\meat (this folder will be automatically
   created after the 1st build run), then:
 
     ..\R\bin\R --arch x64 CMD INSTALL --no-multiarch HilbertVisGUI
@@ -928,7 +910,7 @@ From a personal administrator account
   if you were already logged on) try to load the rggobi package for the
   2 archs (this package will be automatically installed after the 1st build
   run but cannot be loaded if GGobi is not found on the system) e.g. open a
-  PowerShell window, cd to C:\Users\biocbuild\bbs-3.4-bioc, then
+  PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc, then
 
     - start R in 64-bit mode with
         R\bin\R --arch x64
@@ -942,7 +924,7 @@ From a personal administrator account
 ===============================================================================
 Single Package Builder Requirements
 -------------------------------------------------------------------------------
-       
+
 ** Create the pkgbuild account:
 
   Username: pkgbuild
@@ -965,7 +947,7 @@ Single Package Builder Requirements
      -> User Rights Assignment
   In the right pane, right-click on 'Log on as a batch job' -> Properties
   Add pkgbuild user
-  
+
 ** Grant the pkgbuild user permissions within the biocbuild user folder using the Users security group
 
   Using File Explorer, go to C:\Users and right click the biocbuild folder and choose properties. Go to the Security tab.
@@ -974,28 +956,28 @@ Single Package Builder Requirements
   -> Enter the object names to select: Users
   -> Click Check Names to validate
   -> Click OK
-  
+
   For Permissions choose Read & execute, List folder contents and Read. Click OK.
-  
-  Go to C:\Users\biocbuild\bbs-3.5-bioc and right click the meat folder and choose properties. Go to the Security tab.
+
+  Go to C:\Users\biocbuild\bbs-3.10-bioc and right click the meat folder and choose properties. Go to the Security tab.
   -> Click Edit
   -> Click Add
   -> Enter the object names to select: Users
   -> Click Check Names to validate
   -> Click OK
-  
+
   For Permissions choose Read & execute, List folder contents and Read. Click OK.
-  
-  Go to C:\Users\biocbuild\bbs-3.5-bioc and right click the NodeInfo folder and choose properties. Go to the Security tab.
+
+  Go to C:\Users\biocbuild\bbs-3.10-bioc and right click the NodeInfo folder and choose properties. Go to the Security tab.
   -> Click Edit
   -> Click Add
   -> Enter the object names to select: Users
   -> Click Check Names to validate
   -> Click OK
-  
+
   For Permissions choose Read & execute, List folder contents and Read. Click OK.
-  
-  
+
+
   ** Grant the pkgbuild user permissions within the Windows\Temp folder using the Users security group. This is for BiocCheck.
 
   Using File Explorer, go to C:\Windows and right click the Temp folder and choose properties. Go to the Security tab.
@@ -1004,6 +986,6 @@ Single Package Builder Requirements
   -> Enter the object names to select: Users
   -> Click Check Names to validate
   -> Click OK
-  
-  For Permissions choose Full Control. Click OK.  
+
+  For Permissions choose Full Control. Click OK.
 
