@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 ##############################################################################
 
 import sys
@@ -22,10 +22,10 @@ def update_packages(pkg_dir, pkgs, pkg_git_branch=None, skip=None):
         i = i + 1
         if i <= skip:
             continue
-        print 'BBS> ----------------------------------------------------------'
-        print 'BBS> [update_packages] (%d/%d) repo: %s / branch: %s' % \
-              (i, len(pkgs), pkg, pkg_git_branch)
-        print ''
+        print('BBS> ----------------------------------------------------------')
+        print('BBS> [update_packages] (%d/%d) repo: %s / branch: %s' % \
+              (i, len(pkgs), pkg, pkg_git_branch))
+        print()
         pkg_git_clone = os.path.join(pkg_dir, pkg)
         pkg_git_repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
         bbs.gitutils.update_git_clone(pkg_git_clone, pkg_git_repo_url,
@@ -34,30 +34,30 @@ def update_packages(pkg_dir, pkgs, pkg_git_branch=None, skip=None):
 
 def update_packages_in_current_working_dir(pkg_git_branch=None, skip=None):
     key = 'MANIFEST_FILE'
-    print 'BBS> Environment variable %s is' % key,
+    print('BBS> Environment variable %s is' % key, end=' ')
     if key in os.environ and os.environ[key] != "":
         manifest_path = os.environ[key]
-        print 'defined and set to:'
-        print 'BBS>     %s' % manifest_path
-        print 'BBS> ==> Using %s as manifest file...' % manifest_path
+        print('defined and set to:')
+        print('BBS>     %s' % manifest_path)
+        print('BBS> ==> Using %s as manifest file...' % manifest_path)
         pkgs = bbs.manifest.read(manifest_path)
-        print 'BBS> Nb of packages listed in manifest file: %d' % len(pkgs)
+        print('BBS> Nb of packages listed in manifest file: %d' % len(pkgs))
     else:
-        print 'NOT defined (or is set to '
-        print 'BBS> the empty string).'
-        print 'BBS> ==> Assuming all subdirs in current ' + \
-              'directory are git repos'
-        print 'BBS>     and updating them...'
+        print('NOT defined (or is set to ')
+        print('BBS> the empty string).')
+        print('BBS> ==> Assuming all subdirs in current ' + \
+              'directory are git repos')
+        print('BBS>     and updating them...')
         pkgs = [f for f in os.listdir('.') if os.path.isdir(f) and not f.startswith('.')]
-        print 'BBS> Nb of subdirs in current directory: %d' % len(pkgs)
-    print ''
+        print('BBS> Nb of subdirs in current directory: %d' % len(pkgs))
+    print()
     update_packages('.', pkgs, pkg_git_branch, skip)
     return
 
 def update_manifest(manifest_git_branch=None):
-    print 'BBS> ----------------------------------------------------------'
-    print 'BBS> [update_manifest] branch: %s' % manifest_git_branch
-    print ''
+    print('BBS> ----------------------------------------------------------')
+    print('BBS> [update_manifest] branch: %s' % manifest_git_branch)
+    print()
     bbs.gitutils.update_git_clone(manifest_git_clone,
                                   manifest_git_repo_url,
                                   manifest_git_branch)
