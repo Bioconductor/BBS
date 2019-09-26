@@ -259,17 +259,24 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf = open(desc_file, 'rb')
     lines = dcf.read().splitlines()
     dcf.close()
-    dcf = open(desc_file, 'w', encoding="utf-8")
+    dcf = open(desc_file, 'wb')
     p = re.compile(':|'.join(target_keys) + ':')
     for line in lines:
-        line = bytes2str(line)
-        if not line.strip():  # drop empty lines
+        s = bytes2str(line)
+        if not s.strip():  # drop empty lines
             continue
-        if not p.match(line):
-            dcf.write(line + '\n')
+        if not p.match(s):
+            dcf.write(line + b'\n')
     dcf.close()
 
-    dcf = open(desc_file, 'a')
+    # Note that we open the DESCRIPTION file for appending using the utf-8
+    # encoding (well, we don't know the original encoding of the file) so
+    # the lines we append to it will be encoded using an encoding that will
+    # not necessarily match the original encoding of the file. However, the
+    # strings we actually append only contain ASCII code so hopefully they
+    # get encoded the same way as if we had used the original encoding of
+    # the file.
+    dcf = open(desc_file, 'a', encoding="utf-8")
     dcf.write('%s: %s\n' % (target_keys[0], git_url))
     dcf.write('%s: %s\n' % (target_keys[1], git_branch))
     dcf.write('%s: %s\n' % (target_keys[2], git_last_commit))
