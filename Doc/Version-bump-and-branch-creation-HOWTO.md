@@ -10,19 +10,19 @@ changes to all the packages that go in the release, **in this order**:
 * **Branch creation**: create the release branch
 * **Second version bump**: bump x.y.z version to odd y **in the `master` branch**
 
-For example, for the BioC 3.9 release, we need to do this for all the
+For example, for the BioC 3.10 release, we need to do this for all the
 packages listed in the `software.txt`, `data-experiment.txt`, and
-`workflows.txt` files of the `RELEASE_3_9` branch of the `manifest`
+`workflows.txt` files of the `RELEASE_3_10` branch of the `manifest`
 repo.
 
 Note that there is one exception: the BiocVersion package (software package).
 Section **C.** below provides more information about this.
 
-This needs to be done before the BioC 3.9 builds start for software,
+This needs to be done before the BioC 3.10 builds start for software,
 workflows and data-experiment packages.
 
 Look for the prerun jobs in the crontab for the `biocbuild` user on the main
-BioC 3.9 builder to get the times the software and data-experiment builds get
+BioC 3.10 builder to get the times the software and data-experiment builds get
 kicked off. Make sure to check the crontab again a couple of days before the
 release as we sometimes make small adjustments to the crontabs on the build
 machines.  Also be sure to translate to your local time if you are not on the
@@ -35,7 +35,7 @@ These steps should be performed typically a couple of days before the steps
 in sections **C.**, **D.**, and **E.**.
 
 * Update this document to reflect the BioC version to be released i.e.
-  replace all occurrences of `3.9` and `RELEASE_3_9` with appropriate
+  replace all occurrences of `3.10` and `RELEASE_3_10` with appropriate
   version. This will avoid potentially disastrous mistakes when
   copying/pasting/executing commands from this document.
 
@@ -76,16 +76,16 @@ in sections **C.**, **D.**, and **E.**.
       export BBS_HOME="$HOME/BBS"
 
       # clone `manifest` repo
-      $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_9
+      $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_10
 
       # clone software package repos (takes approx. 1h20)
-      time $BBS_HOME/utils/update_bioc_git_repos.py software master RELEASE_3_9
+      time $BBS_HOME/utils/update_bioc_git_repos.py software master RELEASE_3_10
 
       # clone data-experiment package repos (takes approx. 1h50)
-      time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master RELEASE_3_9
+      time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master RELEASE_3_10
 
       # clone workflow package repos (takes approx. 4 min)
-      time $BBS_HOME/utils/update_bioc_git_repos.py workflows master RELEASE_3_9
+      time $BBS_HOME/utils/update_bioc_git_repos.py workflows master RELEASE_3_10
 
 * Make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
@@ -170,7 +170,7 @@ procedure should take about 2.5 hours. Make sure to reserve enough time.
 
 NOTE: BiocVersion needs special treatment because its version must always
 match the version of the branch it's in. This means that it only needs the
-second bump. So it will remain at `3.9.*` in the RELEASE_3_9 branch and will
+second bump. So it will remain at `3.10.*` in the RELEASE_3_10 branch and will
 be set to `3.10.0` in the new master branch.
 
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
@@ -181,16 +181,16 @@ that people must stop committing/pushing changes to the BioC git server
 
 ### C2. Modify packages.conf to block all commits
 
-The `RELEASE_3_8` lines in `gitolite-admin/conf/packages.conf` were commented
+The `RELEASE_3_9` lines in `gitolite-admin/conf/packages.conf` were commented
 out when the release builds were frozen. At this point, only the `master`
 lines are still active. 
 
 Deactivate all push access by commenting out the `master` lines in
 `gitolite-admin/conf/packages.conf`.
 
-NOTE: Do not change the branch from RELEASE_3_7 to RELEASE_3_8, it is
+NOTE: Do not change the branch from RELEASE_3_9 to RELEASE_3_10, it is
 not a good solution. Maintainers now will be able to push their own
-RELEASE_3_8 branch before we are able to create it at release
+RELEASE_3_10 branch before we are able to create it at release
 time. This issue reflects the issue
 https://stat.ethz.ch/pipermail/bioc-devel/2019-May/015048.html.
 
@@ -210,11 +210,11 @@ agent connection e.g.:
 
 See **B. Preliminary steps** above for the details.
 
-### C4. Checkout/update the `RELEASE_3_9` branch of the `manifest` repo
+### C4. Checkout/update the `RELEASE_3_10` branch of the `manifest` repo
 
     cd ~/git.bioconductor.org/manifest
     git pull --all
-    git checkout RELEASE_3_9
+    git checkout RELEASE_3_10
     git branch
     git status
 
@@ -228,7 +228,7 @@ All the remaining steps in section **C.** must be performed from within
 this folder.
 
 Point `MANIFEST_FILE` to the manifest file for software packages. This must
-be the file from the `RELEASE_3_9` branch of the `manifest` repo:
+be the file from the `RELEASE_3_10` branch of the `manifest` repo:
 
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
 
@@ -239,7 +239,7 @@ Go to the working folder:
     cd $WORKING_DIR
 
 This folder should already contain the git clones of all the
-software packages that are listed in the `RELEASE_3_9` manifest
+software packages that are listed in the `RELEASE_3_10` manifest
 (see **B. Preliminary steps** above). Note that all the git clones
 should be on the **`master`** branch!
 
@@ -263,7 +263,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
     # ** IMPORTANT **
     # Manually correct the version in the BiocVersion DESCRIPTION so it
-    # remains at 3.9.0.
+    # remains at 3.10.0.
 
     # remove the DESCRIPTION.original files
     $BBS_HOME/utils/bump_pkg_versions.sh clean
@@ -274,7 +274,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
 ### C8. Commit first version bump
 
-    commit_msg="bump x.y.z version to even y prior to creation of RELEASE_3_9 branch"
+    commit_msg="bump x.y.z version to even y prior to creation of RELEASE_3_10 branch"
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
@@ -305,19 +305,19 @@ This will modify the DESCRIPTION files only. It won't commit anything.
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
 
-    # create the RELEASE_3_9 branch and change back to master
+    # create the RELEASE_3_10 branch and change back to master
     time for pkg in $pkgs_in_manifest; do
       echo ""
-      echo ">>> create RELEASE_3_9 branch for package $pkg"
-      git -C $pkg checkout -b RELEASE_3_9
+      echo ">>> create RELEASE_3_10 branch for package $pkg"
+      git -C $pkg checkout -b RELEASE_3_10
       git -C $pkg checkout master
     done > createbranch.out 2>&1
 
     # check existence of the new branch
     for pkg in $pkgs_in_manifest; do
-      git -C $pkg branch -a | grep RELEASE_3_9
+      git -C $pkg branch -a | grep RELEASE_3_10
       if [ $? -ne 0 ]; then
-        echo "ERROR: No RELEASE_3_9 branch in $pkg"
+        echo "ERROR: No RELEASE_3_10 branch in $pkg"
         break
       fi
     done
@@ -349,7 +349,7 @@ This will modify the DESCRIPTION files only. It won't commit anything.
 
 Same as step C8 above EXCEPT that commit message now is:
 
-    commit_msg="bump x.y.z version to odd y after creation of RELEASE_3_9 branch"
+    commit_msg="bump x.y.z version to odd y after creation of RELEASE_3_10 branch"
 
 ### C12. Disable hooks
 
@@ -371,8 +371,8 @@ Last sanity check before pushing:
     cd <some package>
     ## master: This should show the even bump, followed by the odd bump
     git log master -n 2
-    ## RELEASE_3_9: This should show the even bump only
-    git log RELEASE_3_9 -n 1
+    ## RELEASE_3_10: This should show the even bump only
+    git log RELEASE_3_10 -n 1
 
 Push:
 
@@ -433,15 +433,15 @@ Approx. timings (on malbec2):
 
 ## F. Finishing up
 
-### F1. Enable push access to new `RELEASE_3_9` branch
+### F1. Enable push access to new `RELEASE_3_10` branch
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`). 
 
-- If not done already, replace all instances of `RELEASE_3_8` with
-`RELEASE_3_9`.
+- If not done already, replace all instances of `RELEASE_3_9` with
+`RELEASE_3_10`.
 
-- Uncomment all `RELEASE_3_9` and `master` lines.
+- Uncomment all `RELEASE_3_10` and `master` lines.
 
 - Run `gitolite setup` from /home/git/repositories to re-enable the hooks.
 
@@ -452,7 +452,7 @@ BiocGenerics_test).
 Check,
 
 	git push
-	git checkout RELEASE_3_9
+	git checkout RELEASE_3_10
 	git pull
 
 ### F2. Tell people that committing/pushing to the BioC git server can resume
@@ -461,20 +461,20 @@ Announce or ask a team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
-### F3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_9` on main BioC 3.9 builder
+### F3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_10` on main BioC 3.10 builder
 
-DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.9 builds grab the
-`RELEASE_3_9` branch of all packages instead of their `master` branch.
+DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.10 builds grab the
+`RELEASE_3_10` branch of all packages instead of their `master` branch.
 
-Login to the main BioC 3.9 builder as `biocbuild` and replace
+Login to the main BioC 3.10 builder as `biocbuild` and replace
 
     export BBS_BIOC_GIT_BRANCH="master"
 
 with
 
-    export BBS_BIOC_GIT_BRANCH="RELEASE_3_9"
+    export BBS_BIOC_GIT_BRANCH="RELEASE_3_10"
 
-in `~/BBS/3.9/config.sh`
+in `~/BBS/3.10/config.sh`
 
 Also replace
 
@@ -482,12 +482,12 @@ Also replace
 
 with
 
-    set BBS_BIOC_GIT_BRANCH=RELEASE_3_9
+    set BBS_BIOC_GIT_BRANCH=RELEASE_3_10
 
-in `~/BBS/3.9/config.bat`
+in `~/BBS/3.10/config.bat`
 
-Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.9-bioc/`,
-`~/bbs-3.9-data-experiment/`, and `~/bbs-3.9-workflows/`. They'll get
+Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.10-bioc/`,
+`~/bbs-3.10-data-experiment/`, and `~/bbs-3.10-workflows/`. They'll get
 automatically re-created and re-populated when the builds start.
 
 ### F4. Update all core bioconductor packages hosted on github/Bioconductor organization
@@ -519,8 +519,8 @@ The specific function which needs to be run is
 which runs, the function (this essentially does all the work).Be sure
 to edit the release version in the function.
 	
-	clone_and_push_git_repo(package, release="RELEASE_3_9")
+	clone_and_push_git_repo(package, release="RELEASE_3_10")
 
 	
-This function will push the `RELEASE_3_9` branch to github and sync
+This function will push the `RELEASE_3_10` branch to github and sync
 the packages on github.
