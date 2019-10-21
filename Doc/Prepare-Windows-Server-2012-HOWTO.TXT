@@ -81,11 +81,13 @@ From the Administrator account
     DChIPRep.
   - mofapy is needed by Bioconductor package MOFA.
   - tensorflow is needed by Bioconductor packages scAlign and netReg.
-  - tensorflow_probability is needed by netReg.
+  - tensorflow_probability is needed by Bioconductor package netReg.
   - h5pyd is needed by Bioconductor package rhdf5client.
   - cwltool is needed by Bioconductor package Rcwl.
-  - nbconvert is needed by CRAN package nbconvertR.
-  - matplotlib and phate are needed by Bioconductor package phemd.
+  - nbconvert is needed by CRAN package nbconvertR which is itself used by
+    Bioconductor package destiny.
+  - matplotlib and phate are needed by CRAN package phateR which is itself
+    used by Bioconductor package phemd.
 
 ** Create personal administrator accounts:
 
