@@ -982,6 +982,13 @@ Everything in this section must be done from the biocbuild account.
     library(nbconvertR)
     ?nbconvert  # copy the commented example and run it
 
+** Install Python modules matplotlib and phate
+
+  These modules are needed by CRAN package phateR which is needed by
+  Bioconductor package phemd.
+
+    pip3 install matplotlib phate
+
 ** Install libSBML
 
   libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
