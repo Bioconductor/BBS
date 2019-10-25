@@ -58,13 +58,17 @@ def writeRconfig():
     Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
     #Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
     #Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
+    #vars = C_vars + \
+    #       Cplusplus_vars + \
+    #       Cplusplus98_vars + \
+    #       Cplusplus11_vars + \
+    #       Cplusplus14_vars + \
+    #       Fortran77_vars + \
+    #       Fortran9x_vars
     vars = C_vars + \
            Cplusplus_vars + \
-           #Cplusplus98_vars
            Cplusplus11_vars + \
            Cplusplus14_vars
-           #Fortran77_vars
-           #Fortran9x_vars
     for var in vars:
         appendRconfigValue(file, var)
     return
