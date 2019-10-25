@@ -60,10 +60,10 @@ def writeRconfig():
     #Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
     vars = C_vars + \
            Cplusplus_vars + \
-           #Cplusplus98_vars + \
+           #Cplusplus98_vars
            Cplusplus11_vars + \
            Cplusplus14_vars
-           #Fortran77_vars + \
+           #Fortran77_vars
            #Fortran9x_vars
     for var in vars:
         appendRconfigValue(file, var)
