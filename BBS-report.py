@@ -1216,14 +1216,14 @@ def make_NodeInfo_page(Node_rdir, node):
 
     out.write('<HR>\n')
 
-    out.write('<H2>C++98 compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus98_vars = ['CXX98', 'CXX98FLAGS', 'CXX98PICFLAGS', 'CXX98STD']
-    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus98_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX98')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
+    #out.write('<H2>C++98 compiler</H2>\n')
+    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    #Cplusplus98_vars = ['CXX98', 'CXX98FLAGS', 'CXX98PICFLAGS', 'CXX98STD']
+    #write_Rconfig_table_from_file(out, Node_rdir, Cplusplus98_vars)
+    #write_SysCommandVersion_from_file(out, Node_rdir, 'CXX98')
+    #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
 
     out.write('<H2>C++11 compiler</H2>\n')
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
@@ -1243,23 +1243,23 @@ def make_NodeInfo_page(Node_rdir, node):
 
     out.write('<HR>\n')
 
-    out.write('<H2>Fortran 77 compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
-    write_Rconfig_table_from_file(out, Node_rdir, Fortran77_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'F77')
-    out.write('</DIV>\n')
+    #out.write('<H2>Fortran 77 compiler</H2>\n')
+    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    #Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
+    #write_Rconfig_table_from_file(out, Node_rdir, Fortran77_vars)
+    #write_SysCommandVersion_from_file(out, Node_rdir, 'F77')
+    #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
 
-    out.write('<HR>\n')
-
-    out.write('<H2>Fortran 9x compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
-    write_Rconfig_table_from_file(out, Node_rdir, Fortran9x_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'FC')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
+    #out.write('<H2>Fortran 9x compiler</H2>\n')
+    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    #Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
+    #write_Rconfig_table_from_file(out, Node_rdir, Fortran9x_vars)
+    #write_SysCommandVersion_from_file(out, Node_rdir, 'FC')
+    #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
 
     out.write('<P>More information might be added in the future...</P>\n')
 
