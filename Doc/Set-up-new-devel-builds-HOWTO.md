@@ -150,7 +150,19 @@ The new 3.11 directory tree should look like this:
 
 ### In /extra/www/bioc/checkResults
 
-Create `3.11` folder. This is where the build reports will be published.
+```
+cd /extra/www/bioc/checkResults
+```
+
+Create folder `3.11` folder and subfolders `bioc-LATEST`,
+`data-experiment-LATEST`, `workflows-LATEST`, and `bioc-longtests-LATEST`:
+```
+mkdir 3.11
+cd 3.11
+mkdir bioc-LATEST data-experiment-LATEST workflows-LATEST bioc-longtests-LATEST
+```
+
+This is where the build reports will be published.
 
 
 
