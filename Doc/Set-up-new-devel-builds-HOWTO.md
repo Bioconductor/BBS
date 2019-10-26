@@ -1,4 +1,4 @@
-## Introduction
+## 1. Introduction
 
 Every 6 months, a couple of weeks before a new BioC release, we need to
 set up the builds for the next devel cycle of Bioconductor (this devel
@@ -17,11 +17,11 @@ malbec2 will be the _central builder_ for the 3.11 builds (like it was for
 the 3.9 builds). This is where the build products from all the build nodes
 will be collected. The central builder generates the build reports and
 propagates packages (source tarballs and binaries) produced by the builds
-to `master.bioconductor.org`.
+to master.bioconductor.org.
 
 
 
-## Add config files and scripts to BBS source tree
+## 2. Add config files and scripts to BBS source tree
 
 Clone the BBS repository on your local machine. With HTTPS:
 ```
@@ -44,6 +44,9 @@ cd BBS
 cp -r 3.10 3.11
 ```
 
+Don't copy the `3.9` folder! It's important to copy the latest config
+files and scripts.
+
 #### From inside `BBS/3.11` folder
 
 ```
@@ -51,7 +54,7 @@ cd 3.11
 ```
 
 Rename machines to reflect new names e.g. malbec1 -> malbec2, tokay1 -> tokay2,
-merida1 -> celaya2. This means renaming the directory inside `bioc/`,
+merida1 -> celaya2. This means renaming the directories inside `bioc/`,
 `data-experiment/`, `workflows/`, and `bioc-longtests/`, and replacing
 every occurence in every file except in `report.css`.
 
@@ -61,7 +64,7 @@ Replace every occurence of `3.10` with `3.11` in every file.
 
 Set new background color in `report.css`.
 
-#### `git add` new 3.11 folder
+#### `git add` new `3.11` folder
 
 ```
 cd ..
@@ -90,7 +93,7 @@ replace every occurence of `3.6` with `4.0`.
 
 Set new background color in `config.sh`.
 
-#### `git add` new propagation-pipe/3.11 folder
+#### `git add` new `propagation-pipe/3.11` folder
 
 ```
 cd ../..
@@ -105,7 +108,10 @@ git commit -a -m 'Add config files and scripts for 3.11 builds'
 
 
 
-## Create destination for build reports and packages on master.bioconductor.org
+## 3. Create 3.11 destinations on master.bioconductor.org
+
+We need to create destination folders for 3.11 build reports and packages
+on master.bioconductor.org.
 
 ```
 ssh -A webadmin@master.bioconductor.org
@@ -148,7 +154,7 @@ Create `3.11` folder. This is where the build reports will be published.
 
 
 
-## Activate builds on central builder
+## 4. Activate builds on central builder
 
 The central builder should be running Linux or other Unix-like OS.
 
@@ -245,11 +251,11 @@ Check the build reports at:
 - https://bioconductor.org/checkResults/3.11/workflows-LATEST/
 - https://bioconductor.org/checkResults/3.11/bioc-longtests-LATEST/
 
-The page at https://bioconductor.org/checkResults/ should have link
+The page at https://bioconductor.org/checkResults/ should have links
 to them.
 
 
-## Activate propagation pipes
+## 5. Activate propagation pipes
 
 Connect to `biocadmin` account:
 ```
@@ -338,13 +344,13 @@ log files in `~/cron.log/3.11`.
 If propagation was successful, you should be able to access the following
 package index files:
 
-- https://bioconductor.org/packages/3.11/bioc/scrc/contrib/PACKAGES
-- https://bioconductor.org/packages/3.11/data/experiment/scrc/contrib/PACKAGES
-- https://bioconductor.org/packages/3.11/workflows/scrc/contrib/PACKAGES
+- https://bioconductor.org/packages/3.11/bioc/src/contrib/PACKAGES
+- https://bioconductor.org/packages/3.11/data/experiment/src/contrib/PACKAGES
+- https://bioconductor.org/packages/3.11/workflows/src/contrib/PACKAGES
 
 
 
-## Activate builds on the other builders
+## 6. Activate builds on the other builders
 
 [coming soon]
 
