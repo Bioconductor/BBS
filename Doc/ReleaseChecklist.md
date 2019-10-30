@@ -243,6 +243,10 @@ in _this_ order
 
   Test the mirrors with commands from:
   http://www.bioconductor.org/about/mirrors/mirror-how-to/.
+  In a test directory the following should produce correct results
+    `rsync -zrtlv --delete master.bioconductor.org::devel/bioc .` 
+    `rsync -zrtlv --delete master.bioconductor.org::release/bioc .` 
+
 
 - Update checkResults page and symlinks ("release" and "devel") under
   checkResults/.
