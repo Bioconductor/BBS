@@ -19,8 +19,10 @@ library(tools)
 rvers <- paste(getRversion()$major,
     getRversion()$minor,
     sep=".")
+
 biocvers <- BiocManager::version()
 
+biocrepos <- BiocManager:::.repositories(character(), version=biocvers)
 
 # Takes as input the value of an Imports, Depends,
 # or LinkingTo field and returns a named character
@@ -328,7 +330,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
                         "data/experiment" = "BioCexp",
                         "workflows" = "BioCworkflows")
     bioc.apdb <<- available.packages(
-        contrib.url(BiocManager::repositories()[[repo.name]]),
+        contrib.url(biocrepos[[repo.name]]),
         type="source")
     bioc.apdf <<- as.data.frame(bioc.apdb, stringsAsFactors=FALSE)
     bioc.ap <<- rownames(bioc.apdb)
