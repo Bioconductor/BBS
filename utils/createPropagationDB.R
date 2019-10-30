@@ -22,6 +22,9 @@ rvers <- paste(getRversion()$major,
 
 biocvers <- BiocManager::version()
 
+# We can't just use BiocManager::repositories() here because of the following
+# issue:
+#  https://github.com/Bioconductor/BiocManager/issues/46#issuecomment-548017624
 biocrepos <- BiocManager:::.repositories(character(), version=biocvers)
 
 # Takes as input the value of an Imports, Depends,
