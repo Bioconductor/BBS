@@ -40,8 +40,8 @@ in sections **C.**, **D.**, and **E.**.
   copying/pasting/executing commands from this document.
 
 * Choose a Linux machine with enough disk space to clone all the software,
-  data-experiment, and workflow packages (as of May 2, 2019, the total size
-  of all the package clones is about 108G). The machine needs to have the
+  data-experiment, and workflow packages (as of October 2019, the total size
+  of all the package clones is about 113G). The machine needs to have the
   `git` client and Python. The procedure described here doesn't require
   `sudo` privileges.
   Make sure to pick up a machine that has fast and reliable internet access.
