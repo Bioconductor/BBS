@@ -237,6 +237,10 @@ in _this_ order
     /etc/apache2/sites-available/000-default.conf
     /etc/apache2/sites-available/default-ssl.conf
 
+  Note: couldn't hurt to restart apache server
+  
+      sudo service apache2 restart 
+
   Test the mirrors with commands from:
   http://www.bioconductor.org/about/mirrors/mirror-how-to/.
 
@@ -262,7 +266,7 @@ in _this_ order
 
   -- Add "Disallow: /packages/XX/" to the web site's robots.txt file
      where XX is the new devel version (one higher than the version)
-     that was just released.
+     that was just released.  (on master)
 
   -- Update http://bioconductor.org/install/ for BiocManager
 
