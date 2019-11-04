@@ -127,7 +127,7 @@ def pkgname_to_HTML(pkg):
     if BBScorevars.subbuilds == "cran":
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
-        version_string = BBSreportutils.bioc_version
+        bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
         subbuilds = BBScorevars.subbuilds
         if subbuilds == "data-annotation":
             repo = "data/annotation"
@@ -137,7 +137,7 @@ def pkgname_to_HTML(pkg):
             repo = "workflows"
         else:
             repo = "bioc"
-        url = "/packages/%s/%s/html/%s.html" % (version_string, repo, pkg)
+        url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
     return '<A href="%s">%s</A>' % (url, pkg)
 
 
