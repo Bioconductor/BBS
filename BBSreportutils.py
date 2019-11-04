@@ -196,10 +196,14 @@ def get_status(dcf, pkg, node_id, stage):
     return status
 
 def get_propagation_status_from_db(pkg, node_id):
-    rodata = open_rodata(PROPAGATE_STATUS_DB_file)
-    status = get_status(rodata['rostream'], pkg, 
-    map_outgoing_node_to_package_type(node_id), 'propagate')
-    return(status)
+    try:
+        rodata = open_rodata(PROPAGATE_STATUS_DB_file)
+    except FileNotFoundError:
+        return None
+    status = get_status(rodata['rostream'], pkg,
+                        map_outgoing_node_to_package_type(node_id),
+                        'propagate')
+    return status
 
 def get_status_from_db(pkg, node_id, stage):
     rodata = open_rodata(STATUS_DB_file)
