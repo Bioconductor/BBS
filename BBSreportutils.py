@@ -229,7 +229,7 @@ def get_distinct_statuses_from_db(pkg, nodes=None):
     for node in nodes:
         if not is_supported(pkg, node):
             continue
-        stages = stages_to_display()
+        stages = stages_to_display(BBScorevars.subbuilds)
         if 'buildbin' in stages and not is_doing_buildbin(node):
             stages.remove('buildbin')
         for stage in stages:
