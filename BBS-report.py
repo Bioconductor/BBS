@@ -105,13 +105,14 @@ def make_STATUS_SUMMARY(allpkgs):
 ### HTMLization
 ##############################################################################
 
-### Does subbuild report contain package propagation status led
-def showPropagationStatus(subbuild):
-    return subbuild != "bioc-longtests"
+### Display package propagation status led for these subbuilds?
+def showPropagationStatus(subbuilds):
+    return subbuilds != "bioc-longtests"
 
-### Number of colums in the report
-def numberOfCols(subbuild):
-    return len(BBSreportutils.stages_to_display()) + showPropagationStatus(subbuild)
+### Number of colums in the report for these subbuilds?
+def numberOfCols(subbuilds):
+    return len(BBSreportutils.stages_to_display(subbuilds)) + \
+           showPropagationStatus(subbuilds)
 
 def writeThinRowSeparator_asTR(out, tr_class=None):
     if tr_class:
@@ -127,12 +128,12 @@ def pkgname_to_HTML(pkg):
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
         version_string = BBSreportutils.bioc_version
-        subbuild = BBScorevars.subbuilds
-        if subbuild == "data-annotation":
+        subbuilds = BBScorevars.subbuilds
+        if subbuilds == "data-annotation":
             repo = "data/annotation"
-        elif subbuild == "data-experiment":
+        elif subbuilds == "data-experiment":
             repo = "data/experiment"
-        elif subbuild == "workflows":
+        elif subbuilds == "workflows":
             repo = "workflows"
         else:
             repo = "bioc"
@@ -297,10 +298,10 @@ def write_stagelabel_asTD(out, stage, extra_style=""):
     return
 
 def write_pkg_stagelabels_asTDs(out, extra_style=""):
-    subbuild = BBScorevars.subbuilds
-    for stage in BBSreportutils.stages_to_display():
+    subbuilds = BBScorevars.subbuilds
+    for stage in BBSreportutils.stages_to_display(subbuilds):
         write_stagelabel_asTD(out, stage, extra_style)
-    if showPropagationStatus(subbuild):
+    if showPropagationStatus(subbuilds):
         out.write('<TD style="width:11px;"></TD>')
     return
 
@@ -322,26 +323,26 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
         % (node.hostname.replace(".", "_"), status, status, path, color))
 
 def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
-    subbuild = BBScorevars.subbuilds
+    subbuilds = BBScorevars.subbuilds
     skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if BBSreportutils.is_supported(pkg, node):
-        for stage in BBSreportutils.stages_to_display():
+        for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD class="node %s"></TD>' % node.hostname.replace(".", "_"))
             else:
                 write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style)
-        if showPropagationStatus(subbuild):
+        if showPropagationStatus(subbuilds):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
         if pkg in skipped_pkgs:
             out.write('<TD COLSPAN="%s" class="node %s">' % \
-                     (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
+                     (numberOfCols(subbuilds), node.hostname.replace(".", "_")) )
             msg = 'ERROR'
             out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
             out.write(' (Bad DESCRIPTION file)</TD>')
         else:
             out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
-                     (numberOfCols(subbuild), node.hostname.replace(".", "_")) )
+                     (numberOfCols(subbuilds), node.hostname.replace(".", "_")) )
             sep = '...'
             NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
             out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
@@ -501,13 +502,13 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
                 node_id_html = '[%s]' % node_id_html
         out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
-        subbuild = BBScorevars.subbuilds
-        for stage in BBSreportutils.stages_to_display():
+        subbuilds = BBScorevars.subbuilds
+        for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD></TD>')
             else:
                 write_summary_TD(out, node, stage)
-        if showPropagationStatus(subbuild):
+        if showPropagationStatus(subbuilds):
             out.write('<TD style="width:11px;"></TD>')
         out.write('</TR>\n')
     return
@@ -620,6 +621,9 @@ def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
 ##############################################################################
 
 def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
+    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
+                                             report_nodes)
     out.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"')
     out.write(' "http://www.w3.org/TR/html4/loose.dtd">\n')
     out.write('<HTML>\n')
@@ -629,7 +633,6 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     out.write('  window.location.href = window.location.href + "/";\n')
     out.write('</script>\n')
     out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
-    title = BBSreportutils.REPORT_TITLE
     if page_title:
         title += " - " + page_title
     out.write('<TITLE>%s</TITLE>\n' % title)
@@ -641,11 +644,13 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     return
 
 def write_goback_asHTML(out, href, current_letter=None):
+    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
+                                             report_nodes)
     out.write('<TABLE class="grid_layout"')
     out.write(' style="width: 100%; background: #BBB;"><TR>')
     out.write('<TD style="text-align: left; padding-left: 5px; vertical-align: middle;">')
-    out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % \
-              (href, BBSreportutils.REPORT_TITLE))
+    out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % (href, title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
         out.write('<TD>')
@@ -666,6 +671,10 @@ def write_motd_asTABLE(out):
     return
 
 def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
+    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
+                                             report_nodes)
+
     pkg = leafreport_ref.pkg
     page_title = 'Results for %s' % pkg
     out_rURL = os.path.join(pkg, 'index.html')
@@ -676,7 +685,7 @@ def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
+    out.write('<H1>%s</H1>\n' % title)
     out.write('<H2>%s</H2>\n' % page_title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
@@ -998,7 +1007,6 @@ def make_LeafReport(leafreport_ref, allpkgs):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    #out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
     out.write('<H2>%s</H2>\n' % page_title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
@@ -1100,10 +1108,13 @@ def make_all_LeafReports(allpkgs):
 ##############################################################################
 
 def write_BioC_mainpage_top_asHTML(out):
+    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
+                                             report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
-    out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
+    out.write('<H1>%s</H1>\n' % title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
@@ -1116,9 +1127,12 @@ def write_BioC_mainpage_top_asHTML(out):
     return
 
 def write_CRAN_mainpage_top_asHTML(out):
+    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
+                                             report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY>\n')
-    out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
+    out.write('<H1>%s</H1>\n' % title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
@@ -1373,7 +1387,7 @@ def write_glyph_table(out):
         out.write('</TR>\n')
         return
 
-    subbuild = BBScorevars.subbuilds
+    subbuilds = BBScorevars.subbuilds
 
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
@@ -1385,9 +1399,9 @@ def write_glyph_table(out):
     out.write('</TR>\n')
 
     ## "TIMEOUT" glyph
-    if subbuild == "bioc-longtests":
+    if subbuilds == "bioc-longtests":
         msg = '<I>CHECK</I>'
-    elif subbuild == "workflows":
+    elif subbuilds == "workflows":
         msg = '<I>INSTALL</I> or <I>BUILD</I>'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
@@ -1397,9 +1411,9 @@ def write_glyph_table(out):
 
     ## "ERROR" glyph
     msg = 'Bad DESCRIPTION file or '
-    if subbuild == "bioc-longtests":
+    if subbuilds == "bioc-longtests":
         msg += '<I>CHECK</I> of package produced errors'
-    elif subbuild == "workflows":
+    elif subbuilds == "workflows":
         msg += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
     else:
         msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
@@ -1407,14 +1421,14 @@ def write_glyph_table(out):
     write_glyph("ERROR", msg, True)
 
     ## "WARNINGS" glyph
-    if subbuild != "workflows":
+    if subbuilds != "workflows":
         msg = '<I>CHECK</I> of package produced warnings'
         write_glyph("WARNINGS", msg, True)
 
     ## "OK" glyph
-    if subbuild == "bioc-longtests":
+    if subbuilds == "bioc-longtests":
         msg = '<I>CHECK</I>'
-    elif subbuild == "workflows":
+    elif subbuilds == "workflows":
         msg = '<I>INSTALL</I> or <I>BUILD</I>'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
@@ -1422,8 +1436,8 @@ def write_glyph_table(out):
     write_glyph("OK", msg, True)
 
     ## "NotNeeded" glyph
-    if subbuild != "bioc-longtests":
-    #    if subbuild != "workflows":
+    if subbuilds != "bioc-longtests":
+    #    if subbuilds != "workflows":
     #        msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
     #        write_glyph("NotNeeded", msg)
 
@@ -1433,9 +1447,9 @@ def write_glyph_table(out):
         write_glyph("skipped", msg)
 
     ## "NA" glyph
-    if subbuild == "bioc-longtests":
+    if subbuilds == "bioc-longtests":
         msg = '<I>CHECK</I>'
-    elif subbuild == "workflows":
+    elif subbuilds == "workflows":
         msg = '<I>BUILD</I>'
     else:
         msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
@@ -1509,7 +1523,6 @@ def write_node_report(node, allpkgs):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    #out.write('<H1>%s</H1>\n' % BBSreportutils.REPORT_TITLE)
     out.write('<H2>%s</H2>\n' % page_title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()

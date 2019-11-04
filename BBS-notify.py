@@ -77,14 +77,17 @@ def send_notification(pkg):
             problem_descs.append(problem_desc)
     if len(problem_descs) == 0:
         return
+
+    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    report_title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
+                                                    report_nodes)
     if maintainer_email == "bioconductor@stat.math.ethz.ch":
         to_addrs = ["devteam-bioc@lists.fhcrc.org"]
     else:
         to_addrs = [maintainer_email]
-    subject = "%s problems reported in the %s" % \
-              (pkg, BBSreportutils.REPORT_TITLE)
+    subject = "%s problems reported in the %s" % (pkg, report_title)
     msg = "%s\nHi %s maintainer,\n\n" % (msg_head, pkg) \
-        + "According to the %s,\n" % BBSreportutils.REPORT_TITLE \
+        + "According to the %s,\n" % report_title \
         + "the %s package has the following problem(s):\n\n" % pkg \
         + "%s\n%s\n%s" % ('\n'.join(problem_descs), msg_tail, msg_footnote)
     if arg1 == "":

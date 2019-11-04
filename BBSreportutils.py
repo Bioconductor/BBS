@@ -79,37 +79,43 @@ def supported_nodes(pkg):
 
 ##############################################################################
 ###
-### REPORT_TITLE
+### make_report_title()
 ### stages_to_display()
 ###
 ##############################################################################
 
-## Report title.
-if BBScorevars.subbuilds == "bioc-longtests":
-    REPORT_TITLE = "Long tests"
-elif BBScorevars.subbuilds == "workflows":
-    REPORT_TITLE = "Workflows build"
-else:
-    if len(NODES) != 1:
-        REPORT_TITLE = "Multiple platform build/check"
+def make_report_title(subbuilds, report_nodes):
+    if subbuilds == "bioc-longtests":
+        title = "Long tests"
+    elif subbuilds == "workflows":
+        title = "Workflows build"
     else:
-        REPORT_TITLE = "Build/check"
-REPORT_TITLE += " report for "
-if BBScorevars.subbuilds == "cran":
-    REPORT_TITLE += "CRAN"
-else:
-    bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
-    REPORT_TITLE += "BioC %s" % bioc_version
-    if BBScorevars.subbuilds == "data-annotation":
-        REPORT_TITLE += " annotations"
-    if BBScorevars.subbuilds == "data-experiment":
-        REPORT_TITLE += " experimental data"
+        nnodes = 0
+        for node in report_nodes.split(' '):
+            if node == "":
+                continue
+            nnodes += 1
+        if nnodes != 1:
+            title = "Multiple platform build/check"
+        else:
+            title = "Build/check"
+    title += " report for "
+    if subbuilds == "cran":
+        title += "CRAN"
+    else:
+        bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
+        title += "BioC %s" % bioc_version
+        if subbuilds == "data-annotation":
+            title += " annotations"
+        elif subbuilds == "data-experiment":
+            title += " experimental data"
+    return title
 
 ## Stages to display on report (as columns in HTML table).
-def stages_to_display():
-    if BBScorevars.subbuilds == "bioc-longtests":
+def stages_to_display(subbuilds):
+    if subbuilds == "bioc-longtests":
         return ['checksrc']  # we run 'buildsrc' but don't display it
-    if BBScorevars.subbuilds == "workflows":
+    if subbuilds == "workflows":
         return ['install', 'buildsrc']
     return ['install', 'buildsrc', 'checksrc', 'buildbin']
 
