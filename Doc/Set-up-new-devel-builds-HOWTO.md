@@ -174,7 +174,7 @@ In our scenario (i.e. 3.11 builds), malbec2 is the central builder.
 
 Builds on all machines are run under dedicated user account `biocbuild`.
 
-Connect to `biocbuild` account on malbec2:
+Connect to the `biocbuild` account on malbec2:
 ```
 ssh -A biocbuild@malbec2.bioconductor.org
 ```
@@ -269,7 +269,7 @@ to them.
 
 ## 5. Activate propagation pipes
 
-Connect to `biocadmin` account:
+Connect to the `biocadmin` account on malbec2:
 ```
 ssh -A biocadmin@malbec2.bioconductor.org
 ```
@@ -363,6 +363,55 @@ package index files:
 
 
 ## 6. Activate builds on the other builders
+
+Traditionally the Windows and Mac builders only run the software builds.
+
+### On Windows
+
+In our scenario (i.e. 3.11 builds), tokay2 will run the Windows software
+builds.
+
+#### From the `biocbuild` account on tokay2
+
+Use rdesktop to connect to the `biocbuild` account on tokay2.
+
+In a PowerShell Window, pull latest changes to BBS:
+```
+cd C:\Users\biocbuild\BBS
+git pull --all
+```
+
+Follow the steps described in the "Create and populate the
+bbs-3.yy-bioc folder" and "Install R in bbs-3.yy-bioc" sections of
+the `Prepare-Windows-Server-2012-HOWTO.TXT` document.
+Make sure to replace all occurences of 3.10 with 3.11.
+
+Remove `C:\Users\biocbuild\bbs-3.9-bioc`.
+
+#### From a personal administrator account on tokay2
+
+Use rdesktop to connect to your personal account on tokay2.
+
+Follow the steps described in the "Add nightly builds to Task Scheduler"
+section of the `Prepare-Windows-Server-2012-HOWTO.TXT` document.
+Make sure to replace all occurences of 3.10 with 3.11.
+
+#### From the `biocbuild` account on the central builder
+
+Connect to `biocbuild` account on malbec2:
+```
+ssh -A biocbuild@malbec2.bioconductor.org
+```
+
+Make sure tokay2 will be included in the next build report:
+```
+cd ~/BBS/3.11/bioc/malbec2/
+git diff config.sh
+vi config.sh  # tokay2 should be in BBS_OUTGOING_MAP and BBS_REPORT_NODES
+```
+
+
+### On Mac
 
 [coming soon]
 
