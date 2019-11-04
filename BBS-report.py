@@ -128,7 +128,9 @@ def pkgname_to_HTML(pkg):
     else:
         version_string = BBSreportutils.bioc_version
         subbuild = BBScorevars.subbuilds
-        if subbuild == "data-experiment":
+        if subbuild == "data-annotation":
+            repo = "data/annotation"
+        elif subbuild == "data-experiment":
             repo = "data/experiment"
         elif subbuild == "workflows":
             repo = "workflows"

@@ -100,6 +100,8 @@ if BBScorevars.subbuilds == "cran":
 else:
     bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
     REPORT_TITLE += "BioC %s" % bioc_version
+    if BBScorevars.subbuilds == "data-annotation":
+        REPORT_TITLE += " annotations"
     if BBScorevars.subbuilds == "data-experiment":
         REPORT_TITLE += " experimental data"
 
