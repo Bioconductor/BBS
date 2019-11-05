@@ -14,6 +14,7 @@
 
 import sys
 import os
+import subprocess
 
 sys.path.insert(0, os.path.dirname(__file__))
 import jobs
@@ -31,7 +32,9 @@ def _create_clone(clone_path, repo_url, branch=None, depth=None):
         cmd += ' --depth %s' % depth
     cmd = '%s %s %s' % (cmd, repo_url, clone_path)
     print("bbs.gitutils._create_clone> %s" % cmd)
-    jobs.call(cmd, check=True)
+    retcode = jobs.call(cmd)
+    if retcode != 0:
+        raise subprocess.CalledProcessError(retcode, cmd)
     print()
     return
 
@@ -52,7 +55,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         if retcode != 0:
             print("bbs.gitutils._update_clone> cd %s" % old_cwd)
             os.chdir(old_cwd)
-            return retcode
+            raise subprocess.CalledProcessError(retcode, cmd)
         print()
     if snapshot_date == None:
         cmd = '%s pull' % git_cmd
@@ -65,7 +68,7 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     if retcode != 0:
         print("bbs.gitutils._update_clone> cd %s" % old_cwd)
         os.chdir(old_cwd)
-        return retcode
+        raise subprocess.CalledProcessError(retcode, cmd)
     print()
     if snapshot_date != None:
         ## Andrzej: merge only up to snapshot date
@@ -79,27 +82,29 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
         if retcode != 0:
             print("bbs.gitutils._update_clone> cd %s" % old_cwd)
             os.chdir(old_cwd)
-            return retcode
+            raise subprocess.CalledProcessError(retcode, cmd)
         print()
     print("bbs.gitutils._update_clone> cd %s" % old_cwd)
     os.chdir(old_cwd)
-    return 0
+    return
 
 def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None, reclone_if_update_fails=False):
     if os.path.exists(clone_path):
-        retcode = _update_clone(clone_path, repo_url, branch, snapshot_date)
-        if retcode == 0:
+        try:
+            _update_clone(clone_path, repo_url, branch, snapshot_date)
+        except subprocess.CalledProcessError as e:
+            if not reclone_if_update_fails:
+                raise e
+            print()
+            print("bbs.gitutils.update_git_clone> _update_clone() failed " +
+                  "with error code %d!" % e.returncode)
+            print("bbs.gitutils.update_git_clone> ==> will try to re-create " +
+                  "git clone from scratch ...")
+            print("bbs.gitutils.update_git_clone> rm -r %s" % clone_path)
+            fileutils.nuke_tree(clone_path)
+            print()
+        else:
             return
-        print()
-        print("bbs.gitutils.update_git_clone> _update_clone() failed " +
-              "with error code %d!" % retcode)
-        if not reclone_if_update_fails:
-            sys.exit("bbs.gitutils.update_git_clone> EXIT")
-        print("bbs.gitutils.update_git_clone> ==> will try to re-create " +
-              "git clone from scratch ...")
-        print("bbs.gitutils.update_git_clone> rm -r %s" % clone_path)
-        fileutils.nuke_tree(clone_path)
-        print()
     _create_clone(clone_path, repo_url, branch, depth)
     return
 
