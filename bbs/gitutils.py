@@ -31,7 +31,7 @@ def _create_clone(clone_path, repo_url, branch=None, depth=None):
         cmd += ' --depth %s' % depth
     cmd = '%s %s %s' % (cmd, repo_url, clone_path)
     print("bbs.gitutils._create_clone> %s" % cmd)
-    jobs.doOrDie(cmd)
+    jobs.call(cmd, check=True)
     print()
     return
 

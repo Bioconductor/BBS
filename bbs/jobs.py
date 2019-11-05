@@ -52,7 +52,7 @@ def sleep(secs):
 ## Subprocess.
 ##############################################################################
 
-def call(cmd):
+def call(cmd, check=False):
     # If we don't flush now, stuff that has already been sent to stdout by
     # this script can appear after stuff printed to stdout by subprocess...
     sys.stdout.flush()
@@ -60,7 +60,10 @@ def call(cmd):
     # subprocess.call() if this script is started by Schedule on Windows
     # (the child process tends to almost always return an error).
     # Apparently using "stderr=subprocess.STDOUT" fixes this pb.
-    return subprocess.call(cmd, stderr=subprocess.STDOUT, shell=True)
+    retcode = subprocess.call(cmd, stderr=subprocess.STDOUT, shell=True)
+    if check and retcode != 0:
+        raise subprocess.CalledProcessError(retcode, cmd)
+    return retcode
 
 ### Implementation taken from subprocess.check_output() (available in Python
 ### >= 2.7 only).
