@@ -55,7 +55,7 @@ def _git_add_DESCRIPTION_and_commit(pkg_dir, commit_msg):
         git_cmd = os.environ['BBS_GIT_CMD']
     except KeyError:
         git_cmd = 'git'
-    cmd = "%s -C %s diff DESCRIPTION" % (git_cmd, pkg_dir)
+    cmd = "%s -C %s --no-pager diff DESCRIPTION" % (git_cmd, pkg_dir)
     print("%s$ %s" % (os.getcwd(), cmd))
     bbs.jobs.call(cmd, check=True)
     print()
