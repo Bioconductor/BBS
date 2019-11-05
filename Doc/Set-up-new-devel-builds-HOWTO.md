@@ -396,6 +396,8 @@ Follow the steps described in the "Add nightly builds to Task Scheduler"
 section of the `Prepare-Windows-Server-2012-HOWTO.TXT` document.
 Make sure to replace all occurences of 3.10 with 3.11.
 
+Remove the old task schedule job for previous version.
+
 #### From the `biocbuild` account on the central builder
 
 Connect to `biocbuild` account on malbec2:
