@@ -16,24 +16,38 @@ commit_msg1 = "bump x.y.z version to even y prior to creation of %s branch"
 commit_msg2 = "bump x.y.z version to odd y following creation of %s branch"
 commit_msg3 = "bump version in master branch following creation of %s branch"
 
-def _run_git_cmd(pkg_dir, args, check=True):
-    try:
-        git_cmd = os.environ['BBS_GIT_CMD']
-    except KeyError:
-        git_cmd = 'git'
-    cmd = "%s -C %s %s" % (git_cmd, pkg_dir, args)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    retcode = bbs.jobs.call(cmd, check=check)
-    print()
-    return retcode
+### Return the first 3 components only (additional components are ignored).
+def _split_version(version):
+    xyz = version.replace('-', '.').split('.')
+    x = int(xyz[0])
+    y = int(xyz[1])
+    if len(xyz) >= 3:
+        z = int(xyz[2])
+    else:
+        z = 0
+    return [x, y, z]
 
-def _branch_exists(pkg_dir, branch):
-    print('---------------------------------------------------------------')
-    print("### Check if branch %s exists" % branch)
-    print()
-    retcode = _run_git_cmd(pkg_dir, "checkout %s" % branch, check=False)
-    _run_git_cmd(pkg_dir, "checkout master")
-    return retcode == 0
+def _unsplit_version(x, y, z):
+    return '.'.join([str(x), str(y), str(z)])
+
+def _bump_to_next_even_y(version):
+    x, y, z = _split_version(version)
+    if y == 99:
+        x += 1
+        y = 0
+    else:
+        y = (y // 2 + 1) * 2  # bump y to next even
+    z = 0
+    return _unsplit_version(x, y, z)
+
+def _bump_to_next_y(version, pkg=None):
+    x, y, z = _split_version(version)
+    ## Should never happen
+    if pkg != "BiocVersion" and y % 2 != 0:
+        sys.exit("Abnomaly: y is odd!")
+    y += 1
+    z = 0
+    return _unsplit_version(x, y, z)
 
 def _replace_version(pkg_dir, new_version):
     in_file = os.path.join(pkg_dir, 'DESCRIPTION')
@@ -52,11 +66,30 @@ def _replace_version(pkg_dir, new_version):
     os.rename(out_file, in_file)
     return
 
+def _run_git_cmd(pkg_dir, args, check=True):
+    try:
+        git_cmd = os.environ['BBS_GIT_CMD']
+    except KeyError:
+        git_cmd = 'git'
+    cmd = "%s -C %s %s" % (git_cmd, pkg_dir, args)
+    print("%s$ %s" % (os.getcwd(), cmd))
+    retcode = bbs.jobs.call(cmd, check=check)
+    print()
+    return retcode
+
 def _git_add_DESCRIPTION_and_commit(pkg_dir, commit_msg):
     _run_git_cmd(pkg_dir, "--no-pager diff DESCRIPTION")
     _run_git_cmd(pkg_dir, "add DESCRIPTION")
     _run_git_cmd(pkg_dir, "commit -m '%s'" % commit_msg)
     return
+
+def _branch_exists(pkg_dir, branch):
+    print('---------------------------------------------------------------')
+    print("### Check if branch %s exists" % branch)
+    print()
+    retcode = _run_git_cmd(pkg_dir, "checkout %s" % branch, check=False)
+    _run_git_cmd(pkg_dir, "checkout master")
+    return retcode == 0
 
 def _first_version_bump(pkg_dir, branch):
     print('---------------------------------------------------------------')
@@ -68,17 +101,7 @@ def _first_version_bump(pkg_dir, branch):
         print()
         return
     version = bbs.parse.getVersionFromDir(pkg_dir)
-    xyz = version.replace('-', '.').split('.')
-    x = int(xyz[0])
-    y = int(xyz[1])
-    z = int(xyz[2])
-    if y == 99:
-        x += 1
-        y = 0
-    else:
-        y = (y // 2 + 1) * 2  # bump y to next even
-    z = 0
-    new_version = '.'.join([str(x), str(y), str(z)])
+    new_version = _bump_to_next_even_y(version)
     _replace_version(pkg_dir, new_version)
     commit_msg = commit_msg1 % branch
     _git_add_DESCRIPTION_and_commit(pkg_dir, commit_msg)
@@ -98,16 +121,7 @@ def _second_version_bump(pkg_dir, branch):
     print()
     pkg = bbs.parse.getPkgFromDir(pkg_dir)
     version = bbs.parse.getVersionFromDir(pkg_dir)
-    xyz = version.replace('-', '.').split('.')
-    x = int(xyz[0])
-    y = int(xyz[1])
-    z = int(xyz[2])
-    ## Should never happen
-    if pkg != "BiocVersion" and y % 2 != 0:
-        sys.exit("Abnomaly: y is odd!")
-    y += 1
-    z = 0
-    new_version = '.'.join([str(x), str(y), str(z)])
+    new_version = _bump_to_next_y(version, pkg)
     _replace_version(pkg_dir, new_version)
     if pkg != "BiocVersion":
         commit_msg = commit_msg2
