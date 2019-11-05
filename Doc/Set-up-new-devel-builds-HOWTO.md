@@ -383,7 +383,7 @@ git pull --all
 
 Follow the steps described in the "Create and populate the
 bbs-3.yy-bioc folder" and "Install R in bbs-3.yy-bioc" sections of
-the `Prepare-Windows-Server-2012-HOWTO.TXT` document.
+the [`Prepare-Windows-Server-2012-HOWTO.TXT`](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-Windows-Server-2012-HOWTO.TXT) document.
 Make sure to replace all occurences of 3.10 with 3.11.
 
 Remove `C:\Users\biocbuild\bbs-3.9-bioc`.
