@@ -38,7 +38,8 @@ def _create_clone(clone_path, repo_url, branch=None, depth=None):
     print()
     return
 
-def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
+def _update_clone(clone_path, undo_changes=False, branch=None,
+                  snapshot_date=None):
     try:
         git_cmd = os.environ['BBS_GIT_CMD']
     except KeyError:
@@ -47,6 +48,15 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     print("bbs.gitutils._update_clone> cd %s" % clone_path)
     os.chdir(clone_path)
     print()
+    if undo_changes:
+        cmd = '%s checkout -f' % git_cmd
+        print("bbs.gitutils._update_clone> %s" % cmd)
+        retcode = jobs.call(cmd)
+        if retcode != 0:
+            print("bbs.gitutils._update_clone> cd %s" % old_cwd)
+            os.chdir(old_cwd)
+            raise subprocess.CalledProcessError(retcode, cmd)
+        print()
     if branch != None:
         ## checkout branch
         cmd = '%s checkout %s' % (git_cmd, branch)
@@ -88,10 +98,12 @@ def _update_clone(clone_path, repo_url, branch=None, snapshot_date=None):
     os.chdir(old_cwd)
     return
 
-def update_git_clone(clone_path, repo_url, branch=None, depth=None, snapshot_date=None, reclone_if_update_fails=False):
+def update_git_clone(clone_path, repo_url, branch=None, depth=None,
+                     undo_changes=False, snapshot_date=None,
+                     reclone_if_update_fails=False):
     if os.path.exists(clone_path):
         try:
-            _update_clone(clone_path, repo_url, branch, snapshot_date)
+            _update_clone(clone_path, undo_changes, branch, snapshot_date)
         except subprocess.CalledProcessError as e:
             if not reclone_if_update_fails:
                 raise e
