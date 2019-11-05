@@ -3,23 +3,25 @@
 
 ## A. Introduction
 
-On the day prior to the release, we need to make and push the following
+On the day prior to the release, we will need to apply and push the following
 changes to all the packages that go in the release, **in this order**:
 
 * **First version bump**: bump x.y.z version to even y **in the `master` branch**
 * **Branch creation**: create the release branch
 * **Second version bump**: bump x.y.z version to odd y **in the `master` branch**
 
-For example, for the BioC 3.10 release, we need to do this for all the
-packages listed in the `software.txt`, `data-experiment.txt`, and
+For example, for the BioC 3.10 release, we will need to do this for all
+the packages listed in the `software.txt`, `data-experiment.txt`, and
 `workflows.txt` files of the `RELEASE_3_10` branch of the `manifest`
 repo.
 
 Note that there is one exception: the BiocVersion package (software package).
-Section **C.** below provides more information about this.
+This package only needs the new branch and a simple y -> y + 1 version bump.
 
-This needs to be done before the BioC 3.10 builds start for software,
-workflows and data-experiment packages.
+We'll use Python script `bump_version_and_create_branch.py` to apply and
+push these changes. This will need to be done on the day prior to the release
+before the BioC 3.10 builds start for software, workflows, and data-experiment
+packages.
 
 Look for the prerun jobs in the crontab for the `biocbuild` user on the main
 BioC 3.10 builder to get the times the software and data-experiment builds get
@@ -107,20 +109,6 @@ in sections **C.**, **D.**, and **E.**.
       cd ~/git.bioconductor.org/software/affy
       git push  # should display 'Everything up-to-date'
 
-* Find (and fix) packages with problematic versions:
-
-      # software packages
-      cd ~/git.bioconductor.org/software
-      $BBS_HOME/utils/bump_pkg_versions.sh bad
-
-      # data-experiment packages
-      cd ~/git.bioconductor.org/data-experiment
-      $BBS_HOME/utils/bump_pkg_versions.sh bad
-
-      # workflow packages
-      cd ~/git.bioconductor.org/workflows
-      $BBS_HOME/utils/bump_pkg_versions.sh bad
-
 * Clone (or update) the `bioc_git_transition` git repo:
 
       # clone
@@ -146,7 +134,7 @@ in sections **C.**, **D.**, and **E.**.
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-
+    
     # Check last 10 commits in each package
     for pkg in $pkgs_in_manifest; do
         echo ""
@@ -168,11 +156,6 @@ Perform these steps on the day prior to the release. They must be completed
 before the software builds get kicked off (see **A. Introduction**). The full
 procedure should take about 2.5 hours. Make sure to reserve enough time.
 
-NOTE: BiocVersion needs special treatment because its version must always
-match the version of the branch it's in. This means that it only needs the
-second bump. So it will remain at `3.10.*` in the RELEASE_3_10 branch and will
-be set to `3.10.0` in the new master branch.
-
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
 
 Announce or ask a team member to announce on the bioc-devel mailing list
@@ -183,7 +166,7 @@ that people must stop committing/pushing changes to the BioC git server
 
 The `RELEASE_3_9` lines in `gitolite-admin/conf/packages.conf` were commented
 out when the release builds were frozen. At this point, only the `master`
-lines are still active. 
+lines are still active.
 
 Deactivate all push access by commenting out the `master` lines in
 `gitolite-admin/conf/packages.conf`.
@@ -201,7 +184,20 @@ Using vim, it is possible with a one liner,
 Once `packages.conf` is updated, push to `gitolite-admin` on the git server
 to make the changes effective.
 
-### C3. Login to the machine where you've performed the preliminary steps
+### C3. Disable hooks
+
+Log on to git.bioconductor.org as the `git` user.
+
+- Comment out the hook lines in `packages.conf`.
+
+- Remove the `pre-receive.h00-pre-receive-hook-software` file from the
+  `hook/` directory in each package, e.g.,
+  `/home/git/repositories/packages/<PACKAGE>.git/hooks`
+    ```
+    rm -rf ~/repositories/packages/*.git/hooks/pre-receive.h00-pre-receive-hook-software
+    ```
+
+### C4. Login to the machine where you've performed the preliminary steps
 
 Make sure to use the `-A` flag to enable forwarding of the authentication
 agent connection e.g.:
@@ -210,7 +206,7 @@ agent connection e.g.:
 
 See **B. Preliminary steps** above for the details.
 
-### C4. Checkout/update the `RELEASE_3_10` branch of the `manifest` repo
+### C5. Checkout/update the `RELEASE_3_10` branch of the `manifest` repo
 
     cd ~/git.bioconductor.org/manifest
     git pull --all
@@ -218,7 +214,7 @@ See **B. Preliminary steps** above for the details.
     git branch
     git status
 
-### C5. Set the `WORKING_DIR` and `MANIFEST_FILE` environment variables
+### C6. Set the `WORKING_DIR` and `MANIFEST_FILE` environment variables
 
 Point `WORKING_DIR` to the folder containing the software packages:
 
@@ -232,203 +228,68 @@ be the file from the `RELEASE_3_10` branch of the `manifest` repo:
 
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
 
-### C6. Make sure all package git clones are up-to-date
+### C7. Run `bump_version_and_create_branch.py`
 
-Go to the working folder:
-
-    cd $WORKING_DIR
-
-This folder should already contain the git clones of all the
-software packages that are listed in the `RELEASE_3_10` manifest
-(see **B. Preliminary steps** above). Note that all the git clones
-should be on the **`master`** branch!
-
-Update the git clones of all the packages listed in `$MANIFEST_FILE`. This
-should take 15-20 minutes:
-
-    export BBS_HOME="$HOME/BBS"
-    time $BBS_HOME/utils/update_bioc_git_repos.py
-
-### C7. First version bump (to even y)
-
-This will modify the DESCRIPTION files only. It won't commit anything.
-
-    cd $WORKING_DIR
-
-    # dry-run
-    $BBS_HOME/utils/bump_pkg_versions.sh test even
-
-    # if everything looks OK
-    $BBS_HOME/utils/bump_pkg_versions.sh even
-
-    # ** IMPORTANT **
-    # Manually correct the version in the BiocVersion DESCRIPTION so it
-    # remains at 3.10.0.
-
-    # remove the DESCRIPTION.original files
-    $BBS_HOME/utils/bump_pkg_versions.sh clean
-
-    # check 'y' is even and not greater than 99
-    export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
-    python $BIOC_GIT_TRANSITION/misc/detect_bad_version.py . even
-
-### C8. Commit first version bump
-
-    commit_msg="bump x.y.z version to even y prior to creation of RELEASE_3_10 branch"
+We're going to run the script on all the software packages. It will take care
+of applying and pushing the changes described in **A. Introduction**.
 
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
+    
+    $BBS_HOME/utils/bump_version_and_create_branch.py --push RELEASE_3_10 $pkgs_in_manifest >bump_version_and_create_branch.log 2>&1 &
 
-    # stage DESCRIPTION for commit
-    time for pkg in $pkgs_in_manifest; do
-      echo ""
-      echo ">>> 'git add DESCRIPTION' for package $pkg"
-      git -C $pkg add DESCRIPTION
-    done > stage.out
+The `bump_version_and_create_branch.py` run above can be replaced with
+a 2-pass run:
 
-    # commit
-    time for pkg in $pkgs_in_manifest; do
-      echo ""
-      echo ">>> commit version bump for package $pkg"
-      git -C $pkg commit -m "$commit_msg"
-    done > commit.out
+    # First pass (applies all the changes but does NOT push them)
+    $BBS_HOME/utils/bump_version_and_create_branch.py RELEASE_3_10 $pkgs_in_manifest >bump_version_and_create_branch.log1 2>&1 &
+    # Second pass (push all the changes)
+    $BBS_HOME/utils/bump_version_and_create_branch.py --push RELEASE_3_10 $pkgs_in_manifest >bump_version_and_create_branch.log2 2>&1 &
 
-    # check last commit
-    for pkg in $pkgs_in_manifest; do
-      echo ""
-      echo ">>> last commit for package $pkg"
-      git -C $pkg log -n 1
-    done
- 
-### C9. Branch creation
+This can be useful if one wants to inspect the changes before pushing them.
 
-    cd $WORKING_DIR
-    pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
+Notes:
 
-    # create the RELEASE_3_10 branch and change back to master
-    time for pkg in $pkgs_in_manifest; do
-      echo ""
-      echo ">>> create RELEASE_3_10 branch for package $pkg"
-      git -C $pkg checkout -b RELEASE_3_10
-      git -C $pkg checkout master
-    done > createbranch.out 2>&1
+* You can follow progress with `tail -f bump_version_and_create_branch.log`.
 
-    # check existence of the new branch
-    for pkg in $pkgs_in_manifest; do
-      git -C $pkg branch -a | grep RELEASE_3_10
-      if [ $? -ne 0 ]; then
-        echo "ERROR: No RELEASE_3_10 branch in $pkg"
-        break
-      fi
-    done
+* The BiocVersion package will receive special treatment.
 
-### C10. Second version bump (to odd y)
+* In the 2-pass run the second pass checks the packages and applies the
+  changes only if needed (i.e. if a package does not already have the
+  `RELEASE_3_10` branch) before pushing the changes.
 
-This will modify the DESCRIPTION files only. It won't commit anything.
+* If for some reason the `bump_version_and_create_branch.py` script stops
+  prematurly, it can be safely re-run with the same arguments. This is
+  because the script only does things to packages that need treatment.
+  Packages that were already successfully treated will no longer be touched.
 
-    cd $WORKING_DIR
+* A typical error is `Error: duplicate commits` (happened for affyPLM and
+  Rdisop first time I tested this). Report these errors to `gitolite`
+  experts Nitesh and Martin. Once the problem is fixed, re-run the script.
 
-    # dry-run
-    $BBS_HOME/utils/bump_pkg_versions.sh test odd
+### C8. Check `bump_version_and_create_branch.log`
 
-    # if everything looks OK
-    $BBS_HOME/utils/bump_pkg_versions.sh odd
-
-    # ** IMPORTANT **
-    # Manually set the version in the BiocVersion DESCRIPTION to 3.10.0.
-    # The BiocVersion package must be 3.10.0 in the master branch.
-
-    # remove the DESCRIPTION.original files
-    $BBS_HOME/utils/bump_pkg_versions.sh clean
-
-    # check 'y' is odd and not greater than 99
-    export BIOC_GIT_TRANSITION="$HOME/bioc_git_transition"
-    python $BIOC_GIT_TRANSITION/misc/detect_bad_version.py . odd 
-
-### C11. Commit second version bump
-
-Same as step C8 above EXCEPT that commit message now is:
-
-    commit_msg="bump x.y.z version to odd y after creation of RELEASE_3_10 branch"
-
-### C12. Disable hooks
-
-Log on to git.bioconductor.org as the `git` user.
-
-- Comment out the hook lines in `packages.conf`.
-
-- Remove the `pre-receive.h00-pre-receive-hook-software` file from the
-  `hook/` directory in each package, e.g.,
-  `/home/git/repositories/packages/<PACKAGE>.git/hooks`
-    ```
-    rm -rf ~/repositories/packages/*.git/hooks/pre-receive.h00-pre-receive-hook-software
-    ```
-
-### C13. Push all the changes
-
-Last sanity check before pushing:
-
-    cd <some package>
-    ## master: This should show the even bump, followed by the odd bump
-    git log master -n 2
-    ## RELEASE_3_10: This should show the even bump only
-    git log RELEASE_3_10 -n 1
-
-Push:
-
-    cd $WORKING_DIR
-    pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
-
-    # dry-run push (takes 20-30 min, not worth it!)
-    #for pkg in $pkgs_in_manifest; do
-    #  echo ""
-    #  echo ">>> pushing all changes for package $pkg (dry-run)"
-    #  git -C $pkg push --all --dry-run
-    #done
-
-    # if everything looks OK (takes approx. 25 min)
-    time for pkg in $pkgs_in_manifest; do
-      echo ""
-      echo ">>> pushing all changes for package $pkg"
-      git -C $pkg push --all
-    done > push.out 2>&1
-
-Open `push.out` in an editor and search for errors. A typical error is
-`Error: duplicate commits` (happened for affyPLM and Rdisop first time I
-tested this). Report these errors to `gitolite` experts Nitesh and Martin.
+After completion of the `bump_version_and_create_branch.py` run,
+open `bump_version_and_create_branch.log` and make sure everything
+looks ok.
 
 
 ## D. Version bumps and branch creation for data-experiment packages
 
-Repeat steps C5 to C13 above **but for C5 define the environment variables
+Repeat steps C6 to C8 above **but for C6 define the environment variables
 as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-experiment.txt"
 
-Approx. timings (on malbec2):
-
-* **Commit first version bump**: 21 sec for `stage DESCRIPTION`, 41 sec
-  for `commit`
-* **Branch creation**: 40 sec
-* **Commit second version bump**: < 1 sec for `stage DESCRIPTION`, 28 sec for `commit`
-* **Push all the changes**: 43 min
-
 
 ## E. Version bumps and branch creation for workflow packages
 
-Repeat steps C5 to C13 above **but for C5 define the environment variables
+Repeat steps C6 to C8 above **but for C6 define the environment variables
 as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/workflows.txt"
-
-Approx. timings (on malbec2):
-
-* **Commit first version bump**: < 1 min
-* **Branch creation**: < 10 sec
-* **Commit second version bump**: < 10 sec
-* **Push all the changes**: < 2 min
 
 
 ## F. Finishing up
@@ -436,24 +297,24 @@ Approx. timings (on malbec2):
 ### F1. Enable push access to new `RELEASE_3_10` branch
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
-repo (`git clone git@git.bioconductor.org:gitolite-admin`). 
+repo (`git clone git@git.bioconductor.org:gitolite-admin`).
 
 - If not done already, replace all instances of `RELEASE_3_9` with
-`RELEASE_3_10`.
+  `RELEASE_3_10`.
 
 - Uncomment all `RELEASE_3_10` and `master` lines.
 
 - Run `gitolite setup` from /home/git/repositories to re-enable the hooks.
 
-- Test that a non-super user can push access is enabled. (Nitesh can do
-this currently with ni41435 account, and the dummy package
-BiocGenerics_test).
+- Test that a non-super user can push access is enabled. (Nitesh
+  can do this currently with ni41435 account, and the dummy package
+  BiocGenerics_test).
 
-Check,
+Check:
 
-	git push
-	git checkout RELEASE_3_10
-	git pull
+    git push
+    git checkout RELEASE_3_10
+    git pull
 
 ### F2. Tell people that committing/pushing to the BioC git server can resume
 
