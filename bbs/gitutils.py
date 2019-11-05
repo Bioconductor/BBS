@@ -34,8 +34,8 @@ def _create_clone(clone_path, repo_url, branch=None, depth=None):
     print("bbs.gitutils._create_clone> %s" % cmd)
     retcode = jobs.call(cmd)
     if retcode != 0:
+        print()
         raise subprocess.CalledProcessError(retcode, cmd)
-    print()
     return
 
 def _update_clone(clone_path, undo_changes=False, branch=None,

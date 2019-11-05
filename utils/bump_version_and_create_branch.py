@@ -16,22 +16,24 @@ commit_msg1 = "bump x.y.z version to even y prior to creation of %s branch"
 commit_msg2 = "bump x.y.z version to odd y following creation of %s branch"
 commit_msg3 = "bump version in master branch following creation of %s branch"
 
-def _branch_exists(pkg_dir, branch):
-    print("### Check if branch %s exists:" % branch)
-    print()
+def _run_git_cmd(pkg_dir, args, check=True):
     try:
         git_cmd = os.environ['BBS_GIT_CMD']
     except KeyError:
         git_cmd = 'git'
-    cmd = "%s -C %s checkout %s" % (git_cmd, pkg_dir, branch)
+    cmd = "%s -C %s %s" % (git_cmd, pkg_dir, args)
     print("%s$ %s" % (os.getcwd(), cmd))
-    ok = bbs.jobs.call(cmd) == 0
+    retcode = bbs.jobs.call(cmd, check=check)
     print()
-    cmd = "%s -C %s checkout master" % (git_cmd, pkg_dir)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    bbs.jobs.call(cmd, check=True)
+    return retcode
+
+def _branch_exists(pkg_dir, branch):
+    print('---------------------------------------------------------------')
+    print("### Check if branch %s exists" % branch)
     print()
-    return ok
+    retcode = _run_git_cmd(pkg_dir, "checkout %s" % branch, check=False)
+    _run_git_cmd(pkg_dir, "checkout master")
+    return retcode == 0
 
 def _replace_version(pkg_dir, new_version):
     in_file = os.path.join(pkg_dir, 'DESCRIPTION')
@@ -51,26 +53,14 @@ def _replace_version(pkg_dir, new_version):
     return
 
 def _git_add_DESCRIPTION_and_commit(pkg_dir, commit_msg):
-    try:
-        git_cmd = os.environ['BBS_GIT_CMD']
-    except KeyError:
-        git_cmd = 'git'
-    cmd = "%s -C %s --no-pager diff DESCRIPTION" % (git_cmd, pkg_dir)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    bbs.jobs.call(cmd, check=True)
-    print()
-    cmd = "%s -C %s add DESCRIPTION" % (git_cmd, pkg_dir)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    bbs.jobs.call(cmd, check=True)
-    print()
-    cmd = "%s -C %s commit -m '%s'" % (git_cmd, pkg_dir, commit_msg)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    bbs.jobs.call(cmd, check=True)
-    print()
+    _run_git_cmd(pkg_dir, "--no-pager diff DESCRIPTION")
+    _run_git_cmd(pkg_dir, "add DESCRIPTION")
+    _run_git_cmd(pkg_dir, "commit -m '%s'" % commit_msg)
     return
 
 def _first_version_bump(pkg_dir, branch):
-    print("### First version bump:")
+    print('---------------------------------------------------------------')
+    print("### First version bump")
     print()
     pkg = bbs.parse.getPkgFromDir(pkg_dir)
     if pkg == "BiocVersion":
@@ -95,24 +85,16 @@ def _first_version_bump(pkg_dir, branch):
     return
 
 def _create_branch(pkg_dir, branch):
-    print("### Create branch:")
+    print('---------------------------------------------------------------')
+    print("### Create branch")
     print()
-    try:
-        git_cmd = os.environ['BBS_GIT_CMD']
-    except KeyError:
-        git_cmd = 'git'
-    cmd = "%s -C %s checkout -b %s" % (git_cmd, pkg_dir, branch)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    bbs.jobs.call(cmd, check=True)
-    print()
-    cmd = "%s -C %s checkout master" % (git_cmd, pkg_dir)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    bbs.jobs.call(cmd, check=True)
-    print()
+    _run_git_cmd(pkg_dir, "checkout -b %s" % branch)
+    _run_git_cmd(pkg_dir, "checkout master")
     return
 
 def _second_version_bump(pkg_dir, branch):
-    print("### Second version bump:")
+    print('---------------------------------------------------------------')
+    print("### Second version bump")
     print()
     pkg = bbs.parse.getPkgFromDir(pkg_dir)
     version = bbs.parse.getVersionFromDir(pkg_dir)
@@ -136,16 +118,10 @@ def _second_version_bump(pkg_dir, branch):
     return
 
 def _push(pkg_dir):
-    print("### Push changes:")
+    print('---------------------------------------------------------------')
+    print("### Push changes")
     print()
-    try:
-        git_cmd = os.environ['BBS_GIT_CMD']
-    except KeyError:
-        git_cmd = 'git'
-    cmd = "%s -C %s push --all" % (git_cmd, pkg_dir)
-    print("%s$ %s" % (os.getcwd(), cmd))
-    bbs.jobs.call(cmd, check=True)
-    print()
+    _run_git_cmd(pkg_dir, "push --all")
     return
 
 def _bump_version_and_create_branch(pkg, branch, push):
@@ -154,25 +130,24 @@ def _bump_version_and_create_branch(pkg, branch, push):
     print()
     if _branch_exists(pkg, branch):
         print("Branch %s already exists ==> skip package" % branch)
+        print()
     else:
         _first_version_bump(pkg, branch)
-        print()
         _create_branch(pkg, branch)
-        print()
         _second_version_bump(pkg, branch)
-    print()
     if push:
         _push(pkg)
-        print()
+    print()
     return
 
 def _bump_versions_and_create_branches(pkgs, branch, push):
     i = 0
     for pkg in pkgs:
         i += 1
-        print('---------------------------------------------------------------')
+        print('===============================================================')
         print('Bump version and create branch for package %s (%d/%d)' % \
               (pkg, i, len(pkgs)))
+        print('---------------------------------------------------------------')
         print()
         _bump_version_and_create_branch(pkg, branch, push)
     return
