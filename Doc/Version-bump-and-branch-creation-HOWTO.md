@@ -241,20 +241,20 @@ of applying and pushing the changes described in **A. Introduction**.
 The `bump_version_and_create_branch.py` run above can be replaced with
 a 2-pass run:
 
-    # First pass (applies all the changes but does NOT push them)
+    # First pass (apply all the changes but do NOT push them):
     $BBS_HOME/utils/bump_version_and_create_branch.py RELEASE_3_10 $pkgs_in_manifest >bump_version_and_create_branch.log1 2>&1 &
-    # Second pass (push all the changes)
+    # Second pass (push all the changes):
     $BBS_HOME/utils/bump_version_and_create_branch.py --push RELEASE_3_10 $pkgs_in_manifest >bump_version_and_create_branch.log2 2>&1 &
 
-This can be useful if one wants to inspect the changes before pushing them.
+The 2-pass run can be useful if one wants to inspect the changes before pushing them.
 
 Notes:
 
 * You can follow progress with `tail -f bump_version_and_create_branch.log`.
 
-* The BiocVersion package will receive special treatment.
+* The BiocVersion package will automatically receive special treatment.
 
-* In the 2-pass run the second pass checks the packages and applies the
+* In the 2-pass run, the second pass checks the packages and applies the
   changes only if needed (i.e. if a package does not already have the
   `RELEASE_3_10` branch) before pushing the changes.
 
