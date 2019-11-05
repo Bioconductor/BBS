@@ -240,7 +240,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
     pkgs = bbs.manifest.read(BBSvars.manifest_path)
     i = 0
     for pkg in pkgs:
-        i = i + 1
+        i += 1
         print("BBS> ----------------------------------------------------------")
         print("BBS> [update_git_MEAT0] (%d/%d) repo: %s / branch: %s" % \
               (i, len(pkgs), pkg, git_branch))

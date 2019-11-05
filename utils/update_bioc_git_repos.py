@@ -19,7 +19,7 @@ def update_packages(pkg_dir, pkgs, pkg_git_branch=None, skip=None):
         skip = 0
     i = 0
     for pkg in pkgs:
-        i = i + 1
+        i += 1
         if i <= skip:
             continue
         print('BBS> ----------------------------------------------------------')
