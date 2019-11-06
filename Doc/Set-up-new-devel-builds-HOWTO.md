@@ -449,7 +449,7 @@ git pull --all
 Create `~/bbs-3.11-bioc` folder and `log` subfolder.
 
 Install R by following instructions in section "E. Install R" of
-the `Prepare-MacOSX-El-Capitan-HOWTO.TXT` document (in our scenario,
+the [`Prepare-MacOSX-El-Capitan-HOWTO.TXT`](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT) document (in our scenario,
 `R-devel-el-capitan-signed.pkg` needs to be installed).
 
 Edit crontab: replace all occurrences of 3.9 with 3.11 then uncomment
