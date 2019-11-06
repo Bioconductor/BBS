@@ -408,6 +408,8 @@ Remove the old task schedule job for previous version.
 
 #### From the `biocbuild` account on the central builder
 
+In our scenario (i.e. 3.11 builds), malbec2 is the central builder.
+
 Connect to `biocbuild` account on malbec2 (you might need to establish
 a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
 ```
@@ -430,7 +432,7 @@ Next day: Check build report at:
 In our scenario (i.e. 3.11 builds), celaya2 will run the Mac software
 builds.
 
-#### From the `biocbuild` account on the central celaya2
+#### From the `biocbuild` account on celaya2
 
 Connect to the `biocbuild` account on celaya2 (you might need to establish
 a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
@@ -456,6 +458,8 @@ entry for software builds. Builds will start at scheduled time.
 Remove `~/bbs-3.9-bioc` folder.
 
 #### From the `biocbuild` account on the central builder
+
+In our scenario (i.e. 3.11 builds), malbec2 is the central builder.
 
 Connect to `biocbuild` account on malbec2 (you might need to establish
 a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
