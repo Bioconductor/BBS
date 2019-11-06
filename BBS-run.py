@@ -252,24 +252,24 @@ def CallRfunctionFromSTAGE2Script(Rfunction, out_file=None):
     print("BBS> [%s] END." % Rfunction)
     return
 
-def CreateREnvironFiles():
-    archs = ("i386", "x64")
-    for arch in archs:
-        archup = arch.upper()
-        filename = "%s/etc/%s/Renviron.site" % (BBSvars.r_home, arch)
-        f = open(filename, 'w')
-        graphviz_install_dir = os.environ["GRAPHVIZ_INSTALL_DIR_%s" % archup]
-        f.write("GRAPHVIZ_INSTALL_DIR=%s\n" % graphviz_install_dir)
-        graphviz_install_major = os.environ["GRAPHVIZ_INSTALL_MAJOR_%s" %
-          archup]
-        f.write("GRAPHVIZ_INSTALL_MAJOR=%s\n" % graphviz_install_major)
-        graphviz_install_minor = os.environ["GRAPHVIZ_INSTALL_MINOR_%s" %
-          archup]
-        f.write("GRAPHVIZ_INSTALL_MINOR=%s\n" % graphviz_install_minor)
-        graphviz_install_subminor = os.environ["GRAPHVIZ_INSTALL_SUBMINOR_%s" %
-          archup]
-        f.write("GRAPHVIZ_INSTALL_SUBMINOR=%s\n" % graphviz_install_subminor)
-        f.close()
+#def CreateREnvironFiles():
+#    archs = ("i386", "x64")
+#    for arch in archs:
+#        archup = arch.upper()
+#        filename = "%s/etc/%s/Renviron.site" % (BBSvars.r_home, arch)
+#        f = open(filename, 'w')
+#        graphviz_install_dir = os.environ["GRAPHVIZ_INSTALL_DIR_%s" % archup]
+#        f.write("GRAPHVIZ_INSTALL_DIR=%s\n" % graphviz_install_dir)
+#        graphviz_install_major = os.environ["GRAPHVIZ_INSTALL_MAJOR_%s" %
+#          archup]
+#        f.write("GRAPHVIZ_INSTALL_MAJOR=%s\n" % graphviz_install_major)
+#        graphviz_install_minor = os.environ["GRAPHVIZ_INSTALL_MINOR_%s" %
+#          archup]
+#        f.write("GRAPHVIZ_INSTALL_MINOR=%s\n" % graphviz_install_minor)
+#        graphviz_install_subminor = os.environ["GRAPHVIZ_INSTALL_SUBMINOR_%s" %
+#          archup]
+#        f.write("GRAPHVIZ_INSTALL_SUBMINOR=%s\n" % graphviz_install_subminor)
+#        f.close()
 
 def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
     print("BBS> Preparing STAGE2 job queue ... ", end=" ")
@@ -371,10 +371,10 @@ def STAGE2():
 
     # Re-create architecture-specific Renviron.site files on multi-arch
     # build machines.
-    if ('BBS_STAGE2_MODE' in os.environ and
-      os.environ['BBS_STAGE2_MODE'] == 'multiarch' and
-      BBScorevars.subbuilds == "bioc"):
-        CreateREnvironFiles()
+    #if ('BBS_STAGE2_MODE' in os.environ and
+    #  os.environ['BBS_STAGE2_MODE'] == 'multiarch' and
+    #  BBScorevars.subbuilds == "bioc"):
+    #    CreateREnvironFiles()
 
     # Try to update all installed packages.
     CallRfunctionFromSTAGE2Script("updateNonTargetPkgs",
