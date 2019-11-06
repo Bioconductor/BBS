@@ -174,14 +174,15 @@ In our scenario (i.e. 3.11 builds), malbec2 is the central builder.
 
 Builds on all machines are run under dedicated user account `biocbuild`.
 
-Connect to the `biocbuild` account on malbec2:
+Connect to the `biocbuild` account on malbec2 (you might need to establish
+a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
 ```
 ssh -A biocbuild@malbec2.bioconductor.org
 ```
 
 Pull latest changes to BBS:
 ```
-cd BBS
+cd ~/BBS
 git pull --all
 ```
 
@@ -195,9 +196,9 @@ rm -rf 3.9
 
 #### Preliminary steps
 
-Remove `~/bbs-3.9-bioc` folder and create `~/bbs-3.11-bioc` folder
+Remove `~/bbs-3.9-bioc` folder and create `~/bbs-3.11-bioc` folder.
 
-In `~/bbs-3.11-bioc` create `log` and `rdownloads` folders
+In `~/bbs-3.11-bioc` create `log` and `rdownloads` folders.
 
 Download latest R 4.0 source tarball in `~/bbs-3.11-bioc/rdownloads`
 and install in `~/bbs-3.11-bioc/R` (using the usual procedure, see
@@ -269,14 +270,15 @@ to them.
 
 ## 5. Activate propagation pipes
 
-Connect to the `biocadmin` account on malbec2:
+Connect to the `biocadmin` account on malbec2 (you might need to establish
+a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
 ```
 ssh -A biocadmin@malbec2.bioconductor.org
 ```
 
 Pull latest changes to BBS:
 ```
-cd BBS
+cd ~/BBS
 git pull --all
 ```
 
@@ -373,7 +375,9 @@ builds.
 
 #### From the `biocbuild` account on tokay2
 
-Use rdesktop to connect to the `biocbuild` account on tokay2.
+Use rdesktop to connect to the `biocbuild` account on tokay2 (you might need
+to establish a VPN connection to rpcivpn.roswellpark.org first if you are
+outside RPCI).
 
 In a PowerShell Window, pull latest changes to BBS:
 ```
@@ -390,17 +394,22 @@ Remove `C:\Users\biocbuild\bbs-3.9-bioc`.
 
 #### From a personal administrator account on tokay2
 
-Use rdesktop to connect to your personal account on tokay2.
+Use rdesktop to connect to your personal account on tokay2 (you might need
+to establish a VPN connection to rpcivpn.roswellpark.org first if you are
+outside RPCI).
 
 Follow the steps described in the "Add nightly builds to Task Scheduler"
 section of the `Prepare-Windows-Server-2012-HOWTO.TXT` document.
 Make sure to replace all occurences of 3.10 with 3.11.
 
+Builds will start at scheduled time.
+
 Remove the old task schedule job for previous version.
 
 #### From the `biocbuild` account on the central builder
 
-Connect to `biocbuild` account on malbec2:
+Connect to `biocbuild` account on malbec2 (you might need to establish
+a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
 ```
 ssh -A biocbuild@malbec2.bioconductor.org
 ```
@@ -412,8 +421,56 @@ git diff config.sh
 vi config.sh  # tokay2 should be in BBS_OUTGOING_MAP and BBS_REPORT_NODES
 ```
 
+Next day: Check build report at:
+
+    https://bioconductor.org/checkResults/3.11/bioc-LATEST/
 
 ### On Mac
 
-[coming soon]
+In our scenario (i.e. 3.11 builds), celaya2 will run the Mac software
+builds.
+
+#### From the `biocbuild` account on the central celaya2
+
+Connect to the `biocbuild` account on celaya2 (you might need to establish
+a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
+```
+ssh -A biocbuild@celaya2.bioconductor.org
+```
+
+Pull latest changes to BBS:
+```
+cd ~/BBS
+git pull --all
+```
+
+Create `~/bbs-3.11-bioc` folder and `log` subfolder.
+
+Install R by following instructions in section "E. Install R" of
+the `Prepare-MacOSX-El-Capitan-HOWTO.TXT` document (in our scenario,
+`R-devel-el-capitan-signed.pkg` needs to be installed).
+
+Edit crontab: replace all occurrences of 3.9 with 3.11 then uncomment
+entry for software builds. Builds will start at scheduled time.
+
+Remove `~/bbs-3.9-bioc` folder.
+
+#### From the `biocbuild` account on the central builder
+
+Connect to `biocbuild` account on malbec2 (you might need to establish
+a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
+```
+ssh -A biocbuild@malbec2.bioconductor.org
+```
+
+Make sure celaya2 will be included in the next build report:
+```
+cd ~/BBS/3.11/bioc/malbec2/
+git diff config.sh  # see local edits
+vi config.sh  # celaya2 should be in BBS_OUTGOING_MAP and BBS_REPORT_NODES
+```
+
+Next day: Check build report at:
+
+    https://bioconductor.org/checkResults/3.11/bioc-LATEST/
 

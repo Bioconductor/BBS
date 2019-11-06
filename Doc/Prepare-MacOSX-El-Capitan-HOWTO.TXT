@@ -532,8 +532,8 @@ E. Install R
 This must be done from the biocbuild account.
 
   From Simon's site at AT&T https://r.research.att.com/ for R devel
-  (pick up R-devel-el-capitan.pkg) or for R alpha/beta versions
-  (e.g. R-3.4-branch-el-capitan.pkg). Double check the site for the
+  (pick up R-devel-el-capitan-signed.pkg) or for R alpha/beta versions
+  (e.g. R-3.4-branch-mavericks-signed.pkg). Double check the site for the
   exact name of the .pkg file as it may change over time.
 
   From CRAN (e.g. https://cloud.r-project.org/bin/macosx/) for R release
@@ -542,8 +542,8 @@ This must be done from the biocbuild account.
 Download and install with:
 
   cd /Users/biocbuild/Downloads
-  curl -LO https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan.pkg
-  sudo installer -pkg R-devel-el-capitan.pkg -target /
+  curl -LO https://r.research.att.com/el-capitan/R-devel/R-devel-el-capitan-signed.pkg
+  sudo installer -pkg R-devel-el-capitan-signed.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
 *system-wide* installation of R i.e. it can be started with 'R' from any
