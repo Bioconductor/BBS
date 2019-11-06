@@ -34,6 +34,8 @@ if sys.platform == "win32":
     #    else:
     #        break
 
+sys.path.insert(0, os.path.dirname(__file__))
+import parse
 
 ##############################################################################
 ## On Windows XP time.sleep() is fragile: if the Python script is started by
@@ -73,7 +75,7 @@ def getCmdOutput(cmd):
     retcode = process.poll()
     if retcode:
         sys.exit("BBS>   FATAL ERROR: subprocess '%s' returned nonzero value %d\nBBS>   and generated error message:\nBBS>     %s" % (cmd, retcode, output))
-    return output
+    return parse.bytes2str(output)
 
 def doOrDie(cmd):
     retcode = call(cmd)
