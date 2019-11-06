@@ -410,7 +410,7 @@ Remove the old task schedule job for previous version.
 
 In our scenario (i.e. 3.11 builds), malbec2 is the central builder.
 
-Connect to `biocbuild` account on malbec2 (you might need to establish
+Connect to the `biocbuild` account on malbec2 (you might need to establish
 a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
 ```
 ssh -A biocbuild@malbec2.bioconductor.org
@@ -461,7 +461,7 @@ Remove `~/bbs-3.9-bioc` folder.
 
 In our scenario (i.e. 3.11 builds), malbec2 is the central builder.
 
-Connect to `biocbuild` account on malbec2 (you might need to establish
+Connect to the `biocbuild` account on malbec2 (you might need to establish
 a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
 ```
 ssh -A biocbuild@malbec2.bioconductor.org
