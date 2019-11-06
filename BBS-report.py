@@ -473,8 +473,9 @@ def write_summary_TD(out, node, stage):
     if stage == 'checksrc':
         html += '<TD class="summary %s">%d</TD>' % ("WARNINGS", stats[2])
     html += '<TD class="summary %s">%d</TD>' % ("OK", stats[3])
-    if stage == 'install':
-        html += '<TD class="summary %s">%d</TD>' % ("NotNeeded", stats[4])
+    # Only relevant when "smart STAGE2" is enabled.
+    #if stage == 'install':
+    #    html += '<TD class="summary %s">%d</TD>' % ("NotNeeded", stats[4])
     html += '</TR></TABLE>'
     #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stage, html))
     out.write('<TD>%s</TD>' % html)
@@ -1435,13 +1436,15 @@ def write_glyph_table(out):
     msg += ' of package was OK'
     write_glyph("OK", msg, True)
 
-    ## "NotNeeded" glyph
-    if subbuilds != "bioc-longtests":
-    #    if subbuilds != "workflows":
-    #        msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
-    #        write_glyph("NotNeeded", msg)
+    ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e. when
+    ## STAGE2 skips installation of target packages not needed by another
+    ## target package for build or check).
+    #if subbuilds != "workflows" and subbuilds != "bioc-longtests":
+    #    msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
+    #    write_glyph("NotNeeded", msg)
 
     ## "skipped" glyph
+    if subbuilds != "bioc-longtests":
         msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
         msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
         write_glyph("skipped", msg)

@@ -195,8 +195,8 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
     script_path2 = script_path.replace('\\', '/')
     target_pkgs_file2 = target_pkgs_file.replace('\\', '/')
     STAGE2_pkg_deps_list_path2 = STAGE2_pkg_deps_list_path.replace('\\', '/')
-    # Use short.list=TRUE to skip installation of target packages not needed
-    # by another target package for build or check.
+    # Use short.list=TRUE for "smart STAGE2" i.e. to skip installation of
+    # target packages not needed by another target package for build or check.
     #Rscript = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
     Rscript = "source('%s');%s('%s',outfile='%s')" % \
               (script_path2, Rfunction, target_pkgs_file2,
@@ -281,10 +281,7 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
         pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(None, pkgdumps_prefix)
         if pkg in target_pkgs:
-            try:
-                version = bbs.parse.getVersionFromDir(pkg)
-            except IOError:
-                print("BBS>   Can't read %s/DESCRIPTION file!" % pkg)
+            version = bbs.parse.getVersionFromDir(pkg)
             cmd = BBSbase.getSTAGE2cmd(pkg, version)
             nb_target_pkgs_in_queue += 1
         else:
