@@ -156,4 +156,3 @@ meat_index_file = 'meat-index.dcf'
 
 skipped_index_file = 'skipped-index.dcf'
 
-is_workflow = subbuilds == "workflows"
