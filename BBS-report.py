@@ -105,21 +105,12 @@ def make_STATUS_SUMMARY(allpkgs):
 ### HTMLization
 ##############################################################################
 
-### Display package propagation status led for these subbuilds?
-def showPropagationStatus(subbuilds):
-    return subbuilds != "bioc-longtests"
-
-### Number of colums in the report for these subbuilds?
-def numberOfCols(subbuilds):
-    return len(BBSreportutils.stages_to_display(subbuilds)) + \
-           showPropagationStatus(subbuilds)
-
 def writeThinRowSeparator_asTR(out, tr_class=None):
     if tr_class:
         tr_class = ' class="%s"' % tr_class
     else:
         tr_class = '';
-    colspan = numberOfCols(BBScorevars.subbuilds) + 3
+    colspan = BBSreportutils.ncol_to_display(BBScorevars.subbuilds) + 3
     out.write('<TR%s><TD COLSPAN="%s" style="height: 4pt; background: inherit;"></TD></TR>\n' % (tr_class, colspan))
     return
 
@@ -301,7 +292,7 @@ def write_pkg_stagelabels_asTDs(out, extra_style=""):
     subbuilds = BBScorevars.subbuilds
     for stage in BBSreportutils.stages_to_display(subbuilds):
         write_stagelabel_asTD(out, stage, extra_style)
-    if showPropagationStatus(subbuilds):
+    if BBSreportutils.display_propagation_status(subbuilds):
         out.write('<TD style="width:11px;"></TD>')
     return
 
@@ -331,18 +322,20 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
                 out.write('<TD class="node %s"></TD>' % node.hostname.replace(".", "_"))
             else:
                 write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style)
-        if showPropagationStatus(subbuilds):
+        if BBSreportutils.display_propagation_status(subbuilds):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
         if pkg in skipped_pkgs:
             out.write('<TD COLSPAN="%s" class="node %s">' % \
-                     (numberOfCols(subbuilds), node.hostname.replace(".", "_")) )
+                     (BBSreportutils.ncol_to_display(subbuilds), \
+                      node.hostname.replace(".", "_")) )
             msg = 'ERROR'
             out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
             out.write(' (Bad DESCRIPTION file)</TD>')
         else:
             out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
-                     (numberOfCols(subbuilds), node.hostname.replace(".", "_")) )
+                     (BBSreportutils.ncol_to_display(subbuilds), \
+                      node.hostname.replace(".", "_")) )
             sep = '...'
             NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
             out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
@@ -376,7 +369,7 @@ def write_pkg_index_as2fullTRs(out, current_letter):
               (current_letter, current_letter))
     out.write('</TD></TR></TABLE>')
     out.write('</TD>')
-    colspan = numberOfCols(BBScorevars.subbuilds) + 2
+    colspan = BBSreportutils.ncol_to_display(BBScorevars.subbuilds) + 2
     out.write('<TD COLSPAN="%s" style="background: inherit;">' % colspan)
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
@@ -509,7 +502,7 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
                 out.write('<TD></TD>')
             else:
                 write_summary_TD(out, node, stage)
-        if showPropagationStatus(subbuilds):
+        if BBSreportutils.display_propagation_status(subbuilds):
             out.write('<TD style="width:11px;"></TD>')
         out.write('</TR>\n')
     return
@@ -1498,7 +1491,7 @@ def write_glyph_and_propagation_LED_table(out):
     out.write('<TD>\n')
     write_glyph_table(out)
     out.write('</TD>')
-    if showPropagationStatus(BBScorevars.subbuilds):
+    if BBSreportutils.display_propagation_status(BBScorevars.subbuilds):
         out.write('<TD style="padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')

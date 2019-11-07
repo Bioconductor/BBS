@@ -111,14 +111,6 @@ def make_report_title(subbuilds, report_nodes):
             title += " experimental data"
     return title
 
-## Stages to display on report (as columns in HTML table).
-def stages_to_display(subbuilds):
-    if subbuilds == "bioc-longtests":
-        return ['checksrc']  # we run 'buildsrc' but don't display it
-    if subbuilds == "workflows":
-        return ['install', 'buildsrc']
-    return ['install', 'buildsrc', 'checksrc', 'buildbin']
-
 def stage_label(stage):
     stage2label = {
         'install':  "INSTALL",
@@ -127,6 +119,31 @@ def stage_label(stage):
         'buildbin': "BUILD BIN"
     }
     return stage2label[stage]
+
+## Stages to display on the report (as columns in HTML table) for the given
+## subbuilds. Should be a subset of the stages that were run because we
+## obviously can't display the results for stages that we didn't run.
+## However we don't necessarily want to display the results for all the
+## stages that we ran. For example, for the "bioc-longtests" subbuilds
+## we run 'buildsrc' (STAGE3) and 'checksrc' (STAGE4) but we only display
+## the results of 'checksrc' (CHECK column on the report).
+def stages_to_display(subbuilds):
+    if subbuilds in ["data-annotation", "data-experiment"]:
+        return ['install', 'buildsrc', 'checksrc']
+    if subbuilds == "workflows":
+        return ['install', 'buildsrc']
+    if subbuilds == "bioc-longtests":
+        return ['checksrc']  # we run 'buildsrc' but don't display it
+    return ['install', 'buildsrc', 'checksrc', 'buildbin']
+
+### Whether to display the package propagation status led or not for the
+### given subbuilds.
+def display_propagation_status(subbuilds):
+    return subbuilds not in ["bioc-longtests", "cran"]
+
+def ncol_to_display(subbuilds):
+    return len(stages_to_display(subbuilds)) + \
+           display_propagation_status(subbuilds)
 
 
 ##############################################################################
