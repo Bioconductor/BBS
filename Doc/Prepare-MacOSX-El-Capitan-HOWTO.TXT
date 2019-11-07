@@ -529,6 +529,11 @@ Everything in this section must be done from the biocbuild account.
 E. Install R
 ------------
 
+If this is a new version of R on a builder rather than setting up R 
+for the first time, Remove the old R.framework directory.  This allows 
+for a clean install of R and removes the old version 
+`/Library/Frameworks/R.framework`.  
+
 This must be done from the biocbuild account.
 
   From Simon's site at AT&T https://r.research.att.com/ for R devel
