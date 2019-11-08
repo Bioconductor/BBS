@@ -19,10 +19,20 @@ because once they are removed it's very difficult to recover them.
 
 ## Running the crontab job <a name="crontab"/>
 
+**NOTE:** It is important that only 1 instance of the cron job be running at a 
+time. This can be checked by looking at the `cron.log/`
+
+```sh
+~/cron.log/3.10$ ls -ltr | tail -n 3
+```
+
+If there is a `propagate-data-annotation-*.log` with a timestamp that is the 
+current date and time then that means the job is currently running. 
+
 Once the correct version of the package is in 
-`/home/biocadmin/PACKAGES/3.10/data/annotation/src/contrib` then the crontab job 
-must be run so that the VIEWS are updated. This can be done doing the following 
-steps.
+`home/biocadmin/PACKAGES/3.10/data/annotation/src/contrib` (and no other jobs 
+are running) then the crontab job must be run so that the VIEWS are updated. 
+This can be done by doing the following steps.
 
 **1. View the crontab job**
 
