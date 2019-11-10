@@ -8,7 +8,7 @@
 ##    CONTRIB_PATHS="c(source='src/contrib', win.binary='bin/windows/contrib/4.0')"
 ##    HTML_DIR="data/experiment/html"
 
-rm -r "$REPOS_ROOT"/html "$REPOS_ROOT"/index.html "$REPOS_ROOT"/REPOSITORY "$REPOS_ROOT"/repository-detail.css "$REPOS_ROOT"/SYMBOLS "$REPOS_ROOT"/VIEWS "$REPOS_ROOT"/vignettes
+rm -r "$REPOS_ROOT"/html "$REPOS_ROOT"/index.html "$REPOS_ROOT"/REPOSITORY "$REPOS_ROOT"/repository-detail.css "$REPOS_ROOT"/VIEWS "$REPOS_ROOT"/vignettes
 
 R_SCRIPT="library(biocViews)"
 R_SCRIPT="$R_SCRIPT; if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cran.rstudio.com')"
