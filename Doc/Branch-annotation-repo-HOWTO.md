@@ -3,6 +3,11 @@
 The document describes how to branch the annotation repository for a 
 new release. This can be done the day of the release or several days after.
 
+Before branching, Check and make sure there is enough room on master for the 
+annotations.  If there isn't enough room follow the guidelines for moving
+old [Bioconductor releases into S3](https://github.com/Bioconductor/AWS_management/blob/master/docs/S3_website.md)
+As of release 3.11 Annotations are around 83G. 
+
 These instructions use BioC 3.7 as the new devel version and malbec2
 as the devel master builder.
 
