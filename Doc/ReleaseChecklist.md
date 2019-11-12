@@ -143,6 +143,8 @@ in _this_ order
 ## One week before the release:
 
 - Packages and workflows clean of errors and warnings
+- Check master has enough room for release and create archieve on S3 if necessary
+   See  [S3_website](https://github.com/Bioconductor/AWS_management/blob/master/docs/S3_website.md)
 
 <a name="d-2"></a>
 ## Day before we branch (D-2):
