@@ -317,12 +317,14 @@ recur <- function(pkg)
 # mac.binary.el-capitan directories.
 # biocrepo should be one of 
 #  "bioc" for software packages
+#  "data/annotation" for annotation packages
 #  "data/experiment" for experiment data packages
 #  "workflows" for workflow packages
 # internalRepos is consulted to see what needs to be propagated 
 # (i.e. nothing if package there has the same version.)
 createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
-    biocrepo=c("bioc", "data/experiment", "workflows"), internalRepos)
+    biocrepo=c("bioc", "data/annotation", "data/experiment", "workflows"),
+    internalRepos)
 {
     if (missing(internalRepos))
         stop("Must specify internalRepos!")
@@ -330,6 +332,7 @@ createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
         stop("Must specify biocrepo!")
     repo.name <- switch(biocrepo,
                         "bioc" = "BioCsoft",
+                        "data/annotation" = "BioCann",
                         "data/experiment" = "BioCexp",
                         "workflows" = "BioCworkflows")
     bioc.apdb <<- available.packages(
@@ -450,8 +453,10 @@ getPkgVer <- function(pkg)
 
 doesReposNeedPkg <- function(pkg, type, outgoingDirPath, internalRepos)
 {
+    internalRepos <- sub("data-annotation", "data/annotation",
+                         internalRepos, fixed=TRUE)
     internalRepos <- sub("data-experiment", "data/experiment",
-        internalRepos, fixed=TRUE)
+                         internalRepos, fixed=TRUE)
     contribdirs <- sprintf(
         c("src/contrib",
           "bin/windows/contrib/%s",
