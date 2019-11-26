@@ -773,7 +773,8 @@ From a personal administrator account
 
 ** Install libxml2 and google protocol buffer
 
-  This is needed in order to compile the flowWorkspace package.
+  This is needed in order to compile the RProtoBufLib and flowWorkspace
+  packages.
   Download libxml2 and google protocol buffer Windows binaries from
     http://rglab.github.io/binaries/
   Extract all the files to C:\libxml2 and to C:\protobuf respectively.
@@ -787,6 +788,7 @@ From a personal administrator account
   open a PowerShell window, cd to C:\Users\biocbuild\bbs-3.10-bioc\meat (this
   folder will be automatically created after the 1st build run), then:
 
+    ..\R\bin\R CMD INSTALL RProtoBufLib
     ..\R\bin\R CMD INSTALL flowWorkspace
 
 ** Install Open Babel
