@@ -50,7 +50,7 @@ def build_meat_index(pkgs, meat_path):
     for pkg in pkgs:
         pkgdir_path = os.path.join(meat_path, pkg)
         if BBScorevars.subbuilds == "bioc-longtests" and \
-           bbs.parse.getBBSoptionFromDir(pkgdir_path, 'RunLongtests') != "TRUE":
+           bbs.parse.getBBSoptionFromDir(pkgdir_path, 'RunLongTests') != "TRUE":
             continue
         try:
             package = bbs.parse.getPkgFromDir(pkgdir_path)
