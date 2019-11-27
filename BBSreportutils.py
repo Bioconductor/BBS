@@ -86,7 +86,7 @@ def supported_nodes(pkg):
 
 def make_report_title(subbuilds, report_nodes):
     if subbuilds == "bioc-longtests":
-        title = "Long tests"
+        title = "Long Tests"
     elif subbuilds == "workflows":
         title = "Workflows build"
     else:
