@@ -35,12 +35,8 @@ set BBS_CENTRAL_RDIR=/home/biocbuild/public_html/BBS/%BBS_BIOC_VERSIONED_REPO_PA
 set BBS_CENTRAL_BASEURL=https://%BBS_CENTRAL_RHOST%/BBS/%BBS_BIOC_VERSIONED_REPO_PATH%
 
 
-@rem 'R CMD check' variables
-@rem -----------------------
+@rem Define some environment variables that affect the behavior of R
+@rem ---------------------------------------------------------------
 
-@rem set _R_CHECK_TIMINGS_=0
-set _R_CHECK_EXECUTABLES_=false
-set _R_CHECK_EXECUTABLES_EXCLUSIONS_=false
-set _R_CHECK_LENGTH_1_CONDITION_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
-set _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
-@rem set _R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
+call R_env_vars.bat
+

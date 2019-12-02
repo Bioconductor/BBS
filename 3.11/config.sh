@@ -42,12 +42,7 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
 
-# 'R CMD check' variables
-# -----------------------
+# Define some environment variables that affect the behavior of R
+# ---------------------------------------------------------------
+. ./R_env_vars.sh
 
-#export _R_CHECK_TIMINGS_="0"
-export _R_CHECK_EXECUTABLES_=false
-export _R_CHECK_EXECUTABLES_EXCLUSIONS_=false
-export _R_CHECK_LENGTH_1_CONDITION_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
-export _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
-#export _R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
