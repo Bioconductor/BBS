@@ -2,6 +2,12 @@
 # ====================================================================
 # Environment variables that control the behavior of R / 'R CMD check'
 # ====================================================================
+#
+# IMPORTANT: Make sure the settings used by the Bioconductor Devel
+# Docker image are kept in sync with the settings in this file.
+# A PR should be send to https://github.com/Bioconductor/bioconductor_full
+# each time this file is modified.
+#
 
 #export _R_CHECK_TIMINGS_="0"
 export _R_CHECK_EXECUTABLES_=false
