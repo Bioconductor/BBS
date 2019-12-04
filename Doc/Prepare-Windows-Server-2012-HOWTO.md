@@ -4,17 +4,20 @@
 
 ## 0. General information and tips
 
-a. Open the Task Manager with CTRL+Shift+Esc
 
-b. How to edit an environment variable:
+### How to open Task Manager
 
-  Always from a *personal administrator account* (see below about this):
+Use CTRL+Shift+Esc
 
-    Windows start menu -> This PC -> right-click on This PC -> Properties
-    -> Advanced system settings -> Environment Variables...
 
-  Always go to *System variables* (at the bottom) to add new variables or edit
-  existing variables. Do not add or edit user variables (at the top).
+### How to edit an environment variable
+
+Always from a _personal administrator account_ (see below about this):
+
+Windows start menu -> This PC -> right-click on This PC -> Properties -> Advanced system settings -> Environment Variables...
+
+Always go to *System variables* (at the bottom) to add new variables or edit
+existing variables. Do not add or edit user variables (at the top).
 
 
 
@@ -52,7 +55,7 @@ ALSO: You need to explicitly associate .py files with Python by:
 
 ### Upgrade to the latest pip
 
-In a PowerShell Window:
+In a PowerShell window:
 
     python -m pip install --upgrade pip
 
@@ -66,7 +69,7 @@ This module is needed by BBS.
 
 ### Install Python modules needed by some CRAN/Bioconductor packages
 
-In a PowerShell Window:
+In a PowerShell window:
 
     pip install numpy scipy sklearn h5py pandas mofapy
     pip install tensorflow tensorflow_probability
@@ -100,27 +103,25 @@ Go in Computer Management
       -> System Tools
          -> Local Users and Groups
             -> Users
+
 Then in the Actions panel (on the right):
       -> Users
          -> More Actions
             -> New User
 
-Username: mtmorgan
-Full name: Martin Morgan
+- Username: mtmorgan / Full name: Martin Morgan
 
-Username: hpages
-Full name: Hervé Pagès
+- Username: hpages / Full name: Hervé Pagès
 
-Username: lshepherd
-Full name: Lori Shepherd
+- Username: lshepherd / Full name: Lori Shepherd
 
 For all these accounts:
-  [x] User must change password at next logon
-  [ ] User cannot change password
-  [ ] Password never expires
-  [ ] Account is disabled
+- [x] User must change password at next logon
+- [ ] User cannot change password
+- [ ] Password never expires
+- [ ] Account is disabled
 
-Then make these users members of the Administrators group
+Then make these users members of the Administrators group.
 
 
 ### Create the biocbuild account
@@ -128,10 +129,10 @@ Then make these users members of the Administrators group
 Username: biocbuild
 
 For this account:
-  [ ] User must change password at next logon
-  [x] User cannot change password
-  [x] Password never expires
-  [ ] Account is disabled
+- [ ] User must change password at next logon
+- [x] User cannot change password
+- [x] Password never expires
+- [ ] Account is disabled
 
 
 ### Make the biocbuild user member of the Remote Desktop Users group
@@ -145,7 +146,9 @@ user.)
 Go in Local Security Policy
   -> Local Policies
      -> User Rights Assignment
+
 In the right pane, right-click on 'Log on as a batch job' -> Properties
+
 Add biocbuild user
 
 From now on, all administrative tasks should be performed from one of the
@@ -166,7 +169,7 @@ Choose the Basic MiKTeX 64-bit Installer
 
 Run MiKTeX Update (Admin) in the Windows start menu
 
-Set environment variable MIKTEX_ENABLEWRITE18=t (this is for packages using
+Set environment variable `MIKTEX_ENABLEWRITE18=t` (this is for packages using
 auto-pst-pdf in their vignette). See "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to do
 this. Not clear that this actually helps with recent versions of
@@ -177,39 +180,41 @@ for an alternative that actually seems to help.
 ### Install Pandoc
 
 Go to http://pandoc.org/installing.html#windows
+
 Download and run the installer
 
 
 ### Install 32-bit Cygwin
 
-Cygwin is needed for the ssh, rsync, and curl commands only.
+Cygwin is needed for the `ssh`, `rsync`, and `curl` commands only.
 
-Download and run setup-x86.exe to install or update Cygwin.
+Download and run `setup-x86.exe` to install or update Cygwin.
+
 Install for all users.
-Make sure packages openssh, rsync, and curl are selected (the 3 of them
-are in the Net category).
+
+Make sure packages `openssh`, `rsync`, and `curl` are selected (the 3 of
+them are in the Net category).
 
 Note that this installs the Cygwin 32-bit DLL.
 
+Prepend `C:\cygwin\bin` to `PATH` (see "How to edit an environment variable"
+in "General information and tips" at the top of this document for how to do
+this).
 
-### Prepend C:\cygwin\bin to PATH
-
-See "How to edit an environment variable" in "General information and tips"
-at the top of this document for how to do this.
-
-TESTING: Open a PowerShell window and try to run ssh, rsync, or curl in it.
-Do this by just typing the name of the command followed by <Enter>. If PATH
-was set correctly, the command should be found (the Cygwin executables are
-in C:\cygwin\bin).
+TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
+in it. Do this by just typing the name of the command followed by <Enter>.
+If `PATH` was set correctly, the command should be found (the Cygwin
+executables are in `C:\cygwin\bin`).
 
 
 ### Install Rtools
 
 Download `Rtools*.exe` from https://CRAN.R-project.org/bin/windows/Rtools/
-For the devel builds: choose the latest version (NOT frozen)
-For the release builds: choose the latest *frozen* version
 
-On the Select Components page: select everything *except* Cygwin DLLs
+For the devel builds, choose the latest version (NOT frozen), for the
+release builds, choose the latest _frozen_ version.
+
+On the Select Components page: select everything **except** Cygwin DLLs
 and the "Extras" files
 
 On the Select Additional Tasks page: select everything
@@ -219,36 +224,40 @@ On the System Path page: add `c:\Rtools\mingw_64\bin;` right after
 
 TESTING: Open a PowerShell window and try to run:
 
-    which rsync (should show /cygdrive/c/Rtools/bin/rsync, because rsync from
-                 Rtools is before Cygwin rsync in PATH)
-    which ssh   (should show /usr/bin/ssh)
-    which curl  (should show /usr/bin/curl)
-    rsync       (will crash if 64-bit Cygwin was installed instead of 32-bit)
-    which gcc   (should show /cygdrive/c/Rtools/mingw_32/bin/gcc)
+    which rsync # should show /cygdrive/c/Rtools/bin/rsync, because rsync
+                # from Rtools should be before Cygwin rsync in PATH
+    which ssh   # should show /usr/bin/ssh
+    which curl  # should show /usr/bin/curl
+    rsync       # will crash if 64-bit Cygwin was installed instead of 32-bit!
+    which gcc   # should show /cygdrive/c/Rtools/mingw_32/bin/gcc
 
 
 ### Install git client for Windows
 
 Available at https://git-scm.com/download/win
+
 Keep all the default settings when running the installer.
 
-TESTING: Open a PowerShell window and try to run 'git --version'
+TESTING: Open a PowerShell window and try to run `git --version`
 
 
-### [OPTIONAL] Install TortoiseSVN (Subversion client for Windows)
+### Install TortoiseSVN (Subversion client for Windows)
 
-Just a convenience that will allow us to check out some individual BioC
-packages in the future in case we want to troubleshoot them on Windows.
+This is no longer needed. Install only if you need to checkout some
+svn-based code like the latest R-devel (even though should never need
+to do that).
 
 Available at https://tortoisesvn.net/
-Choose 64-bit version
-When running the installer, make sure the command line clients tools are
-selected (by default they're NOT -- choose 'Entire feature will be installed
-on local hard drive').
 
-TESTING: Open a PowerShell window and try to run 'svn --version'
-If PATH was set correctly (by the installer), the command should be found
-(it's located in C:\Program Files\TortoiseSVN\bin).
+Choose 64-bit version
+
+When running the installer, make sure the command line clients tools are
+selected (by default they're NOT -- choose 'Entire feature will be
+installed on local hard drive').
+
+TESTING: Open a PowerShell window and try to run 'svn --version'.
+If `PATH` was set correctly (by the installer), the command should be
+found (it's located in `C:\Program Files\TortoiseSVN\bin`).
 
 
 
@@ -517,7 +526,7 @@ Right-click on the BBS folder -> choose Create Task
       New Trigger
       Begin the task On a schedule
       In Settings:
-        Daily - At 5:55 PM - Recur every 1 day
+        Daily - At 6:00 PM - Recur every 1 day
       In Advanced Settings:
         nothing should be checked except 'Enabled'
   - Tab Actions:
