@@ -149,7 +149,7 @@ Go in Local Security Policy
 
 In the right pane, right-click on 'Log on as a batch job' -> Properties
 
-Add biocbuild user
+Add biocbuild user.
 
 From now on, all administrative tasks should be performed from one of the
 personal accounts instead of the Administrator account.
@@ -181,7 +181,7 @@ for an alternative that actually seems to help.
 
 Go to http://pandoc.org/installing.html#windows
 
-Download and run the installer
+Download and run the installer.
 
 
 ### Install 32-bit Cygwin
@@ -279,7 +279,7 @@ In a PowerShell Window, clone BBS git source tree with:
 
 ### Install biocbuild RSA private key
 
-From C:\Users\biocbuild, create the .BBS/id_rsa file as follow
+From `C:\Users\biocbuild`, create the `.BBS/id_rsa` file as follow:
 
     mkdir .BBS
     cd .BBS
@@ -288,8 +288,8 @@ From C:\Users\biocbuild, create the .BBS/id_rsa file as follow
     # content from another Windows builder e.g. moscato1)
     chmod 400 id_rsa
 
-    Having the RSA key installed allows the biocbuild user to ssh to the
-    central node.
+Having the RSA key installed allows the biocbuild user to ssh to the
+central node.
 
 TESTING: Open a PowerShell window and try to ssh to the central node with:
 
@@ -313,10 +313,12 @@ From C:\Users\biocbuild, proceed as follow
 
 ### Install R in bbs-3.10-bioc
 
-#### Download the CRAN Windows R binary
+#### Download R Windows binary from CRAN
 
-Choose the binary that matches the BioC version to build.
-(https://cran.rstudio.com/bin/windows/base/)
+https://cran.rstudio.com/bin/windows/base/
+
+Choose the binary that matches the BioC version to build (see links
+in "Other builds" section if you need the latest R devel binary).
 
 When running the installer:
 - Ignore warning about the current user not being an admin
@@ -326,23 +328,25 @@ When running the installer:
 
 #### Edit Makeconf and Rprofile.site files
 
-The R\etc\i386\Makeconf, R\etc\x64\Makeconf, and R\etc\Rprofile.site
+The `R\etc\i386\Makeconf`, `R\etc\x64\Makeconf`, and `R\etc\Rprofile.site`
 files need to be edited as follow (without this, compilation of zlibbioc
 will fail):
 
-a. R\etc\i386\Makeconf
+- `R\etc\i386\Makeconf`
 
    From C:\Users\biocbuild\bbs-3.10-bioc:
-
-     - cd R\etc\i386
-     - cp Makeconf Makeconf.original
-     - vi Makeconf
-         replace line
-           BINPREF ?= c:/Rtools/mingw_32/bin/
-         with
-           BINPREF = C:/Rtools/mingw_$(WIN)/bin/
-     - Save and quit vi. Then see your changes with:
-         C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+   ```
+   cd R\etc\i386
+   cp Makeconf Makeconf.original
+   vi Makeconf
+   # replace line
+   #   BINPREF ?= c:/Rtools/mingw_32/bin/
+   # with
+   #   BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+   # Save and quit vi.
+   # Then see your changes with:
+   C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+   ```
 
 b. R\etc\x64\Makeconf
 
