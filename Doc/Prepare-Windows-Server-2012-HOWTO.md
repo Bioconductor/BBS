@@ -334,7 +334,7 @@ will fail):
 
 - `R\etc\i386\Makeconf`
 
-   From C:\Users\biocbuild\bbs-3.10-bioc:
+   From `C:\Users\biocbuild\bbs-3.10-bioc`:
    ```
    cd R\etc\i386
    cp Makeconf Makeconf.original
@@ -348,36 +348,39 @@ will fail):
    C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
    ```
 
-b. R\etc\x64\Makeconf
+- `R\etc\x64\Makeconf`
 
-   From C:\Users\biocbuild\bbs-3.10-bioc:
+   From `C:\Users\biocbuild\bbs-3.10-bioc`:
+   ```
+   cd R\etc\x64
+   cp Makeconf Makeconf.original
+   vi Makeconf
+   # replace line
+   #   BINPREF ?= c:/Rtools/mingw_64/bin/
+   # with
+   #   BINPREF = C:/Rtools/mingw_$(WIN)/bin/
+   # Save and quit vi.
+   # Then see your changes with:
+   C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+   ```
 
-     - cd R\etc\x64
-     - cp Makeconf Makeconf.original
-     - vi Makeconf
-         replace line
-           BINPREF ?= c:/Rtools/mingw_64/bin/
-         with
-           BINPREF = C:/Rtools/mingw_$(WIN)/bin/
-     - Save and quit vi. Then see your changes with:
-         C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+- `R\etc\Rprofile.site`
 
-c. R\etc\Rprofile.site
+   From `C:\Users\biocbuild\bbs-3.10-bioc`:
+   ```
+   cd R\etc
+   cp Rprofile.site Rprofile.site.original
+   vi Rprofile.site
+   # add the following line at bottom
+   #   Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
+   ```
 
-   From C:\Users\biocbuild\bbs-3.10-bioc:
-
-     - cd R\etc
-     - cp Rprofile.site Rprofile.site.original
-     - vi Rprofile.site
-         add the following line at bottom
-           Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
-
-d. See "Install Ripley's bundle of pre-compiled external software used by
-   some packages" below for other edits to do to R/etc/{i386,x64}/Makeconf
+- See "Install Ripley's bundle of external software" below for other
+  edits to do to `R/etc/{i386,x64}/Makeconf`.
 
 #### Install BiocManager
 
-Start R (with R/bin/R from C:\Users\biocbuild\bbs-3.10-bioc) and install
+Start R (with `R/bin/R` from `C:\Users\biocbuild\bbs-3.10-bioc`) and install
 BiocManager:
 
     install.packages("BiocManager")
@@ -391,7 +394,7 @@ Check that BiocManager is pointing to the correct version of Bioconductor:
     install(version="devel")
 
 TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
-with:
+**from source** with:
 
     library(BiocManager)
     install("IRanges", type="source")
@@ -402,24 +405,24 @@ Install BiocCheck for the Single Package Builder:
 
     install("BiocCheck")
 
-Quit R (do NOT save the workspace image)
+Quit R (do NOT save the workspace image).
 
 #### If updating R
 
 If you are updating R, the cache for AnnotationHub and ExperimentHub
 should be refreshed. This is done by removing all of .AnnotationHub/,
-.AnnotationHubData/, .ExperimentHub/ and .ExperimentHubData/ present
-in C:\Users\biocbuild\ and C:\Users\biobuild\Documents\AppData\.
+`.AnnotationHubData/`, `.ExperimentHub/` and `.ExperimentHubData/`
+present in `C:\Users\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
 
 
 ### Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
 
-The command below will open an editor. Put EnableWrite18=t in it, save and
-exit:
+The command below will open an editor. Put `EnableWrite18=t` in it, then
+save and exit:
 
     initexmf --edit-config-file=miktex\config\pdflatex.ini
 
-Without this, 'R CMD build' will fail on packages using auto-pst-pdf in
+Without this, `R CMD build` will fail on packages using auto-pst-pdf in
 their vignette (e.g. affyContam, arrayMvout, ArrayTools, BrainStars, clst,
 clstutils, GeneAnswers, GGBase, GGtools, lumi, maSigPro, MassArray,
 PAnnBuilder, parody, PLPE, ppiStats, randPack, rbsurv, rnaSeqMap, vtpnet,
@@ -457,40 +460,45 @@ is already logged on when the task starts).
 
 Configure the task as follow:
 
-  Open Task Scheduler
+- Open Task Scheduler
 
-  In the right pane (Actions) click on Enable All Tasks History
+- In the right pane (Actions) click on Enable All Tasks History
 
-  In the left pane create new BBS folder next to Microsoft folder
+- In the left pane create new BBS folder next to Microsoft folder
 
-  Right-click on the BBS folder -> choose Create Task
+- Right-click on the BBS folder -> choose Create Task
+
   - Tab General:
-      Name: loggon_biocbuild_at_startup
-      In Security options:
-        Use TOKAY1\biocbuild account to run the task
-        Run whether user is logged on or not
-      Configure for Windows Server 2012 R2
+    - Name: loggon_biocbuild_at_startup
+    - In Security options:
+      - Use TOKAY1\biocbuild account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2012 R2
+
   - Tab Triggers:
-      New Trigger
-      Begin the task At startup
+    - New Trigger
+    - Begin the task At startup
+
   - Tab Actions:
-      New Action
-      Action: Start a program
-      In Settings:
-        Program/script: C:\Python27\python.exe
-        Add arguments: C:\Users\biocbuild\BBS\utils\do_nothing_forever.py
-        Start in: C:\Users\biocbuild\log
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: C:\Python27\python.exe
+      - Add arguments: C:\Users\biocbuild\BBS\utils\do_nothing_forever.py
+      - Start in: C:\Users\biocbuild\log
+
   - Tab Conditions:
       nothing to do (keep all the defaults)
+
   - Tab Settings:
       nothing should be checked except 'Allow task to be run on demand' and
       'If the running task does not end when requested force it to stop'
 
-  Then click OK on bottom right (requires biocbuild password)
+  - Then click OK on bottom right (requires biocbuild password)
 
-Before the task can be started, the C:\Users\biocbuild\log folder should
+Before the task can be started, the `C:\Users\biocbuild\log` folder should
 be created from the biocbuild account. The first time the task will be
-started, the C:\Users\biocbuild\log\loggon_biocbuild_at_startup.log file
+started, the `C:\Users\biocbuild\log\loggon_biocbuild_at_startup.log` file
 will be created and the task will write 1 line to it. Each subsequent time
 the task will be started in the future (i.e. each time the machine will be
 rebooted), 1 additional line will be added to this file. So this file will
@@ -500,11 +508,10 @@ Now either start the task manually or reboot the machine (the task should
 start automatically after reboot).
 
 When this task is running (and from now on it should always be running),
-the 2 following processes should be seen in the Task Manager: python.exe
-and conhost.exe
-(Open the Task Manager with CTRL+Shift+Esc, click on the Details tab, and
-sort processes by user name).
-These should be the *only* processes running as biocbuild when the builds
+the 2 following processes should be seen in the Task Manager: `python.exe`
+and `conhost.exe` (Open the Task Manager with CTRL+Shift+Esc, click on the
+Details tab, and sort processes by user name).
+These should be the _only_ processes running as biocbuild when the builds
 are not running and the biocbuild user is not logged on.
 
 
