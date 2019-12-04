@@ -469,9 +469,9 @@ Configure the task as follow:
 - Right-click on the BBS folder -> choose Create Task
 
   - Tab General:
-    - Name: loggon_biocbuild_at_startup
+    - Name: `loggon_biocbuild_at_startup`
     - In Security options:
-      - Use TOKAY1\biocbuild account to run the task
+      - Use `TOKAY1\biocbuild` account to run the task
       - Run whether user is logged on or not
     - Configure for Windows Server 2012 R2
 
@@ -483,9 +483,9 @@ Configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: C:\Python27\python.exe
-      - Add arguments: C:\Users\biocbuild\BBS\utils\do_nothing_forever.py
-      - Start in: C:\Users\biocbuild\log
+      - Program/script: `C:\Python37\python.exe`
+      - Add arguments: `C:\Users\biocbuild\BBS\utils\do_nothing_forever.py`
+      - Start in: `C:\Users\biocbuild\log`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
