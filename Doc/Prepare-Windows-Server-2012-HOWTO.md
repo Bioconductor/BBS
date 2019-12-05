@@ -300,13 +300,11 @@ If malbec1 not in DNS, replace with 172.29.0.3
 
 ### Create and populate the bbs-3.10-bioc folder
 
-From C:\Users\biocbuild, proceed as follow
+From `C:\Users\biocbuild`:
 
     mkdir bbs-3.10-bioc
     cd bbs-3.10-bioc
     mkdir log
-    mkdir NodeInfo
-    chmod 755 NodeInfo
     mkdir tmp
     mkdir tmpdir
 
@@ -322,7 +320,7 @@ in "Other builds" section if you need the latest R devel binary).
 
 When running the installer:
 - Ignore warning about the current user not being an admin
-- Select destination location C:\Users\biocbuild\bbs-3.10-bioc\R
+- Select destination location `C:\Users\biocbuild\bbs-3.10-bioc\R`
 - Don't create a Start Menu Folder
 - Don't create a desktop icon
 
@@ -634,17 +632,17 @@ This is not mandatory but HIGHLY RECOMMENDED.
 - On the left panel click on Change Settings.
 
   - Important updates:
-      Make sure "Install updates automatically (recommended)" is selected.
-      Click on Updates will be automatically installed during the maintenance
+    - Make sure "Install updates automatically (recommended)" is selected.
+    - Click on Updates will be automatically installed during the maintenance
       window.
-      Change the time for "Run maintenance tasks daily at" to 1:00 PM (default
+    - Change the time for "Run maintenance tasks daily at" to 1:00 PM (default
       is 2:00 AM).
-      Check "Allow scheduled maintenance to wake up my computer at the
+    - Check "Allow scheduled maintenance to wake up my computer at the
       scheduled time".
-      Then click OK on bottom.
+    - Then click OK on bottom.
 
   - Recommended updates:
-      Check "Give me recommended updates the same way I receive important
+    - Check "Give me recommended updates the same way I receive important
       updates".
 
 - Then click OK on bottom.
@@ -730,7 +728,7 @@ and set variable `LOCAL_SOFT` to `C:/extsoft in R\etc\{i386,x64}\Makeconf`.
 
 - `R\etc\i386\Makeconf`
 
-   From C:\Users\biocbuild\bbs-3.10-bioc:
+   From `C:\Users\biocbuild\bbs-3.10-bioc`:
    ```
    cd R\etc\i386
    vi Makeconf
@@ -757,7 +755,7 @@ and set variable `LOCAL_SOFT` to `C:/extsoft in R\etc\{i386,x64}\Makeconf`.
 
 - `R\etc\x64\Makeconf`
 
-   From C:\Users\biocbuild\bbs-3.10-bioc:
+   From `C:\Users\biocbuild\bbs-3.10-bioc`:
    ```
    cd R\etc\x64
    vi Makeconf
@@ -909,14 +907,14 @@ open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.10-bioc\meat`
 
 ### Install Open Babel
 
-Follow instructions in ChemmineOB/INSTALL for this.
+Follow instructions in `ChemmineOB/INSTALL` for this.
 
 IMPORTANT: Unlike all the other things here that need to be installed from
 a personal administrator account, this one needs to be installed from the
 biocbuild account. That's because the compilation process described in
-ChemmineOB/INSTALL needs to access stuff under
+`ChemmineOB/INSTALL` needs to access stuff under
 
-  c:/Users/biocbuild/bbs-3.10-bioc/R/library/zlibbioc/
+    c:/Users/biocbuild/bbs-3.10-bioc/R/library/zlibbioc/
 
 TESTING: From the biocbuild account (log out and on again from this account
 if you were already logged on) try to compile the ChemmineOB package e.g.
@@ -1099,6 +1097,12 @@ For Permissions choose Read & execute, List folder contents and Read.
 
 Click OK.
 
+NOTE (Hervé 12/04/2019): The `meat` and `NodeInfo` folders belong to the
+daily builds and are automatically created/refreshed/recreated every day
+by the daily builds. I'm not sure why the SPB would need to access or
+even know about these folders so I suspect that the following settings
+are not actually needed (in any case they shouldn't).
+
 Go to `C:\Users\biocbuild\bbs-3.10-bioc` and right click the `meat` folder
 and choose properties. Go to the Security tab:
 
@@ -1161,5 +1165,48 @@ Not run on Windows at the moment.
 
 ### Long Tests builds
 
-TODO
+From `C:\Users\biocbuild`:
+
+    mkdir bbs-3.10-bioc-longtests
+    cd bbs-3.10-bioc
+    mkdir log
+
+Then:
+
+- Open Task Scheduler
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.10-bioc-longtests`
+    - In Security options:
+      - Use `TOKAY1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2012 R2
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Weekly - Start on next Saturday at 11:00 AM -
+        Recur every 1 week on Saturday
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `C:\Users\biocbuild\BBS\3.10\bioc-longtests\tokay1\run.bat`
+      - Add arguments: `>>C:\Users\biocbuild\bbs-3.10-bioc-longtests\log\tokay1.log 2>&1`
+      - Start in: `C:\Users\biocbuild\BBS\3.10\bioc-longtests\tokay1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires biocbuild password)
 
