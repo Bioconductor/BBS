@@ -337,13 +337,13 @@ will fail):
    cd R\etc\i386
    cp Makeconf Makeconf.original
    vi Makeconf
-   # replace line
+   # Replace line
    #     BINPREF ?= c:/Rtools/mingw_32/bin/
    # with
    #     BINPREF = C:/Rtools/mingw_$(WIN)/bin/
    # Save and quit vi.
    ```
-   Then see your changes with:
+   Check your changes with:
    ```
    C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
    ```
@@ -355,13 +355,13 @@ will fail):
    cd R\etc\x64
    cp Makeconf Makeconf.original
    vi Makeconf
-   # replace line
+   # Replace line
    #     BINPREF ?= c:/Rtools/mingw_64/bin/
    # with
    #     BINPREF = C:/Rtools/mingw_$(WIN)/bin/
    # Save and quit vi.
    ```
-   Then see your changes with:
+   Check your changes with:
    ```
    C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
    ```
@@ -373,8 +373,13 @@ will fail):
    cd R\etc
    cp Rprofile.site Rprofile.site.original
    vi Rprofile.site
-   # add the following line at bottom
+   # Add the following line at bottom
    #   Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
+   # Save and quit vi.
+   ```
+   Check your changes with:
+   ```
+   C:\Rtools\bin\diff.exe -Z Rprofile.site.original Rprofile.site
    ```
 
 - See "Install Ripley's bundle of external software" below for other
@@ -732,13 +737,13 @@ and set variable `LOCAL_SOFT` to `C:/extsoft in R\etc\{i386,x64}\Makeconf`.
    ```
    cd R\etc\i386
    vi Makeconf
-   # replace line
+   # Replace line
    #     #LOCAL_SOFT
    # with
    #     LOCAL_SOFT = C:/extsoft
    # Save and quit vi.
    ```
-   Then see your changes with:
+   Check your changes with:
    ```
    C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
    ```
@@ -759,13 +764,13 @@ and set variable `LOCAL_SOFT` to `C:/extsoft in R\etc\{i386,x64}\Makeconf`.
    ```
    cd R\etc\x64
    vi Makeconf
-   # replace line
+   # Replace line
    #     #LOCAL_SOFT
    # with
    #     LOCAL_SOFT = C:/extsoft
    # Save and quit vi.
    ```
-   Then see your changes with:
+   Check your changes with:
    ```
    C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
    ```
@@ -1102,6 +1107,7 @@ the Users security group.
   Click OK.
 
 ###############################################################################
+
 NOTE (Hervé 12/04/2019): The `meat` and `NodeInfo` folders belong to the
 daily builds and are automatically created/refreshed/recreated every day
 by the daily builds. I'm not sure why the SPB would need to access or
