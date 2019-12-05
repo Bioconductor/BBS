@@ -1109,6 +1109,10 @@ def write_BioC_mainpage_top_asHTML(out):
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
     out.write('<H1>%s</H1>\n' % title)
+    if BBScorevars.subbuilds == "bioc-longtests":
+        long_tests_howto_url = '/developers/how-to/long-tests/'
+        out.write('<P>See <A href="%s">here</A> ' % long_tests_howto_url)
+        out.write('for how to subscribe to these builds</P>\n')
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
