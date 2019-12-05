@@ -1082,60 +1082,69 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 Add pkgbuild user
 
 
-### Grant the pkgbuild user permissions within the biocbuild user folder using the Users security group
+### Grant the pkgbuild user permissions within the biocbuild user folder
 
-Using File Explorer, go to `C:\Users` and right click the biocbuild folder
-and choose properties. Go to the Security tab:
+Grant the pkgbuild user permissions within the `biocbuild` user folder using
+the Users security group.
 
-- Click Edit
-- Click Add
-- Enter the object names to select: Users
-- Click Check Names to validate
-- Click OK
+- `C:\Users\biocbuild`
 
-For Permissions choose Read & execute, List folder contents and Read.
+  Using File Explorer, go to `C:\Users` and right click the `biocbuild` folder
+  and choose properties. Go to the Security tab:
+  - Click Edit
+  - Click Add
+  - Enter the object names to select: Users
+  - Click Check Names to validate
+  - Click OK
 
-Click OK.
+  For Permissions choose Read & execute, List folder contents and Read.
 
+  Click OK.
+
+###############################################################################
 NOTE (Hervé 12/04/2019): The `meat` and `NodeInfo` folders belong to the
 daily builds and are automatically created/refreshed/recreated every day
 by the daily builds. I'm not sure why the SPB would need to access or
-even know about these folders so I suspect that the following settings
+even know about these folders so I suspect that the settings below
 are not actually needed (in any case they shouldn't).
 
-Go to `C:\Users\biocbuild\bbs-3.10-bioc` and right click the `meat` folder
-and choose properties. Go to the Security tab:
+- `C:\Users\biocbuild\bbs-3.10-bioc\meat`
 
-- Click Edit
-- Click Add
-- Enter the object names to select: Users
-- Click Check Names to validate
-- Click OK
+  Using File Explorer, go to `C:\Users\biocbuild\bbs-3.10-bioc` and right
+  click the `meat` folder and choose properties. Go to the Security tab:
+  - Click Edit
+  - Click Add
+  - Enter the object names to select: Users
+  - Click Check Names to validate
+  - Click OK
 
-For Permissions choose Read & execute, List folder contents and Read.
+  For Permissions choose Read & execute, List folder contents and Read.
 
-Click OK.
+  Click OK.
 
-Go to `C:\Users\biocbuild\bbs-3.10-bioc` and right click the `NodeInfo` folder
-and choose properties. Go to the Security tab:
+- `C:\Users\biocbuild\bbs-3.10-bioc\NodeInfo`
 
-- Click Edit
-- Click Add
-- Enter the object names to select: Users
-- Click Check Names to validate
-- Click OK
+  Using File Explorer, go to `C:\Users\biocbuild\bbs-3.10-bioc` and right
+  click the `NodeInfo` folder and choose properties. Go to the Security tab:
+  - Click Edit
+  - Click Add
+  - Enter the object names to select: Users
+  - Click Check Names to validate
+  - Click OK
 
-For Permissions choose Read & execute, List folder contents and Read.
+  For Permissions choose Read & execute, List folder contents and Read.
 
-Click OK.
+  Click OK.
+
+###############################################################################
 
 
 ### Grant the pkgbuild user permissions within the Windows\Temp folder
 
-Grant the pkgbuild user permissions within the Windows\Temp folder using
+Grant the pkgbuild user permissions within the `Windows\Temp` folder using
 the Users security group. This is for BiocCheck.
 
-Using File Explorer, go to C:\Windows and right click the Temp folder
+Using File Explorer, go to `C:\Windows` and right click the `Temp` folder
 and choose properties. Go to the Security tab:
 
 - Click Edit
