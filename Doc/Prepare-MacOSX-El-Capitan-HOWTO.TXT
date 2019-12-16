@@ -599,21 +599,21 @@ Everything in this section should be done from the biocbuild account.
     https://tug.org/mactex/mactex-download.html
 
     cd /Users/biocbuild/Downloads
-    curl -O ftp://ftp.tug.org/historic/systems/mactex/2016/mactex-20161009.pkg 
+    curl -O ftp://ftp.tug.org/historic/systems/mactex/2018/mactex-20180417.pkg
 
 
   Install with:
 
-    sudo installer -pkg mactex-20161009.pkg -target /
+    sudo installer -pkg mactex-20180417.pkg -target /
 
   TESTING: Logout and login again so that the changes to the $PATH take
   effect. Then:
 
     which tex
 
-  Add shell_escape = t to /usr/local/texlive/2016/texmf.cnf
+  Add shell_escape = t to /usr/local/texlive/2018/texmf.cnf
 
-    cd /usr/local/texlive/2016/
+    cd /usr/local/texlive/2018/
     sudo cp texmf.cnf texmf.cnf.original
     sudo vi texmf.cnf
     ## add shell_escape = t at the bottom of the file
@@ -621,7 +621,8 @@ Everything in this section should be done from the biocbuild account.
   TESTING: Try to build a package using pstricks + auto-pst-pdf in its
   vignette e.g.:
 
-    svn co https://hedgehog.fhcrc.org/bioconductor/trunk/madman/Rpacks/affyContam
+    cd ~/sandbox
+    git clone https://git.bioconductor.org/packages/affyContam
     R CMD build affyContam
 
 ** Install Pandoc
@@ -966,7 +967,7 @@ Everything in this section must be done from the biocbuild account.
 
     sudo -H pip install cwltool
 
-** Install Python 3 and modules nbconvert + jupyter_client
+** Install Python 3 and modules nbconvert + jupyter
 
   Install Python 3 + Jupyter + pip3 with:
 
@@ -975,10 +976,10 @@ Everything in this section must be done from the biocbuild account.
   See "Install Homebrew" previously in this file if you get errors about
   /usr/local/bin or other directories under /usr/local not being writable.
 
-  Install nbconvert + jupyter_client with:
+  Install nbconvert + jupyter with:
 
     pip3 install nbconvert
-    pip3 install jupyter_client
+    pip3 install jupyter
 
   TESTING: Install CRAN package nbconvertR *from source* and try to run the
   example in the man page for nbconvert():
