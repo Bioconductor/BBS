@@ -14,12 +14,12 @@ import shutil
 import re
 import fnmatch
 import string
+import html
 
 import bbs.fileutils
 import bbs.parse
 import bbs.rdir
 import bbs.jobs
-import bbs.html
 import BBScorevars
 import BBSvars
 import BBSreportutils
@@ -660,7 +660,7 @@ def write_motd_asTABLE(out):
     if motd == "":
         return
     out.write('<TABLE class="motd">')
-    out.write('<TR><TD>%s</TD></TR>' % bbs.html.encodeHTMLentities(motd, 'utf_8')) # untrusted
+    out.write('<TR><TD>%s</TD></TR>' % html.escape(motd)) # untrusted
     out.write('</TABLE>\n')
     return
 
@@ -737,11 +737,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
         line = bbs.parse.bytes2str(line)
         if pattern != None and regex.match(line):
             pattern_detected = True
-        #try:
-        #    html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
-        #except:
-        #    html_line = line
-        html_line = bbs.html.encodeHTMLentities(line, encoding) # untrusted
+        html_line = html.escape(line)  # untrusted
         try:
             out.write(html_line)
         except UnicodeEncodeError:
