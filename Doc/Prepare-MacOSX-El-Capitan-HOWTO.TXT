@@ -1410,11 +1410,33 @@ Perform the following steps from the biocbuild account:
 
        install.packages("RGtk2", type="source", repos='http://cran.r-project.org')
 
-  5) Install the following package binaries:
+  5) If the builds are using R-devel and CRAN doesn't provide package binaries
+     for Mac yet, install the following package binaries (these are the
+     Bioconductor deps that are "difficult" to compile from source on Mac,
+     as of Dec 2019):
 
-       pkgs <- c("Cairo", "tkrplot", "sysfonts", "rphast", "rtfbs",
-                 "RMySQL", "RPostgreSQL", "V8", "udunits2")
+       pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
+                 "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools", "PSCBS",
+                 "protolite", "RSQLite")
+
+     First try to install with:
+
        install.packages(pkgs, repos='http://cran.r-project.org')
+
+     It should fail for most (if not all) packages. However, it's still worth
+     doing it as it will be able to install many dependencies from source.
+     Then try to install the binaries built with the current R release:
+
+       contriburl <- "https://cran.r-project.org/bin/macosx/el-capitan/contrib/3.6"
+       install.packages(pkgs, contriburl=contriburl)
+
+     Please note that the binaries built with a previous version of R are not
+     guaranteed to work with R-devel but if they can be loaded then it's
+     **very** likely that they will. So make sure they can be loaded:
+
+       for (pkg in pkgs) library(pkg, character.only=TRUE)
+
+     and remove those that can't.
 
   6) Refresh the cache for AnnotationHub and ExperimentHub 
 
