@@ -219,26 +219,29 @@ Everything in this section must be done from the biocbuild account.
 
 ** Install the C and C++ compilers used by the CRAN folks
 
-  The CRAN folks use clang 4.0.0 to compile R and produce binary packages on
-  Mac. It can be found at http://r.research.att.com/libs/
+  The CRAN folks use the clang version provided here:
 
-  Download and install with:
+    https://cran.r-project.org/bin/macosx/tools/
 
-    curl -O http://r.research.att.com/libs/clang-4.0.0-darwin15.6-Release.tar.gz
-    sudo tar fvxz clang-4.0.0-darwin15.6-Release.tar.gz -C /
+  to compile R and produce binary packages on Mac.
+
+  So for example, for R 4.0, download and install with:
+
+    curl -O https://cran.r-project.org/bin/macosx/tools/clang-8.0.0.pkg
+    sudo installer -pkg clang-8.0.0.pkg -target /
     sudo chown -R biocbuild:admin /usr/local
 
   Then in /etc/profile *prepend*
 
-    /usr/local/clang4/bin
+    /usr/local/clang8/bin
 
   to PATH.
 
   TESTING: Logout and login again so that the changes to /etc/profile take
   effect.
 
-    which clang  # /usr/local/clang4/bin/clang
-    clang -v     # clang version 4.0.0
+    which clang  # /usr/local/clang8/bin/clang
+    clang -v     # clang version 8.0.0
 
 ** Install gfortran
 
@@ -1211,8 +1214,9 @@ libsbml.pc
 ** Install ROOT
 
   xps wants ROOT 5, not 6. Unfortunately, there are no ROOT 5 binaries
-  for OS X 10.11 / clang4 at https://root.cern.ch/. So we need to install from
-  source.
+  for OS X 10.11 and for the version of clang we use on the builders
+  at https://root.cern.ch/ (well at least that was the case last time I
+  checked but you should check again). So we need to install from source.
 
   Download source of latest ROOT 5 release (5.34/36):
 
@@ -1237,10 +1241,10 @@ libsbml.pc
     tar zxvf root_v5.34.36.source.tar.gz
     mkdir root_builddir
     cd root_builddir
-    # Tell cmake to use clang4 (even though it comes before Apple's clang in
+    # Tell cmake to use clang8 (even though it comes before Apple's clang in
     # the PATH, by default cmake wants to use the latter).
-    export CC=/usr/local/clang4/bin/clang
-    export CXX=/usr/local/clang4/bin/clang++
+    export CC=/usr/local/clang8/bin/clang
+    export CXX=/usr/local/clang8/bin/clang++
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ../root
     cmake --build . -- -j4  # takes about 10-15 min (> 45 min without -j4)
 
