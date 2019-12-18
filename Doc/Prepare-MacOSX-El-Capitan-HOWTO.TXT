@@ -1421,7 +1421,7 @@ Perform the following steps from the biocbuild account:
 
        pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
                  "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools", "PSCBS",
-                 "protolite", "RSQLite")
+                 "protolite", "RSQLite", "RPostgres", "glpkAPI")
 
      First try to install with:
 
