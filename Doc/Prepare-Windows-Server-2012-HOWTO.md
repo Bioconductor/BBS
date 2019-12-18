@@ -10,7 +10,16 @@
 Use CTRL+Shift+Esc
 
 
-### How to edit an environment variable
+### Managing environment variables
+
+#### Display the value of an environment variable in a PowerShell window
+
+E.g. to see the `Path`:
+```
+Get-ChildItem Env:Path
+```
+
+### Edit an environment variable
 
 Always from a _personal administrator account_ (see below about this):
 
@@ -39,8 +48,8 @@ When running the installer:
 - Select "Add Python 3.7 to PATH" then click on "Customize installation".
 - In the "Optional Features" screen, click Next without changing anything.
 - In "Advanced Options" choose "Install for all users" and change install
-  location from C:\Program Files\Python37 to C:\Python37, then click on
-  "Install".
+  location from `C:\Program Files\Python37` to `C:\Python37`, then click
+  on "Install".
 
 ALSO: You need to explicitly associate .py files with Python by:
 - Double-clicking on a .py file.
@@ -197,13 +206,13 @@ them are in the Net category).
 
 Note that this installs the Cygwin 32-bit DLL.
 
-Prepend `C:\cygwin\bin` to `PATH` (see "How to edit an environment variable"
+Prepend `C:\cygwin\bin` to `Path` (see "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to do
 this).
 
 TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
 in it. Do this by just typing the name of the command followed by <Enter>.
-If `PATH` was set correctly, the command should be found (the Cygwin
+If `Path` was set correctly, the command should be found (the Cygwin
 executables are in `C:\cygwin\bin`).
 
 
@@ -225,11 +234,49 @@ On the System Path page: add `c:\Rtools\mingw_64\bin;` right after
 TESTING: Open a PowerShell window and try to run:
 
     which rsync # should show /cygdrive/c/Rtools/bin/rsync, because rsync
-                # from Rtools should be before Cygwin rsync in PATH
+                # from Rtools should be before Cygwin rsync in Path
     which ssh   # should show /usr/bin/ssh
     which curl  # should show /usr/bin/curl
     rsync       # will crash if 64-bit Cygwin was installed instead of 32-bit!
     which gcc   # should show /cygdrive/c/Rtools/mingw_32/bin/gcc
+
+
+### Install convert.exe from ImageMagick
+
+Currently needed (as of December 2019) by `knitr::plot_crop()` to
+build the vignettes of some Bioconductor packages (e.g. bigPint,
+CellBench, CTDquerier, evaluomeR, FELLA, IgGeneUsage, MEAL, netSmooth,
+PrecisionTrialDrawer, pRoloc, rnaseqcomp, and many more). Will no longer
+be needed when the following issue is addressed:
+
+  https://github.com/yihui/knitr/issues/1785
+
+Download ImageMagick for Windows:
+
+  https://imagemagick.org/script/download.php#windows
+
+Choose the first option (Win64 dynamic at 16 bits-per-pixel component).
+
+When running the installer: use all the defaults **except** on the
+"Select Additional Tasks" screen. On this screen: **uncheck** the
+"Create a desktop icon" and "Install FFmpeg" boxes, and **check**
+the "Install legacy utilities (e.g. convert)" box. Also keep the
+"Add application directory to your system path" box checked.
+
+Note that the installer will prepend `C:\Program Files\ImageMagick-7.0.9-Q16;`
+to the `Path`. However, on a Windows build machine, `c:\Rtools\bin;`
+`c:\Rtools\mingw_32\bin;` and `c:\Rtools\mingw_64\bin;` should always
+be first in `Path`, so move `C:\Program Files\ImageMagick-7.0.9-Q16;`
+**right after** `c:\Rtools\mingw_64\bin;`. See "How to edit an environment
+variable" in "General information and tips" at the top of this document
+for how to do this.
+
+TESTING: From the biocbuild account (log out and on again from the biocbuild
+account if you were already logged on) in a PowerShell window:
+
+    which convert
+
+This should display `/cygdrive/c/Program Files/ImageMagick-7.0.9-Q16/convert`.
 
 
 ### Install git client for Windows
@@ -256,7 +303,7 @@ selected (by default they're NOT -- choose 'Entire feature will be
 installed on local hard drive').
 
 TESTING: Open a PowerShell window and try to run 'svn --version'.
-If `PATH` was set correctly (by the installer), the command should be
+If `Path` was set correctly (by the installer), the command should be
 found (it's located in `C:\Program Files\TortoiseSVN\bin`).
 
 
@@ -675,9 +722,9 @@ products (this will download 2 executables named something like
 Install both. Use the default settings when running the installers.
 
 Note that the installer will prepend `C:\ProgramData\Oracle\Java\javapath;`
-to the `PATH`. However, on a Windows build machine, `c:\Rtools\bin;`
-`c:\\Rtools\\mingw_32\\bin;` and `c:\\Rtools\\mingw_64\\bin;` should always
-be first in the `PATH`, so move this towards the end of `PATH` (e.g. anywhere
+to the `Path`. However, on a Windows build machine, `c:\Rtools\bin;`
+`c:\Rtools\mingw_32\bin;` and `c:\Rtools\mingw_64\bin;` should always
+be first in the `Path`, so move this towards the end of `Path` (e.g. anywhere
 after `C:\Program Files\Git\cmd`). See "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to
 do this.
@@ -824,7 +871,7 @@ Choose Ghostscript AGPL Release for 64 bit Windows.
 
 Use the default settings when running the installer.
 
-Append `C:\Program Files\gs\gs9.19\bin` to `PATH` (see "How to edit an
+Append `C:\Program Files\gs\gs9.19\bin` to `Path` (see "How to edit an
 environment variable" in "General information and tips" at the top of this
 document for how to do this).
 
@@ -846,9 +893,9 @@ Download and install Active Perl Community Edition for 64-bit Windows
 When running the installer, choose "Typical" setup
 
 Note that the installer will prepend `C:\Perl64\site\bin;C:\Perl64\bin;`
-to the PATH. However, on a Windows build machine, `c:\Rtools\bin;`
-`c:\\Rtools\\mingw_32\\bin;` and `c:\\Rtools\\mingw_64\\bin;` should always
-be first in the `PATH`, so move this towards the end of `PATH` (e.g. anywhere
+to the `Path`. However, on a Windows build machine, `c:\Rtools\bin;`
+`c:\Rtools\mingw_32\bin;` and `c:\Rtools\mingw_64\bin;` should always
+be first in `Path`, so move this towards the end of `Path` (e.g. anywhere
 after `C:\Program Files\Git\cmd`). See "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to
 do this.
@@ -962,7 +1009,7 @@ Download Windows 64-bit zip file from http://www.clustal.org/omega/
 
 Extract all the files in `C:\ClustalO`
 
-Append `C:\ClustalO` to PATH (see "How to edit an environment variable"
+Append `C:\ClustalO` to `Path` (see "How to edit an environment variable"
 in "General information and tips" at the top of this document for how
 to do this).
 
