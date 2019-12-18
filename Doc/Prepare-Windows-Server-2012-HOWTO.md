@@ -18,8 +18,9 @@ E.g. to see the `Path`:
 ```
 Get-ChildItem Env:Path
 ```
+Pretty bad though because it doesn't display the full thing.
 
-### Edit an environment variable
+#### Edit an environment variable
 
 Always from a _personal administrator account_ (see below about this):
 
