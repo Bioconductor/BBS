@@ -171,7 +171,10 @@ personal accounts instead of the Administrator account.
 
 ### Install MiKTeX
 
-Choose the Basic MiKTeX 64-bit Installer
+Go to https://ctan.org/tex-archive/systems/win32/miktex/setup/windows-x64/
+
+Download latest Basic MiKTeX 64-bit Installer (`basic-miktex-2.9.7269-x64.exe`
+as of Dec. 2019) and run it:
 
 - Install MiKTeX for all users
 - Preferred paper: Letter
@@ -183,15 +186,16 @@ Set environment variable `MIKTEX_ENABLEWRITE18=t` (this is for packages using
 auto-pst-pdf in their vignette). See "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to do
 this. Not clear that this actually helps with recent versions of
-Windows/MiKTeX. See below ("Turn on write18 for a few MiKTeX applications")
-for an alternative that actually seems to help.
+Windows/MiKTeX. See below ("Turn on write18 for pdflatex") for an alternative
+that actually seems to help.
 
 
 ### Install Pandoc
 
-Go to http://pandoc.org/installing.html#windows
+Go to https://pandoc.org/installing.html#windows
 
-Download and run the installer.
+Download latest installer for Windows x86\_64
+(`pandoc-2.9-windows-x86_64.msi` as of Dec. 2019) and run it.
 
 
 ### Install 32-bit Cygwin
