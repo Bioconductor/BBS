@@ -604,7 +604,6 @@ Everything in this section should be done from the biocbuild account.
     cd /Users/biocbuild/Downloads
     curl -O ftp://ftp.tug.org/historic/systems/mactex/2018/mactex-20180417.pkg
 
-
   Install with:
 
     sudo installer -pkg mactex-20180417.pkg -target /

@@ -185,9 +185,8 @@ Run MiKTeX Update (Admin) in the Windows start menu
 Set environment variable `MIKTEX_ENABLEWRITE18=t` (this is for packages using
 auto-pst-pdf in their vignette). See "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to do
-this. Not clear that this actually helps with recent versions of
-Windows/MiKTeX. See below ("Turn on write18 for pdflatex") for an alternative
-that actually seems to help.
+this. See below ("Turn on write18 for pdflatex") for an important additional
+setting related to this.
 
 
 ### Install Pandoc
@@ -476,16 +475,16 @@ present in `C:\Users\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
 
 ### Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
 
-The command below will open an editor. Put `EnableWrite18=t` in it, then
-save and exit:
+In a PowerShell window:
 
     initexmf --edit-config-file=miktex\config\pdflatex.ini
 
-Without this, `R CMD build` will fail on packages using auto-pst-pdf in
-their vignette (e.g. affyContam, arrayMvout, ArrayTools, BrainStars, clst,
-clstutils, GeneAnswers, GGBase, GGtools, lumi, maSigPro, MassArray,
-PAnnBuilder, parody, PLPE, ppiStats, randPack, rbsurv, rnaSeqMap, vtpnet,
-xmapbridge). With the following error:
+The command above will open an editor. Put `EnableWrite18=t` in it, then
+save and exit. Without this, `R CMD build` will fail on packages using
+auto-pst-pdf in their vignette (e.g. affyContam, arrayMvout, ArrayTools,
+BioSeqClass, BrainStars, clst, clstutils, GeneAnswers, GGtools, maSigPro,
+MassArray, PLPE, ppiStats, randPack, rbsurv, rnaSeqMap, vtpnet, xmapbridge).
+With the following error:
 
     LaTeX errors:
     df.sty:134: Package auto-pst-pdf Error:
