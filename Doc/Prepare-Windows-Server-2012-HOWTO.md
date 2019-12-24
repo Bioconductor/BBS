@@ -493,7 +493,7 @@ present in `C:\Users\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
 ### Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
 
 This is no longer needed (as of Dec 2019) since no package that uses
-pstricks in their vignette should still need to use auto-pst-pdf:
+pstricks in their vignette should still need to use auto-pst-pdf.
 
 In a PowerShell window:
 
