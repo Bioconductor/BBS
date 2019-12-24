@@ -133,21 +133,3 @@ nodes.
 Use first build/check report to indentify what's missing.
 
 
-*** Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
-
-  The command below will open an editor. Put EnableWrite18=t in it, save and
-  exit:
-
-    initexmf --edit-config-file=miktex\config\pdflatex.ini
-
-  Without this, 'R CMD build' will fail on packages using auto-pst-pdf in
-  their vignette (e.g. affyContam, arrayMvout, ArrayTools, BrainStars, clst,
-  clstutils, GeneAnswers, GGBase, GGtools, lumi, maSigPro, MassArray,
-  PAnnBuilder, parody, PLPE, ppiStats, randPack, rbsurv, rnaSeqMap, vtpnet,
-  xmapbridge). With the following error:
-
-    LaTeX errors:
-    df.sty:134: Package auto-pst-pdf Error:
-        "shell escape" (or "write18") is not enabled:
-        auto-pst-pdf will not work!
-

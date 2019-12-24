@@ -165,11 +165,13 @@ From now on, all administrative tasks should be performed from one of the
 personal accounts instead of the Administrator account.
 
 
-
-## 2. From a personal administrator account
-
-
 ### Install MiKTeX
+
+If this is a reinstallation of MiKTeX, make sure to uninstall
+MiKTeX first (from the Administrator account) and to manually
+remove C:\Users\biocbuild\AppData\Roaming\MiKTeX\ and
+C:\Users\pkgbuild\AppData\Roaming\MiKTeX\ (better done from
+the biocbuild and pkgbuild accounts, respectively) before reinstalling.
 
 Go to https://ctan.org/tex-archive/systems/win32/miktex/setup/windows-x64/
 
@@ -180,13 +182,28 @@ as of Dec. 2019) and run it:
 - Preferred paper: Letter
 - Install missing packages on-the-fly: Yes
 
-Run MiKTeX Update (Admin) in the Windows start menu
+IMPORTANT: After the installer finishes, do NOT check for updates by
+unchecking the "Check for updates now" on the "Update Check" screen.
+We're going to do this from the MiKTeX Console.
 
-Set environment variable `MIKTEX_ENABLEWRITE18=t` (this is for packages using
-auto-pst-pdf in their vignette). See "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to do
-this. See below ("Turn on write18 for pdflatex") for an important additional
-setting related to this.
+Open the MiKTeX Console by going to the Windows start menu:
+
+- Switch to administrator mode
+- Check for updates
+- Go to the Updates page
+- Click on "Update now"
+
+This is no longer needed (as of Dec 2019) since no package that uses
+pstricks in their vignette should still need to use auto-pst-pdf:
+> Set environment variable `MIKTEX_ENABLEWRITE18=t` (this is for packages
+> using auto-pst-pdf in their vignette). See "How to edit an environment
+> variable" in "General information and tips" at the top of this document
+> for how to do this. See below ("Turn on write18 for pdflatex") for an
+> important additional setting related to this.
+
+
+
+## 2. From a personal administrator account
 
 
 ### Install Pandoc
@@ -474,6 +491,9 @@ present in `C:\Users\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
 
 
 ### Turn on write18 for pdflatex (and maybe for other MiKTeX applications)
+
+This is no longer needed (as of Dec 2019) since no package that uses
+pstricks in their vignette should still need to use auto-pst-pdf:
 
 In a PowerShell window:
 

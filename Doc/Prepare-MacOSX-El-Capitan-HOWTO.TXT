@@ -613,19 +613,21 @@ Everything in this section should be done from the biocbuild account.
 
     which tex
 
-  Add shell_escape = t to /usr/local/texlive/2018/texmf.cnf
-
-    cd /usr/local/texlive/2018/
-    sudo cp texmf.cnf texmf.cnf.original
-    sudo vi texmf.cnf
-    ## add shell_escape = t at the bottom of the file
-
-  TESTING: Try to build a package using pstricks + auto-pst-pdf in its
-  vignette e.g.:
-
-    cd ~/sandbox
-    git clone https://git.bioconductor.org/packages/affyContam
-    R CMD build affyContam
+  This is no longer needed (as of Dec 2019) since no package that uses
+  pstricks in their vignette should still need to use auto-pst-pdf:
+  #Add shell_escape = t to /usr/local/texlive/2018/texmf.cnf
+  #
+  #  cd /usr/local/texlive/2018/
+  #  sudo cp texmf.cnf texmf.cnf.original
+  #  sudo vi texmf.cnf
+  #  ## add shell_escape = t at the bottom of the file
+  #
+  # TESTING: Try to build a package using pstricks + auto-pst-pdf in its
+  # vignette e.g.:
+  #
+  #   cd ~/sandbox
+  #   git clone https://git.bioconductor.org/packages/affyContam
+  #   R CMD build affyContam
 
 ** Install Pandoc
 
