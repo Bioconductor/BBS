@@ -513,7 +513,11 @@ With the following error:
 
 
 
-## 4. From a personal administrator account
+## 4. Add tasks to Task Scheduler
+
+
+All the installation in this section should be made from a personal
+administrator account.
 
 
 ### Add loggon_biocbuild_at_startup task to Task Scheduler
