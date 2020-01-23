@@ -6,9 +6,9 @@
 set BBS_DEBUG=0
 
 set BBS_NODE_HOSTNAME=tokay2
-set BBS_USER=biocbuild
-set BBS_RSAKEY=C:\Users\biocbuild\.BBS\id_rsa
-set BBS_WORK_TOPDIR=C:\Users\biocbuild\bbs-3.11-bioc-testing
+set BBS_USER=bioctesting
+set BBS_RSAKEY=C:\Users\bioctesting\.BBS\id_rsa
+set BBS_WORK_TOPDIR=C:\Users\bioctesting\bbs-3.11-bioc-testing
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=2
 set BBS_CHECK_NB_CPU=3
