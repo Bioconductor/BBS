@@ -109,6 +109,8 @@ def make_report_title(subbuilds, report_nodes):
             title += " annotations"
         elif subbuilds == "data-experiment":
             title += " experimental data"
+        elif subbuilds == "bioc-testing":
+            title += " (small subset of software packages ONLY)"
     return title
 
 def stage_label(stage):
@@ -139,7 +141,7 @@ def stages_to_display(subbuilds):
 ### Whether to display the package propagation status led or not for the
 ### given subbuilds.
 def display_propagation_status(subbuilds):
-    return subbuilds not in ["bioc-longtests", "cran"]
+    return subbuilds not in ["bioc-longtests", "bioc-testing", "cran"]
 
 def ncol_to_display(subbuilds):
     return len(stages_to_display(subbuilds)) + \

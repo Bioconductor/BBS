@@ -13,7 +13,18 @@ export BBS_NODE_HOSTNAME="malbec2"
 export BBS_USER="biocbuild"
 export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.11-bioc-testing"
+# We use the same R instance that is used for the nightly software
+# subbuilds (because it's convenient) but we don't want the bioc-testing
+# subbuilds to interfer in any way with the nightly software subbuilds.
+# In particular STAGE2 should NOT install anything in
+# /home/biocbuild/bbs-3.11-bioc/R/library!
+# So we set R_LIBS to point to our own library folder.
+# IMPORTANT: Make sure to create the Rlibs folder on malbec2 before
+# starting the bioc-testing subbuilds. Otherwise the bioc-testing
+# subbuilds will ignore the folder and install packages in
+# /home/biocbuild/bbs-3.11-bioc/R/library!
 export BBS_R_HOME="/home/biocbuild/bbs-3.11-bioc/R"
+export R_LIBS="/home/biocbuild/bbs-3.11-bioc-testing/Rlibs"
 export BBS_NB_CPU=2        # 20 cores are available
 export BBS_CHECK_NB_CPU=3  # 20 cores are available
 
