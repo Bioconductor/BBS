@@ -1,9 +1,9 @@
 @rem ============================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.11-bioc subbuilds
+@rem Settings shared by all the Windows nodes involved in the 3.11-bioc-testing subbuilds
 @rem ============================================================================
 
 
-set BBS_SUBBUILDS=bioc
+set BBS_SUBBUILDS=bioc-testing
 
 
 set wd1=%cd%
@@ -24,12 +24,12 @@ set BBS_BIOC_MANIFEST_GIT_BRANCH=master
 set BBS_BIOC_MANIFEST_CLONE_PATH=%BBS_WORK_TOPDIR%\manifest
 
 @rem Needed if BBS_MEAT0_TYPE is 1 or 3
-set BBS_BIOC_MANIFEST_FILE=software.txt
+set BBS_BIOC_MANIFEST_FILE=software-testing.txt
 
 @rem Where is the fresh meat to be stored by prerun (stage1)
 set BBS_MEAT0_RHOST=%BBS_CENTRAL_RHOST%
 set BBS_MEAT0_RUSER=%BBS_CENTRAL_RUSER%
-set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.11-bioc/MEAT0
+set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.11-bioc-testing/MEAT0
 
 @rem Triggers a MEAT0 update at beginning of prerun (stage1)
 set BBS_UPDATE_MEAT0=1
