@@ -95,7 +95,9 @@ def make_report_title(subbuilds, report_nodes):
             if node == "":
                 continue
             nnodes += 1
-        if nnodes != 1:
+        if subbuilds == "bioc-testing":
+            title = '"Blame Jeroen" build/check'
+        elif nnodes != 1:
             title = "Multiple platform build/check"
         else:
             title = "Build/check"
@@ -109,8 +111,6 @@ def make_report_title(subbuilds, report_nodes):
             title += " annotations"
         elif subbuilds == "data-experiment":
             title += " experimental data"
-        elif subbuilds == "bioc-testing":
-            title += " (small subset of software packages ONLY)"
     return title
 
 def stage_label(stage):
