@@ -26,7 +26,7 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.11-bioc-testing"
 export BBS_R_HOME="/home/biocbuild/bbs-3.11-bioc/R"
 export R_LIBS="/home/biocbuild/bbs-3.11-bioc-testing/Rlibs"
 export BBS_NB_CPU=2        # 20 cores are available
-export BBS_CHECK_NB_CPU=3  # 20 cores are available
+export BBS_CHECK_NB_CPU=4  # 20 cores are available
 
 
 
