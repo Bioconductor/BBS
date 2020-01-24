@@ -25,3 +25,8 @@ set wd0=%cd%
 cd ..
 call config.bat
 cd %wd0%
+
+
+@rem The Shared settings above already set BBS_HOME to the value defined
+@rem in BBS/nodes/tokay2/local-settings.bat. We need to override this value.
+set BBS_HOME=C:\Users\bioctesting\BBS
