@@ -97,7 +97,7 @@ def makeNodeInfo():
     Rscript = "sessionInfo()"
     bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
-    Rscript = "data.frame(installed.packages()[,c('LibPath','Version','Built')])"
+    Rscript = "options(width=500);print(installed.packages()[,c('LibPath','Version','Built')],quote=FALSE)"
     bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
                     'R-instpkgs.txt', 60.0, True) # ignore retcode
     writeSysCommandVersion('CC')
