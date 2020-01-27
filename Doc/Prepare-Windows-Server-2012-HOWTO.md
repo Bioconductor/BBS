@@ -530,8 +530,8 @@ This task is a workaround for the following issue with the Task Scheduler. The i
 Under these conditions the environment seen by the running task is not the
 same as if the user under which the task is running was already logged on
 when the task started.
-This issue causes some MiKTeX commands like pdflatex to fail during
-the nightly builds.
+This issue causes some MiKTeX commands like pdflatex to fail mysteriously
+during the nightly builds.
 
 The following task automatically loggon the biocbuild user at system
 startup. It's not a "real" loggon (e.g. it's not reported in the Task
