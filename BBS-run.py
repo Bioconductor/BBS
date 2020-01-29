@@ -153,7 +153,7 @@ def getSrcPkgFilesFromSuccessfulSTAGE3():
         srcpkg_file = bbs.parse.getNextDcfVal(dcf, 'PackageFile')
         dcf.close()
         if status in ok_statuses:
-            srcpkg_files.append[srcpkg_file]
+            srcpkg_files.append(srcpkg_file)
     return srcpkg_files
 
 def waitForTargetRepoToBeReady():
