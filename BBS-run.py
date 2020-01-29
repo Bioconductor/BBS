@@ -138,6 +138,24 @@ def extractTargetPkgListFromMeatIndex():
     dcf.close()
     return target_pkgs
 
+def getSrcPkgFilesFromSuccessfulSTAGE3():
+    target_pkgs = extractTargetPkgListFromMeatIndex()
+    stage = "buildsrc"
+    ok_statuses = ["OK", "WARNINGS"]
+    srcpkg_files = []
+    for target_pkg in target_pkgs:
+        summary_file = "%s.%s-summary.dcf" % (target_pkg, stage)
+        try:
+            dcf = open(summary_file, 'rb')
+        except IOError:
+            continue
+        status = bbs.parse.getNextDcfVal(dcf, 'Status')
+        srcpkg_file = bbs.parse.getNextDcfVal(dcf, 'PackageFile')
+        dcf.close()
+        if status in ok_statuses:
+            srcpkg_files.append[srcpkg_file]
+    return srcpkg_files
+
 def waitForTargetRepoToBeReady():
     Central_rdir = BBScorevars.Central_rdir
     PACKAGES_url = Central_rdir.url + '/src/contrib/PACKAGES'
@@ -497,13 +515,6 @@ def STAGE3():
 ## STAGE4: Check the srcpkg files.
 ##############################################################################
 
-# IMPLEMENT ME: Use BBSvars.buildsrc_rdir.List()
-# and compare with srcpkg_files. If local srcpkg files are missing,
-# then raise an error.
-def CheckLocalSrcpkgFiles(srcpkg_files):
-    sys.exit("IMPLEMENT ME!")
-    return
-
 def prepare_STAGE4_job_queue(srcpkg_paths):
     print("BBS> Preparing STAGE4 job queue ... ", end=" ")
     stage = 'checksrc'
@@ -548,9 +559,8 @@ def STAGE4():
     BBSvars.checksrc_rdir.RemakeMe(True)
     print("BBS> [STAGE4] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
-    print("BBS> [STAGE4] Get list of srcpkg files found in current dir")
-    srcpkg_paths = bbs.fileutils.listSrcPkgFiles()
-    #CheckLocalSrcpkgFiles(srcpkg_paths)
+    print("BBS> [STAGE4] Get list of source tarballs to CHECK")
+    srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3()
     job_queue = prepare_STAGE4_job_queue(srcpkg_paths)
     STAGE4_loop(job_queue, BBSvars.check_nb_cpu)
     print("BBS> [STAGE4] DONE at %s." % time.asctime())
@@ -607,9 +617,8 @@ def STAGE5():
     BBSvars.buildbin_rdir.RemakeMe(True)
     print("BBS> [STAGE5] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
-    print("BBS> [STAGE5] Get list of srcpkg files found in current dir")
-    srcpkg_paths = bbs.fileutils.listSrcPkgFiles()
-    #CheckLocalSrcpkgFiles(srcpkg_paths)
+    print("BBS> [STAGE5] Get list of source tarballs to BUILD BIN")
+    srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3()
     job_queue = prepare_STAGE5_job_queue(srcpkg_paths)
     STAGE5_loop(job_queue, BBSvars.nb_cpu)
     print("BBS> [STAGE5] DONE at %s." % time.asctime())
