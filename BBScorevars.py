@@ -88,7 +88,7 @@ if user != running_user:
 BBS_home = getenv('BBS_HOME')
 ### BBS_BIOC_VERSION is not necessarily defined (e.g. for the "cran"
 ### subbuilds) in which case 'bioc_version' will be set to None.
-bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
+bioc_version = getenv('BBS_BIOC_VERSION', False)
 
 #sys.path.append(os.path.join(BBS_home, "nodes"))
 import nodes.nodespecs
