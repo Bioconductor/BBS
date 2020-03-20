@@ -1596,6 +1596,7 @@ print("BBS> [stage8] STARTING stage8 at %s..." % time.asctime())
 
 report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
 report_path = BBScorevars.getenv('BBS_REPORT_PATH')
+r_environ_user = BBScorevars.getenv('R_ENVIRON_USER', False)
 css_file = BBScorevars.getenv('BBS_REPORT_CSS', False)
 bgimg_file = BBScorevars.getenv('BBS_REPORT_BGIMG', False)
 js_file = BBScorevars.getenv('BBS_REPORT_JS', False)
@@ -1627,17 +1628,27 @@ allpkgs = meat_pkgs + skipped_pkgs
 allpkgs.sort(key=str.lower)
 make_STATUS_SUMMARY(allpkgs)
 
-print("BBS> [stage8] cp %s %s/" % (css_file, report_path))
-shutil.copy(css_file, report_path)
-if bgimg_file:
+if r_environ_user != None:
+    dst = os.path.join(report_path, 'Renviron.bioc')
+    print("BBS> [stage8] cp %s %s" % (r_environ_user, dst))
+    shutil.copy(r_environ_user, dst)
+
+if css_file != None:
+    print("BBS> [stage8] cp %s %s/" % (css_file, report_path))
+    shutil.copy(css_file, report_path)
+
+if bgimg_file != None:
     print("BBS> [stage8] cp %s %s/" % (bgimg_file, report_path))
     shutil.copy(bgimg_file, report_path)
-if js_file:
+
+if js_file != None:
     print("BBS> [stage8] cp %s %s/" % (js_file, report_path))
     shutil.copy(js_file, report_path)
+
 for color in ["Red", "Green", "Blue"]:
     icon = "%s/images/120px-%s_Light_Icon.svg.png" % (os.getenv("BBS_HOME"), color)
     shutil.copy(icon, report_path)
+
 print("BBS> [stage8] Will generate HTML report for nodes: %s" % report_nodes)
 if arg1 != "skip-leaf-reports":
     make_all_LeafReports(allpkgs)

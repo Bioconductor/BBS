@@ -9,7 +9,6 @@
 
 import sys
 import os
-import shutil
 import time
 import urllib.request
 
@@ -86,12 +85,6 @@ def write_sys_command_version(var):
         bbs.jobs.call(syscmd) # ignore retcode
     return
 
-def copy_Renviron_bioc():
-    r_environ_user = BBScorevars.getenv('R_ENVIRON_USER', False)
-    if r_environ_user != None:
-        shutil.copy(r_environ_user, '.')
-    return
-
 def makeNodeInfo():
     # Generate the NodeInfo files (the files containing some node related info)
     NodeInfo_subdir = "NodeInfo"
@@ -108,7 +101,6 @@ def makeNodeInfo():
     write_sys_command_version('CXX14')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
-    copy_Renviron_bioc()
     Rscript = "sessionInfo()"
     bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
