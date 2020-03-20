@@ -105,8 +105,7 @@ def make_report_title(subbuilds, report_nodes):
     if subbuilds == "cran":
         title += "CRAN"
     else:
-        bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
-        title += "BioC %s" % bioc_version
+        title += "BioC %s" % BBScorevars.bioc_version
         if subbuilds == "data-annotation":
             title += " annotations"
         elif subbuilds == "data-experiment":

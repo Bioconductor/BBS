@@ -1,6 +1,7 @@
 #!/bin/bash
 # ====================================================================
-# Environment variables that control the behavior of R / 'R CMD check'
+# Environment variables used by the Bioconductor Build System to
+# control the behavior of R during 'R CMD BUILD' and/or 'R CMD check'
 # ====================================================================
 #
 # IMPORTANT: Make sure the settings used by the Bioconductor Devel

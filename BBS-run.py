@@ -9,6 +9,7 @@
 
 import sys
 import os
+import shutil
 import time
 import urllib.request
 
@@ -26,7 +27,7 @@ import BBSbase
 
 # 'R --version' writes to the standard output on Unix/Linux/Mac and to
 # the standard error on Windows :-/. Hence the '2>&1' in the command. 
-def writeRversion():
+def write_R_version():
     file = 'R-version.txt'
     syscmd = '%s --version >%s 2>&1' % (BBSvars.r_cmd, file)
     bbs.jobs.doOrDie(syscmd)
@@ -48,7 +49,7 @@ def appendRconfigValue(file, var, is_first=False):
     f.close()
     return
 
-def writeRconfig():
+def write_R_config():
     file = 'R-config.txt'
     appendRconfigValue(file, 'MAKE', True)
     C_vars = ['CC', 'CFLAGS', 'CPICFLAGS', 'CPP']
@@ -77,12 +78,25 @@ def writeRconfig():
 # guarantees that 'file' will be created anyway but with the shell error
 # message inside (e.g. '-bash: gfortran: command not found') instead of
 # the command output. 
-def writeSysCommandVersion(var):
+def write_sys_command_version(var):
     file = '%s-version.txt' % var
     cmd = getRconfigValue(var)
     if cmd.strip():
         syscmd = '%s --version >%s 2>&1' % (cmd, file)
         bbs.jobs.call(syscmd) # ignore retcode
+    return
+
+def write_BBS_Renvironvars():
+    if BBScorevars.bioc_version == None:
+        return
+    if sys.platform == 'win32':
+        filename = 'BBS_Renvironvars.bat'
+    else:
+        filename = 'BBS_Renvironvars.sh'
+    filepath = os.path.join(BBScorevars.BBS_home, BBScorevars.bioc_version, filename)
+    if not os.path.exists(filepath):
+        return
+    shutil.copy(filepath, '.')
     return
 
 def makeNodeInfo():
@@ -92,21 +106,22 @@ def makeNodeInfo():
     NodeInfo_path = os.path.join(BBSvars.work_topdir, NodeInfo_subdir)
     bbs.fileutils.remake_dir(NodeInfo_path)
     os.chdir(NodeInfo_path)
-    writeRversion()
-    writeRconfig()
+    write_R_version()
+    write_R_config()
+    write_sys_command_version('CC')
+    write_sys_command_version('CXX')
+    #write_sys_command_version('CXX98')
+    write_sys_command_version('CXX11')
+    write_sys_command_version('CXX14')
+    #write_sys_command_version('F77')
+    #write_sys_command_version('FC')
+    write_BBS_Renvironvars()
     Rscript = "sessionInfo()"
     bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
     Rscript = "options(width=500);print(installed.packages()[,c('LibPath','Version','Built')],quote=FALSE)"
     bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
                     'R-instpkgs.txt', 60.0, True) # ignore retcode
-    writeSysCommandVersion('CC')
-    writeSysCommandVersion('CXX')
-    #writeSysCommandVersion('CXX98')
-    writeSysCommandVersion('CXX11')
-    writeSysCommandVersion('CXX14')
-    #writeSysCommandVersion('F77')
-    #writeSysCommandVersion('FC')
     print("BBS>   cd BBS_WORK_TOPDIR")
     os.chdir(BBSvars.work_topdir)
     BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
@@ -117,8 +132,8 @@ def makeNodeInfo():
 ## Misc utils
 ##############################################################################
 
-def writeEndOfRunTicket(ticket):
-    print("BBS> START making BBS_EndOfRun.txt Ticket.")
+def write_BBS_EndOfRun_ticket(ticket):
+    print("BBS> START writing BBS_EndOfRun.txt ticket.")
     print("BBS>   cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
     file_path = "BBS_EndOfRun.txt"
@@ -127,7 +142,7 @@ def writeEndOfRunTicket(ticket):
         f.write("%s | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n" % t)
     f.close()
     BBSvars.Node_rdir.Put(file_path, True, True)
-    print("BBS> END making BBS_EndOfRun.txt Ticket.")
+    print("BBS> END writing BBS_EndOfRun.txt ticket.")
     return
 
 def extractTargetPkgListFromMeatIndex():
@@ -675,4 +690,4 @@ if __name__ == "__main__":
         dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE5', started_at, ended_at, dt))
-    writeEndOfRunTicket(ticket)
+    write_BBS_EndOfRun_ticket(ticket)

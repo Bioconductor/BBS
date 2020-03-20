@@ -35,8 +35,8 @@ set BBS_CENTRAL_RDIR=/home/biocbuild/public_html/BBS/%BBS_BIOC_VERSIONED_REPO_PA
 set BBS_CENTRAL_BASEURL=https://%BBS_CENTRAL_RHOST%/BBS/%BBS_BIOC_VERSIONED_REPO_PATH%
 
 
-@rem Define some environment variables that control the behavior of R
-@rem ----------------------------------------------------------------
+@rem Define some environment variables to control the behavior of R
+@rem --------------------------------------------------------------
 
-call R_env_vars.bat
+call BBS_Renvironvars.bat
 

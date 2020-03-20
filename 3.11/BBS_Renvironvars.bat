@@ -1,5 +1,6 @@
 @rem ====================================================================
-@rem Environment variables that control the behavior of R / 'R CMD check'
+@rem Environment variables used by the Bioconductor Build System to
+@rem control the behavior of R during 'R CMD BUILD' and/or 'R CMD check'
 @rem ====================================================================
 
 @rem set _R_CHECK_TIMINGS_=0

@@ -118,17 +118,19 @@ def pkgname_to_HTML(pkg):
     if BBScorevars.subbuilds == "cran":
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
-        bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
-        subbuilds = BBScorevars.subbuilds
-        if subbuilds == "data-annotation":
-            repo = "data/annotation"
-        elif subbuilds == "data-experiment":
-            repo = "data/experiment"
-        elif subbuilds == "workflows":
-            repo = "workflows"
-        else:
-            repo = "bioc"
-        url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
+        bioc_version = BBScorevars.bioc_version
+        #subbuilds = BBScorevars.subbuilds
+        #if subbuilds == "data-annotation":
+        #    repo = "data/annotation"
+        #elif subbuilds == "data-experiment":
+        #    repo = "data/experiment"
+        #elif subbuilds == "workflows":
+        #    repo = "workflows"
+        #else:
+        #    repo = "bioc"
+        #url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
+        ## Use short URL:
+        url = "/packages/%s/%s" % (bioc_version, pkg)
     return '<A href="%s">%s</A>' % (url, pkg)
 
 

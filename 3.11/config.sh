@@ -42,7 +42,7 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
 
-# Define some environment variables that control the behavior of R
-# ----------------------------------------------------------------
-. ./R_env_vars.sh
+# Define some environment variables to control the behavior of R
+# --------------------------------------------------------------
+. ./BBS_Renvironvars.sh
 

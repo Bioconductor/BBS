@@ -56,11 +56,11 @@ def Rscript2syscmd(Rscript, Roptions=None):
 ##############################################################################
 
 def _BiocGreaterThanOrEqualTo(x, y):
-    bioc_version = BBScorevars.getenv('BBS_BIOC_VERSION', False)
-    # If BBS_BIOC_VERSION is not defined, then we assume it's the latest version.
-    if bioc_version == None:
+    # If 'BBScorevars.bioc_version' is not defined, then we assume it's the
+    # latest version.
+    if BBScorevars.bioc_version == None:
         return True
-    parts = bioc_version.split('.')
+    parts = BBScorevars.bioc_version.split('.')
     x0 = int(parts[0])
     y0 = int(parts[1])
     return x0 > x or (x0 == x and y0 >= y)
