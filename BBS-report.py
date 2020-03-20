@@ -1012,7 +1012,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('<TABLE style="width: 100%;"><TR>\n')
         out.write('<TD style="width: 15%;"></TD>\n')
         out.write('<TD style="text-align: center;">\n')
-        out.write('TO THE DEVELOPERS/MAINTAINERS OF THE %s PACKAGE: ' % pkg)
+        out.write('TO THE DEVELOPERS/MAINTAINERS OF THE <B>%s</B> PACKAGE: ' % pkg)
         out.write('Please make sure to use the ')
         out.write('<A href="../Renviron.bioc">following settings</A> ')
         out.write('in order to reproduce any error or warning ')
