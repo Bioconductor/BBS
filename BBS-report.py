@@ -1005,12 +1005,13 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out.write('This page was generated on %s.\n' % date)
     out.write('</P>\n')
     write_motd_asTABLE(out)
-    Renviron_bioc_path = '../Renviron.bioc'
-    if os.path.exists(Renviron_bioc_path):
+    # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
+    # be the current working directory.
+    if os.path.exists('Renviron.bioc'):
         out.write('<P>\n')
         out.write('TO THE DEVELOPERS/MAINTAINERS OF THE %s PACKAGE: ' % pkg)
         out.write('Please make sure to use the ')
-        out.write('<A href="%s">following settings</A>' % Renviron_bioc_path)
+        out.write('<A href="../Renviron.bioc">following settings</A>')
         out.write('in order to reproduce any error or warning ')
         out.write('you see on this page.')
         out.write('</P>\n')
