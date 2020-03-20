@@ -1005,6 +1005,15 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out.write('This page was generated on %s.\n' % date)
     out.write('</P>\n')
     write_motd_asTABLE(out)
+    Renviron_bioc_path = '../Renviron.bioc'
+    if os.path.exists(Renviron_bioc_path):
+        out.write('<P>\n')
+        out.write('TO THE DEVELOPERS/MAINTAINERS OF THE %s PACKAGE: ' % pkg)
+        out.write('Please make sure to use the ')
+        out.write('<A href="%s">following settings</A>' % Renviron_bioc_path)
+        out.write('in order to reproduce any error or warning ')
+        out.write('you see on this page.')
+        out.write('</P>\n')
 
     write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
     #if len(BBSreportutils.NODES) != 1:
