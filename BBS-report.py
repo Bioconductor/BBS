@@ -1224,6 +1224,7 @@ def make_NodeInfo_page(Node_rdir, node):
     out.write('<TR><TD><B>R&nbsp;version:&nbsp;</B></TD><TD>%s</TD></TR>\n' % read_Rversion(Node_rdir))
     out.write('<TR>')
     out.write('<TD><B>R&nbsp;environment&nbsp;variables:&nbsp;</B></TD>')
+    out.write('<TD>')
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
     if os.path.exists('Renviron.bioc'):
