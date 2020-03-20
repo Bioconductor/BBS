@@ -44,5 +44,5 @@ export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_
 
 # Define some environment variables to control the behavior of R
 # --------------------------------------------------------------
-. ./BBS_Renvironvars.sh
+export R_ENVIRON_USER="$BBS_HOME/$BBS_BIOC_VERSION/Renviron.bioc"
 

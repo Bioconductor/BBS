@@ -86,17 +86,10 @@ def write_sys_command_version(var):
         bbs.jobs.call(syscmd) # ignore retcode
     return
 
-def write_BBS_Renvironvars():
-    if BBScorevars.bioc_version == None:
-        return
-    if sys.platform == 'win32':
-        filename = 'BBS_Renvironvars.bat'
-    else:
-        filename = 'BBS_Renvironvars.sh'
-    filepath = os.path.join(BBScorevars.BBS_home, BBScorevars.bioc_version, filename)
-    if not os.path.exists(filepath):
-        return
-    shutil.copy(filepath, '.')
+def copy_Renviron_bioc():
+    r_environ_user = BBScorevars.getenv('R_ENVIRON_USER', False)
+    if r_environ_user != None:
+        shutil.copy(r_environ_user, '.')
     return
 
 def makeNodeInfo():
@@ -115,7 +108,7 @@ def makeNodeInfo():
     write_sys_command_version('CXX14')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
-    write_BBS_Renvironvars()
+    copy_Renviron_bioc()
     Rscript = "sessionInfo()"
     bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode

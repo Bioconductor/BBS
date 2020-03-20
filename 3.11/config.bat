@@ -38,5 +38,5 @@ set BBS_CENTRAL_BASEURL=https://%BBS_CENTRAL_RHOST%/BBS/%BBS_BIOC_VERSIONED_REPO
 @rem Define some environment variables to control the behavior of R
 @rem --------------------------------------------------------------
 
-call BBS_Renvironvars.bat
+set R_ENVIRON_USER=%BBS_HOME%\%BBS_BIOC_VERSION%\Renviron.bioc
 
