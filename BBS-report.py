@@ -1008,15 +1008,15 @@ def make_LeafReport(leafreport_ref, allpkgs):
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
     if os.path.exists('Renviron.bioc'):
-        out.write('<TABLE><TR>\n')
-        out.write('<TD style="width: 670px; text-align: center; padding: 10px;">\n')
+        out.write('<DIV style="width: 670px; text-align: center;">\n')
+        out.write('<TABLE><TR><TD>\n')
         out.write('TO THE DEVELOPERS/MAINTAINERS OF THE %s PACKAGE: ' % pkg)
         out.write('Please make sure to use the ')
         out.write('<A href="../Renviron.bioc">following settings</A> ')
         out.write('in order to reproduce any error or warning ')
         out.write('you see on this page.\n')
-        out.write('</TD>\n')
-        out.write('</TR></TABLE>\n')
+        out.write('</TD></TR></TABLE>\n')
+        out.write('</DIV>\n')
 
     write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
     #if len(BBSreportutils.NODES) != 1:
