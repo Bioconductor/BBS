@@ -1014,7 +1014,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('<TD style="text-align: center;">\n')
         out.write('TO THE DEVELOPERS/MAINTAINERS OF THE <B>%s</B> PACKAGE: ' % pkg)
         out.write('Please make sure to use the ')
-        out.write('<A href="../Renviron.bioc">following settings</A> ')
+        out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
         out.write('in order to reproduce any error or warning ')
         out.write('you see on this page.\n')
         out.write('</TD>\n')
@@ -1222,7 +1222,7 @@ def make_NodeInfo_page(Node_rdir, node):
     out.write('<TR><TD><B>Arch:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.arch)
     out.write('<TR><TD><B>Platform:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.platform)
     out.write('<TR><TD><B>R&nbsp;version:&nbsp;</B></TD><TD>%s</TD></TR>\n' % read_Rversion(Node_rdir))
-    out.write('<TR><TD><B>R&nbsp;environment&nbsp;variables</B></TD><TD><A href="%">%s</A></TD></TR>\n' % (Renviron.bioc, Renviron.bioc))
+    out.write('<TR><TD><B>R&nbsp;environment&nbsp;variables</B></TD><TD><A href="%">%s</A></TD></TR>\n' % ('Renviron.bioc', 'Renviron.bioc'))
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
 
