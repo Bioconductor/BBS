@@ -1222,7 +1222,7 @@ def make_NodeInfo_page(Node_rdir, node):
     out.write('<TR><TD><B>Arch:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.arch)
     out.write('<TR><TD><B>Platform:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.platform)
     out.write('<TR><TD><B>R&nbsp;version:&nbsp;</B></TD><TD>%s</TD></TR>\n' % read_Rversion(Node_rdir))
-    out.write('<TR><TD><B>R&nbsp;environment&nbsp;variables</B></TD><TD><A href="%">%s</A></TD></TR>\n' % ('Renviron.bioc', 'Renviron.bioc'))
+    out.write('<TR><TD><B>R&nbsp;environment&nbsp;variables</B></TD><TD><A href="%s">%s</A></TD></TR>\n' % ('Renviron.bioc', 'Renviron.bioc'))
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
 
