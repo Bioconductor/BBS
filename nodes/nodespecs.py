@@ -65,5 +65,10 @@ allnodes = {
                    "x86_64",
                    "x86_64-apple-darwin15.6.0",
                    "mac.binary.el-capitan",
+                   "utf-8"),
+    'machv2':     ("macOS 10.14.6 Mojave",
+                   "x86_64",
+                   "x86_64-apple-darwin18.7.0",
+                   "mac.binary",
                    "utf-8")
 }
