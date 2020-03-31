@@ -150,8 +150,8 @@ long (i.e. hostname+domain) hostname. For example:
 
 Check that you can ssh to the central build node:
 
-  Add `~/.BBS/id_rsa` to the biocbuild home (copy `id_rsa` from another build
-  machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this
+Add `~/.BBS/id_rsa` to the biocbuild home (copy `id_rsa` from another build
+machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
 
     machv2:~ biocbuild$ ls -l .BBS/id_rsa
     -r--------  1 biocbuild  staff  884 Jan 12 12:19 .BBS/id_rsa
@@ -180,7 +180,7 @@ If this is blocked by RPCI's firewall, after a while you'll get:
     curl: (7) Failed connect to malbec2.bioconductor.org:80; Operation timed out
 
 Contact the IT folks at RPCI if that's the case (see above). More details
-on https implementation in the BBS/README.md.
+on https implementation in `BBS/README.md`.
 
 
 
@@ -251,13 +251,9 @@ So for example, for R 4.0, download and install with:
     sudo installer -pkg clang-8.0.0.pkg -target /
     sudo chown -R biocbuild:admin /usr/local
 
-Then in /etc/profile *prepend*
+Then in `/etc/profile` *prepend* `/usr/local/clang8/bin` to `PATH`.
 
-    /usr/local/clang8/bin
-
-to PATH.
-
-TESTING: Logout and login again so that the changes to /etc/profile take
+TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect.
 
     which clang  # /usr/local/clang8/bin/clang
@@ -267,9 +263,7 @@ effect.
 
 ### Install gfortran
 
-Simon uses Coudert's gfortran 8.2 found here:
-
-    https://github.com/fxcoudert/gfortran-for-macOS/releases
+Simon uses Coudert's gfortran 8.2: https://github.com/fxcoudert/gfortran-for-macOS/releases
 
 Download with:
 
@@ -289,9 +283,8 @@ TESTING:
 Finally check that the gfortran libraries got installed in
 `/usr/local/gfortran/lib` and make sure that `LOCAL_FORTRAN_DYLIB_DIR`
 in `BBS/utils/macosx-inst-pkg.sh` points to this location.
-Otherwise  we will produce broken binaries again:
-
-    https://support.bioconductor.org/p/95587/#95631
+Otherwise  we will produce broken binaries again (see
+https://support.bioconductor.org/p/95587/#95631).
 
 
 ### Install XQuartz
@@ -309,7 +302,7 @@ Install with:
     ln -s /opt/X11/include/X11 X11
 
 TESTING: Logout and login again so that the changes made by the installer
-to the PATH take effect. Then:
+to the `PATH` take effect. Then:
 
     which Xvfb        # should be /opt/X11/bin/Xvfb
     ls -l /usr/X11    # should be a symlink to /opt/X11
@@ -333,7 +326,7 @@ called and when they are started. We'll call our plist `local.xvfb.plist`.
     cd /Library/LaunchDaemons
     sudo vim local.xvfb.plist
 
-Paste these contents into local.xvfb.plist:
+Paste these contents into `local.xvfb.plist`:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -392,7 +385,7 @@ the `xvfb.conf` file is in place, simulate a rotation:
 
     sudo vim /etc/profile
 
-Add this line to /etc/profile:
+Add this line to `/etc/profile`:
 
     export DISPLAY=:1.0
 
@@ -412,7 +405,7 @@ If a PID is assigned that means the daemon is running. The service is
 scheduled to start on boot so at this point there probably is no PID
 assigned (service is loaded but not started).
 
-#### Test starting / stopping the service
+#### Test starting/stopping the service
 
 NOTE: For testing, set `KeepAlive` to `false` in the plist file. Once
 testing is done, reset the key to `true`.
@@ -534,7 +527,7 @@ Install with:
 
 
 
-## Install BBS git tree and create bbs-3.y-bioc directory structure
+## 4. Install BBS git tree and create bbs-3.y-bioc directory structure
 
 Everything in this section must be done from the biocbuild account.
 
@@ -567,7 +560,7 @@ TESTING: Check that the permissions on chown-rootadmin look like this:
 
 
 
-## Install R
+## 5. Install R
 
 
 This must be done from the `biocbuild` account.
@@ -631,7 +624,7 @@ end of this file and perform all steps from step 3.
 
 
 
-## Install MacTeX & Pandoc
+## 6. Install MacTeX & Pandoc
 
 
 Everything in this section should be done from the biocbuild account.
@@ -639,9 +632,7 @@ Everything in this section should be done from the biocbuild account.
 
 ### Install MacTeX
 
-Home page:
-
-    https://www.tug.org/mactex/
+Home page: https://www.tug.org/mactex/
 
 Download:
 
@@ -657,7 +648,7 @@ Install with:
     sudo installer -pkg MacTeX.pkg -target /
 
 TESTING: Logout and login again so that the changes made by the installer
-to the PATH take effect. Then:
+to the `PATH` take effect. Then:
 
     which tex
 
@@ -692,7 +683,7 @@ Install with:
 
 
 
-## Add crontab entries for daily builds
+## 7. Add crontab entries for daily builds
 
 
 This must be done from the biocbuild account.
@@ -706,7 +697,7 @@ doing so.
 
 
 
-## Additional stuff to install for packages with special needs
+## 8. Additional stuff to install for packages with special needs
 
 
 Everything in this section must be done from the biocbuild account.
@@ -874,7 +865,7 @@ Download and install with:
     curl -O https://mac.r-project.org/libs/GTK_2.24.17-X11.pkg
     sudo installer -allowUntrusted -pkg GTK_2.24.17-X11.pkg -target /
 
-Create pkg-config symlink in /usr/local/bin/ with:
+Create `pkg-config` symlink in `/usr/local/bin/` with:
 
     cd /usr/local/bin
     sudo ln -s /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
@@ -965,7 +956,7 @@ Ignore the "This formula is keg-only..." caveat.
 In `/etc/profile` *prepend* `/usr/local/opt/libxml2/lib/pkgconfig` to
 `PKG_CONFIG_PATH`.
 
-Logout and login again so that the changes to /etc/profile take
+Logout and login again so that the changes to `/etc/profile` take
 effect.
 
 Finally install libSBML. As of December 2018, Homebrew was no longer
@@ -1032,7 +1023,7 @@ In `/etc/profile` add:
     export ISR_login=bioc@immunespace.org
     export ISR_pwd=1notCRAN
 
-TESTING: Logout and login again so that the changes to /etc/profile take
+TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then try to build the ImmuneSpaceR package:
 
     cd ~/bbs-3.11-bioc/meat
@@ -1060,7 +1051,7 @@ TESTING: Try to install the Rmpi package *from source*:
 Note that we only need this for the ensemblVEP package. RMySQL doesn't need
 it as long as we can install the binary package.
 
-Download mysql-8.0.0-dmr-osx10.11-x86_64.dmg from:
+Download `mysql-8.0.0-dmr-osx10.11-x86_64.dmg` from:
 
     https://downloads.mysql.com/archives/community/
 
@@ -1211,7 +1202,7 @@ Then in `/etc/profile` add the following line (before the `PATH` and
 and append `$ROOTSYS/bin` to `PATH` and `$ROOTSYS/lib/root`
 to `DYLD_LIBRARY_PATH`.
 
-TESTING: Logout and login again so that the changes to /etc/profile take
+TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
 
     which root-config      # /usr/local/root/bin/root-config
@@ -1322,7 +1313,7 @@ Install with:
 
 
 
-## Additional stuff to install when CRAN Mac binary packages are not available
+## 9. Additional stuff to install when CRAN Mac binary packages are not available
 
 
 CRAN has a tradition of making Mac binary packages available at the last minute
@@ -1351,7 +1342,7 @@ Download and install with:
 
 
 
-## How to update R
+## 10. How to update R
 
 
 Perform the following steps from the biocbuild account:
