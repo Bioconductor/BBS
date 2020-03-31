@@ -77,7 +77,7 @@ This module is needed by BBS.
     pip install psutil
 
 
-### Install Python modules needed by some CRAN/Bioconductor packages
+### Install Python 3 modules needed by some CRAN/Bioconductor packages
 
 In a PowerShell window:
 
