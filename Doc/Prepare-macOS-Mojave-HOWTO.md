@@ -1185,14 +1185,17 @@ IGNORE ALL THIS (As of Apr 2017, xps can still not be compiled against
 ROOT 6)
 
 |Installing a ROOT 6 pre-compiled binary for OS X 10.11.
+
 |Download with:
-|
+
 |    curl -O https://root.cern.ch/download/root_v6.08.06.macosx64-10.11-clang80.dmg
-|
+
 |Install with:
-|
+
 |    sudo hdiutil attach root_v6.08.06.macosx64-10.11-clang80.dmg
+
 |    sudo installer -pkg /Volumes/root_v6.08.06.macosx64-10.11-clang80/root_v6.08.06.macosx64-10.11-clang80.mpkg -target /
+
 |    sudo hdiutil detach /Volumes/root_v6.08.06.macosx64-10.11-clang80
 
 --------------------------------------------------------------------------
