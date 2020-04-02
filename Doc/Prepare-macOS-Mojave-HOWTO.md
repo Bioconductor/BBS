@@ -323,8 +323,7 @@ you specify with the 'UserName' key).
 The plist files in `/Library/LaunchDaemons` specify how applications are
 called and when they are started. We'll call our plist `local.xvfb.plist`.
 
-    cd /Library/LaunchDaemons
-    sudo vim local.xvfb.plist
+    sudo vim /Library/LaunchDaemons/local.xvfb.plist
 
 Paste these contents into `local.xvfb.plist`:
 
@@ -363,8 +362,8 @@ so you can manually start/stop the service. Once you are done testing, set
 #### Logs
 
 stdout and stderror logs are output to `/var/log/xvfb` as indicated in
-the plist file. Logs are rotated with newsyslog and the config is in
-`/etc/newsyslog.d/`.
+`/Library/LaunchDaemons/local.xvfb.plist`. Logs are rotated with `newsyslog`
+and the config is in `/etc/newsyslog.d/`.
 
 Create `xvfb.conf`:
 
@@ -407,12 +406,13 @@ assigned (service is loaded but not started).
 
 #### Test starting/stopping the service
 
-NOTE: For testing, set `KeepAlive` to `false` in the plist file. Once
-testing is done, reset the key to `true`.
+NOTE: For testing, set `KeepAlive` to `false` in
+`/Library/LaunchDaemons/local.xvfb.plist`. Once testing is done,
+reset the key to `true`.
 
-The `RunAtLoad` directive in the plist file says to start the service
-at boot. To test the service without a re-boot use the `start` and
-`stop` commands with the service label.
+The `RunAtLoad` directive in `/Library/LaunchDaemons/local.xvfb.plist`
+says to start the service at boot. To test the service without a re-boot
+use the `start` and `stop` commands with the service label.
 
     sudo launchctl start local.xvfb
 
@@ -443,13 +443,13 @@ Reboot the server and confirm the service came up:
 
 #### Kill the process
 
-When `KeepAlive` is set to 'true' in the plist file, the service will
-be restarted if killed with:
+When `KeepAlive` is set to 'true' in `/Library/LaunchDaemons/local.xvfb.plist`,
+the service will be restarted if killed with:
 
     sudo kill -9 <PID>
 
 If you really need to kill the service, change `KeepAlive` to `false`
-in the plist, then kill the process.
+in the plist file, then kill the process.
 
 #### Testing X11 from R
 
@@ -464,6 +464,62 @@ result in output of "SUCCESS!":
     merida2:sandbox biocbuild$ ./testX11.sh
     [1] "SUCCESS!"
 
+
+### The nasty Fonts/XQuartz issue on macOS High Sierra or higher
+
+The following code produces a `polygon edge not found` error and a bunch
+of `no font could be found for family "Arial"` warnings on macOS High Sierra
+or higher:
+
+    library(ggplot2)
+    png(type="quartz")
+    ggplot(data.frame(), aes(1, 1))
+    dev.off()
+
+See https://github.com/tidyverse/ggplot2/issues/2252#issuecomment-398268742
+
+This breaks `R CMD build` on > 300 Bioconductor packages at the moment!
+(March 2020)
+
+Simpler code (that doesn't involve ggplot2) that reproduces the warning
+about the missing font:
+
+    png(type="quartz")
+    plot(density(rnorm(1000)))
+    dev.off()
+
+NO GOOD SOLUTION YET!!
+
+Current workaround (found here https://stackoverflow.com/questions/55933524/r-can-not-find-fonts-to-be-used-in-plotting):
+
+    library(showtext)
+    font_add("Arial", "/Library/Fonts/Arial.ttf")  # use the actual file path
+    showtext_auto()
+    library(ggplot2)
+    png(type="quartz")
+    ggplot(data.frame(), aes(1, 1))
+    dev.off()
+
+If the above works, then put the following lines
+
+    ## A very unsatisfactory workaround for the nasty Fonts/XQuartz issue
+    ## on macOS High Sierra or higher. See Prepare-macOS-Mojave-HOWTO.md
+    ## Add more fonts if necessary.
+    if (nzchar(system.file(package="showtext"))) {
+      suppressMessages(library(showtext))
+      font_add("Arial", "/Library/Fonts/Arial.ttf")  # use the actual file path
+      showtext_auto()
+    }
+
+in `/Library/Frameworks/R.framework/Resources/etc/Rprofile.site`
+
+TESTING:
+
+Gviz: Arial warning only
+plyranges: polygon edge error only
+DESeq2: both
+
+non-finite location and/or size for viewport
 
 ### Install Homebrew
 
@@ -705,18 +761,39 @@ Everything in this section must be done from the biocbuild account.
 
 ### Install Java
 
-Visit https://www.java.com/en/download/faq/develop.xml, then click on the
-"JDK downloads" link, then on the big Java DOWNLOAD button, then pick up
-the Java SE Development Kit for Mac OS X. It's a big (> 220 MB) .dmg file
-named something like jdk-8u191-macosx-x64.dmg
+Go to https://jdk.java.net/ and follow the link to the latest JDK (JDK
+14 as of April 1, 2020). Then download the tarball for macOS/x64 (e.g.
+`openjdk-14_osx-x64_bin.tar.gz`) to `~/Downloads/`.
 
 Install with:
 
-    sudo hdiutil attach jdk-8u191-macosx-x64.dmg
-    sudo installer -pkg "/Volumes/JDK 8 Update 191/JDK 8 Update 191.pkg" -target /
-    sudo hdiutil detach "/Volumes/JDK 8 Update 191"
+    cd /usr/local
+    sudo tar zxvf ~/Downloads/openjdk-14_osx-x64_bin.tar.gz
+    sudo chown -R biocbuild:admin /usr/local
 
-Then reconfigure R to use this new Java installation:
+Then:
+
+    cd /usr/local/bin
+    ln -s ../jdk-14.jdk/Contents/Home/bin/java
+    ln -s ../jdk-14.jdk/Contents/Home/bin/javac
+    ln -s ../jdk-14.jdk/Contents/Home/bin/jar
+
+In `/etc/profile` add the following line:
+
+    export JAVA_HOME=/usr/local/jdk-14.jdk/Contents/Home
+
+TESTING: Logout and login again so that the changes to `/etc/profile` take
+effect. Then:
+
+    java --version
+    # openjdk 14 2020-03-17
+    # OpenJDK Runtime Environment (build 14+36-1461)
+    # OpenJDK 64-Bit Server VM (build 14+36-1461, mixed mode, sharing)
+
+    javac --version
+    # javac 14
+
+Finally reconfigure R to use this new Java installation:
 
     sudo R CMD javareconf
 
@@ -727,6 +804,7 @@ TESTING: Try to install the rJava package:
     library(rJava)
     .jinit()
     .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
+    # [1] "14+36-1461"
 
 
 ### Install JPEG system library
