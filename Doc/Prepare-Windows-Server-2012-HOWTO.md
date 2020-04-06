@@ -239,6 +239,9 @@ executables are in `C:\cygwin\bin`).
 
 ### Install Rtools
 
+WARNING: With the upcoming of Rtools 40, the instructions in this section
+will change!
+
 Download `Rtools*.exe` from https://CRAN.R-project.org/bin/windows/Rtools/
 
 For the devel builds, choose the latest version (NOT frozen), for the
@@ -379,6 +382,9 @@ From `C:\Users\biocbuild`:
 
 ### Install R in bbs-3.10-bioc
 
+WARNING: With the upcoming of Rtools 40, the instructions in this section
+will change!
+
 #### Download R Windows binary from CRAN
 
 https://cran.rstudio.com/bin/windows/base/
@@ -393,6 +399,10 @@ When running the installer:
 - Don't create a desktop icon
 
 #### Edit Makeconf and Rprofile.site files
+
+NOTE: Skip this if you're installing R-testing, and go directly to
+"Install Ripley's bundle of external software" below for a 1-line
+edit to do to `R/etc/{i386,x64}/Makeconf`.
 
 The `R\etc\i386\Makeconf`, `R\etc\x64\Makeconf`, and `R\etc\Rprofile.site`
 files need to be edited as follow (without this, compilation of zlibbioc
