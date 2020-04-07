@@ -683,9 +683,9 @@ without reporting any issue!
 
 #### Compilation issue with Rcpp 1.0.4
 
-Some Rcpp clients (e.g. mzR, msa, csaw, BiocNeighbors, DropletUtils, etc..)
-won't compile with R 4.0.0 alpha and the Rcpp version currently on CRAN
-(version 1.0.4):
+Some Rcpp clients (e.g. mzR, msa, csaw, BiocNeighbors, DropletUtils, and about
+20 more Bioconductor software packages) won't compile with R 4.0.0 alpha and
+the Rcpp version currently on CRAN (version 1.0.4). For example:
 
     library(BiocManager)
     install("BiocNeighbors", type="source")
