@@ -1099,12 +1099,13 @@ effect. Then try to install the RGtk2 package *from source*:
 
 TESTING:
 
-Start python3 and try to import the above modules. Quit.
+- Start python3 and try to import the above modules. Quit.
 
-Try to build the BiocSklearn package (takes < 1 min):
-
-      cd ~/bbs-3.11-bioc/meat
-      R CMD build BiocSklearn
+- Try to build the BiocSklearn package (takes < 1 min):
+    ```
+    cd ~/bbs-3.11-bioc/meat
+    R CMD build BiocSklearn
+    ```
 
 
 ### Install JAGS
@@ -1126,17 +1127,45 @@ TESTING: Try to install the rjags package *from source*:
 
 ### Install Open Babel
 
-As of May 2017, we want Open Babel 2.4.1 which is the version available
-with 'brew install'.
+Don't install via Homebrew! This used to work and was installing Open Babel
+2.4.1 (as of May 2017). However, as of April 2020, `brew install open-babel`
+installs Open Babel 3.0.0 which includes a broken `.pc`
+file (`pkg-config --cflags openbabel-3` will return
+`-I/usr/local/Cellar/open-babel/3.0.0/include/openbabel-2.0`
+which is wrong) and is not compatible with the ChemmineOB package
+(ChemmineOB includes `openbabel/rand.h` but this is no longer
+in open-babel 3.0.0). What is strange is that according to the
+Open Babel website (http://openbabel.org/), the latest Open Babel
+version is still 2.4.0. There is no mention of a 2.4.1 or 3.0.0 version!
 
-    brew install open-babel
+#### Compiling/installing openbabel 2.4.1 from source
+
+See http://openbabel.org/wiki/Install_(source_code) for full instructions
+(Installing globally with root access). Here is the quick way if TLDR:
+
+- Download openbabel-2.4.1.tar.gz from
+  https://sourceforge.net/projects/openbabel/files/openbabel/2.4.1/
+
+-Then:
+
+    brew install cmake
+    cd ~/sandbox
+    tar zxvf ~/Downloads/openbabel-2.4.1.tar.gz
+    mv openbabel-2.4.1 ob-src
+    mkdir ob-build
+    cd ob-build
+    cmake ../ob-src 2>&1 | tee cmake.out
+    make 2>&1 | tee make.out  # takes 10-15 min.
+    make install
 
 TESTING:
 
     which babel
     babel -V
 
-Then try to install the ChemmineOB package *from source*:
+#### Install ChemmineOB from source
+
+Now try to install the ChemmineOB package *from source*:
 
     library(BiocManager)
     BiocManager::install("ChemmineOB", type="source")
@@ -1144,46 +1173,89 @@ Then try to install the ChemmineOB package *from source*:
 
 ### Install libSBML
 
+#### Install a more recent libxml-2.0
+
 libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
-El Capitan is 2.6.16 so we first need to install a more recent libxml-2.0.
-Install a more recent libxml-2.0 with:
+Mojave is still 2.6.16 (this has not changed since El Capitan). So we first
+install a more recent libxml-2.0 with:
 
     brew install libxml2
 
 Ignore the "This formula is keg-only..." caveat.
 
-In `/etc/profile` *prepend* `/usr/local/opt/libxml2/lib/pkgconfig` to
-`PKG_CONFIG_PATH`.
+In `/etc/profile` **prepend** `/usr/local/opt/libxml2/lib/pkgconfig` to
+`PKG_CONFIG_PATH` (in particular it's important to put this **before**
+`/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig` which
+contains a broken `libxml-2.0.pc` file).
 
 Logout and login again so that the changes to `/etc/profile` take
-effect.
+effect then check that `pkg-config` picks up the right libxml-2.0:
 
-Finally install libSBML. As of December 2018, Homebrew was no longer
-offering libsbml so we download it from SourceForge.
+    pkg-config --cflags libxml-2.0
+    # -I/usr/local/Cellar/libxml2/2.9.10_1/include/libxml2
 
-Download with:
+#### Install libSBML
 
-    curl -LO https://sourceforge.net/projects/sbml/files/libsbml/5.13.0/stable/Mac%20OS%20X/libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
+Home page http://sbml.org/Software/libSBML
+As of December 2018, Homebrew was no longer offering libsbml so we download
+it from SourceForge:
+
+- Go to https://sourceforge.net/projects/sbml/files/libsbml/, click on
+  the latest version (5.18.0 as of April 2020), choose "stable", then
+  "Mac OS X", then download libSBML installer for Mojave
+  (`libsbml-5.18.0-libxml2-macosx-mojave.dmg`) with:
+
+    curl -OL https://sourceforge.net/projects/sbml/files/libsbml/5.18.0/stable/Mac%20OS%20X/libsbml-5.18.0-libxml2-macosx-mojave.dmg
+
+    #curl -OL https://sourceforge.net/projects/sbml/files/libsbml/5.13.0/stable/Mac%20OS%20X/libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
 
 Install with:
 
-    sudo hdiutil attach libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
-    sudo installer -pkg "/Volumes/libsbml-5.13.0-libxml2/libSBML-5.13.0-libxml2-elcapitan.pkg" -target /
-    sudo hdiutil detach "/Volumes/libsbml-5.13.0-libxml2"
+    sudo hdiutil attach libsbml-5.18.0-libxml2-macosx-mojave.dmg
+    sudo installer -pkg "/Volumes/libsbml-5.18.0-libxml2/libSBML-5.18.0-libxml2-mojave.pkg" -target /
+    sudo hdiutil detach "/Volumes/libsbml-5.18.0-libxml2"
     sudo chown -R biocbuild:admin /usr/local
 
-Modify `/usr/local/lib/pkgconfig/libsbml.pc`:
+    #sudo hdiutil attach libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
+    #sudo installer -pkg "/Volumes/libsbml-5.13.0-libxml2/libSBML-5.13.0-libxml2-elcapitan.pkg" -target /
+    #sudo hdiutil detach "/Volumes/libsbml-5.13.0-libxml2"
+    #sudo chown -R biocbuild:admin /usr/local
 
-    cd /usr/local/lib/pkgconfig
-    cp libsbml.pc libsbml.pc.original
+The `.pc` file included in the installer (`/usr/local/lib/pkgconfig/libsbml.pc`)
+is broken:
 
-Modify these lines:
+    pkg-config --cflags libsbml
+    # -I/usr/local/Cellar/libxml2/2.9.10_1/include/libxml2 -I/Users/frank/gitrepo/libsbml-build-scripts/common/mac_installer/installer/libsbml-dist/include
 
-    prefix=/usr/local/share/libsbml
-    libdir=/usr/local/lib
-    includedir=/usr/local/include
+Someone should tell Frank. Fix it by replacing the broken settings with
+the following:
 
-TESTING: Try to install the rsbml package *from source*:
+    prefix=/usr/local
+    exec_prefix=${prefix}
+    libdir=${exec_prefix}/lib
+    includedir=${prefix}/include
+
+Check that `pkg-config` picks the new settings:
+
+    pkg-config --cflags libsbml
+    # -I/usr/local/Cellar/libxml2/2.9.10_1/include/libxml2 -I/usr/local/include
+
+#### Install rsbml from source
+
+[NOT CLEAR THIS IS NEEDED] Create a few symlinks:
+
+    cd /usr/local/opt
+    mkdir libsbml
+    cd libsbml
+    ln -s ../../include
+    ln -s ../../lib
+
+[NOT CLEAR THIS IS NEEDED] In `/etc/profile` add the following line:
+
+    export DYLD_LIBRARY_PATH="/usr/local/lib"
+
+TESTING: Logout and login again so that the changes to `/etc/profile` take
+effect. Then try to install the rsbml package *from source*:
 
     library(BiocManager)
     BiocManager::install("rsbml", type="source")
@@ -1346,7 +1418,7 @@ Download source of latest ROOT 5 release (5.34/36):
 
     curl -O https://root.cern.ch/download/root_v5.34.36.source.tar.gz
 
-Make sure cmake is installed:
+Make sure CMake is installed:
 
     which cmake
 
