@@ -637,7 +637,17 @@ See "Install GTK2" below in this file for what to install in order to
 compile RGtk2.
 
 
-### What if CRAN doesn't provide package binaries for macOS yet?
+### Refresh the cache for AnnotationHub and ExperimentHub
+
+Do we still need to do this?
+
+Remove all of `.AnnotationHub/`, `.AnnotationHubData/`, `.ExperimentHub/`
+and `.ExperimentHubData/` present in `C:\Users\biocbuild\`.
+
+
+### Known issues and workarounds
+
+#### What if CRAN doesn't provide package binaries for macOS yet?
 
 If the builds are using R-devel and CRAN doesn't provide package binaries
 for Mac yet, install the following package binaries (these are the
@@ -671,14 +681,26 @@ Weird that PSCBS depends on some Bioconductor packages but that somehow
 `install.packages()` didn't care about missing deps and installed PSCBS
 without reporting any issue!
 
+#### Compilation issue with Rcpp 1.0.4
 
-### Refresh the cache for AnnotationHub and ExperimentHub
+Some Rcpp clients (e.g. mzR, msa, csaw, BiocNeighbors, DropletUtils, etc..)
+won't compile with R 4.0.0 alpha and the Rcpp version currently on CRAN
+(version 1.0.4):
 
-Remove all of `.AnnotationHub/`, `.AnnotationHubData/`, `.ExperimentHub/`
-and `.ExperimentHubData/` present in `C:\Users\biocbuild\`.
+    library(BiocManager)
+    install("BiocNeighbors", type="source")
+    # will fail with
+    #   error: unknown type name 'uuid_t'; did you mean 'uid_t'?
 
+The issue is addressed in the GitHub version of Rcpp so the workaround is
+to re-install Rcpp from GitHub:
 
-### The nasty fonts/XQuartz issue on macOS High Sierra or higher
+    library(BiocManager)
+    install("RcppCore/Rcpp")
+
+TESTING: Try to install BiocNeighbors from source again.
+
+#### The nasty fonts/XQuartz issue on macOS High Sierra or higher
 
 The following code produces a `polygon edge not found` error and a bunch
 of `no font could be found for family "Arial"` warnings on macOS High Sierra
