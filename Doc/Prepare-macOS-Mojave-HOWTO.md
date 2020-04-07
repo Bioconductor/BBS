@@ -465,62 +465,6 @@ result in output of "SUCCESS!":
     [1] "SUCCESS!"
 
 
-### The nasty Fonts/XQuartz issue on macOS High Sierra or higher
-
-The following code produces a `polygon edge not found` error and a bunch
-of `no font could be found for family "Arial"` warnings on macOS High Sierra
-or higher:
-
-    library(ggplot2)
-    png(type="quartz")
-    ggplot(data.frame(), aes(1, 1))
-    dev.off()
-
-See https://github.com/tidyverse/ggplot2/issues/2252#issuecomment-398268742
-
-This breaks `R CMD build` on > 300 Bioconductor packages at the moment!
-(March 2020)
-
-Simpler code (that doesn't involve ggplot2) that reproduces the warning
-about the missing font:
-
-    png(type="quartz")
-    plot(density(rnorm(1000)))
-    dev.off()
-
-NO GOOD SOLUTION YET!!
-
-Current workaround (found here https://stackoverflow.com/questions/55933524/r-can-not-find-fonts-to-be-used-in-plotting):
-
-    library(showtext)
-    font_add("Arial", "/Library/Fonts/Arial.ttf")  # use the actual file path
-    showtext_auto()
-    library(ggplot2)
-    png(type="quartz")
-    ggplot(data.frame(), aes(1, 1))
-    dev.off()
-
-If the above works, then put the following lines
-
-    ## A very unsatisfactory workaround for the nasty Fonts/XQuartz issue
-    ## on macOS High Sierra or higher. See Prepare-macOS-Mojave-HOWTO.md
-    ## Add more fonts if necessary.
-    if (nzchar(system.file(package="showtext"))) {
-      suppressMessages(library(showtext))
-      font_add("Arial", "/Library/Fonts/Arial.ttf")  # use the actual file path
-      showtext_auto()
-    }
-
-in `/Library/Frameworks/R.framework/Resources/etc/Rprofile.site`
-
-TESTING:
-
-Gviz: Arial warning only
-plyranges: polygon edge error only
-DESeq2: both
-
-non-finite location and/or size for viewport
-
 ### Install Homebrew
 
 First make sure `/usr/local` is writable by the `biocbuild` user and other
@@ -621,22 +565,24 @@ TESTING: Check that the permissions on chown-rootadmin look like this:
 
 This must be done from the `biocbuild` account.
 
-If this is a new version of R on a builder rather than setting up R
-for the first time, Remove the old R.framework directory.  This allows
-for a clean install of R and removes the old version
-`/Library/Frameworks/R.framework`.
 
-If installing R devel: download R from https://mac.r-project.org/ (pick up
-R-4.0-branch.pkg)
+### Install the latest R binary for macOS
+
+Remove the previous R installation:
+
+    sudo rm /Library/Frameworks/R.framework
+
+If installing R devel: download R from https://mac.r-project.org/ (e.g.
+pick up `R-4.0-branch.pkg`)
 
 If installing R release: download R from CRAN (e.g. from
 https://cloud.r-project.org/bin/macosx/). Pick up the 1st file
-(e.g. R-3.6.3.pkg).
+(e.g. `R-3.6.3.pkg`).
 
 Download and install with:
 
     cd /Users/biocbuild/Downloads
-    curl -LO https://mac.r-project.org/high-sierra/R-4.0-branch/R-4.0-branch.pkg
+    curl -O https://mac.r-project.org/high-sierra/R-4.0-branch/R-4.0-branch.pkg
 
     sudo installer -pkg R-4.0-branch.pkg -target /
 
@@ -675,8 +621,159 @@ libraries with:
 
     otool -L /Library/Frameworks/R.framework/Resources/library/rtracklayer/libs/rtracklayer.so
 
-WAIT!!! II'S NOT FINISHED YET! Now go to the "How to update R" section at the
-end of this file and perform all steps from step 3.
+
+### Configure R to use the Java installed on the machine
+
+    sudo R CMD javareconf
+
+TESTING: See "Install Java" below in this file for how to test Java/rJava.
+
+
+### Try to install RGtk2 from source
+
+    install.packages("RGtk2", type="source", repos="https://cran.r-project.org")
+
+See "Install GTK2" below in this file for what to install in order to
+compile RGtk2.
+
+
+### What if CRAN doesn't provide package binaries for macOS yet?
+
+If the builds are using R-devel and CRAN doesn't provide package binaries
+for Mac yet, install the following package binaries (these are the
+Bioconductor deps that are "difficult" to compile from source on Mac,
+as of Dec 2019):
+
+    pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
+              "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools", "PSCBS",
+              "protolite", "RSQLite", "RPostgres", "glpkAPI")
+
+First try to install with:
+
+    install.packages(pkgs, repos="https://cran.r-project.org")
+
+It should fail for most (if not all) packages. However, it's still worth
+doing it as it will be able to install many dependencies from source.
+Then try to install the binaries built with the current R release:
+
+    contriburl <- "https://cran.r-project.org/bin/macosx/el-capitan/contrib/3.6"
+    install.packages(pkgs, contriburl=contriburl)
+
+Please note that the binaries built with a previous version of R are not
+guaranteed to work with R-devel but if they can be loaded then it's
+**very** likely that they will. So make sure they can be loaded:
+
+    for (pkg in pkgs) library(pkg, character.only=TRUE)
+
+Will probably fail for PSCBS (unless Bioconductor packages aroma.light
+and DNAcopy are already installed, install them if they are not).
+Weird that PSCBS depends on some Bioconductor packages but that somehow
+`install.packages()` didn't care about missing deps and installed PSCBS
+without reporting any issue!
+
+
+### Refresh the cache for AnnotationHub and ExperimentHub
+
+Remove all of `.AnnotationHub/`, `.AnnotationHubData/`, `.ExperimentHub/`
+and `.ExperimentHubData/` present in `C:\Users\biocbuild\`.
+
+
+### The nasty fonts/XQuartz issue on macOS High Sierra or higher
+
+The following code produces a `polygon edge not found` error and a bunch
+of `no font could be found for family "Arial"` warnings on macOS High Sierra
+or higher:
+
+    library(ggplot2)
+    png(type="quartz")
+    ggplot(data.frame(), aes(1, 1))
+    dev.off()
+
+See https://github.com/tidyverse/ggplot2/issues/2252#issuecomment-398268742
+
+This breaks `R CMD build` on > 300 Bioconductor packages at the moment!
+(March 2020)
+
+Simpler code (that doesn't involve ggplot2) that reproduces the warnings
+about the missing font family:
+
+    png(type="quartz")
+    plot(density(rnorm(1000)))
+    dev.off()
+
+We don't really have a fix for this yet, only a workaround. The workaround
+is to avoid the use of the `"quartz"` device, which is the default on macOS.
+However we can't do this via an `Rprofile` file (it's ignored by `R CMD build`
+and `R CMD check`) so we use the following hack:
+
+Put:
+
+    options(bitmapType="Xlib")
+
+in `/Library/Frameworks/R.framework/Resources/library/grDevices/R/grDevices`
+at the beginning of the `local()` block.
+
+Not a totally satisfying solution because code that explicitly resets the
+device to `"quartz"` will still fail.
+
+TESTING:
+
+- Start R, then:
+
+    getOption("bitmapType")  # would show "quartz" without our hack
+    png()
+    plot(density(rnorm(1000)))
+    library(ggplot2)
+    ggplot(data.frame(), aes(1, 1))
+    dev.off()
+
+- Try to `R CMD build` DESeq2 and plyranges.
+
+For the record, here are a couple of things we tried that didn't work:
+
+- Found [here](https://stackoverflow.com/questions/55933524/r-can-not-find-fonts-to-be-used-in-plotting):
+
+    library(showtext)
+    font_add("Arial", "/Library/Fonts/Arial.ttf")  # use the actual file path
+    showtext_auto()
+
+  Fixes the problem in an interactively session but not in the context of
+  `R CMD DESeq2` (where do we put the 3 lines above?)
+
+- We also tried to compile R from source:
+
+    brew install pcre2
+
+    cd ~/bbs-3.11-bioc
+    mkdir rdownloads
+    cd rdownloads
+    download latest R source tarball, extract, rename
+
+    cd ~/bbs-3.11-bioc
+    mkdir R
+    cd R
+    ## Use same settings as Simon:
+    ## https://svn.r-project.org/R-dev-web/trunk/QA/Simon/R4/conf.high-sierra-x86_64
+    CC="clang -mmacosx-version-min=10.13" CXX="clang++ -mmacosx-version-min=10.13" OBJC="clang -mmacosx-version-min=10.13" FC="gfortran -mmacosx-version-min=10.13" F77="gfortran -mmacosx-version-min=10.13" CFLAGS='-Wall -g -O2' CXXFLAGS='-Wall -g -O2' OBJCFLAGS='-Wall -g -O2' FCFLAGS='-Wall -g -O2' F77FLAGS='-Wall -g -O2' ../rdownloads/R-4.0.r78132/configure --build=x86_64-apple-darwin17.0
+
+    make -j8
+
+Then create `R/etc/Rprofile.site` with the following line in it:
+
+    options(pkgType="mac.binary")
+
+TESTING:
+
+    cd ~/bbs-3.11-bioc
+    R/bin/R CMD config CC
+    # Start R
+    pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
+              "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools", "PSCBS",
+              "protolite", "RSQLite", "RPostgres", "glpkAPI")
+    install.packages(pkgs, repos="https://cran.r-project.org")
+    for (pkg in pkgs) library(pkg, character.only=TRUE)
+
+Unfortunately, most packages crash the session when loaded. [According to Simon](https://stat.ethz.ch/pipermail/r-sig-mac/2020-April/013328.html), this is expected somehow.
 
 
 
@@ -1424,72 +1521,4 @@ Download and install with:
     #curl -O https://mac.r-project.org/libs-4/xml2-2.9.10-darwin.17-x86_64.tar.gz
     #sudo tar fvxz xml2-2.9.10-darwin.17-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
-
-
-
-## 10. How to update R
-
-
-Perform the following steps from the biocbuild account:
-
-1. If you have enough disk space (i.e. if available disk space on the `/`
-    filesystem is more than the size reported by
-    `du -sh /Library/Frameworks/R.framework`)
-    then `cd to /Library/Frameworks/` and rename
-    `R.framework` -> `R.framework.old`.
-    Otherwise, just delete it.
-
-2. See "Install R" section previously in this file for how to install R.
-
-3. Configure R to use the Java installed on the machine:
-    ```
-    sudo R CMD javareconf
-    ```
-    TESTING: Try to install the rJava package:
-    ```
-    # install the CRAN binary
-    install.packages("rJava", repos="https://cran.r-project.org")
-    ```
-    See "Install Java" previously in this file for more testing.
-
-4. TESTING: Try to install the RGtk2 package *from source*:
-    ```
-    install.packages("RGtk2", type="source", repos="https://cran.r-project.org")
-    ```
-
-5. If the builds are using R-devel and CRAN doesn't provide package binaries
-    for Mac yet, install the following package binaries (these are the
-    Bioconductor deps that are "difficult" to compile from source on Mac,
-    as of Dec 2019):
-    ```
-    pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
-              "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools", "PSCBS",
-              "protolite", "RSQLite", "RPostgres", "glpkAPI")
-    ```
-    First try to install with:
-    ```
-    install.packages(pkgs, repos="https://cran.r-project.org")
-    ```
-    It should fail for most (if not all) packages. However, it's still worth
-    doing it as it will be able to install many dependencies from source.
-    Then try to install the binaries built with the current R release:
-    ```
-    contriburl <- "https://cran.r-project.org/bin/macosx/el-capitan/contrib/3.6"
-    install.packages(pkgs, contriburl=contriburl)
-    ```
-    Please note that the binaries built with a previous version of R are not
-    guaranteed to work with R-devel but if they can be loaded then it's
-    **very** likely that they will. So make sure they can be loaded:
-    ```
-    for (pkg in pkgs) library(pkg, character.only=TRUE)
-    ```
-    Will probably fail for PSCBS (unless Bioconductor packages aroma.light
-    and DNAcopy are already installed, install them if they are not).
-    Weird that PSCBS depends on some Bioconductor packages but that somehow
-    install.packages() didn't care about missing deps and installed PSCBS
-    without reporting any issue!
-
-6. Refresh the cache for AnnotationHub and ExperimentHub: remove all
-    of `.AnnotationHub/`, `.AnnotationHubData/`, `.ExperimentHub/` and
-    `.ExperimentHubData/` present in `C:\Users\biocbuild\`.
 
