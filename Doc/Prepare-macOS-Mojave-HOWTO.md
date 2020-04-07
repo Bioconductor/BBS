@@ -719,29 +719,29 @@ device to `"quartz"` will still fail.
 TESTING:
 
 - Start R, then:
-
+    ```
     getOption("bitmapType")  # would show "quartz" without our hack
     png()
     plot(density(rnorm(1000)))
     library(ggplot2)
     ggplot(data.frame(), aes(1, 1))
     dev.off()
-
+    ```
 - Try to `R CMD build` DESeq2 and plyranges.
 
 For the record, here are a couple of things we tried that didn't work:
 
 - Found [here](https://stackoverflow.com/questions/55933524/r-can-not-find-fonts-to-be-used-in-plotting):
-
+    ```
     library(showtext)
     font_add("Arial", "/Library/Fonts/Arial.ttf")  # use the actual file path
     showtext_auto()
-
-  Fixes the problem in an interactively session but not in the context of
-  `R CMD DESeq2` (where do we put the 3 lines above?)
+    ```
+    This fixes the problem in an interactively session but not in the context
+    of `R CMD DESeq2` (where do we put the 3 lines above?)
 
 - We also tried to compile R from source:
-
+    ```
     brew install pcre2
 
     cd ~/bbs-3.11-bioc
@@ -757,10 +757,12 @@ For the record, here are a couple of things we tried that didn't work:
     CC="clang -mmacosx-version-min=10.13" CXX="clang++ -mmacosx-version-min=10.13" OBJC="clang -mmacosx-version-min=10.13" FC="gfortran -mmacosx-version-min=10.13" F77="gfortran -mmacosx-version-min=10.13" CFLAGS='-Wall -g -O2' CXXFLAGS='-Wall -g -O2' OBJCFLAGS='-Wall -g -O2' FCFLAGS='-Wall -g -O2' F77FLAGS='-Wall -g -O2' ../rdownloads/R-4.0.r78132/configure --build=x86_64-apple-darwin17.0
 
     make -j8
+    ```
 
-Then create `R/etc/Rprofile.site` with the following line in it:
-
+    Then create `R/etc/Rprofile.site` with the following line in it:
+    ```
     options(pkgType="mac.binary")
+    ```
 
 TESTING:
 
