@@ -1274,12 +1274,16 @@ Make it executable with:
 
 Move it to `/usr/local/bin` with:
 
-    sudo mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
+    mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
 
 Create clustalo symlink in `/usr/local/bin/` with:
 
     cd /usr/local/bin
-    sudo ln -s clustal-omega-1.2.3-macosx clustalo
+    ln -s clustal-omega-1.2.3-macosx clustalo
+
+Then:
+
+    which clustalo
 
 TESTING: Try to build the LowMACA package (takes about 5 min):
 
@@ -1303,6 +1307,9 @@ effect. Then try to build the ImmuneSpaceR package:
 
 ### Install Open MPI
 
+Only needed if Rmpi needs to be installed from source! This should not be
+the case if the Rmpi binary for Mac is available on CRAN.
+
 Install with:
 
     brew install open-mpi  # takes between 15-20 min
@@ -1311,10 +1318,33 @@ TESTING: Try to install the Rmpi package *from source*:
 
     install.packages("Rmpi", type="source")
     library(Rmpi)
-    mpi.spawn.Rslaves()
+    mpi.spawn.Rslaves(nslaves=3)
     mpi.parReplicate(100, mean(rnorm(1000000)))
     mpi.close.Rslaves()
     mpi.quit()
+
+
+### Install ViennaRNA
+
+Download with:
+
+    curl -O https://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.4.11-MacOSX.dmg
+
+Install with:
+
+    sudo hdiutil attach ViennaRNA-2.4.11-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.4.11/ViennaRNA Package 2.4.11 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.4.11"
+    sudo chown -R biocbuild:admin /usr/local
+
+TESTING:
+
+    which RNAfold  # /usr/local/bin/RNAfold
+
+Then try to build the GeneGA package:
+
+    cd ~/bbs-3.11-bioc/meat
+    R CMD build GeneGA
 
 
 ### Install MySQL Community Server
@@ -1555,28 +1585,6 @@ standalone commands `convert`, `identify`, and `montage`):
     R CMD build flowQ
 
 
-### Install ViennaRNA
-
-Download with:
-
-    curl -O https://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.4.11-MacOSX.dmg
-
-Install with:
-
-    sudo hdiutil attach ViennaRNA-2.4.11-MacOSX.dmg
-    sudo installer -pkg "/Volumes/ViennaRNA 2.4.11/ViennaRNA Package 2.4.11 Installer.pkg" -target /
-    sudo hdiutil detach "/Volumes/ViennaRNA 2.4.11"
-
-TESTING:
-
-    which RNAfold  # /usr/local/bin/RNAfold
-
-Then try to build the GeneGA package:
-
-    cd ~/bbs-3.11-bioc/meat
-    R CMD build GeneGA
-
-
 ### Install protobuf system dependencies
 
 MARCH 2020: THIS SHOULD NO LONGER BE NEEDED! (GoogleGenomics is no longer
@@ -1591,7 +1599,7 @@ Install with:
 
 
 
-## 9. Additional stuff to install when CRAN Mac binary packages are not available
+## 9. More stuff to install when CRAN Mac binary packages are not available
 
 
 CRAN has a tradition of making Mac binary packages available at the last minute
