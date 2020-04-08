@@ -12,7 +12,7 @@ PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATE_STATUS_DB.txt"
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/workflows"
 SRC_CONTRIB="$REPOS_ROOT/src/contrib"
 WIN_CONTRIB="$REPOS_ROOT/bin/windows/contrib/$R_VERSION"
-MAC_ELCAPITAN_CONTRIB="$REPOS_ROOT/bin/macosx/el-capitan/contrib/$R_VERSION"
+MAC_CONTRIB="$REPOS_ROOT/bin/macosx/contrib/$R_VERSION"
 
 update_repo()
 {
