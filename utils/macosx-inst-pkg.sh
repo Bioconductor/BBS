@@ -14,8 +14,8 @@ set -e  # Exit immediately if a simple command exits with a non-zero status
 
 # Extra .so for the following archs will be installed (in addition to the
 # native .so):
-#TARGET_ARCHS="ppc x86_64 ppc64"
-TARGET_ARCHS="x86_64"
+#TARGET_ARCHS="/ppc /x86_64 /ppc64"
+TARGET_ARCHS="/x86_64"
 SINGLE_ARCH=true
 
 # Change dynamic shared library path for
@@ -23,14 +23,17 @@ LOCAL_DYLIB_DIR="/usr/local/lib"
 LOCAL_FORTRAN_DYLIB_DIR="/usr/local/gfortran/lib"
 
 if uname -a | grep -q "Version 10."; then
-	# Snow Leopard
-	DYLIB_FILES="libgcc_s.1.dylib libgfortran.2.dylib libreadline.5.2.dylib libreadline.dylib"
+    # Snow Leopard builds
+    DYLIB_FILES="libgcc_s.1.dylib libgfortran.2.dylib libreadline.5.2.dylib libreadline.dylib"
 elif uname -a | grep -q "Version 13."; then
-	# Mavericks
-	DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
+    # Mavericks builds
+    DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
+elif uname -a | grep -q "Version 15."; then
+    # El Capitan builds
+    DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
 else
-       # El Capitan
-	DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
+    # Builds on any macOS >= High Sierra with High Sierra as **target**
+    DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
 fi
 
 
@@ -40,7 +43,7 @@ print_usage()
 {
 	cat <<-EOD
 	Usage:
-	  $0 <src-tarball-path> [<R_CMD> [<path-to-install-dir>]] 
+	  $0 <src-tarball-path> [<R_CMD> [<path-to-install-dir>]]
 	EOD
 	exit 1
 }
@@ -176,15 +179,15 @@ if [ -d "$so_path" ]; then
         if $SINGLE_ARCH ; then
             arch=""
         fi
-        arch_so_path="$so_path/$arch"
+        arch_so_path="${so_path}${arch}"
         if [ ! -d "$arch_so_path" ]; then
             # The package has a configure script.
             echo ">>>>>>> "
             echo -n ">>>>>>> "
-            echo "INSTALLATION OF $arch LIBS WITH 'R_ARCH=/$arch R CMD INSTALL --preclean --no-multiarch --no-test-load --library=$R_LIBS --libs-only $srcpkg_filepath'"
+            echo "INSTALLATION OF $arch LIBS WITH 'R_ARCH=$arch R CMD INSTALL --preclean --no-multiarch --no-test-load --library=$R_LIBS --libs-only $srcpkg_filepath'"
             echo ">>>>>>> "
             echo ""
-            R_ARCH=/$arch $R_CMD CMD INSTALL --preclean --no-multiarch --no-test-load --library="$R_LIBS" --libs-only "$srcpkg_filepath"
+            R_ARCH=$arch $R_CMD CMD INSTALL --preclean --no-multiarch --no-test-load --library="$R_LIBS" --libs-only "$srcpkg_filepath"
             echo ""
             echo ""
         fi
