@@ -832,11 +832,11 @@ to the `PATH` take effect. Then:
 This is no longer needed (as of Dec 2019) since no package that uses
 pstricks in their vignette should still need to use auto-pst-pdf:
 
-    #Add shell_escape = t to /usr/local/texlive/2018/texmf.cnf
+    #Add shell_escape = t to /usr/local/texlive/2019/texmf.cnf
     #
     #  cd /usr/local/texlive/2018/
-    #  sudo cp texmf.cnf texmf.cnf.original
-    #  sudo vi texmf.cnf
+    #  cp texmf.cnf texmf.cnf.original
+    #  vi texmf.cnf
     #  ## add shell_escape = t at the bottom of the file
     #
     # TESTING: Try to build a package using pstricks + auto-pst-pdf in its
