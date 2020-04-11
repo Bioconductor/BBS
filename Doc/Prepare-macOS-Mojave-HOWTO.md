@@ -465,6 +465,42 @@ result in output of "SUCCESS!":
     [1] "SUCCESS!"
 
 
+### Install CMake
+
+Home page: https://cmake.org/
+
+Let's make sure it's not already installed:
+
+    which cmake
+
+Note that installing CMake via Homebrew (`brew install cmake`) should be
+avoided. In our experience, even though it leads to a `cmake` command that
+works at the beginning, it might break in the future (and it has in our case)
+as we install more and more components to the machine. So, if for any reason
+you already have a brewed CMake on the machine, make sure to remove it:
+
+    brew uninstall cmake
+
+Then:
+
+    curl -LO https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Darwin-x86_64.dmg
+    sudo hdiutil attach cmake-3.16.5-Darwin-x86_64.dmg
+    cp -ri /Volumes/cmake-3.16.5-Darwin-x86_64/CMake.app /Applications/
+    sudo hdiutil detach /Volumes/cmake-3.16.5-Darwin-x86_64
+
+Then in `/etc/profile` *prepend* `/Applications/CMake.app/Contents/bin`
+to `PATH`, or, if the file as not line setting `PATH` already, add the
+following line:
+
+    export PATH="/Applications/CMake.app/Contents/bin:$PATH"
+
+TESTING: Logout and login again so that the changes to `/etc/profile` take
+effect. Then:
+
+    which cmake
+    cmake --version
+
+
 ### Install Homebrew
 
 First make sure `/usr/local` is writable by the `biocbuild` user and other
@@ -1138,17 +1174,19 @@ in open-babel 3.0.0). What is strange is that according to the
 Open Babel website (http://openbabel.org/), the latest Open Babel
 version is still 2.4.0. There is no mention of a 2.4.1 or 3.0.0 version!
 
-#### Compiling/installing openbabel 2.4.1 from source
+#### Compile/install openbabel 2.4.1 from source
 
 See http://openbabel.org/wiki/Install_(source_code) for full instructions
 (Installing globally with root access). Here is the quick way if TLDR:
 
+- Make sure CMake is installed (see "Install CMake" section previously
+  in this file for how to do this).
+
 - Download openbabel-2.4.1.tar.gz from
   https://sourceforge.net/projects/openbabel/files/openbabel/2.4.1/
 
--Then:
+- Then:
 
-    brew install cmake
     cd ~/sandbox
     tar zxvf ~/Downloads/openbabel-2.4.1.tar.gz
     mv openbabel-2.4.1 ob-src
@@ -1439,76 +1477,56 @@ Create the following symlink:
 
 ### Install ROOT
 
+APRIL 2020: THIS IS NO LONGER NEEDED! Was needed for the xps package
+which is no longer supported on Mac (since BioC 3.11).
+
 xps wants ROOT 5, not 6. Unfortunately, there are no ROOT 5 binaries
 for OS X 10.11 and for the version of clang we use on the builders
 at https://root.cern.ch/ (well at least that was the case last time I
 checked but you should check again). So we need to install from source.
 
-Download source of latest ROOT 5 release (5.34/36):
-
+- Download source of latest ROOT 5 release (5.34/36):
+    ```
+    cd ~/Downloads
     curl -O https://root.cern.ch/download/root_v5.34.36.source.tar.gz
+    ```
 
-Make sure CMake is installed:
-
-    which cmake
-
-If not, install it with:
-
-    brew install cmake
+- Make sure CMake is installed (see "Install CMake" section previously
+  in this file for how to do this).
 
 ROOT supports 2 installation methods: "location independent" and "fix
-location". Here we do "location independent" installation:
+location". We will do "location independent" installation.
 
-Build with:
-
-    tar zxvf root_v5.34.36.source.tar.gz
+- Build with:
+    ```
+    cd ~/sandbox
+    tar zxvf ~/Downloads/root_v5.34.36.source.tar.gz
     mkdir root_builddir
     cd root_builddir
-    # Tell cmake to use clang8 (even though it comes before Apple's clang in
-    # the PATH, by default cmake wants to use the latter).
-    export CC=/usr/local/clang8/bin/clang
-    export CXX=/usr/local/clang8/bin/clang++
-    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ../root
-    cmake --build . -- -j4  # takes about 10-15 min (> 45 min without -j4)
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ~/sandbox/root
+    cmake --build . -- -j8  # takes about 10-15 min (> 45 min without -j8)
+    ```
 
-Install with:
-
+- Install with:
+    ```
     sudo cmake --build . --target install
     sudo chown -R biocbuild:admin /usr/local
+    ```
 
-Try to start a ROOT interactive session:
-
+- Try to start a ROOT interactive session:
+    ```
     source bin/thisroot.sh
     root  # then quit the session with .q
+    ```
 
---------------------------------------------------------------------------
-IGNORE ALL THIS (As of Apr 2017, xps can still not be compiled against
-ROOT 6)
-
-|Installing a ROOT 6 pre-compiled binary for OS X 10.11.
-
-|Download with:
-
-|    curl -O https://root.cern.ch/download/root_v6.08.06.macosx64-10.11-clang80.dmg
-
-|Install with:
-
-|    sudo hdiutil attach root_v6.08.06.macosx64-10.11-clang80.dmg
-
-|    sudo installer -pkg /Volumes/root_v6.08.06.macosx64-10.11-clang80/root_v6.08.06.macosx64-10.11-clang80.mpkg -target /
-
-|    sudo hdiutil detach /Volumes/root_v6.08.06.macosx64-10.11-clang80
-
---------------------------------------------------------------------------
-
-Then in `/etc/profile` add the following line (before the `PATH` and
-`DYLD_LIBRARY_PATH` lines):
-
+- Finally in `/etc/profile` add the following line (before the `PATH` and
+  `DYLD_LIBRARY_PATH` lines):
+    ```
     export ROOTSYS="/usr/local/root"  # do NOT set ROOTSYS, it will break
                                       # xps configure script!
-
-and append `$ROOTSYS/bin` to `PATH` and `$ROOTSYS/lib/root`
-to `DYLD_LIBRARY_PATH`.
+    ```
+    and append `$ROOTSYS/bin` to `PATH` and `$ROOTSYS/lib/root`
+    to `DYLD_LIBRARY_PATH`.
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
