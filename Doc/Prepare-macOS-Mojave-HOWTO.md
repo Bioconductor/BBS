@@ -1130,10 +1130,28 @@ effect. Then try to install the RGtk2 package *from source*:
     pip3 install tensorflow tensorflow_probability
     pip3 install h5pyd
     pip3 install cwltool
-    pip3 install nbconvert
+    pip3 install nbconvert jupyter
     pip3 install matplotlib phate
 
 TESTING:
+
+- `jupyter --version` should display something like this:
+    ```
+    machv2:~ biocbuild$ jupyter --version
+    jupyter core     : 4.6.3
+    jupyter-notebook : 6.0.3
+    qtconsole        : 4.7.2
+    ipython          : 7.13.0
+    ipykernel        : 5.2.0
+    jupyter client   : 6.1.3
+    jupyter lab      : not installed
+    nbconvert        : 5.6.1
+    ipywidgets       : 7.5.1
+    nbformat         : 5.0.4
+    traitlets        : 4.3.3
+    ```
+    Note that it's ok if jupyter lab is not installed but everything else
+    should be.
 
 - Start python3 and try to import the above modules. Quit.
 
@@ -1141,6 +1159,10 @@ TESTING:
     ```
     cd ~/bbs-3.11-bioc/meat
     R CMD build BiocSklearn
+    ```
+    and the destiny package:
+    ```
+    R CMD build destiny
     ```
 
 
