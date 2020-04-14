@@ -490,6 +490,18 @@ Install BiocCheck for the Single Package Builder:
 
     install("BiocCheck")
 
+
+A problem package has been Cairo where the binaries often lag behind the source
+and compiling the source results in an ERROR and broken state package.  This can
+sometimes be remedied by re-installing manually: 
+
+    install("Cairo", type="source", INSTALL_opts="--merge-multiarch")
+
+Test the install on both arch by loading the library:
+
+    R --arch x64
+    R --arch i386
+
 Quit R (do NOT save the workspace image).
 
 #### If updating R
