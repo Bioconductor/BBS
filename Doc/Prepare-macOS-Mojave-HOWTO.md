@@ -885,14 +885,21 @@ pstricks in their vignette should still need to use auto-pst-pdf:
 
 ### Install Pandoc
 
-Download latest Pandoc from https://github.com/jgm/pandoc/releases/latest
-(pick up .pkg file) e.g.:
+Install Pandoc 2.7.3 instead of the latest Pandoc (2.9.2.1 as of April 2020).
+The latter breaks `R CMD build` for 8 Bioconductor software packages
+(ChIPSeqSpike, FELLA, flowPloidy, MACPET, profileScoreDist, projectR,
+swfdr, and TVTB) with the following error:
 
-    curl -LO https://github.com/jgm/pandoc/releases/download/2.9.2.1/pandoc-2.9.2.1-macOS.pkg
+    ! LaTeX Error: Environment cslreferences undefined.
+
+Download with:
+
+    curl -LO https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-macOS.pkg
 
 Install with:
 
-    sudo installer -pkg pandoc-2.9.2.1-macOS.pkg -target /
+    sudo installer -pkg pandoc-2.7.3-macOS.pkg -target /
+    sudo chown -R biocbuild:admin /usr/local
 
 
 
