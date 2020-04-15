@@ -402,7 +402,7 @@ When running the installer:
 
 NOTE: Skip this if you're installing R-testing, and go directly to
 "Install Ripley's bundle of external software" below for a 1-line
-edit to do to `R/etc/{i386,x64}/Makeconf`.
+edit to do to `R\etc\{i386,x64}\Makeconf`.
 
 The `R\etc\i386\Makeconf`, `R\etc\x64\Makeconf`, and `R\etc\Rprofile.site`
 files need to be edited as follow (without this, compilation of zlibbioc
@@ -461,7 +461,7 @@ will fail):
    ```
 
 - See "Install Ripley's bundle of external software" below for other
-  edits to do to `R/etc/{i386,x64}/Makeconf`.
+  edits to do to `R\etc\{i386,x64}\Makeconf`.
 
 #### Install BiocManager
 
@@ -508,6 +508,11 @@ package but for some reason sometimes fails to compile it. To make it worse
 it seems that for some reason R also fails to restore the previous installation
 of the package. So as a result Cairo ends up in a broken state and can no
 longer be loaded (on one arch or the other).
+
+This typically breaks `R CMD build` or `R CMD check` on the following software
+packages: a4Base, animalcules, bigPint, CATALYST, DAPAR, debrowser,
+DiscoRhythm, dittoSeq, explorase, GeneTonic, GRmetrics, MetaVolcanoR,
+ngsReports, OUTRIDER, PECA, Prostar, scde, singscore, TIN.
 
 This can sometimes be remedied by (re)installing Cairo manually from source:
 
@@ -841,7 +846,7 @@ This is not where we have installed the binaries so the i386 and x64
 Makefiles need to be modified.
 
 From the biocbuild account, go to `C:\Users\biocbuild\bbs-3.10-bioc`
-and set variable `LOCAL_SOFT` to `C:/extsoft in R\etc\{i386,x64}\Makeconf`.
+and set variable `LOCAL_SOFT` to `C:/extsoft` in `R\etc\{i386,x64}\Makeconf`.
 
 - `R\etc\i386\Makeconf`
 
