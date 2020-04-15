@@ -486,23 +486,38 @@ TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
     install("Biobase", type="source")
     install("zlibbioc", type="source")
 
-Install BiocCheck for the Single Package Builder:
+Quit R (do NOT save the workspace image).
 
+#### Install BiocCheck
+
+BiocCheck is needed for the Single Package Builder:
+
+    library(BiocManager)
     install("BiocCheck")
 
+#### Install Cairo
 
-A problem package has been Cairo where the binaries often lag behind the source
-and compiling the source results in an ERROR and broken state package.  This can
-sometimes be remedied by re-installing manually: 
+Note that a recurrent problem is to see the Cairo package that is currently
+installed on the Windows builders suddenly break after CRAN publishes a newer
+version of the package: https://cran.r-project.org/package=Cairo
 
+Here is what we think is happening: Often the Windows binary available on CRAN
+lags behind the source package for several days so when the build system tries
+to update all the deps at the beginning of a run, it picks up the source
+package but for some reason sometimes fails to compile it. To make it worse
+it seems that for some reason R also fails to restore the previous installation
+of the package. So as a result Cairo ends up in a broken state and can no
+longer be loaded (on one arch or the other).
+
+This can sometimes be remedied by (re)installing Cairo manually from source:
+
+    library(BiocManager)
     install("Cairo", type="source", INSTALL_opts="--merge-multiarch")
 
-Test the install on both arch by loading the library:
+TESTING: Try to load the package (with `library(Cairo)`) on both archs:
 
     R --arch x64
     R --arch i386
-
-Quit R (do NOT save the workspace image).
 
 #### If updating R
 
