@@ -60,7 +60,6 @@ export BBS_OUTGOING_MAP="source:zin2-Rtrunk/buildsrc"
 # must be run on the BBS_CENTRAL_RHOST machine.
 
 export BBS_REPORT_NODES="zin2-Rtrunk zin2-Rshallow"
-#export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/cran/report.css"
 export BBS_REPORT_JS="$BBS_HOME/cran/report.js"

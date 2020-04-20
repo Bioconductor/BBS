@@ -55,7 +55,6 @@ export BBS_OUTGOING_MAP="source:malbec1/buildsrc"
 # must be run on the BBS_CENTRAL_RHOST machine.
 
 export BBS_REPORT_NODES="malbec1"
-#export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"

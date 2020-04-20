@@ -274,7 +274,6 @@ index b7a14b5..490f8b4 100644
  
 -export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin oaxaca:bin"
 +export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin"
- #export BBS_SVNCHANGELOG_URL="http://fgc.lsi.umich.edu/cgi-bin/blosxom.cgi"
  export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
  export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 ```

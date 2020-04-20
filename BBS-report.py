@@ -178,11 +178,6 @@ def write_svn_Changelog_asTD(out, url, pkg):
     return
 
 def write_svn_info_for_pkg_asTRs(out, pkg, full_info=False):
-    if 'BBS_SVNCHANGELOG_URL' in os.environ:
-        url = os.environ['BBS_SVNCHANGELOG_URL']
-        out.write('<TR>')
-        write_svn_Changelog_asTD(out, url, pkg)
-        out.write('</TR>\n')
     if full_info:
         out.write('<TR>')
         write_Date_asTD(out, None, 'Snapshot Date', full_info)
