@@ -1,0 +1,43 @@
+# ====================================================================
+# Environment variables used on the Bioconductor build machines to
+# control the behavior of R 4.0 for the BioC 3.12 builds
+# ====================================================================
+#
+# TO BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the
+# settings below on your machine when working on the master branch
+# of your package. Also make sure to use a recent version of R 4.0.
+# This should allow you to reproduce any error or warning you see on
+# the Bioconductor build reports. The easiest way to use the settings
+# below is to add them to your .Renviron file. However, please note
+# that this will enable them for any R installation you have on your
+# system. To enable them for a particular R session only, put them
+# in a separate file (e.g. .Renviron.bioc, located in your home) and
+# start R with:
+#
+#     R_ENVIRON_USER=~/.Renviron.bioc R
+#
+# or:
+#
+#     R_ENVIRON_USER=~/.Renviron.bioc R CMD build ...
+#
+# or:
+#
+#     R_ENVIRON_USER=~/.Renviron.bioc R CMD check ...
+#
+# Alternatively, if you have write access to the R_HOME folder, you
+# can put them in R_HOME/etc/Renviron.site
+
+#_R_CHECK_TIMINGS_="0"
+_R_CHECK_EXECUTABLES_=false
+_R_CHECK_EXECUTABLES_EXCLUSIONS_=false
+_R_CHECK_LENGTH_1_CONDITION_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
+_R_CHECK_LENGTH_1_LOGIC2_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
+_R_CHECK_S3_METHODS_NOT_REGISTERED_=true
+#_R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
+#_R_CLASS_MATRIX_ARRAY_=true
+
+# TO THE BIOCONDUCTOR CORE TEAM: Make sure the settings used by
+# the Bioconductor Devel Docker image are kept in sync with the
+# settings in this file. Please send a PR to
+# https://github.com/Bioconductor/bioconductor_docker each time
+# you modify the settings in this file.
