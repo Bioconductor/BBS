@@ -72,6 +72,7 @@ cd ..
 git add 3.12
 ```
 
+
 ### In `BBS/propagation-pipe/` folder
 
 #### Copy `BBS/propagation-pipe/3.11/` to `BBS/propagation-pipe/3.12/`
@@ -101,6 +102,7 @@ cd ../..
 git add propagation-pipe/3.12
 ```
 
+
 ### Commit and push
 
 ```
@@ -117,6 +119,7 @@ on master.bioconductor.org.
 ```
 ssh -A webadmin@master.bioconductor.org
 ```
+
 
 ### In /extra/www/bioc/packages
 
@@ -149,6 +152,7 @@ The new 3.12 directory tree should look like this:
     4 directories, 0 files
 ```
 
+
 ### In /extra/www/bioc/checkResults
 
 ```
@@ -168,6 +172,7 @@ This is where the build reports will be published.
 
 
 ## 4. Activate builds on central builder
+
 
 The central builder should be running Linux or other Unix-like OS.
 
@@ -192,6 +197,7 @@ Remove `~/public_html/BBS/3.10` (this is about 160G):
 cd ~/public_html/BBS
 rm -rf 3.10
 ```
+
 
 ### Software builds
 
@@ -218,6 +224,7 @@ Check for build report the next day at:
 
     https://bioconductor.org/checkResults/3.12/bioc-LATEST/
 
+
 ### Data-experiment builds
 
 #### Preliminary steps
@@ -229,16 +236,18 @@ In `bbs-3.12-data-experiment` create `log` folder
 
 #### Activation
 
-Edit crontab: uncomment entries for data-experiment builds builds.
+Edit crontab: uncomment entries for data-experiment builds.
 Builds will start at scheduled time.
 Check for build report 1 or 2 days later at:
 
     https://bioconductor.org/checkResults/3.12/data-experiment-LATEST/
 
+
 ### Workflows and "long tests" builds
 
 Repeat data-experiment instructions. _Top-level working dirs_ for these builds
 are `bbs-3.12-workflows` and `bbs-3.12-bioc-longtests`.
+
 
 ### Summary and follow-up
 
@@ -269,7 +278,9 @@ The page at https://bioconductor.org/checkResults/ should have links
 to them.
 
 
+
 ## 5. Activate propagation pipes
+
 
 Connect to the `biocadmin` account on malbec1 (you might need to establish
 a VPN connection to rpcivpn.roswellpark.org first if you are outside RPCI):
@@ -282,6 +293,7 @@ Pull latest changes to BBS:
 cd ~/BBS
 git pull --all
 ```
+
 
 ### Set up internal staging package repos
 
@@ -300,10 +312,9 @@ biocadmin@malbec1:~/PACKAGES/3.12/data/experiment$ tree
 .
 ├── bin
 │   ├── macosx
-│   │   └── el-capitan
-│   │       └── contrib
-│   │           └── 4.0
-│   │               └── PACKAGES
+│   │   └── contrib
+│   │       └── 4.0
+│   │           └── PACKAGES
 │   └── windows
 │       └── contrib
 │           └── 4.0
@@ -312,9 +323,10 @@ biocadmin@malbec1:~/PACKAGES/3.12/data/experiment$ tree
     └── contrib
         └── PACKAGES
 
-10 directories, 3 files
+9 directories, 3 files
 ```
 where `PACKAGES` are empty files.
+
 
 ### Install latest R
 
@@ -336,12 +348,14 @@ Make sure you can start R with:
 R-4.0
 ```
 
+
 ### Install packages needed by propagation pipe
 
 ```
 cd pkgs_to_install
 ```
 See `README` file.
+
 
 ### Activate propagation of software, data-experiment, and workflow packages
 
@@ -350,6 +364,7 @@ Create `3.12` subfolder in `~/cron.log`
 Edit crontab: replace all occurrences of 3.10 with 3.12 and uncomment
 entries for propagation of software, data-experiment, and workflow
 packages.
+
 
 ### Follow-up
 
@@ -367,7 +382,9 @@ package index files:
 
 ## 6. Activate builds on the other builders
 
+
 Traditionally the Windows and Mac builders only run the software builds.
+
 
 ### On Windows
 
@@ -427,6 +444,7 @@ vi config.sh  # tokay1 should be in BBS_OUTGOING_MAP and BBS_REPORT_NODES
 Next day: Check build report at:
 
     https://bioconductor.org/checkResults/3.12/bioc-LATEST/
+
 
 ### On Mac
 
