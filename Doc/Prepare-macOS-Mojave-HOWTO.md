@@ -2,6 +2,14 @@
 
 
 
+## 0. General information and tips
+
+
+- For how to uninstall Mac packages (`.pkg` files) using native `pkgutil`:
+  https://wincent.com/wiki/Uninstalling_packages_(.pkg_files)_on_Mac_OS_X
+
+
+
 ## 1. Initial setup (from administrator account)
 
 
@@ -542,13 +550,18 @@ This module is needed by BBS.
 
     brew install openssl
 
-Then in `/etc/profile` add the following line, replacing '1.1.1d' with
-the version installed:
+Then in `/etc/profile`:
 
+- Add `/usr/local/opt/openssl@1.1/bin` to `PATH`.
+
+- Add `/usr/local/opt/openssl@1.1/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+- Add the following line, replacing '1.1.1d' with the version installed:
+    ```
     export OPENSSL_LIBS="/usr/local/Cellar/openssl@1.1/1.1.1d/lib/libssl.a /usr/local/Cellar/openssl@1.1/1.1.1d/lib/libcrypto.a"
-
-This will trigger statically linking of the rtracklayer package against the
-openssl libraries.
+    ```
+  This will trigger statically linking of the rtracklayer package against
+  the openssl libraries.
 
 
 ### [OPTIONAL] Install wget and pstree
@@ -1414,10 +1427,37 @@ Then try to build the GeneGA package:
     R CMD build GeneGA
 
 
-### Install MySQL Community Server
+### Install the MySQL client
 
 Note that we only need this for the ensemblVEP package. RMySQL doesn't need
 it as long as we can install the binary package.
+
+Even though we only need the MySQL client, we used to install the MySQL
+Community Server because it was an easy way to get the MySQL client.
+Not anymore! Our attempt to use the recent binaries available at
+https://dev.mysql.com/downloads/ for macOS Mojave gave us too much
+headache when trying to install Perl module DBD::mysql or install RMySQL
+from source. So we switched to installing the MySQL client only via brew:
+
+    brew install mysql-client
+
+Then in `/etc/profile` append `/usr/local/opt/mysql-client/bin` to `PATH`
+and `/usr/local/opt/mysql-client/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+Finally, make sure that you have a brewed `openssl` (`brew install openssl`,
+see above in this file) and create the following symlinks (without them
+`sudo cpan install DBD::mysql` won't be able to find the `ssl` or `crypto`
+libraries and will fail):
+
+    cd /usr/local/Cellar/mysql-client/8.0.18/lib
+    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1g/lib/libssl.dylib
+    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1g/lib/libcrypto.dylib
+
+
+--------------------------------------------------------------------------
+NO LONGER NEEDED (kept for the record only)
+
+Installing the MySQL Community Server
 
 Download `mysql-8.0.0-dmr-osx10.11-x86_64.dmg` from:
 
@@ -1429,14 +1469,26 @@ e.g. with:
 
 Install with:
 
-    sudo hdiutil attach mysql-8.0.0-dmr-osx10.11-x86_64.dmg
-    sudo installer -pkg /Volumes/mysql-8.0.0-dmr-osx10.11-x86_64/mysql-8.0.0-dmr-osx10.11-x86_64.pkg -target /
-    sudo hdiutil detach /Volumes/mysql-8.0.0-dmr-osx10.11-x86_64
+    sudo hdiutil attach mysql-8.0.18-macos10.14-x86_64.dmg
+    sudo installer -pkg /Volumes/mysql-8.0.18-macos10.14-x86_64/mysql-8.0.18-macos10.14-x86_64.pkg -target /
+    sudo hdiutil detach /Volumes/mysql-8.0.18-macos10.14-x86_64
     sudo chown -R biocbuild:admin /usr/local
 
 Then in `/etc/profile` append `/usr/local/mysql/bin` to `PATH`,
 `/usr/local/mysql/lib` to `DYLD_LIBRARY_PATH`, and
 `/usr/local/mysql/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+And finally (needed only for some MySQL builds that seem broken):
+
+    cd /usr/local/mysql/lib
+    otool -L libmysqlclient.21.dylib
+    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
+    install_name_tool -add_rpath /usr/local/mysql/lib libmysqlclient.21.dylib
+
+    #install_name_tool -change @rpath/libmysqlclient.21.dylib /usr/local/mysql/lib/libmysqlclient.21.dylib libmysqlclient.21.dylib
+    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
+
+--------------------------------------------------------------------------
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
@@ -1445,63 +1497,46 @@ effect. Then:
 
 Then try to install the RMySQL package *from source*:
 
-    install.packages("RMySQL", type="source")
+    library(BiocManager)
+    install("RMySQL", type="source")
 
 
 ### Install Ensembl VEP script
 
-In release 88, the primary script was renamed from "variant_effect_predictor.pl"
-to "vep" and the directory structure of the tarball changed. The instructions
-in this document are specific for installing versions >= 88.
-
 Complete installation instructions are at
-http://www.ensembl.org/info/docs/tools/vep/script/vep_download.html#installer
+https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
 
-Move to location:
+- According to ensembl-vep README, the following Perl modules are required:
 
-    cd /usr/local/
-
-Download script:
-
-    git clone https://github.com/Ensembl/ensembl-vep.git
-
-Get correct branch (substitute 96 with desired version):
-
-    cd ensembl-vep
-    git pull
-    git checkout release/96
-
-Run the installer script:
-
-    sudo perl INSTALL.pl
-
-You may need to install the File::Copy::Recursive perl module:
-
+    sudo cpan install Archive::Zip
     sudo cpan install File::Copy::Recursive
+    sudo cpan install DBI
+    sudo cpan install DBD::mysql
 
-Modify the `PATH` and `DYLD_LIBRARY_PATH` variables:
+- Then:
 
-The `/etc/profile` file has read only permissions (factory settings). To save
-changes you will need to force save, e.g., with `vi` this is `w!`.
+    cd /usr/local
+    sudo git clone https://github.com/Ensembl/ensembl-vep.git
+    cd ensembl-vep
+    sudo chown -R biocbuild:admin .
+    git checkout release/99  # select desired branch
 
-    sudo vi /etc/profile
-    export PATH=$PATH:/usr/local/ensembl-vep
-    export DYLD_LIBRARY_PATH=/usr/local/lib:/usr/local/ensembl-vep/htslib
+    # Avoid the hassle of getting HTSlib to compile because ensemblVEP
+    # passes 'R CMD build' and 'R CMD check' without that and that's all
+    # we care about. No sudo!
+    perl INSTALL.pl --NO_HTSLIB
 
-Checks:
+- Finally in `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
+  Note that the `/etc/profile` file has read-only permissions (factory
+  settings). To save changes you will need to force save, e.g., in the
+  `vi` editor this is `w!`.
 
-    echo $PATH
-    echo $DYLD_LIBRARY_PATH
-    PERL5LIB=/usr/local/ensembl-vep perl -e "use Bio::DB::HTS"
-    PERL5LIB=/usr/local/ensembl-vep perl -e "use Bio::DB::HTS::Tabix"
+TESTING: Logout and login again so that the changes to `/etc/profile` take
+effect. Then:
 
-If the above fails and it is not able to be found. The
-`/usr/local/ensembl-vep/HTS.bundle` is a binary linked to
-`/usr/local/lib/libhts.1.dylib`. The perl `Install.pl` script may create
-this bundle in `/usr/local/ensembl-vep/htslib/` and not in `/usr/local/lib`.
-Create the following symlink:
-
-    /usr/local/lib/libhts.1.dylib -> /usr/local/ensembl-vep/htslib/libhts.1.dylib
+    cd ~/bbs-3.11-bioc/meat
+    R CMD build ensemblVEP
+    R CMD check ensemblVEP_X.Y.Z.tar.gz  # replace X.Y.Z with current version
 
 
 ### Install ROOT
