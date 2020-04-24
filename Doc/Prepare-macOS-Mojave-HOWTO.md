@@ -619,7 +619,7 @@ This must be done from the `biocbuild` account.
 
 Remove the previous R installation:
 
-    sudo rm /Library/Frameworks/R.framework
+    sudo rm -rf /Library/Frameworks/R.framework
 
 If installing R devel: download R from https://mac.r-project.org/ (e.g.
 pick up `R-4.0-branch.pkg`)
@@ -632,7 +632,6 @@ Download and install with:
 
     cd /Users/biocbuild/Downloads
     curl -O https://mac.r-project.org/high-sierra/R-4.0-branch/R-4.0-branch.pkg
-
     sudo installer -pkg R-4.0-branch.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
@@ -772,7 +771,7 @@ about the missing font family:
     plot(density(rnorm(1000)))
     dev.off()
 
-We don't really have a fix for this yet, only a workaround. The workaround
+We don't really have a fix for this yet, only a dirty workaround. The workaround
 is to avoid the use of the `"quartz"` device, which is the default on macOS.
 However we can't do this via an `Rprofile` file (it's ignored by `R CMD build`
 and `R CMD check`) so we use the following hack:
