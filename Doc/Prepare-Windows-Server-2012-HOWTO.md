@@ -354,10 +354,10 @@ the "Install legacy utilities (e.g. convert)" box. Also keep the
 "Add application directory to your system path" box checked.
 
 Note that the installer will prepend `C:\Program Files\ImageMagick-7.0.9-Q16;`
-to the `Path`. However, on a Windows build machine, `c:\Rtools\bin;`
-`c:\Rtools\mingw_32\bin;` and `c:\Rtools\mingw_64\bin;` should always
+to the `Path`. However, on a Windows build machine, `C:\rtools40\usr\bin;`,
+`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should always
 be first in `Path`, so move `C:\Program Files\ImageMagick-7.0.9-Q16;`
-**right after** `c:\Rtools\mingw_64\bin;`. See "How to edit an environment
+**right after** `C:\rtools40\mingw64\bin;`. See "How to edit an environment
 variable" in "General information and tips" at the top of this document
 for how to do this.
 
@@ -565,17 +565,17 @@ Quit R (do NOT save the workspace image).
    From `C:\Users\biocbuild\bbs-3.11-bioc`:
    ```
    cd R\etc\i386
-   cp -i Makeconf Makeconf.original
+   C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
    vi Makeconf
    # Replace line
-   #     #LOCAL_SOFT
+   #     LOCAL_SOFT ?=
    # with
    #     LOCAL_SOFT = C:/extsoft
    # Save and quit vi.
    ```
    Check your changes with:
    ```
-   C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
    ```
 
 - `R\etc\x64\Makeconf`
@@ -583,17 +583,17 @@ Quit R (do NOT save the workspace image).
    From `C:\Users\biocbuild\bbs-3.11-bioc`:
    ```
    cd R\etc\x64
-   cp -i Makeconf Makeconf.original
+   C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
    vi Makeconf
    # Replace line
-   #     #LOCAL_SOFT
+   #     LOCAL_SOFT ?=
    # with
    #     LOCAL_SOFT = C:/extsoft
    # Save and quit vi.
    ```
    Check your changes with:
    ```
-   C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
+   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
    ```
 
 TESTING: Try to compile a package that uses the GSL (provided by `extsoft/`)
@@ -613,7 +613,13 @@ Also try to compile a package that uses netCDF (also provided by `extsoft/`):
 BiocCheck is needed for the Single Package Builder:
 
     library(BiocManager)
+    ## This installs all BiocCheck deps as binaries if they are available,
+    ## which is much faster than installing from source.
     install("BiocCheck")
+    ## IMPORTANT: BiocCheck needs to be loaded at least once for a full
+    ## installation (this will install the BiocCheck and BiocCheckGitClone
+    ## scripts).
+    library(BiocCheck)
 
 
 ### Install Cairo
@@ -892,8 +898,8 @@ products (this will download 2 executables named something like
 Install both. Use the default settings when running the installers.
 
 Note that the installer will prepend `C:\ProgramData\Oracle\Java\javapath;`
-to the `Path`. However, on a Windows build machine, `c:\Rtools\bin;`
-`c:\Rtools\mingw_32\bin;` and `c:\Rtools\mingw_64\bin;` should always
+to the `Path`. However, on a Windows build machine, `C:\rtools40\usr\bin;`,
+`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should always
 be first in the `Path`, so move this towards the end of `Path` (e.g. anywhere
 after `C:\Program Files\Git\cmd`). See "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to
@@ -962,8 +968,8 @@ Download and install Active Perl Community Edition for 64-bit Windows
 When running the installer, choose "Typical" setup
 
 Note that the installer will prepend `C:\Perl64\site\bin;C:\Perl64\bin;`
-to the `Path`. However, on a Windows build machine, `c:\Rtools\bin;`
-`c:\Rtools\mingw_32\bin;` and `c:\Rtools\mingw_64\bin;` should always
+to the `Path`. However, on a Windows build machine, `C:\rtools40\usr\bin;`,
+`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should always
 be first in `Path`, so move this towards the end of `Path` (e.g. anywhere
 after `C:\Program Files\Git\cmd`). See "How to edit an environment variable"
 in "General information and tips" at the top of this document for how to
