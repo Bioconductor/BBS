@@ -342,21 +342,10 @@ DIV.merida1,
 TR.merida1 TD,
 TABLE.mainrep .merida1,
 TABLE.mainrep .odd .merida1 {
-    background: #BBF;
+    background: #BCF;
 }
 TABLE.mainrep .even .merida1 {
-    background: #99D;
-}
-
-/* merida2 */
-DIV.merida2,
-TR.merida2 TD,
-TABLE.mainrep .merida2,
-TABLE.mainrep .odd .merida2 {
-    background: #BBF;
-}
-TABLE.mainrep .even .merida2 {
-    background: #99D;
+    background: #9AD;
 }
 
 /* machv2 */
