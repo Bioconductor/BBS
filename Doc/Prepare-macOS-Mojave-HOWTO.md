@@ -206,7 +206,7 @@ you already have them or not with:
     which ld     # /usr/bin/ld
     which make   # /usr/bin/make
     which clang  # /usr/bin/clang
-    clang -v     # Apple LLVM version 10.0.1
+    clang -v     # Apple clang version 11.0.0 (clang-1100.0.33.17)
 
 If you do, skip this section.
 
@@ -217,55 +217,23 @@ tools that enable Unix-style development at the command line. It's all
 that is needed to install/compile R packages with native code in them (note
 that it even includes the svn and git clients).
 
-The full Xcode IDE is much bigger (2.6G vs 103M) and is not needed.
-
-IMPORTANT NOTE: For R 3.4, the CRAN folks actually decided to use a different
-set of compilers for compiling R and packages with C and/or C++ code. So we
-do the same, but we still need the Command Line Developer Tools for the `ld`
-(linker) and `make` commands.
+The full Xcode IDE is much bigger (2.6G vs 220M) and is not needed.
 
 Go on https://developer.apple.com/ and pick up the last version for
-macOS Mojave.
+macOS Mojave (`Command_Line_Tools_for_Xcode_11.3.1.dmg` as of May 13, 2020,
+note that Command Line Tools for Xcode 11.4 requires Catalina or higher).
 
 Install with:
 
-    sudo hdiutil attach Command_Line_Tools_macOS_10.11_for_Xcode_8.2.dmg
-    sudo installer -pkg "/Volumes/Command Line Developer Tools/Command Line Tools (macOS El Capitan version 10.11).pkg" -target /
+    sudo hdiutil attach Command_Line_Tools_for_Xcode_11.3.1.dmg
+    sudo installer -pkg "/Volumes/Command Line Developer Tools/Command Line Tools.pkg" -target /
     sudo hdiutil detach "/Volumes/Command Line Developer Tools"
 
 TESTING:
 
     which make   # /usr/bin/make
     which clang  # /usr/bin/clang
-    clang -v     # Apple LLVM version 10.0.1
---------------------------------------------------------------------------
-
-
-### Install the C and C++ compilers used by the CRAN folks
-
-This should no longer be needed. Last news is that Simon is planning to
-use Apple clang from Xcode for the R-4.0 builds.
-
---------------------------------------------------------------------------
-The CRAN folks use the clang version provided here:
-
-    https://cran.r-project.org/bin/macosx/tools/
-
-to compile R and produce binary packages on Mac.
-
-So for example, for R 4.0, download and install with:
-
-    curl -O https://cran.r-project.org/bin/macosx/tools/clang-8.0.0.pkg
-    sudo installer -pkg clang-8.0.0.pkg -target /
-    sudo chown -R biocbuild:admin /usr/local
-
-Then in `/etc/profile` *prepend* `/usr/local/clang8/bin` to `PATH`.
-
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect.
-
-    which clang  # /usr/local/clang8/bin/clang
-    clang -v     # clang version 8.0.0
+    clang -v     # Apple clang version 11.0.0 (clang-1100.0.33.17)
 --------------------------------------------------------------------------
 
 
@@ -275,7 +243,7 @@ Simon uses Coudert's gfortran 8.2: https://github.com/fxcoudert/gfortran-for-mac
 
 Download with:
 
-    curl -OL https://github.com/fxcoudert/gfortran-for-macOS/releases/download/8.2/gfortran-8.2-Mojave.dmg
+    curl -LO https://github.com/fxcoudert/gfortran-for-macOS/releases/download/8.2/gfortran-8.2-Mojave.dmg
 
 Install with:
 
@@ -284,9 +252,13 @@ Install with:
     sudo hdiutil detach /Volumes/gfortran-8.2-Mojave
     sudo chown -R biocbuild:admin /usr/local
 
+Ignore message:
+
+    chown: /usr/local: Operation not permitted
+
 TESTING:
 
-    gfortran -v
+    gfortran --version  # GNU Fortran (GCC) 8.2.0
 
 Finally check that the gfortran libraries got installed in
 `/usr/local/gfortran/lib` and make sure that `LOCAL_FORTRAN_DYLIB_DIR`
@@ -299,7 +271,7 @@ https://support.bioconductor.org/p/95587/#95631).
 
 Download it from https://xquartz.macosforge.org/
 
-    curl -OL https://dl.bintray.com/xquartz/downloads/XQuartz-2.7.11.dmg
+    curl -LO https://dl.bintray.com/xquartz/downloads/XQuartz-2.7.11.dmg
 
 Install with:
 
@@ -475,6 +447,9 @@ result in output of "SUCCESS!":
 
 ### Install CMake
 
+MAY 2020: We only need this for compiling Open Babel from source at the moment
+(Open Babel is needed by the ChemmineOB package).
+
 Home page: https://cmake.org/
 
 Let's make sure it's not already installed:
@@ -516,9 +491,13 @@ members of the `admin` group:
 
     sudo chown -R biocbuild:admin /usr/local
 
+Ignore message:
+
+    chown: /usr/local: Operation not permitted
+
 Then install with:
 
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 TESTING:
 
@@ -529,9 +508,12 @@ TESTING:
 
     brew install python3
 
+Some python3 deps (e.g. openssl, readline, sqlite) will be installed
+as keg-only. This is expected and should not be a problem.
+
 TESTING:
 
-    python3 --version
+    python3 --version  # Python 3.7.7
 
 
 ### Install Python 3 module psutil
@@ -548,17 +530,20 @@ This module is needed by BBS.
 
 ### Install openssl
 
+Installing Python 3 should have taken care of this already but you still
+need to manually edit `/etc/profile` as instructed below.
+
     brew install openssl
 
 Then in `/etc/profile`:
 
-- Add `/usr/local/opt/openssl@1.1/bin` to `PATH`.
+- Append `/usr/local/opt/openssl@1.1/bin` to `PATH`.
 
 - Add `/usr/local/opt/openssl@1.1/lib/pkgconfig` to `PKG_CONFIG_PATH`.
 
-- Add the following line, replacing '1.1.1d' with the version installed:
+- Add the following line, replacing '1.1.1g' with the version installed:
     ```
-    export OPENSSL_LIBS="/usr/local/Cellar/openssl@1.1/1.1.1d/lib/libssl.a /usr/local/Cellar/openssl@1.1/1.1.1d/lib/libcrypto.a"
+    export OPENSSL_LIBS="/usr/local/Cellar/openssl@1.1/1.1.1g/lib/libssl.a /usr/local/Cellar/openssl@1.1/1.1.1g/lib/libcrypto.a"
     ```
   This will trigger statically linking of the rtracklayer package against
   the openssl libraries.
@@ -577,6 +562,7 @@ Install with:
 
 
 ## 4. Install BBS git tree and create bbs-3.y-bioc directory structure
+
 
 Everything in this section must be done from the biocbuild account.
 
@@ -631,8 +617,8 @@ https://cloud.r-project.org/bin/macosx/). Pick up the 1st file
 Download and install with:
 
     cd /Users/biocbuild/Downloads
-    curl -O https://mac.r-project.org/high-sierra/R-4.0-branch/R-4.0-branch.pkg
-    sudo installer -pkg R-4.0-branch.pkg -target /
+    curl -O https://cloud.r-project.org/bin/macosx/R-4.0.0.pkg
+    sudo installer -pkg R-4.0.0.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
 *system-wide* installation of R i.e. it can be started with `R` from any
@@ -648,18 +634,21 @@ TESTING: Start the virtual X server, start R, and check X11:
 Then start R again and try to install a few packages *from source*:
 
     # CRAN packages
+
     # contains C++ code:
     install.packages("Rcpp", type="source", repos="https://cran.r-project.org")
-    # contains Fortran code
+    # contains Fortran code:
     install.packages("minqa", type="source", repos="https://cran.r-project.org")
     # always good to have; try this even if CRAN binaries are not available
     install.packages("devtools", type="source", repos="https://cran.r-project.org")
 
     # Bioconductor packages
-    install.packages("BiocManager", type="source", repos="https://cran.r-project.org")
+
+    install.packages("BiocManager", repos="https://cran.r-project.org")
     library(BiocManager)
     ## ONLY if release and devel are using the same version of R:
     BiocManager::install(version="devel")
+
     BiocManager::install("BiocCheck", type="source")
     BiocManager::install("rtracklayer", type="source")
     BiocManager::install("VariantAnnotation", type="source")
@@ -702,8 +691,8 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Dec 2019):
 
-    pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
-              "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools", "PSCBS",
+    pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL",
+              "gdtools", "rsvg", "magick", "rgeos", "V8", "pdftools",
               "protolite", "RSQLite", "RPostgres", "glpkAPI")
 
 First try to install with:
@@ -863,7 +852,7 @@ Download:
 
     https://tug.org/mactex/mactex-download.html
 
-On March 2020 the above paage was displaying "Downloading MacTeX 2019".
+As of May 2020 the above page is displaying "Downloading MacTeX 2020".
 
     cd /Users/biocbuild/Downloads
     curl -LO https://tug.org/cgi-bin/mactex-download/MacTeX.pkg
@@ -922,7 +911,7 @@ This must be done from the biocbuild account.
 
 Add the following entry to biocbuild crontab:
 
-    55 17 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.11/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.11-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 18 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.11/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.11-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run before
 doing so.
@@ -939,35 +928,35 @@ Everything in this section must be done from the biocbuild account.
 
 Go to https://jdk.java.net/ and follow the link to the latest JDK (JDK
 14 as of April 1, 2020). Then download the tarball for macOS/x64 (e.g.
-`openjdk-14_osx-x64_bin.tar.gz`) to `~/Downloads/`.
+`openjdk-14.0.1_osx-x64_bin.tar.gz`) to `~/Downloads/`.
 
 Install with:
 
     cd /usr/local
-    sudo tar zxvf ~/Downloads/openjdk-14_osx-x64_bin.tar.gz
+    sudo tar zxvf ~/Downloads/openjdk-14.0.1_osx-x64_bin.tar.gz
     sudo chown -R biocbuild:admin /usr/local
 
 Then:
 
     cd /usr/local/bin
-    ln -s ../jdk-14.jdk/Contents/Home/bin/java
-    ln -s ../jdk-14.jdk/Contents/Home/bin/javac
-    ln -s ../jdk-14.jdk/Contents/Home/bin/jar
+    ln -s ../jdk-14.0.1.jdk/Contents/Home/bin/java
+    ln -s ../jdk-14.0.1.jdk/Contents/Home/bin/javac
+    ln -s ../jdk-14.0.1.jdk/Contents/Home/bin/jar
 
 In `/etc/profile` add the following line:
 
-    export JAVA_HOME=/usr/local/jdk-14.jdk/Contents/Home
+    export JAVA_HOME=/usr/local/jdk-14.0.1.jdk/Contents/Home
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
 
     java --version
-    # openjdk 14 2020-03-17
-    # OpenJDK Runtime Environment (build 14+36-1461)
-    # OpenJDK 64-Bit Server VM (build 14+36-1461, mixed mode, sharing)
+    # openjdk 14.0.1 2020-04-14
+    # OpenJDK Runtime Environment (build 14.0.1+7)
+    # OpenJDK 64-Bit Server VM (build 14.0.1+7, mixed mode, sharing)
 
     javac --version
-    # javac 14
+    # javac 14.0.1
 
 Finally reconfigure R to use this new Java installation:
 
@@ -980,10 +969,14 @@ TESTING: Try to install the rJava package:
     library(rJava)
     .jinit()
     .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
-    # [1] "14+36-1461"
+    # [1] "14.0.1+7"
 
 
-### Install JPEG system library
+### [OPTIONAL] Install JPEG system library
+
+This is needed only if CRAN package jpeg needs to be installed from source
+which is usually NOT the case (most of the time a Mac binary should be
+available on CRAN).
 
 Download and install with:
 
@@ -993,13 +986,17 @@ Download and install with:
 
 TESTING: Try to install the jpeg package *from source*:
 
-    install.packages("jpeg", type="source")
+    install.packages("jpeg", type="source", repos="https://cran.r-project.org")
     library(jpeg)
     example(readJPEG)
     example(writeJPEG)
 
 
-### Install TIFF system library
+### [OPTIONAL] Install TIFF system library
+
+This is needed only if CRAN package tiff needs to be installed from source
+which is usually NOT the case (most of the time a Mac binary should be
+available on CRAN).
 
 Download and install with:
 
@@ -1009,13 +1006,32 @@ Download and install with:
 
 TESTING: Try to install the tiff package *from source*:
 
-    install.packages("tiff", type="source")
+    install.packages("tiff", type="source", repos="https://cran.r-project.org")
     library(tiff)
     example(readTIFF)
     example(writeTIFF)
 
 
-### Install autoconf & automake
+### [OPTIONAL] Install FFTW system library
+
+This is needed only if CRAN package fftwtools needs to be installed from
+source which is usually NOT the case (most of the time a Mac binary should
+be available on CRAN).
+
+Download and install with:
+
+    curl -O https://mac.r-project.org/libs-4/fftw-3.3.8-darwin.17-x86_64.tar.gz
+    sudo tar fvxz fftw-3.3.8-darwin.17-x86_64.tar.gz -C /
+    sudo chown -R biocbuild:admin /usr/local
+
+TESTING: Try to install the fftwtools package *from source*:
+
+    install.packages("fftwtools", type="source", repos="https://cran.r-project.org")
+
+
+### [OPTIONAL] Install autoconf & automake
+
+MAY 2020: Who needs this? Is this still needed?
 
 Install with:
 
@@ -1040,7 +1056,7 @@ With R 4.0 on macOS Mojave, seems like Cairo can be installed from source
 without the need to download/install the cairo library from mac.r-project.org
 Check this with:
 
-    install.packages("Cairo", type="source")
+    install.packages("Cairo", type="source", repos="https://cran.r-project.org")
 
 --------------------------------------------------------------------------
 Download and install with:
@@ -1049,9 +1065,9 @@ Download and install with:
     sudo tar fvxz cairo-1.14.12-darwin.17-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
 
-TESTING: Try to install and load the Cairo *binary* package:
+TESTING: Try to install and load the Cairo **binary** package:
 
-    install.packages("Cairo")
+    install.packages("Cairo", repos="https://cran.r-project.org")
     library(Cairo)
 
 Note: As of Feb 22, 2017, CRAN still does not provide Mac binary packages
@@ -1066,6 +1082,10 @@ with R 3.4. Install and load with:
 
 ### Install NetCDF and HDF5 system library
 
+NetCDF is needed only if CRAN package ncdf4 needs to be installed from
+source which is usually NOT the case (most of the time a Mac binary should
+be available on CRAN).
+
 Download and install with:
 
     curl -O https://mac.r-project.org/libs-4/netcdf-4.7.3-darwin.17-x86_64.tar.gz
@@ -1076,26 +1096,13 @@ Download and install with:
 
 TESTING: Try to install the ncdf4 package *from source*:
 
-    install.packages("ncdf4", type="source")
+    install.packages("ncdf4", type="source", repos="https://cran.r-project.org")
 
 If you have time, you can also try to install the mzR package but be aware
 that this takes much longer:
 
     library(BiocManager)
     BiocManager::install("mzR", type="source")  # takes between 7-10 min
-
-
-### Install FFTW system library
-
-Download and install with:
-
-    curl -O https://mac.r-project.org/libs-4/fftw-3.3.8-darwin.17-x86_64.tar.gz
-    sudo tar fvxz fftw-3.3.8-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
-
-TESTING: Try to install the fftwtools package *from source*:
-
-    install.packages("fftwtools", type="source")
 
 
 ### Install GSL system library
@@ -1118,6 +1125,15 @@ Download and install with:
 
     curl -O https://mac.r-project.org/libs/GTK_2.24.17-X11.pkg
     sudo installer -allowUntrusted -pkg GTK_2.24.17-X11.pkg -target /
+
+TESTING: Try to install and load the RGtk2 **binary** package:
+
+    install.packages("RGtk2", repos="https://cran.r-project.org")
+    library(RGtk2)
+
+The following is needed only if CRAN package RGtk2 needs to be installed
+from source which is usually NOT the case (most of the time a Mac binary
+should be available on CRAN).
 
 Create `pkg-config` symlink in `/usr/local/bin/` with:
 
@@ -1159,14 +1175,14 @@ TESTING:
     machv2:~ biocbuild$ jupyter --version
     jupyter core     : 4.6.3
     jupyter-notebook : 6.0.3
-    qtconsole        : 4.7.2
-    ipython          : 7.13.0
-    ipykernel        : 5.2.0
+    qtconsole        : 4.7.4
+    ipython          : 7.14.0
+    ipykernel        : 5.2.1
     jupyter client   : 6.1.3
     jupyter lab      : not installed
     nbconvert        : 5.6.1
     ipywidgets       : 7.5.1
-    nbformat         : 5.0.4
+    nbformat         : 5.0.6
     traitlets        : 4.3.3
     ```
     Note that it's ok if jupyter lab is not installed but everything else
@@ -1196,10 +1212,11 @@ Install with:
     sudo hdiutil attach JAGS-4.3.0.dmg
     sudo installer -pkg /Volumes/JAGS-4.3.0/JAGS-4.3.0.mpkg -target /
     sudo hdiutil detach /Volumes/JAGS-4.3.0
+    sudo chown -R biocbuild:admin /usr/local
 
 TESTING: Try to install the rjags package *from source*:
 
-    install.packages("rjags", type="source")
+    install.packages("rjags", type="source", repos="https://cran.r-project.org")
 
 
 ### Install Open Babel
@@ -1262,7 +1279,8 @@ install a more recent libxml-2.0 with:
 
 Ignore the "This formula is keg-only..." caveat.
 
-In `/etc/profile` **prepend** `/usr/local/opt/libxml2/lib/pkgconfig` to
+In `/etc/profile` **prepend** `/usr/local/opt/libxml2/bin`
+to `PATH` and `/usr/local/opt/libxml2/lib/pkgconfig` to
 `PKG_CONFIG_PATH` (in particular it's important to put this **before**
 `/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig` which
 contains a broken `libxml-2.0.pc` file).
@@ -1270,8 +1288,20 @@ contains a broken `libxml-2.0.pc` file).
 Logout and login again so that the changes to `/etc/profile` take
 effect then check that `pkg-config` picks up the right libxml-2.0:
 
+    which xml2-config
+    # /usr/local/opt/libxml2/bin/xml2-config
+
+    xml2-config --cflags
+    # -I/usr/local/Cellar/libxml2/2.9.10_1/include/libxml2
+
+    xml2-config --libs
+    # -L/usr/local/Cellar/libxml2/2.9.10_1/lib -lxml2 -lz -lpthread -liconv -lm
+
     pkg-config --cflags libxml-2.0
     # -I/usr/local/Cellar/libxml2/2.9.10_1/include/libxml2
+
+    pkg-config --libs libxml-2.0
+    # -L/usr/local/Cellar/libxml2/2.9.10_1/lib -lxml2
 
 #### Install libSBML
 
@@ -1284,9 +1314,9 @@ it from SourceForge:
   "Mac OS X", then download libSBML installer for Mojave
   (`libsbml-5.18.0-libxml2-macosx-mojave.dmg`) with:
 
-    curl -OL https://sourceforge.net/projects/sbml/files/libsbml/5.18.0/stable/Mac%20OS%20X/libsbml-5.18.0-libxml2-macosx-mojave.dmg
+    curl -LO https://sourceforge.net/projects/sbml/files/libsbml/5.18.0/stable/Mac%20OS%20X/libsbml-5.18.0-libxml2-macosx-mojave.dmg
 
-    #curl -OL https://sourceforge.net/projects/sbml/files/libsbml/5.13.0/stable/Mac%20OS%20X/libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
+    #curl -LO https://sourceforge.net/projects/sbml/files/libsbml/5.13.0/stable/Mac%20OS%20X/libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
 
 Install with:
 
@@ -1386,16 +1416,30 @@ effect. Then try to build the ImmuneSpaceR package:
 
 ### Install Open MPI
 
-Only needed if Rmpi needs to be installed from source! This should not be
-the case if the Rmpi binary for Mac is available on CRAN.
+This is needed to install CRAN package Rmpi from source (unfortunately no
+Mac binary is available on CRAN).
 
 Install with:
 
-    brew install open-mpi  # takes between 15-20 min
+    brew install open-mpi
+
+Notes:
+- This will install many deps: gmp, isl, mpfr, libmpc, gcc, hwloc and libevent
+- During installation of gcc, you might see the following error:
+    ```
+    Error: The `brew link` step did not complete successfully
+    The formula built, but is not symlinked into /usr/local
+    Could not symlink bin/gfortran
+    Target /usr/local/bin/gfortran
+    already exists. You may want to remove it:
+      rm '/usr/local/bin/gfortran'
+    ```
+  Please ignore it. In particular do NOT try to perform any of the suggested
+  actions (e.g. `rm /usr/local/bin/gfortran` or `brew link --overwrite gcc`).
 
 TESTING: Try to install the Rmpi package *from source*:
 
-    install.packages("Rmpi", type="source")
+    install.packages("Rmpi", type="source", repos="https://cran.r-project.org")
     library(Rmpi)
     mpi.spawn.Rslaves(nslaves=3)
     mpi.parReplicate(100, mean(rnorm(1000000)))
