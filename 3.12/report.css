@@ -285,7 +285,7 @@ TABLE.mainrep .odd TD {
 }
 TABLE.mainrep .even TH,
 TABLE.mainrep .even TD {
-    background: #DDD;
+    background: #EEE;
 }
 
 
@@ -298,10 +298,10 @@ DIV.malbec1,
 TR.malbec1 TD,
 TABLE.mainrep .malbec1,
 TABLE.mainrep .odd .malbec1 {
-    background: #ACC;
+    background: #BDF;
 }
 TABLE.mainrep .even .malbec1 {
-    background: #8AA;
+    background: #ACE;
 }
 
 /* malbec2 */
@@ -309,10 +309,10 @@ DIV.malbec2,
 TR.malbec2 TD,
 TABLE.mainrep .malbec2,
 TABLE.mainrep .odd .malbec2 {
-    background: #ACC;
+    background: #BDF;
 }
 TABLE.mainrep .even .malbec2 {
-    background: #8AA;
+    background: #ACE;
 }
 
 /* tokay1 */
@@ -320,10 +320,10 @@ DIV.tokay1,
 TR.tokay1 TD,
 TABLE.mainrep .tokay1,
 TABLE.mainrep .odd .tokay1 {
-    background: #DBB;
+    background: #EDC;
 }
 TABLE.mainrep .even .tokay1 {
-    background: #B99;
+    background: #DCB;
 }
 
 /* tokay2 */
@@ -331,10 +331,10 @@ DIV.tokay2,
 TR.tokay2 TD,
 TABLE.mainrep .tokay2,
 TABLE.mainrep .odd .tokay2 {
-    background: #DBB;
+    background: #EDC;
 }
 TABLE.mainrep .even .tokay2 {
-    background: #B99;
+    background: #DCB;
 }
 
 /* merida1 */
@@ -342,10 +342,10 @@ DIV.merida1,
 TR.merida1 TD,
 TABLE.mainrep .merida1,
 TABLE.mainrep .odd .merida1 {
-    background: #BCF;
+    background: #DCF;
 }
 TABLE.mainrep .even .merida1 {
-    background: #9AD;
+    background: #CBE;
 }
 
 /* machv2 */
@@ -353,9 +353,9 @@ DIV.machv2,
 TR.machv2 TD,
 TABLE.mainrep .machv2,
 TABLE.mainrep .odd .machv2 {
-    background: #BCF;
+    background: #DCF;
 }
 TABLE.mainrep .even .machv2 {
-    background: #9AD;
+    background: #CBE;
 }
 
