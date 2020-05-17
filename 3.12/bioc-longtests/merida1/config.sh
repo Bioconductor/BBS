@@ -1,7 +1,7 @@
 #!/bin/bash
-# ===================
-# Settings for machv1
-# ===================
+# ====================
+# Settings for merida1
+# ====================
 
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="machv1"
+export BBS_NODE_HOSTNAME="merida1"
 export BBS_USER="biocbuild"
 export BBS_RSAKEY="/Users/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.12-bioc-longtests"
