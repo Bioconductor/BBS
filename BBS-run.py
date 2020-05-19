@@ -106,7 +106,7 @@ def makeNodeInfo():
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
     Rscript = "options(width=500);print(installed.packages()[,c('LibPath','Version','Built')],quote=FALSE)"
     bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
-                    'R-instpkgs.txt', 60.0, True) # ignore retcode
+                    'R-instpkgs.txt', 120.0, True) # ignore retcode
     print("BBS>   cd BBS_WORK_TOPDIR")
     os.chdir(BBSvars.work_topdir)
     BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
