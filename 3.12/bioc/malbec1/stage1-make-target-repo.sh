@@ -2,4 +2,4 @@
 
 . ./config.sh
 
-$BBS_HOME/BBS-prerun.py make-target-repo
+$BBS_PYTHON_CMD $BBS_HOME/BBS-prerun.py make-target-repo

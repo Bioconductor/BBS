@@ -46,10 +46,10 @@ Download the Latest Python 3 Release from:
 (Choose the "Windows x86-64 executable installer".)
 
 When running the installer:
-- Select "Add Python 3.7 to PATH" then click on "Customize installation".
+- Select "Add Python 3.8 to PATH" then click on "Customize installation".
 - In the "Optional Features" screen, click Next without changing anything.
 - In "Advanced Options" choose "Install for all users" and change install
-  location from `C:\Program Files\Python37` to `C:\Python37`, then click
+  location from `C:\Program Files\Python38` to `C:\Python38`, then click
   on "Install".
 
 ALSO: You need to explicitly associate .py files with Python by:
@@ -59,7 +59,7 @@ ALSO: You need to explicitly associate .py files with Python by:
 - Check the "Use this app for all .py files" box then scroll all the way
   down and click on "Look for another app on this PC". This opens the File
   Explorer.
-- In the File Explorer find the python file in `C:\Python37` and
+- In the File Explorer find the python file in `C:\Python38` and
   double-click on it.
 
 
@@ -77,7 +77,7 @@ This module is needed by BBS.
     pip install psutil
 
 
-### Install Python 3 modules needed by some CRAN/Bioconductor packages
+### Install Python modules needed by some CRAN/Bioconductor packages
 
 In a PowerShell window:
 
@@ -713,7 +713,7 @@ Configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `C:\Python37\python.exe`
+      - Program/script: `C:\Python38\python.exe`
       - Add arguments: `C:\Users\biocbuild\BBS\utils\do_nothing_forever.py`
       - Start in: `C:\Users\biocbuild\log`
 

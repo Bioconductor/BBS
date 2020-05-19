@@ -2,4 +2,4 @@
 
 . ./config.sh
 
-$BBS_HOME/BBS-report.py
+$BBS_PYTHON_CMD $BBS_HOME/BBS-report.py

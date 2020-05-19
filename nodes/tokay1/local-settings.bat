@@ -4,7 +4,7 @@
 
 set BBS_HOME=C:\Users\biocbuild\BBS
 
-set BBS_PYTHON_CMD=C:\Python27\python.exe
+set BBS_PYTHON_CMD=C:\Python38\python.exe
 
 set BBS_SSH_CMD=C:\cygwin\bin\ssh.exe
 set BBS_RSYNC_CMD=C:\cygwin\bin\rsync.exe 

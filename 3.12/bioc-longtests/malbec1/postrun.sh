@@ -19,10 +19,10 @@ cd nodes
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
 # Generate STATUS_DB.txt file
-"$BBS_HOME"/BBS-make-STATUS_DB.py
+$BBS_PYTHON_CMD $BBS_HOME/BBS-make-STATUS_DB.py
 
 # Generate and publish HTML report
-"$BBS_HOME"/BBS-report.py no-alphabet-dispatch
+$BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch
 REPORT_DIRNAME=$(/usr/bin/dirname "$BBS_REPORT_PATH")
 REPORT_BASENAME=$(/usr/bin/basename "$BBS_REPORT_PATH")
 cd "$REPORT_DIRNAME"

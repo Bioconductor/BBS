@@ -2,4 +2,4 @@
 
 . ./config.sh
 
-$BBS_HOME/BBS-report.py skip-leaf-reports
+$BBS_PYTHON_CMD $BBS_HOME/BBS-report.py skip-leaf-reports
