@@ -229,6 +229,10 @@ Go to https://pandoc.org/installing.html#windows
 Download latest installer for Windows x86\_64
 (`pandoc-2.9-windows-x86_64.msi` as of Dec. 2019) and run it.
 
+Note:  There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8. 
+It caused build failures with the ERROR `Environment cslreferences undefined`.  
+Until we know it is resolved we have downgraded pandoc to 2.7.3. 
+
 
 ### Install 32-bit Cygwin
 
