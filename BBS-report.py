@@ -197,7 +197,9 @@ def write_git_log_for_pkg_asTRs(out, pkg, full_info=False):
     ## metadata other than snapshot date exists only for individual pkg repos
     if pkg == None:
         out.write('<TR>')
-        write_Date_asTD(out, None, 'Snapshot Date', full_info)
+        write_Date_asTD(out, None,
+                        'Approx. Package Snapshot Date (git pull)',
+                        full_info)
         out.write('</TR>\n')
     else:
         if full_info:
@@ -218,15 +220,7 @@ def write_git_log_for_pkg_asTRs(out, pkg, full_info=False):
         out.write('</TR>\n')
     return
 
-def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False, with_heading=False):
-    if BBSvars.MEAT0_type == 1:
-        vcs = 'svn'
-        heading = 'svn info'
-    else:
-        vcs = 'git'
-        heading = 'git log'
-    if with_heading:
-        out.write('<P>%s</P>\n' % heading)
+def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
     out.write('<TABLE class="svn_info">\n')
     if BBSvars.MEAT0_type == 1:
         write_svn_info_for_pkg_asTRs(out, pkg, full_info)
@@ -1130,7 +1124,17 @@ def write_BioC_mainpage_top_asHTML(out):
     write_motd_asTABLE(out)
     if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
         out.write('<DIV class="svn_info">\n')
-        write_vcs_meta_for_pkg_asTABLE(out, None, True, True)
+        out.write('<TABLE class="centered"><TR><TD>\n')
+        if BBSvars.MEAT0_type == 1:
+            vcs = 'svn'
+            heading = 'svn info'
+            out.write('<P style="text-align: center;">%s</P>\n' % heading)
+        #else:
+        #    vcs = 'git'
+        #    heading = 'git log'
+        #    out.write('<P style="text-align: center;">%s</P>\n' % heading)
+        write_vcs_meta_for_pkg_asTABLE(out, None, True)
+        out.write('</TD></TR></TABLE>\n')
         out.write('</DIV>\n')
     return
 

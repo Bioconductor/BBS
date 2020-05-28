@@ -32,6 +32,11 @@ P.time_stamp {
     text-align: center;
 }
 
+TABLE.centered {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 TABLE.grid_layout {
     border-spacing: 0px;
     border-collapse: collapse;
@@ -116,7 +121,8 @@ DIV.svn_info SPAN.svn_info {
  */
 
 TABLE.node_specs {
-    /* margin: auto; */
+    margin-left: auto;
+    margin-right: auto;
     border: solid black 1px;
     font-size: smaller;
 }
