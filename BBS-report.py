@@ -197,9 +197,10 @@ def write_git_log_for_pkg_asTRs(out, pkg, full_info=False):
     ## metadata other than snapshot date exists only for individual pkg repos
     if pkg == None:
         out.write('<TR>')
-        write_Date_asTD(out, None,
-                        'Approx. Package Snapshot Date (git pull)',
-                        full_info)
+        val = BBSreportutils.get_vcs_meta(None, 'Snapshot Date')
+        if not full_info:
+            val = ' '.join(val.split(' ')[0:3])
+        write_keyval_asTD(out, 'Approx. Package Snapshot Date (git pull)', val)
         out.write('</TR>\n')
     else:
         if full_info:
