@@ -90,7 +90,7 @@ C. Back to malbec2 to run the scripts
 
   Symlink must be gone on master before running this!
 
-  Run the crontab entry by hand. Monitor ~/cron.log/3.7/prepare-repos* log
+  Run the crontab entry by hand. Monitor ~/cron.log/3.7/propagate-data-annotation-* log
   file.
 
 2. Test BiocManager::install() to see if it finds the new repo.
