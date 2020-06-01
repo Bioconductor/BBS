@@ -8,7 +8,7 @@
 ### codecs.getdecoder('utf_8') or codecs.getdecoder('iso8859'))
 
 # FIXME - parameterize this as much as possible
-# OS version, etc. can be obtained programmatically
+# OS version, etc.. can be obtained programmatically
 
 allnodes = {
     'malbec1':    ("Linux (Ubuntu 18.04.4 LTS)",
