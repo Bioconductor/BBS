@@ -87,6 +87,7 @@ In a PowerShell window:
     pip install cwltool
     pip install nbconvert
     pip install matplotlib phate
+    pip install virtualenv
 
 Notes:
 - scipy is needed by Bioconductor package MOFA but also by the sklearn
@@ -105,7 +106,8 @@ Notes:
   Bioconductor package destiny.
 - matplotlib and phate are needed by CRAN package phateR which is itself
   used by Bioconductor package phemd.
-
+- virtualenv is used by the single package builder. Despite python3 shipping
+  with venv, venv is not sufficient. The SPB must use virtualenv.
 
 ### Create personal administrator accounts
 
