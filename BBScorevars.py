@@ -148,7 +148,7 @@ subbuilds = getenv('BBS_SUBBUILDS', False, "bioc")
 if subbuilds == "data-experiment":
     default_r_cmd_timeout = "4800.0"   # 80 min
 elif subbuilds == "workflows":
-    default_r_cmd_timeout = "7200.0"   # 2 h
+    default_r_cmd_timeout = "10800.0"  # 3 h
 elif subbuilds == "bioc-longtests":
     default_r_cmd_timeout = "21600.0"  # 6 h
 else:
