@@ -1428,14 +1428,14 @@ def write_glyph_table(out):
     t3 = int(BBScorevars.CHECK_timeout    / 60.0)
     t4 = int(BBScorevars.BUILDBIN_timeout / 60.0)
     if subbuilds == "bioc-longtests":
-        msg = '<I>CHECK</I> of package took more than ' +
+        msg = '<I>CHECK</I> of package took more than ' + \
               '%d minutes' % t3
     elif subbuilds == "workflows":
-        msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than ' +
+        msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than ' + \
               '%d or %d minutes, respectively' % (t1, t2)
     else:
-        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' +
-              '<I>BUILD BIN</I> of package took more than ' +
+        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' + \
+              '<I>BUILD BIN</I> of package took more than ' + \
               '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
     write_glyph("TIMEOUT", msg, True, True)
 
