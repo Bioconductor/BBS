@@ -145,15 +145,32 @@ nodes_rdir = Central_rdir.subdir('nodes')
 
 subbuilds = getenv('BBS_SUBBUILDS', False, "bioc")
 
+### Timeout limits
+
+default_INSTALL_timeout   =  "2400.0"  # 40 min
+
 if subbuilds == "data-experiment":
-    default_r_cmd_timeout = "4800.0"   # 80 min
+    default_BUILD_timeout =  "4800.0"  # 80 min
 elif subbuilds == "workflows":
-    default_r_cmd_timeout = "10800.0"  # 3 h
+    default_BUILD_timeout = "10800.0"  # 3 h
 elif subbuilds == "bioc-longtests":
-    default_r_cmd_timeout = "21600.0"  # 6 h
+    default_BUILD_timeout = "21600.0"  # 6 h
 else:
-    default_r_cmd_timeout = "2400.0"   # 40 min
-r_cmd_timeout = float(getenv('BBS_R_CMD_TIMEOUT', False, default_r_cmd_timeout))
+    default_BUILD_timeout =  "2400.0"  # 40 min
+
+INSTALL_timeout  = float(getenv('BBS_INSTALL_TIMEOUT',  False,
+                                default_INSTALL_timeout))
+
+BUILD_timeout    = float(getenv('BBS_BUILD_TIMEOUT',    False,
+                                default_BUILD_timeout))
+
+CHECK_timeout    = float(getenv('BBS_CHECK_TIMEOUT',    False,
+                                default_BUILD_timeout))
+
+BUILDBIN_timeout = float(getenv('BBS_BUILDBIN_TIMEOUT', False,
+                                default_INSTALL_timeout))
+
+### Other stuff
 
 meat_index_file = 'meat-index.dcf'
 

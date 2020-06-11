@@ -345,7 +345,7 @@ def STAGE2_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE2 loop.")
     t1 = time.time()
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                            BBScorevars.r_cmd_timeout, True)
+                                            BBScorevars.INSTALL_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE2 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -473,7 +473,7 @@ def STAGE3_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE3 loop.")
     t1 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                           BBScorevars.r_cmd_timeout, True)
+                                           BBScorevars.BUILD_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE3 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -540,7 +540,7 @@ def STAGE4_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE4 loop.")
     t1 = time.time()
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                             BBScorevars.r_cmd_timeout, True)
+                             BBScorevars.CHECK_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE4 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -597,7 +597,7 @@ def STAGE5_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE5 loop.")
     t1 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                           BBScorevars.r_cmd_timeout, True)
+                                           BBScorevars.BUILDBIN_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE5 loop.")
     nb_jobs = len(job_queue._jobs)
