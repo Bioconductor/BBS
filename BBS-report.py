@@ -1431,12 +1431,18 @@ def write_glyph_table(out):
         msg = '<I>CHECK</I> of package took more than ' + \
               '%d minutes' % t3
     elif subbuilds == "workflows":
-        msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than ' + \
-              '%d or %d minutes, respectively' % (t1, t2)
+        msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than '
+        if t1 == t2:
+            msg += '%d minutes' % t1
+        else:
+            msg += '%d or %d minutes, respectively' % (t1, t2)
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' + \
-              '<I>BUILD BIN</I> of package took more than ' + \
-              '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
+              '<I>BUILD BIN</I> of package took more than '
+        if t1 == t2 and t2 == t3 and t3 == t4:
+            msg += '%d minutes' % t1
+        else:
+            msg += '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
     write_glyph("TIMEOUT", msg, True, True)
 
     ## "ERROR" glyph
