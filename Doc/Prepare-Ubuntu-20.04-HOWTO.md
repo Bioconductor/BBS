@@ -95,10 +95,15 @@ Install with:
 
     sudo apt-get install <pkg>
 
+#### Always nice to have
+
+    tree
+    manpages-dev (includes man pages for the C standard lib)
+
 #### Packages required by the build system itself (BBS)
 
     python3-minimal
-    git    # needed only if standalone or central builder
+    git
 
 #### Packages required to compile R
 
@@ -139,11 +144,6 @@ capabilities will be missing):
     texinfo
     pandoc (used by CRAN package knitr)
     #ttf-mscorefonts-installer
-
-#### Always nice to have
-
-    tree
-    manpages-dev (includes man pages for the C standard lib)
 
 #### Packages needed by some CRAN and/or BioC packages
 
@@ -265,6 +265,9 @@ For example, for the BioC 3.12 software builds:
 
 Must be done from the biocbuild account.
 
+
+### 4.1 Get R source from CRAN
+
 Download and extract R source tarball from CRAN in `~/bbs-3.12-bioc/rdownloads`.
 The exact tarball to download depends on whether we're configuring the
 release or devel builds.
@@ -275,7 +278,8 @@ For example:
     wget https://cran.r-project.org/src/base/R-4/R-4.0.2.tar.gz
     tar zxvf R-4.0.2.tar.gz
 
-Configure and compile R:
+
+### 4.2 Configure and compile R
 
     cd ~/bbs-3.12-bioc/
     mkdir R    # possibly preceded by mv R R.old if previous installation
@@ -285,7 +289,12 @@ Configure and compile R:
     cd etc
     ~/BBS/utils/R-fix-flags.sh
 
-TESTING: Start R:
+Do NOT run `make install`!
+
+
+### 4.3 Testing
+
+Start R:
 
     cd ~/bbs-3.12-bioc/
     R/bin/R
