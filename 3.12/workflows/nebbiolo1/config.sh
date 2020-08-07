@@ -14,8 +14,8 @@ export BBS_USER="biocbuild"
 export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.12-workflows"
 export BBS_R_HOME="/home/biocbuild/bbs-3.12-bioc/R"
-export BBS_NB_CPU=20        # 72 cores are available
-export BBS_CHECK_NB_CPU=25  # 72 cores are available
+export BBS_NB_CPU=12        # 72 cores are available
+export BBS_CHECK_NB_CPU=16  # 72 cores are available
 
 
 
