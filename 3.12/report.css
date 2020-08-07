@@ -299,6 +299,17 @@ TABLE.mainrep .even TD {
  * Node specific background colors
  */
 
+/* nebbiolo1 */
+DIV.nebbiolo1,
+TR.nebbiolo1 TD,
+TABLE.mainrep .nebbiolo1,
+TABLE.mainrep .odd .nebbiolo1 {
+    background: #B8E8F4;
+}
+TABLE.mainrep .even .nebbiolo1 {
+    background: #A8D8E4;
+}
+
 /* malbec1 */
 DIV.malbec1,
 TR.malbec1 TD,
