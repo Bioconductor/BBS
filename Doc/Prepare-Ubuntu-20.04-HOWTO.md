@@ -8,20 +8,23 @@
 ### Standalone vs non-standalone builder
 
 The machine could either be configured as a _standalone_ builder or as
-a _non-standalone_ builder, that is, as a build node that participates
-to builds run by a group of build machines.
+a _non-standalone_ builder. A _non-standalone_ builder is a build node that
+participates to builds run by a group of build machines. For example the
+BioC 3.11 software builds are currently run by 3 nodes (as of Aug 2020):
+https://bioconductor.org/checkResults/3.11/bioc-LATEST/
 
 When part of a group of build machines, one machine must be setup as the
-_central_ builder (a.k.a. _primary node_) and all the other machines (called
-_secondary nodes_) must be able to communicate (SSH and HTTP/S) with the
-central builder. Note that this communication generates a lot of data transfer
+_central_ builder (a.k.a. _primary node_) e.g. malbec2 in the case of the
+BioC 3.11 software builds. All the other machines (called _secondary nodes_)
+must be able to communicate (SSH and HTTP/S) with the central builder.
+Note that this communication generates some fair amount of data transfer
 back and forth between each secondary node and the central builder (> 5GB
 every day on normal days).
 
 
 ### Check system requirements
 
-For a _standalone_ or _central_ builder:
+For a _central_ builder:
 
 - At least 800GB of disk space
 
@@ -29,13 +32,17 @@ For a _standalone_ or _central_ builder:
 
 - At least 48GB of RAM
 
-For a _secondary node_:
+For a _secondary node_ or _standalone_ builder:
 
 - At least 400GB of disk space
 
 - At least 20 cores
 
 - At least 32GB of RAM
+
+These requirements are _very_ approximate and tend to increase over time (as
+Bioconductor grows). The above numbers reflect the current state of affairs
+as of Aug 2020.
 
 
 ### Apply any pending system updates and reboot
@@ -68,7 +75,7 @@ Service will automatically restart after each reboot.
 
     sudo adduser biocbuild
 
-This should be set up as a regular account. In particular is should NOT have
+This should be set up as a regular account. In particular it should NOT have
 sudo privileges.
 
 Install devteam member public keys in biocbuild account.
@@ -88,12 +95,12 @@ Install with:
 
     sudo apt-get install <pkg>
 
-#### Required by the build system itself
+#### Packages required by the build system itself (BBS)
 
     python3-minimal
-    git    # only if standalone or central builder
+    git    # needed only if standalone or central builder
 
-#### Required to compile R
+#### Packages required to compile R
 
     build-essential
     gfortran
@@ -106,7 +113,7 @@ Install with:
     libpcre2-dev
     libcurl4-openssl-dev
 
-#### Highly recommended stuff
+#### Packages highly recommended stuff
 
     gobjc
     libpng-dev
@@ -131,7 +138,7 @@ Install with:
     tree
     manpages-dev (includes man pages for the C standard lib)
 
-#### Needed by some CRAN and/or BioC packages
+#### Packages needed by some CRAN and/or BioC packages
 
     pandoc (for knitr)
     automake (for RProtoBufLib)
@@ -176,9 +183,9 @@ From now on everything must be done from the biocbuild account.
 ## 2. Check connectivity with central builder
 
 
-Required only for a secondary node.
+Needed only on a secondary node.
 
-From the biocbuild account.
+Must be done from the biocbuild account.
 
 ### Install biocbuild RSA private key
 
@@ -229,7 +236,7 @@ More details on https implementation in `BBS/README.md`.
 ## 3. Clone BBS git tree and create bbs-3.y-bioc directory structure
 
 
-From the biocbuild account.
+Must be done from the biocbuild account.
 
 ### Clone BBS git tree
 
@@ -250,7 +257,7 @@ For example, for the BioC 3.12 software builds:
 ## 4. Install R
 
 
-From the biocbuild account.
+Must be done from the biocbuild account.
 
 Download and extract R source tarball from CRAN in `~/bbs-3.12-bioc/rdownloads`.
 The exact tarball to download depends on whether we're configuring the
@@ -314,7 +321,7 @@ Then from R:
 ## 5. Add crontab entries for nightly builds
 
 
-From the biocbuild account.
+Must be done from the biocbuild account.
 
 Add the following entry to biocbuild crontab:
 
@@ -328,7 +335,7 @@ doing so (great moment to watch your favorite Netflix show and relax).
 ## 6. Additional stuff to install for packages with special needs
 
 
-From the biocbuild account.
+Must be done from the biocbuild account.
 
 TODO
 
