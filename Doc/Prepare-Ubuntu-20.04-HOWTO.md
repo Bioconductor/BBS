@@ -142,7 +142,7 @@ capabilities will be missing):
     texlive-science (for algorithm.sty)
     texi2html
     texinfo
-    pandoc (used by CRAN package knitr)
+    pandoc and pandoc-citeproc (used by CRAN package knitr)
     #ttf-mscorefonts-installer
 
 #### Packages needed by some CRAN and/or BioC packages
