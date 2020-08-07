@@ -102,6 +102,8 @@ Install with:
 
 #### Packages required to compile R
 
+Strictly required:
+
     build-essential
     gfortran
     libreadline-dev
@@ -113,7 +115,8 @@ Install with:
     libpcre2-dev
     libcurl4-openssl-dev
 
-#### Packages highly recommended stuff
+Optional (still possible to compile R without these packages but some
+capabilities will be missing):
 
     gobjc
     libpng-dev
@@ -123,6 +126,10 @@ Install with:
     libicu-dev
     tcl-dev
     tk-dev
+    default-jdk
+
+#### Packages needed to build vignettes and reference manuals
+
     texlive
     texlive-latex-extra (for fullpage.sty)
     texlive-fonts-extra (for incosolata.sty)
@@ -130,7 +137,7 @@ Install with:
     texlive-science (for algorithm.sty)
     texi2html
     texinfo
-    default-jdk
+    pandoc (used by CRAN package knitr)
     #ttf-mscorefonts-installer
 
 #### Always nice to have
@@ -140,7 +147,6 @@ Install with:
 
 #### Packages needed by some CRAN and/or BioC packages
 
-    pandoc (for knitr)
     automake (for RProtoBufLib)
     libssl-dev (for openssl)
     libxml2-dev (for XML)
@@ -183,7 +189,7 @@ From now on everything must be done from the biocbuild account.
 ## 2. Check connectivity with central builder
 
 
-Needed only on a secondary node.
+Needed only if the machine is being configured as a secondary build node.
 
 Must be done from the biocbuild account.
 
