@@ -1,7 +1,7 @@
 #!/bin/bash
-# ==========================
-# Local settings for malbec2
-# ==========================
+# ============================
+# Local settings for nebbiolo1
+# ============================
 
 
 if [ "$BBS_HOME" == "" ]; then
@@ -15,7 +15,7 @@ export BBS_RSYNC_CMD="/usr/bin/rsync"
 
 # Needed only on a node capable of running STAGE1 (STAGE1 is supported on
 # Linux only)
-export BBS_SVN_CMD="/usr/bin/svn"
+#export BBS_SVN_CMD="/usr/bin/svn"
 export BBS_TAR_CMD="/bin/tar"
 export BBS_GIT_CMD="/usr/bin/git"
 

@@ -2,6 +2,7 @@
 @rem Local settings for tokay1
 @rem =========================
 
+
 set BBS_HOME=C:\Users\biocbuild\BBS
 
 set BBS_PYTHON_CMD=C:\Python37\python.exe
@@ -15,3 +16,4 @@ set BBS_CURL_CMD=C:\cygwin\bin\curl.exe
 @rem set BBS_SVN_CMD=
 @rem set BBS_TAR_CMD=
 @rem set BBS_GIT_CMD=
+
