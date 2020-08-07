@@ -75,9 +75,9 @@ of macOS Mojave i.e. 10.14.6. Check this with:
 
 ### Install devteam member public keys in biocbuild account
 
-  TESTING: Logout and try to login again as biocbuild. From now on, you should
-  never need the administrator account again. Do everything from the biocbuild
-  account.
+TESTING: Logout and try to login again as biocbuild. From now on, you should
+never need the administrator account again. Do everything from the biocbuild
+account.
 
 
 
@@ -561,7 +561,7 @@ Install with:
 
 
 
-## 4. Install BBS git tree and create bbs-3.y-bioc directory structure
+## 4. Clone BBS git tree and create bbs-3.y-bioc directory structure
 
 
 Everything in this section must be done from the biocbuild account.
@@ -911,7 +911,7 @@ This must be done from the biocbuild account.
 
 Add the following entry to biocbuild crontab:
 
-    00 18 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.11/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.11-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 16 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.11/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.11-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run before
 doing so.
