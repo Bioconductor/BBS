@@ -5,7 +5,7 @@
 ## 1. Initial setup (from a sudoer account)
 
 
-### Standalone vs non-standalone builder
+### 1.1 Standalone vs non-standalone builder
 
 The machine could either be configured as a _standalone_ builder or as
 a _non-standalone_ builder. A _non-standalone_ builder is a build node that
@@ -22,7 +22,7 @@ back and forth between each secondary node and the central builder (> 5GB
 every day on normal days).
 
 
-### Check system requirements
+### 1.2 Check system requirements
 
 For a _central_ builder:
 
@@ -45,14 +45,14 @@ Bioconductor grows). The above numbers reflect the current state of affairs
 as of Aug 2020.
 
 
-### Apply any pending system updates and reboot
+### 1.3 Apply any pending system updates and reboot
 
     sudo apt-get update
     sudo apt-get upgrade
     sudo reboot
 
 
-### Run Apache server as service
+### 1.4 Run Apache server as service
 
 Required only for a standalone or central builder.
 
@@ -71,7 +71,7 @@ Check its status:
 Service will automatically restart after each reboot.
 
 
-### Create the biocbuild account
+### 1.5 Create the biocbuild account
 
     sudo adduser biocbuild
 
@@ -84,12 +84,12 @@ TESTING: Logout and try to login again as biocbuild. Then logout and login
 again as before (sudoer account).
 
 
-### Run Xvfb as service
+### 1.6 Run Xvfb as service
 
 See Prepare-Ubuntu-HOWTO.TXT
 
 
-### Install Ubuntu/deb packages
+### 1.7 Install Ubuntu/deb packages
 
 Install with:
 
@@ -180,7 +180,7 @@ Remove this last subsection after confirmation.
     #libhdf5-dev (for ncdfFlow)
 
 
-### Logout and login again as biocbuild
+### 1.8 Logout and login again as biocbuild
 
 From now on everything must be done from the biocbuild account.
 
@@ -193,7 +193,7 @@ Needed only if the machine is being configured as a secondary build node.
 
 Must be done from the biocbuild account.
 
-### Install biocbuild RSA private key
+### 2.1 Install biocbuild RSA private key
 
 Add `~/.BBS/id_rsa` to the biocbuild home (copy `id_rsa` from another build
 machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
@@ -201,7 +201,7 @@ machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
     biocbuild@nebbiolo1:~$ ls -l .BBS/id_rsa
     -r-------- 1 biocbuild biocbuild 883 Aug  6 17:21 .BBS/id_rsa
 
-### Check that you can ping the central builder
+### 2.2 Check that you can ping the central builder
 
 Check that you can ping the central builder. Depending on whether the
 node you're ping'ing from is within RPCI's DMZ or not, use its short or
@@ -210,7 +210,7 @@ long (i.e. hostname+domain) hostname. For example:
     ping malbec1                                 # from within RPCI's DMZ
     ping malbec1.bioconductor.org                # from anywhere else
 
-### Check that you can ssh to the central builder
+### 2.3 Check that you can ssh to the central builder
 
     ssh -i .BBS/id_rsa malbec1                   # from within RPCI's DMZ
     ssh -i .BBS/id_rsa malbec1.bioconductor.org  # from anywhere else
@@ -224,7 +224,7 @@ Contact the IT folks at RPCI if that's the case:
     Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
     Landsiedel, Timothy <tjlandsi@RoswellPark.org>
 
-### Check that you can send HTTPS requests to the central builder
+### 2.4 Check that you can send HTTPS requests to the central builder
 
     curl https://malbec1                         # from within RPCI's DMZ
     curl https://malbec1.bioconductor.org        # from anywhere else
@@ -244,12 +244,12 @@ More details on https implementation in `BBS/README.md`.
 
 Must be done from the biocbuild account.
 
-### Clone BBS git tree
+### 3.1 Clone BBS git tree
 
     cd
     git clone https://github.com/bioconductor/BBS
 
-### Create bbs-3.y-bioc directory structure
+### 3.2 Create bbs-x.y-bioc directory structure
 
 For example, for the BioC 3.12 software builds:
 
@@ -333,8 +333,9 @@ Add the following entry to biocbuild crontab:
 
     00 16 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.12-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
-Now you can proceed to the next section or wait for a complete build run before
-doing so (great moment to watch your favorite Netflix show and relax).
+Now you can proceed to the next section or wait for a complete build run
+before doing so (great opportunity to catch up on your favorite Netflix
+show and relax).
 
 
 
