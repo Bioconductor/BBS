@@ -241,6 +241,7 @@ Install with:
 #### Packages required by the build system itself (BBS)
 
     python3-minimal
+    python3-pip
     git
 
 #### Packages required to compile R
@@ -322,7 +323,88 @@ capabilities will be missing):
     ocl-icd-opencl-dev (for gpuMagic)
 
 
-### 1.8 Logout and login again as biocbuild
+### 1.8 Install Python 3 modules
+
+#### Python 3 modules needed by some CRAN/Bioconductor packages
+
+Some CRAN/Bioconductor packages interact with Python 3 and use Python
+modules. Note that we deliberately install the modules _system wide_
+(with `sudo -H pip3 install <module>`). This will make them available to
+_all the builds_, independently of which account they will run from (e.g.
+biocbuild for BBS or pkgbuild for the Single Package Builder). Since we
+only install _trusted_ modules, this should not be a security concern. See
+https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practice)
+
+    sudo -H pip3 install numpy scipy sklearn h5py pandas mofapy
+    sudo -H pip3 install tensorflow tensorflow_probability
+    sudo -H pip3 install h5pyd
+    sudo -H pip3 install cwltool
+    sudo -H pip3 install nbconvert jupyter
+    sudo -H pip3 install matplotlib phate
+
+Notes:
+
+- `scipy` is needed by Bioconductor package MOFA but also by the `sklearn`
+  module (when `sklearn` is imported and `scipy` is not present, the former
+  breaks). However, for some reason, `sudo -H pip3 install sklearn` does not
+  install `scipy` and completes successfully even if `scipy` is not installed.
+
+- `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
+  BiocSklearn and MOFA, and `numpy` is also needed by Bioconductor package
+  DChIPRep.
+
+- `mofapy` is needed by Bioconductor package MOFA.
+
+- `tensorflow` is needed by Bioconductor packages scAlign and netReg. Note that
+  trying to load the module in a Python 3 session might raise the following error:
+    ```
+    >>> import tensorflow
+    2020-08-08 16:52:56.617223: W tensorflow/stream_executor/platform/default/dso_loader.cc:59] Could not load dynamic library 'libcudart.so.10.1'; dlerror: libcudart.so.10.1: cannot open shared object file: No such file or directory
+    2020-08-08 16:52:56.617255: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+    ```
+  Even though the message says that the error can be ignored, you can get rid
+  of it by installing the libcudart10.1 package:
+    ```
+    sudo apt-get install libcudart10.1
+    ```
+
+- `tensorflow_probability` is needed by Bioconductor package netReg.
+
+- `h5pyd` is needed by Bioconductor package rhdf5client.
+
+- `cwltool` is needed by Bioconductor package Rcwl.
+
+- `nbconvert` and `jupyter` are needed by CRAN package nbconvertR which is
+  itself used by Bioconductor package destiny. Note that `jupyter --version`
+  should display something like this (as of Aug. 2020):
+    ```
+    hpages@nebbiolo1:~$ jupyter --version
+    jupyter core     : 4.6.3
+    jupyter-notebook : 6.1.1
+    qtconsole        : 4.7.5
+    ipython          : 7.17.0
+    ipykernel        : 5.3.4
+    jupyter client   : 6.1.6
+    jupyter lab      : not installed
+    nbconvert        : 5.6.1
+    ipywidgets       : 7.5.1
+    nbformat         : 5.0.7
+    traitlets        : 4.3.3
+    ```
+  It's ok if jupyter lab is not installed but everything else should be.
+
+- `matplotlib` and `phate` are needed by CRAN package phateR which is itself
+  used by Bioconductor package phemd.
+
+#### Python 3 modules needed by the Single Package Builder only
+
+`virtualenv` is used by the Single Package Builder. Despite python3 shipping
+with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
+
+    sudo -H pip3 install virtualenv
+
+
+### 1.9 Logout and login again as biocbuild
 
 From now on everything must be done from the biocbuild account.
 
