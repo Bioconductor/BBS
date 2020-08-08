@@ -5,6 +5,9 @@
 ## 1. Initial setup (from a sudoer account)
 
 
+Everything in this section must be done **from a sudoer account**.
+
+
 ### 1.1 Standalone vs non-standalone builder
 
 The machine could either be configured as a _standalone_ builder or as
@@ -406,18 +409,21 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
 ### 1.9 Logout and login again as biocbuild
 
-From now on everything must be done from the biocbuild account.
+Everything in the next section must be done from the biocbuild account.
 
 
 
-## 2. Check connectivity with central builder
+## 2. Configure the Bioconductor software builds
 
+
+Everything in this section must be done **from the biocbuild account**.
+
+
+### 2.1 Check connectivity with central builder
 
 Needed only if the machine is being configured as a secondary build node.
 
-Must be done from the biocbuild account.
-
-### 2.1 Install biocbuild RSA private key
+#### Install biocbuild RSA private key
 
 Add `~/.BBS/id_rsa` to the biocbuild home (copy `id_rsa` from another build
 machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
@@ -425,7 +431,7 @@ machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
     biocbuild@nebbiolo1:~$ ls -l .BBS/id_rsa
     -r-------- 1 biocbuild biocbuild 883 Aug  6 17:21 .BBS/id_rsa
 
-### 2.2 Check that you can ping the central builder
+#### Check that you can ping the central builder
 
 Check that you can ping the central builder. Depending on whether the
 node you're ping'ing from is within RPCI's DMZ or not, use its short or
@@ -434,7 +440,7 @@ long (i.e. hostname+domain) hostname. For example:
     ping malbec1                                 # from within RPCI's DMZ
     ping malbec1.bioconductor.org                # from anywhere else
 
-### 2.3 Check that you can ssh to the central builder
+#### Check that you can ssh to the central builder
 
     ssh -i .BBS/id_rsa malbec1                   # from within RPCI's DMZ
     ssh -i .BBS/id_rsa malbec1.bioconductor.org  # from anywhere else
@@ -448,7 +454,7 @@ Contact the IT folks at RPCI if that's the case:
     Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
     Landsiedel, Timothy <tjlandsi@RoswellPark.org>
 
-### 2.4 Check that you can send HTTPS requests to the central builder
+#### Check that you can send HTTPS requests to the central builder
 
     curl https://malbec1                         # from within RPCI's DMZ
     curl https://malbec1.bioconductor.org        # from anywhere else
@@ -462,18 +468,16 @@ Contact the IT folks at RPCI if that's the case (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-
-## 3. Clone BBS git tree and create bbs-3.y-bioc directory structure
-
+### 2.2 Clone BBS git tree and create bbs-3.y-bioc directory structure
 
 Must be done from the biocbuild account.
 
-### 3.1 Clone BBS git tree
+#### Clone BBS git tree
 
     cd
     git clone https://github.com/bioconductor/BBS
 
-### 3.2 Create bbs-x.y-bioc directory structure
+#### Create bbs-x.y-bioc directory structure
 
 For example, for the BioC 3.12 software builds:
 
@@ -483,14 +487,11 @@ For example, for the BioC 3.12 software builds:
     mkdir rdownloads log
 
 
-
-## 4. Install R
-
+### 2.3 Install R
 
 Must be done from the biocbuild account.
 
-
-### 4.1 Get R source from CRAN
+#### Get R source from CRAN
 
 Download and extract R source tarball from CRAN in `~/bbs-3.12-bioc/rdownloads`.
 The exact tarball to download depends on whether we're configuring the
@@ -502,8 +503,7 @@ For example:
     wget https://cran.r-project.org/src/base/R-4/R-4.0.2.tar.gz
     tar zxvf R-4.0.2.tar.gz
 
-
-### 4.2 Configure and compile R
+#### Configure and compile R
 
     cd ~/bbs-3.12-bioc/
     mkdir R    # possibly preceded by mv R R.old if previous installation
@@ -515,8 +515,7 @@ For example:
 
 Do NOT run `make install`!
 
-
-### 4.3 Testing
+#### Testing
 
 Start R:
 
@@ -556,9 +555,7 @@ Then from R:
     BiocManager::install("rhdf5")
 
 
-
-## 5. Add crontab entries for nightly builds
-
+### 2.4 Add crontab entries for nightly builds
 
 Must be done from the biocbuild account.
 
@@ -572,10 +569,10 @@ show and relax).
 
 
 
-## 6. Additional stuff to install for packages with special needs
+## 3. Additional stuff to install for packages with special needs
 
 
-Must be done from the biocbuild account.
+Everything in this section must be done **from a sudoer account**.
 
 TODO
 
