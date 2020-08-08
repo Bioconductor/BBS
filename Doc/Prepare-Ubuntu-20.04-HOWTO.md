@@ -84,9 +84,136 @@ TESTING: Logout and try to login again as biocbuild. Then logout and login
 again as before (sudoer account).
 
 
-### 1.6 Run Xvfb as service
+### 1.6 Run Xvfb as a service
 
-See Prepare-Ubuntu-HOWTO.TXT
+Some Bioconductor packages like adSplit, GeneAnswers, or maSigPro have examples
+that need access to an X11 display. However, when running `R CMD check` in the
+context of the daily builds, no X11 display is available. If R is already
+installed, an easy way to reproduce the CHECK error that will happen to the
+above packages during the builds is with:
+
+    /path/to/Rscript -e 'png("fig2.png", type="Xlib")'
+    #Error in .External2(C_X11, paste0("png::", filename), g$width, g$height,  :
+    #  unable to start device PNG
+    #Calls: png
+    #In addition: Warning message:
+    #In png("fig2.png", type = "Xlib") :
+    #  unable to open connection to X11 display ''
+    #Execution halted
+
+Running Xvfb as a service addresses that.
+
+#### Install Xvfb
+
+    sudo apt-get install xvfb
+
+#### Create /etc/init.d/xvfb
+
+Create `/etc/init.d/xvfb` with the following content:
+
+    #! /bin/sh
+    ### BEGIN INIT INFO
+    # Provides:          Xvfb
+    # Required-Start:    $remote_fs $syslog
+    # Required-Stop:     $remote_fs $syslog
+    # Default-Start:     2 3 4 5
+    # Default-Stop:      0 1 6
+    # Short-Description: Loads X Virtual Frame Buffer
+    # Description:       This file should be used to construct scripts to be
+    #                    placed in /etc/init.d.
+    #
+    #                    A virtual X server is needed to non-interactively run
+    #                    'R CMD build' and 'R CMD check on some BioC packages.
+    #                    The DISPLAY variable is set in /etc/profile.d/xvfb.sh.
+    ### END INIT INFO
+    
+    XVFB=/usr/bin/Xvfb
+    XVFBARGS=":1 -screen 0 800x600x16"
+    PIDFILE=/var/run/xvfb.pid
+    case "$1" in
+      start)
+        echo -n "Starting virtual X frame buffer: Xvfb"
+        start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+        echo "."
+        ;;
+      stop)
+        echo -n "Stopping virtual X frame buffer: Xvfb"
+        start-stop-daemon --stop --quiet --pidfile $PIDFILE
+        sleep 2
+        rm -f $PIDFILE
+        echo "."
+        ;;
+      restart)
+        $0 stop
+        $0 start
+        ;;
+      *)
+        echo "Usage: /etc/init.d/xvfb {start|stop|restart}"
+        exit 1
+    esac
+    
+    exit 0
+
+Change permissions on `/etc/init.d/xvfb`:
+
+    sudo chmod 755 /etc/init.d/xvfb
+
+Test the script:
+
+    sudo /etc/init.d/xvfb start
+    sudo /etc/init.d/xvfb restart
+    sudo /etc/init.d/xvfb stop
+
+#### Create runlevel symlinks from /etc/rc.d/ to /etc/init.d/xvfb
+
+Install `init-system-helpers`:
+
+    sudo apt-get install init-system-helpers
+
+Create the symlinks:
+
+    sudo update-rc.d xvfb defaults
+
+You can see the new symlinks with:
+
+    ls -al /etc/rc*.d/*xvfb
+
+These symlinks make the application behave as a system service,
+by starting when the device boots and stopping at shutdown, as
+configured by `Default-Start` and `Default-Stop` in the header
+of the `/etc/init.d/xvfb` script.
+
+Check current status of the service with:
+
+    service xvfb status
+
+Service will automatically restart after each reboot.
+
+#### Set DISPLAY environment variable in /etc/profile.d/xvfb.sh
+
+Create `/etc/profile.d/xvfb.sh` with the following content:
+
+    ## Set DISPLAY environment variable for use with Xvfb.
+    ## See /etc/init.d/xvfb for start / stop configuration.
+    
+    export DISPLAY=:1.0
+
+Change permissions on `/etc/profile.d/xvfb.sh`:
+
+    sudo chmod 644 /etc/profile.d/xvfb.sh
+
+You'll need to logout and login again to see the `DISPLAY` variable in your
+environment. For now `echo $DISPLAY` should nothing.
+
+#### Reboot
+
+    sudo reboot
+
+#### Test
+
+    service xvfb status  # should be up and running
+    echo $DISPLAY        # :1.0
+    /path/to/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
 
 
 ### 1.7 Install Ubuntu/deb packages
@@ -177,6 +304,7 @@ capabilities will be missing):
     graphviz and libgraphviz-dev (for RGraphviz)
     libgtkmm-2.4-dev (for HilbertVisGUI)
     libgsl-dev (for all the packages that depend on the GSL)
+    libsbml5-dev (for rsbml)
     automake (for RProtoBufLib)
     libnetcdf-dev (for xcms, RNetCDF, etc...)
     libopenbabel-dev (for ChemmineOB)
@@ -234,7 +362,7 @@ Contact the IT folks at RPCI if that's the case:
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
-    curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to malbec1.bioconductor.org:443 
+    curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to malbec1.bioconductor.org:443
 
 Contact the IT folks at RPCI if that's the case (see above).
 
