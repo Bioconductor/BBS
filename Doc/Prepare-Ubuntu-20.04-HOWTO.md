@@ -187,6 +187,17 @@ Check current status of the service with:
 
     service xvfb status
 
+Start/restart/stop the service:
+
+    sudo service xvfb start
+    service xvfb status
+    
+    sudo service xvfb restart
+    service xvfb status
+    
+    sudo service xvfb stop
+    service xvfb status
+
 Service will automatically restart after each reboot.
 
 #### Set DISPLAY environment variable in /etc/profile.d/xvfb.sh
@@ -203,7 +214,7 @@ Change permissions on `/etc/profile.d/xvfb.sh`:
     sudo chmod 644 /etc/profile.d/xvfb.sh
 
 You'll need to logout and login again to see the `DISPLAY` variable in your
-environment. For now `echo $DISPLAY` should nothing.
+environment. For now `echo $DISPLAY` should show nothing.
 
 #### Reboot
 
