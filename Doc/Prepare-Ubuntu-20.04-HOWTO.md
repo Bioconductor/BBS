@@ -136,6 +136,8 @@ capabilities will be missing):
 #### Packages needed to build vignettes and reference manuals
 
     texlive
+    texlive-font-utils (for epstopdf)
+    texlive-pstricks (for pstricks.sty)
     texlive-latex-extra (for fullpage.sty)
     texlive-fonts-extra (for incosolata.sty)
     texlive-bibtex-extra (for unsrturl.bst)
@@ -147,37 +149,38 @@ capabilities will be missing):
 
 #### Packages needed by some CRAN and/or BioC packages
 
-    automake (for RProtoBufLib)
-    libssl-dev (for openssl)
+    libglu1-mesa-dev (for rgl)
+    librsvg2-dev (for rsvg)
+    libgmp-dev (for gmp)
+    libssl-dev (for openssl and mongolite)
+    libsasl2-dev (for mongolite)
     libxml2-dev (for XML)
     libcurl4-openssl-dev (for RCurl)
-    libgtk2.0-dev (for RGtk2)
-    libnetcdf-dev (for xcms, RNetCDF, etc...)
-    graphviz and libgraphviz-dev (for RGraphviz)
-    libgsl-dev (for all the packages that depend on the GSL)
+    mpi-default-dev (for Rmpi)
+    libudunits2-dev (for units)
+    libv8-dev (for V8)
+    libmpfr-dev (for Rmpfr)
+    libfftw3-dev (for fftw and fftwtools)
     libmysqlclient-dev (for RMySQL)
+    libpq-dev (for RPostgreSQL and RPostgres)
+    libmagick++-dev (for magick)
+    libgeos-dev (for rgeos)
+    libproj-dev (for proj4)
+    libgdal-dev (for sf)
+    libpoppler-cpp-dev (for pdftools)
+    libgtk2.0-dev (for RGtk2)
+    jags (for rjags)
+    libprotobuf-dev and protobuf-compiler (for protolite)
+    cwltool (for Rcwl)
+    libglpk-dev (for glpkAPI)
 
-    #libglu1-mesa-dev (for rgl)
-    #libopenbabel-dev (for ChemmineOB)
-    #libgmpv4-dev (for gmp)
-    #libncurses-dev
-    #jags (for rjags)
-    #pandoc-citeproc (for dagLogo)
-    #libmpfr-dev (for Rmpfr)
-    #libudunits2-dev (for ggraph)
-    #libv8-3.14-dev (for DiagrammeRsvg)
-    #libapparmor-dev (for sys)
-    #protobuf-compiler (for protolite)
-    #libpq-dev (for RPostgreSQL)
-    #ocl-icd-opencl-dev (for gpuMagic)
-
-#### No longer needed (to be confirmed)
-
-Remove this last subsection after confirmation.
-
-    #libmagick++-dev (for EBImage)
-    #libpq-dev (for RdbiPgSQL)
-    #libhdf5-dev (for ncdfFlow)
+    graphviz and libgraphviz-dev (for RGraphviz)
+    libgtkmm-2.4-dev (for HilbertVisGUI)
+    libgsl-dev (for all the packages that depend on the GSL)
+    automake (for RProtoBufLib)
+    libnetcdf-dev (for xcms, RNetCDF, etc...)
+    libopenbabel-dev (for ChemmineOB)
+    ocl-icd-opencl-dev (for gpuMagic)
 
 
 ### 1.8 Logout and login again as biocbuild
