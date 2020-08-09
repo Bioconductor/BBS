@@ -55,21 +55,21 @@ def send_notification(pkg):
     problem_descs = []
     for node in BBSreportutils.supported_nodes(pkg):
         stage = 'install'
-        status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
         if status in ["TIMEOUT", "ERROR"]:
             leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
             problem_desc = "  o %s for 'R CMD INSTALL' on %s. See the details here:\n" % (status, node.id) \
                          + "      %s%s\n" % (BBSreportutils.data_source, leafreport_rURL)
             problem_descs.append(problem_desc)
         stage = 'buildsrc'
-        status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
         if status in ["TIMEOUT", "ERROR"]:
             leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
             problem_desc = "  o %s for 'R CMD build' on %s. See the details here:\n" % (status, node.id) \
                          + "      %s%s\n" % (BBSreportutils.data_source, leafreport_rURL)
             problem_descs.append(problem_desc)
         stage = 'checksrc'
-        status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
         if status in ["TIMEOUT", "ERROR"]:
             leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
             problem_desc = "  o %s for 'R CMD check' on %s. See the details here:\n" % (status, node.id) \
@@ -141,6 +141,14 @@ if arg1 != "":
 
 BBSreportutils.set_NODES(notify_nodes)
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
+
+print("BBS> [stage9] Import package statuses from %s ..." % \
+      BBSreportutils.STATUS_DB_file, end=" ")
+sys.stdout.flush()
+BBSreportutils.import_STATUS_DB(allpkgs)
+print("OK")
+sys.stdout.flush()
+
 print("BBS> [stage9] Notifying package maintainers for nodes: %s" % notify_nodes)
 if BBScorevars.subbuilds in ["bioc", "data-experiment"]:
     send_BioC_notifications(allpkgs)

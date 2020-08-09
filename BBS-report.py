@@ -38,68 +38,6 @@ def wopen_leafreport_input_file(pkg, node_id, stage, filename, return_None_on_er
     rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
     return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
 
-STATUS_SUMMARY = {}
-
-def update_STATUS_SUMMARY(pkg, node_id, stage, status):
-    if node_id not in STATUS_SUMMARY:
-        STATUS_SUMMARY[node_id] = { 'install':     (0, 0, 0, 0, 0), \
-                                    'buildsrc':    (0, 0, 0, 0, 0), \
-                                    'checksrc':    (0, 0, 0, 0, 0), \
-                                    'buildbin':    (0, 0, 0, 0, 0) }
-    x = STATUS_SUMMARY[node_id][stage]
-    x0 = x[0]
-    x1 = x[1]
-    x2 = x[2]
-    x3 = x[3]
-    x4 = x[4]
-    if status == "TIMEOUT":
-        x0 += 1
-    if status == "ERROR":
-        x1 += 1
-    if status == "WARNINGS":
-        x2 += 1
-    if status == "OK":
-        x3 += 1
-    if status == "NotNeeded":
-        x4 += 1
-    STATUS_SUMMARY[node_id][stage] = (x0, x1, x2, x3, x4)
-    return
-
-def make_STATUS_SUMMARY(allpkgs):
-    for pkg in allpkgs:
-        for node in BBSreportutils.supported_nodes(pkg):
-
-            # INSTALL status
-            if BBScorevars.subbuilds != "bioc-longtests":
-                stage = 'install'
-                status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
-                update_STATUS_SUMMARY(pkg, node.id, stage, status)
-
-            # BUILD status
-            stage = 'buildsrc'
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
-            update_STATUS_SUMMARY(pkg, node.id, stage, status)
-            skipped_is_OK = status in ["TIMEOUT", "ERROR"]
-
-            # CHECK status
-            if BBScorevars.subbuilds != "workflows":
-                stage = 'checksrc'
-                if skipped_is_OK:
-                    status = "skipped"
-                else:
-                    status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
-                update_STATUS_SUMMARY(pkg, node.id, stage, status)
-
-            # BUILD BIN status
-            if BBSreportutils.is_doing_buildbin(node):
-                stage = 'buildbin'
-                if skipped_is_OK:
-                    status = "skipped"
-                else:
-                    status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
-                update_STATUS_SUMMARY(pkg, node.id, stage, status)
-    return
-
 
 ##############################################################################
 ### HTMLization
@@ -251,7 +189,7 @@ def status_asSPAN(status):
 
 def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
     #print("  %s %s %s" % (pkg, node.id, stage))
-    status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+    status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
     if status in ["skipped", "NA"]:
         status_html = status_asSPAN(status)
     else:
@@ -1018,7 +956,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     #else:
     #    write_compactreport_asTABLE(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
 
-    status = BBSreportutils.get_status_from_db(pkg, node_id, stage)
+    status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
         out.write('<HR>\n')
         out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
@@ -1041,7 +979,7 @@ def make_node_LeafReports(allpkgs, node):
         # INSTALL leaf-report
         if BBScorevars.subbuilds != "bioc-longtests":
             stage = "install"
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+            status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
             if status != "skipped":
                 leafreport_ref = LeafReportReference(pkg,
                                                      node.hostname, node.id,
@@ -1050,7 +988,7 @@ def make_node_LeafReports(allpkgs, node):
 
         # BUILD leaf-report
         stage = "buildsrc"
-        status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
         if not status in ["skipped", "NA"]:
             leafreport_ref = LeafReportReference(pkg,
                                                  node.hostname, node.id,
@@ -1060,7 +998,7 @@ def make_node_LeafReports(allpkgs, node):
         # CHECK leaf-report
         if BBScorevars.subbuilds != "workflows":
             stage = 'checksrc'
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+            status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
                                                      node.hostname, node.id,
@@ -1070,7 +1008,7 @@ def make_node_LeafReports(allpkgs, node):
         # BUILD BIN leaf-report
         if BBSreportutils.is_doing_buildbin(node):
             stage = "buildbin"
-            status = BBSreportutils.get_status_from_db(pkg, node.id, stage)
+            status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
                                                      node.hostname, node.id,
@@ -1665,7 +1603,13 @@ meat_pkgs = BBSreportutils.get_pkgs_from_meat_index()
 skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
 allpkgs = meat_pkgs + skipped_pkgs
 allpkgs.sort(key=str.lower)
-make_STATUS_SUMMARY(allpkgs)
+
+print("BBS> [stage8] Import package statuses from %s ..." % \
+      BBSreportutils.STATUS_DB_file, end=" ")
+sys.stdout.flush()
+STATUS_SUMMARY = BBSreportutils.import_STATUS_DB(allpkgs)
+print("OK")
+sys.stdout.flush()
 
 if r_environ_user != None:
     dst = os.path.join(report_path, 'Renviron.bioc')
