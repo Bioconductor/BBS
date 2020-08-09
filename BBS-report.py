@@ -1032,7 +1032,7 @@ def make_all_LeafReports(allpkgs):
             continue
         leafreport_ref = LeafReportReference(pkg, None, None, None)
         make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs)
-    print("DONE")
+    print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
         make_node_LeafReports(allpkgs, node)
