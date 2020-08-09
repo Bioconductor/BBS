@@ -5,7 +5,7 @@
 
 
 
-#set -x # Print commands and their arguments as they are executed.
+#set -x  # print commands and their arguments as they are executed
 
 export BBS_DEBUG="0"
 
@@ -18,9 +18,10 @@ export BBS_NB_CPU=4  # 24 cores are available
 
 
 
-# Shared settings (by all Unix nodes)
+# Shared settings (by all Unix nodes).
 
 wd0=`pwd`
 cd ..
 . ./config.sh
 cd "$wd0"
+
