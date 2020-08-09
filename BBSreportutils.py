@@ -331,13 +331,13 @@ def import_STATUS_DB(allpkgs):
             if BBScorevars.subbuilds != "bioc-longtests":
                 stage = 'install'
                 status = _get_status_from_db(pkg, node.id, stage)
-                _set_pkg_status(pkg, node_id, stage, status)
+                _set_pkg_status(pkg, node.id, stage, status)
                 _update_STATUS_SUMMARY(pkg, node.id, stage, status)
 
             # BUILD status
             stage = 'buildsrc'
             status = _get_status_from_db(pkg, node.id, stage)
-            _set_pkg_status(pkg, node_id, stage, status)
+            _set_pkg_status(pkg, node.id, stage, status)
             _update_STATUS_SUMMARY(pkg, node.id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
 
@@ -348,7 +348,7 @@ def import_STATUS_DB(allpkgs):
                     status = "skipped"
                 else:
                     status = _get_status_from_db(pkg, node.id, stage)
-                _set_pkg_status(pkg, node_id, stage, status)
+                _set_pkg_status(pkg, node.id, stage, status)
                 _update_STATUS_SUMMARY(pkg, node.id, stage, status)
 
             # BUILD BIN status
@@ -358,7 +358,7 @@ def import_STATUS_DB(allpkgs):
                     status = "skipped"
                 else:
                     status = _get_status_from_db(pkg, node.id, stage)
-                _set_pkg_status(pkg, node_id, stage, status)
+                _set_pkg_status(pkg, node.id, stage, status)
                 _update_STATUS_SUMMARY(pkg, node.id, stage, status)
     return STATUS_SUMMARY
 
