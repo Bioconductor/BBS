@@ -569,10 +569,27 @@ show and relax).
 
 
 
-## 3. Additional stuff to install for packages with special needs
+## 3. Install additional stuff for Bioconductor packages with special needs
 
 
 Everything in this section must be done **from a sudoer account**.
 
-TODO
+
+### 3.1 Install BibTeX style humannat.bst
+
+Required by Bioconductor package destiny.
+
+Used to be part of earlier Ubuntu versions (in texlive-bibtex-extra) but
+is no longer here in Ubuntu 20.04.
+
+Install with:
+
+    cd /usr/share/texlive/texmf-dist/bibtex/bst
+    sudo mkdir beebe
+    cd beebe
+    sudo wget https://ctan.org/tex-archive/biblio/bibtex/contrib/misc/humannat.bst
+    sudo texhash
+
+
+TO BE CONTINUED
 
