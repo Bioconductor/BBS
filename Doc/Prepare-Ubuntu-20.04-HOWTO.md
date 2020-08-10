@@ -663,5 +663,23 @@ Then try to build the GeneGA package:
     ../R/bin/R CMD build GeneGA
 
 
+### 3.4 Install ImmuneSpace credentials
+
+Required by Bioconductor package ImmuneSpaceR.
+
+In `/etc/profile` add:
+
+    export ISR_login=bioc@immunespace.org
+    export ISR_pwd=1notCRAN
+
+#### Testing
+
+From the biocbuild account:
+
+    cd ~/bbs-3.12-bioc/meat
+    ../R/bin/R CMD build ImmuneSpaceR
+
+
 TO BE CONTINUED
+
 

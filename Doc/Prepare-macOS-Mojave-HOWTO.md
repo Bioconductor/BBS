@@ -1451,6 +1451,7 @@ TESTING: Try to install the Rmpi package *from source*:
 
 Download with:
 
+    cd ~/Downloads
     curl -O https://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.4.11-MacOSX.dmg
 
 Install with:
