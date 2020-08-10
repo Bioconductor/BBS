@@ -243,6 +243,7 @@ Simon uses Coudert's gfortran 8.2: https://github.com/fxcoudert/gfortran-for-mac
 
 Download with:
 
+    cd ~/Downloads
     curl -LO https://github.com/fxcoudert/gfortran-for-macOS/releases/download/8.2/gfortran-8.2-Mojave.dmg
 
 Install with:
@@ -271,6 +272,7 @@ https://support.bioconductor.org/p/95587/#95631).
 
 Download it from https://xquartz.macosforge.org/
 
+    cd ~/Downloads
     curl -LO https://dl.bintray.com/xquartz/downloads/XQuartz-2.7.11.dmg
 
 Install with:
@@ -466,6 +468,7 @@ you already have a brewed CMake on the machine, make sure to remove it:
 
 Then:
 
+    cd ~/Downloads
     curl -LO https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Darwin-x86_64.dmg
     sudo hdiutil attach cmake-3.16.5-Darwin-x86_64.dmg
     cp -ri /Volumes/cmake-3.16.5-Darwin-x86_64/CMake.app /Applications/
@@ -616,7 +619,7 @@ https://cloud.r-project.org/bin/macosx/). Pick up the 1st file
 
 Download and install with:
 
-    cd /Users/biocbuild/Downloads
+    cd ~/Downloads
     curl -O https://cloud.r-project.org/bin/macosx/R-4.0.0.pkg
     sudo installer -pkg R-4.0.0.pkg -target /
 
@@ -854,7 +857,7 @@ Download:
 
 As of May 2020 the above page is displaying "Downloading MacTeX 2020".
 
-    cd /Users/biocbuild/Downloads
+    cd ~/Downloads
     curl -LO https://tug.org/cgi-bin/mactex-download/MacTeX.pkg
 
 Install with:
@@ -895,6 +898,7 @@ swfdr, and TVTB) with the following error:
 
 Download with:
 
+    cd ~/Downloads
     curl -LO https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-macOS.pkg
 
 Install with:
@@ -980,6 +984,7 @@ available on CRAN).
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/jpeg-9-darwin.17-x86_64.tar.gz
     sudo tar fvxz jpeg-9-darwin.17-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
@@ -1000,6 +1005,7 @@ available on CRAN).
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/tiff-4.1.0-darwin.17-x86_64.tar.gz
     sudo tar fvxz tiff-4.1.0-darwin.17-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
@@ -1020,6 +1026,7 @@ be available on CRAN).
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/fftw-3.3.8-darwin.17-x86_64.tar.gz
     sudo tar fvxz fftw-3.3.8-darwin.17-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
@@ -1061,6 +1068,7 @@ Check this with:
 --------------------------------------------------------------------------
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/cairo-1.14.12-darwin.17-x86_64.tar.gz
     sudo tar fvxz cairo-1.14.12-darwin.17-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
@@ -1088,6 +1096,7 @@ be available on CRAN).
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/netcdf-4.7.3-darwin.17-x86_64.tar.gz
     curl -O https://mac.r-project.org/libs-4/hdf5-1.12.0-darwin.17-x86_64.tar.gz
     sudo tar fvxz netcdf-4.7.3-darwin.17-x86_64.tar.gz -C /
@@ -1109,6 +1118,7 @@ that this takes much longer:
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/gsl-2.6-darwin.17-x86_64.tar.gz
     sudo tar fvxz gsl-2.6-darwin.17-x86_64.tar.gz -C /
     sudo chown -R biocbuild:admin /usr/local
@@ -1123,6 +1133,7 @@ TESTING: Try to install the GLAD package *from source*:
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs/GTK_2.24.17-X11.pkg
     sudo installer -allowUntrusted -pkg GTK_2.24.17-X11.pkg -target /
 
@@ -1205,6 +1216,7 @@ TESTING:
 
 Download with:
 
+    cd ~/Downloads
     curl -LO https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Mac%20OS%20X/JAGS-4.3.0.dmg
 
 Install with:
@@ -1314,6 +1326,7 @@ it from SourceForge:
   "Mac OS X", then download libSBML installer for Mojave
   (`libsbml-5.18.0-libxml2-macosx-mojave.dmg`) with:
 
+    cd ~/Downloads
     curl -LO https://sourceforge.net/projects/sbml/files/libsbml/5.18.0/stable/Mac%20OS%20X/libsbml-5.18.0-libxml2-macosx-mojave.dmg
 
     #curl -LO https://sourceforge.net/projects/sbml/files/libsbml/5.13.0/stable/Mac%20OS%20X/libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
@@ -1375,6 +1388,7 @@ effect. Then try to install the rsbml package *from source*:
 There is a standalone Mac binary at http://www.clustal.org/omega/
 Downnload it with:
 
+    cd ~/Downloads
     curl -O http://www.clustal.org/omega/clustal-omega-1.2.3-macosx
 
 Make it executable with:
@@ -1509,6 +1523,7 @@ Download `mysql-8.0.0-dmr-osx10.11-x86_64.dmg` from:
 
 e.g. with:
 
+    cd ~/Downloads
     curl -O https://downloads.mysql.com/archives/get/file/mysql-8.0.0-dmr-osx10.11-x86_64.dmg
 
 Install with:
@@ -1661,6 +1676,7 @@ in order to work!
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://www.imagemagick.org/download/binaries/ImageMagick-x86_64-apple-darwin16.4.0.tar.gz
     sudo tar zxvf ImageMagick-x86_64-apple-darwin16.4.0.tar.gz -C /
     sudo chown -R biocbuild:admin /ImageMagick-7.0.5
@@ -1740,6 +1756,7 @@ the following stuff (all available at https://mac.r-project.org/libs-4/):
 
 Download and install with:
 
+    cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/gmp-6.2.0-darwin.17-x86_64.tar.gz
     sudo tar fvxz gmp-6.2.0-darwin.17-x86_64.tar.gz -C /
     curl -O https://mac.r-project.org/libs-4/udunits-2.2.24-darwin.17-x86_64.tar.gz

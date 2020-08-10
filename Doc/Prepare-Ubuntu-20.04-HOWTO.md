@@ -323,6 +323,7 @@ capabilities will be missing):
     automake (for RProtoBufLib)
     libnetcdf-dev (for xcms, RNetCDF, etc...)
     libopenbabel-dev (for ChemmineOB)
+    clustalo (LowMACA)
     ocl-icd-opencl-dev (for gpuMagic)
 
 
@@ -667,6 +668,8 @@ Then try to build the GeneGA package:
 
 Required by Bioconductor package ImmuneSpaceR.
 
+#### Edit /etc/profile
+
 In `/etc/profile` add:
 
     export ISR_login=bioc@immunespace.org
@@ -680,6 +683,21 @@ From the biocbuild account:
     ../R/bin/R CMD build ImmuneSpaceR
 
 
-TO BE CONTINUED
+### 3.5 Install Perl module XML::Simple
 
+Required by Bioconductor package LowMACA.
+
+#### Install
+
+    sudo cpan install XML::Simple
+
+#### Testing
+
+From the biocbuild account:
+
+    cd ~/bbs-3.12-bioc/meat
+    ../R/bin/R CMD build LowMACA
+
+
+TO BE CONTINUED
 
