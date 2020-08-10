@@ -640,6 +640,28 @@ From the biocbuild account:
     ../R/bin/R CMD check ensemblVEP_X.Y.Z.tar.gz  # replace X.Y.Z with current version
 
 
-TO BE CONTINUED
+### 3.3 Install ViennaRNA
 
+Required by Bioconductor package GeneGA.
+
+#### Download and install
+
+    ## No Ubuntu package for 20.04 yet (as of Aug. 2020) but the package for
+    ## Ubuntu 19.04 seems to work alright.
+    wget https://www.tbi.univie.ac.at/RNA/download/ubuntu/ubuntu_19_04/viennarna_2.4.14-1_amd64.deb
+    sudo dpkg -i viennarna_2.4.14-1_amd64.deb
+
+#### Testing
+
+From the biocbuild account:
+
+    which RNAfold  # /usr/bin/RNAfold
+
+Then try to build the GeneGA package:
+
+    cd ~/bbs-3.12-bioc/meat
+    ../R/bin/R CMD build GeneGA
+
+
+TO BE CONTINUED
 
