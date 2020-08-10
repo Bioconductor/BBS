@@ -591,5 +591,55 @@ Install with:
     sudo texhash
 
 
+### 3.2 Install ensembl-vep
+
+Required by Bioconductor package ensemblVEP.
+
+Complete installation instructions are at
+https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
+
+#### Install Perl modules
+
+According to ensembl-vep README, the following Perl modules are required:
+
+    sudo cpan install Archive::Zip
+    sudo cpan install File::Copy::Recursive
+    sudo cpan install DBI
+    sudo cpan install DBD::mysql
+
+#### Install ensembl-vep
+
+    cd /usr/local
+    sudo git clone https://github.com/Ensembl/ensembl-vep.git
+    cd ensembl-vep
+    sudo git checkout release/100  # select desired branch
+
+    # Avoid the hassle of getting HTSlib to compile because ensemblVEP
+    # passes 'R CMD build' and 'R CMD check' without that and that's all
+    # we care about. No sudo!
+    sudo perl INSTALL.pl --NO_HTSLIB
+    # When asked if you want to install any cache files - say no
+    # When asked if you want to install any FASTA files - say no
+    # When asked if you want to install any plugins - say no
+
+#### Edit /etc/profile
+
+In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
+Note that the `/etc/profile` file has read-only permissions (factory
+settings). To save changes you will need to force save, e.g., in the
+`vi` editor this is `w!`.
+
+Logout and login again so that the changes to `/etc/profile` take effect.
+
+#### Testing
+
+From the biocbuild account:
+
+    cd ~/bbs-3.12-bioc/meat
+    ../R/bin/R CMD build ensemblVEP
+    ../R/bin/R CMD check ensemblVEP_X.Y.Z.tar.gz  # replace X.Y.Z with current version
+
+
 TO BE CONTINUED
+
 
