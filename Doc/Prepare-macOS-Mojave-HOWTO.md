@@ -1562,15 +1562,27 @@ Then try to install the RMySQL package *from source*:
 
 ### Install Ensembl VEP script
 
+Required by Bioconductor packages ensemblVEP and MMAPPR2.
+
 Complete installation instructions are at
 https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
 
+- Make sure the MySQL client is installed on the system (see "Install
+  the MySQL client" above in this file).
+
 - According to ensembl-vep README, the following Perl modules are required:
 
+    ## Needed by both ensemblVEP and MMAPPR2:
     sudo cpan install Archive::Zip
     sudo cpan install File::Copy::Recursive
     sudo cpan install DBI
-    sudo cpan install DBD::mysql
+    sudo cpan install DBD::mysql  # MySQL client needed!
+    
+    ## Needed by MMAPPR2 only:
+    sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
+    sudo cpan install Bio::SeqFeature::Lite
+    brew install htslib
+    sudo cpan install Bio::DB::HTS::Tabix
 
 - Then:
 
@@ -1578,12 +1590,15 @@ https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
     sudo git clone https://github.com/Ensembl/ensembl-vep.git
     cd ensembl-vep
     sudo chown -R biocbuild:admin .
-    git checkout release/99  # select desired branch
+    #sudo git checkout release/100  # select desired branch
 
-    # Avoid the hassle of getting HTSlib to compile because ensemblVEP
-    # passes 'R CMD build' and 'R CMD check' without that and that's all
-    # we care about. No sudo!
+    # Avoid the hassle of getting HTSlib to compile because ensemblVEP and
+    # MMAPPR2 pass 'R CMD build' and 'R CMD check' without that and that's
+    # all we care about. No sudo!
     perl INSTALL.pl --NO_HTSLIB
+    # When asked if you want to install any cache files - say no
+    # When asked if you want to install any FASTA files - say no
+    # When asked if you want to install any plugins - say no
 
 - Finally in `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
   Note that the `/etc/profile` file has read-only permissions (factory
@@ -1596,6 +1611,8 @@ effect. Then:
     cd ~/bbs-3.11-bioc/meat
     R CMD build ensemblVEP
     R CMD check ensemblVEP_X.Y.Z.tar.gz  # replace X.Y.Z with current version
+    R CMD build MMAPPR2
+    R CMD check MMAPPR2_X.Y.Z.tar.gz     # replace X.Y.Z with current version
 
 
 ### Install ROOT
