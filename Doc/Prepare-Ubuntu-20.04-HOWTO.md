@@ -516,7 +516,7 @@ For example:
 
 Do NOT run `make install`!
 
-#### Testing
+#### Basic testing
 
 Start R:
 
@@ -540,17 +540,28 @@ Then from R:
     install.packages("rJava", repos="https://cran.r-project.org")
     # another possibly difficult package:
     install.packages("RGtk2", repos="https://cran.r-project.org")
-    # always good to have:
-    install.packages("devtools", repos="https://cran.r-project.org")
 
-    # --- install a few Bioconductor packages ---
+#### Install BiocManager + packages required by SPB and book builds
+
+From R:
 
     install.packages("BiocManager", repos="https://cran.r-project.org")
     library(BiocManager)
-    ## ONLY if release and devel are using the same version of R:
+
+    ## IMPORTANT: Switch to "devel" ONLY if installing R for the devel builds
+    ## and if BioC devel uses the same version of R as BioC release!
     BiocManager::install(version="devel")
 
-    BiocManager::install("BiocCheck")
+    BiocManager::install("BiocCheck")    # required by SPB
+    BiocManager::install("LTLA/rebook")  # required by book builds
+
+    # always good to have:
+    install.packages("devtools", repos="https://cran.r-project.org")
+
+#### [OPTIONAL] More testing
+
+From R:
+
     BiocManager::install("rtracklayer")
     BiocManager::install("VariantAnnotation")
     BiocManager::install("rhdf5")
