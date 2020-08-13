@@ -66,13 +66,15 @@ def _BiocGreaterThanOrEqualTo(x, y):
     return x0 > x or (x0 == x and y0 >= y)
 
 def _noExampleArchs(pkg):
+    archs = []
     no_examples = bbs.parse.getBBSoptionFromDir(pkg, 'NoExamplesOnPlatforms')
+    if no_examples == None:
+        return archs
     no_examples = no_examples.replace(" ", "").split(",")
     clean = []
     for item in no_examples:
         clean.append(item.strip())
     no_examples = clean
-    archs = []
     if "mac" in no_examples:
         archs.append("darwin")
     if "win" in no_examples:
@@ -91,9 +93,12 @@ def _noExampleArchs(pkg):
 
 ### 'pkgdir_path' must be the path to a package source tree.
 def _supportedWinArchs(pkgdir_path):
-    unsupported = bbs.parse.getBBSoptionFromDir(pkg, 'UnsupportedPlatforms')
-    unsupported = unsupported.replace(" ", "").split(",")
     archs = []
+    unsupported = bbs.parse.getBBSoptionFromDir(pkg, 'UnsupportedPlatforms')
+    if unsupported == None:
+        unsupported = []
+    else:
+        unsupported = unsupported.replace(" ", "").split(",")
     if "win" in unsupported:
         return archs
     if "win32" not in unsupported:
