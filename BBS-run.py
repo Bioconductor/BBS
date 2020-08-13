@@ -138,7 +138,8 @@ def extractTargetPkgListFromMeatIndex():
     dcf.close()
     return target_pkgs
 
-def getSrcPkgFilesFromSuccessfulSTAGE3():
+def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
+    print("BBS> Get list of source tarballs to %s ..." % stage_label, end=" ")
     target_pkgs = extractTargetPkgListFromMeatIndex()
     stage = "buildsrc"
     ok_statuses = ["OK", "WARNINGS"]
@@ -154,6 +155,8 @@ def getSrcPkgFilesFromSuccessfulSTAGE3():
         dcf.close()
         if status in ok_statuses:
             srcpkg_files.append(srcpkg_file)
+    print("OK")
+    sys.stdout.flush()
     return srcpkg_files
 
 def waitForTargetRepoToBeReady():
@@ -290,7 +293,7 @@ def CallRfunctionFromSTAGE2Script(Rfunction, out_file=None):
 #        f.close()
 
 def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
-    print("BBS> Preparing STAGE2 job queue ... ", end=" ")
+    print("BBS> Preparing STAGE2 job queue ...", end=" ")
     stage = 'install'
     jobs = []
     nb_target_pkgs_in_queue = nb_skipped_pkgs = 0
@@ -363,7 +366,7 @@ def STAGE2_loop(job_queue, nb_cpu):
     return
 
 def STAGE2():
-    print("BBS> [STAGE2] STARTING STAGE2 at %s..." % time.asctime())
+    print("BBS> [STAGE2] STARTING STAGE2 at %s" % time.asctime())
     # We want to make sure the target repo is ready before we actually start
     # (if it's not ready yet it probably means that the prerun.sh script did
     # not finish on the main node, in which case we want to wait before we
@@ -448,7 +451,7 @@ def STAGE2():
 ##############################################################################
 
 def prepare_STAGE3_job_queue(pkgdir_paths):
-    print("BBS> Preparing STAGE3 job queue ... ", end=" ")
+    print("BBS> Preparing STAGE3 job queue ...", end=" ")
     stage = 'buildsrc'
     jobs = []
     for pkgdir_path in pkgdir_paths:
@@ -492,7 +495,7 @@ def STAGE3_loop(job_queue, nb_cpu):
     return
 
 def STAGE3():
-    print("BBS> [STAGE3] STARTING STAGE3 at %s..." % time.asctime())
+    print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
     BBSvars.buildsrc_rdir.RemakeMe(True)
     makeNodeInfo()
     print("BBS> [STAGE3] cd BBS_MEAT_PATH")
@@ -518,7 +521,7 @@ def STAGE3():
 ##############################################################################
 
 def prepare_STAGE4_job_queue(srcpkg_paths):
-    print("BBS> Preparing STAGE4 job queue ... ", end=" ")
+    print("BBS> Preparing STAGE4 job queue ...", end=" ")
     stage = 'checksrc'
     jobs = []
     for srcpkg_path in srcpkg_paths:
@@ -558,12 +561,11 @@ def STAGE4_loop(job_queue, nb_cpu):
     return
 
 def STAGE4():
-    print("BBS> [STAGE4] STARTING STAGE4 at %s..." % time.asctime())
+    print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
     BBSvars.checksrc_rdir.RemakeMe(True)
     print("BBS> [STAGE4] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
-    print("BBS> [STAGE4] Get list of source tarballs to CHECK")
-    srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3()
+    srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("CHECK")
     job_queue = prepare_STAGE4_job_queue(srcpkg_paths)
     STAGE4_loop(job_queue, BBSvars.check_nb_cpu)
     print("BBS> [STAGE4] DONE at %s." % time.asctime())
@@ -575,7 +577,7 @@ def STAGE4():
 ##############################################################################
 
 def prepare_STAGE5_job_queue(srcpkg_paths):
-    print("BBS> Preparing STAGE5 job queue ... ", end=" ")
+    print("BBS> Preparing STAGE5 job queue ...", end=" ")
     stage = 'buildbin'
     jobs = []
     for srcpkg_path in srcpkg_paths:
@@ -617,12 +619,11 @@ def STAGE5_loop(job_queue, nb_cpu):
     return
 
 def STAGE5():
-    print("BBS> [STAGE5] STARTING STAGE5 at %s..." % time.asctime())
+    print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
     BBSvars.buildbin_rdir.RemakeMe(True)
     print("BBS> [STAGE5] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
-    print("BBS> [STAGE5] Get list of source tarballs to BUILD BIN")
-    srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3()
+    srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("BUILD BIN")
     job_queue = prepare_STAGE5_job_queue(srcpkg_paths)
     STAGE5_loop(job_queue, BBSvars.nb_cpu)
     print("BBS> [STAGE5] DONE at %s." % time.asctime())
