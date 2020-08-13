@@ -530,8 +530,6 @@ def prepare_STAGE4_job_queue(srcpkg_paths):
     jobs = []
     for srcpkg_path in srcpkg_paths:
         cmd = BBSbase.getSTAGE4cmd(srcpkg_path)
-        if cmd == None:
-            continue
         pkg = bbs.parse.getPkgFromPath(srcpkg_path)
         version = bbs.parse.getVersionFromPath(srcpkg_path)
         check_dir = pkg + '.Rcheck'
@@ -587,8 +585,6 @@ def prepare_STAGE5_job_queue(srcpkg_paths):
     jobs = []
     for srcpkg_path in srcpkg_paths:
         cmd = BBSbase.getSTAGE5cmd(srcpkg_path)
-        if cmd == None:
-            continue
         pkg = bbs.parse.getPkgFromPath(srcpkg_path)
         version = bbs.parse.getVersionFromPath(srcpkg_path)
         fileext = BBScorevars.getNodeSpec(BBSvars.node_hostname, 'pkgFileExt')
