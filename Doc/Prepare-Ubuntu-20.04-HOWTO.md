@@ -284,6 +284,7 @@ capabilities will be missing):
     texlive-fonts-extra (for incosolata.sty)
     texlive-bibtex-extra (for unsrturl.bst)
     texlive-science (for algorithm.sty)
+    texlive-luatex (for luatex85.sty)
     texlive-lang-european (for language definition files e.g. swedish.ldf)
     texi2html
     texinfo

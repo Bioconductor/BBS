@@ -313,6 +313,7 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
         jobs.append(job)
     nb_jobs = len(jobs)
     print("OK")
+    sys.stdout.flush()
     nb_not_needed = len(target_pkgs) - nb_target_pkgs_in_queue
     nb_non_target_pkgs_in_queue = nb_jobs - nb_target_pkgs_in_queue
     nb_non_target_pkgs_to_install = nb_non_target_pkgs_in_queue - \
@@ -465,6 +466,7 @@ def prepare_STAGE3_job_queue(pkgdir_paths):
                                        pkgdumps, BBSvars.buildsrc_rdir)
             jobs.append(job)
     print("OK")
+    sys.stdout.flush()
     job_queue = bbs.jobs.JobQueue(stage, jobs, None)
     job_queue._total = len(pkgdir_paths)
     return job_queue
@@ -532,6 +534,7 @@ def prepare_STAGE4_job_queue(srcpkg_paths):
                                    pkgdumps, BBSvars.checksrc_rdir)
         jobs.append(job)
     print("OK")
+    sys.stdout.flush()
     job_queue = bbs.jobs.JobQueue(stage, jobs, None)
     job_queue._total = len(srcpkg_paths)
     return job_queue
@@ -589,6 +592,7 @@ def prepare_STAGE5_job_queue(srcpkg_paths):
                                    pkgdumps, BBSvars.buildbin_rdir)
         jobs.append(job)
     print("OK")
+    sys.stdout.flush()
     job_queue = bbs.jobs.JobQueue(stage, jobs, None)
     job_queue._total = len(srcpkg_paths)
     return job_queue
