@@ -140,6 +140,7 @@ def extractTargetPkgListFromMeatIndex():
 
 def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
     print("BBS> Get list of source tarballs to %s ..." % stage_label, end=" ")
+    sys.stdout.flush()
     target_pkgs = extractTargetPkgListFromMeatIndex()
     stage = "buildsrc"
     ok_statuses = ["OK", "WARNINGS"]
@@ -294,6 +295,7 @@ def CallRfunctionFromSTAGE2Script(Rfunction, out_file=None):
 
 def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
     print("BBS> Preparing STAGE2 job queue ...", end=" ")
+    sys.stdout.flush()
     stage = 'install'
     jobs = []
     nb_target_pkgs_in_queue = nb_skipped_pkgs = 0
@@ -452,6 +454,7 @@ def STAGE2():
 
 def prepare_STAGE3_job_queue(pkgdir_paths):
     print("BBS> Preparing STAGE3 job queue ...", end=" ")
+    sys.stdout.flush()
     stage = 'buildsrc'
     jobs = []
     for pkgdir_path in pkgdir_paths:
@@ -522,6 +525,7 @@ def STAGE3():
 
 def prepare_STAGE4_job_queue(srcpkg_paths):
     print("BBS> Preparing STAGE4 job queue ...", end=" ")
+    sys.stdout.flush()
     stage = 'checksrc'
     jobs = []
     for srcpkg_path in srcpkg_paths:
@@ -578,6 +582,7 @@ def STAGE4():
 
 def prepare_STAGE5_job_queue(srcpkg_paths):
     print("BBS> Preparing STAGE5 job queue ...", end=" ")
+    sys.stdout.flush()
     stage = 'buildbin'
     jobs = []
     for srcpkg_path in srcpkg_paths:
