@@ -65,16 +65,9 @@ def _BiocGreaterThanOrEqualTo(x, y):
     y0 = int(parts[1])
     return x0 > x or (x0 == x and y0 >= y)
 
-def _getPkgFieldFromMeatIndex(pkg, field):
-    Central_rdir = BBScorevars.Central_rdir
-    dcf = Central_rdir.WOpen(BBScorevars.meat_index_file)
-    val = bbs.parse.getPkgFieldFromDCF(dcf, pkg, field,
-                                       BBScorevars.meat_index_file)
-    dcf.close()
-    return val.replace(" ", "").split(",")
-
 def _noExampleArchs(pkg):
-    no_examples = _getPkgFieldFromMeatIndex(pkg, 'NoExamplesOnPlatforms')
+    no_examples = bbs.parse.getBBSoptionFromDir(pkg, 'NoExamplesOnPlatforms')
+    no_examples = no_examples.replace(" ", "").split(",")
     clean = []
     for item in no_examples:
         clean.append(item.strip())
@@ -98,7 +91,8 @@ def _noExampleArchs(pkg):
 
 ### 'pkgdir_path' must be the path to a package source tree.
 def _supportedWinArchs(pkgdir_path):
-    unsupported = _getPkgFieldFromMeatIndex(pkgdir_path, 'UnsupportedPlatforms')
+    unsupported = bbs.parse.getBBSoptionFromDir(pkg, 'UnsupportedPlatforms')
+    unsupported = unsupported.replace(" ", "").split(",")
     archs = []
     if "win" in unsupported:
         return archs
