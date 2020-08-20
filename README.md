@@ -50,16 +50,10 @@ Further documentation on specific tasks is in the [Doc](Doc/) directory.
 
 ## What is BBS **not**?
 
-* BBS is different from the Single Package Builder,
-  which is triggered when a tarball is submitted
-  to the new package tracker. Though there is some
-  common code.
-* BBS is different from the workflow builder which 
-  is based on jenkins and builds in response to commits.
-  The workflow builder is only used to build contents of
-  directories in 
-  [https://hedgehog.fhcrc.org/bioconductor/trunk/madman/workflows](https://hedgehog.fhcrc.org/bioconductor/trunk/madman/workflows
-  ).
+BBS is different from the Single Package Builder,
+which is triggered when a tarball is submitted
+to the new package tracker. Though there is some
+common code.
 
 ## Where is the code?
 

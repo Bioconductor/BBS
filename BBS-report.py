@@ -64,6 +64,8 @@ def pkgname_to_HTML(pkg):
         #    repo = "data/experiment"
         #elif subbuilds == "workflows":
         #    repo = "workflows"
+        #elif subbuilds == "books":
+        #    repo = "books"
         #else:
         #    repo = "bioc"
         #url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
@@ -404,8 +406,8 @@ def write_summary_TD(out, node, stage):
     out.write('<TD>%s</TD>' % html)
     return
 
-### Produces full TRs (normally 8 TDs each, only 7 for the workflow subbuilds,
-### and only 4 for the longtests subbuilds)
+### Produces full TRs (normally 8 TDs each, only 7 for the workflow and book
+### subbuilds, and only 4 for the longtests subbuilds)
 def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TR class="summary header">')
     out.write('<TD COLSPAN="2" style="background: inherit;">SUMMARY</TD>')
@@ -996,7 +998,7 @@ def make_node_LeafReports(allpkgs, node):
             make_LeafReport(leafreport_ref, allpkgs)
 
         # CHECK leaf-report
-        if BBScorevars.subbuilds != "workflows":
+        if BBScorevars.subbuilds not in ["workflows", "books"]:
             stage = 'checksrc'
             status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
             if not status in ["skipped", "NA"]:
@@ -1368,7 +1370,7 @@ def write_glyph_table(out):
     if subbuilds == "bioc-longtests":
         msg = '<I>CHECK</I> of package took more than ' + \
               '%d minutes' % t3
-    elif subbuilds == "workflows":
+    elif subbuilds in ["workflows", "books"]:
         msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than '
         if t1 == t2:
             msg += '%d minutes' % t1
@@ -1387,7 +1389,7 @@ def write_glyph_table(out):
     msg = 'Bad DESCRIPTION file or '
     if subbuilds == "bioc-longtests":
         msg += '<I>CHECK</I> of package produced errors'
-    elif subbuilds == "workflows":
+    elif subbuilds in ["workflows", "books"]:
         msg += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
     else:
         msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
@@ -1395,14 +1397,14 @@ def write_glyph_table(out):
     write_glyph("ERROR", msg, True)
 
     ## "WARNINGS" glyph
-    if subbuilds != "workflows":
+    if subbuilds not in ["workflows", "books"]:
         msg = '<I>CHECK</I> of package produced warnings'
         write_glyph("WARNINGS", msg, True)
 
     ## "OK" glyph
     if subbuilds == "bioc-longtests":
         msg = '<I>CHECK</I>'
-    elif subbuilds == "workflows":
+    elif subbuilds in ["workflows", "books"]:
         msg = '<I>INSTALL</I> or <I>BUILD</I>'
     else:
         msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
@@ -1412,7 +1414,7 @@ def write_glyph_table(out):
     ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e. when
     ## STAGE2 skips installation of target packages not needed by another
     ## target package for build or check).
-    #if subbuilds != "workflows" and subbuilds != "bioc-longtests":
+    #if subbuilds not in ["workflows", "books", "bioc-longtests"]:
     #    msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
     #    write_glyph("NotNeeded", msg)
 
@@ -1425,7 +1427,7 @@ def write_glyph_table(out):
     ## "NA" glyph
     if subbuilds == "bioc-longtests":
         msg = '<I>CHECK</I>'
-    elif subbuilds == "workflows":
+    elif subbuilds in ["workflows", "books"]:
         msg = '<I>BUILD</I>'
     else:
         msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'

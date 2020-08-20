@@ -45,7 +45,7 @@ def make_STATUS_DB(allpkgs):
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
 
             # CHECK status
-            if BBScorevars.subbuilds != "workflows":
+            if BBScorevars.subbuilds not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"

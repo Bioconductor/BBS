@@ -89,6 +89,8 @@ def make_report_title(subbuilds, report_nodes):
         title = "Long Tests"
     elif subbuilds == "workflows":
         title = "Workflows build"
+    elif subbuilds == "books":
+        title = "Books build"
     else:
         nnodes = 0
         for node in report_nodes.split(' '):
@@ -131,7 +133,7 @@ def stage_label(stage):
 def stages_to_display(subbuilds):
     if subbuilds in ["data-annotation", "data-experiment"]:
         return ['install', 'buildsrc', 'checksrc']
-    if subbuilds == "workflows":
+    if subbuilds in ["workflows", "books"]:
         return ['install', 'buildsrc']
     if subbuilds == "bioc-longtests":
         return ['checksrc']  # we run 'buildsrc' but don't display it
@@ -342,7 +344,7 @@ def import_STATUS_DB(allpkgs):
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
 
             # CHECK status
-            if BBScorevars.subbuilds != "workflows":
+            if BBScorevars.subbuilds not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
