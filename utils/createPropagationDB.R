@@ -320,24 +320,28 @@ recur <- function(pkg)
 #  "data/annotation" for annotation packages
 #  "data/experiment" for experiment data packages
 #  "workflows" for workflow packages
+#  "books" for book packages
 # internalRepos is consulted to see what needs to be propagated 
 # (i.e. nothing if package there has the same version.)
 createPropagationList <- function(outgoingDirPath, propagationDbFilePath,
-    biocrepo=c("bioc", "data/annotation", "data/experiment", "workflows"),
+    biocrepo=c("bioc", "data/annotation", "data/experiment", "workflows", "books"),
     internalRepos)
 {
     if (missing(internalRepos))
         stop("Must specify internalRepos!")
     if (missing(biocrepo))
         stop("Must specify biocrepo!")
-    repo.name <- switch(biocrepo,
-                        "bioc" = "BioCsoft",
-                        "data/annotation" = "BioCann",
-                        "data/experiment" = "BioCexp",
-                        "workflows" = "BioCworkflows")
-    bioc.apdb <<- available.packages(
-        contrib.url(biocrepos[[repo.name]]),
-        type="source")
+    if (biocrepo != "books") {
+        repo.name <- switch(biocrepo,
+                            "bioc" = "BioCsoft",
+                            "data/annotation" = "BioCann",
+                            "data/experiment" = "BioCexp",
+                            "workflows" = "BioCworkflows")
+        repo_url <- biocrepos[[repo.name]]
+    } else {
+        repo_url <- sprintf("https://bioconductor.org/packages/%s/books", biocvers)
+    }
+    bioc.apdb <<- available.packages(contrib.url(repo_url), type="source")
     bioc.apdf <<- as.data.frame(bioc.apdb, stringsAsFactors=FALSE)
     bioc.ap <<- rownames(bioc.apdb)
 
