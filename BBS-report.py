@@ -53,6 +53,8 @@ def writeThinRowSeparator_asTR(out, tr_class=None):
     return
 
 def pkgname_to_HTML(pkg):
+    if BBScorevars.subbuilds == "books":
+        return pkg
     if BBScorevars.subbuilds == "cran":
         url = "https://cran.rstudio.com/web/packages/%s/" % pkg
     else:
