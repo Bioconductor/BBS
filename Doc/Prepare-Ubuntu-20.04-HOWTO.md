@@ -795,7 +795,7 @@ As expected, this currently fails (with xps 1.49.0):
     checking for C compiler default output file name... a.out
     checking whether the C compiler works... yes
     checking whether we are cross compiling... no
-    checking for suffix of executables... 
+    checking for suffix of executables...
     checking for suffix of object files... o
     checking whether we are using the GNU C compiler... yes
     checking whether gcc accepts -g... yes
@@ -807,13 +807,13 @@ As expected, this currently fails (with xps 1.49.0):
     checking for gcc option to accept ANSI C... (cached) none needed
     found ROOT version 6.22/01 in directory /usr/local/root
     ** libs
-    ** arch - 
+    ** arch -
     Unknown argument "--dicttype"!
     Usage: root-config [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--cflags] [--auxcflags] [--ldflags] [--new] [--nonew] [--libs] [--glibs] [--evelibs] [--bindir] [--libdir] [--incdir] [--etcdir] [--tutdir] [--srcdir] [--noauxcflags] [--noauxlibs] [--noldflags] [--has-<feature>] [--arch][--python-version] [--python2-version] [--python3-version] [--cc] [--cxx] [--f77] [--ld ] [--help]
     c++ -I/usr/local/root/include -O2 -Wall -fPIC -pthread -std=c++11 -m64 -I/usr/local/root/include/root -c TMLMath.cxx
     TMLMath.cxx:1111: warning: "xmax" redefined
      1111 | #define xmax  2.5327372760800758e+305
-          | 
+          |
     ...
     ...
     c++ -I/usr/local/root/include -O2 -Wall -fPIC -pthread -std=c++11 -m64 -I/usr/local/root/include/root -c rwrapper.cxx
@@ -832,11 +832,26 @@ As expected, this currently fails (with xps 1.49.0):
 
 Affects several Bioconductor packages:
 
-#### MouseFM
+#### MouseFM and martini
 
-An Ensembl server misconfiguration + increased security level in Ubuntu
-20.04 + a bug in OpenSSL 1.1.1 causes the `annotate_consequences` example
-in Bioconductor package MouseFM to fail.
+An Ensembl server misconfiguration + increased security level
+in Ubuntu 20.04 + a bug in OpenSSL 1.1.1 cause the examples in
+`?MouseFM::annotate_consequences` and some unit test in martini to fail:
+
+    library(curl)
+    
+    ## At a very low level the examples in `?MouseFM::annotate_consequences` do:
+    url <- "https://rest.ensembl.org/vep/mouse/id"
+    curl_fetch_memory(url)
+    #Error in curl_fetch_memory(url) :
+    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+    
+    ## The code in test_snp2gene.R in martini does:
+    url <- "https://rest.ensembl.org/taxonomy/id/9606?content-type=application/json"
+    curl_fetch_memory(url)
+    #Error in curl_fetch_memory(url) :
+    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+
 See https://github.com/Ensembl/ensembl-rest/issues/427 for the details.
 
 Easy way to reproduce:
@@ -849,7 +864,7 @@ Internally `test_GencodeFasta()` does:
 
     library(RCurl)
     getURL("https://www.gencodegenes.org/human/releases")
-    #Error in function (type, msg, asError = TRUE)  : 
+    #Error in function (type, msg, asError = TRUE)  :
     #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
 
 This causes AnnotationHubData's unit tests to fail.
@@ -882,7 +897,7 @@ Internally the package tries to access www.gencodegenes.org with the following R
     > library(RCurl)
 
     > getURL("https://www.gencodegenes.org/human/releases")
-    Error in function (type, msg, asError = TRUE)  : 
+    Error in function (type, msg, asError = TRUE)  :
       error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
 
     > sessionInfo()
@@ -941,7 +956,7 @@ Internally `rfaRm:::rfamGetClanDefinitions()` does:
 
     library(xml2)
     read_xml("https://rfam.xfam.org/clans")
-    #Error in open.connection(x, "rb") : 
+    #Error in open.connection(x, "rb") :
     #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
 
 Note that `rfaRm:::rfamGetClanDefinitions()` is called at **installation time**
