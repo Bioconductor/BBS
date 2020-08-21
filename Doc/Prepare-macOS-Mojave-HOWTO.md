@@ -525,9 +525,11 @@ This module is needed by BBS.
 
     pip3 install psutil
 
+
 ### Install Python3 module virtualenv
 
-This module is needed by the SPB. venv has subtle differences that have proven problematic.
+This module is needed by the SPB. Module venv has subtle differences that
+have proven problematic.
 
     pip3 install virtualenv
 
