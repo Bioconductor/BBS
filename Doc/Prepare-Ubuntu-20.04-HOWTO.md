@@ -300,7 +300,7 @@ capabilities will be missing):
     libssl-dev (for openssl and mongolite)
     libsasl2-dev (for mongolite)
     libxml2-dev (for XML)
-    libcurl4-openssl-dev (for RCurl)
+    libcurl4-openssl-dev (for RCurl and curl)
     mpi-default-dev (for Rmpi)
     libudunits2-dev (for units)
     libv8-dev (for V8)
@@ -822,4 +822,127 @@ As expected, this currently fails (with xps 1.49.0):
     make: *** [Makefile:112: xpsDict.cxx] Error 127
     ERROR: compilation failed for package ‘xps’
     * removing ‘/home/biocbuild/bbs-3.12-bioc/R/library/xps’
+
+
+
+## 4. Known issues
+
+
+### 4.1 curl SSLv3 alert handshake failure
+
+Affects several Bioconductor packages:
+
+#### MouseFM
+
+An Ensembl server misconfiguration + increased security level in Ubuntu 20.04
++ a bug in OpenSSL 1.1.1 causes the `annotate_consequences` example in
+Bioconductor package MouseFM to fail.
+See https://github.com/Ensembl/ensembl-rest/issues/427 for the details.
+
+Easy way to reproduce:
+
+    curl https://rest.ensembl.org  # works fine on Ubuntu < 20.04
+
+#### AnnotationHubData
+
+Internally `test_GencodeFasta()` does:
+
+    library(RCurl)
+    getURL("https://www.gencodegenes.org/human/releases")
+    #Error in function (type, msg, asError = TRUE)  : 
+    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+
+This causes AnnotationHubData's unit tests to fail.
+
+Easy way to reproduce:
+
+    curl https://www.gencodegenes.org  # works fine on Ubuntu < 20.04
+
+I reported the issue by filling a form here https://www.gencodegenes.org/pages/contact.html on Aug 20, 2020. Message sent:
+
+--------------------------------------------------------------------------
+Subject: curl SSLv3 alert handshake failure when accessing the
+gencodegenes.org website from Ubuntu 20.04
+
+Hi,
+
+This fails with Ubuntu 20.04:
+
+    curl https://www.gencodegenes.org
+    #curl: (35) error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+
+but works fine with Ubuntu < 20.04 and on Windows and macOS Mojave.
+
+This seems to happen with some websites because of a combination of three reasons: server misconfiguration, increased TLS security level in Ubuntu 20.04 by default, and a bug in OpenSSL 1.1.1. See https://github.com/Ensembl/ensembl-rest/issues/427 for a similar issue with the Ensembl server.
+
+FWIW this breaks Bioconductor package AnnotationHubData: https://bioconductor.org/checkResults/3.12/bioc-LATEST/AnnotationHubData/nebbiolo1-checksrc.html
+
+Internally the package tries to access www.gencodegenes.org with the following R code:
+
+    > library(RCurl)
+
+    > getURL("https://www.gencodegenes.org/human/releases")
+    Error in function (type, msg, asError = TRUE)  : 
+      error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+
+    > sessionInfo()
+    R version 4.0.2 Patched (2020-08-04 r78971)
+    Platform: x86_64-pc-linux-gnu (64-bit)
+    Running under: Ubuntu 20.04.1 LTS
+
+    Matrix products: default
+    BLAS:   /home/hpages/R/R-4.0.r78971/lib/libRblas.so
+    LAPACK: /home/hpages/R/R-4.0.r78971/lib/libRlapack.so
+
+    locale:
+     [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+     [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+     [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+     [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+     [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+    [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+    attached base packages:
+    [1] stats     graphics  grDevices utils     datasets  methods   base     
+
+    other attached packages:
+    [1] RCurl_1.98-1.2
+
+    loaded via a namespace (and not attached):
+    [1] compiler_4.0.2 bitops_1.0-6  
+
+Thanks!
+
+Hervé Pagès
+
+Program in Computational Biology
+Division of Public Health Sciences
+Fred Hutchinson Cancer Research Center
+1100 Fairview Ave. N, M1-B514
+P.O. Box 19024
+Seattle, WA 98109-1024
+
+E-mail: hpages@fredhutch.org
+Phone:  (206) 667-5791
+Fax:    (206) 667-1319
+--------------------------------------------------------------------------
+
+#### rfaRm
+
+Internally `rfaRm:::rfamGetClanDefinitions()` does:
+
+    library(xml2)
+    read_xml("https://rfam.xfam.org/clans")
+    #Error in open.connection(x, "rb") : 
+    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
+
+Note that `rfaRm:::rfamGetClanDefinitions()` is called at **installation time**
+so rfaRm doesn't even install!
+
+Easy way to reproduce:
+
+    curl https://rfam.xfam.org  # works fine on Ubuntu < 20.04
+
+I reported the issue here on Aug 20, 2020:
+https://github.com/Rfam/rfam-website/issues/39
 
