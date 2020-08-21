@@ -834,9 +834,9 @@ Affects several Bioconductor packages:
 
 #### MouseFM
 
-An Ensembl server misconfiguration + increased security level in Ubuntu 20.04
-+ a bug in OpenSSL 1.1.1 causes the `annotate_consequences` example in
-Bioconductor package MouseFM to fail.
+An Ensembl server misconfiguration + increased security level in Ubuntu
+20.04 + a bug in OpenSSL 1.1.1 causes the `annotate_consequences` example
+in Bioconductor package MouseFM to fail.
 See https://github.com/Ensembl/ensembl-rest/issues/427 for the details.
 
 Easy way to reproduce:
