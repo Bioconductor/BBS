@@ -916,15 +916,22 @@ Thanks!
 Hervé Pagès
 
 Program in Computational Biology
+
 Division of Public Health Sciences
+
 Fred Hutchinson Cancer Research Center
+
 1100 Fairview Ave. N, M1-B514
+
 P.O. Box 19024
+
 Seattle, WA 98109-1024
 
-E-mail: hpages@fredhutch.org
-Phone:  (206) 667-5791
-Fax:    (206) 667-1319
+E-mail: xxxxxx@xxxxxxxxx.org
+
+Phone:  (XXX) XXX-XXXX
+
+Fax:    (XXX) XXX-XXXX
 
 --------------------------------------------------------------------------
 
