@@ -152,9 +152,9 @@ default_INSTALL_timeout   =  "2400.0"  # 40 min
 if subbuilds == "data-experiment":
     default_BUILD_timeout =  "4800.0"  # 80 min
 elif subbuilds == "workflows":
-    default_BUILD_timeout = "14400.0"  #  4 h
+    default_BUILD_timeout =  "7200.0"  #  2 h
 elif subbuilds == "books":
-    default_BUILD_timeout = "14400.0"  #  4 h
+    default_BUILD_timeout = "18000.0"  #  5 h
 elif subbuilds == "bioc-longtests":
     default_BUILD_timeout = "21600.0"  #  6 h
 else:
