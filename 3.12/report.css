@@ -332,6 +332,17 @@ TABLE.mainrep .even .malbec2 {
     background: #ACE;
 }
 
+/* riesling1 */
+DIV.riesling1,
+TR.riesling1 TD,
+TABLE.mainrep .riesling1,
+TABLE.mainrep .odd .riesling1 {
+    background: #EEE4CC;
+}
+TABLE.mainrep .even .riesling1 {
+    background: #DDD3BB;
+}
+
 /* tokay1 */
 DIV.tokay1,
 TR.tokay1 TD,

@@ -1,9 +1,9 @@
-@rem =========================
-@rem Local settings for tokay1
-@rem =========================
+@rem ============================
+@rem Local settings for riesling1
+@rem ============================
 
 
-set BBS_HOME=C:\Users\biocbuild\BBS
+set BBS_HOME=D:\biocbuild\BBS
 
 set BBS_PYTHON_CMD=C:\Python37\python.exe
 
