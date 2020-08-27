@@ -94,7 +94,7 @@ def _noExampleArchs(pkg):
 ### 'pkgdir_path' must be the path to a package source tree.
 def _supportedWinArchs(pkgdir_path):
     archs = []
-    unsupported = bbs.parse.getBBSoptionFromDir(pkg, 'UnsupportedPlatforms')
+    unsupported = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'UnsupportedPlatforms')
     if unsupported == None:
         unsupported = []
     else:
