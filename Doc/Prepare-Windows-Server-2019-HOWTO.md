@@ -1,8 +1,14 @@
-# How to set up a Windows Server 2012 machine for the daily builds
+# How to set up a Windows Server 2019 machine for the daily builds
 
 
 
 ## 0. General information and tips
+
+
+### Disconnect vs logoff
+
+Using Disconnect when ending your rdesktop session does NOT log you off.
+To log off, use the `logoff` command in a PowerShell window.
 
 
 ### How to open Task Manager
@@ -31,7 +37,10 @@ existing variables. Do not add or edit user variables (at the top).
 
 
 
-## 1. From the Administrator account
+## 1. Initial setup (from a sudoer account)
+
+
+Everything in this section must be done **from the Administrator account**.
 
 
 ### Install Google Chrome
@@ -147,8 +156,12 @@ For this account:
 - [x] Password never expires
 - [ ] Account is disabled
 
+By default, the home folder will be `C:\Users\biocbuild`. If this needs to
+be changed (e.g. to `D:\biocbuild`), double-click on the biocbuild user and
+make the change in the Profile tab. Note that the `C:\Users\biocbuild` folder
+will still be created and populated at first logon.
 
-### Make the biocbuild user member of the Remote Desktop Users group
+Make the biocbuild user member of the Remote Desktop Users group.
 
 
 ### Grant the biocbuild user "Log on as batch job" rights
@@ -164,8 +177,37 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 
 Add `biocbuild` user.
 
-From now on, all administrative tasks should be performed from one of the
-personal accounts instead of the Administrator account.
+
+### Install 32-bit Cygwin
+
+Cygwin is needed for: `ssh`, `rsync`, `curl`, and `vi`.
+
+Download and run `setup-x86.exe` to install or update Cygwin.
+
+Install for all users.
+
+Make sure packages `openssh`, `rsync`, and `curl` are selected (the 3 of
+them are in the Net category).
+
+Note that this installs the Cygwin 32-bit DLL.
+
+Prepend `C:\cygwin\bin` to `Path` (see "How to edit an environment variable"
+in "General information and tips" at the top of this document for how to do
+this).
+
+TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
+in it. Do this by just typing the name of the command followed by <Enter>.
+If `Path` was set correctly, the command should be found (the Cygwin
+executables are in `C:\cygwin\bin`).
+
+
+### Install git client for Windows
+
+Available at https://git-scm.com/download/win
+
+Keep all the default settings when running the installer.
+
+TESTING: Open a PowerShell window and try to run `git --version`
 
 
 ### Install MiKTeX
@@ -176,10 +218,10 @@ remove `C:\Users\biocbuild\AppData\Roaming\MiKTeX\` and
 `C:\Users\pkgbuild\AppData\Roaming\MiKTeX\` (better done from
 the `biocbuild` and `pkgbuild` accounts, respectively) before reinstalling.
 
-Go to https://ctan.org/tex-archive/systems/win32/miktex/setup/windows-x64/
+Go to https://miktex.org/download
 
-Download latest Basic MiKTeX 64-bit Installer (`basic-miktex-2.9.7269-x64.exe`
-as of Dec. 2019) and run it:
+Download latest Basic MiKTeX 64-bit Installer (`basic-miktex-20.6.29-x64.exe`
+as of Aug. 2020) and run it:
 
 - Install MiKTeX for all users
 - Preferred paper: Letter
@@ -221,6 +263,10 @@ pstricks in their vignette should still need to use auto-pst-pdf:
 >        auto-pst-pdf will not work!
 
 
+From now on, all administrative tasks should be performed from one of the
+personal accounts instead of the Administrator account.
+
+
 
 ## 2. From a personal administrator account
 
@@ -232,45 +278,23 @@ Go to https://pandoc.org/installing.html#windows
 Download latest installer for Windows x86\_64
 (`pandoc-2.9-windows-x86_64.msi` as of Dec. 2019) and run it.
 
-Note:  There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8. 
+Note: There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8. 
 It caused build failures with the ERROR `Environment cslreferences undefined`.  
 Until we know it is resolved we have downgraded pandoc to 2.7.3. 
-
-
-### Install 32-bit Cygwin
-
-Cygwin is needed for the `ssh`, `rsync`, and `curl` commands only.
-
-Download and run `setup-x86.exe` to install or update Cygwin.
-
-Install for all users.
-
-Make sure packages `openssh`, `rsync`, and `curl` are selected (the 3 of
-them are in the Net category).
-
-Note that this installs the Cygwin 32-bit DLL.
-
-Prepend `C:\cygwin\bin` to `Path` (see "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to do
-this).
-
-TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
-in it. Do this by just typing the name of the command followed by <Enter>.
-If `Path` was set correctly, the command should be found (the Cygwin
-executables are in `C:\cygwin\bin`).
 
 
 ### Install Rtools
 
 Download Rtools from https://CRAN.R-project.org/bin/windows/Rtools/
 
-For the devel builds, choose the latest version (NOT frozen), for the
-release builds, choose the latest _frozen_ version.
+Choose rtools40 for Windows 64-bit: `rtools40-x86_64.exe`
 
-#### Installation instructions for Rtools40
-
-Just run the installer and keep all the defaults. This will install Rtools40
+Run the installer and keep all the defaults. This will install rtools40
 in `C:\rtools40`.
+
+Do NOT follow the "Putting Rtools on the PATH" instructions given on Rtools
+webpage as they put Rtools on the PATH only in the context of running R. We
+want Rtools to **always** be on the PATH, not just when in an R session.
 
 Prepend `C:\rtools40\usr\bin;C:\rtools40\mingw32\bin;C:\rtools40\mingw64\bin;`
 to `Path` (see "How to edit an environment variable" in "General information
@@ -279,129 +303,30 @@ and tips" at the top of this document for how to do this).
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
 
-    which rsync    # /usr/bin/rsync, because rsync from Rtools40 should be
+    which ssh      # /c/cygwin/bin/ssh
+    which rsync    # /usr/bin/rsync, because rsync from rtools40 should be
                    # before rsync from Cygwin in Path
-    which ssh      # Should show /c/cygwin/bin/ssh
-    which curl     # Should show /usr/bin/curl
+    which curl     # /usr/bin/curl, because curl from rtools40 should be
+                   # before curl from Cygwin in Path
+    which vi       # /usr/bin/vi, because vi from rtools40 should be
+                   # before vi from Cygwin in Path
     rsync          # Will crash if 64-bit Cygwin was installed instead
                    # of 32-bit!
-    which gcc      # Should show /mingw32/bin/gcc
+    which make     # /usr/bin/make
+    which gcc      # /mingw32/bin/gcc
     gcc --version  # gcc.exe (Built by Jeroen for the R-project) 8.3.0
 
-#### Old installation instructions (for Rtools prior to 4.0)
 
-Run the installer:
+### Create and populate C:\extsoft
 
-- On the Select Components page: select everything **except** Cygwin DLLs
-  and the "Extras" files
+Download `local323.zip`, `spatial324.zip`, and `curl-7.40.0.zip` from
+https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/ and unzip them
+**in that order** in `C:\extsoft`.
 
-- On the Select Additional Tasks page: select everything
-
-- On the System Path page: add `c:\Rtools\mingw_64\bin;` right after
-  `c:\Rtools\mingw_32\bin;`
-
-TESTING: Open a PowerShell window and try to run:
-
-    which rsync # should show /cygdrive/c/Rtools/bin/rsync, because rsync
-                # from Rtools should be before rsync from Cygwin in Path
-    which ssh   # should show /usr/bin/ssh
-    which curl  # should show /usr/bin/curl
-    rsync       # will crash if 64-bit Cygwin was installed instead of 32-bit!
-    which gcc   # should show /cygdrive/c/Rtools/mingw_32/bin/gcc
-
-
-### Install Ripley's bundle of external software
-
-This is a bundle of pre-compiled libraries needed by some Bioconductor
-packages.
-
-NOTE: In the past we installed `localXYZ.zip` and `spatialXYZ.zip` from:
-
-  https://www.stats.ox.ac.uk/pub/Rtools/libs.html
-
-That software was compiled using the recommended toolchain for R 2.14.2 to
-3.2.4 so we have since moved on to the `extsoft/` repository located here:
-
-  https://cran.r-project.org/bin/windows/extsoft/
-
-Create the `extsoft` directory:
-
-    mkdir C:/extsoft
-
-Download the files using the `rsync` command from the `rsync-extsoft` macro
-from the `src/gnuwin32/Makefile`. Change the 'major.minor' version in the
-command as appropriate.
-
-    cd C:/extsoft
-    rsync --timeout=60 -rcvp --delete --chmod=ugo=rwX cran.r-project.org::CRAN/bin/windows/extsoft/3.5/ .
-
-
-### Install convert.exe from ImageMagick
-
-APRIL 2020: THIS SHOULD NO LONGER BE NEEDED!
-
-Currently needed (as of December 2019) by `knitr::plot_crop()` to
-build the vignettes of some Bioconductor packages (e.g. bigPint,
-CellBench, CTDquerier, evaluomeR, FELLA, IgGeneUsage, MEAL, netSmooth,
-PrecisionTrialDrawer, pRoloc, rnaseqcomp, and many more). Will no longer
-be needed when the following issue is addressed:
-
-  https://github.com/yihui/knitr/issues/1785
-
-Download ImageMagick for Windows:
-
-  https://imagemagick.org/script/download.php#windows
-
-Choose the first option (Win64 dynamic at 16 bits-per-pixel component).
-
-When running the installer: use all the defaults **except** on the
-"Select Additional Tasks" screen. On this screen: **uncheck** the
-"Create a desktop icon" and "Install FFmpeg" boxes, and **check**
-the "Install legacy utilities (e.g. convert)" box. Also keep the
-"Add application directory to your system path" box checked.
-
-Note that the installer will prepend `C:\Program Files\ImageMagick-7.0.9-Q16;`
-to the `Path`. However, on a Windows build machine, `C:\rtools40\usr\bin;`,
-`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should always
-be first in `Path`, so move `C:\Program Files\ImageMagick-7.0.9-Q16;`
-**right after** `C:\rtools40\mingw64\bin;`. See "How to edit an environment
-variable" in "General information and tips" at the top of this document
-for how to do this.
-
-TESTING: From the `biocbuild` account (log out and on again from
-the `biocbuild` account if you were already logged on) in a PowerShell window:
-
-    which convert
-
-This should display `/cygdrive/c/Program Files/ImageMagick-7.0.9-Q16/convert`.
-
-
-### Install git client for Windows
-
-Available at https://git-scm.com/download/win
-
-Keep all the default settings when running the installer.
-
-TESTING: Open a PowerShell window and try to run `git --version`
-
-
-### Install TortoiseSVN (Subversion client for Windows)
-
-This is no longer needed. Install only if you need to checkout some
-svn-based code like the latest R-devel (even though should never need
-to do that).
-
-Available at https://tortoisesvn.net/
-
-Choose 64-bit version
-
-When running the installer, make sure the command line clients tools are
-selected (by default they're NOT -- choose 'Entire feature will be
-installed on local hard drive').
-
-TESTING: Open a PowerShell window and try to run 'svn --version'.
-If `Path` was set correctly (by the installer), the command should be
-found (it's located in `C:\Program Files\TortoiseSVN\bin`).
+When extacting all file from `curl-7.40.0.zip`, you'll be asked if you want
+to replace or skip the files with the same names (these are the `libz.a`
+files located in `lib\i386\` and `lib\x64\`, respectively). Choose "Skip
+these files".
 
 
 
@@ -418,19 +343,20 @@ command line environment when working interactively on a Windows build machine.
 
 In a PowerShell Window:
 
-    cd C:\Users\biocbuild
+    cd D:\biocbuild  
     git clone https://github.com/Bioconductor/BBS
 
 
 ### Install biocbuild RSA private key
 
-In `C:\Users\biocbuild`, create the `.BBS/id_rsa` file as follow:
+In `D:\biocbuild`, create the `.BBS/id_rsa` file as follow:
 
     mkdir .BBS
     cd .BBS
-
-    # Use vi (included in Cygwin) to create the id_rsa file (copy/paste its
-    # content from another Windows builder e.g. moscato1)
+    
+    # Use vi (included in Rtools and Cygwin) to create the id_rsa file
+    # (copy/paste its content from another builder e.g. malbec1 or tokay1).
+    
     chmod 400 id_rsa
 
 Having the RSA key installed allows the `biocbuild` user to ssh to the
@@ -438,17 +364,17 @@ central node.
 
 TESTING: Open a PowerShell window and try to ssh to the central node with:
 
-    ssh -i C:\Users\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
+    ssh -i D:\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
 
 If malbec1 not in DNS, replace with 172.29.0.3
 
 
-### Create bbs-3.11-bioc directory structure
+### Create bbs-3.12-bioc directory structure
 
-From `C:\Users\biocbuild`:
+From `D:\biocbuild`:
 
-    mkdir bbs-3.11-bioc
-    cd bbs-3.11-bioc
+    mkdir bbs-3.12-bioc
+    cd bbs-3.12-bioc
     mkdir log
     mkdir tmp
     mkdir tmpdir
@@ -461,7 +387,7 @@ From `C:\Users\biocbuild`:
 This must be done from the `biocbuild` account.
 
 
-### Download R Windows binary from CRAN
+### 4.1 Download R Windows binary from CRAN
 
 https://cran.rstudio.com/bin/windows/base/
 
@@ -470,76 +396,14 @@ in "Other builds" section if you need the latest R devel binary).
 
 When running the installer:
 - Ignore warning about the current user not being an admin
-- Select destination location `C:\Users\biocbuild\bbs-3.11-bioc\R`
+- Select destination location `D:\biocbuild\bbs-3.12-bioc\R`
 - Don't create a Start Menu Folder
-- Don't create a desktop icon
+- Don't create a desktop or QuickLaunch shortcut
 
 
-### Edit Makeconf and Rprofile.site files
+### 4.2 Install BiocManager
 
-NOTE: Skip this if you're installing R >= 4.0 or R-testing from Jeroen,
-and go directly to the next subsection below ("Install BiocManager").
-
-The `R\etc\i386\Makeconf`, `R\etc\x64\Makeconf`, and `R\etc\Rprofile.site`
-files need to be edited as follow (without this, compilation of zlibbioc
-will fail):
-
-- `R\etc\i386\Makeconf`
-
-   From `C:\Users\biocbuild\bbs-3.11-bioc`:
-   ```
-   cd R\etc\i386
-   cp Makeconf Makeconf.original
-   vi Makeconf
-   # Replace line
-   #     BINPREF ?= c:/Rtools/mingw_32/bin/
-   # with
-   #     BINPREF = C:/Rtools/mingw_$(WIN)/bin/
-   # Save and quit vi.
-   ```
-   Check your changes with:
-   ```
-   C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
-   ```
-
-- `R\etc\x64\Makeconf`
-
-   From `C:\Users\biocbuild\bbs-3.11-bioc`:
-   ```
-   cd R\etc\x64
-   cp Makeconf Makeconf.original
-   vi Makeconf
-   # Replace line
-   #     BINPREF ?= c:/Rtools/mingw_64/bin/
-   # with
-   #     BINPREF = C:/Rtools/mingw_$(WIN)/bin/
-   # Save and quit vi.
-   ```
-   Check your changes with:
-   ```
-   C:\Rtools\bin\diff.exe -Z Makeconf.original Makeconf
-   ```
-
-- `R\etc\Rprofile.site`
-
-   From `C:\Users\biocbuild\bbs-3.11-bioc`:
-   ```
-   cd R\etc
-   cp Rprofile.site Rprofile.site.original
-   vi Rprofile.site
-   # Add the following line at bottom
-   #   Sys.setenv(BINPREF = "C:/Rtools/mingw_$(WIN)/bin/")
-   # Save and quit vi.
-   ```
-   Check your changes with:
-   ```
-   C:\Rtools\bin\diff.exe -Z Rprofile.site.original Rprofile.site
-   ```
-
-
-### Install BiocManager
-
-Start R (with `R/bin/R` from `C:\Users\biocbuild\bbs-3.11-bioc`) and install
+Start R (with `R\bin\R` from `D:\biocbuild\bbs-3.12-bioc`) and install
 BiocManager:
 
     install.packages("BiocManager")
@@ -548,8 +412,8 @@ Check that BiocManager is pointing to the correct version of Bioconductor:
 
     library(BiocManager)  # This displays the version of Bioconductor
                           # that BiocManager is pointing at.
-    ## If BiocManager is pointing to release instead of devel, change this
-    ## with:
+    ## ONLY if BiocManager is pointing to release when it should be pointing
+    ## to devel. Then make it point to devel with:
     install(version="devel")
 
 TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
@@ -563,13 +427,13 @@ TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
 Quit R (do NOT save the workspace image).
 
 
-### Point R to C:/extsoft
+### 4.3 Point R to C:/extsoft
 
 `LOCAL_SOFT` needs to be set to `C:/extsoft` in `R\etc\{i386,x64}\Makeconf`:
 
 - `R\etc\i386\Makeconf`
 
-   From `C:\Users\biocbuild\bbs-3.11-bioc`:
+   From `D:\biocbuild\bbs-3.12-bioc`:
    ```
    cd R\etc\i386
    C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
@@ -587,7 +451,7 @@ Quit R (do NOT save the workspace image).
 
 - `R\etc\x64\Makeconf`
 
-   From `C:\Users\biocbuild\bbs-3.11-bioc`:
+   From `D:\biocbuild\bbs-3.12-bioc`:
    ```
    cd R\etc\x64
    C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
@@ -603,26 +467,26 @@ Quit R (do NOT save the workspace image).
    C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
    ```
 
-TESTING:
+TESTING: 
 
-- Try to compile a package that uses libcurl (provided by `extsoft/`) e.g.
-  open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat`
+- Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
+  open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
   (this folder should be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL Rhtslib
 
-- Try to compile a package that uses the GSL (also provided by `extsoft/`):
+- Try to compile a package that uses the GSL (also provided by `C:\extsoft`):
 
     ..\R\bin\R CMD INSTALL flowPeaks
     ..\R\bin\R CMD INSTALL GLAD
     ..\R\bin\R CMD INSTALL PICS
 
-- Try to compile a package that uses netCDF (also provided by `extsoft/`):
+- Try to compile a package that uses netCDF (also provided by `C:\extsoft`):
 
-    ..\R\bin\R CMD INSTALL mzR
+    ..\R\bin\R CMD INSTALL mzR  # will take about 10-15 min!
 
 
-### Install BiocCheck
+### 4.4 Install BiocCheck
 
 BiocCheck is needed for the Single Package Builder:
 
@@ -636,7 +500,7 @@ BiocCheck is needed for the Single Package Builder:
     library(BiocCheck)
 
 
-### Install Cairo
+### 4.5 Install Cairo
 
 Note that a recurrent problem is to see the Cairo package that is currently
 installed on the Windows builders suddenly break after CRAN publishes a newer
@@ -666,12 +530,12 @@ TESTING: Try to load the package (with `library(Cairo)`) on both archs:
     R --arch i386
 
 
-### If updating R
+### 4.6 If updating R
 
 If you are updating R, the cache for AnnotationHub and ExperimentHub
 should be refreshed. This is done by removing all of .AnnotationHub/,
 `.AnnotationHubData/`, `.ExperimentHub/` and `.ExperimentHubData/`
-present in `C:\Users\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
+present in `D:\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
 
 
 
@@ -682,9 +546,10 @@ All the installation in this section should be made from a personal
 administrator account.
 
 
-### Add loggon_biocbuild_at_startup task to Task Scheduler
+### 5.1 Add loggon_biocbuild_at_startup task to Task Scheduler
 
-This task is a workaround for the following issue with the Task Scheduler. The issue happens under the following conditions:
+This task is a workaround for the following issue with the Task Scheduler.
+The issue happens under the following conditions:
 - The task is run under a regular user (e.g. `biocbuild`)
 - It's configured to 'Run whether user is logged on or not'
 - The user under which the task is running is not logged on when the
@@ -715,9 +580,9 @@ Configure the task as follow:
   - Tab General:
     - Name: `loggon_biocbuild_at_startup`
     - In Security options:
-      - Use `TOKAY1\biocbuild` account to run the task
+      - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
-    - Configure for Windows Server 2012 R2
+    - Configure for Windows Server 2019
 
   - Tab Triggers:
     - New Trigger
@@ -728,8 +593,8 @@ Configure the task as follow:
     - Action: Start a program
     - In Settings:
       - Program/script: `C:\Python38\python.exe`
-      - Add arguments: `C:\Users\biocbuild\BBS\utils\do_nothing_forever.py`
-      - Start in: `C:\Users\biocbuild\log`
+      - Add arguments: `D:\biocbuild\BBS\utils\do_nothing_forever.py`
+      - Start in: `D:\biocbuild\log`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -740,9 +605,9 @@ Configure the task as follow:
 
   - Then click OK on bottom right (requires `biocbuild` password)
 
-Before the task can be started, the `C:\Users\biocbuild\log` folder should
+Before the task can be started, the `D:\biocbuild\log` folder should
 be created from the `biocbuild` account. The first time the task will be
-started, the `C:\Users\biocbuild\log\loggon_biocbuild_at_startup.log` file
+started, the `D:\biocbuild\log\loggon_biocbuild_at_startup.log` file
 will be created and the task will write 1 line to it. Each subsequent time
 the task will be started in the future (i.e. each time the machine will be
 rebooted), 1 additional line will be added to this file. So this file will
@@ -759,7 +624,7 @@ These should be the _only_ processes running as `biocbuild` when the
 builds are not running and the `biocbuild` user is not logged on.
 
 
-### Add software builds (a.k.a. nightly builds) to Task Scheduler
+### 5.2 Add software builds (a.k.a. nightly builds) to Task Scheduler
 
 - Open Task Scheduler
 
@@ -772,17 +637,17 @@ builds are not running and the `biocbuild` user is not logged on.
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.11-bioc`
+    - Name: `bbs-3.12-bioc`
     - In Security options:
-      - Use `TOKAY1\biocbuild` account to run the task
+      - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
-    - Configure for Windows Server 2012 R2
+    - Configure for Windows Server 2019
 
   - Tab Triggers:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Daily - At 6:00 PM - Recur every 1 day
+        Daily - At 4:00 PM - Recur every 1 day
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
 
@@ -790,9 +655,9 @@ builds are not running and the `biocbuild` user is not logged on.
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `C:\Users\biocbuild\BBS\3.11\bioc\tokay2\run.bat`
-      - Add arguments: `>>C:\Users\biocbuild\bbs-3.11-bioc\log\tokay2.log 2>&1`
-      - Start in: `C:\Users\biocbuild\BBS\3.11\bioc\tokay2`
+      - Program/script: `D:\biocbuild\BBS\3.12\bioc\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-bioc\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\bioc\riesling1`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -804,7 +669,7 @@ builds are not running and the `biocbuild` user is not logged on.
   - Then click OK on bottom right (requires `biocbuild` password)
 
 
-### Schedule daily server reboot
+### 5.3 Schedule daily server reboot
 
 This is not mandatory but HIGHLY RECOMMENDED.
 
@@ -835,13 +700,13 @@ and the prerun script would fail to delete this folder.
       - When running the task, use the following account: `SYSTEM`
       - Run whether user is logged on or not
       - Run with highest privileges
-    - Configure for Windows Server 2012 R2
+    - Configure for Windows Server 2019
 
   - Tab Triggers:
     - New Trigger
     - Begin the task On a schedule
     - In Settings:
-        Daily - At 5:00 PM - Recur every 1 day
+        Daily - At 3:00 PM - Recur every 1 day
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
 
@@ -861,9 +726,12 @@ and the prerun script would fail to delete this folder.
   - Then click OK on bottom right
 
 
-### Schedule installation of system updates before daily reboot
+### 5.4 Schedule installation of system updates before daily reboot
 
 This is not mandatory but HIGHLY RECOMMENDED.
+
+NOTE: Instructions below are for Windows Server 2012. TODO: Update them
+for Windows Server 2019.
 
 - Open Control Panel.
 
@@ -898,6 +766,30 @@ All the installation in this section should be made from a personal
 administrator account.
 
 
+### Install libxml2 and google protocol buffer
+
+This is needed in order to compile the RProtoBufLib and flowWorkspace
+packages.
+
+Download libxml2 and google protocol buffer Windows binaries from
+
+  https://rglab.github.io/binaries/
+
+Extract all the files to `C:\libxml2` and to `C:\protobuf` respectively.
+Set environment variables `LIB_XML2` and `LIB_PROTOBUF` to `C:/libxml2`
+and `C:/protobuf`, respectively (see "How to edit an environment variable"
+in "General information and tips" at the top of this document for how to do
+this). Make sure to use `/` instead of `\` as the directory delimiter.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to compile the flowWorkspace package e.g.
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
+(this folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL RProtoBufLib
+    ..\R\bin\R CMD INSTALL flowWorkspace
+
+
 ### Install Java
 
 You need the JDK (Java Development Kit).
@@ -923,7 +815,7 @@ TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to load the rJava package for the
 2 archs (this package will be automatically installed after the 1st build
 run but cannot be loaded if Java is not found on the system) e.g. open a
-PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc`, then
+PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc`, then
 
 - start R in 64-bit mode with `R\bin\R --arch x64` and do:
   ```
@@ -933,23 +825,6 @@ PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc`, then
   ```
 
 - start R in 32-bit mode with `R\bin\R --arch i386` and do the same as above.
-
-
-### Install libcurl
-
-Download `curl-7.40.0.zip` from:
-
-  https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/
-
-and extract it to `C:/extsoft`. Choose "Skip these files" when asked if you
-want to replace or skip the files with the same names (these are the `libz.a`
-files located in `lib\i386\` and `lib\x64\`, respectively).
-
-TESTING: From the `biocbuild` account try to compile Rhtslib e.g. open a
-PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat` (this
-folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL Rhtslib
 
 
 ### Install Ghostscript
@@ -967,7 +842,7 @@ document for how to do this).
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Ghostscript
 for its vignette e.g. open a PowerShell window, `cd` to
-`C:\Users\biocbuild\bbs-3.11-bioc\meat` (this folder will be automatically
+`D:\biocbuild\bbs-3.12-bioc\meat` (this folder will be automatically
 created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
@@ -991,7 +866,7 @@ do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Perl e.g.
-open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build COHCAP
@@ -1015,35 +890,11 @@ need to create shortcuts (check the "Do not create shortcuts" box).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to load the rjags package e.g. open a
-PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat` (this
+PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat` (this
 folder will be automatically created after the 1st build run), start R
 (with `..\R\bin\R`), then:
 
     library(rjags)
-
-
-### Install libxml2 and google protocol buffer
-
-This is needed in order to compile the RProtoBufLib and flowWorkspace
-packages.
-
-Download libxml2 and google protocol buffer Windows binaries from
-
-  http://rglab.github.io/binaries/
-
-Extract all the files to `C:\libxml2` and to `C:\protobuf` respectively.
-Set environment variables `LIB_XML2` and `LIB_PROTOBUF` to `C:/libxml2`
-and `C:/protobuf`, respectively (see "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to do
-this). Make sure to use `/` instead of `\` as the directory delimiter.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to compile the flowWorkspace package e.g.
-open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL RProtoBufLib
-    ..\R\bin\R CMD INSTALL flowWorkspace
 
 
 ### Install Open Babel
@@ -1055,11 +906,11 @@ a personal administrator account, this one needs to be installed from the
 `biocbuild` account. That's because the compilation process described in
 `ChemmineOB/INSTALL` needs to access stuff under
 
-    c:/Users/biocbuild/bbs-3.11-bioc/R/library/zlibbioc/
+    c:/Users/biocbuild/bbs-3.12-bioc/R/library/zlibbioc/
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the ChemmineOB package e.g.
-open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL ChemmineOB
@@ -1086,7 +937,7 @@ information and tips" at the top of this document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the rsbml package e.g.
-open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL rsbml
@@ -1104,7 +955,7 @@ to do this).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Clustal Omega
-e.g. open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat`
+e.g. open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build LowMACA
@@ -1121,7 +972,7 @@ do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build the ImmuneSpaceR package e.g.
-open a PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build ImmuneSpaceR
@@ -1137,7 +988,7 @@ for how to do this).
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to run the `getReads` example in the
 GoogleGenomics package e.g. open a PowerShell window, `cd` to
-`C:\Users\biocbuild\bbs-3.11-bioc\meat` (this folder will be automatically
+`D:\biocbuild\bbs-3.12-bioc\meat` (this folder will be automatically
 created after the 1st build run), then:
 
 - Install the GoogleGenomics package if it's not already installed (check
@@ -1165,7 +1016,7 @@ Set `GTK_PATH` to `C:\gtkmm64`
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the HilbertVisGUI package
 for the x64 arch only e.g. open a PowerShell window, `cd` to
-`C:\Users\biocbuild\bbs-3.11-bioc\meat` (this folder will be automatically
+`D:\biocbuild\bbs-3.12-bioc\meat` (this folder will be automatically
 created after the 1st build run), then:
 
     ..\R\bin\R --arch x64 CMD INSTALL --no-multiarch HilbertVisGUI
@@ -1185,7 +1036,7 @@ TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to load the rggobi package for the
 2 archs (this package will be automatically installed after the 1st build
 run but cannot be loaded if GGobi is not found on the system) e.g. open a
-PowerShell window, `cd` to `C:\Users\biocbuild\bbs-3.11-bioc`, then
+PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc`, then
 
 - start R in 64-bit mode with `R\bin\R --arch x64` and do `library(rggobi)`
 
@@ -1228,7 +1079,7 @@ Add `pkgbuild` user
 Grant the `pkgbuild` user permissions within the `biocbuild` user folder
 using the Users security group.
 
-- `C:\Users\biocbuild`
+- `D:\biocbuild`
 
   Using File Explorer, go to `C:\Users` and right click the `biocbuild` folder
   and choose properties. Go to the Security tab:
@@ -1250,9 +1101,9 @@ by the daily builds. I'm not sure why the SPB would need to access or
 even know about these folders so I suspect that the settings below
 are not actually needed (in any case they shouldn't).
 
-- `C:\Users\biocbuild\bbs-3.11-bioc\meat`
+- `D:\biocbuild\bbs-3.12-bioc\meat`
 
-  Using File Explorer, go to `C:\Users\biocbuild\bbs-3.11-bioc` and right
+  Using File Explorer, go to `D:\biocbuild\bbs-3.12-bioc` and right
   click the `meat` folder and choose properties. Go to the Security tab:
   - Click Edit
   - Click Add
@@ -1264,9 +1115,9 @@ are not actually needed (in any case they shouldn't).
 
   Click OK.
 
-- `C:\Users\biocbuild\bbs-3.11-bioc\NodeInfo`
+- `D:\biocbuild\bbs-3.12-bioc\NodeInfo`
 
-  Using File Explorer, go to `C:\Users\biocbuild\bbs-3.11-bioc` and right
+  Using File Explorer, go to `D:\biocbuild\bbs-3.12-bioc` and right
   click the `NodeInfo` folder and choose properties. Go to the Security tab:
   - Click Edit
   - Click Add
@@ -1316,10 +1167,10 @@ Not run on Windows at the moment.
 
 ### Long Tests builds
 
-From `C:\Users\biocbuild`:
+From `D:\biocbuild`:
 
-    mkdir bbs-3.11-bioc-longtests
-    cd bbs-3.11-bioc
+    mkdir bbs-3.12-bioc-longtests
+    cd bbs-3.12-bioc
     mkdir log
 
 Then:
@@ -1329,11 +1180,11 @@ Then:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.11-bioc-longtests`
+    - Name: `bbs-3.12-bioc-longtests`
     - In Security options:
-      - Use `TOKAY1\biocbuild` account to run the task
+      - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
-    - Configure for Windows Server 2012 R2
+    - Configure for Windows Server 2019
 
   - Tab Triggers:
     - New Trigger
@@ -1348,9 +1199,9 @@ Then:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `C:\Users\biocbuild\BBS\3.11\bioc-longtests\tokay2\run.bat`
-      - Add arguments: `>>C:\Users\biocbuild\bbs-3.11-bioc-longtests\log\tokay2.log 2>&1`
-      - Start in: `C:\Users\biocbuild\BBS\3.11\bioc-longtests\tokay2`
+      - Program/script: `D:\biocbuild\BBS\3.12\bioc-longtests\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-bioc-longtests\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\bioc-longtests\riesling1`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
