@@ -427,6 +427,15 @@ Everything in this section must be done **from the biocbuild account**.
 
 Needed only if the machine is being configured as a secondary build node.
 
+#### Check that you can ping the central builder
+
+Check that you can ping the central builder. Depending on whether the
+node you're ping'ing from is within RPCI's DMZ or not, use the central
+builder's short or long (i.e. hostname+domain) hostname. For example:
+
+    ping malbec1                                   # from within RPCI's DMZ
+    ping malbec1.bioconductor.org                  # from anywhere else
+
 #### Install biocbuild RSA private key
 
 Add `~/.BBS/id_rsa` to the biocbuild home (copy `id_rsa` from another build
@@ -435,19 +444,10 @@ machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
     biocbuild@nebbiolo1:~$ ls -l .BBS/id_rsa
     -r-------- 1 biocbuild biocbuild 883 Aug  6 17:21 .BBS/id_rsa
 
-#### Check that you can ping the central builder
-
-Check that you can ping the central builder. Depending on whether the
-node you're ping'ing from is within RPCI's DMZ or not, use its short or
-long (i.e. hostname+domain) hostname. For example:
-
-    ping malbec1                                 # from within RPCI's DMZ
-    ping malbec1.bioconductor.org                # from anywhere else
-
 #### Check that you can ssh to the central builder
 
-    ssh -i .BBS/id_rsa malbec1                   # from within RPCI's DMZ
-    ssh -i .BBS/id_rsa malbec1.bioconductor.org  # from anywhere else
+    ssh -i ~/.BBS/id_rsa malbec1                   # from within RPCI's DMZ
+    ssh -i ~/.BBS/id_rsa malbec1.bioconductor.org  # from anywhere else
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
@@ -460,8 +460,8 @@ Contact the IT folks at RPCI if that's the case:
 
 #### Check that you can send HTTPS requests to the central builder
 
-    curl https://malbec1                         # from within RPCI's DMZ
-    curl https://malbec1.bioconductor.org        # from anywhere else
+    curl https://malbec1                           # from within RPCI's DMZ
+    curl https://malbec1.bioconductor.org          # from anywhere else
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
@@ -570,7 +570,7 @@ From R:
     BiocManager::install("rhdf5")
 
 
-### 2.4 Add crontab entries for nightly builds
+### 2.4 Add software builds to biocbuild crontab
 
 Must be done from the biocbuild account.
 

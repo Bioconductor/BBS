@@ -1,22 +1,22 @@
-# How to set up a Windows Server 2019 machine for the daily builds
+# How to set up a Windows Server 2019 system for the daily builds
 
 
 
 ## 0. General information and tips
 
 
-### Disconnect vs logoff
+### 0.1 Disconnect vs logoff
 
 Using Disconnect when ending your rdesktop session does NOT log you off.
 To log off, use the `logoff` command in a PowerShell window.
 
 
-### How to open Task Manager
+### 0.2 How to open Task Manager
 
 Use CTRL+Shift+Esc
 
 
-### Managing environment variables
+### 0.3 Managing environment variables
 
 #### Display the value of an environment variable in a PowerShell window
 
@@ -37,22 +37,23 @@ existing variables. Do not add or edit user variables (at the top).
 
 
 
-## 1. Initial setup (from a sudoer account)
+## 1. Initial setup (from the Administrator account)
 
 
 Everything in this section must be done **from the Administrator account**.
 
 
-### Install Google Chrome
+### 1.1 Install a decent web browser (for all users)
+
+Can be Firefox or Google Chrome.
 
 
-### Install Python 3 (for all users)
+### 1.2 Install Python 3 (for all users)
 
-Download the Latest Python 3 Release from:
+Download the Latest Python 3 Release from
+https://www.python.org/downloads/windows/
 
-  https://www.python.org/downloads/windows/
-
-(Choose the "Windows x86-64 executable installer".)
+Choose the "Windows x86-64 executable installer".
 
 When running the installer:
 - Select "Add Python 3.8 to PATH" then click on "Customize installation".
@@ -61,10 +62,10 @@ When running the installer:
   location from `C:\Program Files\Python38` to `C:\Python38`, then click
   on "Install".
 
-ALSO: You need to explicitly associate .py files with Python by:
-- Double-clicking on a .py file.
+ALSO: You need to explicitly associate `.py` files with Python by:
+- Double-clicking on a `.py` file.
 - A popup window will ask you: How do you want to open this type of file
-  (.py)? Click on "More options".
+  (`.py`)? Click on "More options".
 - Check the "Use this app for all .py files" box then scroll all the way
   down and click on "Look for another app on this PC". This opens the File
   Explorer.
@@ -72,21 +73,21 @@ ALSO: You need to explicitly associate .py files with Python by:
   double-click on it.
 
 
-### Upgrade to the latest pip
+### 1.3 Upgrade to the latest pip
 
 In a PowerShell window:
 
     python -m pip install --upgrade pip
 
 
-### Install Python module psutil
+### 1.4 Install Python module psutil
 
 This module is needed by BBS.
 
     pip install psutil
 
 
-### Install Python modules needed by some CRAN/Bioconductor packages
+### 1.5 Install Python modules needed by some CRAN/Bioconductor packages
 
 In a PowerShell window:
 
@@ -119,7 +120,7 @@ Notes:
   with venv, venv is not sufficient. The SPB must use virtualenv.
 
 
-### Create personal administrator accounts
+### 1.6 Create personal administrator accounts
 
 Go in Computer Management
       -> System Tools
@@ -146,7 +147,7 @@ For all these accounts:
 Then make these users members of the Administrators group.
 
 
-### Create the biocbuild account
+### 1.7 Create the biocbuild account
 
 Username: biocbuild
 
@@ -161,24 +162,22 @@ be changed (e.g. to `D:\biocbuild`), double-click on the biocbuild user and
 make the change in the Profile tab. Note that the `C:\Users\biocbuild` folder
 will still be created and populated at first logon.
 
-Make the biocbuild user member of the Remote Desktop Users group.
+Make the biocbuild user a member of the Remote Desktop Users group.
 
 
-### Grant the biocbuild user "Log on as batch job" rights
+### 1.8 Grant the biocbuild user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `biocbuild`
 user.)
 
-Go in Local Security Policy
-  -> Local Policies
-     -> User Rights Assignment
+Go in Local Security Policy -> Local Policies -> User Rights Assignment
 
 In the right pane, right-click on 'Log on as a batch job' -> Properties
 
 Add `biocbuild` user.
 
 
-### Install 32-bit Cygwin
+### 1.9 Install 32-bit Cygwin (for all users)
 
 Cygwin is needed for: `ssh`, `rsync`, `curl`, and `vi`.
 
@@ -200,8 +199,12 @@ in it. Do this by just typing the name of the command followed by <Enter>.
 If `Path` was set correctly, the command should be found (the Cygwin
 executables are in `C:\cygwin\bin`).
 
+IMPORTANT NOTE: We will never need the Cygwin terminal. Generally speaking,
+the PowerShell window is the preferred command line environment when working
+interactively on a Windows build machine.
 
-### Install git client for Windows
+
+### 1.10 Install git client for Windows
 
 Available at https://git-scm.com/download/win
 
@@ -210,7 +213,7 @@ Keep all the default settings when running the installer.
 TESTING: Open a PowerShell window and try to run `git --version`
 
 
-### Install MiKTeX
+### 1.11 Install MiKTeX
 
 If this is a reinstallation of MiKTeX, make sure to uninstall
 MiKTeX first (from the Administrator account) and to manually
@@ -238,33 +241,9 @@ Open the MiKTeX Console by going to the Windows start menu:
 - Go to the Updates page
 - Click on "Update now"
 
-This is no longer needed (as of Dec 2019) since no package that uses
-pstricks in their vignette should still need to use auto-pst-pdf:
 
-> Set environment variable `MIKTEX_ENABLEWRITE18=t` (this is for packages
-> using auto-pst-pdf in their vignette). See "How to edit an environment
-> variable" in "General information and tips" at the top of this document
-> for how to do this.
-
-> Then in a PowerShell window:
->
->    initexmf --edit-config-file=miktex\config\pdflatex.ini
->
-> The command above will open an editor. Put `EnableWrite18=t` in it, then
-> save and exit. Without this, `R CMD build` will fail on packages using
-> auto-pst-pdf in their vignette (e.g. affyContam, arrayMvout, ArrayTools,
-> BioSeqClass, BrainStars, clst, clstutils, GeneAnswers, GGtools, maSigPro,
-> MassArray, PLPE, ppiStats, randPack, rbsurv, rnaSeqMap, vtpnet, xmapbridge).
-> With the following error:
->
->    LaTeX errors:
->    df.sty:134: Package auto-pst-pdf Error:
->        "shell escape" (or "write18") is not enabled:
->        auto-pst-pdf will not work!
-
-
-From now on, all administrative tasks should be performed from one of the
-personal accounts instead of the Administrator account.
+From now on, all administrative tasks must be performed from one of the
+_personal administrator accounts_ instead of the Administrator account.
 
 
 
@@ -275,315 +254,7 @@ Unless stated otherwise, everything in this section must be done **from
 a personal administrator account**.
 
 
-### Install Pandoc
-
-Go to https://pandoc.org/installing.html#windows
-
-Download latest installer for Windows x86\_64
-(`pandoc-2.9-windows-x86_64.msi` as of Dec. 2019) and run it.
-
-Note: There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8. 
-It caused build failures with the ERROR `Environment cslreferences undefined`.  
-Until we know it is resolved we have downgraded pandoc to 2.7.3. 
-
-
-### Install Rtools
-
-Download Rtools from https://CRAN.R-project.org/bin/windows/Rtools/
-
-Choose rtools40 for Windows 64-bit: `rtools40-x86_64.exe`
-
-Run the installer and keep all the defaults. This will install rtools40
-in `C:\rtools40`.
-
-Do **NOT** follow the "Putting Rtools on the PATH" instructions given
-on Rtools webpage as they put Rtools on the PATH only in the context of
-running R. We want Rtools to **always** be on the PATH, not just in the
-context of an R session.
-
-Prepend `C:\rtools40\usr\bin;C:\rtools40\mingw32\bin;C:\rtools40\mingw64\bin;`
-to `Path` (see "How to edit an environment variable" in "General information
-and tips" at the top of this document for how to do this).
-
-IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin;`,
-`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should
-**always be first** in the `Path`.
-
-TESTING: Log out and on again so that the changes to `Path` take effect. Then
-in a PowerShell window:
-
-    which ssh      # /c/cygwin/bin/ssh
-    which rsync    # /usr/bin/rsync, because rsync from rtools40 should be
-                   # before rsync from Cygwin in Path
-    which curl     # /usr/bin/curl, because curl from rtools40 should be
-                   # before curl from Cygwin in Path
-    which vi       # /usr/bin/vi, because vi from rtools40 should be
-                   # before vi from Cygwin in Path
-    rsync          # Will crash if 64-bit Cygwin was installed instead
-                   # of 32-bit!
-    which make     # /usr/bin/make
-    which gcc      # /mingw32/bin/gcc
-    gcc --version  # gcc.exe (Built by Jeroen for the R-project) 8.3.0
-
-
-### Allow cc1plus.exe access to a 3GB address space
-
-Needed to compile large software projects (e.g. mzR) on 32-bit Windows. See:
-https://www.intel.com/content/www/us/en/programmable/support/support-resources/knowledge-base/embedded/2016/cc1plus-exe--out-of-memory-allocating-65536-bytes.html
-
-Get the `editbin` command by installing Visual Studio Community 2019. **From
-the Administrator account**:
-
-- Download it from https://www.microsoft.com/express/Windows/
-
-- Start the installer:
-
-  - On the first screen, go to "Individual components" and select the
-    latest "MSVC v142 - VS 2019 C++ x64/x86 build tools" in the "Compilers,
-    build tools, and runtimes" section.
-    Total space required (bottom right) should go up from 699MB to 2.47GB.
-    Click Install. When asked "Do you want to continue without workloads?",
-    click on "Continue".
-
-  - Click on Restart at the end of the installation.
-
-Then **from the Administrator account** again, in the Developer Command
-Prompt for VS 2019:
-
-    bcdedit /set IncreaseUserVa 3072
-    editbin /LARGEADDRESSAWARE "C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\cc1plus.exe"
-
-
-### Create and populate C:\extsoft
-
-Download `local323.zip`, `spatial324.zip`, and `curl-7.40.0.zip` from
-https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/ and unzip them
-**in that order** in `C:\extsoft`.
-
-When extacting all file from `curl-7.40.0.zip`, you'll be asked if you want
-to replace or skip the files with the same names (these are the `libz.a`
-files located in `lib\i386\` and `lib\x64\`, respectively). Choose "Skip
-these files".
-
-
-
-## 3. Install BBS git tree and create bbs-3.y-bioc directory structure
-
-
-All the steps described in this section should be performed in a PowerShell
-window and from the `biocbuild` account. Don't use the Cygwin terminal!
-Generally speaking, the PowerShell window should always be the preferred
-command line environment when working interactively on a Windows build machine.
-
-
-### Clone BBS git tree
-
-In a PowerShell Window:
-
-    cd D:\biocbuild  
-    git clone https://github.com/Bioconductor/BBS
-
-
-### Install biocbuild RSA private key
-
-In `D:\biocbuild`, create the `.BBS/id_rsa` file as follow:
-
-    mkdir .BBS
-    cd .BBS
-    
-    # Use vi (included in Rtools and Cygwin) to create the id_rsa file
-    # (copy/paste its content from another builder e.g. malbec1 or tokay1).
-    
-    chmod 400 id_rsa
-
-Having the RSA key installed allows the `biocbuild` user to ssh to the
-central node.
-
-TESTING: Open a PowerShell window and try to ssh to the central node with:
-
-    ssh -i D:\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
-
-If malbec1 not in DNS, replace with 172.29.0.3
-
-
-### Create bbs-3.12-bioc directory structure
-
-From `D:\biocbuild`:
-
-    mkdir bbs-3.12-bioc
-    cd bbs-3.12-bioc
-    mkdir log
-    mkdir tmp
-    mkdir tmpdir
-
-
-
-## 4. Install R
-
-
-This must be done from the `biocbuild` account.
-
-
-### 4.1 Download R Windows binary from CRAN
-
-https://cran.rstudio.com/bin/windows/base/
-
-Choose the binary that matches the BioC version to build (see links
-in "Other builds" section if you need the latest R devel binary).
-
-When running the installer:
-- Ignore warning about the current user not being an admin
-- Select destination location `D:\biocbuild\bbs-3.12-bioc\R`
-- Don't create a Start Menu Folder
-- Don't create a desktop or QuickLaunch shortcut
-
-
-### 4.2 Install BiocManager
-
-Start R (with `R\bin\R` from `D:\biocbuild\bbs-3.12-bioc`) and install
-BiocManager:
-
-    install.packages("BiocManager")
-
-Check that BiocManager is pointing to the correct version of Bioconductor:
-
-    library(BiocManager)  # This displays the version of Bioconductor
-                          # that BiocManager is pointing at.
-    ## ONLY if BiocManager is pointing to release when it should be pointing
-    ## to devel. Then make it point to devel with:
-    install(version="devel")
-
-TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
-**from source** with:
-
-    library(BiocManager)
-    install("IRanges", type="source")
-    install("Biobase", type="source")
-    install("zlibbioc", type="source")
-
-Quit R (do NOT save the workspace image).
-
-
-### 4.3 Point R to C:/extsoft
-
-`LOCAL_SOFT` needs to be set to `C:/extsoft` in `R\etc\{i386,x64}\Makeconf`:
-
-- `R\etc\i386\Makeconf`
-
-   From `D:\biocbuild\bbs-3.12-bioc`:
-   ```
-   cd R\etc\i386
-   C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
-   vi Makeconf
-   # Replace line
-   #     LOCAL_SOFT ?=
-   # with
-   #     LOCAL_SOFT = C:/extsoft
-   # Save and quit vi.
-   ```
-   Check your changes with:
-   ```
-   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
-   ```
-
-- `R\etc\x64\Makeconf`
-
-   From `D:\biocbuild\bbs-3.12-bioc`:
-   ```
-   cd R\etc\x64
-   C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
-   vi Makeconf
-   # Replace line
-   #     LOCAL_SOFT ?=
-   # with
-   #     LOCAL_SOFT = C:/extsoft
-   # Save and quit vi.
-   ```
-   Check your changes with:
-   ```
-   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
-   ```
-
-TESTING: 
-
-- Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
-  open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
-  (this folder should be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL Rhtslib
-
-- Try to compile a package that uses the GSL (also provided by `C:\extsoft`):
-
-    ..\R\bin\R CMD INSTALL flowPeaks
-    ..\R\bin\R CMD INSTALL GLAD
-    ..\R\bin\R CMD INSTALL PICS
-
-- Try to compile a package that uses netCDF (also provided by `C:\extsoft`):
-
-    ..\R\bin\R CMD INSTALL mzR  # will take about 10-15 min!
-
-
-### 4.4 Install BiocCheck
-
-BiocCheck is needed for the Single Package Builder:
-
-    library(BiocManager)
-    ## This installs all BiocCheck deps as binaries if they are available,
-    ## which is much faster than installing from source.
-    install("BiocCheck")
-    ## IMPORTANT: BiocCheck needs to be loaded at least once for a full
-    ## installation (this will install the BiocCheck and BiocCheckGitClone
-    ## scripts).
-    library(BiocCheck)
-
-
-### 4.5 Install Cairo
-
-Note that a recurrent problem is to see the Cairo package that is currently
-installed on the Windows builders suddenly break after CRAN publishes a newer
-version of the package: https://cran.r-project.org/package=Cairo
-
-Here is what we think is happening: Often the Windows binary available on CRAN
-lags behind the source package for several days so when the build system tries
-to update all the deps at the beginning of a run, it picks up the source
-package but for some reason sometimes fails to compile it. To make it worse
-it seems that for some reason R also fails to restore the previous installation
-of the package. So as a result Cairo ends up in a broken state and can no
-longer be loaded (on one arch or the other).
-
-This typically breaks `R CMD build` or `R CMD check` on the following software
-packages: a4Base, animalcules, bigPint, CATALYST, DAPAR, debrowser,
-DiscoRhythm, dittoSeq, explorase, GeneTonic, GRmetrics, MetaVolcanoR,
-ngsReports, OUTRIDER, PECA, Prostar, scde, singscore, TIN.
-
-This can sometimes be remedied by (re)installing Cairo manually from source:
-
-    library(BiocManager)
-    install("Cairo", type="source", INSTALL_opts="--merge-multiarch")
-
-TESTING: Try to load the package (with `library(Cairo)`) on both archs:
-
-    R --arch x64
-    R --arch i386
-
-
-### 4.6 If updating R
-
-If you are updating R, the cache for AnnotationHub and ExperimentHub
-should be refreshed. This is done by removing all of .AnnotationHub/,
-`.AnnotationHubData/`, `.ExperimentHub/` and `.ExperimentHubData/`
-present in `D:\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
-
-
-
-## 5. Add tasks to Task Scheduler
-
-
-All the installation in this section should be made **from a personal
-administrator account**.
-
-
-### 5.1 Add loggon_biocbuild_at_startup task to Task Scheduler
+### 2.1 Add loggon_biocbuild_at_startup task to Task Scheduler
 
 This task is a workaround for the following issue with the Task Scheduler.
 The issue happens under the following conditions:
@@ -661,58 +332,13 @@ These should be the _only_ processes running as `biocbuild` when the
 builds are not running and the `biocbuild` user is not logged on.
 
 
-### 5.2 Add software builds (a.k.a. nightly builds) to Task Scheduler
-
-- Open Task Scheduler
-
-- In the right pane (Actions) click on Enable All Tasks History (if not
-  already done)
-
-- In the left pane create new `BBS` folder next to Microsoft folder (if not
-  already done)
-
-- Right-click on the `BBS` folder -> choose Create Task
-
-  - Tab General:
-    - Name: `bbs-3.12-bioc`
-    - In Security options:
-      - Use `RIESLING1\biocbuild` account to run the task
-      - Run whether user is logged on or not
-    - Configure for Windows Server 2019
-
-  - Tab Triggers:
-    - New Trigger
-    - Begin the task On a schedule
-      - In Settings:
-        Daily - At 4:00 PM - Recur every 1 day
-    - In Advanced Settings:
-        nothing should be checked except 'Enabled'
-
-  - Tab Actions:
-    - New Action
-    - Action: Start a program
-    - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.12\bioc\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.12-bioc\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.12\bioc\riesling1`
-
-  - Tab Conditions:
-      nothing to do (keep all the defaults)
-
-  - Tab Settings:
-      nothing should be checked except 'Allow task to be run on demand' and
-      'If the running task does not end when requested force it to stop'
-
-  - Then click OK on bottom right (requires `biocbuild` password)
-
-
-### 5.3 Schedule daily server reboot
+### 2.2 Schedule daily server reboot
 
 This is not mandatory but HIGHLY RECOMMENDED.
 
-Leftover processes from the previous builds often get in the way of the next
+Leftover processes from previous builds often get in the way of the next
 builds, causing catastrophic build failures. Until BBS does a better job at
-killing these leftover processes (see bbs.jobs.killProc() function in BBS
+killing these leftover processes (see `bbs.jobs.killProc()` function in BBS
 source code), rebooting the server will do it. Blunt but efficient.
 Best time for this reboot is a few minutes (e.g. 15) before the prerun script
 starts on the central node. This is because if, for some reason, the builds
@@ -763,7 +389,7 @@ and the prerun script would fail to delete this folder.
   - Then click OK on bottom right
 
 
-### 5.4 Schedule installation of system updates before daily reboot
+### 2.3 Schedule installation of system updates before daily reboot
 
 This is not mandatory but HIGHLY RECOMMENDED.
 
@@ -795,39 +421,384 @@ for Windows Server 2019.
 - Then click OK on bottom.
 
 
+### 2.4 Install Rtools
 
-## 6. Additional stuff to install for packages with special needs
+Download Rtools from https://CRAN.R-project.org/bin/windows/Rtools/
+
+Choose rtools40 for Windows 64-bit: `rtools40-x86_64.exe`
+
+Run the installer and keep all the defaults. This will install rtools40
+in `C:\rtools40`.
+
+Do **NOT** follow the "Putting Rtools on the PATH" instructions given
+on Rtools webpage as they put Rtools on the PATH only in the context of
+running R. We want Rtools to **always** be on the PATH, not just in the
+context of an R session.
+
+Prepend `C:\rtools40\usr\bin;C:\rtools40\mingw32\bin;C:\rtools40\mingw64\bin;`
+to `Path` (see "How to edit an environment variable" in "General information
+and tips" at the top of this document for how to do this).
+
+IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin;`,
+`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should
+**always be first** in the `Path`.
+
+TESTING: Log out and on again so that the changes to `Path` take effect. Then
+in a PowerShell window:
+
+    which ssh      # /c/cygwin/bin/ssh
+    which rsync    # /usr/bin/rsync, because rsync from rtools40 should be
+                   # before rsync from Cygwin in Path
+    which curl     # /usr/bin/curl, because curl from rtools40 should be
+                   # before curl from Cygwin in Path
+    which vi       # /usr/bin/vi, because vi from rtools40 should be
+                   # before vi from Cygwin in Path
+    rsync          # Will crash if 64-bit Cygwin was installed instead
+                   # of 32-bit!
+    which make     # /usr/bin/make
+    which gcc      # /mingw32/bin/gcc
+    gcc --version  # gcc.exe (Built by Jeroen for the R-project) 8.3.0
 
 
-All the installation in this section should be made **from a personal
+### 2.5 Allow cc1plus.exe access to a 3GB address space
+
+`cc1plus.exe` is a 32-bit executable shipped with Rtools. It's located
+in `C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\`.
+
+By default `cc1plus.exe` can only access a 2GB address space. However, in
+order to be able to compile large software projects (e.g. mzR) on 32-bit
+Windows, it needs to be able to access to a 3GB address space. See:
+https://www.intel.com/content/www/us/en/programmable/support/support-resources/knowledge-base/embedded/2016/cc1plus-exe--out-of-memory-allocating-65536-bytes.html
+
+But first we need to get the `editbin` command. We get the command by
+installing Visual Studio Community 2019 **from the Administrator account**:
+
+- Download it from https://www.microsoft.com/express/Windows/
+
+- Start the installer:
+
+  - On the first screen, go to "Individual components" and select the
+    latest "MSVC v142 - VS 2019 C++ x64/x86 build tools" in the "Compilers,
+    build tools, and runtimes" section.
+    Total space required (bottom right) should go up from 699MB to 2.47GB.
+    Click Install. When asked "Do you want to continue without workloads?",
+    click on "Continue".
+
+  - Click on Restart at the end of the installation.
+
+Then **from the Administrator account** again, in the Developer Command
+Prompt for VS 2019:
+
+    bcdedit /set IncreaseUserVa 3072
+    editbin /LARGEADDRESSAWARE "C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\cc1plus.exe"
+
+
+### 2.6 Create and populate C:\extsoft
+
+Download `local323.zip`, `spatial324.zip`, and `curl-7.40.0.zip` from
+https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/ and unzip them
+**in that order** in `C:\extsoft`.
+
+When extacting all file from `curl-7.40.0.zip`, you'll be asked if you want
+to replace or skip the files with the same names (these are the `libz.a`
+files located in `lib\i386\` and `lib\x64\`, respectively). Choose "Skip
+these files".
+
+
+### 2.7 Install Pandoc
+
+Go to https://pandoc.org/installing.html#windows
+
+Download latest installer for Windows x86\_64
+(`pandoc-2.9-windows-x86_64.msi` as of Dec. 2019) and run it.
+
+Note: There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8.
+It caused build failures with the ERROR `Environment cslreferences undefined`.
+Until we know it is resolved we have downgraded Pandoc to 2.7.3.
+
+
+
+## 3. Configure the Bioconductor software builds
+
+
+### 3.1 Check connectivity with central builder
+
+All the steps described in this section must be performed in a PowerShell
+window and from the `biocbuild` account.
+
+#### Check that you can ping the central builder
+
+Check that you can ping the central builder. Depending on whether the
+node you're ping'ing from is within RPCI's DMZ or not, use the central
+builder's short or long (i.e. hostname+domain) hostname. For example:
+
+    ping malbec1                                   # from within RPCI's DMZ
+    ping malbec1.bioconductor.org                  # from anywhere else
+
+#### Install biocbuild RSA private key
+
+Create the `.BBS/id_rsa` file as follow:
+
+    cd D:\biocbuild
+    mkdir .BBS
+    cd .BBS
+    
+    # Use vi (included in Rtools and Cygwin) to create the id_rsa file
+    # (copy/paste its content from another builder e.g. malbec1 or tokay1).
+    
+    chmod 400 id_rsa
+
+#### Check that you can ssh to the central builder
+
+    ssh -i D:\biocbuild\.BBS\id_rsa biocbuild@malbec1 -o StrictHostKeyChecking=no
+
+If malbec1 not in DNS, replace with 172.29.0.3
+
+Contact the IT folks at RPCI if this is blocked by RPCI's firewall:
+
+    Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
+    Landsiedel, Timothy <tjlandsi@RoswellPark.org>
+
+#### Check that you can send HTTPS requests to the central builder
+
+    curl https://malbec1                           # from within RPCI's DMZ
+    curl https://malbec1.bioconductor.org          # from anywhere else
+
+Contact the IT folks at RPCI if this is blocked by RPCI's firewall (see above).
+
+More details on https implementation in `BBS/README.md`.
+
+
+### 3.2 Clone BBS git tree and create bbs-3.y-bioc directory structure
+
+All the steps described in this section must be performed in a PowerShell
+window and from the `biocbuild` account.
+
+#### Clone BBS git tree
+
+    cd D:\biocbuild
+    git clone https://github.com/Bioconductor/BBS
+
+
+#### Create bbs-x.y-bioc directory structure
+
+For example, for the BioC 3.12 software builds:
+
+    cd D:\biocbuild
+    mkdir bbs-3.12-bioc
+    cd bbs-3.12-bioc
+    mkdir log
+    mkdir tmp
+    mkdir tmpdir
+
+
+### 3.3 Install R
+
+All the steps described in this section must be performed in a PowerShell
+window and from the `biocbuild` account.
+
+#### Get R Windows binary from CRAN
+
+https://cran.rstudio.com/bin/windows/base/
+
+Choose the binary that matches the BioC version to build (see links
+in "Other builds" section if you need the latest R devel binary).
+
+When running the installer:
+- Ignore warning about the current user not being an admin
+- Select destination location `D:\biocbuild\bbs-3.12-bioc\R`
+- Don't create a Start Menu Folder
+- Don't create a desktop or QuickLaunch shortcut
+
+#### Install BiocManager
+
+Start R (with `R\bin\R` from `D:\biocbuild\bbs-3.12-bioc`) and install
+BiocManager:
+
+    install.packages("BiocManager")
+
+Check that BiocManager is pointing to the correct version of Bioconductor:
+
+    library(BiocManager)  # This displays the version of Bioconductor
+                          # that BiocManager is pointing at.
+    ## ONLY if BiocManager is pointing to release when it should be pointing
+    ## to devel. Then make it point to devel with:
+    install(version="devel")
+
+TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
+**from source** with:
+
+    library(BiocManager)
+    install("IRanges", type="source")
+    install("Biobase", type="source")
+    install("zlibbioc", type="source")
+
+Quit R (do NOT save the workspace image).
+
+#### Point R to C:/extsoft
+
+`LOCAL_SOFT` needs to be set to `C:/extsoft` in `R\etc\{i386,x64}\Makeconf`:
+
+- `R\etc\i386\Makeconf`
+
+   From `D:\biocbuild\bbs-3.12-bioc`:
+   ```
+   cd R\etc\i386
+   C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
+   vi Makeconf
+   # Replace line
+   #     LOCAL_SOFT ?=
+   # with
+   #     LOCAL_SOFT = C:/extsoft
+   # Save and quit vi.
+   ```
+   Check your changes with:
+   ```
+   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
+   ```
+
+- `R\etc\x64\Makeconf`
+
+   From `D:\biocbuild\bbs-3.12-bioc`:
+   ```
+   cd R\etc\x64
+   C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
+   vi Makeconf
+   # Replace line
+   #     LOCAL_SOFT ?=
+   # with
+   #     LOCAL_SOFT = C:/extsoft
+   # Save and quit vi.
+   ```
+   Check your changes with:
+   ```
+   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
+   ```
+
+TESTING:
+
+- Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
+  open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
+  (this folder should be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL Rhtslib
+
+- Try to compile a package that uses the GSL (also provided by `C:\extsoft`):
+
+    ..\R\bin\R CMD INSTALL flowPeaks
+    ..\R\bin\R CMD INSTALL GLAD
+    ..\R\bin\R CMD INSTALL PICS
+
+- Try to compile a package that uses netCDF (also provided by `C:\extsoft`):
+
+    ..\R\bin\R CMD INSTALL mzR  # will take about 10-15 min!
+
+#### Install BiocCheck
+
+BiocCheck is needed for the Single Package Builder:
+
+    library(BiocManager)
+    ## This installs all BiocCheck deps as binaries if they are available,
+    ## which is much faster than installing from source.
+    install("BiocCheck")
+    ## IMPORTANT: BiocCheck needs to be loaded at least once for a full
+    ## installation (this will install the BiocCheck and BiocCheckGitClone
+    ## scripts).
+    library(BiocCheck)
+
+#### Install Cairo
+
+Note that a recurrent problem is to see the Cairo package that is currently
+installed on the Windows builders suddenly break after CRAN publishes a newer
+version of the package: https://cran.r-project.org/package=Cairo
+
+Here is what we think is happening: Often the Windows binary available on CRAN
+lags behind the source package for several days so when the build system tries
+to update all the deps at the beginning of a run, it picks up the source
+package but for some reason sometimes fails to compile it. To make it worse
+it seems that for some reason R also fails to restore the previous installation
+of the package. So as a result Cairo ends up in a broken state and can no
+longer be loaded (on one arch or the other).
+
+This typically breaks `R CMD build` or `R CMD check` on the following software
+packages: a4Base, animalcules, bigPint, CATALYST, DAPAR, debrowser,
+DiscoRhythm, dittoSeq, explorase, GeneTonic, GRmetrics, MetaVolcanoR,
+ngsReports, OUTRIDER, PECA, Prostar, scde, singscore, TIN.
+
+This can sometimes be remedied by (re)installing Cairo manually from source:
+
+    library(BiocManager)
+    install("Cairo", type="source", INSTALL_opts="--merge-multiarch")
+
+TESTING: Try to load the package (with `library(Cairo)`) on both archs:
+
+    R --arch x64
+    R --arch i386
+
+#### If updating R
+
+If you are updating R, the cache for AnnotationHub and ExperimentHub
+should be refreshed. This is done by removing all of .AnnotationHub/,
+`.AnnotationHubData/`, `.ExperimentHub/` and `.ExperimentHubData/`
+present in `D:\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
+
+
+### 3.4 Add software builds to Task Scheduler
+
+IMPORTANT: Tasks must always be added **from a personal administrator account**.
+
+- Open Task Scheduler
+
+- In the right pane (Actions) click on Enable All Tasks History (if not
+  already done)
+
+- In the left pane create new `BBS` folder next to Microsoft folder (if not
+  already done)
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.12-bioc`
+    - In Security options:
+      - Use `RIESLING1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2019
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Daily - At 4:00 PM - Recur every 1 day
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `D:\biocbuild\BBS\3.12\bioc\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-bioc\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\bioc\riesling1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires `biocbuild` password)
+
+
+
+## 4. Install additional stuff for Bioconductor packages with special needs
+
+
+All the installations in this section must be made **from a personal
 administrator account**.
 
 
-### Install libxml2 and google protocol buffer
-
-This is needed in order to compile the RProtoBufLib and flowWorkspace
-packages.
-
-Download libxml2 and google protocol buffer Windows binaries from
-
-  https://rglab.github.io/binaries/
-
-Extract all the files to `C:\libxml2` and to `C:\protobuf` respectively.
-Set environment variables `LIB_XML2` and `LIB_PROTOBUF` to `C:/libxml2`
-and `C:/protobuf`, respectively (see "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to do
-this). Make sure to use `/` instead of `\` as the directory delimiter.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to compile the flowWorkspace package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL RProtoBufLib
-    ..\R\bin\R CMD INSTALL flowWorkspace
-
-
-### Install Java
+### 4.1 Install Java
 
 You need the JDK (Java Development Kit). Available at:
 
@@ -864,7 +835,31 @@ Note that `library(rJava)` should fail in 32-bit R (e.g. in an R session
 started with `R\bin\R --arch i386`).
 
 
-### Install Ghostscript
+### 4.2 Install libxml2 and google protocol buffer
+
+This is needed in order to compile the RProtoBufLib and flowWorkspace
+packages.
+
+Download libxml2 and google protocol buffer Windows binaries from
+
+  https://rglab.github.io/binaries/
+
+Extract all the files to `C:\libxml2` and to `C:\protobuf` respectively.
+Set environment variables `LIB_XML2` and `LIB_PROTOBUF` to `C:/libxml2`
+and `C:/protobuf`, respectively (see "How to edit an environment variable"
+in "General information and tips" at the top of this document for how to do
+this). Make sure to use `/` instead of `\` as the directory delimiter.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to compile the flowWorkspace package e.g.
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
+(this folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL RProtoBufLib
+    ..\R\bin\R CMD INSTALL flowWorkspace
+
+
+### 4.3 Install Ghostscript
 
 Available at: http://www.ghostscript.com/download/gsdnld.html
 
@@ -888,7 +883,7 @@ created after the 1st build run), then:
     ..\R\bin\R CMD build twilight
 
 
-### Install Perl
+### 4.4 Install Perl
 
 Download and install Active Perl Community Edition for 64-bit Windows
 When running the installer, choose "Typical" setup
@@ -909,7 +904,7 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
     ..\R\bin\R CMD build COHCAP
 
 
-### Install JAGS
+### 4.5 Install JAGS
 
 Go to http://www.sourceforge.net/projects/mcmc-jags/files
 
@@ -934,7 +929,7 @@ folder will be automatically created after the 1st build run), start R
     library(rjags)
 
 
-### Install Open Babel
+### 4.6 Install Open Babel
 
 Follow instructions in `ChemmineOB/INSTALL` for this.
 
@@ -953,7 +948,7 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
     ..\R\bin\R CMD INSTALL ChemmineOB
 
 
-### Install libSBML
+### 4.7 Install libSBML
 
 Download `64-bit/libSBML-5.18.0-win-x64.exe` and
 `32-bit/libSBML-5.18.0-win-x86.exe` from
@@ -980,7 +975,7 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
     ..\R\bin\R CMD INSTALL rsbml
 
 
-### Install Clustal Omega
+### 4.8 Install Clustal Omega
 
 Download Windows 64-bit zip file from http://www.clustal.org/omega/
 
@@ -1000,7 +995,7 @@ e.g. open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 (Note that this package also needs Perl.)
 
 
-### Set up ImmuneSpaceR package for connecting to ImmuneSpace
+### 4.9 Install ImmuneSpace credentials
 
 Set environment variable `ISR_login` and `ISR_pwd` to `bioc@immunespace.org`
 and `1notCRAN`, respectively. See "How to edit an environment variable"
@@ -1015,32 +1010,7 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
     ..\R\bin\R CMD build ImmuneSpaceR
 
 
-### Set up GoogleGenomics package to authenticate for Google Genomics API
-
-Set environment variable `GOOGLE_API_KEY` to
-`AIzaSyDOIu6mUVWneDXkfbEQXi1CHnlgUQHkka4` (see "How to edit an environment
-variable" in "General information and tips" at the top of this document
-for how to do this).
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to run the `getReads` example in the
-GoogleGenomics package e.g. open a PowerShell window, `cd` to
-`D:\biocbuild\bbs-3.12-bioc\meat` (this folder will be automatically
-created after the 1st build run), then:
-
-- Install the GoogleGenomics package if it's not already installed (check
-  whether it's already installed or not by starting R with `..\R\bin\R` and
-  try `library(GoogleGenomics)`):
-
-    ..\R\bin\R CMD INSTALL GoogleGenomics
-
-- Then from within R (start it with `..\R\bin\R`):
-
-    library(GoogleGenomics)
-    example(getReads)
-
-
-### Install gtkmm
+### 4.10 Install gtkmm
 
 Download `gtkmm-win64-devel-2.22.0-2.exe` from
 
@@ -1059,32 +1029,11 @@ created after the 1st build run), then:
     ..\R\bin\R --arch x64 CMD INSTALL --no-multiarch HilbertVisGUI
 
 
-### Install GGobi
 
-Download Windows 64-bit and 32-bit versions from
-
-  http://www.ggobi.org/downloads/
-
-Make sure to remove any old versions of GGobi.
-
-Install the new versions.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to load the rggobi package for the
-2 archs (this package will be automatically installed after the 1st build
-run but cannot be loaded if GGobi is not found on the system) e.g. open a
-PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc`, then
-
-- start R in 64-bit mode with `R\bin\R --arch x64` and do `library(rggobi)`
-
-- start R in 32-bit mode with `R\bin\R --arch i386` and do `library(rggobi)`
+## 5. Single Package Builder Requirements
 
 
-
-## 7. Single Package Builder Requirements
-
-
-### Create the pkgbuild account:
+### 5.1 Create the pkgbuild account:
 
 Username: pkgbuild
 
@@ -1094,24 +1043,27 @@ For this account:
 - [x] Password never expires
 - [ ] Account is disabled
 
+By default, the home folder will be `C:\Users\pkgbuild`. If this needs to
+be changed (e.g. to `D:\pkgbuild`), double-click on the pkgbuild user and
+make the change in the Profile tab. Note that the `C:\Users\pkgbuild` folder
+will still be created and populated at first logon.
 
-### Make the pkgbuild user member of the Remote Desktop Users group
+Make the pkgbuild user a member of the Remote Desktop Users group.
 
 
-### Grant the pkgbuild user "Log on as batch job" rights
+### 5.2 Grant the biocbuild user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `pkgbuild`
 user.)
 
-Go in Local Security Policy
-  -> Local Policies
-     -> User Rights Assignment
+Go in Local Security Policy -> Local Policies -> User Rights Assignment
 
 In the right pane, right-click on 'Log on as a batch job' -> Properties
+
 Add `pkgbuild` user
 
 
-### Grant the pkgbuild user permissions within the biocbuild user folder
+### 5.3 Grant the pkgbuild user permissions within the biocbuild user folder
 
 Grant the `pkgbuild` user permissions within the `biocbuild` user folder
 using the Users security group.
@@ -1169,7 +1121,7 @@ are not actually needed (in any case they shouldn't).
 ###############################################################################
 
 
-### Grant the pkgbuild user permissions within the Windows\Temp folder
+### 5.4 Grant the pkgbuild user permissions within the Windows\Temp folder
 
 Grant the `pkgbuild` user permissions within the `Windows\Temp` folder using
 the Users security group. This is for BiocCheck.
@@ -1189,20 +1141,20 @@ Click OK.
 
 
 
-## 8. Add other builds to Task Scheduler
+## 6. Add other builds to Task Scheduler
 
 
-### Annotation builds
-
-Not run on Windows at the moment.
-
-
-### Experimental data builds
+### 6.1 Annotation builds
 
 Not run on Windows at the moment.
 
 
-### Long Tests builds
+### 6.2 Experimental data builds
+
+Not run on Windows at the moment.
+
+
+### 6.3 Long Tests builds
 
 From `D:\biocbuild`:
 
@@ -1227,7 +1179,7 @@ Then:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on next Saturday at 11:00 AM -
+        Weekly - Start on next Saturday at 10:00 AM -
         Recur every 1 week on Saturday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
