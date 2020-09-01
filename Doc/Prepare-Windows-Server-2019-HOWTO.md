@@ -30,7 +30,7 @@ Pretty bad though because it doesn't display the full thing.
 
 Always from a _personal administrator account_ (see below about this):
 
-Windows start menu -> This PC -> right-click on This PC -> Properties -> Advanced system settings -> Environment Variables...
+Open File Explorer -> This PC -> right-click on This PC -> Properties -> Advanced system settings -> Environment Variables...
 
 Always go to *System variables* (at the bottom) to add new variables or edit
 existing variables. Do not add or edit user variables (at the top).
@@ -271,6 +271,10 @@ personal accounts instead of the Administrator account.
 ## 2. From a personal administrator account
 
 
+Unless stated otherwise, everything in this section must be done **from
+a personal administrator account**.
+
+
 ### Install Pandoc
 
 Go to https://pandoc.org/installing.html#windows
@@ -292,13 +296,18 @@ Choose rtools40 for Windows 64-bit: `rtools40-x86_64.exe`
 Run the installer and keep all the defaults. This will install rtools40
 in `C:\rtools40`.
 
-Do NOT follow the "Putting Rtools on the PATH" instructions given on Rtools
-webpage as they put Rtools on the PATH only in the context of running R. We
-want Rtools to **always** be on the PATH, not just when in an R session.
+Do **NOT** follow the "Putting Rtools on the PATH" instructions given
+on Rtools webpage as they put Rtools on the PATH only in the context of
+running R. We want Rtools to **always** be on the PATH, not just in the
+context of an R session.
 
 Prepend `C:\rtools40\usr\bin;C:\rtools40\mingw32\bin;C:\rtools40\mingw64\bin;`
 to `Path` (see "How to edit an environment variable" in "General information
 and tips" at the top of this document for how to do this).
+
+IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin;`,
+`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should
+**always be first** in the `Path`.
 
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
@@ -315,6 +324,34 @@ in a PowerShell window:
     which make     # /usr/bin/make
     which gcc      # /mingw32/bin/gcc
     gcc --version  # gcc.exe (Built by Jeroen for the R-project) 8.3.0
+
+
+### Allow cc1plus.exe access to a 3GB address space
+
+Needed to compile large software projects (e.g. mzR) on 32-bit Windows. See:
+https://www.intel.com/content/www/us/en/programmable/support/support-resources/knowledge-base/embedded/2016/cc1plus-exe--out-of-memory-allocating-65536-bytes.html
+
+Get the `editbin` command by installing Visual Studio Community 2019. **From
+the Administrator account**:
+
+- Download it from https://www.microsoft.com/express/Windows/
+
+- Start the installer:
+
+  - On the first screen, go to "Individual components" and select the
+    latest "MSVC v142 - VS 2019 C++ x64/x86 build tools" in the "Compilers,
+    build tools, and runtimes" section.
+    Total space required (bottom right) should go up from 699MB to 2.47GB.
+    Click Install. When asked "Do you want to continue without workloads?",
+    click on "Continue".
+
+  - Click on Restart at the end of the installation.
+
+Then **from the Administrator account** again, in the Developer Command
+Prompt for VS 2019:
+
+    bcdedit /set IncreaseUserVa 3072
+    editbin /LARGEADDRESSAWARE "C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\cc1plus.exe"
 
 
 ### Create and populate C:\extsoft
@@ -792,39 +829,39 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 
 ### Install Java
 
-You need the JDK (Java Development Kit).
+You need the JDK (Java Development Kit). Available at:
 
-Available at:
+  https://www.oracle.com/technetwork/java/javase/downloads/index.html
 
-  http://www.oracle.com/technetwork/java/javase/downloads/index.html
+Choose "JDK Download" then download the "Windows x64 Installer".
+Note that Oracle no longer provides the JDK for 32-bit windows so any
+Bioconductor package that depends on rJava/Java needs to be marked as
+unsupported on 32-bit Windows.
 
-Choose "Java Platform", then download the "Windows x64" **and** "Windows x86"
-products (this will download 2 executables named something like
-`jdk-8u102-windows-i586.exe` and `jdk-8u102-windows-x64.exe`).
-Install both. Use the default settings when running the installers.
+Use the default settings when running the installers.
 
-Note that the installer will prepend `C:\ProgramData\Oracle\Java\javapath;`
-to the `Path`. However, on a Windows build machine, `C:\rtools40\usr\bin;`,
-`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should always
-be first in the `Path`, so move this towards the end of `Path` (e.g. anywhere
-after `C:\Program Files\Git\cmd`). See "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to
-do this.
+Make sure that `C:\rtools40\usr\bin;`, `C:\rtools40\mingw32\bin;`
+and `C:\rtools40\mingw64\bin;` are still first in the `Path`. In case
+the installer prepended something to the `Path` (e.g. something like
+`C:\ProgramData\Oracle\Java\javapath;`), move it towards the end of
+`Path` (e.g. anywhere after `C:\Program Files\Git\cmd`). See "How to
+edit an environment variable" in "General information and tips" at the
+top of this document for how to do this.
 
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to load the rJava package for the
-2 archs (this package will be automatically installed after the 1st build
-run but cannot be loaded if Java is not found on the system) e.g. open a
-PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc`, then
+TESTING: From the `biocbuild` account (log out and on again from this
+account if you were already logged on) try to load the rJava package for
+the 64-bit arch (this package will be automatically installed after the
+1st build run but cannot be loaded if Java is not found on the system).
+To do this: open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc`,
+start 64-bit R (with `R\bin\R --arch x64`, or just `R\bin\R` since x64
+is the default), then:
 
-- start R in 64-bit mode with `R\bin\R --arch x64` and do:
-  ```
-  library(rJava)
-  .jinit()
-  .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
-  ```
+    library(rJava)
+    .jinit()
+    .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
 
-- start R in 32-bit mode with `R\bin\R --arch i386` and do the same as above.
+Note that `library(rJava)` should fail in 32-bit R (e.g. in an R session
+started with `R\bin\R --arch i386`).
 
 
 ### Install Ghostscript
@@ -918,16 +955,16 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 
 ### Install libSBML
 
-Download `64-bit/libSBML-5.10.0-win-x64.exe` and
-`32-bit/libSBML-5.10.0-win-x86.exe` from
+Download `64-bit/libSBML-5.18.0-win-x64.exe` and
+`32-bit/libSBML-5.18.0-win-x86.exe` from
 
-  https://sourceforge.net/projects/sbml/files/libsbml/5.10.0/stable/Windows/
+  https://sourceforge.net/projects/sbml/files/libsbml/5.18.0/stable/Windows/
 
 Run the 2 installers and keep all the default settings.
 
 Create `C:\libsbml` folder and copy
-`C:\Program Files\SBML\libSBML-5.10.0-libxml2-x64\win64` and
-`C:\Program Files (x86)\SBML\libSBML-5.10.0-libxml2-x86\win32` to it.
+`C:\Program Files\SBML\libSBML-5.18.0-libxml2-x64\win64` and
+`C:\Program Files (x86)\SBML\libSBML-5.18.0-libxml2-x86\win32` to it.
 Rename `C:\libsbml\win64` and `C:\libsbml\win32` -> `C:\libsbml\x64`
 and `C:\libsbml\i386`, respectively.
 
