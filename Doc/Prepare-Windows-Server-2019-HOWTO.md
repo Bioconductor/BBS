@@ -579,8 +579,8 @@ present in `D:\biocbuild\` and `C:\Users\biobuild\Documents\AppData\`.
 ## 5. Add tasks to Task Scheduler
 
 
-All the installation in this section should be made from a personal
-administrator account.
+All the installation in this section should be made **from a personal
+administrator account**.
 
 
 ### 5.1 Add loggon_biocbuild_at_startup task to Task Scheduler
@@ -799,8 +799,8 @@ for Windows Server 2019.
 ## 6. Additional stuff to install for packages with special needs
 
 
-All the installation in this section should be made from a personal
-administrator account.
+All the installation in this section should be made **from a personal
+administrator account**.
 
 
 ### Install libxml2 and google protocol buffer
