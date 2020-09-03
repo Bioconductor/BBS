@@ -687,11 +687,12 @@ compile RGtk2.
 
 ### Refresh the cache for AnnotationHub and ExperimentHub
 
-Do we still need to do this?
+It is still best practice to remove the cache occassionally to ensure 
+resources are still available.
 
-Remove all of `.AnnotationHub/`, `.AnnotationHubData/`, `.ExperimentHub/`
-and `.ExperimentHubData/` present in `C:\Users\biocbuild\`.
+Remove AnnotationHub and ExperimentHub caches present in `/Users/biocbuild/Library/Caches/`.
 
+Should we remove package specific caches? 
 
 ### Known issues and workarounds
 

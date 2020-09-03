@@ -175,13 +175,14 @@ STAGE2).
 ### Flushing AnnotationHub and ExperimentHub cache
 
 When R is updated, the cache for AnnotationHub and ExperimentHub should be
-refreshed. This is done by removing all of .AnnotationHub/,
-.AnnotationHubData/, .ExperimentHub/ and .ExperimentHubData/ that are
-present in /home/biocbuild/.
+refreshed. This is done by removing AnnotationHub and ExperimentHub 
+present in /home/biocbuild/.cache/.
 
 Removing these directories means all packages using these resources
 will have to re-download the files. This also contributes to an increased
 runtime for the builds.
+
+Should we also remove package specific caches? 
 
 <a name="flushing"></a>
 ### Flushing the build pipe
