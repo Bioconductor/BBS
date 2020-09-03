@@ -55,26 +55,7 @@ as of Aug 2020.
     sudo reboot
 
 
-### 1.4 Run Apache server as service
-
-Required only for a standalone or central builder.
-
-Install Apache server:
-
-    sudo apt-get install apache2
-
-Start it:
-
-    sudo service apache2 start
-
-Check its status:
-
-    service apache2 status
-
-Service will automatically restart after each reboot.
-
-
-### 1.5 Create the biocbuild account
+### 1.4 Create the biocbuild account
 
     sudo adduser biocbuild
 
@@ -87,7 +68,7 @@ TESTING: Logout and try to login again as biocbuild. Then logout and login
 again as before (sudoer account).
 
 
-### 1.6 Run Xvfb as a service
+### 1.5 Run Xvfb as a service
 
 Some Bioconductor packages like adSplit, GeneAnswers, or maSigPro have examples
 that need access to an X11 display. However, when running `R CMD check` in the
@@ -230,7 +211,7 @@ environment. For now `echo $DISPLAY` should show nothing.
     /path/to/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
 
 
-### 1.7 Install Ubuntu/deb packages
+### 1.6 Install Ubuntu/deb packages
 
 Install with:
 
@@ -330,7 +311,7 @@ capabilities will be missing):
     ocl-icd-opencl-dev (for gpuMagic)
 
 
-### 1.8 Install Python 3 modules
+### 1.7 Install Python 3 modules
 
 #### Python 3 modules needed by some CRAN/Bioconductor packages
 
@@ -411,21 +392,85 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
     sudo -H pip3 install virtualenv
 
 
+### 1.8 Run Apache server as a service
+
+Required only for a standalone or central builder.
+
+Install Apache server:
+
+    sudo apt-get install apache2
+
+Start it:
+
+    sudo service apache2 start
+
+Check its status:
+
+    service apache2 status
+
+Service will automatically restart after each reboot.
+
+
 ### 1.9 Logout and login again as biocbuild
 
-Everything in the next section must be done from the biocbuild account.
+Almost everything in the next section must be done from the biocbuild account.
 
 
 
 ## 2. Configure the Bioconductor software builds
 
 
-Everything in this section must be done **from the biocbuild account**.
+### 2.1 Set Apache server DocumentRoot
+
+Required only for a standalone or central builder.
+
+Create `/home/biocbuild/public_html/BBS` from the biocbuild account:
+
+    cd
+    mkdir -p public_html/BBS
+
+Then edit `/etc/apache2/sites-enabled/000-default.conf` **from a sudoer
+account**. First make a copy of the original file:
+
+    cd /etc/apache2/sites-enabled
+    sudo cp -i 000-default.conf 000-default.conf.original
+
+and make the following changes:
+
+- Set `DocumentRoot` to `/home/biocbuild/public_html`
+
+- Add the following lines inside the `VirtualHost` section:
+    ```
+    <VirtualHost *:80>
+            ...
+
+            # Add the 5 lines below.
+            <Directory /home/biocbuild/public_html/>
+                    Options Indexes FollowSymLinks
+                    AllowOverride None
+                    Require all granted
+            </Directory>
+
+    </VirtualHost>
+    ```
+
+Restart the Apache server:
+
+    sudo service apache2 restart
+
+TESTING: From any account on the machine, you should be able to do:
+
+    # This should print an HTML document showing the index
+    # of the /home/biocbuild/public_html/BBS/ folder:
+    curl http://localhost/BBS/
 
 
-### 2.1 Check connectivity with central builder
+
+### 2.2 Check connectivity with central builder
 
 Needed only if the machine is being configured as a secondary build node.
+
+Must be done from the biocbuild account.
 
 #### Check that you can ping the central builder
 
@@ -472,7 +517,7 @@ Contact the IT folks at RPCI if that's the case (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-### 2.2 Clone BBS git tree and create bbs-3.y-bioc directory structure
+### 2.3 Clone BBS git tree and create bbs-3.y-bioc directory structure
 
 Must be done from the biocbuild account.
 
@@ -491,7 +536,7 @@ For example, for the BioC 3.12 software builds:
     mkdir rdownloads log
 
 
-### 2.3 Install R
+### 2.4 Install R
 
 Must be done from the biocbuild account.
 
@@ -570,7 +615,7 @@ From R:
     BiocManager::install("rhdf5")
 
 
-### 2.4 Add software builds to biocbuild crontab
+### 2.5 Add software builds to biocbuild crontab
 
 Must be done from the biocbuild account.
 
