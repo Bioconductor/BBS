@@ -189,10 +189,8 @@ def getSTAGE1cmd(pkgdir_path):
     cmd = '%s zcf %s %s' % (tar_cmd, srcpkg_file, pkgdir_path)
     return cmd
 
-def _mustRunSTAGE2InMultiarchMode():
-    return BBScorevars.subbuilds in \
-           ["bioc", "workflows", "books", "bioc-testing"] and \
-           "BBS_STAGE2_MODE" in os.environ and \
+def _install_is_multiarch():
+    return "BBS_STAGE2_MODE" in os.environ and \
            os.environ['BBS_STAGE2_MODE'] == 'multiarch'
 
 def getSTAGE2cmdForNonTargetPkg(pkg):
@@ -205,7 +203,7 @@ def getSTAGE2cmdForNonTargetPkg(pkg):
     # contain backslahes.
     script_path = script_path.replace('\\', '/')
     Rscript = "source('%s');" % script_path
-    if sys.platform == "win32" and _mustRunSTAGE2InMultiarchMode():
+    if sys.platform == "win32" and _install_is_multiarch():
         Rscript += "installNonTargetPkg('%s',multiArch=TRUE)" % pkg
     else:
         Rscript += "installNonTargetPkg('%s')" % pkg
@@ -220,7 +218,7 @@ def getSTAGE2cmd(pkg, version):
         if prepend_win != None:
             prepend = prepend_win
         win_archs = _supportedWinArchs(pkg)
-        if _mustRunSTAGE2InMultiarchMode() and len(win_archs) >= 2:
+        if _install_is_multiarch() and len(win_archs) >= 2:
             ## Here is what Dan's commit message says about why BBS uses this
             ## very long and complicated compound command to install packages
             ## in multiarch mode on Windows during STAGE2 (see
