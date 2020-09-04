@@ -540,29 +540,66 @@ For example, for the BioC 3.12 software builds:
 
 Must be done from the biocbuild account.
 
+Note that we always build R **from source** on a Linux builder. We do not
+install a package for a Linux distribution (i.e. we don't use `apt-get`
+on Ubuntu).
+
 #### Get R source from CRAN
 
-Download and extract R source tarball from CRAN in `~/bbs-3.12-bioc/rdownloads`.
+Move to the directory where we're going to download and extract the R source
+tarball from CRAN:
+
+    cd ~/bbs-3.12-bioc/rdownloads
+
 The exact tarball to download depends on whether we're configuring the
-release or devel builds.
+release or devel builds:
+- Current release: https://cran.r-project.org/
+- Latest R devel: https://stat.ethz.ch/R/daily/
+- R alpha, beta, RC, etc: https://cran.r-project.org/src/base-prerelease/
 
 For example:
 
-    cd ~/bbs-3.12-bioc/rdownloads
     wget https://cran.r-project.org/src/base/R-4/R-4.0.2.tar.gz
+
+Note that the source tarball you download should have a unique and descriptive
+name, including a version or a date, such as `R-3.2.r67960.tar.gz`
+or `R-3.2-2015-10-26.tar.gz`. If it does not have such a name (e.g.
+it's just caled R-devel.tar.gz) please rename it after downloading and
+before extracting.
+
     tar zxvf R-4.0.2.tar.gz
+
+If the directory created by untarring is called something like `R-devel`
+and does not have a unique and descriptive name (containing a date or svn
+revision number) then please rename accordingly. Directory should have a
+name like `R-3.2.r67960` or `R-3.2-2015-10-26`.
+
+Check version and revision:
+
+    cat R-4.0.2/VERSION
+    cat R-4.0.2/SVN-REVISION
 
 #### Configure and compile R
 
     cd ~/bbs-3.12-bioc/
-    mkdir R    # possibly preceded by mv R R.old if previous installation
+    mkdir R      # possibly preceded by mv R R.old if updating R
     cd R
     ../rdownloads/R-4.0.2/configure --enable-R-shlib
-    make -j20  # takes about 5 min.
+    make -j10    # or 'make -j' to use all cores
+
+#### After compilation
+
+Do NOT run `make install`!
+
+Run a script to fix compilation flags by modifying `R/etc/Makeconf`. It's
+very important to run this from the `~/bbs-3.12-bioc/R/etc/` directory and
+not one level up. Both locations have Makefiles.
+
     cd etc
     ~/BBS/utils/R-fix-flags.sh
 
-Do NOT run `make install`!
+This sets the C/C++ compilation flags appropriately for the build system,
+e.g., `-Wall`, which show additional warnings useful for package developers.
 
 #### Basic testing
 
@@ -613,6 +650,18 @@ From R:
     BiocManager::install("rtracklayer")
     BiocManager::install("VariantAnnotation")
     BiocManager::install("rhdf5")
+
+#### Flush the data caches
+
+When R is updated, the cache for AnnotationHub and ExperimentHub should be
+refreshed. This is done by removing AnnotationHub and ExperimentHub present
+in `/home/biocbuild/.cache/`.
+
+Removing these directories means all packages using these resources will have
+to re-download the files. This also contributes to an increased runtime for
+the builds.
+
+Should we also remove package specific caches?
 
 
 ### 2.5 Add software builds to biocbuild crontab
@@ -1014,12 +1063,3 @@ Easy way to reproduce:
 I reported the issue here on Aug 20, 2020:
 https://github.com/Rfam/rfam-website/issues/39
 
-## 5. Updating R
-
-#### Flushing the caches
-
-When R is updated, the cache for AnnotationHub and ExperimentHub should be refreshed. This is done by removing AnnotationHub and ExperimentHub present in `/home/biocbuild/.cache/`.
-
-Removing these directories means all packages using these resources will have to re-download the files. This also contributes to an increased runtime for the builds.
-
-Should we also remove package specific caches?
