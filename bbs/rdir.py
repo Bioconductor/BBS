@@ -236,10 +236,19 @@ class RemoteDir:
         os.chdir(local_dir)
         if self.host == None or self.host == 'localhost':
             # self is a local dir too
-            cmd = "%s -rlptz %s/ %s" % (self.rsync_cmd, self.path, '.')
+            rsync_cmd = self.rsync_cmd
+            src = self.path
         else:
             # self is a remote dir
-            cmd = "%s -rlptz %s/ %s" % (self.rsync_rsh_cmd, self.get_full_remote_path(), '.')
+            rsync_cmd = self.rsync_rsh_cmd
+            src = self.get_full_remote_path()
+        if sys.platform == "win32":
+            # Transform symlink into referent file/dir (-L)
+            rsync_options = '-rLptz'
+        else:
+            # Copy symlinks as symlinks (-l)
+            rsync_options = '-rlptz'
+        cmd = "%s %s %s/ %s" % (rsync_cmd, rsync_options, src, '.')
         if verbose:
             print("BBS>   Syncing local '%s' with %s" % (local_dir, self.label))
         jobs.tryHardToRunJob(cmd, 3, None, 1800.0, 60.0, True, verbose)
