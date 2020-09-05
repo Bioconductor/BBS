@@ -306,7 +306,7 @@ capabilities will be missing):
     libsbml5-dev (for rsbml)
     automake (for RProtoBufLib)
     libnetcdf-dev (for xcms, RNetCDF, etc...)
-    libopenbabel-dev (for ChemmineOB)
+    libopenbabel-dev and libeigen3-dev (for ChemmineOB)
     clustalo (LowMACA)
     ocl-icd-opencl-dev (for gpuMagic)
 
