@@ -743,7 +743,7 @@ TESTING: Try to load the package (with `library(Cairo)`) on both archs:
 #### If updating R
 
 If you are updating R, the cache for AnnotationHub and ExperimentHub
-should be refreshed. This is done by removing all of `AnnotationHub/` 
+should be refreshed. This is done by removing all of `AnnotationHub/`
 and `ExperimentHub/` present in `C:\Users\biocbuild\AppData\Local`.
 
 
