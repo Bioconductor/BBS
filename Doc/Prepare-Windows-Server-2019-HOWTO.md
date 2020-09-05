@@ -1047,34 +1047,35 @@ created after the 1st build run), then:
 Affects Bioconductor packages:
 
 - BiocDockerManager:
-
+    ```
     BiocDockerManager::help()
     # Error in shell.exec(url) : 
     #   file association for 'https://hub.docker.com/r/bioconductor/bioconductor_docker' not available or invalid
-
+    ```
 - GenomicFeatures:
-
+    ```
     browseUCSCtrack("hg38", tablename="knownGene")
     # Error in shell.exec(url) : 
     #   file association for 'http://genome.ucsc.edu/cgi-bin//hgTrackUi?db=hg38&g=knownGene' not available or invalid
-
+    ```
 - hpar:
-
+    ```
     test_check("hpar")
     # -- 1. Error: getHpa (@test_hpa.R#49)  ------------------------------------------
     # file association for 'http://www.proteinatlas.org/ENSG00000000003' not available or invalid
-
+    ```
 - miRBaseConverter:
-
+    ```
     goTo_miRBase(Accession1)
     # Error in shell.exec(url) : 
     #   file association for 'http://www.mirbase.org/cgi-bin/mirna_entry.pl?acc=MI0000447' not available or invalid
-
+    ```
 - rWikiPathways:
-
+    ```
     wikipathwaysAPI()
     # Error in shell.exec(url) : 
     #   file association for 'https://webservice.wikipathways.org/ui' not available or invalid
+    ```
 
 
 
