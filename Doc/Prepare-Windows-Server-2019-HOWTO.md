@@ -65,10 +65,10 @@ When running the installer:
 ALSO: You need to explicitly associate `.py` files with Python by:
 - Double-clicking on a `.py` file.
 - A popup window will ask you: How do you want to open this type of file
-  (`.py`)? Click on "More options".
-- Check the "Use this app for all .py files" box then scroll all the way
-  down and click on "Look for another app on this PC". This opens the File
-  Explorer.
+  (`.py`)? Make sure the "Always use this app to open .py files" box is
+  checked. Click on "More apps".
+- Scroll all the way down and click on "Look for another app on this PC".
+  This opens the File Explorer.
 - In the File Explorer find the python file in `C:\Python38` and
   double-click on it.
 
@@ -443,9 +443,14 @@ IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin;`,
 `C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should
 **always be first** in the `Path`.
 
+Finally, rename the `perl.exe` file located in `C:\rtools40\usr\bin` to avoid
+any conflict with Strawberry Perl (we will install this later). E.g. rename
+to `perl_DO_NOT_USE.exe`.
+
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
 
+    which which    # /usr/bin/which (provided by rtools40)
     which ssh      # /c/cygwin/bin/ssh
     which rsync    # /usr/bin/rsync, because rsync from rtools40 should be
                    # before rsync from Cygwin in Path
@@ -455,8 +460,8 @@ in a PowerShell window:
                    # before vi from Cygwin in Path
     rsync          # Will crash if 64-bit Cygwin was installed instead
                    # of 32-bit!
-    which make     # /usr/bin/make
-    which gcc      # /mingw32/bin/gcc
+    which make     # /usr/bin/make (provided by rtools40)
+    which gcc      # /mingw32/bin/gcc (provided by rtools40)
     gcc --version  # gcc.exe (Built by Jeroen for the R-project) 8.3.0
 
 
@@ -805,9 +810,10 @@ You need the JDK (Java Development Kit). Available at:
   https://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 Choose "JDK Download" then download the "Windows x64 Installer".
-Note that Oracle no longer provides the JDK for 32-bit windows so any
-Bioconductor package that depends on rJava/Java needs to be marked as
-unsupported on 32-bit Windows.
+Note that Oracle no longer provides the JDK for 32-bit windows (see
+https://stackoverflow.com/questions/7019912/using-the-rjava-package-on-win7-64-bit-with-r
+for some details), so any Bioconductor package that depends on rJava/Java
+needs to be marked as unsupported on 32-bit Windows.
 
 Use the default settings when running the installers.
 
@@ -859,15 +865,30 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
     ..\R\bin\R CMD INSTALL flowWorkspace
 
 
-### 4.3 Install Ghostscript
+### 4.3 Install JAGS
 
-Available at: http://www.ghostscript.com/download/gsdnld.html
-
-Choose Ghostscript AGPL Release for 64 bit Windows.
+Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
+on "Download Latest Version".
 
 Use the default settings when running the installer.
 
-Append `C:\Program Files\gs\gs9.19\bin` to `Path` (see "How to edit an
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to load the rjags package e.g. open a
+PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc`, start R (with
+`R\bin\R`), then:
+
+    library(rjags)
+
+
+### 4.4 Install Ghostscript
+
+Available at: https://www.ghostscript.com/download/gsdnld.html
+
+Choose Ghostscript AGPL Release for 64-bit Windows.
+
+Use the default settings when running the installer.
+
+Append `C:\Program Files\gs\gs9.52\bin` to `Path` (see "How to edit an
 environment variable" in "General information and tips" at the top of this
 document for how to do this).
 
@@ -881,74 +902,10 @@ created after the 1st build run), then:
     ..\R\bin\R CMD build MANOR
     ..\R\bin\R CMD build OrderedList
     ..\R\bin\R CMD build twilight
+    ..\R\bin\R CMD check RnBeads_<X.Y.Z>.tar.gz
 
 
-### 4.4 Install Perl
-
-Download and install Active Perl Community Edition for 64-bit Windows
-When running the installer, choose "Typical" setup
-
-Note that the installer will prepend `C:\Perl64\site\bin;C:\Perl64\bin;`
-to the `Path`. However, on a Windows build machine, `C:\rtools40\usr\bin;`,
-`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should always
-be first in `Path`, so move this towards the end of `Path` (e.g. anywhere
-after `C:\Program Files\Git\cmd`). See "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to
-do this.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to build a package that uses Perl e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD build COHCAP
-
-
-### 4.5 Install JAGS
-
-Go to http://www.sourceforge.net/projects/mcmc-jags/files
-
-You'll see:
-
-  Looking for the latest version? Download JAGS-X.Y.Z.html
-
-Click on that link. It downloads an HTML file.
-
-Open the downloaded file with Chrome and choose the installer that
-corresponds to the version of R used for the builds.
-
-Use the default settings when running the installer, except that we do not
-need to create shortcuts (check the "Do not create shortcuts" box).
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to load the rjags package e.g. open a
-PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat` (this
-folder will be automatically created after the 1st build run), start R
-(with `..\R\bin\R`), then:
-
-    library(rjags)
-
-
-### 4.6 Install Open Babel
-
-Follow instructions in `ChemmineOB/INSTALL` for this.
-
-IMPORTANT: Unlike all the other things here that need to be installed from
-a personal administrator account, this one needs to be installed from the
-`biocbuild` account. That's because the compilation process described in
-`ChemmineOB/INSTALL` needs to access stuff under
-
-    c:/Users/biocbuild/bbs-3.12-bioc/R/library/zlibbioc/
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to compile the ChemmineOB package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL ChemmineOB
-
-
-### 4.7 Install libSBML
+### 4.5 Install libSBML
 
 Download `64-bit/libSBML-5.18.0-win-x64.exe` and
 `32-bit/libSBML-5.18.0-win-x86.exe` from
@@ -975,11 +932,58 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
     ..\R\bin\R CMD INSTALL rsbml
 
 
+### 4.6 Install Open Babel
+
+Follow instructions in `ChemmineOB/INSTALL` for this.
+
+IMPORTANT: Unlike all the other things here that need to be installed from
+a personal administrator account, this one needs to be installed from the
+`biocbuild` account. That's because the compilation process described in
+`ChemmineOB/INSTALL` needs to access stuff under
+
+    c:/Users/biocbuild/bbs-3.12-bioc/R/library/zlibbioc/
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to compile the ChemmineOB package e.g.
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
+(this folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL ChemmineOB
+
+
+### 4.7 Install Strawberry Perl
+
+Download installer for Windows 64-bit (e.g.
+`strawberry-perl-5.32.0.1-64bit.msi`) from http://strawberryperl.com/
+(this site does not support HTTPS).
+
+When running the installer, keep all the default settings.
+Check that the perl executable is in `Path`:
+
+    which perl  # /c/Strawberry/perl/bin/perl
+
+If `which perl` returns `/usr/bin/perl` then you MUST rename the `perl.exe`
+file located in `C:\rtools40\usr\bin` to avoid any conflict. See
+_Install Rtools_ section for more information.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to build a package that uses Perl e.g.
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
+(this folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD build LowMACA
+
+(Note that this package also needs Clustal Omega.)
+
+
 ### 4.8 Install Clustal Omega
 
-Download Windows 64-bit zip file from http://www.clustal.org/omega/
+Download precompiled binary for Windows 64-bit (zip file) from
+http://www.clustal.org/omega/ (this site does not support HTTPS).
 
-Extract all the files in `C:\ClustalO`
+Extract all the files in `C:\ClustalO`. Make sure that the files
+get extracted in `C:\ClustalO\` and not in a subdirectory (e.g. in
+`C:\ClustalO\clustal-omega-1.2.2-win64\`).
 
 Append `C:\ClustalO` to `Path` (see "How to edit an environment variable"
 in "General information and tips" at the top of this document for how
@@ -1014,7 +1018,7 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 
 Download `gtkmm-win64-devel-2.22.0-2.exe` from
 
-  http://ftp.gnome.org/mirror/gnome.org/binaries/win64/gtkmm/2.22/
+  https://ftp.gnome.org/mirror/gnome.org/binaries/win64/gtkmm/2.22/
 
 Run it (use default settings). This installs gtkmm in `C:\gtkmm64`
 
