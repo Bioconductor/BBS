@@ -464,6 +464,10 @@ in a PowerShell window:
     which gcc      # /mingw32/bin/gcc (provided by rtools40)
     gcc --version  # gcc.exe (Built by Jeroen for the R-project) 8.3.0
 
+Oh WAIT!! You also need to perform the step below (_Allow cc1plus.exe
+access to a 3GB address space_) or the mzR package won't compile in
+32-bit mode!
+
 
 ### 2.5 Allow cc1plus.exe access to a 3GB address space
 
@@ -496,6 +500,8 @@ Prompt for VS 2019:
 
     bcdedit /set IncreaseUserVa 3072
     editbin /LARGEADDRESSAWARE "C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\cc1plus.exe"
+    # Microsoft (R) COFF/PE Editor Version 14.27.29111.0
+    # Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
 ### 2.6 Create and populate C:\extsoft
@@ -1033,10 +1039,49 @@ created after the 1st build run), then:
 
 
 
-## 5. Single Package Builder Requirements
+## 5. Known issues
 
 
-### 5.1 Create the pkgbuild account:
+### 5.1 file association for 'http://...' not available or invalid
+
+Affects Bioconductor packages:
+
+- BiocDockerManager:
+
+    BiocDockerManager::help()
+    # Error in shell.exec(url) : 
+    #   file association for 'https://hub.docker.com/r/bioconductor/bioconductor_docker' not available or invalid
+
+- GenomicFeatures:
+
+    browseUCSCtrack("hg38", tablename="knownGene")
+    # Error in shell.exec(url) : 
+    #   file association for 'http://genome.ucsc.edu/cgi-bin//hgTrackUi?db=hg38&g=knownGene' not available or invalid
+
+- hpar:
+
+    test_check("hpar")
+    # -- 1. Error: getHpa (@test_hpa.R#49)  ------------------------------------------
+    # file association for 'http://www.proteinatlas.org/ENSG00000000003' not available or invalid
+
+- miRBaseConverter:
+
+    goTo_miRBase(Accession1)
+    # Error in shell.exec(url) : 
+    #   file association for 'http://www.mirbase.org/cgi-bin/mirna_entry.pl?acc=MI0000447' not available or invalid
+
+- rWikiPathways:
+
+    wikipathwaysAPI()
+    # Error in shell.exec(url) : 
+    #   file association for 'https://webservice.wikipathways.org/ui' not available or invalid
+
+
+
+## 6. Single Package Builder Requirements
+
+
+### 6.1 Create the pkgbuild account:
 
 Username: pkgbuild
 
@@ -1054,7 +1099,7 @@ will still be created and populated at first logon.
 Make the pkgbuild user a member of the Remote Desktop Users group.
 
 
-### 5.2 Grant the biocbuild user "Log on as batch job" rights
+### 6.2 Grant the biocbuild user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `pkgbuild`
 user.)
@@ -1066,7 +1111,7 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 Add `pkgbuild` user
 
 
-### 5.3 Grant the pkgbuild user permissions within the biocbuild user folder
+### 6.3 Grant the pkgbuild user permissions within the biocbuild user folder
 
 Grant the `pkgbuild` user permissions within the `biocbuild` user folder
 using the Users security group.
@@ -1124,7 +1169,7 @@ are not actually needed (in any case they shouldn't).
 ###############################################################################
 
 
-### 5.4 Grant the pkgbuild user permissions within the Windows\Temp folder
+### 6.4 Grant the pkgbuild user permissions within the Windows\Temp folder
 
 Grant the `pkgbuild` user permissions within the `Windows\Temp` folder using
 the Users security group. This is for BiocCheck.
@@ -1144,20 +1189,20 @@ Click OK.
 
 
 
-## 6. Add other builds to Task Scheduler
+## 7. Add other builds to Task Scheduler
 
 
-### 6.1 Annotation builds
-
-Not run on Windows at the moment.
-
-
-### 6.2 Experimental data builds
+### 7.1 Annotation builds
 
 Not run on Windows at the moment.
 
 
-### 6.3 Long Tests builds
+### 7.2 Experimental data builds
+
+Not run on Windows at the moment.
+
+
+### 7.3 Long Tests builds
 
 From `D:\biocbuild`:
 
