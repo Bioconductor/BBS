@@ -1082,10 +1082,166 @@ Affects Bioconductor packages:
 
 
 
-## 6. Single Package Builder Requirements
+## 6. Add other builds to Task Scheduler
 
 
-### 6.1 Create the pkgbuild account:
+### 6.1 Annotation builds
+
+Not run on Windows at the moment.
+
+
+### 6.2 Experimental data builds
+
+In a PowerShell window from the `biocbuild` account:
+
+    cd D:\biocbuild
+    mkdir bbs-3.12-data-experiment
+    cd bbs-3.12-data-experiment
+    mkdir log
+
+Then **from a personal administrator account**:
+
+- Open Task Scheduler
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.12-data-experiment`
+    - In Security options:
+      - Use `RIESLING1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2019
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Weekly - Start on <leave current date> at 9:30 AM -
+        Recur every 1 week on Monday and Thursday
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `D:\biocbuild\BBS\3.12\data-experiment\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-data-experiment\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\data-experiment\riesling1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires `biocbuild` password)
+
+
+### 6.3 Worflows builds
+
+In a PowerShell window from the `biocbuild` account:
+
+    cd D:\biocbuild
+    mkdir bbs-3.12-workflows
+    cd bbs-3.12-workflows
+    mkdir log
+
+Then **from a personal administrator account**:
+
+- Open Task Scheduler
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.12-workflows`
+    - In Security options:
+      - Use `RIESLING1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2019
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Weekly - Start on <leave current date> at 9:00 AM -
+        Recur every 1 week on Tuesday and Friday
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `D:\biocbuild\BBS\3.12\workflows\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-workflows\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\workflows\riesling1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires `biocbuild` password)
+
+
+### 6.4 Long Tests builds
+
+In a PowerShell window from the `biocbuild` account:
+
+    cd D:\biocbuild
+    mkdir bbs-3.12-bioc-longtests
+    cd bbs-3.12-bioc-longtests
+    mkdir log
+
+Then **from a personal administrator account**:
+
+- Open Task Scheduler
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.12-bioc-longtests`
+    - In Security options:
+      - Use `RIESLING1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2019
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Weekly - Start on <leave current date> at 09:30 AM -
+        Recur every 1 week on Saturday
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `D:\biocbuild\BBS\3.12\bioc-longtests\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-bioc-longtests\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\bioc-longtests\riesling1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires `biocbuild` password)
+
+
+
+## 7. Single Package Builder Requirements
+
+
+### 7.1 Create the pkgbuild account:
 
 Username: pkgbuild
 
@@ -1103,7 +1259,7 @@ will still be created and populated at first logon.
 Make the pkgbuild user a member of the Remote Desktop Users group.
 
 
-### 6.2 Grant the biocbuild user "Log on as batch job" rights
+### 7.2 Grant the biocbuild user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `pkgbuild`
 user.)
@@ -1115,7 +1271,7 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 Add `pkgbuild` user
 
 
-### 6.3 Grant the pkgbuild user permissions within the biocbuild user folder
+### 7.3 Grant the pkgbuild user permissions within the biocbuild user folder
 
 Grant the `pkgbuild` user permissions within the `biocbuild` user folder
 using the Users security group.
@@ -1173,7 +1329,7 @@ are not actually needed (in any case they shouldn't).
 ###############################################################################
 
 
-### 6.4 Grant the pkgbuild user permissions within the Windows\Temp folder
+### 7.4 Grant the pkgbuild user permissions within the Windows\Temp folder
 
 Grant the `pkgbuild` user permissions within the `Windows\Temp` folder using
 the Users security group. This is for BiocCheck.
@@ -1190,160 +1346,4 @@ and choose properties. Go to the Security tab:
 For Permissions choose Full Control.
 
 Click OK.
-
-
-
-## 7. Add other builds to Task Scheduler
-
-
-### 7.1 Annotation builds
-
-Not run on Windows at the moment.
-
-
-### 7.2 Experimental data builds
-
-In a PowerShell window from the `biocbuild` account:
-
-    cd D:\biocbuild
-    mkdir bbs-3.12-data-experiment
-    cd bbs-3.12-data-experiment
-    mkdir log
-
-Then **from a personal administrator account**:
-
-- Open Task Scheduler
-
-- Right-click on the `BBS` folder -> choose Create Task
-
-  - Tab General:
-    - Name: `bbs-3.12-data-experiment`
-    - In Security options:
-      - Use `RIESLING1\biocbuild` account to run the task
-      - Run whether user is logged on or not
-    - Configure for Windows Server 2019
-
-  - Tab Triggers:
-    - New Trigger
-    - Begin the task On a schedule
-      - In Settings:
-        Weekly - Start on <leave current date> at 9:30 AM -
-        Recur every 1 week on Monday and Thursday
-    - In Advanced Settings:
-        nothing should be checked except 'Enabled'
-
-  - Tab Actions:
-    - New Action
-    - Action: Start a program
-    - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.12\data-experiment\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.12-data-experiment\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.12\data-experiment\riesling1`
-
-  - Tab Conditions:
-      nothing to do (keep all the defaults)
-
-  - Tab Settings:
-      nothing should be checked except 'Allow task to be run on demand' and
-      'If the running task does not end when requested force it to stop'
-
-  - Then click OK on bottom right (requires `biocbuild` password)
-
-
-### 7.3 Worflows builds
-
-In a PowerShell window from the `biocbuild` account:
-
-    cd D:\biocbuild
-    mkdir bbs-3.12-workflows
-    cd bbs-3.12-workflows
-    mkdir log
-
-Then **from a personal administrator account**:
-
-- Open Task Scheduler
-
-- Right-click on the `BBS` folder -> choose Create Task
-
-  - Tab General:
-    - Name: `bbs-3.12-workflows`
-    - In Security options:
-      - Use `RIESLING1\biocbuild` account to run the task
-      - Run whether user is logged on or not
-    - Configure for Windows Server 2019
-
-  - Tab Triggers:
-    - New Trigger
-    - Begin the task On a schedule
-      - In Settings:
-        Weekly - Start on <leave current date> at 9:00 AM -
-        Recur every 1 week on Tuesday and Friday
-    - In Advanced Settings:
-        nothing should be checked except 'Enabled'
-
-  - Tab Actions:
-    - New Action
-    - Action: Start a program
-    - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.12\workflows\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.12-workflows\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.12\workflows\riesling1`
-
-  - Tab Conditions:
-      nothing to do (keep all the defaults)
-
-  - Tab Settings:
-      nothing should be checked except 'Allow task to be run on demand' and
-      'If the running task does not end when requested force it to stop'
-
-  - Then click OK on bottom right (requires `biocbuild` password)
-
-
-### 7.4 Long Tests builds
-
-In a PowerShell window from the `biocbuild` account:
-
-    cd D:\biocbuild
-    mkdir bbs-3.12-bioc-longtests
-    cd bbs-3.12-bioc-longtests
-    mkdir log
-
-Then **from a personal administrator account**:
-
-- Open Task Scheduler
-
-- Right-click on the `BBS` folder -> choose Create Task
-
-  - Tab General:
-    - Name: `bbs-3.12-bioc-longtests`
-    - In Security options:
-      - Use `RIESLING1\biocbuild` account to run the task
-      - Run whether user is logged on or not
-    - Configure for Windows Server 2019
-
-  - Tab Triggers:
-    - New Trigger
-    - Begin the task On a schedule
-      - In Settings:
-        Weekly - Start on <leave current date> at 09:30 AM -
-        Recur every 1 week on Saturday
-    - In Advanced Settings:
-        nothing should be checked except 'Enabled'
-
-  - Tab Actions:
-    - New Action
-    - Action: Start a program
-    - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.12\bioc-longtests\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.12-bioc-longtests\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.12\bioc-longtests\riesling1`
-
-  - Tab Conditions:
-      nothing to do (keep all the defaults)
-
-  - Tab Settings:
-      nothing should be checked except 'Allow task to be run on demand' and
-      'If the running task does not end when requested force it to stop'
-
-  - Then click OK on bottom right (requires `biocbuild` password)
 
