@@ -634,23 +634,43 @@ def STAGE5():
 ## MAIN SECTION
 ##############################################################################
 
+### Return the stages to run in one string.
+### Can return special strings "all" o "all-no-bin".
+def stages_to_run():
+    usage_msg = 'Usage:\n' + \
+        '    BBS-run.py\n' + \
+        'or:\n' + \
+        '    BBS-run.py no-bin\n' + \
+        'or:\n' + \
+        '    BBS-run.py STAGEx STAGEy ...\n'
+    argc = len(sys.argv)
+    if argc <= 1:
+        return "all"
+    arg1 = sys.argv[1]
+    if arg1 == "no-bin":
+        if argc > 2:
+            sys.exit(usage_msg)
+        return "all-no-bin"
+    stages = ""
+    for stage in sys.argv[1:]:
+        if stage not in ['STAGE2', 'STAGE3', 'STAGE4', 'STAGE5']:
+            print("ERROR: Invalid stage: %s" % stage)
+            print()
+            sys.exit(usage_msg)
+        if len(stages) != 0:
+            stages += " "
+        stages += stage
+    return stages
+
 if __name__ == "__main__":
     print()
     print("BBS> ==============================================================")
-    argc = len(sys.argv)
-    if argc > 1:
-        arg1 = sys.argv[1]
-    else:
-        arg1 = ""
-    if argc > 2:
-        arg2 = sys.argv[2]
-    else:
-        arg2 = ""
-    if arg1 in ["", "no-bin"]:
+    stages = stages_to_run()
+    if stages in ["all", "all-no-bin"]:
         BBSvars.Node_rdir.RemakeMe(True)
     ticket = []
     ## STAGE2: preinstall dependencies
-    if arg1 in ["", "no-bin"] or "STAGE2" in sys.argv:
+    if stages in ["all", "all-no-bin"] or "STAGE2" in stages:
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE2()
@@ -658,7 +678,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE2', started_at, ended_at, dt))
     ## STAGE3: build source packages
-    if arg1 in ["", "no-bin"] or "STAGE3" in sys.argv:
+    if stages in ["all", "all-no-bin"] or "STAGE3" in stages:
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE3()
@@ -666,7 +686,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE3', started_at, ended_at, dt))
     ## STAGE4: check source packages
-    if arg1 in ["", "no-bin"] or "STAGE4" in sys.argv:
+    if stages in ["all", "all-no-bin"] or "STAGE4" in stages:
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE4()
@@ -674,7 +694,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE4', started_at, ended_at, dt))
     ## STAGE5: build bin packages
-    if arg1 == "" or "STAGE5" in sys.argv:
+    if stages == "all" or "STAGE5" in stages:
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE5()
