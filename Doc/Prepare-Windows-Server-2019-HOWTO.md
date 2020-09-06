@@ -215,16 +215,13 @@ TESTING: Open a PowerShell window and try to run `git --version`
 
 ### 1.11 Install MiKTeX
 
-If this is a reinstallation of MiKTeX, make sure to uninstall
-MiKTeX first (from the Administrator account) and to manually
-remove `C:\Users\biocbuild\AppData\Roaming\MiKTeX\` and
-`C:\Users\pkgbuild\AppData\Roaming\MiKTeX\` (better done from
-the `biocbuild` and `pkgbuild` accounts, respectively) before reinstalling.
+If this is a reinstallation of MiKTeX, make sure to uninstall it (from
+the Administrator account) before reinstalling.
 
-Go to https://miktex.org/download
+Go to https://miktex.org/download and download the latest Basic MiKTeX
+64-bit Installer (`basic-miktex-20.6.29-x64.exe` as of Aug. 2020).
 
-Download latest Basic MiKTeX 64-bit Installer (`basic-miktex-20.6.29-x64.exe`
-as of Aug. 2020) and run it:
+When running the installer:
 
 - Install MiKTeX for all users
 - Preferred paper: Letter
@@ -237,13 +234,19 @@ We're going to do this from the MiKTeX Console.
 Open the MiKTeX Console by going to the Windows start menu:
 
 - Switch to administrator mode
-- Check for updates
-- Go to the Updates page
-- Click on "Update now"
+- In Settings: select "Always install missing packages on-the-fly" and
+  check "For anyone who uses this computer (all users)"
+- In Updates: click on "Check for updates", and, if any updates,
+  click on "Update now"
+
+IMPORTANT: After each update, or if this is a reinstallation of MiKTeX,
+make sure to manually remove `C:\Users\biocbuild\AppData\Roaming\MiKTeX\`
+and `C:\Users\pkgbuild\AppData\Roaming\MiKTeX\` (better done from
+the `biocbuild` and `pkgbuild` accounts, respectively).
 
 
-From now on, all administrative tasks must be performed from one of the
-_personal administrator accounts_ instead of the Administrator account.
+**From now on, all administrative tasks must be performed from one of the
+_personal administrator accounts_ instead of the Administrator account.**
 
 
 
@@ -1200,18 +1203,63 @@ Not run on Windows at the moment.
 
 ### 7.2 Experimental data builds
 
-Not run on Windows at the moment.
+In a PowerShell window from the `biocbuild` account:
+
+    cd D:\biocbuild
+    mkdir bbs-3.12-data-experiment
+    cd bbs-3.12-data-experiment
+    mkdir log
+
+Then **from a personal administrator account**:
+
+- Open Task Scheduler
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.12-data-experiment`
+    - In Security options:
+      - Use `RIESLING1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2019
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Weekly - Start on next Mondays at 9:30 AM -
+        Recur every 1 week on Monday and Thursday
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `D:\biocbuild\BBS\3.12\data-experiment\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-data-experiment\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\data-experiment\riesling1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires `biocbuild` password)
 
 
 ### 7.3 Long Tests builds
 
-From `D:\biocbuild`:
+In a PowerShell window from the `biocbuild` account:
 
+    cd D:\biocbuild
     mkdir bbs-3.12-bioc-longtests
-    cd bbs-3.12-bioc
+    cd bbs-3.12-bioc-longtests
     mkdir log
 
-Then:
+Then **from a personal administrator account**:
 
 - Open Task Scheduler
 
