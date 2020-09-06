@@ -1276,7 +1276,7 @@ Then **from a personal administrator account**:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 9:30 AM -
+        Weekly - Start on <leave current date> at 9:00 AM -
         Recur every 1 week on Tuesday and Friday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
