@@ -1227,7 +1227,7 @@ Then **from a personal administrator account**:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on next Mondays at 9:30 AM -
+        Weekly - Start on <leave current date> at 9:30 AM -
         Recur every 1 week on Monday and Thursday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
@@ -1250,7 +1250,56 @@ Then **from a personal administrator account**:
   - Then click OK on bottom right (requires `biocbuild` password)
 
 
-### 7.3 Long Tests builds
+### 7.3 Worflows builds
+
+In a PowerShell window from the `biocbuild` account:
+
+    cd D:\biocbuild
+    mkdir bbs-3.12-workflows
+    cd bbs-3.12-workflows
+    mkdir log
+
+Then **from a personal administrator account**:
+
+- Open Task Scheduler
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.12-workflows`
+    - In Security options:
+      - Use `RIESLING1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2019
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Weekly - Start on <leave current date> at 9:30 AM -
+        Recur every 1 week on Tuesday and Friday
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `D:\biocbuild\BBS\3.12\workflows\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-workflows\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\workflows\riesling1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires `biocbuild` password)
+
+
+### 7.4 Long Tests builds
 
 In a PowerShell window from the `biocbuild` account:
 
@@ -1276,7 +1325,7 @@ Then **from a personal administrator account**:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on next Saturday at 10:00 AM -
+        Weekly - Start on <leave current date> at 09:30 AM -
         Recur every 1 week on Saturday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
