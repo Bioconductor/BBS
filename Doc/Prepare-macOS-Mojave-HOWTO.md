@@ -872,28 +872,12 @@ As of May 2020 the above page is displaying "Downloading MacTeX 2020".
 Install with:
 
     sudo installer -pkg MacTeX.pkg -target /
+    sudo chown -R biocbuild:admin /usr/local
 
 TESTING: Logout and login again so that the changes made by the installer
 to the `PATH` take effect. Then:
 
     which tex
-
-This is no longer needed (as of Dec 2019) since no package that uses
-pstricks in their vignette should still need to use auto-pst-pdf:
-
-    #Add shell_escape = t to /usr/local/texlive/2019/texmf.cnf
-    #
-    #  cd /usr/local/texlive/2018/
-    #  cp texmf.cnf texmf.cnf.original
-    #  vi texmf.cnf
-    #  ## add shell_escape = t at the bottom of the file
-    #
-    # TESTING: Try to build a package using pstricks + auto-pst-pdf in its
-    # vignette e.g.:
-    #
-    #   cd ~/sandbox
-    #   git clone https://git.bioconductor.org/packages/affyContam
-    #   R CMD build affyContam
 
 
 ### Install Pandoc
