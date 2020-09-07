@@ -251,7 +251,10 @@ Install with:
     sudo hdiutil attach gfortran-8.2-Mojave.dmg
     sudo installer -pkg /Volumes/gfortran-8.2-Mojave/gfortran-8.2-Mojave/gfortran.pkg -target /
     sudo hdiutil detach /Volumes/gfortran-8.2-Mojave
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 Ignore message:
 
@@ -492,11 +495,9 @@ effect. Then:
 First make sure `/usr/local` is writable by the `biocbuild` user and other
 members of the `admin` group:
 
-    sudo chown -R biocbuild:admin /usr/local
-
-Ignore message:
-
-    chown: /usr/local: Operation not permitted
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 Then install with:
 
@@ -872,7 +873,10 @@ As of May 2020 the above page is displaying "Downloading MacTeX 2020".
 Install with:
 
     sudo installer -pkg MacTeX.pkg -target /
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Logout and login again so that the changes made by the installer
 to the `PATH` take effect. Then:
@@ -897,7 +901,10 @@ Download with:
 Install with:
 
     sudo installer -pkg pandoc-2.7.3-macOS.pkg -target /
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 
 
@@ -931,7 +938,10 @@ Install with:
 
     cd /usr/local
     sudo tar zxvf ~/Downloads/openjdk-14.0.1_osx-x64_bin.tar.gz
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 Then:
 
@@ -980,7 +990,10 @@ Download and install with:
     cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/jpeg-9-darwin.17-x86_64.tar.gz
     sudo tar fvxz jpeg-9-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
+
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Try to install the jpeg package *from source*:
 
@@ -1001,7 +1014,10 @@ Download and install with:
     cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/tiff-4.1.0-darwin.17-x86_64.tar.gz
     sudo tar fvxz tiff-4.1.0-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Try to install the tiff package *from source*:
 
@@ -1022,7 +1038,10 @@ Download and install with:
     cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/fftw-3.3.8-darwin.17-x86_64.tar.gz
     sudo tar fvxz fftw-3.3.8-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Try to install the fftwtools package *from source*:
 
@@ -1064,7 +1083,10 @@ Download and install with:
     cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/cairo-1.14.12-darwin.17-x86_64.tar.gz
     sudo tar fvxz cairo-1.14.12-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
+
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Try to install and load the Cairo **binary** package:
 
@@ -1094,7 +1116,10 @@ Download and install with:
     curl -O https://mac.r-project.org/libs-4/hdf5-1.12.0-darwin.17-x86_64.tar.gz
     sudo tar fvxz netcdf-4.7.3-darwin.17-x86_64.tar.gz -C /
     sudo tar fvxz hdf5-1.12.0-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Try to install the ncdf4 package *from source*:
 
@@ -1114,7 +1139,10 @@ Download and install with:
     cd ~/Downloads
     curl -O https://mac.r-project.org/libs-4/gsl-2.6-darwin.17-x86_64.tar.gz
     sudo tar fvxz gsl-2.6-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Try to install the GLAD package *from source*:
 
@@ -1217,7 +1245,10 @@ Install with:
     sudo hdiutil attach JAGS-4.3.0.dmg
     sudo installer -pkg /Volumes/JAGS-4.3.0/JAGS-4.3.0.mpkg -target /
     sudo hdiutil detach /Volumes/JAGS-4.3.0
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING: Try to install the rjags package *from source*:
 
@@ -1329,12 +1360,17 @@ Install with:
     sudo hdiutil attach libsbml-5.18.0-libxml2-macosx-mojave.dmg
     sudo installer -pkg "/Volumes/libsbml-5.18.0-libxml2/libSBML-5.18.0-libxml2-mojave.pkg" -target /
     sudo hdiutil detach "/Volumes/libsbml-5.18.0-libxml2"
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
     #sudo hdiutil attach libsbml-5.13.0-libxml2-macosx-elcapitan.dmg
     #sudo installer -pkg "/Volumes/libsbml-5.13.0-libxml2/libSBML-5.13.0-libxml2-elcapitan.pkg" -target /
     #sudo hdiutil detach "/Volumes/libsbml-5.13.0-libxml2"
-    #sudo chown -R biocbuild:admin /usr/local
+    # Fix /usr/local/ permissions:
+    #sudo chown -R biocbuild:admin /usr/local/*
+    #sudo chown -R root:wheel /usr/local/texlive
 
 The `.pc` file included in the installer (`/usr/local/lib/pkgconfig/libsbml.pc`)
 is broken:
@@ -1466,7 +1502,10 @@ Install with:
     sudo hdiutil attach ViennaRNA-2.4.11-MacOSX.dmg
     sudo installer -pkg "/Volumes/ViennaRNA 2.4.11/ViennaRNA Package 2.4.11 Installer.pkg" -target /
     sudo hdiutil detach "/Volumes/ViennaRNA 2.4.11"
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 TESTING:
 
@@ -1524,7 +1563,10 @@ Install with:
     sudo hdiutil attach mysql-8.0.18-macos10.14-x86_64.dmg
     sudo installer -pkg /Volumes/mysql-8.0.18-macos10.14-x86_64/mysql-8.0.18-macos10.14-x86_64.pkg -target /
     sudo hdiutil detach /Volumes/mysql-8.0.18-macos10.14-x86_64
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 Then in `/etc/profile` append `/usr/local/mysql/bin` to `PATH`,
 `/usr/local/mysql/lib` to `DYLD_LIBRARY_PATH`, and
@@ -1643,7 +1685,10 @@ location". We will do "location independent" installation.
 - Install with:
     ```
     sudo cmake --build . --target install
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
     ```
 
 - Try to start a ROOT interactive session:
@@ -1689,7 +1734,10 @@ Download and install with:
     cd ~/Downloads
     curl -O https://www.imagemagick.org/download/binaries/ImageMagick-x86_64-apple-darwin16.4.0.tar.gz
     sudo tar zxvf ImageMagick-x86_64-apple-darwin16.4.0.tar.gz -C /
-    sudo chown -R biocbuild:admin /ImageMagick-7.0.5
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 Then in `/etc/profile` add the following line (before the `PATH` and
 `DYLD_LIBRARY_PATH` lines):
@@ -1777,5 +1825,8 @@ Download and install with:
     #sudo tar fvxz geos-3.7.2-darwin.17-x86_64.tar.gz -C /
     #curl -O https://mac.r-project.org/libs-4/xml2-2.9.10-darwin.17-x86_64.tar.gz
     #sudo tar fvxz xml2-2.9.10-darwin.17-x86_64.tar.gz -C /
-    sudo chown -R biocbuild:admin /usr/local
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 

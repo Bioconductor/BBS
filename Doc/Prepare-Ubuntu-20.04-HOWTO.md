@@ -220,7 +220,8 @@ Install with:
 #### Always nice to have
 
     tree
-    manpages-dev (includes man pages for the C standard lib)
+    manpages-dev  (includes man pages for the C standard lib)
+    mlocate       (for the 'locate' command)
 
 #### Packages required by the build system itself (BBS)
 
