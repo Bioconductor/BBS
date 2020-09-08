@@ -55,6 +55,19 @@ def Rscript2syscmd(Rscript, Roptions=None):
 ### (STAGE3 and STAGE5), and checking (STAGE4) each package.
 ##############################################################################
 
+def _get_prepend_from_BBSoptions(key_prefix):
+    key = key_prefix + 'prepend'
+    prepend = bbs.parse.getBBSoptionFromDir(pkg, key)
+    if sys.platform == "win32":
+        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, key + '.win')
+        if prepend_win != None:
+            prepend = prepend_win
+    elif sys.platform == "darwin":
+        prepend_mac = bbs.parse.getBBSoptionFromDir(pkg, key + '.mac')
+        if prepend_mac != None:
+            prepend = prepend_mac
+    return prepend
+
 def _BiocGreaterThanOrEqualTo(x, y):
     # If 'BBScorevars.bioc_version' is not defined, then we assume it's the
     # latest version.
@@ -210,13 +223,9 @@ def getSTAGE2cmdForNonTargetPkg(pkg):
     return Rscript2syscmd(Rscript)
 
 def getSTAGE2cmd(pkg, version):
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'INSTALLprepend')
     if sys.platform != "win32":
         cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
     else:
-        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'INSTALLprepend.win')
-        if prepend_win != None:
-            prepend = prepend_win
         win_archs = _supportedWinArchs(pkg)
         if _install_is_multiarch() and len(win_archs) >= 2:
             ## Here is what Dan's commit message says about why BBS uses this
@@ -246,18 +255,15 @@ def getSTAGE2cmd(pkg, version):
                   'rm %s %s' % (srcpkg_file, zip_file)
         else:
             cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
+    prepend = _get_prepend_from_BBSoptions('INSTALL')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
 ### 'pkgdir_path' must be the path to a package source tree.
 def getSTAGE3cmd(pkgdir_path):
-    prepend = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'BUILDprepend')
-    if sys.platform == "win32":
-        prepend_win = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'BUILDprepend.win')
-        if prepend_win != None:
-            prepend = prepend_win
     cmd =  _get_Rbuild_cmd(pkgdir_path) + ' ' + pkgdir_path
+    prepend = _get_prepend_from_BBSoptions('BUILD')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
@@ -280,13 +286,9 @@ def getSTAGE3cmd(pkgdir_path):
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend')
     if sys.platform != "win32":
         win_archs = None
     else:
-        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'CHECKprepend.win')
-        if prepend_win != None:
-            prepend = prepend_win
         if BBSvars.STAGE4_mode == "multiarch":
             win_archs = _supportedWinArchs(pkg)
         else:
@@ -335,6 +337,7 @@ def getSTAGE4cmd(srcpkg_path):
             common_opts += ["--no-examples"]
     common_opts = ' '.join(common_opts)
     cmd = '%s %s %s' % (cmd0, common_opts, srcpkg_path)
+    prepend = _get_prepend_from_BBSoptions('CHECK')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
@@ -346,15 +349,12 @@ def getSTAGE4cmd(srcpkg_path):
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
     pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, 'BUILDBINprepend')
     win_archs = None
     if sys.platform == "win32":
-        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, 'BUILDBINprepend.win')
-        if prepend_win != None:
-            prepend = prepend_win
         if BBSvars.STAGE5_mode == "multiarch":
             win_archs = _supportedWinArchs(pkg)
     cmd = _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
+    prepend = _get_prepend_from_BBSoptions('BUILDBIN')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd

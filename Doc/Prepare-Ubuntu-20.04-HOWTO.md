@@ -301,7 +301,7 @@ capabilities will be missing):
     cwltool (for Rcwl)
     libglpk-dev (for glpkAPI and to compile igraph with GLPK support)
 
-    graphviz and libgraphviz-dev (for RGraphviz)
+    graphviz and libgraphviz-dev (for Rgraphviz)
     libgtkmm-2.4-dev (for HilbertVisGUI)
     libgsl-dev (for all the packages that depend on the GSL)
     libsbml5-dev (for rsbml)
