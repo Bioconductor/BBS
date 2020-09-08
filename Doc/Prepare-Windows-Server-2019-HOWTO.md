@@ -236,6 +236,9 @@ Open the MiKTeX Console by going to the Windows start menu:
 - Switch to administrator mode
 - In Settings: select "Always install missing packages on-the-fly" and make
   sure that "For anyone who uses this computer (all users)" is NOT checked
+  (otherwise running `R CMD build` from a non-admin account like biocbuild
+  will fail to install missing packages on-the-fly because it doesn't have
+  admin privileges)
 - In Updates: click on "Check for updates", and, if any updates,
   click on "Update now"
 
