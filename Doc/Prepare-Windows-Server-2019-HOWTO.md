@@ -234,8 +234,8 @@ We're going to do this from the MiKTeX Console.
 Open the MiKTeX Console by going to the Windows start menu:
 
 - Switch to administrator mode
-- In Settings: select "Always install missing packages on-the-fly" and
-  check "For anyone who uses this computer (all users)"
+- In Settings: select "Always install missing packages on-the-fly" and make
+  sure that "For anyone who uses this computer (all users)" is NOT checked
 - In Updates: click on "Check for updates", and, if any updates,
   click on "Update now"
 
