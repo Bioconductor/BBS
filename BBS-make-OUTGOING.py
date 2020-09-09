@@ -35,7 +35,7 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         dcf = open(summary_file, 'rb')
     except IOError:
         return True
-    status = bbs.parse.getNextDcfVal(dcf, 'Status')
+    status = bbs.parse.get_next_DCF_val(dcf, 'Status')
     dcf.close()
     if status != 'OK':
         return True
@@ -51,7 +51,7 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         dcf = open(summary_file, 'rb')
     except IOError:
         return True
-    status = bbs.parse.getNextDcfVal(dcf, 'Status')
+    status = bbs.parse.get_next_DCF_val(dcf, 'Status')
     dcf.close()
     if status not in ["OK", "WARNINGS"]:
         return True
@@ -65,7 +65,7 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         dcf = open(summary_file, 'rb')
     except IOError:
         return True
-    status = bbs.parse.getNextDcfVal(dcf, 'Status')
+    status = bbs.parse.get_next_DCF_val(dcf, 'Status')
     dcf.close()
     return status != 'OK'
 

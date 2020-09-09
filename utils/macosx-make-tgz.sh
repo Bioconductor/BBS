@@ -33,11 +33,11 @@ if [ "x$1" == "x" ] || [ "x$2" != "x" ]; then
 	print_usage
 fi
 
-pkg_dirpath="$1"
+pkgsrctree="$1"
 
-#pkg_dirname=`echo "$pkg_dirpath" | sed 's/.*\///'`
+#pkgsrctree=`echo "$pkgsrctree" | sed 's/.*\///'`
 
-desc_file="$pkg_dirpath/DESCRIPTION"
+desc_file="$pkgsrctree/DESCRIPTION"
 DESCFIELD_PARSER="^.*:[[:space:]]*([^[:space:]]+)[[:space:]]*$"
 line=`grep -E "^Package:" $desc_file`
 pkgname=`echo $line | sed -E "s/$DESCFIELD_PARSER/\1/"`
@@ -45,9 +45,9 @@ line=`grep -E "^Version:" $desc_file`
 pkgversion=`echo $line | sed -E "s/$DESCFIELD_PARSER/\1/"`
 tgz_file="${pkgname}_${pkgversion}.tgz"
 
-chmod -R ug+w "$pkg_dirpath" # Just because Simon does it
+chmod -R ug+w "$pkgsrctree" # Just because Simon does it
 
-$CHOWNROOTADMIN "$pkg_dirpath" # Change the ownerchip to root:admin
+$CHOWNROOTADMIN "$pkgsrctree" # Change the ownerchip to root:admin
 
-tar zcf "$tgz_file" -C "$pkg_dirpath/.." "$pkgname"
+tar zcf "$tgz_file" -C "$pkgsrctree/.." "$pkgname"
 

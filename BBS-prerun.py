@@ -48,43 +48,48 @@ def build_meat_index(pkgs, meat_path):
     skipped = open(skipped_index_path, 'w')
     nskipped = 0
     for pkg in pkgs:
-        pkgdir_path = os.path.join(meat_path, pkg)
-        if BBScorevars.subbuilds == "bioc-longtests" and \
-           bbs.parse.getBBSoptionFromDir(pkgdir_path, 'RunLongTests') != "TRUE":
-            continue
+        pkgsrctree = os.path.join(meat_path, pkg)
+        if BBScorevars.subbuilds == "bioc-longtests":
+           run_long_tests = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                          pkgsrctree,
+                                          'RunLongTests')
+           if run_long_tests != "TRUE":
+               continue
         try:
-            package = bbs.parse.getPkgFromDir(pkgdir_path)
-            version = bbs.parse.getVersionFromDir(pkgdir_path)
+            pkgname = bbs.parse.get_Package_from_pkgsrctree(pkgsrctree)
+            version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
             if BBScorevars.subbuilds != "cran":
-                maintainer = bbs.parse.getMaintainerFromDir(pkgdir_path)
-                maintainer_email = bbs.parse.getMaintainerEmailFromDir(pkgdir_path)
+                maintainer = bbs.parse.get_Maintainer_name_from_pkgsrctree(pkgsrctree)
+                maintainer_email = bbs.parse.get_Maintainer_email_from_pkgsrctree(pkgsrctree)
             else:
-                maintainer = bbs.parse._getMaintainerFromDir(pkgdir_path)
+                maintainer = bbs.parse.get_Maintainer_from_pkgsrctree(pkgsrctree)
         except IOError:
-            print("BBS>   Missing DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path)
+            print("BBS>   Missing DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgsrctree)
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
             continue
         except (bbs.parse.DcfFieldNotFoundError, bbs.dcf.dcfrecordsparser.DCFParseError):
-            print("BBS>   Bad DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgdir_path)
+            print("BBS>   Bad DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgsrctree)
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
             continue
-        if package != pkg:
-            desc_file = bbs.parse.getDescFile(pkgdir_path)
-            print("BBS>   Unexpected 'Package: %s' in '%s'. Skip it!" % (package, desc_file))
+        if pkgname != pkg:
+            DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
+            print("BBS>   Unexpected 'Package: %s' in '%s'. Skip it!" % \
+                  (pkgname, DESCRIPTION_path))
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
             nskipped = nskipped + 1
             continue
-        if not bbs.parse.versionIsValid(version):
-            desc_file = bbs.parse.getDescFile(pkgdir_path)
-            print("BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % (version, desc_file))
+        if not bbs.parse.version_is_valid(version):
+            DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
+            print("BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % \
+                  (version, DESCRIPTION_path))
             sys.stdout.flush()
             skipped.write('Package: %s\n' % pkg)
             skipped.write('\n')
@@ -95,20 +100,26 @@ def build_meat_index(pkgs, meat_path):
         out.write('Maintainer: %s\n' % maintainer)
         if BBScorevars.subbuilds != "cran":
             out.write('MaintainerEmail: %s\n' % maintainer_email)
-        package_status = bbs.parse.getPackageStatusFromDir(pkgdir_path)
+        package_status = bbs.parse.get_PackageStatus_pkgsrctree(pkgsrctree)
         out.write('PackageStatus: %s\n' % package_status)
-        unsupported = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'UnsupportedPlatforms')
+        unsupported = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                    pkgsrctree,
+                                    'UnsupportedPlatforms')
         out.write('UnsupportedPlatforms: %s\n' % unsupported)
-        no_examples = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'NoExamplesOnPlatforms')
+        no_examples = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                    pkgsrctree,
+                                    'NoExamplesOnPlatforms')
         out.write('NoExamplesOnPlatforms: %s\n' % no_examples)
-        force_install = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'ForceInstall')
+        force_install = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                    pkgsrctree,
+                                    'ForceInstall')
         out.write('ForceInstall: %s\n' % force_install)
         if BBScorevars.subbuilds != "cran":
-            alert = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'Alert')
+            alert = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'Alert')
             out.write('Alert: %s\n' % alert)
-            alert_on = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'AlertOn')
+            alert_on = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'AlertOn')
             out.write('AlertOn: %s\n' % alert_on)
-            alert_to = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'AlertTo')
+            alert_to = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'AlertTo')
             out.write('AlertTo: %s\n' % alert_to)
         out.write('\n')
         nout = nout + 1
@@ -173,9 +184,9 @@ def collect_vcs_meta(snapshot_date):
         bbs.jobs.doOrDie(cmd)
         ## Create svn-info file for each package
         for pkg in pkgs:
-            pkgdir_path = os.path.join(MEAT0_path, pkg)
+            pkgsrctree = os.path.join(MEAT0_path, pkg)
             svninfo_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
-            cmd = '%s info %s >%s' % (vcs_cmd, pkgdir_path, svninfo_file)
+            cmd = '%s info %s >%s' % (vcs_cmd, pkgsrctree, svninfo_file)
             bbs.jobs.doOrDie(cmd)
         update_svnlog()
     if vcs == 'git':
@@ -187,8 +198,8 @@ def collect_vcs_meta(snapshot_date):
         dcf.close()
         all_pkgs = pkgs + skipped_pkgs
         for pkg in all_pkgs:
-            pkgdir_path = os.path.join(MEAT0_path, pkg)
-            git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgdir_path)
+            pkgsrctree = os.path.join(MEAT0_path, pkg)
+            git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgsrctree)
             gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
             gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
             date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
@@ -298,7 +309,7 @@ def extractSrcPkgTarballs(dest_dir):
     bbs.fileutils.remake_dir(dest_dir)
     pkgs = []
     for srcpkg_file in srcpkg_files:
-        pkg = bbs.parse.getPkgFromPath(srcpkg_file)
+        pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_file)
         srcpkg_filepath = os.path.join(MEAT0_path, srcpkg_file)
         BBSbase.Untar(srcpkg_filepath, dest_dir)
         pkgs.append(pkg)
@@ -335,26 +346,26 @@ def MakeReposPACKAGES(rdir):
 ## Make the target-repo and populate it with the no-vignettes srcpkg files.
 ##############################################################################
 
-def prepare_STAGE1_job_queue(pkgdir_paths, dest_rdir):
+def prepare_STAGE1_job_queue(pkgsrctrees, dest_rdir):
     print("BBS> Preparing STAGE1 job queue ... ", end=" ")
     stage = 'buildnovig'
     jobs = []
-    for pkgdir_path in pkgdir_paths:
+    for pkgsrctree in pkgsrctrees:
         try:
-            pkg = bbs.parse.getPkgFromDir(pkgdir_path)
-            version = bbs.parse.getVersionFromDir(pkgdir_path)
-            srcpkg_file = bbs.parse.getSrcPkgFileFromDir(pkgdir_path)
+            pkg = bbs.parse.get_Package_from_pkgsrctree(pkgsrctree)
+            version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
+            srcpkg_file = bbs.parse.make_srcpkg_file_from_pkgsrctree(pkgsrctree)
         except IOError:
             print("BBS>   Can't read DESCRIPTION file!")
         else:
-            cmd = BBSbase.getSTAGE1cmd(pkgdir_path)
+            cmd = BBSbase.getSTAGE1cmd(pkgsrctree)
             pkgdumps_prefix = pkg + '.' + stage;
             pkgdumps = BBSbase.PkgDumps(srcpkg_file, pkgdumps_prefix)
             job = BBSbase.BuildPkg_Job(pkg, version, cmd, pkgdumps, dest_rdir)
             jobs.append(job)
     print("OK")
     job_queue = bbs.jobs.JobQueue(stage, jobs, None)
-    job_queue._total = len(pkgdir_paths)
+    job_queue._total = len(pkgsrctrees)
     return job_queue
 
 def STAGE1_loop(job_queue, nb_cpu):
@@ -388,9 +399,9 @@ def makeTargetRepo(rdir):
     print("BBS> [makeTargetRepo] Get list of pkgs from %s" % BBScorevars.meat_index_file)
     meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
     dcf = open(meat_index_path, 'rb')
-    pkgdir_paths = bbs.parse.readPkgsFromDCF(dcf)
+    pkgsrctrees = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
-    job_queue = prepare_STAGE1_job_queue(pkgdir_paths, rdir)
+    job_queue = prepare_STAGE1_job_queue(pkgsrctrees, rdir)
     ## STAGE1 will run 'tar zcf' commands to generate the no-vignettes source
     ## tarballs. Running too many concurrent 'tar zcf' commands seems harmful
     ## so we limit the nb of cpus to 2.

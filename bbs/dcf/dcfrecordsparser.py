@@ -8,8 +8,8 @@ import time
 This file contains two main classes: DcfRecordParser 
 and DcfRecordsParser. DcfRecordParser can parse a single
 DCF record; DcfRecordsParser separates multiple records 
-and hands them off to DcfRecordParser. Unlike the previous
-implementation of getNextDcfVal() in bbs.parse, this can
+and hands them off to DcfRecordParser. Unlike the
+implementation of get_next_DCF_val() in bbs.parse, this can
 handle continuation lines (newlines are stripped from the
 result).
 
@@ -17,7 +17,7 @@ To take advantage of this, current code like this:
 
     summary_file = os.path.join(buildsrc_path, summary_file0 % 'buildsrc')
     dcf = open(summary_file, 'r')
-    status = bbs.parse.getNextDcfVal(dcf, 'Status')
+    status = bbs.parse.get_next_DCF_val(dcf, 'Status')
 
 ...should be changed to:
 

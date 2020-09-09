@@ -220,7 +220,7 @@ def get_pkg_field_from_meat_index(pkg, field):
 
 def get_status(dcf, pkg, node_id, stage):
     key = '%s#%s#%s' % (pkg, node_id, stage)
-    status = bbs.parse.getNextDcfVal(dcf, key, full_line=True)
+    status = bbs.parse.get_next_DCF_val(dcf, key, full_line=True)
     return status
 
 def get_propagation_status_from_db(pkg, node_id):
@@ -260,7 +260,7 @@ def get_distinct_statuses_from_db(pkg, nodes=None):
 
 def WReadDcfVal(rdir, file, field, full_line=False):
     dcf = rdir.WOpen(file)
-    val = bbs.parse.getNextDcfVal(dcf, field, full_line)
+    val = bbs.parse.get_next_DCF_val(dcf, field, full_line)
     dcf.close()
     return val
 

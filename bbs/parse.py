@@ -41,7 +41,7 @@ def bytes2str(line):
 ###   - if full_line is False: it ends at the first whitespace following
 ###     the start of the value.
 ###   - if the value is empty, return ""
-def getNextDcfFieldVal(dcf, full_line=False):
+def get_next_DCF_fieldval(dcf, full_line=False):
     if full_line:
         val_regex = '\\S.*'
     else:
@@ -58,7 +58,7 @@ def getNextDcfFieldVal(dcf, full_line=False):
     return None
 
 ### Get the next value of the field specified by the user from a DCF file.
-def getNextDcfVal(dcf, field, full_line=False):
+def get_next_DCF_val(dcf, field, full_line=False):
     if full_line:
         val_regex = '\\S.*'
     else:
@@ -77,46 +77,46 @@ def getNextDcfVal(dcf, field, full_line=False):
         return val
     return None
 
-def getDescFile(pkg_dir):
-    return os.path.join(pkg_dir, 'DESCRIPTION')
+def get_DESCRIPTION_path(pkgsrctree):
+    return os.path.join(pkgsrctree, 'DESCRIPTION')
 
-def getPkgFromDir(pkg_dir):
-    desc_file = getDescFile(pkg_dir)
+def get_Package_from_pkgsrctree(pkgsrctree):
+    desc_file = get_DESCRIPTION_path(pkgsrctree)
     dcf = open(desc_file, 'rb')
-    pkg = getNextDcfVal(dcf, 'Package')
+    pkg = get_next_DCF_val(dcf, 'Package')
     dcf.close()
     if pkg == None:
         raise DcfFieldNotFoundError(desc_file, 'Package')
     return pkg
 
-def getVersionFromDir(pkg_dir):
-    desc_file = getDescFile(pkg_dir)
+def get_Version_from_pkgsrctree(pkgsrctree):
+    desc_file = get_DESCRIPTION_path(pkgsrctree)
     dcf = open(desc_file, 'rb')
-    version = getNextDcfVal(dcf, 'Version')
+    version = get_next_DCF_val(dcf, 'Version')
     dcf.close()
     if version == None:
         raise DcfFieldNotFoundError(desc_file, 'Version')
     return version
 
-def versionIsValid(version_string):
+def version_is_valid(version_string):
     version_regex = '^[0-9]+([.-][0-9]+)*$'
     p = re.compile(version_regex)
     m = p.match(version_string)
     return m != None
 
-def getPackageStatusFromDir(pkg_dir):
-    desc_file = getDescFile(pkg_dir)
+def get_PackageStatus_pkgsrctree(pkgsrctree):
+    desc_file = get_DESCRIPTION_path(pkgsrctree)
     dcf = open(desc_file, 'rb')
-    version = getNextDcfVal(dcf, 'PackageStatus')
+    version = get_next_DCF_val(dcf, 'PackageStatus')
     dcf.close()
     if version == None:
         return "OK"
     return version
 
-def _getMaintainerFromDir(pkg_dir):
+def get_Maintainer_from_pkgsrctree(pkgsrctree):
     r_home = os.environ['BBS_R_HOME']
     BBS_home = os.environ['BBS_HOME']
-    desc_file = getDescFile(pkg_dir)
+    desc_file = get_DESCRIPTION_path(pkgsrctree)
     FNULL = open(os.devnull, 'w')
     Rscript_cmd = os.path.join(r_home, "bin", "Rscript")
     script_path = os.path.join(BBS_home, "utils", "getMaintainer.R")
@@ -126,8 +126,8 @@ def _getMaintainerFromDir(pkg_dir):
         raise DcfFieldNotFoundError(desc_file, 'Maintainer')
     return maintainer
 
-def getMaintainerFromDir(pkg_dir):
-    maintainer = _getMaintainerFromDir(pkg_dir)
+def get_Maintainer_name_from_pkgsrctree(pkgsrctree):
+    maintainer = get_Maintainer_from_pkgsrctree(pkgsrctree)
     regex = '(.*\S)\s*<(.*)>\s*'
     p = re.compile(regex)
     m = p.match(maintainer)
@@ -135,23 +135,23 @@ def getMaintainerFromDir(pkg_dir):
         maintainer = m.group(1)
     return maintainer
 
-def getMaintainerEmailFromDir(pkg_dir):
-    maintainer = _getMaintainerFromDir(pkg_dir)
+def get_Maintainer_email_from_pkgsrctree(pkgsrctree):
+    maintainer = get_Maintainer_from_pkgsrctree(pkgsrctree)
     regex = '(.*\S)\s*<(.*)>\s*'
     p = re.compile(regex)
     m = p.match(maintainer)
     if m:
         email = m.group(2)
     else:
-        #email = None
-        raise DcfFieldNotFoundError(getDescFile(pkg_dir), 'Maintainer email')
+        DESCRIPTION_path = get_DESCRIPTION_path(pkgsrctree)
+        raise DcfFieldNotFoundError(DESCRIPTION_path, 'Maintainer email')
     return email
 
-def getBBSoptionFromDir(pkg_dir, key):
+def get_BBSoption_from_pkgsrctree(pkgsrctree, key):
+    option_file = os.path.join(pkgsrctree, '.BBSoptions')
     try:
-        option_file = os.path.join(pkg_dir, '.BBSoptions')
         dcf = open(option_file, 'rb')
-        val = getNextDcfVal(dcf, key, True)
+        val = get_next_DCF_val(dcf, key, True)
         dcf.close()
     except IOError:
         val = None
@@ -160,11 +160,11 @@ def getBBSoptionFromDir(pkg_dir, key):
 def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
     pkg2 = ""
     while pkg2 != pkg:
-        pkg2 = getNextDcfVal(dcf, 'Package', False)
+        pkg2 = get_next_DCF_val(dcf, 'Package', False)
         if pkg2 == None:
             print("ERROR: Can't find package '%s' in DCF file '%s'!" % (pkg, data_desc))
             raise DcfFieldNotFoundError(data_desc, 'Package')
-    val = getNextDcfVal(dcf, field, True)
+    val = get_next_DCF_val(dcf, field, True)
     if val == None:
         print("ERROR: Can't find field '%s' for package '%s' in DCF file '%s'!" % (field, pkg, data_desc))
         raise DcfFieldNotFoundError(data_desc, field)
@@ -176,12 +176,12 @@ def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
 def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
     pkgs = []
     while True:
-        pkg = getNextDcfVal(dcf, 'Package')
+        pkg = get_next_DCF_val(dcf, 'Package')
         if not pkg:
             break
         supported = True
         if node_id or pkgType:
-            unsupported = getNextDcfVal(dcf, 'UnsupportedPlatforms', True)
+            unsupported = get_next_DCF_val(dcf, 'UnsupportedPlatforms', True)
             for x in unsupported.split(","):
                 x = x.strip()
                 if x in ["", "None", "NA"]:
@@ -204,25 +204,25 @@ def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
             pkgs.append(pkg)
     return pkgs
 
-### Return the name of the srcpkg file that would result
-### from building the pkg found at pkg_dir.
-def getSrcPkgFileFromDir(pkg_dir):
-    pkg = getPkgFromDir(pkg_dir)
-    version = getVersionFromDir(pkg_dir)
-    srcpkg_file = pkg + '_' + version + '.tar.gz'
+### Return the name of the package source tarball that would result
+### from building the package found at 'pkgsrctree'.
+def make_srcpkg_file_from_pkgsrctree(pkgsrctree):
+    pkgname = get_Package_from_pkgsrctree(pkgsrctree)
+    version = get_Version_from_pkgsrctree(pkgsrctree)
+    srcpkg_file = '%s_%s.tar.gz' % (pkgname, version)
     return srcpkg_file
 
-### srcpkg_path must be a path to a package source tarball (.tar.gz file).
-def getPkgFromPath(srcpkg_path):
+### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
+def get_pkgname_from_srcpkg_path(srcpkg_path):
     srcpkg_file = os.path.basename(srcpkg_path)
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
     p = re.compile(srcpkg_regex)
     m = p.match(srcpkg_file)
-    pkg = m.group(1)
-    return pkg
+    pkgname = m.group(1)
+    return pkgname
 
-### srcpkg_path must be a path to a srcpkg file (.tar.gz file).
-def getVersionFromPath(srcpkg_path):
+### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
+def get_version_from_srcpkg_path(srcpkg_path):
     srcpkg_file = os.path.basename(srcpkg_path)
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
     p = re.compile(srcpkg_regex)
@@ -234,10 +234,10 @@ def getVersionFromPath(srcpkg_path):
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     # git-log
     dcf = open(gitlog_file, 'rb')
-    git_url = getNextDcfVal(dcf, 'URL')
-    git_branch = getNextDcfVal(dcf, 'Branch')
-    git_last_commit = getNextDcfVal(dcf, 'Last Commit')
-    git_last_commit_date = getNextDcfVal(dcf, 'Last Changed Date')
+    git_url = get_next_DCF_val(dcf, 'URL')
+    git_branch = get_next_DCF_val(dcf, 'Branch')
+    git_last_commit = get_next_DCF_val(dcf, 'Last Commit')
+    git_last_commit_date = get_next_DCF_val(dcf, 'Last Changed Date')
     dcf.close()
     if git_url == None:
         raise DcfFieldNotFoundError(gitlog_file, 'URL')

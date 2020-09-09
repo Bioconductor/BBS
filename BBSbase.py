@@ -55,15 +55,17 @@ def Rscript2syscmd(Rscript, Roptions=None):
 ### (STAGE3 and STAGE5), and checking (STAGE4) each package.
 ##############################################################################
 
-def _get_prepend_from_BBSoptions(key_prefix):
+def _get_prepend_from_BBSoptions(pkgsrctree, key_prefix):
     key = key_prefix + 'prepend'
-    prepend = bbs.parse.getBBSoptionFromDir(pkg, key)
+    prepend = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, key)
     if sys.platform == "win32":
-        prepend_win = bbs.parse.getBBSoptionFromDir(pkg, key + '.win')
+        key2 = key + '.win'
+        prepend_win = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, key2)
         if prepend_win != None:
             prepend = prepend_win
     elif sys.platform == "darwin":
-        prepend_mac = bbs.parse.getBBSoptionFromDir(pkg, key + '.mac')
+        key2 = key + '.mac'
+        prepend_mac = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, key2)
         if prepend_mac != None:
             prepend = prepend_mac
     return prepend
@@ -78,9 +80,11 @@ def _BiocGreaterThanOrEqualTo(x, y):
     y0 = int(parts[1])
     return x0 > x or (x0 == x and y0 >= y)
 
-def _noExampleArchs(pkg):
+def _noExampleArchs(pkgsrctree):
     archs = []
-    no_examples = bbs.parse.getBBSoptionFromDir(pkg, 'NoExamplesOnPlatforms')
+    no_examples = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                pkgsrctree,
+                                'NoExamplesOnPlatforms')
     if no_examples == None:
         return archs
     no_examples = no_examples.replace(" ", "").split(",")
@@ -104,10 +108,11 @@ def _noExampleArchs(pkg):
 # to explain the above.
     return archs
 
-### 'pkgdir_path' must be the path to a package source tree.
-def _supportedWinArchs(pkgdir_path):
+def _supportedWinArchs(pkgsrctree):
     archs = []
-    unsupported = bbs.parse.getBBSoptionFromDir(pkgdir_path, 'UnsupportedPlatforms')
+    unsupported = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                pkgsrctree,
+                                'UnsupportedPlatforms')
     if unsupported == None:
         unsupported = []
     else:
@@ -134,7 +139,7 @@ def _get_RINSTALL_cmd0(win_archs=None):
 
 ### 'srcpkg_path' must be the path to a package source tarball.
 def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
-    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     pkg_instdir = "%s.buildbin-libdir" % pkg
     if sys.platform != "darwin":
         ## Generate the command for Windows or Linux. Note that this command
@@ -147,11 +152,10 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
     cmd = 'rm -rf %s && mkdir %s && %s' % (pkg_instdir, pkg_instdir, cmd)
     return cmd
 
-### 'pkgdir_path' must be the path to a package source tree.
-def _get_Rbuild_cmd(pkgdir_path):
+def _get_Rbuild_cmd(pkgsrctree):
     arch = ""
     if sys.platform == "win32":
-        win_archs = _supportedWinArchs(pkgdir_path)
+        win_archs = _supportedWinArchs(pkgsrctree)
         if len(win_archs) == 1:
             arch = " --arch %s" % win_archs[0]
     cmd = '%s%s CMD build' % (BBSvars.r_cmd, arch)
@@ -161,10 +165,10 @@ def _get_Rbuild_cmd(pkgdir_path):
         ## tar problem ("file changed as we read it") observed so far on
         ## Windows Server 2008 R2 Enterprise (64-bit) only.
         ## Traversing the package source tree, with e.g. a call to
-        ## 'chmod a+r pkgdir_path -R', just before we try to build the
+        ## 'chmod a+r <pkgsrctree> -R', just before we try to build the
         ## package seems to "fix" the state of the filesystem and to
         ## make 'tar' work again on it.
-        cmd = 'chmod a+r ' + pkgdir_path + ' -R && ' + cmd
+        cmd = 'chmod a+r ' + pkgsrctree + ' -R && ' + cmd
     common_opts = ["--keep-empty-dirs", "--no-resave-data"]
     if BBScorevars.subbuilds == "bioc-longtests":
         common_opts += ["--no-build-vignettes", "--no-manual"]
@@ -194,12 +198,12 @@ def _get_Rcheck_cmd0(win_archs=None):
 ### there doesn't seem to be any option for turning off the evaluation of the
 ### \Sexpr. So, for now, we build the "light" source tarball "by hand" i.e.
 ### we just use 'tar zcf'.
-def getSTAGE1cmd(pkgdir_path):
-    #cmd = _get_Rbuild_cmd(pkgdir_path) + ' --no-build-vignettes ' + pkgdir_path
+def getSTAGE1cmd(pkgsrctree):
+    #cmd = _get_Rbuild_cmd(pkgsrctree) + ' --no-build-vignettes ' + pkgsrctree
     key = 'BBS_TAR_CMD'
     tar_cmd = os.environ[key]
-    srcpkg_file = bbs.parse.getSrcPkgFileFromDir(pkgdir_path)
-    cmd = '%s zcf %s %s' % (tar_cmd, srcpkg_file, pkgdir_path)
+    srcpkg_file = bbs.parse.make_srcpkg_file_from_pkgsrctree(pkgsrctree)
+    cmd = '%s zcf %s %s' % (tar_cmd, srcpkg_file, pkgsrctree)
     return cmd
 
 def _install_is_multiarch():
@@ -255,15 +259,14 @@ def getSTAGE2cmd(pkg, version):
                   'rm %s %s' % (srcpkg_file, zip_file)
         else:
             cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
-    prepend = _get_prepend_from_BBSoptions('INSTALL')
+    prepend = _get_prepend_from_BBSoptions(pkg, 'INSTALL')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
-### 'pkgdir_path' must be the path to a package source tree.
-def getSTAGE3cmd(pkgdir_path):
-    cmd =  _get_Rbuild_cmd(pkgdir_path) + ' ' + pkgdir_path
-    prepend = _get_prepend_from_BBSoptions('BUILD')
+def getSTAGE3cmd(pkgsrctree):
+    cmd =  _get_Rbuild_cmd(pkgsrctree) + ' ' + pkgsrctree
+    prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'BUILD')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
@@ -285,12 +288,12 @@ def getSTAGE3cmd(pkgdir_path):
 ### 'packages writing to "library" directory during their tests' (Feb 2018).
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
-    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     if sys.platform != "win32":
         win_archs = None
     else:
         if BBSvars.STAGE4_mode == "multiarch":
-            win_archs = _supportedWinArchs(pkg)
+            win_archs = _supportedWinArchs(srcpkg_path)
         else:
             win_archs = []
     cmd0 = _get_Rcheck_cmd0(win_archs)
@@ -332,12 +335,12 @@ def getSTAGE4cmd(srcpkg_path):
         ## means that _noExampleArchs() may not be returning useful results
         ## if the intent is to not run examples for a particular Windows
         ## sub-architecture.
-        no_example_archs = _noExampleArchs(pkg)
+        no_example_archs = _noExampleArchs(pkgsrctree)
         if sys.platform in no_example_archs:
             common_opts += ["--no-examples"]
     common_opts = ' '.join(common_opts)
     cmd = '%s %s %s' % (cmd0, common_opts, srcpkg_path)
-    prepend = _get_prepend_from_BBSoptions('CHECK')
+    prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'CHECK')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
@@ -348,13 +351,13 @@ def getSTAGE4cmd(srcpkg_path):
 ### but would also produce a .zip file with no vignettes in it.
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
-    pkg = bbs.parse.getPkgFromPath(srcpkg_path)
+    pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     win_archs = None
     if sys.platform == "win32":
         if BBSvars.STAGE5_mode == "multiarch":
-            win_archs = _supportedWinArchs(pkg)
+            win_archs = _supportedWinArchs(pkgsrctree)
     cmd = _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
-    prepend = _get_prepend_from_BBSoptions('BUILDBIN')
+    prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'BUILDBIN')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd

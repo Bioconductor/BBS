@@ -14,7 +14,7 @@ home = os.path.expanduser('~')
 manifest_git_clone = os.path.join(home, 'git.bioconductor.org', 'manifest')
 manifest_git_repo_url = 'git@%s:admin/manifest.git' % gitserver
 
-def update_packages(pkg_dir, pkgs, pkg_git_branch=None, skip=None):
+def update_packages(pkgsrctree, pkgs, pkg_git_branch=None, skip=None):
     if skip == None:
         skip = 0
     i = 0
@@ -26,7 +26,7 @@ def update_packages(pkg_dir, pkgs, pkg_git_branch=None, skip=None):
         print('BBS> [update_packages] (%d/%d) repo: %s / branch: %s' % \
               (i, len(pkgs), pkg, pkg_git_branch))
         print()
-        pkg_git_clone = os.path.join(pkg_dir, pkg)
+        pkg_git_clone = os.path.join(pkgsrctree, pkg)
         pkg_git_repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
         bbs.gitutils.update_git_clone(pkg_git_clone, pkg_git_repo_url,
                                       pkg_git_branch)
@@ -63,7 +63,7 @@ def update_manifest(manifest_git_branch=None):
                                   manifest_git_branch)
     return
 
-def update_packages_from_manifest(pkg_dir, manifest_file,
+def update_packages_from_manifest(pkgsrctree, manifest_file,
                                   pkg_git_branch=None,
                                   manifest_git_branch=None,
                                   skip=None):
@@ -72,24 +72,24 @@ def update_packages_from_manifest(pkg_dir, manifest_file,
     update_manifest(manifest_git_branch)
     manifest_path = os.path.join(manifest_git_clone, manifest_file)
     pkgs = bbs.manifest.read(manifest_path)
-    update_packages(pkg_dir, pkgs, pkg_git_branch, skip)
+    update_packages(pkgsrctree, pkgs, pkg_git_branch, skip)
     return
 
 def update_software(pkg_git_branch=None, manifest_git_branch=None, skip=None):
-    pkg_dir = os.path.join(home, 'git.bioconductor.org', 'software')
-    update_packages_from_manifest(pkg_dir, 'software.txt',
+    pkgsrctree = os.path.join(home, 'git.bioconductor.org', 'software')
+    update_packages_from_manifest(pkgsrctree, 'software.txt',
                                   pkg_git_branch, manifest_git_branch, skip)
     return
 
 def update_data_experiment(pkg_git_branch=None, manifest_git_branch=None, skip=None):
-    pkg_dir = os.path.join(home, 'git.bioconductor.org', 'data-experiment')
-    update_packages_from_manifest(pkg_dir, 'data-experiment.txt',
+    pkgsrctree = os.path.join(home, 'git.bioconductor.org', 'data-experiment')
+    update_packages_from_manifest(pkgsrctree, 'data-experiment.txt',
                                   pkg_git_branch, manifest_git_branch, skip)
     return
 
 def update_workflows(pkg_git_branch=None, manifest_git_branch=None, skip=None):
-    pkg_dir = os.path.join(home, 'git.bioconductor.org', 'workflows')
-    update_packages_from_manifest(pkg_dir, 'workflows.txt',
+    pkgsrctree = os.path.join(home, 'git.bioconductor.org', 'workflows')
+    update_packages_from_manifest(pkgsrctree, 'workflows.txt',
                                   pkg_git_branch, manifest_git_branch, skip)
     return
 

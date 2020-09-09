@@ -633,7 +633,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
               node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
     while True:
-        field_val = bbs.parse.getNextDcfFieldVal(dcf, True)
+        field_val = bbs.parse.get_next_DCF_fieldval(dcf, True)
         if not field_val:
             break
         if field_val[0] == 'Status':
@@ -1106,7 +1106,7 @@ def read_Rversion(Node_rdir):
 def get_Rconfig_value_from_file(Node_rdir, var):
     filename = 'NodeInfo/R-config.txt'
     dcf = Node_rdir.WOpen(filename)
-    val = bbs.parse.getNextDcfVal(dcf, var, True)
+    val = bbs.parse.get_next_DCF_val(dcf, var, True)
     dcf.close()
     if val == None:
         filename = '%s/%s' % (Node_rdir.label, filename)

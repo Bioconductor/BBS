@@ -151,8 +151,8 @@ def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
             dcf = open(summary_file, 'rb')
         except IOError:
             continue
-        status = bbs.parse.getNextDcfVal(dcf, 'Status')
-        srcpkg_file = bbs.parse.getNextDcfVal(dcf, 'PackageFile')
+        status = bbs.parse.get_next_DCF_val(dcf, 'Status')
+        srcpkg_file = bbs.parse.get_next_DCF_val(dcf, 'PackageFile')
         dcf.close()
         if status in ok_statuses:
             srcpkg_files.append(srcpkg_file)
@@ -304,7 +304,7 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
         pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(None, pkgdumps_prefix)
         if pkg in target_pkgs:
-            version = bbs.parse.getVersionFromDir(pkg)
+            version = bbs.parse.get_Version_from_pkgsrctree(pkg)
             cmd = BBSbase.getSTAGE2cmd(pkg, version)
             nb_target_pkgs_in_queue += 1
         else:
@@ -452,20 +452,20 @@ def STAGE2():
 ## STAGE3: Build the srcpkg files.
 ##############################################################################
 
-def prepare_STAGE3_job_queue(pkgdir_paths):
+def prepare_STAGE3_job_queue(pkgsrctrees):
     print("BBS> Preparing STAGE3 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'buildsrc'
     jobs = []
-    for pkgdir_path in pkgdir_paths:
+    for pkgsrctree in pkgsrctrees:
         try:
-            pkg = bbs.parse.getPkgFromDir(pkgdir_path)
-            version = bbs.parse.getVersionFromDir(pkgdir_path)
-            srcpkg_file = bbs.parse.getSrcPkgFileFromDir(pkgdir_path)
+            pkg = bbs.parse.get_Package_from_pkgsrctree(pkgsrctree)
+            version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
+            srcpkg_file = bbs.parse.make_srcpkg_file_from_pkgsrctree(pkgsrctree)
         except IOError:
             print("BBS>   Can't read DESCRIPTION file!")
         else:
-            cmd = BBSbase.getSTAGE3cmd(pkgdir_path)
+            cmd = BBSbase.getSTAGE3cmd(pkgsrctree)
             pkgdumps_prefix = pkg + '.' + stage
             pkgdumps = BBSbase.PkgDumps(srcpkg_file, pkgdumps_prefix)
             job = BBSbase.BuildPkg_Job(pkg, version, cmd,
@@ -474,7 +474,7 @@ def prepare_STAGE3_job_queue(pkgdir_paths):
     print("OK")
     sys.stdout.flush()
     job_queue = bbs.jobs.JobQueue(stage, jobs, None)
-    job_queue._total = len(pkgdir_paths)
+    job_queue._total = len(pkgsrctrees)
     return job_queue
 
 def STAGE3_loop(job_queue, nb_cpu):
@@ -530,8 +530,8 @@ def prepare_STAGE4_job_queue(srcpkg_paths):
     jobs = []
     for srcpkg_path in srcpkg_paths:
         cmd = BBSbase.getSTAGE4cmd(srcpkg_path)
-        pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-        version = bbs.parse.getVersionFromPath(srcpkg_path)
+        pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
+        version = bbs.parse.get_version_from_srcpkg_path(srcpkg_path)
         check_dir = pkg + '.Rcheck'
         pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(check_dir, pkgdumps_prefix)
@@ -585,8 +585,8 @@ def prepare_STAGE5_job_queue(srcpkg_paths):
     jobs = []
     for srcpkg_path in srcpkg_paths:
         cmd = BBSbase.getSTAGE5cmd(srcpkg_path)
-        pkg = bbs.parse.getPkgFromPath(srcpkg_path)
-        version = bbs.parse.getVersionFromPath(srcpkg_path)
+        pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
+        version = bbs.parse.get_version_from_srcpkg_path(srcpkg_path)
         fileext = BBScorevars.getNodeSpec(BBSvars.node_hostname, 'pkgFileExt')
         binpkg_file = "%s_%s.%s" % (pkg, version, fileext)
         pkgdumps_prefix = pkg + '.' + stage
