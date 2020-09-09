@@ -245,7 +245,7 @@ def getSTAGE2cmd(pkg, version):
             ##   peak load times) the install takes ~ 5-6 minutes, even when
             ##   done via the build system.
             curl_cmd = BBScorevars.getenv('BBS_CURL_CMD')
-            srcpkg_file = pkg + '_' + version + '.tar.gz'
+            srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
             srcpkg_url = BBScorevars.Central_rdir.url + '/src/contrib/' + \
                          srcpkg_file
             zip_file = srcpkg_file.replace(".tar.gz", ".zip")
