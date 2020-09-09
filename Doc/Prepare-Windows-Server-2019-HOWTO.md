@@ -1099,8 +1099,7 @@ In a PowerShell window from the `biocbuild` account:
 
     cd D:\biocbuild
     mkdir bbs-3.12-data-experiment
-    cd bbs-3.12-data-experiment
-    mkdir log
+    mkdir bbs-3.12-data-experiment\log
 
 Then **from a personal administrator account**:
 
@@ -1148,8 +1147,7 @@ In a PowerShell window from the `biocbuild` account:
 
     cd D:\biocbuild
     mkdir bbs-3.12-workflows
-    cd bbs-3.12-workflows
-    mkdir log
+    mkdir bbs-3.12-workflows\log
 
 Then **from a personal administrator account**:
 
@@ -1191,14 +1189,61 @@ Then **from a personal administrator account**:
   - Then click OK on bottom right (requires `biocbuild` password)
 
 
-### 6.4 Long Tests builds
+### 6.4 Books builds
+
+In a PowerShell window from the `biocbuild` account:
+
+    cd D:\biocbuild
+    mkdir bbs-3.12-books
+    mkdir bbs-3.12-books\log
+
+Then **from a personal administrator account**:
+
+- Open Task Scheduler
+
+- Right-click on the `BBS` folder -> choose Create Task
+
+  - Tab General:
+    - Name: `bbs-3.12-books`
+    - In Security options:
+      - Use `RIESLING1\biocbuild` account to run the task
+      - Run whether user is logged on or not
+    - Configure for Windows Server 2019
+
+  - Tab Triggers:
+    - New Trigger
+    - Begin the task On a schedule
+      - In Settings:
+        Weekly - Start on <leave current date> at 10:30 AM -
+        Recur every 1 week on Tuesday and Friday
+    - In Advanced Settings:
+        nothing should be checked except 'Enabled'
+
+  - Tab Actions:
+    - New Action
+    - Action: Start a program
+    - In Settings:
+      - Program/script: `D:\biocbuild\BBS\3.12\books\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.12-books\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.12\books\riesling1`
+
+  - Tab Conditions:
+      nothing to do (keep all the defaults)
+
+  - Tab Settings:
+      nothing should be checked except 'Allow task to be run on demand' and
+      'If the running task does not end when requested force it to stop'
+
+  - Then click OK on bottom right (requires `biocbuild` password)
+
+
+### 6.5 Long Tests builds
 
 In a PowerShell window from the `biocbuild` account:
 
     cd D:\biocbuild
     mkdir bbs-3.12-bioc-longtests
-    cd bbs-3.12-bioc-longtests
-    mkdir log
+    mkdir bbs-3.12-bioc-longtests\log
 
 Then **from a personal administrator account**:
 
