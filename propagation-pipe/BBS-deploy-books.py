@@ -22,6 +22,7 @@ def _append_package(pkgversions, pkg, version,
 def _deploy_book(pkg, version, destdir):
     book_destroot = os.path.join(destdir, pkg)
     print('Deploying %s book at \'%s/\' ...' % (pkg, book_destroot), end=' ')
+    sys.stdout.flush()
     srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
     tar = tarfile.open(srcpkg_file)
     tar.extractall()
@@ -38,6 +39,7 @@ def _deploy_book(pkg, version, destdir):
     bbs.jobs.call(cmd, check=True)
     shutil.rmtree(pkg, ignore_errors=True)
     print('OK')
+    sys.stdout.flush()
     return
 
 ### Load package list as ('Package', 'Version') pairs.
