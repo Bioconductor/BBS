@@ -79,7 +79,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
         print("BBS>   Failed to extract Maintainer information from '%s' ==> skip package" % \
               DESCRIPTION_path)
         return 1
-    if pkgname != pkg:
+    if pkgname != os.path.basename(pkgsrctree):
         print("BBS>   Unexpected 'Package: %s' in '%s' ==> skip package" % \
               (pkgname, DESCRIPTION_path))
         return 1
@@ -87,7 +87,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
         print("BBS>   Invalid 'Version: %s' in '%s' ==> skip package" % \
               (version, DESCRIPTION_path))
         return 1
-    meat_index.write('Package: %s\n' % pkg)
+    meat_index.write('Package: %s\n' % pkgname)
     meat_index.write('Version: %s\n' % version)
     meat_index.write('Maintainer: %s\n' % maintainer)
     if BBScorevars.subbuilds != "cran":
