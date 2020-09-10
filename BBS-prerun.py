@@ -63,6 +63,10 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
         print("BBS>   Field 'Package' not found in '%s' ==> skip package" % \
               DESCRIPTION_path)
         return 1
+    if pkgname != os.path.basename(pkgsrctree):
+        print("BBS>   Unexpected 'Package: %s' in '%s' ==> skip package" % \
+              (pkgname, DESCRIPTION_path))
+        return 1
     try:
         version = DESCRIPTION['Version']
     except KeyError:
@@ -78,10 +82,6 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     except bbs.parse.DcfFieldNotFoundError:
         print("BBS>   Failed to extract Maintainer information from '%s' ==> skip package" % \
               DESCRIPTION_path)
-        return 1
-    if pkgname != os.path.basename(pkgsrctree):
-        print("BBS>   Unexpected 'Package: %s' in '%s' ==> skip package" % \
-              (pkgname, DESCRIPTION_path))
         return 1
     if not bbs.parse.version_is_valid(version):
         print("BBS>   Invalid 'Version: %s' in '%s' ==> skip package" % \
@@ -156,6 +156,7 @@ def build_meat_index(pkgs, meat_path):
           "the %s packages in the manifest" % len(pkgs))
     print("BBS>   - %d pkgs were skipped" % nskipped)
     print("BBS>   - %d pkgs made it to the meat index" % nadded)
+    print()
     sys.stdout.flush()
     return meat_index_path
 
