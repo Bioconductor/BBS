@@ -248,7 +248,6 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
 
 def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
     subbuilds = BBScorevars.subbuilds
-    skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if BBSreportutils.is_supported(pkg, node):
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
@@ -333,7 +332,6 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     else:
         classes = "odd"
     statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
-    skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if pkg in skipped_pkgs:
         classes += ' error'
     else:
@@ -355,9 +353,10 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         if is_first:
             pkgname_html = pkgname_to_HTML(pkg)
             if statuses:
-                version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
-                maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
-                status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+                dcf_record = meat_pkgs[pkg]
+                version = dcf_record['Version']
+                maintainer = dcf_record['Maintainer']
+                status = dcf_record['PackageStatus']
             else:
                 version = ''
                 maintainer = ''
@@ -486,7 +485,6 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     else:
         classes = "odd"
     statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
-    skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if pkg in skipped_pkgs:
         classes += ' error'
     else:
@@ -496,9 +494,10 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('<TD style="text-align: left; padding-left: 12px;">')
 
     if statuses:
-        version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
-        maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
-        status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+        dcf_record = meat_pkgs[pkg]
+        version = dcf_record['Version']
+        maintainer = dcf_record['Maintainer']
+        status = dcf_record['PackageStatus']
     else:
         version = ''
         status = ''
@@ -1602,9 +1601,14 @@ BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
 
-meat_pkgs = BBSreportutils.get_pkgs_from_meat_index()
-skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
-allpkgs = meat_pkgs + skipped_pkgs
+### Compute 'meat_pkgs' (dict), 'skipped_pkgs' (list), and 'allpkgs' (list).
+meat_index = bbs.parse.parse_DCF(BBScorevars.meat_index_file)
+meat_pkgs = {}
+for dcf_record in meat_index:
+    meat_pkgs[dcf_record['Package']] = dcf_record
+skipped_index = bbs.parse.parse_DCF(BBScorevars.skipped_index_file)
+skipped_pkgs = [dcf_record['Package'] for dcf_record in skipped_index]
+allpkgs = list(meat_pkgs.keys()) + skipped_pkgs
 allpkgs.sort(key=str.lower)
 
 print("BBS> [stage8] Import package statuses from %s ..." % \
