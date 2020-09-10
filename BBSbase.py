@@ -293,7 +293,7 @@ def getSTAGE4cmd(srcpkg_path):
         win_archs = None
     else:
         if BBSvars.STAGE4_mode == "multiarch":
-            win_archs = _supportedWinArchs(srcpkg_path)
+            win_archs = _supportedWinArchs(pkg)
         else:
             win_archs = []
     cmd0 = _get_Rcheck_cmd0(win_archs)
@@ -335,12 +335,12 @@ def getSTAGE4cmd(srcpkg_path):
         ## means that _noExampleArchs() may not be returning useful results
         ## if the intent is to not run examples for a particular Windows
         ## sub-architecture.
-        no_example_archs = _noExampleArchs(pkgsrctree)
+        no_example_archs = _noExampleArchs(pkg)
         if sys.platform in no_example_archs:
             common_opts += ["--no-examples"]
     common_opts = ' '.join(common_opts)
     cmd = '%s %s %s' % (cmd0, common_opts, srcpkg_path)
-    prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'CHECK')
+    prepend = _get_prepend_from_BBSoptions(pkg, 'CHECK')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
@@ -355,9 +355,9 @@ def getSTAGE5cmd(srcpkg_path):
     win_archs = None
     if sys.platform == "win32":
         if BBSvars.STAGE5_mode == "multiarch":
-            win_archs = _supportedWinArchs(pkgsrctree)
+            win_archs = _supportedWinArchs(pkg)
     cmd = _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
-    prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'BUILDBIN')
+    prepend = _get_prepend_from_BBSoptions(pkg, 'BUILDBIN')
     if prepend != None:
         cmd = '%s %s' % (prepend, cmd)
     return cmd
