@@ -37,98 +37,125 @@ def remakeCentralRdir(Central_rdir):
 ## on the manifest file)
 ##############################################################################
 
+### Return 0 if package goes to the "meat index", 1 if it's skipped (in which
+### case it wil go to the "skipped index"), and 2 if it's ignored.
+def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
+    if BBScorevars.subbuilds == "bioc-longtests":
+        run_long_tests = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                       pkgsrctree,
+                                       'RunLongTests')
+        if run_long_tests != "TRUE":
+            return 2;
+    DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
+    try:
+        DESCRIPTION = bbs.parse.parse_DESCRIPTION(DESCRIPTION_path)
+    except FileNotFoundError:
+        print("BBS>   Missing DESCRIPTION file in '%s/' ==> skip package" % \
+              pkgsrctree)
+        return 1
+    except bbs.parse.DcfParsingError:
+        print("BBS>   Invalid DESCRIPTION file: %s ==> skip package" % \
+              DESCRIPTION_path)
+        return 1
+    try:
+        pkgname = DESCRIPTION['Package']
+    except KeyError:
+        print("BBS>   Field 'Package' not found in '%s' ==> skip package" % \
+              DESCRIPTION_path)
+        return 1
+    try:
+        version = DESCRIPTION['Version']
+    except KeyError:
+        print("BBS>   Field 'Version' not found in '%s' ==> skip package" % \
+              DESCRIPTION_path)
+        return 1
+    try:
+        if BBScorevars.subbuilds != "cran":
+            maintainer = bbs.parse.get_Maintainer_name_from_pkgsrctree(pkgsrctree)
+            maintainer_email = bbs.parse.get_Maintainer_email_from_pkgsrctree(pkgsrctree)
+        else:
+            maintainer = bbs.parse.get_Maintainer_from_pkgsrctree(pkgsrctree)
+    except bbs.parse.DcfFieldNotFoundError:
+        print("BBS>   Failed to extract Maintainer information from '%s' ==> skip package" % \
+              DESCRIPTION_path)
+        return 1
+    if pkgname != pkg:
+        print("BBS>   Unexpected 'Package: %s' in '%s' ==> skip package" % \
+              (pkgname, DESCRIPTION_path))
+        return 1
+    if not bbs.parse.version_is_valid(version):
+        print("BBS>   Invalid 'Version: %s' in '%s' ==> skip package" % \
+              (version, DESCRIPTION_path))
+        return 1
+    meat_index.write('Package: %s\n' % pkg)
+    meat_index.write('Version: %s\n' % version)
+    meat_index.write('Maintainer: %s\n' % maintainer)
+    if BBScorevars.subbuilds != "cran":
+        meat_index.write('MaintainerEmail: %s\n' % maintainer_email)
+    try:
+        package_status = DESCRIPTION['PackageStatus']
+    except KeyError:
+        pass
+    else:
+        meat_index.write('PackageStatus: %s\n' % package_status)
+    unsupported = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                          pkgsrctree,
+                                          'UnsupportedPlatforms')
+    meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
+    no_examples = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                          pkgsrctree,
+                                          'NoExamplesOnPlatforms')
+    meat_index.write('NoExamplesOnPlatforms: %s\n' % no_examples)
+    force_install = bbs.parse.get_BBSoption_from_pkgsrctree(
+                                          pkgsrctree,
+                                          'ForceInstall')
+    meat_index.write('ForceInstall: %s\n' % force_install)
+    #if BBScorevars.subbuilds != "cran":
+    #    alert = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'Alert')
+    #    meat_index.write('Alert: %s\n' % alert)
+    #    alert_on = bbs.parse.get_BBSoption_from_pkgsrctree(
+    #                                      pkgsrctree,
+    #                                      'AlertOn')
+    #    meat_index.write('AlertOn: %s\n' % alert_on)
+    #    alert_to = bbs.parse.get_BBSoption_from_pkgsrctree(
+    #                                      pkgsrctree,
+    #                                      'AlertTo')
+    #    meat_index.write('AlertTo: %s\n' % alert_to)
+    meat_index.write('\n')
+    return 0
+
 def build_meat_index(pkgs, meat_path):
     print("BBS> [build_meat_index] START building the meat index for " + \
           "the %s packages in the manifest" % len(pkgs))
     sys.stdout.flush()
-    meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
-    skipped_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.skipped_index_file)
-    out = open(meat_index_path, 'w')
-    nout = 0
-    skipped = open(skipped_index_path, 'w')
-    nskipped = 0
+    meat_index_path = os.path.join(BBSvars.work_topdir,
+                                   BBScorevars.meat_index_file)
+    skipped_index_path = os.path.join(BBSvars.work_topdir,
+                                   BBScorevars.skipped_index_file)
+    meat_index = open(meat_index_path, 'w')
+    skipped_index = open(skipped_index_path, 'w')
+    nadded = nskipped = 0
     for pkg in pkgs:
         pkgsrctree = os.path.join(meat_path, pkg)
-        if BBScorevars.subbuilds == "bioc-longtests":
-           run_long_tests = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                          pkgsrctree,
-                                          'RunLongTests')
-           if run_long_tests != "TRUE":
-               continue
-        try:
-            pkgname = bbs.parse.get_Package_from_pkgsrctree(pkgsrctree)
-            version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
-            if BBScorevars.subbuilds != "cran":
-                maintainer = bbs.parse.get_Maintainer_name_from_pkgsrctree(pkgsrctree)
-                maintainer_email = bbs.parse.get_Maintainer_email_from_pkgsrctree(pkgsrctree)
-            else:
-                maintainer = bbs.parse.get_Maintainer_from_pkgsrctree(pkgsrctree)
-        except IOError:
-            print("BBS>   Missing DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgsrctree)
+        retcode = _add_or_skip_or_ignore_package(pkgsrctree, meat_index)
+        if retcode == 2:
+            ## Ignore package.
+            continue
+        if retcode == 1:
+            ## Skip package.
             sys.stdout.flush()
-            skipped.write('Package: %s\n' % pkg)
-            skipped.write('\n')
+            skipped_index.write('Package: %s\n' % pkg)
+            skipped_index.write('\n')
             nskipped = nskipped + 1
             continue
-        except (bbs.parse.DcfFieldNotFoundError, bbs.dcf.dcfrecordsparser.DCFParseError):
-            print("BBS>   Bad DESCRIPTION file in pkg dir '%s'. Skip it!" % pkgsrctree)
-            sys.stdout.flush()
-            skipped.write('Package: %s\n' % pkg)
-            skipped.write('\n')
-            nskipped = nskipped + 1
-            continue
-        if pkgname != pkg:
-            DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
-            print("BBS>   Unexpected 'Package: %s' in '%s'. Skip it!" % \
-                  (pkgname, DESCRIPTION_path))
-            sys.stdout.flush()
-            skipped.write('Package: %s\n' % pkg)
-            skipped.write('\n')
-            nskipped = nskipped + 1
-            continue
-        if not bbs.parse.version_is_valid(version):
-            DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
-            print("BBS>   Invalid 'Version: %s' in '%s'. Skip it!" % \
-                  (version, DESCRIPTION_path))
-            sys.stdout.flush()
-            skipped.write('Package: %s\n' % pkg)
-            skipped.write('\n')
-            nskipped = nskipped + 1
-            continue
-        out.write('Package: %s\n' % pkg)
-        out.write('Version: %s\n' % version)
-        out.write('Maintainer: %s\n' % maintainer)
-        if BBScorevars.subbuilds != "cran":
-            out.write('MaintainerEmail: %s\n' % maintainer_email)
-        package_status = bbs.parse.get_PackageStatus_pkgsrctree(pkgsrctree)
-        out.write('PackageStatus: %s\n' % package_status)
-        unsupported = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                    pkgsrctree,
-                                    'UnsupportedPlatforms')
-        out.write('UnsupportedPlatforms: %s\n' % unsupported)
-        no_examples = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                    pkgsrctree,
-                                    'NoExamplesOnPlatforms')
-        out.write('NoExamplesOnPlatforms: %s\n' % no_examples)
-        force_install = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                    pkgsrctree,
-                                    'ForceInstall')
-        out.write('ForceInstall: %s\n' % force_install)
-        if BBScorevars.subbuilds != "cran":
-            alert = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'Alert')
-            out.write('Alert: %s\n' % alert)
-            alert_on = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'AlertOn')
-            out.write('AlertOn: %s\n' % alert_on)
-            alert_to = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'AlertTo')
-            out.write('AlertTo: %s\n' % alert_to)
-        out.write('\n')
-        nout = nout + 1
-    skipped.close()
-    out.close()
+        ## Package was added to "meat index".
+        nadded = nadded + 1
+    skipped_index.close()
+    meat_index.close()
     print("BBS> [build_meat_index] DONE building the meat index for " + \
           "the %s packages in the manifest" % len(pkgs))
-    print("BBS> [build_meat_index] %s pkgs were skipped (out of %s)" % (nskipped, len(pkgs)))
-    print("BBS> [build_meat_index] %s pkgs made it to the meat index (out of %s)" % (nout, len(pkgs)))
+    print("BBS>   - %d pkgs were skipped" % nskipped)
+    print("BBS>   - %d pkgs made it to the meat index" % nadded)
     sys.stdout.flush()
     return meat_index_path
 

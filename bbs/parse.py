@@ -49,19 +49,25 @@ def get_version_from_srcpkg_path(srcpkg_path):
     version = m.group(2)
     return version
 
-def get_DESCRIPTION_path(pkgsrctree):
-    return os.path.join(pkgsrctree, 'DESCRIPTION')
-
 
 ##############################################################################
 ### Generic DCF parser
 ###
 
+class DcfParsingError(Exception):
+    def __init__(self, filepath, lineno, msg):
+        self.filepath = filepath
+        self.lineno = lineno
+        self.msg = msg
+    def __str__(self):
+        return 'in DCF file \'%s\' at line %d:\n  %s' % \
+               (self.filepath, self.lineno, self.msg)
+
 ### Return a list of DCF records. Each record is represented as a dictionary
 ### of key-value pairs where the key is a DCF field name and the value a
 ### string.
-def parse_DCF(dcf):
-    f = open(dcf, 'r')
+def parse_DCF(filepath):
+    f = open(filepath, 'r')
     dcf_records = []
     recno = 0
     rec_firstlineno = 0
@@ -78,18 +84,17 @@ def parse_DCF(dcf):
             continue  # skip comment lines
         elif line.startswith(' ') or line.startswith('\t'):
             if rec_firstlineno == 0:
-                errmsg = 'whitespace unexpected at beginning of ' + \
-                         'line %d in DCF file \'%s\'' % (lineno, dcf)
-                raise Exception(errmsg)
+                msg = 'whitespace unexpected at beginning of line'
+                raise DcfParsingError(filepath, lineno, msg)
             ## The current line is the continuation of the latest value.
             val = rec[key]
             rec[key] = line2 if val == '' else val + ' ' + line2
         else:
             pos = line.find(':')
             if pos == -1:
-                errmsg = '\':\' expected at line %d in DCF file \'%s\'' % \
-                         (lineno, dcf)
-                raise Exception(errmsg)
+                what = '\':\'' if rec_firstlineno == 0 else 'leading whitespace'
+                msg = 'invalid line (%s missing?)' % what
+                raise DcfParsingError(filepath, lineno, msg)
             ## The current line is a key-value pair.
             if rec_firstlineno == 0:
                 ## The current line is the first key-value pair in the record.
@@ -162,8 +167,27 @@ def get_next_DCF_val(dcf, field, full_line=False):
 
 
 ##############################################################################
-### Extract specific fields from a package DESCRIPTION file
+### Parse a DESCRIPTION file
 ###
+
+def parse_DESCRIPTION(DESCRIPTION_path):
+    dcf_records = parse_DCF(DESCRIPTION_path)
+    ## We could just raise an error if 'len(dcf_records) != 1' but we want
+    ## to be able to handle a DESCRIPTION file with empty lines. Empty lines
+    ## in a DESCRIPTION file can be considered a mild formatting issue, which
+    ## we tolerate. Such file would result in a file with more than 1 DCF
+    ## record.
+    DESCRIPTION = {}
+    for rec in dcf_records:
+        DESCRIPTION.update(rec)
+    return DESCRIPTION
+
+def get_DESCRIPTION_path(pkgsrctree):
+    return os.path.join(pkgsrctree, 'DESCRIPTION')
+
+def read_DESCRIPTION_from_pkgsrctree(pkgsrctree):
+    DESCRIPTION_path = get_DESCRIPTION_path(pkgsrctree)
+    return parse_DESCRIPTION(DESCRIPTION_path)
 
 def get_Package_from_pkgsrctree(pkgsrctree):
     desc_file = get_DESCRIPTION_path(pkgsrctree)
