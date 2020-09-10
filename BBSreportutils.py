@@ -289,7 +289,7 @@ def get_leafreport_rel_url(pkg, node_id, stage):
 ###
 ##############################################################################
 
-def _get_pkg_status_from_STATUS_DB(STATUS_DB, pkg, node_id, stage)
+def _get_pkg_status_from_STATUS_DB(STATUS_DB, pkg, node_id, stage):
     key = '%s#%s#%s' % (pkg, node_id, stage)
     return STATUS_DB[key]
 
