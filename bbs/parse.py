@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Sep 16, 2019
+### Last modification: Sep 9, 2020
 ###
 ### parse module
 ###
@@ -15,15 +15,6 @@ import re
 import time
 import subprocess
 
-from bbs.dcf.dcfrecordsparser import DcfRecordParser
-
-class DcfFieldNotFoundError(Exception):
-    def __init__(self, filepath, field):
-        self.filepath = filepath
-        self.field = field
-    def __str__(self):
-        return "Field '%s' not found in DCF file '%s'" % \
-               (self.field, self.filepath)
 
 def bytes2str(line):
     if isinstance(line, str):
@@ -33,6 +24,98 @@ def bytes2str(line):
     except UnicodeDecodeError:
         line = line.decode("iso8859")  # typical Windows encoding
     return line
+
+def version_is_valid(version_string):
+    version_regex = '^[0-9]+([.-][0-9]+)*$'
+    p = re.compile(version_regex)
+    m = p.match(version_string)
+    return m != None
+
+### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
+def get_pkgname_from_srcpkg_path(srcpkg_path):
+    srcpkg_file = os.path.basename(srcpkg_path)
+    srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
+    p = re.compile(srcpkg_regex)
+    m = p.match(srcpkg_file)
+    pkgname = m.group(1)
+    return pkgname
+
+### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
+def get_version_from_srcpkg_path(srcpkg_path):
+    srcpkg_file = os.path.basename(srcpkg_path)
+    srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
+    p = re.compile(srcpkg_regex)
+    m = p.match(srcpkg_file)
+    version = m.group(2)
+    return version
+
+def get_DESCRIPTION_path(pkgsrctree):
+    return os.path.join(pkgsrctree, 'DESCRIPTION')
+
+
+##############################################################################
+### Generic DCF parser
+###
+
+### Return a list of DCF records. Each record is represented as a dictionary
+### of key-value pairs where the key is a DCF field name and the value a
+### string.
+def parse_DCF(dcf):
+    f = open(dcf, 'r')
+    dcf_records = []
+    recno = 0
+    rec_firstlineno = 0
+    lineno = 0
+    for line in f:
+        lineno += 1
+        line2 = line.strip()
+        ## The current line is empty.
+        if line2 == '':
+            if rec_firstlineno != 0:
+                dcf_records.append(rec)
+                rec_firstlineno = 0
+        elif line.startswith('#'):
+            continue  # skip comment lines
+        elif line.startswith(' ') or line.startswith('\t'):
+            if rec_firstlineno == 0:
+                errmsg = 'whitespace unexpected at beginning of ' + \
+                         'line %d in DCF file \'%s\'' % (lineno, dcf)
+                raise Exception(errmsg)
+            ## The current line is the continuation of the latest value.
+            val = rec[key]
+            rec[key] = line2 if val == '' else val + ' ' + line2
+        else:
+            pos = line.find(':')
+            if pos == -1:
+                errmsg = '\':\' expected at line %d in DCF file \'%s\'' % \
+                         (lineno, dcf)
+                raise Exception(errmsg)
+            ## The current line is a key-value pair.
+            if rec_firstlineno == 0:
+                ## The current line is the first key-value pair in the record.
+                rec = {}
+                recno += 1
+                rec_firstlineno = lineno
+            key = line[:pos]
+            val = line[pos+1:].strip()
+            rec[key] = val
+    if rec_firstlineno != 0:
+        dcf_records.append(rec)
+    f.close()
+    return dcf_records
+
+
+##############################################################################
+### Other DCF parsing utilities
+###
+
+class DcfFieldNotFoundError(Exception):
+    def __init__(self, filepath, field):
+        self.filepath = filepath
+        self.field = field
+    def __str__(self):
+        return "Field '%s' not found in DCF file '%s'" % \
+               (self.field, self.filepath)
 
 ### Get the next field/value pair from a DCF file.
 ### The field value starts at the first non-whitespace character following
@@ -77,8 +160,10 @@ def get_next_DCF_val(dcf, field, full_line=False):
         return val
     return None
 
-def get_DESCRIPTION_path(pkgsrctree):
-    return os.path.join(pkgsrctree, 'DESCRIPTION')
+
+##############################################################################
+### Extract specific fields from a package DESCRIPTION file
+###
 
 def get_Package_from_pkgsrctree(pkgsrctree):
     desc_file = get_DESCRIPTION_path(pkgsrctree)
@@ -98,11 +183,13 @@ def get_Version_from_pkgsrctree(pkgsrctree):
         raise DcfFieldNotFoundError(desc_file, 'Version')
     return version
 
-def version_is_valid(version_string):
-    version_regex = '^[0-9]+([.-][0-9]+)*$'
-    p = re.compile(version_regex)
-    m = p.match(version_string)
-    return m != None
+### Return the name of the package source tarball that would result
+### from building the package found at 'pkgsrctree'.
+def make_srcpkg_file_from_pkgsrctree(pkgsrctree):
+    pkgname = get_Package_from_pkgsrctree(pkgsrctree)
+    version = get_Version_from_pkgsrctree(pkgsrctree)
+    srcpkg_file = '%s_%s.tar.gz' % (pkgname, version)
+    return srcpkg_file
 
 def get_PackageStatus_pkgsrctree(pkgsrctree):
     desc_file = get_DESCRIPTION_path(pkgsrctree)
@@ -147,6 +234,11 @@ def get_Maintainer_email_from_pkgsrctree(pkgsrctree):
         raise DcfFieldNotFoundError(DESCRIPTION_path, 'Maintainer email')
     return email
 
+
+##############################################################################
+### Extract options from a package .BBSoptions file
+###
+
 def get_BBSoption_from_pkgsrctree(pkgsrctree, key):
     option_file = os.path.join(pkgsrctree, '.BBSoptions')
     try:
@@ -156,6 +248,11 @@ def get_BBSoption_from_pkgsrctree(pkgsrctree, key):
     except IOError:
         val = None
     return val
+
+
+##############################################################################
+### Extract specific fields from a package index in DCF format
+###
 
 def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
     pkg2 = ""
@@ -203,32 +300,6 @@ def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
         if supported:
             pkgs.append(pkg)
     return pkgs
-
-### Return the name of the package source tarball that would result
-### from building the package found at 'pkgsrctree'.
-def make_srcpkg_file_from_pkgsrctree(pkgsrctree):
-    pkgname = get_Package_from_pkgsrctree(pkgsrctree)
-    version = get_Version_from_pkgsrctree(pkgsrctree)
-    srcpkg_file = '%s_%s.tar.gz' % (pkgname, version)
-    return srcpkg_file
-
-### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
-def get_pkgname_from_srcpkg_path(srcpkg_path):
-    srcpkg_file = os.path.basename(srcpkg_path)
-    srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
-    p = re.compile(srcpkg_regex)
-    m = p.match(srcpkg_file)
-    pkgname = m.group(1)
-    return pkgname
-
-### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
-def get_version_from_srcpkg_path(srcpkg_path):
-    srcpkg_file = os.path.basename(srcpkg_path)
-    srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
-    p = re.compile(srcpkg_regex)
-    m = p.match(srcpkg_file)
-    version = m.group(2)
-    return version
 
 ### Inject fields into DESCRIPTION
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
@@ -281,6 +352,7 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf.write('%s: %s\n' % (target_keys[3], git_last_commit_date))
     dcf.write('%s: %s\n' % (target_keys[4], time.strftime("%Y-%m-%d")))
     dcf.close()
+
 
 ##############################################################################
 ### Some utilities for parsing the tail of install.packages(), 'R CMD build',
