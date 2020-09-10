@@ -233,31 +233,6 @@ def get_propagation_status_from_db(pkg, node_id):
                         'propagate')
     return status
 
-def _get_pkg_status_from_db(pkg, node_id, stage):
-    rodata = open_rodata(STATUS_DB_file)
-    status = get_status(rodata['rostream'], pkg, node_id, stage)
-    rodata['rostream'].close()
-    if status == None:
-        raise Exception("'%s' status for package %s on %s not found in %s" %
-                        (stage, pkg, node_id, STATUS_DB_file))
-    return status
-
-def get_distinct_statuses_from_db(pkg, nodes=None):
-    if nodes == None:
-        nodes = NODES
-    statuses = []
-    for node in nodes:
-        if not is_supported(pkg, node):
-            continue
-        stages = stages_to_display(BBScorevars.subbuilds)
-        if 'buildbin' in stages and not is_doing_buildbin(node):
-            stages.remove('buildbin')
-        for stage in stages:
-            status = _get_pkg_status_from_db(pkg, node.id, stage)
-            if status != "skipped" and status not in statuses:
-                statuses.append(status)
-    return statuses
-
 def WReadDcfVal(rdir, file, field, full_line=False):
     dcf = rdir.WOpen(file)
     val = bbs.parse.get_next_DCF_val(dcf, field, full_line)
@@ -375,4 +350,20 @@ def get_pkg_status(pkg, node_id, stage):
                  "BBSreportutils.import_STATUS_DB() before " + \
                  "using BBSreportutils.get_pkg_status() => EXIT.")
     return status_db[pkg][node_id][stage]
+
+def get_distinct_pkg_statuses(pkg, nodes=None):
+    if nodes == None:
+        nodes = NODES
+    statuses = []
+    for node in nodes:
+        if not is_supported(pkg, node):
+            continue
+        stages = stages_to_display(BBScorevars.subbuilds)
+        if 'buildbin' in stages and not is_doing_buildbin(node):
+            stages.remove('buildbin')
+        for stage in stages:
+            status = get_pkg_status(pkg, node.id, stage)
+            if status != "skipped" and status not in statuses:
+                statuses.append(status)
+    return statuses
 

@@ -332,7 +332,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         classes = "even"
     else:
         classes = "odd"
-    statuses = BBSreportutils.get_distinct_statuses_from_db(pkg)
+    statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
     skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if pkg in skipped_pkgs:
         classes += ' error'
@@ -485,7 +485,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
         classes = "even"
     else:
         classes = "odd"
-    statuses = BBSreportutils.get_distinct_statuses_from_db(pkg, [node])
+    statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
     skipped_pkgs = BBSreportutils.get_pkgs_from_skipped_index()
     if pkg in skipped_pkgs:
         classes += ' error'
