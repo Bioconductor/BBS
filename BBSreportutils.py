@@ -233,7 +233,7 @@ def get_propagation_status_from_db(pkg, node_id):
                         'propagate')
     return status
 
-def _get_status_from_db(pkg, node_id, stage):
+def _get_pkg_status_from_db(pkg, node_id, stage):
     rodata = open_rodata(STATUS_DB_file)
     status = get_status(rodata['rostream'], pkg, node_id, stage)
     rodata['rostream'].close()
@@ -253,7 +253,7 @@ def get_distinct_statuses_from_db(pkg, nodes=None):
         if 'buildbin' in stages and not is_doing_buildbin(node):
             stages.remove('buildbin')
         for stage in stages:
-            status = _get_status_from_db(pkg, node.id, stage)
+            status = _get_pkg_status_from_db(pkg, node.id, stage)
             if status != "skipped" and status not in statuses:
                 statuses.append(status)
     return statuses
@@ -289,24 +289,28 @@ def get_leafreport_rel_url(pkg, node_id, stage):
 ###
 ##############################################################################
 
-STATUS_DB = {}
-STATUS_SUMMARY = {}
+def _get_pkg_status_from_STATUS_DB(STATUS_DB, pkg, node_id, stage)
+    key = '%s#%s#%s' % (pkg, node_id, stage)
+    return STATUS_DB[key]
+
+status_db = {}
+status_summary = {}
 
 def _set_pkg_status(pkg, node_id, stage, status):
-    if pkg not in STATUS_DB:
-        STATUS_DB[pkg] = {}
-    if node_id not in STATUS_DB[pkg]:
-        STATUS_DB[pkg][node_id] = {}
-    STATUS_DB[pkg][node_id][stage] = status
+    if pkg not in status_db:
+        status_db[pkg] = {}
+    if node_id not in status_db[pkg]:
+        status_db[pkg][node_id] = {}
+    status_db[pkg][node_id][stage] = status
     return
 
 def _update_STATUS_SUMMARY(pkg, node_id, stage, status):
-    if node_id not in STATUS_SUMMARY:
-        STATUS_SUMMARY[node_id] = { 'install':     (0, 0, 0, 0, 0), \
+    if node_id not in status_summary:
+        status_summary[node_id] = { 'install':     (0, 0, 0, 0, 0), \
                                     'buildsrc':    (0, 0, 0, 0, 0), \
                                     'checksrc':    (0, 0, 0, 0, 0), \
                                     'buildbin':    (0, 0, 0, 0, 0) }
-    x = STATUS_SUMMARY[node_id][stage]
+    x = status_summary[node_id][stage]
     x0 = x[0]
     x1 = x[1]
     x2 = x[2]
@@ -322,52 +326,53 @@ def _update_STATUS_SUMMARY(pkg, node_id, stage, status):
         x3 += 1
     if status == "NotNeeded":
         x4 += 1
-    STATUS_SUMMARY[node_id][stage] = (x0, x1, x2, x3, x4)
+    status_summary[node_id][stage] = (x0, x1, x2, x3, x4)
     return
 
 def import_STATUS_DB(allpkgs):
+    STATUS_DB = bbs.parse.parse_DCF(STATUS_DB_file, merge_records=True)
     for pkg in allpkgs:
         for node in supported_nodes(pkg):
-
             # INSTALL status
             if BBScorevars.subbuilds != "bioc-longtests":
                 stage = 'install'
-                status = _get_status_from_db(pkg, node.id, stage)
+                status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
+                                                        pkg, node.id, stage)
                 _set_pkg_status(pkg, node.id, stage, status)
                 _update_STATUS_SUMMARY(pkg, node.id, stage, status)
-
             # BUILD status
             stage = 'buildsrc'
-            status = _get_status_from_db(pkg, node.id, stage)
+            status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
+                                                    pkg, node.id, stage)
             _set_pkg_status(pkg, node.id, stage, status)
             _update_STATUS_SUMMARY(pkg, node.id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
-
             # CHECK status
             if BBScorevars.subbuilds not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = _get_status_from_db(pkg, node.id, stage)
+                    status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
+                                                            pkg, node.id, stage)
                 _set_pkg_status(pkg, node.id, stage, status)
                 _update_STATUS_SUMMARY(pkg, node.id, stage, status)
-
             # BUILD BIN status
             if is_doing_buildbin(node):
                 stage = 'buildbin'
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = _get_status_from_db(pkg, node.id, stage)
+                    status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
+                                                            pkg, node.id, stage)
                 _set_pkg_status(pkg, node.id, stage, status)
                 _update_STATUS_SUMMARY(pkg, node.id, stage, status)
-    return STATUS_SUMMARY
+    return status_summary
 
 def get_pkg_status(pkg, node_id, stage):
-    if len(STATUS_DB) == 0:
+    if len(status_db) == 0:
         sys.exit("You must import package statuses with " + \
                  "BBSreportutils.import_STATUS_DB() before " + \
                  "using BBSreportutils.get_pkg_status() => EXIT.")
-    return STATUS_DB[pkg][node_id][stage]
+    return status_db[pkg][node_id][stage]
 

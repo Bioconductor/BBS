@@ -48,7 +48,11 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
             return 2;
     DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
     try:
-        DESCRIPTION = bbs.parse.parse_DESCRIPTION(DESCRIPTION_path)
+        ## We set 'merge_records' to True to support DESCRIPTION files with
+        ## empty lines. Empty lines in a DESCRIPTION file can be considered
+        ## a mild formatting issue, which we tolerate. Such file would be
+        ## considered to contain more than 1 DCF record so we merge them.
+        DESCRIPTION = bbs.parse.parse_DCF(DESCRIPTION_path, merge_records=True)
     except FileNotFoundError:
         print("BBS>   Missing DESCRIPTION file in '%s/' ==> skip package" % \
               pkgsrctree)
@@ -154,8 +158,8 @@ def build_meat_index(pkgs, meat_path):
     meat_index.close()
     print("BBS> [build_meat_index] DONE building the meat index for " + \
           "the %s packages in the manifest" % len(pkgs))
-    print("BBS>   - %d pkgs were skipped" % nskipped)
-    print("BBS>   - %d pkgs made it to the meat index" % nadded)
+    print("BBS>   --> %d pkgs were skipped" % nskipped)
+    print("BBS>   --> %d pkgs made it to the meat index" % nadded)
     print()
     sys.stdout.flush()
     return meat_index_path

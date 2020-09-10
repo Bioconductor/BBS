@@ -392,7 +392,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     return
 
 def write_summary_TD(out, node, stage):
-    stats = STATUS_SUMMARY[node.id][stage]
+    stats = status_summary[node.id][stage]
     html = '<TABLE class="summary"><TR>'
     html += '<TD class="summary %s">%d</TD>' % ("TIMEOUT", stats[0])
     html += '<TD class="summary %s">%d</TD>' % ("ERROR", stats[1])
@@ -497,8 +497,8 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
 
     if statuses:
         version = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Version')
-        status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
         maintainer = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'Maintainer')
+        status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
     else:
         version = ''
         status = ''
@@ -1610,7 +1610,7 @@ allpkgs.sort(key=str.lower)
 print("BBS> [stage8] Import package statuses from %s ..." % \
       BBSreportutils.STATUS_DB_file, end=" ")
 sys.stdout.flush()
-STATUS_SUMMARY = BBSreportutils.import_STATUS_DB(allpkgs)
+status_summary = BBSreportutils.import_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 

@@ -66,9 +66,12 @@ class DcfParsingError(Exception):
 ### Return a list of DCF records. Each record is represented as a dictionary
 ### of key-value pairs where the key is a DCF field name and the value a
 ### string.
-def parse_DCF(filepath):
+def parse_DCF(filepath, merge_records=False):
     f = open(filepath, 'r')
-    dcf_records = []
+    if merge_records:
+        rec1 = {}
+    else:
+        records = []
     recno = 0
     rec_firstlineno = 0
     lineno = 0
@@ -78,7 +81,10 @@ def parse_DCF(filepath):
         ## The current line is empty.
         if line2 == '':
             if rec_firstlineno != 0:
-                dcf_records.append(rec)
+                if merge_records:
+                    rec1.update(rec)
+                else:
+                    records.append(rec)
                 rec_firstlineno = 0
         elif line.startswith('#'):
             continue  # skip comment lines
@@ -104,10 +110,13 @@ def parse_DCF(filepath):
             key = line[:pos]
             val = line[pos+1:].strip()
             rec[key] = val
-    if rec_firstlineno != 0:
-        dcf_records.append(rec)
     f.close()
-    return dcf_records
+    if rec_firstlineno != 0:
+        if merge_records:
+            rec1.update(rec)
+        else:
+            records.append(rec)
+    return rec1 if merge_records else records
 
 
 ##############################################################################
@@ -170,24 +179,8 @@ def get_next_DCF_val(dcf, field, full_line=False):
 ### Parse a DESCRIPTION file
 ###
 
-def parse_DESCRIPTION(DESCRIPTION_path):
-    dcf_records = parse_DCF(DESCRIPTION_path)
-    ## We could just raise an error if 'len(dcf_records) != 1' but we want
-    ## to be able to handle a DESCRIPTION file with empty lines. Empty lines
-    ## in a DESCRIPTION file can be considered a mild formatting issue, which
-    ## we tolerate. Such file would result in a file with more than 1 DCF
-    ## record.
-    DESCRIPTION = {}
-    for rec in dcf_records:
-        DESCRIPTION.update(rec)
-    return DESCRIPTION
-
 def get_DESCRIPTION_path(pkgsrctree):
     return os.path.join(pkgsrctree, 'DESCRIPTION')
-
-def read_DESCRIPTION_from_pkgsrctree(pkgsrctree):
-    DESCRIPTION_path = get_DESCRIPTION_path(pkgsrctree)
-    return parse_DESCRIPTION(DESCRIPTION_path)
 
 def get_Package_from_pkgsrctree(pkgsrctree):
     desc_file = get_DESCRIPTION_path(pkgsrctree)
