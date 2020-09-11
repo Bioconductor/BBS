@@ -11,56 +11,60 @@ import sys
 import os
 import time
 
-import bbs.rdir
+import bbs.parse
 import BBScorevars
 import BBSreportutils
 
-def get_status_from_summary_file(pkg, node_id, stage):
-    file = "%s.%s-summary.dcf" % (pkg, stage)
-    rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
+def _read_status_from_summary_file(pkg, node_id, stage):
+    summary_file = '%s.%s-summary.dcf' % (pkg, stage)
+    summary_path = os.path.join(node_id, stage, summary_file)
     try:
-        status = BBSreportutils.WReadDcfVal(rdir, file, 'Status')
-    except bbs.rdir.WOpenError:
-        if stage == "install":
-            return "NotNeeded"
-        return "NA"
+        summary = bbs.parse.parse_DCF(summary_path, merge_records=True)
+    except FileNotFoundError:
+        status = 'NA'
+    else:
+        status = summary['Status']
     return status
+
+def _write_status_to_STATUS_DB(out, pkg, node_id, stage, status):
+    out.write('%s#%s#%s: %s\n' % (pkg, node_id, stage, status))
+    return
+
+def _write_pkg_results_to_STATUS_DB(pkg, out):
+    for node in BBSreportutils.supported_nodes(pkg):
+        # INSTALL status
+        if BBScorevars.subbuilds != 'bioc-longtests':
+            stage = 'install'
+            status = _read_status_from_summary_file(pkg, node.id, stage)
+            _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+        # BUILD status
+        stage = 'buildsrc'
+        status = _read_status_from_summary_file(pkg, node.id, stage)
+        _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+        skipped_is_OK = status in ["TIMEOUT", "ERROR"]
+        # CHECK status
+        if BBScorevars.subbuilds not in ["workflows", "books"]:
+            stage = 'checksrc'
+            if skipped_is_OK:
+                status = "skipped"
+            else:
+                status = _read_status_from_summary_file(pkg, node.id, stage)
+            _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+        # BUILD BIN status
+        if BBSreportutils.is_doing_buildbin(node):
+            stage = 'buildbin'
+            if skipped_is_OK:
+                status = "skipped"
+            else:
+                status = _read_status_from_summary_file(pkg, node.id, stage)
+            _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+    return
 
 def make_STATUS_DB(allpkgs):
     print("BBS> [make_STATUS_DB] BEGIN...")
     out = open(BBSreportutils.STATUS_DB_file, 'w')
     for pkg in allpkgs:
-        for node in BBSreportutils.supported_nodes(pkg):
-
-            # INSTALL status
-            if BBScorevars.subbuilds != "bioc-longtests":
-                stage = 'install'
-                status = get_status_from_summary_file(pkg, node.id, stage)
-                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
-
-            # BUILD status
-            stage = 'buildsrc'
-            status = get_status_from_summary_file(pkg, node.id, stage)
-            out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
-            skipped_is_OK = status in ["TIMEOUT", "ERROR"]
-
-            # CHECK status
-            if BBScorevars.subbuilds not in ["workflows", "books"]:
-                stage = 'checksrc'
-                if skipped_is_OK:
-                    status = "skipped"
-                else:
-                    status = get_status_from_summary_file(pkg, node.id, stage)
-                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
-
-            # BUILD BIN status
-            if BBSreportutils.is_doing_buildbin(node):
-                stage = 'buildbin'
-                if skipped_is_OK:
-                    status = "skipped"
-                else:
-                    status = get_status_from_summary_file(pkg, node.id, stage)
-                out.write('%s#%s#%s: %s\n' % (pkg, node.id, stage, status))
+        _write_pkg_results_to_STATUS_DB(pkg, out)
     out.close()
     print("BBS> [make_STATUS_DB] END")
     return
