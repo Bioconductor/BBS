@@ -77,6 +77,10 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
         print("BBS>   Field 'Version' not found in '%s' ==> skip package" % \
               DESCRIPTION_path)
         return 1
+    if not bbs.parse.version_is_valid(version):
+        print("BBS>   Invalid 'Version: %s' in '%s' ==> skip package" % \
+              (version, DESCRIPTION_path))
+        return 1
     try:
         if BBScorevars.subbuilds != "cran":
             maintainer = bbs.parse.get_Maintainer_name_from_pkgsrctree(pkgsrctree)
@@ -84,23 +88,16 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
         else:
             maintainer = bbs.parse.get_Maintainer_from_pkgsrctree(pkgsrctree)
     except bbs.parse.DcfFieldNotFoundError:
-        print("BBS>   Failed to extract Maintainer information from '%s' ==> skip package" % \
-              DESCRIPTION_path)
-        return 1
-    if not bbs.parse.version_is_valid(version):
-        print("BBS>   Invalid 'Version: %s' in '%s' ==> skip package" % \
-              (version, DESCRIPTION_path))
+        print("BBS>   Failed to extract Maintainer information " + \
+              "from '%s' ==> skip package" % DESCRIPTION_path)
         return 1
     meat_index.write('Package: %s\n' % pkgname)
     meat_index.write('Version: %s\n' % version)
     meat_index.write('Maintainer: %s\n' % maintainer)
     if BBScorevars.subbuilds != "cran":
         meat_index.write('MaintainerEmail: %s\n' % maintainer_email)
-    try:
-        package_status = DESCRIPTION['PackageStatus']
-    except KeyError:
-        pass
-    else:
+    package_status = DESCRIPTION.get('PackageStatus')
+    if package_status != None:
         meat_index.write('PackageStatus: %s\n' % package_status)
     unsupported = bbs.parse.get_BBSoption_from_pkgsrctree(
                                           pkgsrctree,

@@ -356,7 +356,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
                 dcf_record = meat_pkgs[pkg]
                 version = dcf_record['Version']
                 maintainer = dcf_record['Maintainer']
-                status = dcf_record['PackageStatus']
+                status = dcf_record.get('PackageStatus')
             else:
                 version = ''
                 maintainer = ''
@@ -497,7 +497,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
         dcf_record = meat_pkgs[pkg]
         version = dcf_record['Version']
         maintainer = dcf_record['Maintainer']
-        status = dcf_record['PackageStatus']
+        status = dcf_record.get('PackageStatus')
     else:
         version = ''
         status = ''
