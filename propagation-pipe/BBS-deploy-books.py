@@ -40,6 +40,6 @@ if __name__ == '__main__':
     PACKAGES = bbs.parse.parse_DCF('PACKAGES')
     for dcf_record in PACKAGES:
         pkg = dcf_record['Package']
-        version = dcf_record['version']
+        version = dcf_record['Version']
         _deploy_book(pkg, version, destdir)
 
