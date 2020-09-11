@@ -106,25 +106,6 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
                                           pkgsrctree,
                                           'UnsupportedPlatforms')
     meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
-    no_examples = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                          pkgsrctree,
-                                          'NoExamplesOnPlatforms')
-    meat_index.write('NoExamplesOnPlatforms: %s\n' % no_examples)
-    force_install = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                          pkgsrctree,
-                                          'ForceInstall')
-    meat_index.write('ForceInstall: %s\n' % force_install)
-    #if BBScorevars.subbuilds != "cran":
-    #    alert = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, 'Alert')
-    #    meat_index.write('Alert: %s\n' % alert)
-    #    alert_on = bbs.parse.get_BBSoption_from_pkgsrctree(
-    #                                      pkgsrctree,
-    #                                      'AlertOn')
-    #    meat_index.write('AlertOn: %s\n' % alert_on)
-    #    alert_to = bbs.parse.get_BBSoption_from_pkgsrctree(
-    #                                      pkgsrctree,
-    #                                      'AlertTo')
-    #    meat_index.write('AlertTo: %s\n' % alert_to)
     meat_index.write('\n')
     return 0
 
