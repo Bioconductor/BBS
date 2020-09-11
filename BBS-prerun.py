@@ -15,7 +15,6 @@ import time
 import bbs.fileutils
 import bbs.manifest
 import bbs.parse
-import bbs.dcf
 import bbs.jobs
 import bbs.gitutils
 import BBScorevars
