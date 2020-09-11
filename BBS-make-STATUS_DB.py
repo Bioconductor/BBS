@@ -75,15 +75,15 @@ def make_STATUS_DB(allpkgs):
 ##############################################################################
 
 if __name__ == "__main__":
-    print()
-    print('BBS> ==============================================================')
-    print('BBS> [stage7a] STARTING stage7a at %s...' % time.asctime())
     if not os.path.isdir('nodes'):
-        print('mmh.. I don\'t see the \'nodes\' subdirectory ')
-        print('in the current directory!')
+        print('mmh.. I don\'t see the \'nodes\' subdirectory in the current')
+        print('directory!')
         print('Make sure to be in \'%s/\' ' % BBScorevars.Central_rdir.path)
         print('before running the BBS-make-STATUS_DB.py script.')
         sys.exit('=> EXIT.')
+    print()
+    print('BBS> ==============================================================')
+    print('BBS> [stage7a] STARTING stage7a at %s...' % time.asctime())
     report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
     BBSreportutils.set_NODES(report_nodes)
     allpkgs = BBSreportutils.get_pkgs_from_meat_index()
