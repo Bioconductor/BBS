@@ -7,49 +7,8 @@ import tarfile
 import shutil
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+import bbs.parse
 import bbs.jobs
-
-def _append_package(pkgversions, pkg, version,
-                    recno, rec_firstlineno, rec_lastlineno, dcf):
-    if pkg == None or version == None:
-        errmsg = 'Package or Version field is missing in ' + \
-                 'record %d (lines %d-%d)\n  in DCF file \'%s\'' % \
-                 (recno, rec_firstlineno, rec_lastlineno, dcf)
-        raise Exception(errmsg)
-    pkgversions.append((pkg.strip(), version.strip()))
-    return
-
-### Load package list as ('Package', 'Version') pairs.
-def _get_package_list(dcf):
-    f = open(dcf, 'r')
-    pkgversions = []
-    recno = 0
-    rec_firstlineno = 0
-    lineno = 0
-    pkg = version = None
-    for line in f:
-        lineno += 1
-        if line.strip() != '':
-            ## Skip comment lines.
-            if line.startswith('#'):
-                continue
-            if rec_firstlineno == 0:
-                recno += 1
-                rec_firstlineno = lineno
-            if line.startswith('Package:'):
-                pkg = line[len('Package:'):]
-            elif line.startswith('Version:'):
-                version = line[len('Version:'):]
-        elif rec_firstlineno != 0:
-            _append_package(pkgversions, pkg, version,
-                            recno, rec_firstlineno, lineno - 1, dcf)
-            rec_firstlineno = 0
-            pkg = version = None
-    if rec_firstlineno != 0:
-        _append_package(pkgversions, pkg, version,
-                        recno, rec_firstlineno, lineno - 1, dcf)
-    f.close()
-    return pkgversions
 
 def _deploy_book(pkg, version, destdir):
     book_destroot = os.path.join(destdir, pkg)
@@ -78,7 +37,9 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:
         sys.exit('Usage: BBS-deploy-books.py <destdir>')
     destdir = sys.argv[1]
-    pkgversions = _get_package_list('PACKAGES')
-    for (pkg, version) in pkgversions:
+    PACKAGES = bbs.parse.parse_DCF('PACKAGES')
+    for dcf_record in PACKAGES:
+        pkg = dcf_record['Package']
+        version = dcf_record['version']
         _deploy_book(pkg, version, destdir)
 
