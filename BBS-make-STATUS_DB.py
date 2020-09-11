@@ -76,8 +76,8 @@ def make_STATUS_DB(allpkgs):
 
 if __name__ == "__main__":
     if not os.path.isdir('nodes'):
-        print('mmh.. I don\'t see the \'nodes\' subdirectory in the current')
-        print('directory!')
+        print('mmh.. I don\'t see the \'nodes\' subdirectory ' + \
+              'in the current directory!')
         print('Make sure to be in \'%s/\' ' % BBScorevars.Central_rdir.path)
         print('before running the BBS-make-STATUS_DB.py script.')
         sys.exit('=> EXIT.')
