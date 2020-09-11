@@ -17,7 +17,7 @@ import BBSreportutils
 
 def _read_status_from_summary_file(pkg, node_id, stage):
     summary_file = '%s.%s-summary.dcf' % (pkg, stage)
-    summary_path = os.path.join(node_id, stage, summary_file)
+    summary_path = os.path.join('nodes', node_id, stage, summary_file)
     try:
         summary = bbs.parse.parse_DCF(summary_path, merge_records=True)
     except FileNotFoundError:
