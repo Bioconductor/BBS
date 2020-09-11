@@ -41,12 +41,12 @@ def _write_pkg_results_to_STATUS_DB(pkg, out):
         stage = 'buildsrc'
         status = _read_status_from_summary_file(pkg, node.id, stage)
         _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
-        skipped_is_OK = status in ["TIMEOUT", "ERROR"]
+        skipped_is_OK = status in ['TIMEOUT', 'ERROR']
         # CHECK status
-        if BBScorevars.subbuilds not in ["workflows", "books"]:
+        if BBScorevars.subbuilds not in ['workflows', 'books']:
             stage = 'checksrc'
             if skipped_is_OK:
-                status = "skipped"
+                status = 'skipped'
             else:
                 status = _read_status_from_summary_file(pkg, node.id, stage)
             _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
@@ -54,37 +54,39 @@ def _write_pkg_results_to_STATUS_DB(pkg, out):
         if BBSreportutils.is_doing_buildbin(node):
             stage = 'buildbin'
             if skipped_is_OK:
-                status = "skipped"
+                status = 'skipped'
             else:
                 status = _read_status_from_summary_file(pkg, node.id, stage)
             _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
     return
 
 def make_STATUS_DB(allpkgs):
-    print("BBS> [make_STATUS_DB] BEGIN...")
+    print('BBS> Writing %s ...' % BBSreportutils.STATUS_DB_file, end=' ')
+    sys.stdout.flush()
     out = open(BBSreportutils.STATUS_DB_file, 'w')
     for pkg in allpkgs:
         _write_pkg_results_to_STATUS_DB(pkg, out)
     out.close()
-    print("BBS> [make_STATUS_DB] END")
+    print('OK')
     return
-
 
 ##############################################################################
 ### MAIN SECTION
 ##############################################################################
 
-print("BBS> [stage7a] STARTING stage7a at %s..." % time.asctime())
-
-central_rdir_path = BBScorevars.Central_rdir.path
-if central_rdir_path != None:
-    print("BBS> [stage7a] cd %s/" % central_rdir_path)
-    os.chdir(central_rdir_path)
-
-report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-BBSreportutils.set_NODES(report_nodes)
-allpkgs = BBSreportutils.get_pkgs_from_meat_index()
-make_STATUS_DB(allpkgs)
-
-print("BBS> [stage7a] DONE at %s." % time.asctime())
+if __name__ == "__main__":
+    print()
+    print('BBS> ==============================================================')
+    print('BBS> [stage7a] STARTING stage7a at %s...' % time.asctime())
+    if not os.path.isdir('nodes'):
+        print('mmh.. I don\'t see the \'nodes\' subdirectory ')
+        print('in the current directory!')
+        print('Make sure to be in \'%s/\' ' % BBScorevars.Central_rdir.path)
+        print('before running the BBS-make-STATUS_DB.py script.')
+        sys.exit('=> EXIT.')
+    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    BBSreportutils.set_NODES(report_nodes)
+    allpkgs = BBSreportutils.get_pkgs_from_meat_index()
+    make_STATUS_DB(allpkgs)
+    print('BBS> [stage7a] DONE at %s.' % time.asctime())
 
