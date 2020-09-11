@@ -260,14 +260,14 @@ def getSTAGE2cmd(pkg, version):
         else:
             cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
     prepend = _get_prepend_from_BBSoptions(pkg, 'INSTALL')
-    if prepend != None:
+    if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
 def getSTAGE3cmd(pkgsrctree):
     cmd =  _get_Rbuild_cmd(pkgsrctree) + ' ' + pkgsrctree
     prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'BUILD')
-    if prepend != None:
+    if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
@@ -341,7 +341,7 @@ def getSTAGE4cmd(srcpkg_path):
     common_opts = ' '.join(common_opts)
     cmd = '%s %s %s' % (cmd0, common_opts, srcpkg_path)
     prepend = _get_prepend_from_BBSoptions(pkg, 'CHECK')
-    if prepend != None:
+    if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
@@ -358,7 +358,7 @@ def getSTAGE5cmd(srcpkg_path):
             win_archs = _supportedWinArchs(pkg)
     cmd = _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
     prepend = _get_prepend_from_BBSoptions(pkg, 'BUILDBIN')
-    if prepend != None:
+    if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
