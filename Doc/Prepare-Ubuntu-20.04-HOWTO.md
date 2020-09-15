@@ -822,6 +822,8 @@ From the biocbuild account:
 
 ### 3.6 Install ROOT
 
+SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (xps is deprecated in BioC 3.12)
+
 Required by Bioconductor package xps.
 
 xps wants ROOT 5, not 6.
@@ -925,7 +927,20 @@ As expected, this currently fails (with xps 1.49.0):
 
 ### 4.1 curl SSLv3 alert handshake failure
 
-Affects several Bioconductor packages:
+Affects several Bioconductor packages on Ubuntu 20.04: MouseFM, martini,
+AnnotationHubData, and rfaRm. See below for the details. Maintainers of
+these packages have been notified on Sept 8, 2020, with the suggested
+temporary workaround to use HTTP instead of HTTPS.
+
+Note that the following fix at the system level also makes the issue go away
+https://askubuntu.com/questions/1233186/ubuntu-20-04-how-to-set-lower-ssl-security-level
+However most Ubuntu 20.04 users won't know about this, and, even if they
+did, they won't necessarily be in a position to apply the fix (requires
+sudo access). System administrators wouldn't necessarily agree to apply
+such a fix either. So do NOT apply the fix on the Ubuntu 20.04 build machine.
+This way the packages below get an error on the build report and this is
+an incentive for their maintainers to fix them by applying the suggested
+workaround (use HTTP instead of HTTPS).
 
 #### MouseFM and martini
 
