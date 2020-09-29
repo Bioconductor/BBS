@@ -310,7 +310,7 @@ capabilities will be missing):
     libopenbabel-dev and libeigen3-dev (for ChemmineOB)
     clustalo (LowMACA)
     ocl-icd-opencl-dev (for gpuMagic)
-
+    libavfilter-dev (for av/spatialHeatmap)   
 
 ### 1.7 Install Python 3 modules
 
