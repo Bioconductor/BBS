@@ -127,6 +127,7 @@ print("BBS> [stage9] STARTING stage9 at %s..." % time.asctime())
 
 BBSreportutils.data_source = BBScorevars.getenv('BBS_PUBLISHED_REPORT_URL')
 notify_nodes = BBScorevars.getenv('BBS_NOTIFY_NODES')
+report_path = BBScorevars.getenv('BBS_REPORT_PATH')
 
 argc = len(sys.argv)
 if argc > 1:
@@ -138,6 +139,8 @@ if arg1 != "":
     bbs.notify.mode = "do-it"
     if arg1 != "do-it":
         bbs.notify.redirect_to_addr = arg1
+
+os.chdir(report_path)
 
 BBSreportutils.set_NODES(notify_nodes)
 allpkgs = BBSreportutils.get_pkgs_from_meat_index()
