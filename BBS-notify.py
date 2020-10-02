@@ -8,6 +8,7 @@
 ###
 
 import sys
+import os
 import time
 
 import bbs.notify
