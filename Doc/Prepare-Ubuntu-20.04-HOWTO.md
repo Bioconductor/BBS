@@ -308,9 +308,10 @@ capabilities will be missing):
     automake (for RProtoBufLib)
     libnetcdf-dev (for xcms, RNetCDF, etc...)
     libopenbabel-dev and libeigen3-dev (for ChemmineOB)
-    clustalo (LowMACA)
+    clustalo (for LowMACA)
     ocl-icd-opencl-dev (for gpuMagic)
     libavfilter-dev (for av/spatialHeatmap)   
+
 
 ### 1.7 Install Python 3 modules
 
