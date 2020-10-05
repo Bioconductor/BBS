@@ -75,21 +75,22 @@ ALSO: You need to explicitly associate `.py` files with Python by:
 
 ### 1.3 Upgrade to the latest pip
 
-In a PowerShell window:
+**From the Administrator account** in a PowerShell window:
 
     python -m pip install --upgrade pip
 
 
 ### 1.4 Install Python module psutil
 
-This module is needed by BBS.
+**From the Administrator account** in a PowerShell window (this module
+is needed by BBS):
 
     pip install psutil
 
 
 ### 1.5 Install Python modules needed by some CRAN/Bioconductor packages
 
-In a PowerShell window:
+**From the Administrator account** in a PowerShell window:
 
     pip install numpy scipy sklearn h5py pandas mofapy mofapy2
     pip install tensorflow tensorflow_probability
