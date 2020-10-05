@@ -1193,7 +1193,7 @@ effect. Then try to install the RGtk2 package *from source*:
 
 ### Install Python 3 modules needed by some CRAN/Bioconductor packages
 
-    pip3 install numpy scipy sklearn h5py pandas mofapy
+    pip3 install numpy scipy sklearn h5py pandas mofapy mofapy2
     pip3 install tensorflow tensorflow_probability
     pip3 install h5pyd
     pip3 install cwltool

@@ -91,7 +91,7 @@ This module is needed by BBS.
 
 In a PowerShell window:
 
-    pip install numpy scipy sklearn h5py pandas mofapy
+    pip install numpy scipy sklearn h5py pandas mofapy mofapy2
     pip install tensorflow tensorflow_probability
     pip install h5pyd
     pip install cwltool
@@ -100,24 +100,35 @@ In a PowerShell window:
     pip install virtualenv
 
 Notes:
-- scipy is needed by Bioconductor package MOFA but also by the sklearn
-  module (when sklearn is imported and scipy is not present, the former
-  breaks). However, for some reason, `pip install sklearn` does not
-  install scipy and completes successfully even if scipy is not installed.
-- numpy, sklearn, h5py, and pandas are needed by Bioconductor packages
-  BiocSklearn and MOFA, and numpy is also needed by Bioconductor package
-  DChIPRep.
-- mofapy is needed by Bioconductor package MOFA.
-- tensorflow is needed by Bioconductor packages scAlign and netReg.
-- tensorflow_probability is needed by Bioconductor package netReg.
-- h5pyd is needed by Bioconductor package rhdf5client.
-- cwltool is needed by Bioconductor package Rcwl.
-- nbconvert is needed by CRAN package nbconvertR which is itself used by
+- `scipy` is needed by Bioconductor packages MOFA and MOFA2, but also by
+  the `sklearn` module (when `sklearn` is imported and `scipy` is not present,
+  the former breaks). However, for some reason, `pip install sklearn`
+  does not install `scipy` and completes successfully even if `scipy` is
+  not installed.
+
+- `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
+  BiocSklearn, MOFA and MOFA2, and `numpy` is also needed by Bioconductor
+  package DChIPRep.
+
+- `mofapy` and `mofapy2` are needed by Bioconductor packages MOFA and MOFA2,
+  respectively.
+
+- `tensorflow` is needed by Bioconductor packages scAlign and netReg.
+
+- `tensorflow_probability` is needed by Bioconductor package netReg.
+
+- `h5pyd` is needed by Bioconductor package rhdf5client.
+
+- `cwltool` is needed by Bioconductor package Rcwl.
+
+- `nbconvert` is needed by CRAN package nbconvertR which is itself used by
   Bioconductor package destiny.
-- matplotlib and phate are needed by CRAN package phateR which is itself
+
+- `matplotlib` and `phate` are needed by CRAN package phateR which is itself
   used by Bioconductor package phemd.
-- virtualenv is used by the single package builder. Despite python3 shipping
-  with venv, venv is not sufficient. The SPB must use virtualenv.
+
+- `virtualenv` is used by the single package builder. Despite python3 shipping
+  with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
 
 ### 1.6 Create personal administrator accounts

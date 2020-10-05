@@ -325,7 +325,7 @@ biocbuild for BBS or pkgbuild for the Single Package Builder). Since we
 only install _trusted_ modules, this should not be a security concern. See
 https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practice)
 
-    sudo -H pip3 install numpy scipy sklearn h5py pandas mofapy
+    sudo -H pip3 install numpy scipy sklearn h5py pandas mofapy mofapy2
     sudo -H pip3 install tensorflow tensorflow_probability
     sudo -H pip3 install h5pyd
     sudo -H pip3 install cwltool
@@ -334,16 +334,18 @@ https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practi
 
 Notes:
 
-- `scipy` is needed by Bioconductor package MOFA but also by the `sklearn`
-  module (when `sklearn` is imported and `scipy` is not present, the former
-  breaks). However, for some reason, `sudo -H pip3 install sklearn` does not
-  install `scipy` and completes successfully even if `scipy` is not installed.
+- `scipy` is needed by Bioconductor packages MOFA and MOFA2, but also by
+  the `sklearn` module (when `sklearn` is imported and `scipy` is not present,
+  the former breaks). However, for some reason, `sudo -H pip3 install sklearn`
+  does not install `scipy` and completes successfully even if `scipy` is
+  not installed.
 
 - `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
-  BiocSklearn and MOFA, and `numpy` is also needed by Bioconductor package
-  DChIPRep.
+  BiocSklearn, MOFA and MOFA2, and `numpy` is also needed by Bioconductor
+  package DChIPRep.
 
-- `mofapy` is needed by Bioconductor package MOFA.
+- `mofapy` and `mofapy2` are needed by Bioconductor packages MOFA and MOFA2,
+  respectively.
 
 - `tensorflow` is needed by Bioconductor packages scAlign and netReg. Note that
   trying to load the module in a Python 3 session might raise the following error:
