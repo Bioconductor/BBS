@@ -310,7 +310,9 @@ capabilities will be missing):
     libopenbabel-dev and libeigen3-dev (for ChemmineOB)
     clustalo (for LowMACA)
     ocl-icd-opencl-dev (for gpuMagic)
-    libavfilter-dev (for av/spatialHeatmap)   
+    libavfilter-dev (for av/spatialHeatmap)
+    libfribidi-dev (for CRAN package textshaping which BioC package
+                    EnhancedVolcano indirectly depends on via ragg and ggrastr)
 
 
 ### 1.7 Install Python 3 modules
