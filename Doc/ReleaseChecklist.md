@@ -19,13 +19,13 @@ Prior to the release we should be testing the latest binary packages with
 the upcoming release with R RC or R PRERELEASE on a clean Windows and Mac machine.
 It's important to use these binary R installations:
 
-Windows:
+R Windows binary:
 
-  http://cran.fhcrc.org/bin/windows/base/
+  http://cran.r-project.org/bin/windows/base/
 
-Mac:
+R Mac binary:
 
-  http://cran.fhcrc.org/bin/macosx/
+  http://cran.r-project.org/bin/macosx/
 
 A "clean" machine means, on Windows, no Rtools, LaTeX, etc.
 On Mac it means no Xcode and do not use Simon U's builds, use the one above.

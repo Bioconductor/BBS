@@ -3,8 +3,8 @@
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
-### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Sep 12, 2019
+### Author: Hervé Pagès <hpages.on.github@gmail.com>
+### Last modification: Sep 13, 2019
 ###
 ### notify module
 ###
@@ -27,7 +27,7 @@ redirect_to_addr = None
 # Test this with:
 #   import bbs.notify
 #   from_addr = 'devteam-bioc@bioconductor.org'
-#   to_addrs = ['hpages@fredhutch.org']
+#   to_addrs = ['hpages.on.github@gmail.com']
 #   subject = 'TEST'
 #   msg_body = 'hi'
 #   bbs.notify.sendtextmail(from_addr, to_addrs, subject, msg_body)
@@ -128,7 +128,7 @@ def createhtmlmail(html, text, from_addr, to_addrs, subject):
 # Test this with:
 #   import bbs.notify
 #   from_addr = 'devteam-bioc@bioconductor.org'
-#   to_addrs = ['hpages@fredhutch.org']
+#   to_addrs = ['hpages.on.github@gmail.com']
 #   subject='test3'
 #   html_msg='<HTML><BODY style="background: #49A"><H1>OOOH</H1></BODY></HTML>'
 #   text_msg='OOOH'

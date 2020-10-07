@@ -7,7 +7,7 @@
 #
 # Note that this scripts does NOT check the source package!
 #
-# Author: H. Pages (hpages@fhcrc.org)
+# Author: Hervé Pagès <hpages.on.github@gmail.com>
 # Last modified: 2007-08-11
 
 INST_SCRIPT=`dirname "$0"`/macosx-inst-pkg.sh

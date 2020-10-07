@@ -3,10 +3,8 @@
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
-### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Sep 16, 2019
-###
-###
+### Author: Hervé Pagès <hpages.on.github@gmail.com>
+### Last modification: Sep 3, 2020
 ###
 ### rdir module
 ###

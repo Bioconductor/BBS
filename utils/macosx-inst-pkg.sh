@@ -7,7 +7,7 @@
 #
 # Note that this scripts does NOT check the source package!
 #
-# Author: H. Pages (hpages@fhcrc.org)
+# Author: Hervé Pagès <hpages.on.github@gmail.com>
 # Last modified: 2011-06-23
 
 set -e  # Exit immediately if a simple command exits with a non-zero status

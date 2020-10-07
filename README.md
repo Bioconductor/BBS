@@ -15,7 +15,7 @@ Table of Contents
       * [How the build machines are organized\.](#how-the-build-machines-are-organized)
       * [DNS resolution and https specifics](#dns-resolution-and-https-specifics)
         * [Address and canonical DNS records](#address-and-cononical-dns-records)
-        * [Traffic routing within the RPCI DMZ](#traffic-routing-within-the-rpci-dmz) 
+        * [Traffic routing within the RPCI DMZ](#traffic-routing-within-the-rpci-dmz)
         * [Mac builders and the RPCI DMZ](#mac-builders-and-the-rpci-dmz)
       * [What machines are used in which builds?](#what-machines-are-used-in-which-builds)
         * [A note about time zones\.](#a-note-about-time-zones)
@@ -42,10 +42,10 @@ Further documentation on specific tasks is in the [Doc](Doc/) directory.
 * A **nightly** build system, not incremental or continuous
   integration. Maybe it can be replaced by those things
   in the future.
-* Home-grown. The system was written originally by 
-  Herv&eacute; Pag&egrave;s and is now maintained 
-  Herv&eacute; and Valerie.
-* Written in a mix of shell scripting (bash shell, 
+* Home-grown. The system was written originally by
+  Herv&eacute; Pag&egrave;s and is now maintained
+  Herv&eacute; and Lori.
+* Written in a mix of shell scripting (bash shell,
   Windows batch files), Python, and R.
 
 ## What is BBS **not**?
@@ -65,7 +65,7 @@ The canonical location of the code is in GitHub:
 
 If you have a question not covered here:
 
-* Ask Herv&eacute; Pag&egrave;s or Valerie Obenchain.
+* Ask Herv&eacute; Pag&egrave;s or Lori Shepherd.
 * If neither of those two are available, Martin Morgan may know.
 
 ## General overview of BBS
@@ -81,14 +81,14 @@ In general, there are four *builds* that run during any given week:
 2. Release *experiment package* builds (*data-experiment* is the
    name for our experiment package repository). These builds run
    nightly on the release Linux master builder only.
-3. Devel *software* builds. These builds run nightly on 
+3. Devel *software* builds. These builds run nightly on
    all devel build machines.
 4. Devel *experiment package* builds. These builds run
    nightly on the devel Linux master builder only.
 
 ## What builds where
 
-As of December 2017, the Linux and Windows builders are in the 
+As of December 2017, the Linux and Windows builders are in the
 Roswell Park DMZ and the Mac builders are in MacStadium.
 
 There are plans to purchase new Mac hardware in the next 6 months
@@ -115,18 +115,18 @@ about the build, enough to construct the build report.
 ### DNS resolution and https specifics
 
 In Stage 2, the Windows and Mac builders get packages to build from the *master
-builder*. Historically this was done via http and has recently been 
+builder*. Historically this was done via http and has recently been
 transitioned to https.
 
-#### Address and canonical DNS records 
+#### Address and canonical DNS records
 
-Each machine in the RPCI DMZ has both a public and private IP. These are the 
-A (address) record DNS entries and they resolve to the public IPs: 
+Each machine in the RPCI DMZ has both a public and private IP. These are the
+A (address) record DNS entries and they resolve to the public IPs:
 
-malbec1.roswellpark.org  
-malbec2.roswellpark.org  
-tokay1.roswellpark.org  
-tokay2.roswellpark.org  
+malbec1.roswellpark.org
+malbec2.roswellpark.org
+tokay1.roswellpark.org
+tokay2.roswellpark.org
 
 In AWS Route 53 we have CNAME (canonical) record DNS entries that point names
 with the .bioconductor.org extension to names with the .roswellpark.org
@@ -134,7 +134,7 @@ extension.
 
 https://console.aws.amazon.com/route53/home?region=us-east-1#resource-record-sets:Z2LMJH3A2CQNZZ
 
-#### Traffic routing within the RPCI DMZ 
+#### Traffic routing within the RPCI DMZ
 
 When http was used to communicate between the Windows and Linux
 builders the private IP was used instead of the hostname. This resulted in direct communication
@@ -144,15 +144,15 @@ the public IP in the firewall.
 The direct IP approach doesn't work with https because the SSL certificate must
 be validated and it's registered to the .bioconductor.org name (not the IP).
 
-We tried using the .bioconductor.org name with https but there was a problem 
+We tried using the .bioconductor.org name with https but there was a problem
 with the routing of traffic in the DMZ. The key issue was that the outgoing
-request path was different from the return response path. The 
+request path was different from the return response path. The
 return response was coming from a different IP than the outgoing request
-was sent to. Evidently certain protocols don't like this inconsistency and 
+was sent to. Evidently certain protocols don't like this inconsistency and
 https is one of them.
 
 Outgoing traffic must use https://hostname.bioconductor.org which maps to
-the public IP in the firewall. The return traffic was not forced to use 
+the public IP in the firewall. The return traffic was not forced to use
 .bioconductor.org so it instead used the internal route table to lookup
 the private IP of the originating machine which is also in the DMZ.
 
@@ -172,7 +172,7 @@ private IP instead of the public IP. As a result, traffic no longer goes
 through the firewall but instead occurs directly between the two machines which
 means the outgoing and return IP addresses are the same.
 
-#### Mac builders and the RPCI DMZ 
+#### Mac builders and the RPCI DMZ
 
 The Mac builders are located outside the RPCI DMZ. When they https
 to the *master builder*, e.g., malbec1.bioconductor.org, they are
@@ -182,7 +182,7 @@ outgoing and return routes are the same. This works fine, no problems here.
 ### What machines are used in which builds?
 
 This changes with every release. The *active_devel_builders* and
-*active_release_builders* sections of 
+*active_release_builders* sections of
 [config.yaml](http://bioconductor.org/config.yaml) list the current
 builders.
 
@@ -199,9 +199,9 @@ is managed by the *biocbuild* user and the second by the *biocadmin* user.
 
 The BBS code is checked out on all build machines. Each builder has a cron job
 (or Scheduled Task on Windows) that kicks off the builds. On all build
-machines, the build system runs as *biocbuild*. 
+machines, the build system runs as *biocbuild*.
 
-The crontab for the *biocbuild* user on one of the Linux build machines 
+The crontab for the *biocbuild* user on one of the Linux build machines
 (a/k/a master build nodes) lists all tasks involved in the builds. A
 visual summary of these same tasks (with Windows and Mac added) is in the
 [Build Machines Daily Schedule](https://docs.google.com/document/d/1Ubp7Tcxr1I1HQ8Xrp9f73P40YQ0qhWQ_hSmHs05Ln_M/edit#heading=h.r7sorafgdpnf).
@@ -214,29 +214,30 @@ the prerun script:
     # prerun
     00 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.6/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.6-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
-The *prerun* step happens only on the master build node. prerun.sh sources a 
-shell script and then calls a python script:
-[https://github.com/Bioconductor/BBS/blob/master/3.6/bioc/malbec1/config.sh](https://github.com/Bioconductor/BBS/blob/master/3.6/bioc/malbec1/config.sh)
+The *prerun* step happens only on the master build node. `prerun.sh`
+sources `config.sh` and then calls python script `BBS-prerun.py`.
 
-The sourcing of the config script sets up environment variables used during the
+##### config.sh
+
+The sourcing of `config.sh` sets up environment variables used during the
 build. First, variables specific to this build machine are set up. Then, inside
-config.sh, another config.sh script one level up is sourced. This sets up all
+`config.sh`, another `config.sh` script one level up is sourced. This sets up all
 environment variables specific to all Unix (Linux and Mac) nodes involved in
-this *software* build. Inside this config.sh, the config.sh one level up is
+this *software* build. Inside this `config.sh`, the `config.sh` one level up is
 also sourced. That script sets up more environment variables common to all
-builds (software and experiment data) for this version of Bioconductor. 
+builds (software and experiment data) for this version of Bioconductor.
 
 It's important to understand this pattern because it occurs in several places
 in BBS. Shell scripts (or batch files on windows) are essentially used to
 ensure that configuration is correct, but most of the actual build work is done
 by python scripts.
 
-After prerun.sh sets up all the environment variables, it runs a python script 
-[https://github.com/Bioconductor/BBS/blob/master/BBS-prerun.py](https://github.com/Bioconductor/BBS/blob/master/BBS-prerun.py).
+After `prerun.sh` sets up all the environment variables, it runs python
+script `BBS-prerun.py`.
 
-This script runs the following stages:
+`BBS-prerun.py` runs the following stages:
 
-* STAGE1: [on Linux only] Make a local copy of all packages to be built from 
+* STAGE1: [on Linux only] Make a local copy of all packages to be built from
           the version control location (i.e., git, svn etc.).
 
 The start time of this script is the deadline for changes for the day. Any
@@ -245,7 +246,7 @@ build.
 
 #### run
 
-The next line in the crontab starts the run.sh script:
+The next line in the crontab starts the `run.sh` script:
 
     # run:
     55 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.6/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.6-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
@@ -253,13 +254,11 @@ The next line in the crontab starts the run.sh script:
 At the time of this writing, prerun takes about 55 min so the run script
 must start after that time.
 
-This script sources config files in the same way as prerun.sh. It also
+This script sources config files in the same way as `prerun.sh`. It also
 sets up Xvfb (the virtual frame buffer for X11; this makes sure
 that packages which need access to X11 can have it).
 
-After loading environment variables, the main python build script,
-[BBS-run.py](https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/build/BBS/BBS-run.py),
-is run. 
+After loading environment variables, the main python build script, `BBS-run.py`, is run.
 
 This script runs the following stages:
 
@@ -282,51 +281,51 @@ next until all jobs in the current stage are completed.
 #### postrun
 
 At this point the builds should have finished on all nodes. The next line
-in the crontab starts the posrun script. This must not start until the the
-run.sh job has finished on all nodes.
+in the crontab starts the posrun script. This must not start until the
+`run.sh` job has finished on all nodes.
 
     # postrun:
     45 13 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.6/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.6-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
-The prerun build script started at 17:00 and now it is 13:45 the following 
+The prerun build script started at 17:00 and now it is 13:45 the following
 afternoon. We hope that all builders have finished by now, otherwise there will
 be (as there often is) some manual steps to do at this point.
 
-The build system will now run postrun.sh which initializes environment 
+The build system will now run `postrun.sh` which initializes environment
 variables as described above and then runs the following 3 python scripts:
 
-[BBS-make-OUTGOING.py](https://github.com/Bioconductor/BBS/blob/master/BBS-make-OUTGOING.py).
+##### BBS-make-OUTGOING.py
 
 This script performs STAGE6:
 
-* STAGE6: [Linux only] Copy build products to OUTGOING folder for later 
+* STAGE6: [Linux only] Copy build products to OUTGOING folder for later
           transfer to the website by *biocadmin*.
 
-[BBS-make-STATUS_DB.py](https://github.com/Bioconductor/BBS/blob/master/BBS-make-STATUS_DB.py).
+##### BBS-make-STATUS_DB.py
 
 This script performs STAGE7a (don't think there is a 7b):
 
-* STAGE7a: [Linux only] Create STATUS_DB.txt file which records the status of 
+* STAGE7a: [Linux only] Create `STATUS_DB.txt` file which records the status of
            STAGES 2-4 on all platforms.
 
-    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head STATUS_DB.txt 
+    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head STATUS_DB.txt
     a4#malbec1#install: NotNeeded
     a4#malbec1#buildsrc: OK
     a4#malbec1#checksrc: OK
     a4#tokay1#install: NotNeeded
 
-After the STATUS_DB.txt is created the script calls 
-`BBS/utils/createPropagationDB.R` which creates the PROPAGATE_STATUS_DB.txt file. 
+After the `STATUS_DB.txt` is created the script calls
+`BBS/utils/createPropagationDB.R` which creates the `PROPAGATE_STATUS_DB.txt` file.
 This file identifies which packages and what format, e.g., source or binary,
 will be pushed to the website.
 
-    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head PROPAGATE_STATUS_DB.txt 
+    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head PROPAGATE_STATUS_DB.txt
     a4#source#propagate: UNNEEDED, same version exists in internal repository
     a4#win.binary#propagate: UNNEEDED, same version exists in internal repository
     a4#mac.binary.el-capitan#propagate: UNNEEDED, same version exists in internal repository
     a4Base#source#propagate: UNNEEDED, same version exists in internal repository
 
-[BBS-report.py](https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/build/BBS/BBS-report.py).
+##### BBS-report.py
 
 This script performs STAGE8:
 
@@ -353,15 +352,15 @@ Looking at *biocadmin*'s crontab, we see:
 
     35 14 * * * cd /home/biocadmin/propagation-pipe/3.6 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/3.6/updateRepos-bioc-`date +\%Y\%m\%d`.log 2>&1
 
-Notice the job starts at 14:35. This is hopefully enough time for the
-postrun.sh script (above) to have finished; otherwise we'll have to re-run
-some things manually.
+Notice the job starts at 14:35. This is hopefully enough time for
+the `postrun.sh` script (above) to have finished; otherwise we'll have to
+re-run some things manually.
 
 The `cron` job above runs three scripts, to *update*, *prepare*, and *push*.
 
-#### update 
+#### update
 
-The *update* script moves the build products that can be propagated from 
+The *update* script moves the build products that can be propagated from
 `/home/biobuild/public_html/BBS/X.Y/REPO/OUTGOING/` into
 `/home/biocadmin/PACKAGES/X.Y/REPO/` where `X.Y` is the version of
 Bioconductor and `REPO` is the type of package, e.g., bioc or data.

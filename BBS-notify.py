@@ -3,7 +3,7 @@
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
-### Author: Herve Pages (hpages@fhcrc.org)
+### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Oct 6, 2020
 ###
 
@@ -85,7 +85,7 @@ def send_notification(dcf_record):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     report_title = BBSreportutils.make_report_title(report_nodes)
     if maintainer_email == "bioconductor@stat.math.ethz.ch":
-        to_addrs = ["devteam-bioc@lists.fhcrc.org"]
+        to_addrs = ["maintainer@bioconductor.org"]
     else:
         to_addrs = [maintainer_email]
     subject = "%s problems reported in the %s" % (pkg, report_title)

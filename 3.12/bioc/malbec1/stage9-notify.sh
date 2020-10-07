@@ -12,7 +12,7 @@
 # (use for debugging). Another way to test is to replace do-it by a valid
 # email address:
 #
-#   $BBS_PYTHON_CMD $BBS_HOME/BBS-notify.py hpages@fhcrc.org
+#   $BBS_PYTHON_CMD $BBS_HOME/BBS-notify.py hpages.on.github@gmail.com
 #
 # then all outgoing emails are redirected to it.
 

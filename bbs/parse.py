@@ -3,7 +3,7 @@
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
-### Author: Herve Pages (hpages@fhcrc.org)
+### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Sep 9, 2020
 ###
 ### parse module

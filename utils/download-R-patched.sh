@@ -54,7 +54,7 @@ print_help()
 	(by adding $R_TCL_ZIPFILE, $JPEGSRC_TARBALL, $LIBPNG_TARBALL and
 	$LIBTIFF_TARBALL to it).
 	
-	Questions/help: hpages@fhcrc.org (ext. 5791)
+	Questions/help: hpages.on.github@gmail.com
 	Last modified: 2010-10-07
 	
 	EOD

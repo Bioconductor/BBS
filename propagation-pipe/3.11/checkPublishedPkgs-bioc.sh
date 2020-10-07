@@ -21,5 +21,5 @@ for filepath in $PKG_FILEPATHS; do
 done
 
 diff $LOCAL_MD5SUMS $REMOTE_MD5SUMS >$MD5SUMS_DIFF
-mail "hpages@fhcrc.org" -s "Result of $0 on $HOSTNAME" <$MD5SUMS_DIFF
+mail "hpages.on.github@gmail.com" -s "Result of $0 on $HOSTNAME" <$MD5SUMS_DIFF
 

@@ -7,14 +7,14 @@ CRAN packages with the version of R of their choice.
 Instructions
 ============
 
-  1. Get a working copy of the BBS sources:
+  1. Clone the BBS repository:
 
-       svn co https://hedgehog.fhcrc.org/bioconductor/trunk/bioC/admin/build/BBS BBSwc
+       git clone https://github.com/Bioconductor/BBS
 
      Make sure that you are actually reading the last version of this README.TXT
      file. It's here:
 
-       BBSwc/cran/mybbs/gladstone/README.TXT
+       BBS/cran/mybbs/gladstone/README.TXT
 
   2. Create your personal public_html directory (this is where the
      Build System results will be written):
@@ -46,7 +46,7 @@ Instructions
        #!/bin/bash
        # This is the ~/mybbs1/bbs.sh script
 
-       export BBS_HOME=<abs_path_to_BBSwc> # e.g. ~/BBSwc
+       export BBS_HOME=<abs-path-to-BBS-clone>  # e.g. ~/BBS
        export BBS_WORK_TOPDIR=~/mybbs1
        export BBS_BUILD_LABEL="mybbs1" # No space or slash!
        export BBS_R_HOME=<abs_path_to_R_installation>

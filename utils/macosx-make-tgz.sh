@@ -3,7 +3,7 @@
 # Script for making the Mac OS X binary .tgz from a package installation
 # directory.
 #
-# Author: H. Pages (hpages@fhcrc.org)
+# Author: Hervé Pagès <hpages.on.github@gmail.com>
 # Last modified: 2007-08-11
 
 set -e  # Exit immediately if a simple command exits with a non-zero status

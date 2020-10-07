@@ -165,7 +165,7 @@ with the command
 ### Interpreting log output
 
 There are several categories of common problems which will be discussed TBA.
-For now, contact Herve or Valerie and share your findings with them.
+For now, contact Hervé or Lori and share your findings with them.
 
 Possible problems:
 

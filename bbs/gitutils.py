@@ -5,9 +5,9 @@
 ###
 ### Authors:
 ###   Andrzej Oleś <andrzej.oles@embl.de>
-###   Hervé Pagès <hpages@fredhutch.org>
+###   Hervé Pagès <hpages.on.github@gmail.com>
 ###
-### Last modification: May 08, 2018
+### Last modification: Nov 5, 2019
 ###
 ### gitutils module
 ###

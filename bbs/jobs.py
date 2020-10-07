@@ -3,9 +3,8 @@
 ###
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
-### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: May 13, 2011
-###
+### Author: Hervé Pagès <hpages.on.github@gmail.com>
+### Last modification: Oct 7, 2020
 ###
 ### jobs module
 ###
@@ -638,6 +637,7 @@ def getHostname():
     hostname = hostname.lower()
     hostname = hostname.replace(".local", "")
     hostname = hostname.replace(".fhcrc.org", "")
+    hostname = hostname.replace(".fredhutch.org", "")
     hostname = hostname.replace(".bioconductor.org", "")
     return hostname
 
