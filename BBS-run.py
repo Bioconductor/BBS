@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: May 10, 2011
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -15,7 +15,7 @@ import urllib.request
 import bbs.fileutils
 import bbs.parse
 import bbs.jobs
-import BBScorevars
+import BBSutils
 import BBSvars
 import BBSbase
 
@@ -131,9 +131,9 @@ def write_BBS_EndOfRun_ticket(ticket):
     return
 
 def extractTargetPkgListFromMeatIndex():
-    pkgType = BBScorevars.getNodeSpec(BBSvars.node_hostname, 'pkgType')
-    Central_rdir = BBScorevars.Central_rdir
-    dcf = Central_rdir.WOpen(BBScorevars.meat_index_file)
+    pkgType = BBSutils.getNodeSpec(BBSvars.node_hostname, 'pkgType')
+    Central_rdir = BBSvars.Central_rdir
+    dcf = Central_rdir.WOpen(BBSutils.meat_index_file)
     target_pkgs = bbs.parse.readPkgsFromDCF(dcf, BBSvars.node_hostname, pkgType)
     dcf.close()
     return target_pkgs
@@ -161,7 +161,7 @@ def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
     return srcpkg_files
 
 def waitForTargetRepoToBeReady():
-    Central_rdir = BBScorevars.Central_rdir
+    Central_rdir = BBSvars.Central_rdir
     PACKAGES_url = Central_rdir.url + '/src/contrib/PACKAGES'
     nb_attempts = 0
     while True:
@@ -203,7 +203,7 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
 
     # Make 'STAGE2_pkg_deps_list.txt' file.
     Rfunction = "make_STAGE2_pkg_deps_list"
-    script_path = os.path.join(BBScorevars.BBS_home,
+    script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
                                "make_STAGE2_pkg_deps_list.R")
     STAGE2_pkg_deps_list_path = "STAGE2_pkg_deps_list.txt"
@@ -351,7 +351,7 @@ def STAGE2_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE2 loop.")
     t1 = time.time()
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                            BBScorevars.INSTALL_timeout, True)
+                                            BBSvars.INSTALL_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE2 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -385,7 +385,7 @@ def STAGE2():
             os.remove(srcpkg_filepath)
 
     print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog")
-    gitlog_path = BBSvars.gitlog_path
+    gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
     BBSvars.GITLOG_rdir.syncLocalDir(gitlog_path, True)
 
     print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp")
@@ -397,7 +397,7 @@ def STAGE2():
     # build machines.
     #if ('BBS_STAGE2_MODE' in os.environ and
     #  os.environ['BBS_STAGE2_MODE'] == 'multiarch' and
-    #  BBScorevars.subbuilds == "bioc"):
+    #  BBSvars.subbuilds == "bioc"):
     #    CreateREnvironFiles()
 
     # Try to update all installed packages.
@@ -417,7 +417,7 @@ def STAGE2():
     os.chdir(meat_path)
     for pkg in target_pkgs:
 
-        gitlog_file = os.path.join(BBSvars.gitlog_path, "git-log-%s.dcf" % pkg)
+        gitlog_file = os.path.join(gitlog_path, "git-log-%s.dcf" % pkg)
         if not os.path.exists(gitlog_file):
             print("BBS> %s file does not exist --> skipping." % gitlog_file)
             continue 
@@ -481,7 +481,7 @@ def STAGE3_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE3 loop.")
     t1 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                           BBScorevars.BUILD_timeout, True)
+                                           BBSvars.BUILD_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE3 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -490,7 +490,7 @@ def STAGE3_loop(job_queue, nb_cpu):
     print("BBS> STAGE3 SUMMARY:")
     print("BBS>   o Working dir: %s" % os.getcwd())
     print("BBS>   o %d pkg(s) listed in file BBS_CENTRAL_BASEURL/%s" % \
-          (total, BBScorevars.meat_index_file))
+          (total, BBSutils.meat_index_file))
     print("BBS>   o %d pkg dir(s) queued and processed" % nb_jobs)
     print("BBS>   o %d srcpkg file(s) produced" % nb_products)
     print("BBS>   o Total time: %.2f seconds" % dt)
@@ -504,7 +504,7 @@ def STAGE3():
     print("BBS> [STAGE3] cd BBS_MEAT_PATH")
     target_pkgs = extractTargetPkgListFromMeatIndex()
     meat_path = BBSvars.meat_path
-    if BBScorevars.subbuilds == "bioc-longtests":
+    if BBSvars.subbuilds == "bioc-longtests":
         bbs.fileutils.remake_dir(meat_path)
         os.chdir(meat_path)
         for pkg in target_pkgs:
@@ -548,7 +548,7 @@ def STAGE4_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE4 loop.")
     t1 = time.time()
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                             BBScorevars.CHECK_timeout, True)
+                             BBSvars.CHECK_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE4 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -587,7 +587,7 @@ def prepare_STAGE5_job_queue(srcpkg_paths):
         cmd = BBSbase.getSTAGE5cmd(srcpkg_path)
         pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
         version = bbs.parse.get_version_from_srcpkg_path(srcpkg_path)
-        fileext = BBScorevars.getNodeSpec(BBSvars.node_hostname, 'pkgFileExt')
+        fileext = BBSutils.getNodeSpec(BBSvars.node_hostname, 'pkgFileExt')
         binpkg_file = "%s_%s.%s" % (pkg, version, fileext)
         pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(binpkg_file, pkgdumps_prefix)
@@ -604,7 +604,7 @@ def STAGE5_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE5 loop.")
     t1 = time.time()
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                           BBScorevars.BUILDBIN_timeout, True)
+                                           BBSvars.BUILDBIN_timeout, True)
     dt = time.time() - t1
     print("BBS> END STAGE5 loop.")
     nb_jobs = len(job_queue._jobs)

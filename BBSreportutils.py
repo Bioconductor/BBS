@@ -3,7 +3,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Jan 17, 2008
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -12,8 +12,8 @@ import string
 import urllib.request
 
 import bbs.parse
+import BBSutils
 import BBSvars
-import BBScorevars
 
 
 ##############################################################################
@@ -49,9 +49,9 @@ def set_NODES(fancynames_in_one_string):
             continue
         id = fancyname.split(":")[0]
         hostname = id.split("-")[0]
-        os_html = BBScorevars.getNodeSpec(hostname, 'OS').replace(' ', '&nbsp;')
-        arch = BBScorevars.getNodeSpec(hostname, 'Arch')
-        platform = BBScorevars.getNodeSpec(hostname, 'Platform')
+        os_html = BBSutils.getNodeSpec(hostname, 'OS').replace(' ', '&nbsp;')
+        arch = BBSutils.getNodeSpec(hostname, 'Arch')
+        platform = BBSutils.getNodeSpec(hostname, 'Platform')
         buildbin = fancyname_has_a_bin_suffix(fancyname)
         pkgs = get_pkgs_from_meat_index(hostname, id)
         node = Node(hostname, id, os_html, arch, platform, buildbin, pkgs)
@@ -84,7 +84,8 @@ def supported_nodes(pkg):
 ###
 ##############################################################################
 
-def make_report_title(subbuilds, report_nodes):
+def make_report_title(report_nodes):
+    subbuilds = BBSvars.subbuilds
     if subbuilds == "bioc-longtests":
         title = "Long Tests"
     elif subbuilds == "workflows":
@@ -107,7 +108,7 @@ def make_report_title(subbuilds, report_nodes):
     if subbuilds == "cran":
         title += "CRAN"
     else:
-        title += "BioC %s" % BBScorevars.bioc_version
+        title += "BioC %s" % BBSvars.bioc_version
         if subbuilds == "data-annotation":
             title += " annotations"
         elif subbuilds == "data-experiment":
@@ -193,7 +194,7 @@ def open_rodata(file):
 ### supported on this node (and the returned list is unsorted).
 def get_pkgs(dcf, node_hostname=None, node_id=None):
     if node_hostname:
-        pkgType = BBScorevars.getNodeSpec(node_hostname, 'pkgType')
+        pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
         pkgs = bbs.parse.readPkgsFromDCF(dcf, node_id, pkgType)
     else:
         pkgs = bbs.parse.readPkgsFromDCF(dcf)
@@ -201,13 +202,13 @@ def get_pkgs(dcf, node_hostname=None, node_id=None):
     return pkgs
 
 def get_pkgs_from_meat_index(node_hostname=None, node_id=None):
-    rodata = open_rodata(BBScorevars.meat_index_file)
+    rodata = open_rodata(BBSutils.meat_index_file)
     pkgs = get_pkgs(rodata['rostream'], node_hostname, node_id)
     rodata['rostream'].close()
     return pkgs
 
 def get_pkg_field_from_meat_index(pkg, field):
-    rodata = open_rodata(BBScorevars.meat_index_file)
+    rodata = open_rodata(BBSutils.meat_index_file)
     val = bbs.parse.getPkgFieldFromDCF(rodata['rostream'], pkg, field, rodata['desc'])
     rodata['rostream'].close()
     return val
@@ -235,7 +236,7 @@ def WReadDcfVal(rdir, file, field, full_line=False):
 
 ### Get vcs metadata for Rpacks/ or Rpacks/pkg/
 def get_vcs_meta(pkg, key):
-    Central_rdir = BBScorevars.Central_rdir
+    Central_rdir = BBSvars.Central_rdir
     file = BBSvars.vcsmeta_file
     if pkg != None:
         file = "-%s.".join(file.rsplit(".", 1)) % pkg
@@ -303,7 +304,7 @@ def import_STATUS_DB(allpkgs):
     for pkg in allpkgs:
         for node in supported_nodes(pkg):
             # INSTALL status
-            if BBScorevars.subbuilds != "bioc-longtests":
+            if BBSvars.subbuilds != "bioc-longtests":
                 stage = 'install'
                 status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
                                                         pkg, node.id, stage)
@@ -317,7 +318,7 @@ def import_STATUS_DB(allpkgs):
             _update_STATUS_SUMMARY(pkg, node.id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            if BBScorevars.subbuilds not in ["workflows", "books"]:
+            if BBSvars.subbuilds not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
@@ -352,7 +353,7 @@ def get_distinct_pkg_statuses(pkg, nodes=None):
     for node in nodes:
         if not is_supported(pkg, node):
             continue
-        stages = stages_to_display(BBScorevars.subbuilds)
+        stages = stages_to_display(BBSvars.subbuilds)
         if 'buildbin' in stages and not is_doing_buildbin(node):
             stages.remove('buildbin')
         for stage in stages:

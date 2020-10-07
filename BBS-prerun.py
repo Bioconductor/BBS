@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: May 10, 2011
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -17,7 +17,7 @@ import bbs.manifest
 import bbs.parse
 import bbs.jobs
 import bbs.gitutils
-import BBScorevars
+import BBSutils
 import BBSvars
 import BBSbase
 
@@ -39,7 +39,7 @@ def remakeCentralRdir(Central_rdir):
 ### Return 0 if package goes to the "meat index", 1 if it's skipped (in which
 ### case it wil go to the "skipped index"), and 2 if it's ignored.
 def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
-    if BBScorevars.subbuilds == "bioc-longtests":
+    if BBSvars.subbuilds == "bioc-longtests":
         run_long_tests = bbs.parse.get_BBSoption_from_pkgsrctree(
                                        pkgsrctree,
                                        'RunLongTests')
@@ -81,7 +81,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
               (version, DESCRIPTION_path))
         return 1
     try:
-        if BBScorevars.subbuilds != "cran":
+        if BBSvars.subbuilds != "cran":
             maintainer = bbs.parse.get_Maintainer_name_from_pkgsrctree(pkgsrctree)
             maintainer_email = bbs.parse.get_Maintainer_email_from_pkgsrctree(pkgsrctree)
         else:
@@ -93,7 +93,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     meat_index.write('Package: %s\n' % pkgname)
     meat_index.write('Version: %s\n' % version)
     meat_index.write('Maintainer: %s\n' % maintainer)
-    if BBScorevars.subbuilds != "cran":
+    if BBSvars.subbuilds != "cran":
         meat_index.write('MaintainerEmail: %s\n' % maintainer_email)
     package_status = DESCRIPTION.get('PackageStatus')
     if package_status != None:
@@ -110,9 +110,9 @@ def build_meat_index(pkgs, meat_path):
           "the %s packages in the manifest" % len(pkgs))
     sys.stdout.flush()
     meat_index_path = os.path.join(BBSvars.work_topdir,
-                                   BBScorevars.meat_index_file)
+                                   BBSutils.meat_index_file)
     skipped_index_path = os.path.join(BBSvars.work_topdir,
-                                   BBScorevars.skipped_index_file)
+                                      BBSutils.skipped_index_file)
     meat_index = open(meat_index_path, 'w')
     skipped_index = open(skipped_index_path, 'w')
     nadded = nskipped = 0
@@ -143,12 +143,12 @@ def build_meat_index(pkgs, meat_path):
 
 def writeAndUploadMeatIndex(pkgs, meat_path):
     meat_index_path = build_meat_index(pkgs, meat_path)
-    BBScorevars.Central_rdir.Put(meat_index_path, True, True)
+    BBSvars.Central_rdir.Put(meat_index_path, True, True)
     return
 
 def uploadSkippedIndex(work_topdir):
-    skipped_index_path = os.path.join(work_topdir, BBScorevars.skipped_index_file)
-    BBScorevars.Central_rdir.Put(skipped_index_path, True, True)
+    skipped_index_path = os.path.join(work_topdir, BBSutils.skipped_index_file)
+    BBSvars.Central_rdir.Put(skipped_index_path, True, True)
     return
 
 def update_svnlog():
@@ -176,7 +176,7 @@ def collect_vcs_meta(snapshot_date):
     vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     ## Get list of packages
-    meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
+    meat_index_path = os.path.join(BBSvars.work_topdir, BBSutils.meat_index_file)
     dcf = open(meat_index_path, 'rb')
     pkgs = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
@@ -201,7 +201,7 @@ def collect_vcs_meta(snapshot_date):
     if vcs == 'git':
         ## Create git-log file for each package in meat-index.dcf and
         ## skipped-index.dcf
-        skipped_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.skipped_index_file)
+        skipped_index_path = os.path.join(BBSvars.work_topdir, BBSutils.skipped_index_file)
         dcf = open(skipped_index_path, 'rb')
         skipped_pkgs = bbs.parse.readPkgsFromDCF(dcf)
         dcf.close()
@@ -221,7 +221,7 @@ def collect_vcs_meta(snapshot_date):
             ])
             cmd = '(%s) >%s' % (cmd, gitlog_file)
             bbs.jobs.doOrDie(cmd)
-    BBScorevars.Central_rdir.Put(vcsmeta_dir, True, True)
+    BBSvars.Central_rdir.Put(vcsmeta_dir, True, True)
     print("BBS> [collect_vcs_meta] DONE collecting vcs meta data.")
     sys.stdout.flush()
     return
@@ -389,7 +389,7 @@ def STAGE1_loop(job_queue, nb_cpu):
     print("BBS> STAGE1 SUMMARY:")
     print("BBS>     o Working dir: %s" % os.getcwd())
     print("BBS>     o %d pkg(s) listed in file %s" % \
-          (total, BBScorevars.meat_index_file))
+          (total, BBSutils.meat_index_file))
     print("BBS>     o %d pkg dir(s) queued and processed" % nb_jobs)
     print("BBS>     o %d srcpkg file(s) produced" % nb_products)
     print("BBS>     o Total time: %.2f seconds" % dt)
@@ -405,8 +405,8 @@ def makeTargetRepo(rdir):
     rdir.Call('rm -f *')
     print("BBS> [makeTargetRepo] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
-    print("BBS> [makeTargetRepo] Get list of pkgs from %s" % BBScorevars.meat_index_file)
-    meat_index_path = os.path.join(BBSvars.work_topdir, BBScorevars.meat_index_file)
+    print("BBS> [makeTargetRepo] Get list of pkgs from %s" % BBSutils.meat_index_file)
+    meat_index_path = os.path.join(BBSvars.work_topdir, BBSutils.meat_index_file)
     dcf = open(meat_index_path, 'rb')
     pkgsrctrees = bbs.parse.readPkgsFromDCF(dcf)
     dcf.close()
@@ -441,7 +441,7 @@ if __name__ == "__main__":
         arg1 = ""
     work_topdir = BBSvars.work_topdir
     meat_path = BBSvars.meat_path
-    Central_rdir = BBScorevars.Central_rdir
+    Central_rdir = BBSvars.Central_rdir
 
     subtask = "make-central-rdir"
     if arg1 == "" or arg1 == subtask:

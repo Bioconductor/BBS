@@ -3,7 +3,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: July 19, 2011
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -13,7 +13,7 @@ import tarfile
 import bbs.fileutils
 import bbs.parse
 import bbs.jobs
-import BBScorevars
+import BBSutils
 import BBSvars
 
 
@@ -71,11 +71,11 @@ def _get_prepend_from_BBSoptions(pkgsrctree, key_prefix):
     return prepend
 
 def _BiocGreaterThanOrEqualTo(x, y):
-    # If 'BBScorevars.bioc_version' is not defined, then we assume it's the
+    # If 'BBSvars.bioc_version' is not defined, then we assume it's the
     # latest version.
-    if BBScorevars.bioc_version == None:
+    if BBSvars.bioc_version == None:
         return True
-    parts = BBScorevars.bioc_version.split('.')
+    parts = BBSvars.bioc_version.split('.')
     x0 = int(parts[0])
     y0 = int(parts[1])
     return x0 > x or (x0 == x and y0 >= y)
@@ -147,7 +147,7 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
         cmd0 = _get_RINSTALL_cmd0(win_archs)
         cmd = '%s --build --library=%s %s' % (cmd0, pkg_instdir, srcpkg_path)
     else:
-        cmd0 = '%s/utils/build-universal.sh' % BBScorevars.BBS_home
+        cmd0 = '%s/utils/build-universal.sh' % BBSvars.BBS_home
         cmd = '%s %s %s %s' % (cmd0, srcpkg_path, BBSvars.r_cmd, pkg_instdir)
     cmd = 'rm -rf %s && mkdir %s && %s' % (pkg_instdir, pkg_instdir, cmd)
     return cmd
@@ -170,7 +170,7 @@ def _get_Rbuild_cmd(pkgsrctree):
         ## make 'tar' work again on it.
         cmd = 'chmod a+r ' + pkgsrctree + ' -R && ' + cmd
     common_opts = ["--keep-empty-dirs", "--no-resave-data"]
-    if BBScorevars.subbuilds == "bioc-longtests":
+    if BBSvars.subbuilds == "bioc-longtests":
         common_opts += ["--no-build-vignettes", "--no-manual"]
     cmd = "%s %s" % (cmd, ' '.join(common_opts))
     return cmd
@@ -211,7 +211,7 @@ def _install_is_multiarch():
            os.environ['BBS_STAGE2_MODE'] == 'multiarch'
 
 def getSTAGE2cmdForNonTargetPkg(pkg):
-    script_path = os.path.join(BBScorevars.BBS_home,
+    script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
                                "installNonTargetPkg.R")
     # Backslahes in the path injected in the R scripts will be seen as escape
@@ -248,9 +248,9 @@ def getSTAGE2cmd(pkg, version):
             ##   during INSTALL. When run manually (admittedly not during
             ##   peak load times) the install takes ~ 5-6 minutes, even when
             ##   done via the build system.
-            curl_cmd = BBScorevars.getenv('BBS_CURL_CMD')
+            curl_cmd = BBSutils.getenv('BBS_CURL_CMD')
             srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
-            srcpkg_url = BBScorevars.Central_rdir.url + '/src/contrib/' + \
+            srcpkg_url = BBSvars.Central_rdir.url + '/src/contrib/' + \
                          srcpkg_file
             zip_file = srcpkg_file.replace(".tar.gz", ".zip")
             cmd = '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
@@ -321,7 +321,7 @@ def getSTAGE4cmd(srcpkg_path):
         r_library = os.path.join(BBSvars.r_home, 'library')
         common_opts += ["--install=check:%s" % install_out,
                         "--library=%s" % r_library]
-    if BBScorevars.subbuilds == "bioc-longtests":
+    if BBSvars.subbuilds == "bioc-longtests":
         common_opts += ["--test-dir=longtests",
                         "--no-stop-on-test-error",
                         "--no-codoc",

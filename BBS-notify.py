@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Jan 17, 2008
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -13,9 +13,10 @@ import time
 
 import bbs.parse
 import bbs.notify
-
-import BBScorevars
+import BBSutils
 import BBSreportutils
+
+published_report_url = BBSutils.getenv('BBS_PUBLISHED_REPORT_URL')
 
 from_addr = "BBS-noreply@bioconductor.org"
 
@@ -62,28 +63,27 @@ def send_notification(dcf_record):
         if status in ["TIMEOUT", "ERROR"]:
             leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
             problem_desc = "  o %s for 'R CMD INSTALL' on %s. See the details here:\n" % (status, node.id) \
-                         + "      %s%s\n" % (BBSreportutils.data_source, leafreport_rURL)
+                         + "      %s%s\n" % (published_report_url, leafreport_rURL)
             problem_descs.append(problem_desc)
         stage = 'buildsrc'
         status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
         if status in ["TIMEOUT", "ERROR"]:
             leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
             problem_desc = "  o %s for 'R CMD build' on %s. See the details here:\n" % (status, node.id) \
-                         + "      %s%s\n" % (BBSreportutils.data_source, leafreport_rURL)
+                         + "      %s%s\n" % (published_report_url, leafreport_rURL)
             problem_descs.append(problem_desc)
         stage = 'checksrc'
         status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
         if status in ["TIMEOUT", "ERROR"]:
             leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
             problem_desc = "  o %s for 'R CMD check' on %s. See the details here:\n" % (status, node.id) \
-                         + "      %s%s\n" % (BBSreportutils.data_source, leafreport_rURL)
+                         + "      %s%s\n" % (published_report_url, leafreport_rURL)
             problem_descs.append(problem_desc)
     if len(problem_descs) == 0:
         return
 
-    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-    report_title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
-                                                    report_nodes)
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    report_title = BBSreportutils.make_report_title(report_nodes)
     if maintainer_email == "bioconductor@stat.math.ethz.ch":
         to_addrs = ["devteam-bioc@lists.fhcrc.org"]
     else:
@@ -128,9 +128,8 @@ def send_CRAN_notifications(allpkgs):
 
 print("BBS> [stage9] STARTING stage9 at %s..." % time.asctime())
 
-BBSreportutils.data_source = BBScorevars.getenv('BBS_PUBLISHED_REPORT_URL')
-notify_nodes = BBScorevars.getenv('BBS_NOTIFY_NODES')
-report_path = BBScorevars.getenv('BBS_REPORT_PATH')
+notify_nodes = BBSutils.getenv('BBS_NOTIFY_NODES')
+report_path = BBSutils.getenv('BBS_REPORT_PATH')
 
 argc = len(sys.argv)
 if argc > 1:
@@ -148,7 +147,7 @@ os.chdir(report_path)
 BBSreportutils.set_NODES(notify_nodes)
 
 ### Compute 'meat_pkgs' (dict) and 'allpkgs' (list).
-meat_index = bbs.parse.parse_DCF(BBScorevars.meat_index_file)
+meat_index = bbs.parse.parse_DCF(BBSutils.meat_index_file)
 meat_pkgs = {}
 for dcf_record in meat_index:
     meat_pkgs[dcf_record['Package']] = dcf_record
@@ -163,10 +162,11 @@ print("OK")
 sys.stdout.flush()
 
 print("BBS> [stage9] Notifying package maintainers for nodes: %s" % notify_nodes)
-if BBScorevars.subbuilds in ["bioc", "data-experiment"]:
-    send_BioC_notifications(allpkgs)
-else: # "cran" subbuilds
+subbuilds = BBSutils.getenv('BBS_SUBBUILDS', False, "bioc")
+if subbuilds == "cran":
     send_CRAN_notifications(allpkgs)
+else:
+    send_BioC_notifications(allpkgs)
 
 print("BBS> [stage9] DONE at %s." % time.asctime())
 

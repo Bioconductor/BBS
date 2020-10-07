@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: May 18, 2018
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -12,7 +12,8 @@ import os
 import time
 
 import bbs.parse
-import BBScorevars
+import BBSutils
+import BBSvars
 import BBSreportutils
 
 def _read_status_from_summary_file(pkg, node_id, stage):
@@ -33,7 +34,7 @@ def _write_status_to_STATUS_DB(out, pkg, node_id, stage, status):
 def _write_pkg_results_to_STATUS_DB(pkg, out):
     for node in BBSreportutils.supported_nodes(pkg):
         # INSTALL status
-        if BBScorevars.subbuilds != 'bioc-longtests':
+        if BBSvars.subbuilds != 'bioc-longtests':
             stage = 'install'
             status = _read_status_from_summary_file(pkg, node.id, stage)
             _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
@@ -43,7 +44,7 @@ def _write_pkg_results_to_STATUS_DB(pkg, out):
         _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
         skipped_is_OK = status in ['TIMEOUT', 'ERROR']
         # CHECK status
-        if BBScorevars.subbuilds not in ['workflows', 'books']:
+        if BBSvars.subbuilds not in ['workflows', 'books']:
             stage = 'checksrc'
             if skipped_is_OK:
                 status = 'skipped'
@@ -79,12 +80,12 @@ if __name__ == "__main__":
     if not os.path.isdir('nodes'):
         print('mmh.. I don\'t see the \'nodes\' subdirectory ' + \
               'in the current directory!')
-        print('Make sure to be in \'%s/\' ' % BBScorevars.Central_rdir.path)
+        print('Make sure to be in \'%s/\' ' % BBSvars.Central_rdir.path)
         print('before running the BBS-make-STATUS_DB.py script.')
         sys.exit('=> EXIT.')
     print('BBS> ==============================================================')
     print('BBS> [stage7a] STARTING stage7a at %s...' % time.asctime())
-    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     BBSreportutils.set_NODES(report_nodes)
     allpkgs = BBSreportutils.get_pkgs_from_meat_index()
     make_STATUS_DB(allpkgs)

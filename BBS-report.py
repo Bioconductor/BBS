@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
-### Last modification: Sep 16, 2019
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -20,7 +20,7 @@ import bbs.fileutils
 import bbs.parse
 import bbs.rdir
 import bbs.jobs
-import BBScorevars
+import BBSutils
 import BBSvars
 import BBSreportutils
 
@@ -35,7 +35,7 @@ class LeafReportReference:
 def wopen_leafreport_input_file(pkg, node_id, stage, filename, return_None_on_error=False):
     if pkg:
         filename = "%s.%s-%s" % (pkg, stage, filename)
-    rdir = BBScorevars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
+    rdir = BBSvars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
     return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
 
 
@@ -48,16 +48,16 @@ def writeThinRowSeparator_asTR(out, tr_class=None):
         tr_class = ' class="%s"' % tr_class
     else:
         tr_class = '';
-    colspan = BBSreportutils.ncol_to_display(BBScorevars.subbuilds) + 3
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
     out.write('<TR%s><TD COLSPAN="%s" style="height: 4pt; background: inherit;"></TD></TR>\n' % (tr_class, colspan))
     return
 
 def pkgname_to_HTML(pkg):
-    subbuilds = BBScorevars.subbuilds
+    subbuilds = BBSvars.subbuilds
     if subbuilds == "cran":
         url = "https://cran.rstudio.com/package=%s" % pkg
     else:
-        bioc_version = BBScorevars.bioc_version
+        bioc_version = BBSvars.bioc_version
         if subbuilds == "books":
             url = "/books/%s/%s/" % (bioc_version, pkg)
         else:
@@ -222,7 +222,7 @@ def write_stagelabel_asTD(out, stage, extra_style=""):
     return
 
 def write_pkg_stagelabels_asTDs(out, extra_style=""):
-    subbuilds = BBScorevars.subbuilds
+    subbuilds = BBSvars.subbuilds
     for stage in BBSreportutils.stages_to_display(subbuilds):
         write_stagelabel_asTD(out, stage, extra_style)
     if BBSreportutils.display_propagation_status(subbuilds):
@@ -247,7 +247,7 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
         % (node.hostname.replace(".", "_"), status, status, path, color))
 
 def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
-    subbuilds = BBScorevars.subbuilds
+    subbuilds = BBSvars.subbuilds
     if BBSreportutils.is_supported(pkg, node):
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
@@ -301,7 +301,7 @@ def write_pkg_index_as2fullTRs(out, current_letter):
               (current_letter, current_letter))
     out.write('</TD></TR></TABLE>')
     out.write('</TD>')
-    colspan = BBSreportutils.ncol_to_display(BBScorevars.subbuilds) + 2
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 2
     out.write('<TD COLSPAN="%s" style="background: inherit;">' % colspan)
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
@@ -428,7 +428,7 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
                 node_id_html = '[%s]' % node_id_html
         out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
-        subbuilds = BBScorevars.subbuilds
+        subbuilds = BBSvars.subbuilds
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD></TD>')
@@ -547,9 +547,8 @@ def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
 ##############################################################################
 
 def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
-    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
-                                             report_nodes)
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
     out.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"')
     out.write(' "http://www.w3.org/TR/html4/loose.dtd">\n')
     out.write('<HTML>\n')
@@ -570,9 +569,8 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     return
 
 def write_goback_asHTML(out, href, current_letter=None):
-    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
-                                             report_nodes)
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
     out.write('<TABLE class="grid_layout"')
     out.write(' style="width: 100%; background: #BBB;"><TR>')
     out.write('<TD style="text-align: left; padding-left: 5px; vertical-align: middle;">')
@@ -597,9 +595,8 @@ def write_motd_asTABLE(out):
     return
 
 def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
-    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
-                                             report_nodes)
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
 
     pkg = leafreport_ref.pkg
     page_title = 'Results for %s' % pkg
@@ -653,7 +650,7 @@ def write_filepath_asHTML(out, Rcheck_dir, filepath):
 
 ### Write content of file 'f' to report.
 def write_file_asHTML(out, f, node_hostname, pattern=None):
-    encoding = BBScorevars.getNodeSpec(node_hostname, 'encoding')
+    encoding = BBSutils.getNodeSpec(node_hostname, 'encoding')
     pattern_detected = False
     if pattern != None:
         regex = re.compile(pattern)
@@ -679,7 +676,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     return pattern_detected
 
 def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
-    if stage == "checksrc" and BBScorevars.subbuilds == "bioc-longtests":
+    if stage == "checksrc" and BBSvars.subbuilds == "bioc-longtests":
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
@@ -698,7 +695,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
 def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Installation output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    Rcheck_path = os.path.join(BBScorevars.central_rdir_path, "nodes",
+    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "nodes",
                                node_id, "checksrc", Rcheck_dir)
     if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
@@ -816,7 +813,7 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    Rcheck_path = os.path.join(BBScorevars.central_rdir_path, "nodes",
+    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "nodes",
                                node_id, "checksrc", Rcheck_dir)
     if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
@@ -863,7 +860,7 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    Rcheck_path = os.path.join(BBScorevars.central_rdir_path, "nodes",
+    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "nodes",
                                node_id, "checksrc", Rcheck_dir)
     if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
@@ -906,11 +903,11 @@ def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stage):
     if stage != "checksrc":
         write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
         return
-    if BBScorevars.subbuilds == "bioc-longtests":
+    if BBSvars.subbuilds == "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
     write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
     write_Installation_output_asHTML(out, node_hostname, pkg, node_id)
-    if BBScorevars.subbuilds != "bioc-longtests":
+    if BBSvars.subbuilds != "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
         write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
     return
@@ -979,7 +976,7 @@ def make_node_LeafReports(allpkgs, node):
     for pkg in BBSreportutils.supported_pkgs(node):
 
         # INSTALL leaf-report
-        if BBScorevars.subbuilds != "bioc-longtests":
+        if BBSvars.subbuilds != "bioc-longtests":
             stage = "install"
             status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
             if status != "skipped":
@@ -998,7 +995,7 @@ def make_node_LeafReports(allpkgs, node):
             make_LeafReport(leafreport_ref, allpkgs)
 
         # CHECK leaf-report
-        if BBScorevars.subbuilds not in ["workflows", "books"]:
+        if BBSvars.subbuilds not in ["workflows", "books"]:
             stage = 'checksrc'
             status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
             if not status in ["skipped", "NA"]:
@@ -1046,14 +1043,13 @@ def make_all_LeafReports(allpkgs):
 ##############################################################################
 
 def write_BioC_mainpage_top_asHTML(out):
-    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
-                                             report_nodes)
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
     out.write('<H1>%s</H1>\n' % title)
-    if BBScorevars.subbuilds == "bioc-longtests":
+    if BBSvars.subbuilds == "bioc-longtests":
         long_tests_howto_url = '/developers/how-to/long-tests/'
         out.write('<P style="text-align: center;">')
         out.write('See <A href="%s">here</A> ' % long_tests_howto_url)
@@ -1080,9 +1076,8 @@ def write_BioC_mainpage_top_asHTML(out):
     return
 
 def write_CRAN_mainpage_top_asHTML(out):
-    report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-    title = BBSreportutils.make_report_title(BBScorevars.subbuilds,
-                                             report_nodes)
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY>\n')
     out.write('<H1>%s</H1>\n' % title)
@@ -1291,7 +1286,7 @@ def write_node_specs_table(out):
     out.write('<TH>R&nbsp;version</TH>')
     out.write('<TH style="text-align: right;">Installed&nbsp;pkgs</TH>')
     out.write('</TR>\n')
-    nodes_rdir = BBScorevars.nodes_rdir
+    nodes_rdir = BBSvars.nodes_rdir
     for node in BBSreportutils.NODES:
         Node_rdir = nodes_rdir.subdir(node.id)
         NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
@@ -1351,7 +1346,7 @@ def write_glyph_table(out):
         out.write('</TR>\n')
         return
 
-    subbuilds = BBScorevars.subbuilds
+    subbuilds = BBSvars.subbuilds
 
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
@@ -1363,10 +1358,10 @@ def write_glyph_table(out):
     out.write('</TR>\n')
 
     ## "TIMEOUT" glyph
-    t1 = int(BBScorevars.INSTALL_timeout  / 60.0)
-    t2 = int(BBScorevars.BUILD_timeout    / 60.0)
-    t3 = int(BBScorevars.CHECK_timeout    / 60.0)
-    t4 = int(BBScorevars.BUILDBIN_timeout / 60.0)
+    t1 = int(BBSvars.INSTALL_timeout  / 60.0)
+    t2 = int(BBSvars.BUILD_timeout    / 60.0)
+    t3 = int(BBSvars.CHECK_timeout    / 60.0)
+    t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
     if subbuilds == "bioc-longtests":
         msg = '<I>CHECK</I> of package took more than ' + \
               '%d minutes' % t3
@@ -1473,7 +1468,7 @@ def write_glyph_and_propagation_LED_table(out):
     out.write('<TD>\n')
     write_glyph_table(out)
     out.write('</TD>')
-    if BBSreportutils.display_propagation_status(BBScorevars.subbuilds):
+    if BBSreportutils.display_propagation_status(BBSvars.subbuilds):
         out.write('<TD style="padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
@@ -1530,7 +1525,7 @@ def make_all_NodeReports(allpkgs):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs):
-    if BBScorevars.subbuilds != "cran":
+    if BBSvars.subbuilds != "cran":
         write_BioC_mainpage_top_asHTML(out)
     else: # "cran" subbuilds
         write_CRAN_mainpage_top_asHTML(out)
@@ -1573,12 +1568,12 @@ def make_CRAN_MainReport(allpkgs):
 
 print("BBS> [stage8] STARTING stage8 at %s..." % time.asctime())
 
-report_nodes = BBScorevars.getenv('BBS_REPORT_NODES')
-report_path = BBScorevars.getenv('BBS_REPORT_PATH')
-r_environ_user = BBScorevars.getenv('R_ENVIRON_USER', False)
-css_file = BBScorevars.getenv('BBS_REPORT_CSS', False)
-bgimg_file = BBScorevars.getenv('BBS_REPORT_BGIMG', False)
-js_file = BBScorevars.getenv('BBS_REPORT_JS', False)
+report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+report_path = BBSutils.getenv('BBS_REPORT_PATH')
+r_environ_user = BBSutils.getenv('R_ENVIRON_USER', False)
+css_file = BBSutils.getenv('BBS_REPORT_CSS', False)
+bgimg_file = BBSutils.getenv('BBS_REPORT_BGIMG', False)
+js_file = BBSutils.getenv('BBS_REPORT_JS', False)
 
 argc = len(sys.argv)
 if argc > 1:
@@ -1592,21 +1587,21 @@ print("BBS> [stage8] remake_dir %s" % report_path)
 bbs.fileutils.remake_dir(report_path)
 print("BBS> [stage8] cd %s/" % report_path)
 os.chdir(report_path)
-print("BBS> [stage8] get %s from %s/" % (BBScorevars.meat_index_file, BBScorevars.Central_rdir.label))
-BBScorevars.Central_rdir.Get(BBScorevars.meat_index_file)
-print("BBS> [stage8] get %s from %s/" % (BBScorevars.skipped_index_file, BBScorevars.Central_rdir.label))
-BBScorevars.Central_rdir.Get(BBScorevars.skipped_index_file)
-print("BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBScorevars.Central_rdir.label))
-BBScorevars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
+print("BBS> [stage8] get %s from %s/" % (BBSutils.meat_index_file, BBSvars.Central_rdir.label))
+BBSvars.Central_rdir.Get(BBSutils.meat_index_file)
+print("BBS> [stage8] get %s from %s/" % (BBSutils.skipped_index_file, BBSvars.Central_rdir.label))
+BBSvars.Central_rdir.Get(BBSutils.skipped_index_file)
+print("BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBSvars.Central_rdir.label))
+BBSvars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
 
 ### Compute 'meat_pkgs' (dict), 'skipped_pkgs' (list), and 'allpkgs' (list).
-meat_index = bbs.parse.parse_DCF(BBScorevars.meat_index_file)
+meat_index = bbs.parse.parse_DCF(BBSutils.meat_index_file)
 meat_pkgs = {}
 for dcf_record in meat_index:
     meat_pkgs[dcf_record['Package']] = dcf_record
-skipped_index = bbs.parse.parse_DCF(BBScorevars.skipped_index_file)
+skipped_index = bbs.parse.parse_DCF(BBSutils.skipped_index_file)
 skipped_pkgs = [dcf_record['Package'] for dcf_record in skipped_index]
 allpkgs = list(meat_pkgs.keys()) + skipped_pkgs
 allpkgs.sort(key=str.lower)
@@ -1643,7 +1638,7 @@ print("BBS> [stage8] Will generate HTML report for nodes: %s" % report_nodes)
 if arg1 != "skip-leaf-reports":
     make_all_LeafReports(allpkgs)
 make_all_NodeReports(allpkgs)
-if BBScorevars.subbuilds != "cran":
+if BBSvars.subbuilds != "cran":
     make_BioC_MainReport(allpkgs)
 else: # "cran" subbuilds
     make_CRAN_MainReport(allpkgs)

@@ -4,6 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Herve Pages (hpages@fhcrc.org)
+### Last modification: Oct 6, 2020
 ###
 
 import sys
@@ -14,14 +15,14 @@ import shutil
 import bbs.fileutils
 import bbs.parse
 import bbs.jobs
-import BBScorevars
+import BBSutils
 import BBSvars
 
 def is_doing_buildbin(node_hostname):
-    return BBScorevars.getNodeSpec(node_hostname, 'pkgType') != "source"
+    return BBSutils.getNodeSpec(node_hostname, 'pkgType') != "source"
 
 def pkgMustBeRejected(node_hostname, node_id, pkg):
-    nodes_path = BBScorevars.nodes_rdir.path
+    nodes_path = BBSvars.nodes_rdir.path
     node_path = os.path.join(nodes_path, node_id)
     summary_file0 = "%s.%%s-summary.dcf" % pkg
 
@@ -41,7 +42,7 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         return True
 
     ## workflows and books subbuilds exit here
-    if BBScorevars.subbuilds in ["workflows", "books"]:
+    if BBSvars.subbuilds in ["workflows", "books"]:
         return status != 'OK'
 
     ## Extract Status from CHECK summary.
@@ -75,20 +76,20 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         sys.exit("ERROR: Invalid relative path to fresh pkgs %s (must be of the form node/subdir)" % fresh_pkgs_subdir)
     node_id = tmp[0]
     node_hostname = node_id.split("-")[0]
-    fileext = BBScorevars.getNodeSpec(node_hostname, 'pkgFileExt')
-    fresh_pkgs_subdir = os.path.join(BBScorevars.nodes_rdir.path, fresh_pkgs_subdir)
+    fileext = BBSutils.getNodeSpec(node_hostname, 'pkgFileExt')
+    fresh_pkgs_subdir = os.path.join(BBSvars.nodes_rdir.path, fresh_pkgs_subdir)
 
     ## Workflow and book packages do not have manuals/ because we do not run
     ## `R CMD check`.
     manuals_dir = "../manuals"
-    if BBScorevars.subbuilds in ["workflows", "books"]:
+    if BBSvars.subbuilds in ["workflows", "books"]:
         pass
     elif source_node:
         print("BBS> [stage6] mkdir %s" % manuals_dir)
         os.mkdir(manuals_dir)
     print("BBS> [stage6] BEGIN copying outgoing packages from %s." % fresh_pkgs_subdir)
-    pkgType = BBScorevars.getNodeSpec(node_hostname, 'pkgType')
-    meat_index_file = os.path.join(BBScorevars.Central_rdir.path, BBScorevars.meat_index_file)
+    pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
+    meat_index_file = os.path.join(BBSvars.Central_rdir.path, BBSutils.meat_index_file)
     dcf = open(meat_index_file, 'rb')
     pkgs = bbs.parse.readPkgsFromDCF(dcf, node_id, pkgType)
     dcf.close()
@@ -96,7 +97,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         if pkgMustBeRejected(node_hostname, node_id, pkg):
             continue
         dcf = open(meat_index_file, 'rb')
-        version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBScorevars.meat_index_file)
+        version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBSutils.meat_index_file)
         dcf.close()
         ## Copy pkg from 'fresh_pkgs_subdir2'.
         pkg_file = "%s_%s.%s" % (pkg, version, fileext)
@@ -107,11 +108,11 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         else:
             print("BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pkg_file)
         ## Get reference manual from pkg.Rcheck directory.
-        if BBScorevars.subbuilds in ["workflows", "books"]:
+        if BBSvars.subbuilds in ["workflows", "books"]:
             pass
         elif source_node:
             pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \
-                       (BBScorevars.getenv('BBS_WORK_TOPDIR'), pkg, pkg)
+                       (BBSutils.getenv('BBS_WORK_TOPDIR'), pkg, pkg)
             print("BBS> [stage6]   - copying %s manual to OUTGOING/manuals folder..." % pkg)
             if os.path.exists(pdf_file):
                 shutil.copy(pdf_file, "%s/%s.pdf" % (manuals_dir, pkg))
@@ -133,21 +134,21 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
     node2_hostname = node2_id.split("-")[0]
     ## Check that node1 and node2 are registered as Windows i386 and x64
     ## builders, respectively
-    pkgType1 = BBScorevars.getNodeSpec(node1_hostname, 'pkgType')
+    pkgType1 = BBSutils.getNodeSpec(node1_hostname, 'pkgType')
     if pkgType1 != "win.binary":
         sys.exit("ERROR: %s pkgType is not \"win.binary\"" % node1_hostname)
-    pkgType2 = BBScorevars.getNodeSpec(node2_hostname, 'pkgType')
+    pkgType2 = BBSutils.getNodeSpec(node2_hostname, 'pkgType')
     if pkgType2 != "win64.binary":
         sys.exit("ERROR: %s pkgType is not \"win64.binary\"" % node2_hostname)
-    fileext = BBScorevars.getNodeSpec(node1_hostname, 'pkgFileExt')
-    fileext2 = BBScorevars.getNodeSpec(node2_hostname, 'pkgFileExt')
+    fileext = BBSutils.getNodeSpec(node1_hostname, 'pkgFileExt')
+    fileext2 = BBSutils.getNodeSpec(node2_hostname, 'pkgFileExt')
     if fileext2 != fileext:
         sys.exit("ERROR: %s pkgFileExt and %s pkgFileExt differ" % (node1_hostname, node2_hostname))
-    fresh_pkgs_subdir1 = os.path.join(BBScorevars.nodes_rdir.path, fresh_pkgs_subdir1)
-    fresh_pkgs_subdir2 = os.path.join(BBScorevars.nodes_rdir.path, fresh_pkgs_subdir2)
+    fresh_pkgs_subdir1 = os.path.join(BBSvars.nodes_rdir.path, fresh_pkgs_subdir1)
+    fresh_pkgs_subdir2 = os.path.join(BBSvars.nodes_rdir.path, fresh_pkgs_subdir2)
     print("BBS> [stage6] BEGIN making outgoing bi-arch packages from %s and %s." % (fresh_pkgs_subdir1, fresh_pkgs_subdir2))
     ## Get lists of supported pkgs for node1 and node2
-    meat_index_file = os.path.join(BBScorevars.Central_rdir.path, BBScorevars.meat_index_file)
+    meat_index_file = os.path.join(BBSvars.Central_rdir.path, BBSutils.meat_index_file)
     dcf = open(meat_index_file, 'rb')
     pkgs1 = bbs.parse.readPkgsFromDCF(dcf, node1_id, pkgType1)
     dcf.close()
@@ -160,7 +161,7 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
     t1 = time.time()
     for pkg in pkgs0:
         dcf = open(meat_index_file, 'rb')
-        version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBScorevars.meat_index_file)
+        version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBSutils.meat_index_file)
         dcf.close()
         binpkg_file = "%s_%s.%s" % (pkg, version, fileext)
         if pkg not in pkgs1:
@@ -182,7 +183,8 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
         if pkgMustBeRejected(node1_hostname, node1_id, pkg) or pkgMustBeRejected(node2_hostname, node2_id, pkg):
             continue
         ## Merge
-        syscmd = '%s/utils/merge-win-bin-pkgs.sh %s %s %s %s cleanup' % (BBScorevars.BBS_home, pkg, version, fresh_pkgs_subdir1, fresh_pkgs_subdir2)
+        syscmd = '%s/utils/merge-win-bin-pkgs.sh %s %s %s %s cleanup' % \
+                 (BBSvars.BBS_home, pkg, version, fresh_pkgs_subdir1, fresh_pkgs_subdir2)
         bbs.jobs.doOrDie(syscmd)
         nb_products += 1
     dt = time.time() - t1
@@ -198,11 +200,11 @@ def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
 
 def stage6_make_OUTGOING():
     ## Create working directory
-    OUTGOING_dir = os.path.join(BBScorevars.Central_rdir.path, "OUTGOING")
+    OUTGOING_dir = os.path.join(BBSvars.Central_rdir.path, "OUTGOING")
     print("BBS> [stage6] remake_dir %s" % OUTGOING_dir)
     bbs.fileutils.remake_dir(OUTGOING_dir)
     ## Loop over each element of the OUTGOING map
-    OUTGOING_map = BBScorevars.getenv('BBS_OUTGOING_MAP')
+    OUTGOING_map = BBSutils.getenv('BBS_OUTGOING_MAP')
     map_elts = OUTGOING_map.split(" ")
     for map_elt in map_elts:
         tmp = map_elt.split(":")
