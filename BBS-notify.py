@@ -11,6 +11,7 @@ import sys
 import os
 import time
 
+import bbs.parse
 import bbs.notify
 
 import BBScorevars
@@ -43,11 +44,12 @@ msg_footnote = "Notes:\n\n" \
              + "https://bioconductor.org/developers/rss-feeds/\n\n" \
              + "Thanks for contributing to the Bioconductor project!\n\n" 
 
-def send_notification(pkg):
-    package_status = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'PackageStatus')
+def send_notification(dcf_record):
+    pkg = dcf_record['Package']
+    package_status = dcf_record.get('PackageStatus')
     if package_status == 'Deprecated':
         return
-    maintainer_email = BBSreportutils.get_pkg_field_from_meat_index(pkg, 'MaintainerEmail')
+    maintainer_email = dcf_record['MaintainerEmail']
     #print("%s %s %s %s" % (pkg, version, maintainer, maintainer_email))
     #key = 'Last Changed Date'
     #last_changed_date = BBSreportutils.get_vcs_meta(pkg, key)
@@ -104,7 +106,7 @@ def send_notification(pkg):
 
 def send_notifications(allpkgs):
     for pkg in allpkgs:
-        send_notification(pkg)
+        send_notification(meat_pkgs[pkg])
     return
 
 def send_BioC_notifications(allpkgs):
@@ -144,7 +146,14 @@ if arg1 != "":
 os.chdir(report_path)
 
 BBSreportutils.set_NODES(notify_nodes)
-allpkgs = BBSreportutils.get_pkgs_from_meat_index()
+
+### Compute 'meat_pkgs' (dict) and 'allpkgs' (list).
+meat_index = bbs.parse.parse_DCF(BBScorevars.meat_index_file)
+meat_pkgs = {}
+for dcf_record in meat_index:
+    meat_pkgs[dcf_record['Package']] = dcf_record
+allpkgs = list(meat_pkgs.keys())
+allpkgs.sort(key=str.lower)
 
 print("BBS> [stage9] Import package statuses from %s ..." % \
       BBSreportutils.STATUS_DB_file, end=" ")
