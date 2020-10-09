@@ -9,7 +9,7 @@
 ###
 ### Last modification: Nov 5, 2019
 ###
-### gitutils module
+### bbs.gitutils module
 ###
 
 import sys

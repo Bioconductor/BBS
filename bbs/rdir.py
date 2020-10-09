@@ -6,7 +6,7 @@
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Sep 3, 2020
 ###
-### rdir module
+### bbs.rdir module
 ###
 
 import sys

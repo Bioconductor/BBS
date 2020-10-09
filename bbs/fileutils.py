@@ -6,7 +6,7 @@
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Sep 17, 2019
 ###
-### fileutils module
+### bbs.fileutils module
 ###
 
 import os

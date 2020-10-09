@@ -6,7 +6,10 @@
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Sep 9, 2020
 ###
-### parse module
+### bbs.parse module
+###
+### IMPORTANT: The bbs.parse module is imported by the Single Package Builder:
+###   https://github.com/Bioconductor/packagebuilder.git
 ###
 
 import sys

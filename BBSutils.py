@@ -5,6 +5,9 @@
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Oct 6, 2020
 ###
+### IMPORTANT: The BBSutils.py file is imported by the Single Package Builder:
+###   https://github.com/Bioconductor/packagebuilder.git
+###
 
 import sys
 import os

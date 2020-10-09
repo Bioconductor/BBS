@@ -6,7 +6,7 @@
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Sep 13, 2019
 ###
-### notify module
+### bbs.notify module
 ###
 
 import sys

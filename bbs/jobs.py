@@ -6,7 +6,7 @@
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Oct 7, 2020
 ###
-### jobs module
+### bbs.jobs module
 ###
 
 import sys

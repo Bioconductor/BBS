@@ -6,7 +6,7 @@
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
 ### Last modification: Sep 13, 2019
 ###
-### manifest module
+### bbs.manifest module
 ###
 
 ### Trim 'Package:' prefix from every input line so will accept a plain text
