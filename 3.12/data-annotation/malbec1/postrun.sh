@@ -27,8 +27,8 @@ $BBS_R_CMD -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagation
 
 # Generate and publish HTML report
 $BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch
-REPORT_DIRNAME=`/usr/bin/dirname $BBS_REPORT_PATH`
-REPORT_BASENAME=`/usr/bin/basename $BBS_REPORT_PATH`
+REPORT_DIRNAME=$(/usr/bin/dirname $BBS_REPORT_PATH)
+REPORT_BASENAME=$(/usr/bin/basename $BBS_REPORT_PATH)
 cd "$REPORT_DIRNAME"
 /bin/tar zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
 /bin/mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"

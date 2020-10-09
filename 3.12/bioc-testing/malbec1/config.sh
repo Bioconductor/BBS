@@ -32,7 +32,7 @@ export BBS_CHECK_NB_CPU=4  # 20 cores are available
 
 # Shared settings (by all Unix nodes).
 
-wd0=`pwd`
+wd0=$(pwd)
 cd ..
 . ./config.sh
 cd "$wd0"
