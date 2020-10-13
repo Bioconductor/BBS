@@ -665,6 +665,12 @@ https://cran.rstudio.com/bin/windows/base/
 Choose the binary that matches the BioC version to build (see links
 in "Other builds" section if you need the latest R devel binary).
 
+If updating R, uninstall the current R before running the installer:
+- Open the Control Panel
+- Click on Uninstall a program
+- Make sure you pick up the correct R in case there is more than one instance!
+Then go in the File Explorer and remove `D:\biocbuild\bbs-3.12-bioc\R`.
+
 When running the installer:
 - Ignore warning about the current user not being an admin
 - Select destination location `D:\biocbuild\bbs-3.12-bioc\R`
@@ -678,13 +684,17 @@ BiocManager:
 
     install.packages("BiocManager")
 
-Check that BiocManager is pointing to the correct version of Bioconductor:
+Check that BiocManager is pointing at the correct version of Bioconductor:
 
     library(BiocManager)  # This displays the version of Bioconductor
                           # that BiocManager is pointing at.
-    ## ONLY if BiocManager is pointing to release when it should be pointing
-    ## to devel. Then make it point to devel with:
+
+    ## IMPORTANT: Switch to "devel" **ONLY** if you are installing R for
+    ## the devel builds and if BioC devel uses the same version of R as
+    ## BioC release!
     install(version="devel")
+
+Quit R (do NOT save the workspace image).
 
 TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
 **from source** with:
@@ -759,9 +769,11 @@ TESTING:
 BiocCheck is needed for the Single Package Builder:
 
     library(BiocManager)
+
     ## This installs all BiocCheck deps as binaries if they are available,
     ## which is much faster than installing from source.
     install("BiocCheck")
+
     ## IMPORTANT: BiocCheck needs to be loaded at least once for a full
     ## installation (this will install the BiocCheck and BiocCheckGitClone
     ## scripts).
@@ -796,11 +808,17 @@ TESTING: Try to load the package (with `library(Cairo)`) on both archs:
     R --arch x64
     R --arch i386
 
-#### If updating R
+#### Flush the data caches
 
-If you are updating R, the cache for AnnotationHub and ExperimentHub
-should be refreshed. This is done by removing all of `AnnotationHub/`
-and `ExperimentHub/` present in `C:\Users\biocbuild\AppData\Local`.
+When R is updated, it's a good time to flush the cache for AnnotationHub,
+ExperimentHub, and BiocFileCache. This is done by removing the corresponding
+folders present in `C:\Users\biocbuild\AppData\Local`.
+
+Removing these folders means all packages using these resources will have
+to re-download the files. This ensures that resources are still available.
+However it also contributes to an increased runtime for the builds.
+
+Should we also remove package specific caches?
 
 
 ### 3.4 Add software builds to Task Scheduler
