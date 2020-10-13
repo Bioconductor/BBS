@@ -25,13 +25,15 @@ back and forth between each secondary node and the central builder (> 5GB
 every day on normal days).
 
 
-### 1.2 Check system requirements
+### 1.2 Check hardware requirements
+
+These are the requirements for running the BioC software builds.
 
 For a _central_ builder:
 
 - At least 800GB of disk space
 
-- At least 32 cores
+- At least 32 logical cores
 
 - At least 48GB of RAM
 
@@ -39,7 +41,7 @@ For a _secondary node_ or _standalone_ builder:
 
 - At least 400GB of disk space
 
-- At least 20 cores
+- At least 20 logical cores
 
 - At least 32GB of RAM
 
@@ -317,6 +319,13 @@ capabilities will be missing):
 
 ### 1.7 Install Python 3 modules
 
+#### Python 3 modules needed by the Single Package Builder only
+
+`virtualenv` is used by the Single Package Builder. Despite python3 shipping
+with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
+
+    sudo -H pip3 install virtualenv
+
 #### Python 3 modules needed by some CRAN/Bioconductor packages
 
 Some CRAN/Bioconductor packages interact with Python 3 and use Python
@@ -390,13 +399,6 @@ Notes:
 - `matplotlib` and `phate` are needed by CRAN package phateR which is itself
   used by Bioconductor package phemd.
 
-#### Python 3 modules needed by the Single Package Builder only
-
-`virtualenv` is used by the Single Package Builder. Despite python3 shipping
-with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
-
-    sudo -H pip3 install virtualenv
-
 
 ### 1.8 Run Apache server as a service
 
@@ -438,7 +440,7 @@ Create `/home/biocbuild/public_html/BBS` from the biocbuild account:
 Then edit `/etc/apache2/sites-enabled/000-default.conf` **from a sudoer
 account**. First make a copy of the original file:
 
-    cd /etc/apache2/sites-enabled
+    cd /etc/apache2/sites-enabled/
     sudo cp -i 000-default.conf 000-default.conf.original
 
 and make the following changes:
@@ -480,9 +482,9 @@ Must be done from the biocbuild account.
 
 #### Check that you can ping the central builder
 
-Check that you can ping the central builder. Depending on whether the
-node you're ping'ing from is within RPCI's DMZ or not, use the central
-builder's short or long (i.e. hostname+domain) hostname. For example:
+Depending on whether the node you're ping'ing from is within RPCI's DMZ
+or not, use the central builder's short or long (i.e. hostname+domain)
+hostname. For example:
 
     ping malbec1                                   # from within RPCI's DMZ
     ping malbec1.bioconductor.org                  # from anywhere else
@@ -523,7 +525,7 @@ Contact the IT folks at RPCI if that's the case (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-### 2.3 Clone BBS git tree and create bbs-3.y-bioc directory structure
+### 2.3 Clone BBS git tree and create bbs-x.y-bioc directory structure
 
 Must be done from the biocbuild account.
 
@@ -538,7 +540,7 @@ For example, for the BioC 3.12 software builds:
 
     cd
     mkdir bbs-3.12-bioc
-    cd bbs-3.12-bioc
+    cd bbs-3.12-bioc/
     mkdir rdownloads log
 
 
@@ -555,7 +557,7 @@ on Ubuntu).
 Move to the directory where we're going to download and extract the R source
 tarball from CRAN:
 
-    cd ~/bbs-3.12-bioc/rdownloads
+    cd ~/bbs-3.12-bioc/rdownloads/
 
 The exact tarball to download depends on whether we're configuring the
 release or devel builds:
@@ -588,10 +590,10 @@ Check version and revision:
 #### Configure and compile R
 
     cd ~/bbs-3.12-bioc/
-    mkdir R      # possibly preceded by mv R R.old if updating R
-    cd R
+    mkdir R         # preceded by 'rm -rf R.old && mv R R.old' if updating R
+    cd R/
     ../rdownloads/R-4.0.2/configure --enable-R-shlib
-    make -j10    # or 'make -j' to use all cores
+    make -j10       # or 'make -j' to use all cores
 
 #### After compilation
 
@@ -601,7 +603,7 @@ Run a script to fix compilation flags by modifying `R/etc/Makeconf`. It's
 very important to run this from the `~/bbs-3.12-bioc/R/etc/` directory and
 not one level up. Both locations have Makefiles.
 
-    cd etc
+    cd etc/
     ~/BBS/utils/R-fix-flags.sh
 
 This sets the C/C++ compilation flags appropriately for the build system,
@@ -612,7 +614,7 @@ e.g., `-Wall`, which show additional warnings useful for package developers.
 Start R:
 
     cd ~/bbs-3.12-bioc/
-    R/bin/R
+    R/bin/R         # check version displayed by startup message
 
 Then from R:
 
@@ -632,7 +634,7 @@ Then from R:
     # another possibly difficult package:
     install.packages("RGtk2", repos="https://cran.r-project.org")
 
-#### Install BiocManager + packages required by SPB and book builds
+#### Install BiocManager + BiocCheck
 
 From R:
 
@@ -644,14 +646,14 @@ From R:
     BiocManager::install(version="devel")
 
     BiocManager::install("BiocCheck")    # required by SPB
-    BiocManager::install("LTLA/rebook")  # required by book builds
-
-    # always good to have:
-    install.packages("devtools", repos="https://cran.r-project.org")
 
 #### [OPTIONAL] More testing
 
 From R:
+
+    # always good to have:
+    install.packages("devtools", repos="https://cran.r-project.org")
+    BiocManager::install("BiocStyle")
 
     BiocManager::install("rtracklayer")
     BiocManager::install("VariantAnnotation")
@@ -659,13 +661,13 @@ From R:
 
 #### Flush the data caches
 
-When R is updated, the cache for AnnotationHub and ExperimentHub should be
-refreshed. This is done by removing AnnotationHub and ExperimentHub present
-in `/home/biocbuild/.cache/`.
+When R is updated, it's a good time to flush the cache for AnnotationHub,
+ExperimentHub, and BiocFileCache. This is done by removing the corresponding
+folders present in `~/.cache/`.
 
-Removing these directories means all packages using these resources will have
-to re-download the files. This also contributes to an increased runtime for
-the builds.
+Removing these folders means all packages using these resources will have
+to re-download the files. This ensures that resources are still available.
+However it also contributes to an increased runtime for the builds.
 
 Should we also remove package specific caches?
 
@@ -699,9 +701,9 @@ is no longer here in Ubuntu 20.04.
 
 Install with:
 
-    cd /usr/share/texlive/texmf-dist/bibtex/bst
+    cd /usr/share/texlive/texmf-dist/bibtex/bst/
     sudo mkdir beebe
-    cd beebe
+    cd beebe/
     sudo wget https://ctan.org/tex-archive/biblio/bibtex/contrib/misc/humannat.bst
     sudo texhash
 
@@ -727,16 +729,16 @@ According to ensembl-vep README, the following Perl modules are required:
     sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
     sudo cpan install Bio::SeqFeature::Lite
     sudo apt-get install libhts-dev  # HTSlib
-    cd /usr/lib
+    cd /usr/lib/
     sudo ln -s x86_64-linux-gnu/libhts.so
     sudo ln -s x86_64-linux-gnu/libhts.a
     sudo cpan install Bio::DB::HTS::Tabix
 
 #### Install ensembl-vep
 
-    cd /usr/local
+    cd /usr/local/
     sudo git clone https://github.com/Ensembl/ensembl-vep.git
-    cd ensembl-vep
+    cd ensembl-vep/
     #sudo git checkout release/100  # select desired branch
 
     # Avoid the hassle of getting HTSlib to compile because ensemblVEP and
@@ -760,7 +762,7 @@ Logout and login again so that the changes to `/etc/profile` take effect.
 
 From the biocbuild account:
 
-    cd ~/bbs-3.12-bioc/meat
+    cd ~/bbs-3.12-bioc/meat/
     ../R/bin/R CMD build ensemblVEP
     ../R/bin/R CMD check ensemblVEP_X.Y.Z.tar.gz  # replace X.Y.Z with current version
     ../R/bin/R CMD build MMAPPR2
@@ -786,7 +788,7 @@ From the biocbuild account:
 
 Finally try to build the GeneGA package:
 
-    cd ~/bbs-3.12-bioc/meat
+    cd ~/bbs-3.12-bioc/meat/
     ../R/bin/R CMD build GeneGA
 
 
@@ -805,7 +807,7 @@ In `/etc/profile` add:
 
 From the biocbuild account:
 
-    cd ~/bbs-3.12-bioc/meat
+    cd ~/bbs-3.12-bioc/meat/
     ../R/bin/R CMD build ImmuneSpaceR
 
 
@@ -821,7 +823,7 @@ Required by Bioconductor package LowMACA.
 
 From the biocbuild account:
 
-    cd ~/bbs-3.12-bioc/meat
+    cd ~/bbs-3.12-bioc/meat/
     ../R/bin/R CMD build LowMACA
 
 
@@ -843,7 +845,7 @@ location". We will do "location independent" installation.
 
 #### Build
 
-    cd ~/sandbox
+    cd ~/sandbox/
     ## Unfortunately ROOT v5-34-00 fails to compile on Ubuntu 20.04 so
     ## we install ROOT v6-22-00 (current stable release as of July 2020).
     ## We know that xps wants ROOT 5, not 6, so even though compiling
@@ -852,7 +854,7 @@ location". We will do "location independent" installation.
     #git clone --branch v5-34-00-patches https://github.com/root-project/root.git root_src
     git clone --branch v6-22-00-patches https://github.com/root-project/root.git root_src
     mkdir root_build
-    cd root_build
+    cd root_build/
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ../root_src
     cmake --build . -- -j20  # takes about 10 min.
 
@@ -885,7 +887,7 @@ From the biocbuild account:
 
 Finally try to install the xps package:
 
-    cd ~/bbs-3.12-bioc/meat
+    cd ~/bbs-3.12-bioc/meat/
     ../R/bin/R CMD INSTALL xps
 
 As expected, this currently fails (with xps 1.49.0):
