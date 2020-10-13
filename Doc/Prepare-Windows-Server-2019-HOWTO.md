@@ -45,7 +45,34 @@ Everything in this section must be done **from the Administrator account**.
 
 ### 1.1 Install a decent web browser (for all users)
 
-Can be Firefox or Google Chrome.
+E.g. Google Chrome or Firefox.
+
+Known problem: There are some "file association" problems on Windows Server
+2019 when running `R CMD check` on packages that contain calls to browseURL()
+in their examples. For example running `R CMD check` on BiocDockerManager
+or tRNAdbImport produces:
+    ```
+    > BiocDockerManager::help()
+    Error in shell.exec(url) :
+      file association for 'https://hub.docker.com/r/bioconductor/bioconductor_docker' not available or invalid
+    ```
+or
+    ```
+    > tRNAdbImport::open_tdbID("tdbD00000785")
+    Error in shell.exec(url) :
+      file association for 'http://trna.bioinf.uni-leipzig.de/DataOutput/Result?ID=tdbD00000785' not available or invalid
+    ```
+when checking the examples. Note that these errors only happen in the context
+of the daily builds i.e. they can't be reproduced by running `R CMD check` on
+BiocDockerManager or tRNAdbImport in an interactive session in a PowerShell
+window.
+
+The "file association" problem happens with both browsers, Google Chrome
+and Firefox.
+
+Until a solution is found it's been suggested to the maintainers of the
+BiocDockerManager and tRNAdbImport packages that they wrap the above calls
+inside `\donttest` statements.
 
 
 ### 1.2 Install Python 3 (for all users)
@@ -80,15 +107,24 @@ ALSO: You need to explicitly associate `.py` files with Python by:
     python -m pip install --upgrade pip
 
 
-### 1.4 Install Python module psutil
+### 1.4 Install Python 3 modules
 
-**From the Administrator account** in a PowerShell window (this module
-is needed by BBS):
+#### Python 3 modules needed by BBS
+
+**From the Administrator account** in a PowerShell window:
 
     pip install psutil
 
+#### Python 3 modules needed by the Single Package Builder only
 
-### 1.5 Install Python modules needed by some CRAN/Bioconductor packages
+**From the Administrator account** in a PowerShell window:
+
+`virtualenv` is used by the single package builder. Despite python3 shipping
+with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
+
+    pip install virtualenv
+
+#### Python 3 modules needed by some CRAN/Bioconductor packages
 
 **From the Administrator account** in a PowerShell window:
 
@@ -98,7 +134,6 @@ is needed by BBS):
     pip install cwltool
     pip install nbconvert
     pip install matplotlib phate
-    pip install virtualenv
 
 Notes:
 - `scipy` is needed by Bioconductor packages MOFA and MOFA2, but also by
@@ -127,9 +162,6 @@ Notes:
 
 - `matplotlib` and `phate` are needed by CRAN package phateR which is itself
   used by Bioconductor package phemd.
-
-- `virtualenv` is used by the single package builder. Despite python3 shipping
-  with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
 
 ### 1.6 Create personal administrator accounts
@@ -557,9 +589,9 @@ window and from the `biocbuild` account.
 
 #### Check that you can ping the central builder
 
-Check that you can ping the central builder. Depending on whether the
-node you're ping'ing from is within RPCI's DMZ or not, use the central
-builder's short or long (i.e. hostname+domain) hostname. For example:
+Depending on whether the node you're ping'ing from is within RPCI's DMZ
+or not, use the central builder's short or long (i.e. hostname+domain)
+hostname. For example:
 
     ping malbec1                                   # from within RPCI's DMZ
     ping malbec1.bioconductor.org                  # from anywhere else
@@ -598,7 +630,7 @@ Contact the IT folks at RPCI if this is blocked by RPCI's firewall (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-### 3.2 Clone BBS git tree and create bbs-3.y-bioc directory structure
+### 3.2 Clone BBS git tree and create bbs-x.y-bioc directory structure
 
 All the steps described in this section must be performed in a PowerShell
 window and from the `biocbuild` account.
