@@ -639,10 +639,13 @@ Then from R:
 From R:
 
     install.packages("BiocManager", repos="https://cran.r-project.org")
-    library(BiocManager)
 
-    ## IMPORTANT: Switch to "devel" ONLY if installing R for the devel builds
-    ## and if BioC devel uses the same version of R as BioC release!
+    library(BiocManager)  # This displays the version of Bioconductor
+                          # that BiocManager is pointing at.
+
+    ## IMPORTANT: Switch to "devel" **ONLY** if you are installing R for
+    ## the devel builds and if BioC devel uses the same version of R as
+    ## BioC release!
     BiocManager::install(version="devel")
 
     BiocManager::install("BiocCheck")    # required by SPB
