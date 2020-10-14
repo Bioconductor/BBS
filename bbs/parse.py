@@ -262,9 +262,12 @@ def get_Maintainer_email_from_pkgsrctree(pkgsrctree):
 def get_BBSoptions_path(pkgsrctree):
     return os.path.join(pkgsrctree, '.BBSoptions')
 
+### Return a dictionary if the package source tree contains a .BBSoptions
+### file that is valid DCF, or None otherwise.
 def parse_BBSoptions_from_pkgsrctree(pkgsrctree):
+    filepath = get_BBSoptions_path(pkgsrctree)
     try:
-        options = parse_DCF(get_BBSoptions_path(pkgsrctree))
+        options = parse_DCF(filepath, merge_records=True)
     except:
         options = None
     return options
