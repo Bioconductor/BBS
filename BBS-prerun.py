@@ -341,7 +341,7 @@ def GetCranPkgs(work_topdir):
     return
 
 def write_PACKAGES(rdir):
-    Rexpr = r'"library(tools);write_PACKAGES(\".\")"'
+    Rexpr = r'library(tools);write_PACKAGES(\".\")'
     bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd(Rexpr))
     rdir.Put('PACKAGES', True, True)
     return
