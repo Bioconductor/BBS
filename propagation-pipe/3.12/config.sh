@@ -5,4 +5,4 @@
 
 BIOC_VERSION="3.12"
 R_VERSION="4.0"
-R="$HOME/bin/R-$R_VERSION"
+Rscript="$HOME/bin/Rscript-$R_VERSION"

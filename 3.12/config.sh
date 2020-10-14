@@ -17,6 +17,7 @@ export BBS_RSYNC_CMD="$BBS_RSYNC_CMD -rl --delete --exclude='.svn' --exclude='.g
 export BBS_RSYNC_RSH_CMD="$BBS_RSYNC_CMD -e '$BBS_SSH_CMD'"
 
 export BBS_R_CMD="$BBS_R_HOME/bin/R"
+export BBS_RSCRIPT_CMD="$BBS_R_HOME/bin/Rscript"
 
 
 # Variables specifying the version and mode of the current builds

@@ -5,10 +5,10 @@ cd "$HOME/propagation-pipe/3.12"
 . ./config.sh
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/books"
 
-R_SCRIPT="library(tools)"
-R_SCRIPT="$R_SCRIPT; write_PACKAGES('$REPOS_ROOT/src/contrib')"
+R_EXPR="library(tools)"
+R_EXPR="$R_EXPR; write_PACKAGES('$REPOS_ROOT/src/contrib')"
 
-echo "$R_SCRIPT" | $R --slave
+$Rscript -e "$R_EXPR"
 
 chmod +r "$REPOS_ROOT" -Rc
 

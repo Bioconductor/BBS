@@ -101,11 +101,11 @@ def makeNodeInfo():
     write_sys_command_version('CXX14')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
-    Rscript = "sessionInfo()"
-    bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
+    Rexpr = "sessionInfo()"
+    bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
-    Rscript = "options(width=500);print(installed.packages()[,c('LibPath','Version','Built')],quote=FALSE)"
-    bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), \
+    Rexpr = "options(width=500);print(installed.packages()[,c('LibPath','Version','Built')],quote=FALSE)"
+    bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
                     'R-instpkgs.txt', 120.0, True) # ignore retcode
     print("BBS>   cd BBS_WORK_TOPDIR")
     os.chdir(BBSvars.work_topdir)
@@ -210,7 +210,7 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
     print("BBS> [make_STAGE2_pkg_deps_list]", end=" ")
     print("Calling %s() defined in %s to make %s file ..." % \
           (Rfunction, script_path, STAGE2_pkg_deps_list_path), end=" ")
-    # Backslashes in the paths injected in 'Rscript' will be seen as escape
+    # Backslashes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
     # contain backslashes.
@@ -219,12 +219,12 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
     STAGE2_pkg_deps_list_path2 = STAGE2_pkg_deps_list_path.replace('\\', '/')
     # Use short.list=TRUE for "smart STAGE2" i.e. to skip installation of
     # target packages not needed by another target package for build or check.
-    #Rscript = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
-    Rscript = "source('%s');%s('%s',outfile='%s')" % \
+    #Rexpr = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
+    Rexpr = "source('%s');%s('%s',outfile='%s')" % \
               (script_path2, Rfunction, target_pkgs_file2,
                STAGE2_pkg_deps_list_path2)
     out_file = Rfunction + ".Rout"
-    bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), out_file) # ignore retcode
+    bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
     print("OK")
 
     # Load 'STAGE2_pkg_deps_list.txt' file.
@@ -247,10 +247,10 @@ def make_STAGE2_pkg_deps_list(target_pkgs):
 
 def get_installed_pkgs():
     installed_pkgs_path = "installed_pkgs.txt"
-    Rscript = "writeLines(rownames(installed.packages()),'%s')" % \
-              installed_pkgs_path
+    Rexpr = "writeLines(rownames(installed.packages()),'%s')" % \
+            installed_pkgs_path
     out_file = "get_installed_pkgs.Rout"
-    bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), out_file) # ignore retcode
+    bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
     installed_pkgs = []
     f = open(installed_pkgs_path, 'r')
     for line in f:
@@ -262,15 +262,15 @@ def get_installed_pkgs():
 def CallRfunctionFromSTAGE2Script(Rfunction, out_file=None):
     print("BBS> [%s] BEGIN ..." % Rfunction)
     script_path = BBSvars.STAGE2_r_script
-    # Backslahes in the paths injected in 'Rscript' will be seen as escape
+    # Backslahes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
     # contain backslahes.
     script_path = script_path.replace('\\', '/')
-    Rscript = "source('%s');%s()" % (script_path, Rfunction)
+    Rexpr = "source('%s');%s()" % (script_path, Rfunction)
     if out_file == None:
         out_file = '%s.Rout' % Rfunction
-    bbs.jobs.runJob(BBSbase.Rscript2syscmd(Rscript), out_file, 3600.0) # ignore retcode
+    bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file, 3600.0) # ignore retcode
     print("BBS> [%s] END." % Rfunction)
     return
 

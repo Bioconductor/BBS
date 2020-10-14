@@ -38,15 +38,19 @@ def Untar(tarball, dir=None, verbose=False):
         tar.close()
     return
 
-# The script passed thru Rscript must NOT contain spaces or it will break
-# on Windows!
-def Rscript2syscmd(Rscript, Roptions=None):
-    if sys.platform == "win32":
-        syscmd = 'echo %s | %s --slave' % (Rscript, BBSvars.r_cmd)
+# The R expression passed thru 'Rexpr' must NOT contain spaces or it will
+# break on Windows!
+def Rexpr2syscmd(Rexpr):
+    if BBSvars.rscript_cmd == None:
+        if sys.platform == "win32":
+            syscmd = 'echo %s | %s --no-echo' % (Rexpr, BBSvars.r_cmd)
+        else:
+            syscmd = 'echo "%s" | %s --no-echo' % (Rexpr, BBSvars.r_cmd)
     else:
-        syscmd = 'echo "%s" | %s --slave' % (Rscript, BBSvars.r_cmd)
-    if Roptions != None:
-        syscmd += ' ' + Roptions
+        if sys.platform == "win32":
+            syscmd = '%s -e %s' % (BBSvars.rscript_cmd, Rexpr)
+        else:
+            syscmd = '%s -e "%s"' % (BBSvars.rscript_cmd, Rexpr)
     return syscmd
 
 
@@ -219,12 +223,12 @@ def getSTAGE2cmdForNonTargetPkg(pkg):
     # on a Unix-like platform, only on Windows where the paths can actually
     # contain backslahes.
     script_path = script_path.replace('\\', '/')
-    Rscript = "source('%s');" % script_path
+    Rexpr = "source('%s');" % script_path
     if sys.platform == "win32" and _install_is_multiarch():
-        Rscript += "installNonTargetPkg('%s',multiArch=TRUE)" % pkg
+        Rexpr += "installNonTargetPkg('%s',multiArch=TRUE)" % pkg
     else:
-        Rscript += "installNonTargetPkg('%s')" % pkg
-    return Rscript2syscmd(Rscript)
+        Rexpr += "installNonTargetPkg('%s')" % pkg
+    return Rexpr2syscmd(Rexpr)
 
 def getSTAGE2cmd(pkg, version):
     if sys.platform != "win32":

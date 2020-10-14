@@ -16,6 +16,7 @@ set BBS_RSYNC_CMD=%BBS_RSYNC_CMD% -r --delete --exclude='.svn' --exclude='.git'
 set BBS_RSYNC_RSH_CMD=%BBS_RSYNC_CMD% -e '%BBS_SSH_CMD%'
 
 set BBS_R_CMD=%BBS_R_HOME%\bin\R.exe
+set BBS_RSCRIPT_CMD=%BBS_R_HOME%\bin\Rscript.exe
 set TMP=%BBS_WORK_TOPDIR%\tmp
 set TMPDIR=%BBS_WORK_TOPDIR%\tmpdir
 

@@ -5,8 +5,8 @@ cd "$HOME/propagation-pipe/3.12"
 . ./config.sh
 
 BBS_OUTGOING_DIR="/home/biocbuild/public_html/BBS/$BIOC_VERSION/bioc/OUTGOING"
-R_SCRIPT="source('/home/biocbuild/BBS/utils/list.old.pkgs.R')"
-PROPAGATION_R_SCRIPT="source('/home/biocbuild/BBS/utils/createPropagationDB.R')"
+R_EXPR="source('/home/biocbuild/BBS/utils/list.old.pkgs.R')"
+PROPAGATION_R_EXPR="source('/home/biocbuild/BBS/utils/createPropagationDB.R')"
 PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATE_STATUS_DB.txt"
 
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/bioc"
@@ -23,8 +23,8 @@ update_repo()
 	if [ "$?" != "0" ]; then
 		exit 1
 	fi
-        echo "$PROPAGATION_R_SCRIPT; copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT')" | $R --slave
-	echo "$R_SCRIPT; manage.old.pkgs(suffix='.$fileext', bioc_version='$BIOC_VERSION')" | $R --slave
+	$Rscript -e "$PROPAGATION_R_EXPR; copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT')"
+	$Rscript -e "$R_EXPR; manage.old.pkgs(suffix='.$fileext', bioc_version='$BIOC_VERSION')"
 }
 
 echo ""
@@ -49,11 +49,10 @@ update_repo "$MAC_CONTRIB" "mac.binary" "tgz"
 MANUALS_DEST="$REPOS_ROOT/manuals"
 MANUALS_SRC="$BBS_OUTGOING_DIR/manuals"
 echo "Updating $BIOC_VERSION/bioc repo with reference manuals..."
-for i in `ls $MANUALS_SRC`;
-do
-    pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
-    mkdir -p $MANUALS_DEST/$pkg/man
-    cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
+for i in `ls $MANUALS_SRC`; do
+	pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
+	mkdir -p $MANUALS_DEST/$pkg/man
+	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
 
 exit 0

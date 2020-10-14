@@ -71,7 +71,7 @@ else
     R_LIBS="`$R_CMD CMD sh -c 'echo "$R_HOME"'`/library"
 fi
 
-R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".")' | $R_CMD --slave`
+R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".")' | $R_CMD --no-echo`
 
 R_lib_dir="/Library/Frameworks/R.framework/Versions/$R_xyversion/Resources/lib"
 

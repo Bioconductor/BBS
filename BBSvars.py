@@ -109,9 +109,9 @@ meat_path = BBSutils.getenv('BBS_MEAT_PATH')
 
 work_topdir = BBSutils.getenv('BBS_WORK_TOPDIR')
 
-r_cmd = BBSutils.getenv('BBS_R_CMD')
-
 r_home = BBSutils.getenv('BBS_R_HOME')
+r_cmd = BBSutils.getenv('BBS_R_CMD')
+rscript_cmd = BBSutils.getenv('BBS_RSCRIPT_CMD', False)
 
 ### Only needed by BBS-prerun.py
 

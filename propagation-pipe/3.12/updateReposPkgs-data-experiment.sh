@@ -5,8 +5,8 @@ cd "$HOME/propagation-pipe/3.12"
 . ./config.sh
 
 BBS_OUTGOING_DIR="/home/biocbuild/public_html/BBS/$BIOC_VERSION/data-experiment/OUTGOING"
-R_SCRIPT="source('/home/biocbuild/BBS/utils/list.old.pkgs.R')"
-PROPAGATION_R_SCRIPT="source('/home/biocbuild/BBS/utils/createPropagationDB.R')"
+R_EXPR="source('/home/biocbuild/BBS/utils/list.old.pkgs.R')"
+PROPAGATION_R_EXPR="source('/home/biocbuild/BBS/utils/createPropagationDB.R')"
 PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATE_STATUS_DB.txt"
 
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/data/experiment"
@@ -24,8 +24,8 @@ update_repo()
 		exit 1
 	fi
 #	cp --no-clobber --verbose "$outgoing_subdir"/*.$fileext .
-  echo "$PROPAGATION_R_SCRIPT; copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT') " | $R --slave
-	echo "$R_SCRIPT; oldpkgs <- list.old.pkgs(suffix='.$fileext'); removed <- file.remove(oldpkgs); names(removed) <- oldpkgs; removed" | $R --slave
+	$Rscript -e "$PROPAGATION_R_EXPR; copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT')"
+	$Rscript -e "$R_EXPR; oldpkgs <- list.old.pkgs(suffix='.$fileext'); removed <- file.remove(oldpkgs); names(removed) <- oldpkgs; removed"
 }
 
 echo ""
@@ -50,12 +50,10 @@ update_repo "$SRC_CONTRIB" "source" "tar.gz"
 MANUALS_DEST="$REPOS_ROOT/manuals"
 MANUALS_SRC="$BBS_OUTGOING_DIR/manuals"
 echo "Updating $BIOC_VERSION/data/experiment repo with reference manuals..."
-for i in `ls $MANUALS_SRC`;
-do
-    pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
-    mkdir -p $MANUALS_DEST/$pkg/man
-    cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
+for i in `ls $MANUALS_SRC`; do
+	pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
+	mkdir -p $MANUALS_DEST/$pkg/man
+	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
-
 
 exit 0

@@ -342,11 +342,8 @@ def GetCranPkgs(work_topdir):
         BBSbase.Untar(srcpkg_file)
     return
 
-def MakeReposPACKAGES(rdir):
-    cmdTemplate = r'echo "library(tools);write_PACKAGES(\".\")"'
-    cmdTemplate += '| %s --slave'
-    cmdStr = cmdTemplate % BBSvars.r_cmd
-    bbs.jobs.doOrDie(cmdStr)
+def write_PACKAGES(rdir):
+    bbs.jobs.doOrDie(Rexpr2syscmd('library(tools);write_PACKAGES(".")'))
     rdir.Put('PACKAGES', True, True)
     return
 
@@ -416,7 +413,7 @@ def makeTargetRepo(rdir):
     ## so we limit the nb of cpus to 2.
     #STAGE1_loop(job_queue, BBSvars.nb_cpu)
     STAGE1_loop(job_queue, 2)
-    MakeReposPACKAGES(rdir)
+    write_PACKAGES(rdir)
     print("BBS> [makeTargetRepo] DONE.")
     return
 
