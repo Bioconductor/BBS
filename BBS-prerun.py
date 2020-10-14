@@ -39,12 +39,10 @@ def remakeCentralRdir(Central_rdir):
 ### Return 0 if package goes to the "meat index", 1 if it's skipped (in which
 ### case it wil go to the "skipped index"), and 2 if it's ignored.
 def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
-    if BBSvars.subbuilds == "bioc-longtests":
-        run_long_tests = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                       pkgsrctree,
-                                       'RunLongTests')
-        if run_long_tests != "TRUE":
-            return 2;
+    options = bbs.parse.parse_BBSoptions_from_pkgsrctree(pkgsrctree)
+    if BBSvars.subbuilds == "bioc-longtests" and \
+       options.get('RunLongTests') != "TRUE":
+        return 2;
     DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
     try:
         ## We set 'merge_records' to True to support DESCRIPTION files with
@@ -98,9 +96,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     package_status = DESCRIPTION.get('PackageStatus')
     if package_status != None:
         meat_index.write('PackageStatus: %s\n' % package_status)
-    unsupported = bbs.parse.get_BBSoption_from_pkgsrctree(
-                                          pkgsrctree,
-                                          'UnsupportedPlatforms')
+    unsupported = options.get('UnsupportedPlatforms')
     meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
     meat_index.write('\n')
     return 0
@@ -119,6 +115,7 @@ def build_meat_index(pkgs, meat_path):
     for pkg in pkgs:
         pkgsrctree = os.path.join(meat_path, pkg)
         retcode = _add_or_skip_or_ignore_package(pkgsrctree, meat_index)
+        meat_index.flush()
         if retcode == 2:
             ## Ignore package.
             continue
@@ -127,6 +124,7 @@ def build_meat_index(pkgs, meat_path):
             sys.stdout.flush()
             skipped_index.write('Package: %s\n' % pkg)
             skipped_index.write('\n')
+            skipped_index.flush()
             nskipped = nskipped + 1
             continue
         ## Package was added to "meat index".
@@ -343,7 +341,8 @@ def GetCranPkgs(work_topdir):
     return
 
 def write_PACKAGES(rdir):
-    bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd('library(tools);write_PACKAGES(".")'))
+    Rexpr = r'"library(tools);write_PACKAGES(\".\")"'
+    bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd(Rexpr))
     rdir.Put('PACKAGES', True, True)
     return
 

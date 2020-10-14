@@ -259,15 +259,15 @@ def get_Maintainer_email_from_pkgsrctree(pkgsrctree):
 ### Extract options from a package .BBSoptions file
 ###
 
+def get_BBSoptions_path(pkgsrctree):
+    return os.path.join(pkgsrctree, '.BBSoptions')
+
+def parse_BBSoptions_from_pkgsrctree(pkgsrctree):
+    return parse_DCF(get_BBSoptions_path(pkgsrctree))
+
 def get_BBSoption_from_pkgsrctree(pkgsrctree, key):
-    option_file = os.path.join(pkgsrctree, '.BBSoptions')
-    try:
-        dcf = open(option_file, 'rb')
-        val = get_next_DCF_val(dcf, key, True)
-        dcf.close()
-    except IOError:
-        val = None
-    return val
+    options = parse_BBSoptions_from_pkgsrctree(pkgsrctree)
+    return options.get(key)
 
 
 ##############################################################################
