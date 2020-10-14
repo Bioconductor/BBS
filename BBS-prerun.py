@@ -41,6 +41,7 @@ def remakeCentralRdir(Central_rdir):
 def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     options = bbs.parse.parse_BBSoptions_from_pkgsrctree(pkgsrctree)
     if BBSvars.subbuilds == "bioc-longtests" and \
+       options != None and \
        options.get('RunLongTests') != "TRUE":
         return 2;
     DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
@@ -96,8 +97,9 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     package_status = DESCRIPTION.get('PackageStatus')
     if package_status != None:
         meat_index.write('PackageStatus: %s\n' % package_status)
-    unsupported = options.get('UnsupportedPlatforms')
-    meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
+    if options != None:
+        unsupported = options.get('UnsupportedPlatforms')
+        meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
     meat_index.write('\n')
     return 0
 

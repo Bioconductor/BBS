@@ -263,10 +263,16 @@ def get_BBSoptions_path(pkgsrctree):
     return os.path.join(pkgsrctree, '.BBSoptions')
 
 def parse_BBSoptions_from_pkgsrctree(pkgsrctree):
-    return parse_DCF(get_BBSoptions_path(pkgsrctree))
+    try:
+        options = parse_DCF(get_BBSoptions_path(pkgsrctree))
+    except:
+        options = None
+    return options
 
 def get_BBSoption_from_pkgsrctree(pkgsrctree, key):
     options = parse_BBSoptions_from_pkgsrctree(pkgsrctree)
+    if options == None:
+        return None
     return options.get(key)
 
 
