@@ -57,7 +57,7 @@ TESTING: After reboot, check that the machine is running the latest release
 of macOS Mojave i.e. 10.14.6. Check this with:
 
     system_profiler SPSoftwareDataType
-    uname -a  # should show xnu-4903.278.25~1 (or higher)
+    uname -a  # should show xnu-4903.278.44~1 (or higher)
 
 
 ### 1.4 Create the biocbuild account
