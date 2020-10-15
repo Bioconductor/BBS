@@ -288,6 +288,7 @@ def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
                 print("ERROR!")
             else:
                 print("OK")
+    sys.stdout.flush()
     if stdout != None:
         out.close()
     return retcode
