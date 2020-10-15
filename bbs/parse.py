@@ -327,9 +327,9 @@ def get_meat_packages(meat_index_file, as_dict=False):
         for dcf_record in dcf_records:
             meat_index[dcf_record['Package']] = dcf_record
         return meat_index
-    allpkgs = [dcf_record['Package'] for dcf_record in dcf_records]
-    allpkgs.sort(key=str.lower)
-    return allpkgs
+    pkgs = [dcf_record['Package'] for dcf_record in dcf_records]
+    pkgs.sort(key=str.lower)
+    return pkgs
 
 ### 'unsupported_platforms' is the value of BBSoption UnsupportedPlatforms.
 ### 'node_id' is the name of the node and 'node_pkgType' the native package
@@ -367,7 +367,8 @@ def get_meat_packages_for_node(meat_index_file, node_id, node_pkgType=None):
         unsupported_platforms = dcf_record.get('UnsupportedPlatforms')
         if (_is_supported(unsupported_platforms, node_id, node_pkgType)):
             pkgs.append(pkg)
-    return pkgs.sort(key=str.lower)
+    pkgs.sort(key=str.lower)
+    return pkgs
 
 ### Inject fields into DESCRIPTION
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
