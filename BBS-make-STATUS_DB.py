@@ -36,12 +36,12 @@ def _write_pkg_results_to_STATUS_DB(pkg, out):
         # INSTALL status
         if BBSvars.subbuilds != 'bioc-longtests':
             stage = 'install'
-            status = _read_status_from_summary_file(pkg, node.id, stage)
-            _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+            status = _read_status_from_summary_file(pkg, node.node_id, stage)
+            _write_status_to_STATUS_DB(out, pkg, node.node_id, stage, status)
         # BUILD status
         stage = 'buildsrc'
-        status = _read_status_from_summary_file(pkg, node.id, stage)
-        _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+        status = _read_status_from_summary_file(pkg, node.node_id, stage)
+        _write_status_to_STATUS_DB(out, pkg, node.node_id, stage, status)
         skipped_is_OK = status in ['TIMEOUT', 'ERROR']
         # CHECK status
         if BBSvars.subbuilds not in ['workflows', 'books']:
@@ -49,23 +49,25 @@ def _write_pkg_results_to_STATUS_DB(pkg, out):
             if skipped_is_OK:
                 status = 'skipped'
             else:
-                status = _read_status_from_summary_file(pkg, node.id, stage)
-            _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+                status = _read_status_from_summary_file(pkg, node.node_id,
+                                                        stage)
+            _write_status_to_STATUS_DB(out, pkg, node.node_id, stage, status)
         # BUILD BIN status
         if BBSreportutils.is_doing_buildbin(node):
             stage = 'buildbin'
             if skipped_is_OK:
                 status = 'skipped'
             else:
-                status = _read_status_from_summary_file(pkg, node.id, stage)
-            _write_status_to_STATUS_DB(out, pkg, node.id, stage, status)
+                status = _read_status_from_summary_file(pkg, node.node_id,
+                                                        stage)
+            _write_status_to_STATUS_DB(out, pkg, node.node_id, stage, status)
     return
 
-def make_STATUS_DB(allpkgs):
+def make_STATUS_DB(pkgs):
     print('BBS> Writing %s ...' % BBSreportutils.STATUS_DB_file, end=' ')
     sys.stdout.flush()
     out = open(BBSreportutils.STATUS_DB_file, 'w')
-    for pkg in allpkgs:
+    for pkg in pkgs:
         _write_pkg_results_to_STATUS_DB(pkg, out)
     out.close()
     print('OK')
@@ -87,7 +89,7 @@ if __name__ == "__main__":
     print('BBS> [stage7a] STARTING stage7a at %s...' % time.asctime())
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     BBSreportutils.set_NODES(report_nodes)
-    allpkgs = BBSreportutils.get_pkgs_from_meat_index()
-    make_STATUS_DB(allpkgs)
+    pkgs = bbs.parse.get_meat_packages(BBSutils.meat_index_file)
+    make_STATUS_DB(pkgs)
     print('BBS> [stage7a] DONE at %s.' % time.asctime())
 

@@ -134,7 +134,9 @@ def extractTargetPkgListFromMeatIndex():
     pkgType = BBSutils.getNodeSpec(BBSvars.node_hostname, 'pkgType')
     Central_rdir = BBSvars.Central_rdir
     dcf = Central_rdir.WOpen(BBSutils.meat_index_file)
-    target_pkgs = bbs.parse.readPkgsFromDCF(dcf, BBSvars.node_hostname, pkgType)
+    target_pkgs = bbs.parse.get_meat_packages_for_node(dcf,
+                                                       BBSvars.node_hostname,
+                                                       pkgType)
     dcf.close()
     return target_pkgs
 

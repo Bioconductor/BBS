@@ -176,10 +176,9 @@ def collect_vcs_meta(snapshot_date):
     vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     ## Get list of packages
-    meat_index_path = os.path.join(BBSvars.work_topdir, BBSutils.meat_index_file)
-    dcf = open(meat_index_path, 'rb')
-    pkgs = bbs.parse.readPkgsFromDCF(dcf)
-    dcf.close()
+    meat_index_path = os.path.join(BBSvars.work_topdir,
+                                   BBSutils.meat_index_file)
+    pkgs = bbs.parse.get_meat_packages(meat_index_path)
     ## Create top-level metadata file
     vcsmeta_path = os.path.join(BBSvars.work_topdir, BBSvars.vcsmeta_file)
     vcsmeta_dir = os.path.dirname(vcsmeta_path)
@@ -201,12 +200,11 @@ def collect_vcs_meta(snapshot_date):
     if vcs == 'git':
         ## Create git-log file for each package in meat-index.dcf and
         ## skipped-index.dcf
-        skipped_index_path = os.path.join(BBSvars.work_topdir, BBSutils.skipped_index_file)
-        dcf = open(skipped_index_path, 'rb')
-        skipped_pkgs = bbs.parse.readPkgsFromDCF(dcf)
-        dcf.close()
-        all_pkgs = pkgs + skipped_pkgs
-        for pkg in all_pkgs:
+        skipped_index_path = os.path.join(BBSvars.work_topdir,
+                                          BBSutils.skipped_index_file)
+        skipped_pkgs = bbs.parse.get_meat_packages(skipped_index_path)
+        allpkgs = pkgs + skipped_pkgs
+        for pkg in allpkgs:
             pkgsrctree = os.path.join(MEAT0_path, pkg)
             git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgsrctree)
             gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
@@ -404,11 +402,10 @@ def makeTargetRepo(rdir):
     print("BBS> [makeTargetRepo] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
     print("BBS> [makeTargetRepo] Get list of pkgs from %s" % BBSutils.meat_index_file)
-    meat_index_path = os.path.join(BBSvars.work_topdir, BBSutils.meat_index_file)
-    dcf = open(meat_index_path, 'rb')
-    pkgsrctrees = bbs.parse.readPkgsFromDCF(dcf)
-    dcf.close()
-    job_queue = prepare_STAGE1_job_queue(pkgsrctrees, rdir)
+    meat_index_path = os.path.join(BBSvars.work_topdir,
+                                   BBSutils.meat_index_file)
+    pkgs = bbs.parse.get_meat_packages(meat_index_path)
+    job_queue = prepare_STAGE1_job_queue(pkgs, rdir)
     ## STAGE1 will run 'tar zcf' commands to generate the no-vignettes source
     ## tarballs. Running too many concurrent 'tar zcf' commands seems harmful
     ## so we limit the nb of cpus to 2.

@@ -24,9 +24,9 @@ import BBSvars
 
 class Node:
 
-    def __init__(self, hostname, id, os_html, arch, platform, buildbin, pkgs):
+    def __init__(self, hostname, node_id, os_html, arch, platform, buildbin, pkgs):
         self.hostname = hostname
-        self.id = id
+        self.node_id = node_id
         self.os_html = os_html
         self.arch = arch
         self.platform = platform
@@ -47,14 +47,16 @@ def set_NODES(fancynames_in_one_string):
     for fancyname in fancynames:
         if fancyname == "":
             continue
-        id = fancyname.split(":")[0]
-        hostname = id.split("-")[0]
+        node_id = fancyname.split(":")[0]
+        hostname = node_id.split("-")[0]
         os_html = BBSutils.getNodeSpec(hostname, 'OS').replace(' ', '&nbsp;')
         arch = BBSutils.getNodeSpec(hostname, 'Arch')
         platform = BBSutils.getNodeSpec(hostname, 'Platform')
         buildbin = fancyname_has_a_bin_suffix(fancyname)
-        pkgs = get_pkgs_from_meat_index(hostname, id)
-        node = Node(hostname, id, os_html, arch, platform, buildbin, pkgs)
+        pkgType = BBSutils.getNodeSpec(hostname, 'pkgType')
+        pkgs = bbs.parse.get_meat_packages_for_node(BBSutils.meat_index_file,
+                                                    node_id, pkgType)
+        node = Node(hostname, node_id, os_html, arch, platform, buildbin, pkgs)
         NODES.append(node)
     if len(NODES) == 0:
         sys.exit("nothing to report (no nodes) => EXIT.")
@@ -155,9 +157,6 @@ def ncol_to_display(subbuilds):
 STATUS_DB_file = 'STATUS_DB.txt'
 PROPAGATE_STATUS_DB_file = '../PROPAGATE_STATUS_DB.txt'
 
-### Can be 'local' or the URL where to download the data from
-data_source = 'local'
-
 
 ##############################################################################
 
@@ -183,36 +182,6 @@ def map_outgoing_node_to_package_type(node):
         return None
     return map[node]
 
-### Open read-only data stream ('local' or 'published')
-def open_rodata(file):
-    if data_source == 'local':
-        return { 'rostream': open(file, 'rb'), 'desc': file }
-    url = '%s/%s' % (data_source, file)
-    return { 'rostream': urllib.request.urlopen(url), 'desc': url }
-
-### If 'node_hostname' is specified, then returns only the packages that are
-### supported on this node (and the returned list is unsorted).
-def get_pkgs(dcf, node_hostname=None, node_id=None):
-    if node_hostname:
-        pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
-        pkgs = bbs.parse.readPkgsFromDCF(dcf, node_id, pkgType)
-    else:
-        pkgs = bbs.parse.readPkgsFromDCF(dcf)
-        pkgs.sort(key=str.lower)
-    return pkgs
-
-def get_pkgs_from_meat_index(node_hostname=None, node_id=None):
-    rodata = open_rodata(BBSutils.meat_index_file)
-    pkgs = get_pkgs(rodata['rostream'], node_hostname, node_id)
-    rodata['rostream'].close()
-    return pkgs
-
-def get_pkg_field_from_meat_index(pkg, field):
-    rodata = open_rodata(BBSutils.meat_index_file)
-    val = bbs.parse.getPkgFieldFromDCF(rodata['rostream'], pkg, field, rodata['desc'])
-    rodata['rostream'].close()
-    return val
-
 def get_status(dcf, pkg, node_id, stage):
     key = '%s#%s#%s' % (pkg, node_id, stage)
     status = bbs.parse.get_next_DCF_val(dcf, key, full_line=True)
@@ -220,12 +189,13 @@ def get_status(dcf, pkg, node_id, stage):
 
 def get_propagation_status_from_db(pkg, node_id):
     try:
-        rodata = open_rodata(PROPAGATE_STATUS_DB_file)
+        dcf = open(PROPAGATE_STATUS_DB_file, 'rb')
     except FileNotFoundError:
         return None
-    status = get_status(rodata['rostream'], pkg,
+    status = get_status(dcf, pkg,
                         map_outgoing_node_to_package_type(node_id),
                         'propagate')
+    dcf.close()
     return status
 
 def WReadDcfVal(rdir, file, field, full_line=False):
@@ -307,15 +277,16 @@ def import_STATUS_DB(allpkgs):
             if BBSvars.subbuilds != "bioc-longtests":
                 stage = 'install'
                 status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                        pkg, node.id, stage)
-                _set_pkg_status(pkg, node.id, stage, status)
-                _update_STATUS_SUMMARY(pkg, node.id, stage, status)
+                                                        pkg, node.node_id,
+                                                        stage)
+                _set_pkg_status(pkg, node.node_id, stage, status)
+                _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
             # BUILD status
             stage = 'buildsrc'
             status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                    pkg, node.id, stage)
-            _set_pkg_status(pkg, node.id, stage, status)
-            _update_STATUS_SUMMARY(pkg, node.id, stage, status)
+                                                    pkg, node.node_id, stage)
+            _set_pkg_status(pkg, node.node_id, stage, status)
+            _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
             if BBSvars.subbuilds not in ["workflows", "books"]:
@@ -324,9 +295,10 @@ def import_STATUS_DB(allpkgs):
                     status = "skipped"
                 else:
                     status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                            pkg, node.id, stage)
-                _set_pkg_status(pkg, node.id, stage, status)
-                _update_STATUS_SUMMARY(pkg, node.id, stage, status)
+                                                            pkg, node.node_id,
+                                                            stage)
+                _set_pkg_status(pkg, node.node_id, stage, status)
+                _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
             # BUILD BIN status
             if is_doing_buildbin(node):
                 stage = 'buildbin'
@@ -334,9 +306,10 @@ def import_STATUS_DB(allpkgs):
                     status = "skipped"
                 else:
                     status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                            pkg, node.id, stage)
-                _set_pkg_status(pkg, node.id, stage, status)
-                _update_STATUS_SUMMARY(pkg, node.id, stage, status)
+                                                            pkg, node.node_id,
+                                                            stage)
+                _set_pkg_status(pkg, node.node_id, stage, status)
+                _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
     return status_summary
 
 def get_pkg_status(pkg, node_id, stage):
@@ -357,7 +330,7 @@ def get_distinct_pkg_statuses(pkg, nodes=None):
         if 'buildbin' in stages and not is_doing_buildbin(node):
             stages.remove('buildbin')
         for stage in stages:
-            status = get_pkg_status(pkg, node.id, stage)
+            status = get_pkg_status(pkg, node.node_id, stage)
             if status != "skipped" and status not in statuses:
                 statuses.append(status)
     return statuses

@@ -59,18 +59,38 @@ def get_version_from_srcpkg_path(srcpkg_path):
 
 class DcfParsingError(Exception):
     def __init__(self, filepath, lineno, msg):
-        self.filepath = filepath
+        if isinstance(filepath, str):
+            self.filepath = filepath
+        elif hasattr(filepath, 'name'):
+            ## 'filepath' is a file-like object that was opened with open().
+            self.filepath = filepath.name
+        elif hasattr(filepath, 'url'):
+            ## 'filepath' is a file-like object that was opened with
+            ## urllib.request.urlopen().
+            self.filepath = filepath.url
+        else:
+            self.filepath = None
         self.lineno = lineno
         self.msg = msg
     def __str__(self):
-        return 'in DCF file \'%s\' at line %d:\n  %s' % \
-               (self.filepath, self.lineno, self.msg)
+        if self.filepath != None:
+            s = 'in DCF file \'%s\' at line %d:\n  %s' % \
+                (self.filepath, self.lineno, self.msg)
+        else:
+            s = 'in DCF file at line %d:\n  %s' % \
+                (self.lineno, self.msg)
+        return s
 
 ### Return a list of DCF records. Each record is represented as a dictionary
 ### of key-value pairs where the key is a DCF field name and the value a
 ### string.
 def parse_DCF(filepath, merge_records=False):
-    f = open(filepath, 'r')
+    if isinstance(filepath, str):
+        f = open(filepath, 'r')
+    else:
+        ## We assume 'filepath' is a file-like object that was opened
+        ## with open() or urllib.request.urlopen().
+        f = filepath
     if merge_records:
         rec1 = {}
     else:
@@ -79,6 +99,7 @@ def parse_DCF(filepath, merge_records=False):
     rec_firstlineno = 0
     lineno = 0
     for line in f:
+        line = bytes2str(line)
         lineno += 1
         line2 = line.strip()
         ## The current line is empty.
@@ -113,7 +134,8 @@ def parse_DCF(filepath, merge_records=False):
             key = line[:pos]
             val = line[pos+1:].strip()
             rec[key] = val
-    f.close()
+    if isinstance(filepath, str):
+        f.close()
     if rec_firstlineno != 0:
         if merge_records:
             rec1.update(rec)
@@ -296,20 +318,30 @@ def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
         raise DcfFieldNotFoundError(data_desc, field)
     return val
 
+### Return the list of package names if 'as_dict' is False, otherwise a dict
+### with the package names as keys.
+def get_meat_packages(meat_index_file, as_dict=False):
+    dcf_records = parse_DCF(meat_index_file)
+    if as_dict:
+        meat_index = {}
+        for dcf_record in dcf_records:
+            meat_index[dcf_record['Package']] = dcf_record
+        return meat_index
+    allpkgs = [dcf_record['Package'] for dcf_record in dcf_records]
+    return allpkgs.sort(key=str.lower)
+
 ### 'unsupported_platforms' is the value of BBSoption UnsupportedPlatforms.
 ### 'node_id' is the name of the node and 'node_pkgType' the native package
 ### type for this node ('source', 'win.binary', 'win64.binary', 'mac.binary',
 ### 'mac.binary.mavericks', or 'mac.binary.el-capitan').
-def _is_supported(unsupported_platforms, node_id=None, node_pkgType=None):
+def _is_supported(unsupported_platforms, node_id, node_pkgType=None):
     if unsupported_platforms == None:
-        return True
-    if node_id == None and node_pkgType == None:
         return True
     for unsupported_platform in unsupported_platforms.split(','):
         unsupported_platform = unsupported_platform.strip()
         if unsupported_platform in ['', 'None', 'NA']:
             continue
-        if node_id != None and unsupported_platform == node_id:
+        if unsupported_platform == node_id:
             return False
         if node_pkgType == None or node_pkgType == 'source':
             continue
@@ -326,30 +358,15 @@ def _is_supported(unsupported_platforms, node_id=None, node_pkgType=None):
 ### 'node_id' is the name of the node and 'node_pkgType' the native package
 ### type for this node ('source', 'win.binary', 'win64.binary', 'mac.binary',
 ### 'mac.binary.mavericks', or 'mac.binary.el-capitan').
-def readPkgsFromDCF(dcf, node_id=None, node_pkgType=None):
+def get_meat_packages_for_node(meat_index_file, node_id, node_pkgType=None):
+    dcf_records = parse_DCF(meat_index_file)
     pkgs = []
-    while True:
-        pkg = get_next_DCF_val(dcf, 'Package')
-        if pkg == None:
-            break
-        if node_id == None and node_pkgType == None:
-            supported = True
-        else:
-            unsupported_platforms = \
-                get_next_DCF_val(dcf, 'UnsupportedPlatforms', True)
-            supported = _is_supported(unsupported_platforms,
-                                      node_id, node_pkgType)
-        if supported:
+    for dcf_record in dcf_records:
+        pkg = dcf_record['Package']
+        unsupported_platforms = dcf_record.get('UnsupportedPlatforms')
+        if (_is_supported(unsupported_platforms, node_id, node_pkgType)):
             pkgs.append(pkg)
-    return pkgs
-
-#def extract_all_packages_from_meat(meat_path):
-#    meat_index = parse_DCF(meat_path)
-#    return [dcf_record['Package'] for dcf_record in meat_index]
-
-#def extract_supported_packages_from_meat(meat_path, node_pkgType):
-#    meat_index = parse_DCF(meat_path)
-#    return pkgs
+    return pkgs.sort(key=str.lower)
 
 ### Inject fields into DESCRIPTION
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):

@@ -180,7 +180,7 @@ def nodeOSArch_asSPAN(node):
     return '<SPAN style="font-size: smaller;">%s&nbsp;/&nbsp;%s</SPAN>' % (node.os_html, node.arch)
 
 def write_node_spec_asTD(out, node, spec_html, leafreport_ref):
-    if leafreport_ref != None and node.id == leafreport_ref.node_id:
+    if leafreport_ref != None and node.node_id == leafreport_ref.node_id:
         out.write('<TD class="node %s current"' % node.hostname.replace(".", "_"))
     else:
         out.write('<TD class="node %s"' % node.hostname.replace(".", "_"))
@@ -191,8 +191,8 @@ def status_asSPAN(status):
     return '<SPAN class="%s">&nbsp;%s&nbsp;</SPAN>' % (status, status)
 
 def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
-    #print("  %s %s %s" % (pkg, node.id, stage))
-    status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+    #print("  %s %s %s" % (pkg, node.node_id, stage))
+    status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
     if status in ["skipped", "NA"]:
         status_html = status_asSPAN(status)
     else:
@@ -200,11 +200,11 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
             pkgdir = "."
         else:
             pkgdir = pkg
-        leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkgdir, node.id, stage)
+        leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
         status_html = '<A href="%s">%s</A>' % (leafreport_rURL, status_asSPAN(status))
         if leafreport_ref != None \
            and pkg == leafreport_ref.pkg \
-           and node.id == leafreport_ref.node_id \
+           and node.node_id == leafreport_ref.node_id \
            and stage == leafreport_ref.stage:
             status_html = '[%s]' % status_html
     if style == None:
@@ -353,7 +353,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
         if is_first:
             pkgname_html = pkgname_to_HTML(pkg)
             if statuses:
-                dcf_record = meat_pkgs[pkg]
+                dcf_record = meat_index[pkg]
                 version = dcf_record['Version']
                 maintainer = dcf_record['Maintainer']
                 status = dcf_record.get('PackageStatus')
@@ -380,7 +380,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
                 write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
             is_first = False
-        write_node_spec_asTD(out, node, '<I>%s</I>' % node.id, leafreport_ref)
+        write_node_spec_asTD(out, node, '<I>%s</I>' % node.node_id, leafreport_ref)
         write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node), leafreport_ref)
         #if leafreport_ref == None:
         #    style = None
@@ -391,7 +391,7 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     return
 
 def write_summary_TD(out, node, stage):
-    stats = status_summary[node.id][stage]
+    stats = status_summary[node.node_id][stage]
     html = '<TABLE class="summary"><TR>'
     html += '<TD class="summary %s">%d</TD>' % ("TIMEOUT", stats[0])
     html += '<TD class="summary %s">%d</TD>' % ("ERROR", stats[1])
@@ -416,15 +416,15 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     for node in BBSreportutils.NODES:
-        if current_node == node.id:
+        if current_node == node.node_id:
             out.write('<TR class="summary %s current">\n' % node.hostname.replace(".", "_"))
         else:
             out.write('<TR class="summary %s">\n' % node.hostname.replace(".", "_"))
-        node_id_html = '<I>%s</I>' % node.id
+        node_id_html = '<I>%s</I>' % node.node_id
         if nb_nodes != 1:
-            node_index_file = '%s-index.html' % node.id
+            node_index_file = '%s-index.html' % node.node_id
             node_id_html = '<A href="%s">%s</A>' % (node_index_file, node_id_html)
-            if current_node == node.id:
+            if current_node == node.node_id:
                 node_id_html = '[%s]' % node_id_html
         out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
@@ -494,7 +494,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('<TD style="text-align: left; padding-left: 12px;">')
 
     if statuses:
-        dcf_record = meat_pkgs[pkg]
+        dcf_record = meat_index[pkg]
         version = dcf_record['Version']
         maintainer = dcf_record['Maintainer']
         status = dcf_record.get('PackageStatus')
@@ -522,7 +522,7 @@ def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
     nb_pkgs = len(allpkgs)
     out.write('<TABLE class="mainrep">\n')
     if full_table:
-        write_summary_asfullTRs(out, nb_pkgs, node.id)
+        write_summary_asfullTRs(out, nb_pkgs, node.node_id)
         writeThinRowSeparator_asTR(out)
         if no_alphabet_dispatch:
             write_compactreport_header_asfullTR(out)
@@ -971,50 +971,54 @@ def make_LeafReport(leafreport_ref, allpkgs):
     return
 
 def make_node_LeafReports(allpkgs, node):
-    print("BBS> [make_node_LeafReports] Node %s: BEGIN ..." % node.id)
+    print("BBS> [make_node_LeafReports] Node %s: BEGIN ..." % node.node_id)
     sys.stdout.flush()
     for pkg in BBSreportutils.supported_pkgs(node):
 
         # INSTALL leaf-report
         if BBSvars.subbuilds != "bioc-longtests":
             stage = "install"
-            status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+            status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if status != "skipped":
                 leafreport_ref = LeafReportReference(pkg,
-                                                     node.hostname, node.id,
+                                                     node.hostname,
+                                                     node.node_id,
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs)
 
         # BUILD leaf-report
         stage = "buildsrc"
-        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
         if not status in ["skipped", "NA"]:
             leafreport_ref = LeafReportReference(pkg,
-                                                 node.hostname, node.id,
+                                                 node.hostname,
+                                                 node.node_id,
                                                  stage)
             make_LeafReport(leafreport_ref, allpkgs)
 
         # CHECK leaf-report
         if BBSvars.subbuilds not in ["workflows", "books"]:
             stage = 'checksrc'
-            status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+            status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
-                                                     node.hostname, node.id,
+                                                     node.hostname,
+                                                     node.node_id,
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs)
 
         # BUILD BIN leaf-report
         if BBSreportutils.is_doing_buildbin(node):
             stage = "buildbin"
-            status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+            status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
-                                                     node.hostname, node.id,
+                                                     node.hostname,
+                                                     node.node_id,
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs)
 
-    print("BBS> [make_node_LeafReports] Node %s: END." % node.id)
+    print("BBS> [make_node_LeafReports] Node %s: END." % node.node_id)
     sys.stdout.flush()
     return
 
@@ -1140,8 +1144,8 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var):
     return
 
 def make_NodeInfo_page(Node_rdir, node):
-    page_title = 'More about %s' % node.id
-    NodeInfo_page_path = '%s-NodeInfo.html' % node.id
+    page_title = 'More about %s' % node.node_id
+    NodeInfo_page_path = '%s-NodeInfo.html' % node.node_id
     out = open(NodeInfo_page_path, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
@@ -1247,8 +1251,8 @@ def make_NodeInfo_page(Node_rdir, node):
 ### Returns the 2-string tuple containing the filename of the generated page
 ### and the number of installed pkgs.
 def make_Rinstpkgs_page(Node_rdir, node):
-    page_title = 'R packages installed on %s' % node.id
-    Rinstpkgs_page = '%s-R-instpkgs.html' % node.id
+    page_title = 'R packages installed on %s' % node.node_id
+    Rinstpkgs_page = '%s-R-instpkgs.html' % node.node_id
     out = open(Rinstpkgs_page, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
@@ -1288,12 +1292,12 @@ def write_node_specs_table(out):
     out.write('</TR>\n')
     nodes_rdir = BBSvars.nodes_rdir
     for node in BBSreportutils.NODES:
-        Node_rdir = nodes_rdir.subdir(node.id)
+        Node_rdir = nodes_rdir.subdir(node.node_id)
         NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
         Rversion_html = read_Rversion(Node_rdir)
         Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
         out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
-        out.write('<TD><B><A href="%s"><I>%s</I></A></B></TD>' % (NodeInfo_page_path, node.id))
+        out.write('<TD><B><A href="%s"><I>%s</I></A></B></TD>' % (NodeInfo_page_path, node.node_id))
         out.write('<TD>%s</TD>' % node.os_html)
         out.write('<TD>%s</TD>' % node.arch)
         out.write('<TD>%s</TD>' % node.platform)
@@ -1486,11 +1490,11 @@ def write_glyph_and_propagation_LED_table(out):
 ##############################################################################
 
 def write_node_report(node, allpkgs):
-    print("BBS> [write_node_report] Node %s: BEGIN ..." % node.id)
+    print("BBS> [write_node_report] Node %s: BEGIN ..." % node.node_id)
     sys.stdout.flush()
-    node_index_file = '%s-index.html' % node.id
+    node_index_file = '%s-index.html' % node.node_id
     out = open(node_index_file, 'w')
-    page_title = "Results for %s" % node.id
+    page_title = "Results for %s" % node.node_id
 
     write_HTML_header(out, page_title, 'report.css', 'report.js')
     out.write('<BODY>\n')
@@ -1509,7 +1513,7 @@ def write_node_report(node, allpkgs):
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
-    print("BBS> [write_node_report] Node %s: END." % node.id)
+    print("BBS> [write_node_report] Node %s: END." % node.node_id)
     sys.stdout.flush()
     return node_index_file
 
@@ -1596,14 +1600,10 @@ BBSvars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
 
-### Compute 'meat_pkgs' (dict), 'skipped_pkgs' (list), and 'allpkgs' (list).
-meat_index = bbs.parse.parse_DCF(BBSutils.meat_index_file)
-meat_pkgs = {}
-for dcf_record in meat_index:
-    meat_pkgs[dcf_record['Package']] = dcf_record
-skipped_index = bbs.parse.parse_DCF(BBSutils.skipped_index_file)
-skipped_pkgs = [dcf_record['Package'] for dcf_record in skipped_index]
-allpkgs = list(meat_pkgs.keys()) + skipped_pkgs
+### Compute 'meat_index' (dict), 'skipped_pkgs' (list), and 'allpkgs' (list).
+meat_index = bbs.parse.get_meat_packages(BBSutils.meat_index_file, as_dict=True)
+skipped_pkgs = bbs.parse.get_meat_packages(BBSutils.skipped_index_file)
+allpkgs = list(meat_index.keys()) + skipped_pkgs
 allpkgs.sort(key=str.lower)
 
 print("BBS> [stage8] Import package statuses from %s ..." % \

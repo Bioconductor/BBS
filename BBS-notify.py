@@ -59,24 +59,27 @@ def send_notification(dcf_record):
     problem_descs = []
     for node in BBSreportutils.supported_nodes(pkg):
         stage = 'install'
-        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
         if status in ["TIMEOUT", "ERROR"]:
-            leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
-            problem_desc = "  o %s for 'R CMD INSTALL' on %s. See the details here:\n" % (status, node.id) \
+            leafreport_rURL = \
+                BBSreportutils.get_leafreport_rel_url(pkg, node.node_id, stage)
+            problem_desc = "  o %s for 'R CMD INSTALL' on %s. See the details here:\n" % (status, node.node_id) \
                          + "      %s%s\n" % (published_report_url, leafreport_rURL)
             problem_descs.append(problem_desc)
         stage = 'buildsrc'
-        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
         if status in ["TIMEOUT", "ERROR"]:
-            leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
-            problem_desc = "  o %s for 'R CMD build' on %s. See the details here:\n" % (status, node.id) \
+            leafreport_rURL = \
+                BBSreportutils.get_leafreport_rel_url(pkg, node.node_id, stage)
+            problem_desc = "  o %s for 'R CMD build' on %s. See the details here:\n" % (status, node.node_id) \
                          + "      %s%s\n" % (published_report_url, leafreport_rURL)
             problem_descs.append(problem_desc)
         stage = 'checksrc'
-        status = BBSreportutils.get_pkg_status(pkg, node.id, stage)
+        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
         if status in ["TIMEOUT", "ERROR"]:
-            leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkg, node.id, stage)
-            problem_desc = "  o %s for 'R CMD check' on %s. See the details here:\n" % (status, node.id) \
+            leafreport_rURL = \
+                BBSreportutils.get_leafreport_rel_url(pkg, node.node_id, stage)
+            problem_desc = "  o %s for 'R CMD check' on %s. See the details here:\n" % (status, node.node_id) \
                          + "      %s%s\n" % (published_report_url, leafreport_rURL)
             problem_descs.append(problem_desc)
     if len(problem_descs) == 0:

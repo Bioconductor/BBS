@@ -87,18 +87,19 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     elif source_node:
         print("BBS> [stage6] mkdir %s" % manuals_dir)
         os.mkdir(manuals_dir)
-    print("BBS> [stage6] BEGIN copying outgoing packages from %s." % fresh_pkgs_subdir)
+    print("BBS> [stage6] BEGIN copying outgoing packages from %s." % \
+          fresh_pkgs_subdir)
     pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
-    meat_index_file = os.path.join(BBSvars.Central_rdir.path, BBSutils.meat_index_file)
-    dcf = open(meat_index_file, 'rb')
-    pkgs = bbs.parse.readPkgsFromDCF(dcf, node_id, pkgType)
-    dcf.close()
+    meat_index_path = os.path.join(BBSvars.Central_rdir.path,
+                                   BBSutils.meat_index_file)
+    pkgs = bbs.parse.get_meat_packages_for_node(meat_index_path,
+                                                node_id, pkgType)
+    meat_index = bbs.parse.get_meat_packages(meat_index_path, as_dict=True)
     for pkg in pkgs:
         if pkgMustBeRejected(node_hostname, node_id, pkg):
             continue
-        dcf = open(meat_index_file, 'rb')
-        version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBSutils.meat_index_file)
-        dcf.close()
+        dcf_record = meat_index[pkg]
+        version = dcf_record['Version']
         ## Copy pkg from 'fresh_pkgs_subdir2'.
         pkg_file = "%s_%s.%s" % (pkg, version, fileext)
         pkg_file = os.path.join(fresh_pkgs_subdir, pkg_file)
@@ -121,83 +122,6 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     print("BBS> [stage6] END copying outgoing packages from %s." % fresh_pkgs_subdir)
     return
 
-def make_outgoing_biarch_pkgs(fresh_pkgs_subdir1, fresh_pkgs_subdir2):
-    tmp1 = fresh_pkgs_subdir1.split("/")
-    if len(tmp1) != 2:
-        sys.exit("ERROR: Invalid relative path to fresh pkgs %s (must be of the form node/subdir)" % fresh_pkgs_subdir1)
-    node1_id = tmp1[0]
-    node1_hostname = node1_id.split("-")[0]
-    tmp2 = fresh_pkgs_subdir2.split("/")
-    if len(tmp2) != 2:
-        sys.exit("ERROR: Invalid relative path to fresh pkgs %s (must be of the form node/subdir)" % fresh_pkgs_subdir2)
-    node2_id = tmp2[0]
-    node2_hostname = node2_id.split("-")[0]
-    ## Check that node1 and node2 are registered as Windows i386 and x64
-    ## builders, respectively
-    pkgType1 = BBSutils.getNodeSpec(node1_hostname, 'pkgType')
-    if pkgType1 != "win.binary":
-        sys.exit("ERROR: %s pkgType is not \"win.binary\"" % node1_hostname)
-    pkgType2 = BBSutils.getNodeSpec(node2_hostname, 'pkgType')
-    if pkgType2 != "win64.binary":
-        sys.exit("ERROR: %s pkgType is not \"win64.binary\"" % node2_hostname)
-    fileext = BBSutils.getNodeSpec(node1_hostname, 'pkgFileExt')
-    fileext2 = BBSutils.getNodeSpec(node2_hostname, 'pkgFileExt')
-    if fileext2 != fileext:
-        sys.exit("ERROR: %s pkgFileExt and %s pkgFileExt differ" % (node1_hostname, node2_hostname))
-    fresh_pkgs_subdir1 = os.path.join(BBSvars.nodes_rdir.path, fresh_pkgs_subdir1)
-    fresh_pkgs_subdir2 = os.path.join(BBSvars.nodes_rdir.path, fresh_pkgs_subdir2)
-    print("BBS> [stage6] BEGIN making outgoing bi-arch packages from %s and %s." % (fresh_pkgs_subdir1, fresh_pkgs_subdir2))
-    ## Get lists of supported pkgs for node1 and node2
-    meat_index_file = os.path.join(BBSvars.Central_rdir.path, BBSutils.meat_index_file)
-    dcf = open(meat_index_file, 'rb')
-    pkgs1 = bbs.parse.readPkgsFromDCF(dcf, node1_id, pkgType1)
-    dcf.close()
-    dcf = open(meat_index_file, 'rb')
-    pkgs2 = bbs.parse.readPkgsFromDCF(dcf, node2_id, pkgType2)
-    dcf.close()
-    ## Loop on list of supported pkgs
-    pkgs0 = set(pkgs1 + pkgs2)
-    nb_products = 0
-    t1 = time.time()
-    for pkg in pkgs0:
-        dcf = open(meat_index_file, 'rb')
-        version = bbs.parse.getPkgFieldFromDCF(dcf, pkg, 'Version', BBSutils.meat_index_file)
-        dcf.close()
-        binpkg_file = "%s_%s.%s" % (pkg, version, fileext)
-        if pkg not in pkgs1:
-            if pkgMustBeRejected(node2_hostname, node2_id, pkg):
-                continue
-            ## Copy pkg from 'fresh_pkgs_subdir2'
-            binpkg_file2 = os.path.join(fresh_pkgs_subdir2, binpkg_file)
-            shutil.copy(binpkg_file2, ".")
-            nb_products += 1
-            continue
-        if pkg not in pkgs2:
-            if pkgMustBeRejected(node1_hostname, node1_id, pkg):
-                continue
-            ## Copy pkg from 'fresh_pkgs_subdir1'
-            binpkg_file1 = os.path.join(fresh_pkgs_subdir1, binpkg_file)
-            shutil.copy(binpkg_file1, ".")
-            nb_products += 1
-            continue
-        if pkgMustBeRejected(node1_hostname, node1_id, pkg) or pkgMustBeRejected(node2_hostname, node2_id, pkg):
-            continue
-        ## Merge
-        syscmd = '%s/utils/merge-win-bin-pkgs.sh %s %s %s %s cleanup' % \
-                 (BBSvars.BBS_home, pkg, version, fresh_pkgs_subdir1, fresh_pkgs_subdir2)
-        bbs.jobs.doOrDie(syscmd)
-        nb_products += 1
-    dt = time.time() - t1
-    print("BBS> [stage6] END making outgoing bi-arch packages from %s and %s." % (fresh_pkgs_subdir1, fresh_pkgs_subdir2))
-    print("BBS> -------------------------------------------------------------")
-    print("BBS> [stage6] MERGE(%s, %s) SUMMARY:" % (node1_id, node2_id))
-    print("BBS>     o Working dir: %s" % os.getcwd())
-    print("BBS>     o %d pkg(s) supported on Windows" % len(pkgs0))
-    print("BBS>     o %d binpkg file(s) produced" % nb_products)
-    print("BBS>     o Total time: %.2f seconds" % dt)
-    print("BBS> -------------------------------------------------------------")
-    return
-
 def stage6_make_OUTGOING():
     ## Create working directory
     OUTGOING_dir = os.path.join(BBSvars.Central_rdir.path, "OUTGOING")
@@ -218,13 +142,7 @@ def stage6_make_OUTGOING():
         os.mkdir(OUTGOING_subdir)
         print("BBS> [stage6] cd %s/" % OUTGOING_subdir)
         os.chdir(OUTGOING_subdir)
-        tmp2 = tmp[1].split("+")
-        if len(tmp2) == 1:
-            copy_outgoing_pkgs(tmp[1], source_node)
-        elif len(tmp2) == 2:
-            make_outgoing_biarch_pkgs(tmp2[0], tmp2[1])
-        else:
-            sys.exit("ERROR: Invalid OUTGOING map element %s" % map_elt)
+        copy_outgoing_pkgs(tmp[1], source_node)
     return
 
 
