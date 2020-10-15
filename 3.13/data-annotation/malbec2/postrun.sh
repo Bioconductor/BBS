@@ -23,7 +23,7 @@ $BBS_PYTHON_CMD $BBS_HOME/BBS-make-STATUS_DB.py
 OUTGOING_DIR=$BBS_CENTRAL_RDIR/OUTGOING
 PROPAGATE_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATE_STATUS_DB.txt
 INTERNAL_REPOS=/home/biocadmin/PACKAGES/$BBS_BIOC_VERSIONED_REPO_PATH/
-$BBS_R_CMD -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'data/annotation', '$INTERNAL_REPOS')"
+$BBS_RSCRIPT_CMD --vanilla -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'data/annotation', '$INTERNAL_REPOS')"
 
 # Generate and publish HTML report
 $BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch
