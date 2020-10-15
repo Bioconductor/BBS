@@ -328,7 +328,8 @@ def get_meat_packages(meat_index_file, as_dict=False):
             meat_index[dcf_record['Package']] = dcf_record
         return meat_index
     allpkgs = [dcf_record['Package'] for dcf_record in dcf_records]
-    return allpkgs.sort(key=str.lower)
+    allpkgs.sort(key=str.lower)
+    return allpkgs
 
 ### 'unsupported_platforms' is the value of BBSoption UnsupportedPlatforms.
 ### 'node_id' is the name of the node and 'node_pkgType' the native package
