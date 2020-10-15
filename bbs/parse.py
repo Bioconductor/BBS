@@ -296,39 +296,60 @@ def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
         raise DcfFieldNotFoundError(data_desc, field)
     return val
 
-### 'node_id' is the name of the node and 'pkgType' the native package type for
-### this node ("source", "win.binary", "win64.binary", "mac.binary",
-### "mac.binary.mavericks", or "mac.binary.el-capitan").
-def readPkgsFromDCF(dcf, node_id=None, pkgType=None):
+### 'unsupported_platforms' is the value of BBSoption UnsupportedPlatforms.
+### 'node_id' is the name of the node and 'node_pkgType' the native package
+### type for this node ('source', 'win.binary', 'win64.binary', 'mac.binary',
+### 'mac.binary.mavericks', or 'mac.binary.el-capitan').
+def _is_supported(unsupported_platforms, node_id=None, node_pkgType=None):
+    if unsupported_platforms == None:
+        return True
+    if node_id == None and node_pkgType == None:
+        return True
+    for unsupported_platform in unsupported_platforms.split(','):
+        unsupported_platform = unsupported_platform.strip()
+        if unsupported_platform in ['', 'None', 'NA']:
+            continue
+        if node_id != None and unsupported_platform == node_id:
+            return False
+        if node_pkgType == None or node_pkgType == 'source':
+            continue
+        ## If 'unsupported_platform' is mac.binary or mac.binary.*
+        if unsupported_platform == node_pkgType:
+            return False
+        ## If 'unsupported_platform' is win or mac and 'node_pkgType' is
+        ## win.binary or mac.*:
+        if unsupported_platform in ['win', 'mac'] and \
+           node_pkgType.startswith(unsupported_platform):
+            return False
+    return True
+
+### 'node_id' is the name of the node and 'node_pkgType' the native package
+### type for this node ('source', 'win.binary', 'win64.binary', 'mac.binary',
+### 'mac.binary.mavericks', or 'mac.binary.el-capitan').
+def readPkgsFromDCF(dcf, node_id=None, node_pkgType=None):
     pkgs = []
     while True:
         pkg = get_next_DCF_val(dcf, 'Package')
-        if not pkg:
+        if pkg == None:
             break
-        supported = True
-        if node_id or pkgType:
-            unsupported = get_next_DCF_val(dcf, 'UnsupportedPlatforms', True)
-            for x in unsupported.split(","):
-                x = x.strip()
-                if x in ["", "None", "NA"]:
-                    continue
-                if node_id and x == node_id:
-                    supported = False
-                    break
-                if not pkgType or pkgType == "source":
-                    continue
-                # if 'x' is mac.binary or mac.binary.*
-                if pkgType and x == pkgType:
-                    supported = False
-                    break
-                # if 'x' is win or mac and pkgType is win.binary or mac.*:
-                if x in ["win", "mac"]:
-                    if pkgType.startswith(x):
-                        supported = False
-                        break
+        if node_id == None and node_pkgType == None:
+            supported = True
+        else:
+            unsupported_platforms = \
+                get_next_DCF_val(dcf, 'UnsupportedPlatforms', True)
+            supported = _is_supported(unsupported_platforms,
+                                      node_id, node_pkgType)
         if supported:
             pkgs.append(pkg)
     return pkgs
+
+#def extract_all_packages_from_meat(meat_path):
+#    meat_index = parse_DCF(meat_path)
+#    return [dcf_record['Package'] for dcf_record in meat_index]
+
+#def extract_supported_packages_from_meat(meat_path, node_pkgType):
+#    meat_index = parse_DCF(meat_path)
+#    return pkgs
 
 ### Inject fields into DESCRIPTION
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
