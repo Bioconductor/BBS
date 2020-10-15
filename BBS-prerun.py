@@ -141,7 +141,7 @@ def build_meat_index(pkgs, meat_path):
     sys.stdout.flush()
     return meat_index_path
 
-def writeAndUploadMeatIndex(pkgs, meat_path):
+def buildAndUploadMeatIndex(pkgs, meat_path):
     meat_index_path = build_meat_index(pkgs, meat_path)
     BBSvars.Central_rdir.Put(meat_index_path, True, True)
     return
@@ -302,7 +302,7 @@ def writeAndUploadMeatInfo(work_topdir):
     manifest_path = BBSvars.manifest_path
     print("BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path)
     pkgs = bbs.manifest.read(manifest_path)
-    writeAndUploadMeatIndex(pkgs, MEAT0_path)
+    buildAndUploadMeatIndex(pkgs, MEAT0_path)
     collect_vcs_meta(snapshot_date)
     uploadSkippedIndex(work_topdir)
     return
@@ -464,7 +464,7 @@ if __name__ == "__main__":
     if (arg1 == "" or arg1 == subtask) and BBSvars.MEAT0_type == 2:
         print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         pkgs = extractSrcPkgTarballs(meat_path)
-        writeAndUploadMeatIndex(pkgs, meat_path)
+        buildAndUploadMeatIndex(pkgs, meat_path)
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "make-target-repo"
