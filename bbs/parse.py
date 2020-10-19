@@ -467,9 +467,11 @@ def installPkgWasOK(out_file, pkg):
     regex1 = r'^\* removing'
     regex2 = r'installation of package .* had non-zero exit status'
     regex3 = r'Error in install\.packages\("%s"' % pkg
+    regex4 = r'Error in download\.file\('
     p1 = re.compile(regex1)
     p2 = re.compile(regex2)
     p3 = re.compile(regex3)
+    p4 = re.compile(regex4)
     for line in tail:
         m = p1.match(line)
         if m != None:
@@ -478,6 +480,9 @@ def installPkgWasOK(out_file, pkg):
         if m != None:
             return False
         m = p3.match(line)
+        if m != None:
+            return False
+        m = p4.match(line)
         if m != None:
             return False
     return True
