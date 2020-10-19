@@ -1179,7 +1179,7 @@ def make_NodeInfo_page(Node_rdir, node):
 
     out.write('<H2>C compiler</H2>\n')
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    C_vars = ['CC', 'CFLAGS', 'CPICFLAGS', 'CPP']
+    C_vars = ['CC', 'CFLAGS', 'CPICFLAGS']
     write_Rconfig_table_from_file(out, Node_rdir, C_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CC')
     out.write('</DIV>\n')
@@ -1188,7 +1188,7 @@ def make_NodeInfo_page(Node_rdir, node):
 
     out.write('<H2>C++ compiler</H2>\n')
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus_vars = ['CXX', 'CXXFLAGS', 'CXXPICFLAGS', 'CXXCPP']
+    Cplusplus_vars = ['CXX', 'CXXFLAGS', 'CXXPICFLAGS']
     write_Rconfig_table_from_file(out, Node_rdir, Cplusplus_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CXX')
     out.write('</DIV>\n')
@@ -1218,6 +1218,15 @@ def make_NodeInfo_page(Node_rdir, node):
     Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
     write_Rconfig_table_from_file(out, Node_rdir, Cplusplus14_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CXX14')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>C++17 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus17_vars = ['CXX17', 'CXX17FLAGS', 'CXX17PICFLAGS', 'CXX17STD']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus17_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX17')
     out.write('</DIV>\n')
 
     out.write('<HR>\n')
