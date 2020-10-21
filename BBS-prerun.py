@@ -104,8 +104,12 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     return 0
 
 def build_meat_index(pkgs, meat_path):
-    print("BBS> [build_meat_index] START building the meat index for " + \
-          "the %s packages in the manifest" % len(pkgs))
+    doing_what = 'building the meat index for the %s package' % len(pkgs)
+    if BBSvars.subbuilds == "bioc-incremental":
+        doing_what += '(s) that have changed'
+    else:
+        doing_what += 's in the manifest'
+    print("BBS> [build_meat_index] START %s" % doing_what)
     sys.stdout.flush()
     meat_index_path = os.path.join(BBSvars.work_topdir,
                                    BBSutils.meat_index_file)
@@ -133,8 +137,7 @@ def build_meat_index(pkgs, meat_path):
         nadded = nadded + 1
     skipped_index.close()
     meat_index.close()
-    print("BBS> [build_meat_index] DONE building the meat index for " + \
-          "the %s packages in the manifest" % len(pkgs))
+    print("BBS> [build_meat_index] DONE %s" % doing_what)
     print("BBS>   --> %d pkgs were skipped" % nskipped)
     print("BBS>   --> %d pkgs made it to the meat index" % nadded)
     print()
@@ -231,12 +234,8 @@ def update_svn_MEAT0(MEAT0_path, snapshot_date):
     bbs.jobs.doOrDie(cmd)
     return
 
-def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
+def update_git_MEAT0(MEAT0_path, snapshot_date,
                      git_branch=None, manifest_git_branch=None):
-    if MEAT0_path == None:
-        MEAT0_path = BBSvars.MEAT0_rdir.path
-    if snapshot_date == None:
-        snapshot_date = bbs.jobs.currentDateString()
     if git_branch == None:
         git_branch = BBSvars.git_branch
     if manifest_git_branch == None:
@@ -256,6 +255,7 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
                              reclone_if_update_fails=True)
     ## iterate over manifest to update pkg dirs
     pkgs = bbs.manifest.read(BBSvars.manifest_path)
+    changed_pkgs = []
     i = 0
     for pkg in pkgs:
         i += 1
@@ -265,23 +265,33 @@ def update_git_MEAT0(MEAT0_path=None, snapshot_date=None,
         print()
         pkg_git_clone = os.path.join(MEAT0_path, pkg)
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
-        bbs.gitutils.update_git_clone(pkg_git_clone,
-                                 pkg_git_repo_url,
-                                 git_branch,
-                                 depth=1,
-                                 snapshot_date=snapshot_date,
-                                 reclone_if_update_fails=True)
+        if BBSvars.subbuilds == "bioc-incremental":
+            snapshot_date = None
+        pkg_has_changed = bbs.gitutils.update_git_clone(pkg_git_clone,
+                                pkg_git_repo_url,
+                                git_branch,
+                                depth=1,
+                                snapshot_date=snapshot_date,
+                                reclone_if_update_fails=True)
+        if pkg_has_changed:
+            changed_pkgs.append(pkg)
+        if BBSvars.subbuilds == "bioc-incremental":
+            if pkg_has_changed:
+                print("==> package has changed")
+            else:
+                print("==> package has not changed")
         print()
     print("BBS> -------------------------------------------------------------")
     print("BBS> END update_git_MEAT0()")
+    print("BBS> %d/%d package(s) have changed since last pull" % \
+          (len(changed_pkgs), len(pkgs)))
     print("BBS> ==============================================================")
     print()
     sys.stdout.flush()
-    return
+    return changed_pkgs
 
-def update_MEAT0(MEAT0_path):
+def update_MEAT0(MEAT0_path, snapshot_date):
     print("BBS>")
-    snapshot_date = bbs.jobs.currentDateString()
     if BBSvars.update_MEAT0 == 1:
         update_script = os.path.join(MEAT0_path, 'update-BBS-meat.sh')
         if os.path.exists(update_script):
@@ -294,14 +304,17 @@ def update_MEAT0(MEAT0_path):
             update_svn_MEAT0(MEAT0_path, snapshot_date)
         elif BBSvars.MEAT0_type == 3:
             update_git_MEAT0(MEAT0_path, snapshot_date)
-    return snapshot_date
+    return
 
 def writeAndUploadMeatInfo(work_topdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
-    snapshot_date = update_MEAT0(MEAT0_path)
-    manifest_path = BBSvars.manifest_path
-    print("BBS> [writeAndUploadMeatInfo] Get pkg list from %s" % manifest_path)
-    pkgs = bbs.manifest.read(manifest_path)
+    snapshot_date = bbs.jobs.currentDateString()
+    if BBSvars.subbuilds == "bioc-incremental":
+        pkgs = update_git_MEAT0(MEAT0_path, snapshot_date)
+    else:
+        update_MEAT0(MEAT0_path, snapshot_date)
+        manifest_path = BBSvars.manifest_path
+        pkgs = bbs.manifest.read(manifest_path)
     buildAndUploadMeatIndex(pkgs, MEAT0_path)
     collect_vcs_meta(snapshot_date)
     uploadSkippedIndex(work_topdir)
@@ -343,6 +356,11 @@ def GetCranPkgs(work_topdir):
 def write_PACKAGES(rdir):
     Rexpr = r'library(tools);write_PACKAGES(\".\")'
     bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd(Rexpr))
+    ## write_PACKAGES() won't create an empty PACKAGES file if no packages
+    ## are found so we create one.
+    if not os.path.exists('PACKAGES'):
+        f = open('PACKAGES', 'w')
+        f.close()
     rdir.Put('PACKAGES', True, True)
     return
 
