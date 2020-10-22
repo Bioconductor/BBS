@@ -144,6 +144,10 @@ def build_meat_index(pkgs, meat_path):
     skipped_index.close()
     meat_index.close()
     print("BBS> [build_meat_index] DONE %s" % doing_what)
+    if BBSvars.subbuilds == "bioc-longtests":
+        nignored = len(pkgs) - nadded - nskipped
+        print("BBS>   --> %d pkgs were ignored" % nignored, end=" ")
+        print("(because not subscribed to Long Tests builds)")
     print("BBS>   --> %d pkgs were skipped" % nskipped)
     print("BBS>   --> %d pkgs made it to the meat index" % nadded)
     print()
