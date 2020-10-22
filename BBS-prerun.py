@@ -41,9 +41,8 @@ def remakeCentralRdir(Central_rdir):
 def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     options = bbs.parse.parse_BBSoptions_from_pkgsrctree(pkgsrctree)
     if BBSvars.subbuilds == "bioc-longtests" and \
-       options != None and \
-       options.get('RunLongTests') != "TRUE":
-        return 2;
+       (options == None or options.get('RunLongTests').lower() != "true"):
+        return 2  # package will be ignored
     DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
     try:
         ## We set 'merge_records' to True to support DESCRIPTION files with
@@ -54,31 +53,31 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     except FileNotFoundError:
         print("BBS>   Missing DESCRIPTION file in '%s/' ==> skip package" % \
               pkgsrctree)
-        return 1
+        return 1  # package will be skipped
     except bbs.parse.DcfParsingError:
         print("BBS>   Invalid DESCRIPTION file: %s ==> skip package" % \
               DESCRIPTION_path)
-        return 1
+        return 1  # package will be skipped
     try:
         pkgname = DESCRIPTION['Package']
     except KeyError:
         print("BBS>   Field 'Package' not found in '%s' ==> skip package" % \
               DESCRIPTION_path)
-        return 1
+        return 1  # package will be skipped
     if pkgname != os.path.basename(pkgsrctree):
         print("BBS>   Unexpected 'Package: %s' in '%s' ==> skip package" % \
               (pkgname, DESCRIPTION_path))
-        return 1
+        return 1  # package will be skipped
     try:
         version = DESCRIPTION['Version']
     except KeyError:
         print("BBS>   Field 'Version' not found in '%s' ==> skip package" % \
               DESCRIPTION_path)
-        return 1
+        return 1  # package will be skipped
     if not bbs.parse.version_is_valid(version):
         print("BBS>   Invalid 'Version: %s' in '%s' ==> skip package" % \
               (version, DESCRIPTION_path))
-        return 1
+        return 1  # package will be skipped
     try:
         if BBSvars.subbuilds != "cran":
             maintainer = bbs.parse.get_Maintainer_name_from_pkgsrctree(pkgsrctree)
@@ -88,7 +87,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     except bbs.parse.DcfFieldNotFoundError:
         print("BBS>   Failed to extract Maintainer information " + \
               "from '%s' ==> skip package" % DESCRIPTION_path)
-        return 1
+        return 1  # package will be skipped
     meat_index.write('Package: %s\n' % pkgname)
     meat_index.write('Version: %s\n' % version)
     meat_index.write('Maintainer: %s\n' % maintainer)
@@ -101,7 +100,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
         unsupported = options.get('UnsupportedPlatforms')
         meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
     meat_index.write('\n')
-    return 0
+    return 0  # package will be added to the "meat index"
 
 def build_meat_index(pkgs, meat_path):
     print("BBS> [build_meat_index] START building the meat index for " + \
