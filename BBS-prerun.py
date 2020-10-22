@@ -40,9 +40,16 @@ def remakeCentralRdir(Central_rdir):
 ### case it wil go to the "skipped index"), and 2 if it's ignored.
 def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     options = bbs.parse.parse_BBSoptions_from_pkgsrctree(pkgsrctree)
-    if BBSvars.subbuilds == "bioc-longtests" and \
-       (options == None or options.get('RunLongTests').lower() != "true"):
-        return 2  # package will be ignored
+    if BBSvars.subbuilds == "bioc-longtests":
+        ## Ignore the package if it has no .BBSoptions file, or if the file
+        ## has no RunLongTests entry, or if the entry is not TRUE.
+        if options == None:
+            return 2  # package will be ignored
+        run_long_tests = options.get('RunLongTests')
+        if run_long_tests == None:
+            return 2  # package will be ignored
+        if run_long_tests.lower() != "true":
+            return 2  # package will be ignored
     DESCRIPTION_path = bbs.parse.get_DESCRIPTION_path(pkgsrctree)
     try:
         ## We set 'merge_records' to True to support DESCRIPTION files with
