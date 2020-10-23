@@ -425,7 +425,17 @@ TESTING:
     brew doctor
 
 
-### 2.9 Install Python 3
+### 2.9 Install pkg-config
+
+    brew install pkg-config
+
+TESTING:
+
+    which pkg-config
+    pkg-config --list-all
+
+
+### 2.10 Install Python 3
 
     brew install python3
 
@@ -437,7 +447,7 @@ TESTING:
     python3 --version  # Python 3.7.7
 
 
-### 2.10 Install Python 3 modules
+### 2.11 Install Python 3 modules
 
 #### Python 3 modules needed by BBS
 
@@ -492,12 +502,12 @@ TESTING:
     ```
 
 
-### 2.11 Install XZ Utils (includes lzma lib)
+### 2.12 Install XZ Utils (includes lzma lib)
 
     brew install xz
 
 
-### 2.12 Install openssl
+### 2.13 Install openssl
 
 Installing Python 3 should have taken care of this already but you still
 need to manually edit `/etc/profile` as instructed below.
@@ -518,7 +528,7 @@ Then in `/etc/profile`:
   the openssl libraries.
 
 
-### 2.13 Install MacTeX
+### 2.14 Install MacTeX
 
 Home page: https://www.tug.org/mactex/
 
@@ -545,7 +555,7 @@ to the `PATH` take effect. Then:
     which tex
 
 
-### 2.14 Install Pandoc
+### 2.15 Install Pandoc
 
 Install Pandoc 2.7.3 instead of the latest Pandoc (2.9.2.1 as of April 2020).
 The latter breaks `R CMD build` for 8 Bioconductor software packages
@@ -568,7 +578,7 @@ Install with:
     sudo chown -R root:wheel /usr/local/texlive
 
 
-### 2.15 Install wget and pstree
+### 2.16 Install wget and pstree
 
 These are just convenient to have when working interactively on a build
 machine but are not required by the daily builds or propagation pipe.
@@ -1188,8 +1198,8 @@ effect. Then try to install the rsbml package *from source*:
 
 ### 4.7 Install CMake
 
-MAY 2020: We only need this for compiling Open Babel from source at the moment
-(Open Babel is needed by the ChemmineOB package).
+OCT 2020: This is no longer needed. We used to need this only for compiling
+Open Babel from source (Open Babel is needed by the ChemmineOB package).
 
 Home page: https://cmake.org/
 
@@ -1228,47 +1238,67 @@ effect. Then:
 
 ### 4.8 Install Open Babel
 
-Don't install via Homebrew! This used to work and was installing Open Babel
-2.4.1 (as of May 2017). However, as of April 2020, `brew install open-babel`
-installs Open Babel 3.0.0 which includes a broken `.pc`
-file (`pkg-config --cflags openbabel-3` will return
-`-I/usr/local/Cellar/open-babel/3.0.0/include/openbabel-2.0`
-which is wrong) and is not compatible with the ChemmineOB package
-(ChemmineOB includes `openbabel/rand.h` but this is no longer
-in open-babel 3.0.0). What is strange is that according to the
-Open Babel website (http://openbabel.org/), the latest Open Babel
-version is still 2.4.0. There is no mention of a 2.4.1 or 3.0.0 version!
+The ChemmineOB package requires Open Babel 3. Note that the Open Babel
+website seems very outdated:
 
-#### Compile/install openbabel 2.4.1 from source
+    http://openbabel.org/
 
-See http://openbabel.org/wiki/Install_(source_code) for full instructions
-(Installing globally with root access). Here is the quick way if TLDR:
+The latest news reported in the News feed is from 2016-09-21 (as of
+Oct 23rd, 2020) and it announces the release of Open Babel 2.4.0!
+However, there seems to be a version 3.0. It's on GitHub:
+https://github.com/openbabel/openbabel
 
-- Make sure CMake is installed (see "Install CMake" section previously
-  in this file for how to do this).
+Before anything else, do:
 
-- Download openbabel-2.4.1.tar.gz from
-  https://sourceforge.net/projects/openbabel/files/openbabel/2.4.1/
+    python3 --version
 
-- Then:
+and record the current version of Python 3. This is the version that
+we installed earlier with all the modules required for the builds.
+This is our primary Python 3 installation.
 
-    cd ~/sandbox/
-    tar zxvf ~/Downloads/openbabel-2.4.1.tar.gz
-    mv openbabel-2.4.1 ob-src
-    mkdir ob-build
-    cd ob-build/
-    cmake ../ob-src 2>&1 | tee cmake.out
-    make 2>&1 | tee make.out  # takes 10-15 min.
-    make install
+The brew formulae (`3.1.1_1` as of Oct 23rd, 2020) will install
+dependencies `python@3.9`, `glib`, `cairo`, and `eigen`:
+
+    brew install open-babel
+
+If another Python 3 was already installed via `brew` (e.g. `python@3.8`),
+then `python@3.9` will get installed as keg-only because it's an alternate
+version of another formulae. This means it doesn't get put on the `PATH`.
+Check this with:
+
+    python3 --version
+
+Hopefully this will still display the version of our primary Python 3
+installation.
+
+Initial testing:
+
+    which obabel
+    obabel -V
+    # dyld: Library not loaded: /usr/local/opt/boost/lib/libboost_iostreams-mt.dylib
+    #   Referenced from: /usr/local/bin/obabel
+    #   Reason: image not found
+    # Abort trap: 6
+
+This suggests that the current `3.1.1_1` formulae is buggy (it doesn't
+properly specify its dependencies).
+
+Install boost:
+
+    brew install boost
 
 TESTING:
 
-    which babel
-    babel -V
+    merida1:~ biocbuild$ obabel -V
+    # Open Babel 3.1.0 -- Oct 21 2020 -- 21:57:42  # version looks wrong!
+    
+    pkg-config --cflags openbabel-3
+    # -I/usr/local/Cellar/open-babel/3.1.1_1/include/openbabel3
+    
+    pkg-config --libs openbabel-3
+    # -L/usr/local/Cellar/open-babel/3.1.1_1/lib -lopenbabel
 
-#### Install ChemmineOB from source
-
-Now try to install the ChemmineOB package *from source*:
+Then try to install ChemmineOB from source. From R:
 
     library(BiocManager)
     BiocManager::install("ChemmineOB", type="source")
