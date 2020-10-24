@@ -91,14 +91,14 @@ def _update_clone(clone_path, undo_changes=False, branch=None,
         _run(cmd, wd=clone_path, prompt='bbs.gitutils._update_clone> ')
     if snapshot_date == None:
         cmd = '%s pull' % git_cmd
-        out_file = 'git_pull_output.txt'
+        out_file = '.git_pull_output.txt'
         _run(cmd, wd=clone_path, out_path=out_file,
              prompt='bbs.gitutils._update_clone> ')
         return _new_commits_were_pulled(os.path.join(clone_path, out_file))
     ## If 'snapshot_date' was supplied we fetch instead of pull so we can
     ## then merge up to snapshot date.
     cmd = '%s fetch' % git_cmd
-    out_file = 'git_fetch_output.txt'
+    out_file = '.git_fetch_output.txt'
     _run(cmd, wd=clone_path, out_path=out_file,
          prompt='bbs.gitutils._update_clone> ')
     ## Andrzej: merge only up to snapshot date
@@ -107,7 +107,7 @@ def _update_clone(clone_path, undo_changes=False, branch=None,
     ## simple 'git merge' for now...
     #cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
     cmd = '%s merge' % git_cmd
-    out_file = 'git_merge_output.txt'
+    out_file = '.git_merge_output.txt'
     _run(cmd, wd=clone_path, out_path=out_file,
          prompt='bbs.gitutils._update_clone> ')
     return _new_commits_were_pulled(os.path.join(clone_path, out_file))
