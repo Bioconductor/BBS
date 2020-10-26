@@ -14,17 +14,17 @@ order**:
   branch**
 
 For example, for the BioC 3.12 release, we will need to do this for all
-the packages listed in the `software.txt`, `data-experiment.txt`, and
-`workflows.txt` files of the `RELEASE_3_12` branch of the `manifest`
-repo.
+the packages listed in the `software.txt`, `data-experiment.txt`,
+`workflows.txt`, and `books.txt` files of the `RELEASE_3_12` branch
+of the `manifest` repo.
 
 Note that there is one exception: the BiocVersion package (software package).
 This package only needs the new branch and a simple y -> y + 1 version bump.
 
 We'll use Python script `bump_version_and_create_branch.py` to apply and
 push these changes. This will need to be done on the day prior to the release
-before the BioC 3.12 builds start for software, workflows, and data-experiment
-packages.
+before the BioC 3.12 builds start for software, workflow, and data-experiment
+packages, as well as for the books.
 
 Look for the prerun jobs in the crontab for the `biocbuild` user on the main
 BioC 3.12 builder to get the times the software and data-experiment builds get
@@ -37,7 +37,7 @@ East Coast.
 ## B. Preliminary steps
 
 These steps should be performed typically a couple of days before the steps
-in sections **C.**, **D.**, and **E.**.
+in sections **C.** and **D.**.
 
 * Update this document to reflect the BioC version to be released i.e.
   replace all occurrences of `3.12` and `RELEASE_3_12` with appropriate
@@ -45,8 +45,8 @@ in sections **C.**, **D.**, and **E.**.
   copying/pasting/executing commands from this document.
 
 * Choose a Linux machine with enough disk space to clone all the software,
-  data-experiment, and workflow packages (as of October 2019, the total size
-  of all the package clones is about 113G). The machine needs to have the
+  data-experiment, workflow, and book packages (as of October 2019, the total
+  size of all the package clones is about 113G). The machine needs to have the
   `git` client and Python. The procedure described here doesn't require
   `sudo` privileges.
   Make sure to pick up a machine that has fast and reliable internet access.
@@ -73,10 +73,10 @@ in sections **C.**, **D.**, and **E.**.
       mkdir git.bioconductor.org
 
 * Populate `git.bioconductor.org` with git clones of the `manifest` repo
-  and all the package repos (software, data-experiment, and workflows).
+  and all the package repos (software, data-experiment, workflows, and books).
   This takes more than 3h so is worth doing in advance e.g. a couple of days
   before the release. It will save time when performing the steps described
-  in sections **C.**, **D.**, and **E.** below on the day prior to the release.
+  in sections **C.** and **D.** below on the day prior to the release.
 
       export BBS_HOME="$HOME/BBS"
 
@@ -91,6 +91,9 @@ in sections **C.**, **D.**, and **E.**.
 
       # clone workflow package repos (takes approx. 4 min)
       time $BBS_HOME/utils/update_bioc_git_repos.py workflows master RELEASE_3_12
+
+      # clone book repos (takes < 1 min)
+      time $BBS_HOME/utils/update_bioc_git_repos.py books master RELEASE_3_12
 
 * Make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
@@ -277,7 +280,9 @@ open `bump_version_and_create_branch.log` and make sure everything
 looks ok.
 
 
-## D. Version bumps and branch creation for data-experiment packages
+## D. Version bumps and branch creation for data-experiment packages, workflows, and books
+
+### Data-experiment packages
 
 Repeat steps C6 to C8 above **but for C6 define the environment variables
 as follows**:
@@ -285,8 +290,7 @@ as follows**:
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-experiment.txt"
 
-
-## E. Version bumps and branch creation for workflow packages
+### Workflows
 
 Repeat steps C6 to C8 above **but for C6 define the environment variables
 as follows**:
@@ -294,10 +298,18 @@ as follows**:
     export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/workflows.txt"
 
+### Books
 
-## F. Finishing up
+Repeat steps C6 to C8 above **but for C6 define the environment variables
+as follows**:
 
-### F1. Enable push access to new `RELEASE_3_12` branch
+    export WORKING_DIR="$HOME/git.bioconductor.org/books"
+    export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/books.txt"
+
+
+## E. Finishing up
+
+### E1. Enable push access to new `RELEASE_3_12` branch
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`).
@@ -319,13 +331,13 @@ Check:
     git checkout RELEASE_3_12
     git pull
 
-### F2. Tell people that committing/pushing to the BioC git server can resume
+### E2. Tell people that committing/pushing to the BioC git server can resume
 
 Announce or ask a team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
-### F3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_12` on main BioC 3.12 builder
+### E3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_12` on main BioC 3.12 builder
 
 DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.12 builds grab the
 `RELEASE_3_12` branch of all packages instead of their `master` branch.
@@ -354,7 +366,7 @@ Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.12-bioc/`,
 `~/bbs-3.12-data-experiment/`, and `~/bbs-3.12-workflows/`. They'll get
 automatically re-created and re-populated when the builds start.
 
-### F4. Update all core bioconductor packages hosted on github/Bioconductor organization
+### E4. Update all core bioconductor packages hosted on github/Bioconductor organization
 
 The code to update all packages is in,
 https://github.com/Bioconductor/GitContribution.git, in the branch
