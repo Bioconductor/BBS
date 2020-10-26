@@ -101,13 +101,15 @@ def update_books(pkg_git_branch=None, manifest_git_branch=None, skip=None):
 
 def usage_msg():
     script_name =  'update_bioc_git_repos.py'
+    indent = '                           '
     pkg_groups = 'software|data-experiment|workflows|books'
     usage2 = '[manifest|%s]' % pkg_groups
-    usage3 = '[manifest|%s] [master|RELEASE_3_6]' % pkg_groups
-    usage4 = '[%s] [master|RELEASE_3_6 [master|RELEASE_3_6]]' % pkg_groups
+    usage3 = '[manifest|%s] \\\n%s[master|RELEASE_3_6]' % (pkg_groups, indent)
+    usage4 = '[%s] \\\n%s[master|RELEASE_3_6 [master|RELEASE_3_6]]' % \
+             (pkg_groups, indent)
     usage5 = '[%s] <skip>' % pkg_groups
-    usage6 = '[%s] [master|RELEASE_3_6 [master|RELEASE_3_6]] <skip>' % \
-             pkg_groups
+    usage6 = '[%s] \\\n%s[master|RELEASE_3_6 [master|RELEASE_3_6]] <skip>' % \
+             (pkg_groups, indent)
     msg = 'Usage:\n' + \
           '  %s\n' % script_name + \
           'or:\n' + \
