@@ -120,8 +120,8 @@ def usage_msg():
           '    %s %s\n' % (script_name, usage5) + \
           'or:\n' + \
           '    %s %s\n' % (script_name, usage6) + \
-          'NOTE: The 2nd branch specification indicates the branch ' +
-          'of the manifest.'
+          'NOTE: The 2nd branch specification indicates ' + \
+          'the branch of the manifest.'
     return msg
 
 if __name__ == '__main__':
