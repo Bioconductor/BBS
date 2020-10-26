@@ -93,20 +93,38 @@ def update_workflows(pkg_git_branch=None, manifest_git_branch=None, skip=None):
                                   pkg_git_branch, manifest_git_branch, skip)
     return
 
+def update_books(pkg_git_branch=None, manifest_git_branch=None, skip=None):
+    pkgsrctree = os.path.join(home, 'git.bioconductor.org', 'books')
+    update_packages_from_manifest(pkgsrctree, 'books.txt',
+                                  pkg_git_branch, manifest_git_branch, skip)
+    return
+
+def usage_msg():
+    script_name =  'update_bioc_git_repos.py'
+    pkg_groups = 'software|data-experiment|workflows|books'
+    usage2 = '[manifest|%s]' % pkg_groups
+    usage3 = '[manifest|%s] [master|RELEASE_3_6]' % pkg_groups
+    usage4 = '[%s] [master|RELEASE_3_6 [master|RELEASE_3_6]]' % pkg_groups
+    usage5 = '[%s] <skip>' % pkg_groups
+    usage6 = '[%s] [master|RELEASE_3_6 [master|RELEASE_3_6]] <skip>' % \
+             pkg_groups
+    msg = 'Usage:\n' + \
+          '    %s\n' % script_name + \
+          'or:\n' + \
+          '    %s %s\n' % (script_name, usage2) + \
+          'or:\n' + \
+          '    %s %s\n' % (script_name, usage3) + \
+          'or:\n' + \
+          '    %s %s\n' % (script_name, usage4) + \
+          'or:\n' + \
+          '    %s %s\n' % (script_name, usage5) + \
+          'or:\n' + \
+          '    %s %s\n' % (script_name, usage6) + \
+          'NOTE: The 2nd branch specification indicates the branch ' +
+          'of the manifest.'
+    return msg
+
 if __name__ == '__main__':
-    usage_msg = 'Usage:\n' + \
-        '    update_bioc_git_repos.py\n' + \
-        'or:\n' + \
-        '    update_bioc_git_repos.py [manifest|software|data-experiment|workflows]\n' + \
-        'or:\n' + \
-        '    update_bioc_git_repos.py [manifest|software|data-experiment|workflows] [master|RELEASE_3_6]\n' + \
-        'or:\n' + \
-        '    update_bioc_git_repos.py [software|data-experiment|workflows] [master|RELEASE_3_6 [master|RELEASE_3_6]]\n' + \
-        'or:\n' + \
-        '    update_bioc_git_repos.py [software|data-experiment|workflows] <skip>\n' + \
-        'or:\n' + \
-        '    update_bioc_git_repos.py [software|data-experiment|workflows] [master|RELEASE_3_6 [master|RELEASE_3_6]] <skip>\n' + \
-        'NOTE: The 2nd branch specification indicates the branch of the manifest.'
     argc = len(sys.argv)
     if argc == 1:
         update_packages_in_current_working_dir()
@@ -119,7 +137,7 @@ if __name__ == '__main__':
         pass
     else:
         if argc <= 2:
-            sys.exit(usage_msg)
+            sys.exit(usage_msg())
         argc -= 1
     ## 'argc' is still at least 2
     what = sys.argv[1]
@@ -131,7 +149,7 @@ if __name__ == '__main__':
                 sys.exit('invalid skip (must be an integer value)')
     if what == 'manifest':
         if argc > 3 or skip != None:
-            sys.exit(usage_msg)
+            sys.exit(usage_msg())
         update_manifest(git_branch1)
     elif what == 'software':
         update_software(git_branch1, git_branch2, skip)
@@ -139,6 +157,8 @@ if __name__ == '__main__':
         update_data_experiment(git_branch1, git_branch2, skip)
     elif what == 'workflows':
         update_workflows(git_branch1, git_branch2, skip)
+    elif what == 'books':
+        update_books(git_branch1, git_branch2, skip)
     else:
-        sys.exit(usage_msg)
+        sys.exit(usage_msg())
 
