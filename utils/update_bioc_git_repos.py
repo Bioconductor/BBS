@@ -109,17 +109,17 @@ def usage_msg():
     usage6 = '[%s] [master|RELEASE_3_6 [master|RELEASE_3_6]] <skip>' % \
              pkg_groups
     msg = 'Usage:\n' + \
-          '    %s\n' % script_name + \
+          '  %s\n' % script_name + \
           'or:\n' + \
-          '    %s %s\n' % (script_name, usage2) + \
+          '  %s %s\n' % (script_name, usage2) + \
           'or:\n' + \
-          '    %s %s\n' % (script_name, usage3) + \
+          '  %s %s\n' % (script_name, usage3) + \
           'or:\n' + \
-          '    %s %s\n' % (script_name, usage4) + \
+          '  %s %s\n' % (script_name, usage4) + \
           'or:\n' + \
-          '    %s %s\n' % (script_name, usage5) + \
+          '  %s %s\n' % (script_name, usage5) + \
           'or:\n' + \
-          '    %s %s\n' % (script_name, usage6) + \
+          '  %s %s\n' % (script_name, usage6) + \
           'NOTE: The 2nd branch specification indicates ' + \
           'the branch of the manifest.'
     return msg
