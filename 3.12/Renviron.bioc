@@ -4,8 +4,8 @@
 # ====================================================================
 #
 # TO BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the
-# settings below on your machine when working on the master branch
-# of your package. Also make sure to use a recent version of R 4.0.
+# settings below on your machine when working on the RELEASE_3_12
+# branch of your package. Make sure to use a recent version of R 4.0.
 # This should allow you to reproduce any error or warning you see on
 # the Bioconductor build reports. The easiest way to use the settings
 # below is to add them to your .Renviron file. However, please note
