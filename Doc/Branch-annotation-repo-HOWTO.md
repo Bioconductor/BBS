@@ -86,14 +86,16 @@ Create a new annotation folder
 
 C. Back to malbec2 to run the scripts
 
-1. Update and run cronjob by hand (should be commented out). 
+1. Remove any deprecated packages from the 3.6 annotation repo.
+
+2. Update and run cronjob by hand (should be commented out). 
 
   Symlink must be gone on master before running this!
 
   Run the crontab entry by hand. Monitor ~/cron.log/3.7/propagate-data-annotation-* log
   file.
 
-2. Test BiocManager::install() to see if it finds the new repo.
+3. Test BiocManager::install() to see if it finds the new repo.
 
 D. Update bioconductor.org/config.yaml to build landing pages for 3.7.
    Uncomment 'data/annotation':
