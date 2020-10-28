@@ -12,7 +12,7 @@ call ..\nodes\%BBS_NODE_HOSTNAME%\local-settings.bat
 @rem to the user known hosts files (so it doesn't get stalled waiting for an
 @rem answer when not run interactively).
 set BBS_SSH_CMD=%BBS_SSH_CMD% -qi %BBS_RSAKEY% -o StrictHostKeyChecking=no
-set BBS_RSYNC_CMD=%BBS_RSYNC_CMD% -r --delete --exclude='.svn' --exclude='.git' --exclude='.git_*'
+set BBS_RSYNC_CMD=%BBS_RSYNC_CMD% -r --delete --exclude='.svn' --exclude='.git' --exclude='.github' --exclude='.git_*'
 set BBS_RSYNC_RSH_CMD=%BBS_RSYNC_CMD% -e '%BBS_SSH_CMD%'
 
 set BBS_R_CMD=%BBS_R_HOME%\bin\R.exe
