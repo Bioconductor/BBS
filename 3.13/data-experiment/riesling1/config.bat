@@ -17,6 +17,10 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
+@rem Source tarballs produced during STAGE3 are BIG and won't be propagated
+@rem so we don't need to push them to the central builder.
+set DONT_PUSH_SRCPKGS=1
+
 
 
 @rem Shared settings (by all Windows nodes)
