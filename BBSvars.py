@@ -160,6 +160,8 @@ check_nb_cpu = BBSutils.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
 nb_cpu = int(nb_cpu)
 check_nb_cpu = int(check_nb_cpu)
 
+dont_push_srcpkgs = int(BBSutils.getenv('DONT_PUSH_SRCPKGS', False, "0")) != 0
+
 GITLOG_rdir = bbs.rdir.RemoteDir('BBS_GITLOG_RDIR',
                 None,
                 BBSutils.getenv('BBS_GITLOG_RDIR'),

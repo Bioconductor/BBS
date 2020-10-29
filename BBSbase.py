@@ -376,15 +376,8 @@ class PkgDumps:
         self.out_file = prefix + '-out.txt'
         self.MISSING_file = prefix + '-MISSING'
         self.summary_file = prefix + '-summary.dcf'
-    def IsComplete(self, verbose=False):
-        OK = (self.product_path == None or os.path.exists(self.product_path)) \
-             and os.path.exists(self.out_file) \
-             and os.path.exists(self.summary_file)
-        if verbose and OK:
-            print("BBS>   Found output files", end=" ")
-        return OK
-    def Push(self, rdir):
-        if self.product_path == None:
+    def Push(self, rdir, exclude_product=False):
+        if exclude_product or self.product_path == None:
             to_push = []
         else:
             if os.path.exists(self.product_path):
@@ -507,7 +500,7 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.summary.Append('PackageFile', pkg_file)
         self.summary.Append('PackageFileSize', pkg_file_size)
         self.summary.Write(self.pkgdumps.summary_file)
-        self.pkgdumps.Push(self.rdir)
+        self.pkgdumps.Push(self.rdir, BBSvars.dont_push_srcpkgs)
     def AfterRun(self):
         # Avoid leaving rogue processes messing around on the build machine.
         # self._proc.pid should be already dead but some of its children might
