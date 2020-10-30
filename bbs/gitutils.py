@@ -36,15 +36,17 @@ def _run(cmd, wd=None, out_path=None, prompt=''):
         out = None
     print('%s%s' % (prompt, cmd2))
     sys.stdout.flush()
-    process_error = None
     try:
         ## Nasty things (that I don't really understand) can happen with
         ## subprocess.run() if this code is runned by the Task Scheduler
         ## on Windows (the child process tends to almost always return an
         ## error). Apparently using 'stderr=subprocess.STDOUT' fixes this pb.
-        subprocess.run(cmd, stdout=out, stderr=subprocess.STDOUT, shell=True)
-    except subprocess.CalledProcessError as process_error:
-        pass
+        subprocess.run(cmd, stdout=out, stderr=subprocess.STDOUT, shell=True,
+                       check=True)
+    except subprocess.CalledProcessError as e:
+        run_error = e
+    else:
+        run_error = None
     if out_path != None:
         out.close()
     if wd != None:
@@ -52,8 +54,8 @@ def _run(cmd, wd=None, out_path=None, prompt=''):
         sys.stdout.flush()
         os.chdir(previous_wd)
     print()
-    if process_error != None:
-        raise process_error
+    if run_error != None:
+        raise run_error
     return
 
 def _create_clone(clone_path, repo_url, branch=None, depth=None):
