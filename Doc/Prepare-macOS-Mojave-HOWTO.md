@@ -425,29 +425,71 @@ TESTING:
     brew doctor
 
 
-### 2.9 Install pkg-config
+### 2.9 Install openssl
 
-    brew install pkg-config
+    brew install openssl
+
+Note that the installation is keg-only i.e. not symlinked into /usr/local
+because macOS provides LibreSSL.
+
+Then in `/etc/profile`:
+
+- Append `/usr/local/opt/openssl@1.1/bin` to `PATH`.
+
+- Add `/usr/local/opt/openssl@1.1/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+- Add the following line, replacing '1.1.1h' with the version installed:
+    ```
+    export OPENSSL_LIBS="/usr/local/Cellar/openssl@1.1/1.1.1h/lib/libssl.a /usr/local/Cellar/openssl@1.1/1.1.1h/lib/libcrypto.a"
+    ```
+  This will trigger statically linking of the rtracklayer package against
+  the openssl libraries.
+
+
+### 2.10 Install XZ Utils (includes lzma lib)
+
+    brew install xz
+
+
+### 2.11 Install Python 3
+
+NOTE: As of Nov 3rd, 2020, the tensorflow module is not available yet for
+Python 3.9 so we install Python 3.8.
+
+    #brew install python3  # don't do this yet, it will install Python 3.9!
+
+The brew formula for Python 3.8 (`python@3.8` as of Nov 3rd, 2020) will
+install dependencies `gdbm`, `readline` and `sqlite`:
+
+    brew install python@3.8
+
+Note that the installation is keg-only i.e. not symlinked into `/usr/local`,
+because this is an alternate version of the python3 formula (which is an
+alias for python@3.9).
+
+Note that installation of `readline` and `sqlite` are keg-only, which is
+as expected.
+
+Then, install Python 3.9. It is needed by Open Babel 3:
+
+    brew install python3  # will install Python 3.9
+
+Python 3.9 is now the main Python 3 installation (it's in the `PATH`):
+
+    python3 --version  # Python 3.9.0
+
+HOWEVER, WE DON'T WANT THIS! We want to make Python 3.8 the main Python 3
+installation. To do this, `cd` to `/usr/local/bin/` and replace all the links
+that point to stuff in `../Cellar/python@3.9/3.9.0_1/bin/` with links that
+point to the equivalent stuff in `../Cellar/python@3.8/3.8.6_1/bin/`. Do the
+same thing in `/usr/local/lib/pkgconfig/`.
 
 TESTING:
 
-    which pkg-config
-    pkg-config --list-all
+    python3 --version  # Python 3.8.6
 
 
-### 2.10 Install Python 3
-
-    brew install python3
-
-Some python3 deps (e.g. openssl, readline, sqlite) will be installed
-as keg-only. This is expected and should not be a problem.
-
-TESTING:
-
-    python3 --version  # Python 3.7.7
-
-
-### 2.11 Install Python 3 modules
+### 2.12 Install Python 3 modules
 
 #### Python 3 modules needed by BBS
 
@@ -475,16 +517,16 @@ TESTING:
     ```
     machv2:~ biocbuild$ jupyter --version
     jupyter core     : 4.6.3
-    jupyter-notebook : 6.0.3
-    qtconsole        : 4.7.4
-    ipython          : 7.14.0
-    ipykernel        : 5.2.1
-    jupyter client   : 6.1.3
+    jupyter-notebook : 6.1.4
+    qtconsole        : 4.7.7
+    ipython          : 7.19.0
+    ipykernel        : 5.3.4
+    jupyter client   : 6.1.7
     jupyter lab      : not installed
-    nbconvert        : 5.6.1
+    nbconvert        : 6.0.7
     ipywidgets       : 7.5.1
-    nbformat         : 5.0.6
-    traitlets        : 4.3.3
+    nbformat         : 5.0.8
+    traitlets        : 5.0.5
     ```
     Note that it's ok if jupyter lab is not installed but everything else
     should be.
@@ -502,33 +544,7 @@ TESTING:
     ```
 
 
-### 2.12 Install XZ Utils (includes lzma lib)
-
-    brew install xz
-
-
-### 2.13 Install openssl
-
-Installing Python 3 should have taken care of this already but you still
-need to manually edit `/etc/profile` as instructed below.
-
-    brew install openssl
-
-Then in `/etc/profile`:
-
-- Append `/usr/local/opt/openssl@1.1/bin` to `PATH`.
-
-- Add `/usr/local/opt/openssl@1.1/lib/pkgconfig` to `PKG_CONFIG_PATH`.
-
-- Add the following line, replacing '1.1.1g' with the version installed:
-    ```
-    export OPENSSL_LIBS="/usr/local/Cellar/openssl@1.1/1.1.1g/lib/libssl.a /usr/local/Cellar/openssl@1.1/1.1.1g/lib/libcrypto.a"
-    ```
-  This will trigger statically linking of the rtracklayer package against
-  the openssl libraries.
-
-
-### 2.14 Install MacTeX
+### 2.13 Install MacTeX
 
 Home page: https://www.tug.org/mactex/
 
@@ -555,7 +571,7 @@ to the `PATH` take effect. Then:
     which tex
 
 
-### 2.15 Install Pandoc
+### 2.14 Install Pandoc
 
 Install Pandoc 2.7.3 instead of the latest Pandoc (2.9.2.1 as of April 2020).
 The latter breaks `R CMD build` for 8 Bioconductor software packages
@@ -576,6 +592,22 @@ Install with:
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
+
+
+### 2.15 Install pkg-config
+
+NOVEMBER 2020: Who needs this? Is it really needed?
+
+    brew install pkg-config
+
+TESTING:
+
+    which pkg-config       # /usr/local/bin/pkg-config
+    pkg-config --list-all
+
+Note that as Nov 4, 2020, installing `libpng` with `brew install libpng`
+breaks `pkg-config`! Unfortunately, `libpng` will get installed when we
+install Open Babel (see below).
 
 
 ### 2.16 Install wget and pstree
@@ -873,7 +905,7 @@ TESTING:
     R/bin/R CMD config CC
     # Start R
     pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
-              "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools", "PSCBS",
+              "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools",
               "protolite", "RSQLite", "RPostgres", "glpkAPI")
     install.packages(pkgs, repos="https://cran.r-project.org")
     for (pkg in pkgs) library(pkg, character.only=TRUE)
@@ -885,11 +917,11 @@ Unfortunately, most packages crash the session when loaded. [According to Simon]
 If the builds are using R-devel and CRAN doesn't provide package binaries
 for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
-as of Dec 2019):
+as of Nov 2020):
 
-    pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL",
-              "gdtools", "rsvg", "magick", "rgeos", "V8", "pdftools",
-              "protolite", "RSQLite", "RPostgres", "glpkAPI")
+    pkgs <- c("rJava", "Cairo", "V8", "magick", "rsvg", "gmp", "proj4",
+              "textshaping", "ragg", "Rmpfr", "pdftools", "av", "sf",
+              "RcppAlgos")
 
 First try to install with:
 
@@ -899,20 +931,39 @@ It should fail for most (if not all) packages. However, it's still worth
 doing it as it will be able to install many dependencies from source.
 Then try to install the binaries built with the current R release:
 
-    contriburl <- "https://cran.r-project.org/bin/macosx/el-capitan/contrib/3.6"
+    contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.0"
     install.packages(pkgs, contriburl=contriburl)
 
-Please note that the binaries built with a previous version of R are not
-guaranteed to work with R-devel but if they can be loaded then it's
-**very** likely that they will. So make sure they can be loaded:
+NOTES:
+
+- Some packages (e.g. Cairo) contain a shared object (e.g. `libs/Cairo.so`)
+  that is linked to `libR.dylib` via an absolute path that is specific to
+  the version of R that was used when the object was compiled/linked e.g.
+
+    /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
+
+  So loading them in a different version of R (e.g. R 4.1) will fail with
+  an error like this:
+
+    > library(Cairo)
+    Error: package or namespace load failed for ‘Cairo’:
+     .onLoad failed in loadNamespace() for 'Cairo', details:
+      call: dyn.load(file, DLLpath = DLLpath, ...)
+      error: unable to load shared object '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/Cairo/libs/Cairo.so':
+      dlopen(/Library/Frameworks/R.framework/Versions/4.1/Resources/library/Cairo/libs/Cairo.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
+      Referenced from: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/Cairo/libs/Cairo.so
+      Reason: image not found
+
+  However, they can easily be tricked by creating a symlink like this:
+
+    cd /Library/Frameworks/R.framework/Versions
+    ln -s 4.1 4.0
+
+- The binaries built with a previous version of R are not guaranteed to work
+  with R-devel but if they can be loaded then it's **very** likely that they
+  will. So make sure they can be loaded:
 
     for (pkg in pkgs) library(pkg, character.only=TRUE)
-
-Will probably fail for PSCBS (unless Bioconductor packages aroma.light
-and DNAcopy are already installed, install them if they are not).
-Weird that PSCBS depends on some Bioconductor packages but that somehow
-`install.packages()` didn't care about missing deps and installed PSCBS
-without reporting any issue!
 
 
 ### 3.4 Add software builds to biocbuild crontab
@@ -1042,7 +1093,8 @@ Install with:
     brew install open-mpi
 
 Notes:
-- This will install many deps: gmp, isl, mpfr, libmpc, gcc, hwloc and libevent
+- This will install many deps: `gmp`, `isl`, `mpfr`, `libmpc`, `gcc`, `hwloc`,
+  and `libevent`.
 - During installation of gcc, you might see the following error:
     ```
     Error: The `brew link` step did not complete successfully
@@ -1256,8 +1308,10 @@ and record the current version of Python 3. This is the version that
 we installed earlier with all the modules required for the builds.
 This is our primary Python 3 installation.
 
-The brew formulae (`3.1.1_1` as of Oct 23rd, 2020) will install
-dependencies `python@3.9`, `glib`, `cairo`, and `eigen`:
+The brew formulae (`3.1.1_1` as of Oct 23rd, 2020) will install a bunch
+of dependencies e.g. `python@3.9`, `glib`, `cairo`, `eigen`, and possibly
+many more (e.g. `libpng`, `freetype`, `fontconfig`, `gettext`, `libffi`,
+`pcre`, `lzo`, `sqlite`, `pixman`) depending on what's already installed:
 
     brew install open-babel
 
@@ -1283,13 +1337,13 @@ Initial testing:
 This suggests that the current `3.1.1_1` formulae is buggy (it doesn't
 properly specify its dependencies).
 
-Install boost:
+Install `boost` (this will install `icu4c` if not already installed):
 
     brew install boost
 
 TESTING:
 
-    merida1:~ biocbuild$ obabel -V
+    obabel -V
     # Open Babel 3.1.0 -- Oct 21 2020 -- 21:57:42  # version looks wrong!
     
     pkg-config --cflags openbabel-3
@@ -1358,8 +1412,8 @@ see above in this file) and create the following symlinks (without them
 libraries and will fail):
 
     cd /usr/local/Cellar/mysql-client/8.0.18/lib/
-    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1g/lib/libssl.dylib
-    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1g/lib/libcrypto.dylib
+    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1h/lib/libssl.dylib
+    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1h/lib/libcrypto.dylib
 
 
 --------------------------------------------------------------------------
