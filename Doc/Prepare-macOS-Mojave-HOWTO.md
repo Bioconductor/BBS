@@ -513,6 +513,11 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
 TESTING:
 
+- `cwltool --version` should display something like this:
+    ```
+    /usr/local/bin/cwltool 3.0.20201026152241
+    ```
+
 - `jupyter --version` should display something like this:
     ```
     machv2:~ biocbuild$ jupyter --version
@@ -604,10 +609,6 @@ TESTING:
 
     which pkg-config       # /usr/local/bin/pkg-config
     pkg-config --list-all
-
-Note that as Nov 4, 2020, installing `libpng` with `brew install libpng`
-breaks `pkg-config`! Unfortunately, `libpng` will get installed when we
-install Open Babel (see below).
 
 
 ### 2.16 Install wget and pstree
@@ -711,17 +712,20 @@ Must be done from the `biocbuild` account.
 #### Choose latest R binary for macOS
 
 If installing R devel: download R from https://mac.r-project.org/ (e.g.
-pick up `R-4.0-branch.pkg`)
+pick up `R-4.0-branch.pkg`).
 
 If installing R release: download R from CRAN (e.g. from
 https://cloud.r-project.org/bin/macosx/). Pick up the 1st file
-(e.g. `R-3.6.3.pkg`).
+(e.g. `R-3.6.3.pkg`). Make sure to pick the installer, not the
+source tarball, as the former contains Tcl/Tk libraries that will
+install in `/usr/local`.
 
 #### Download and install
 
 Remove the previous R installation:
 
-    sudo rm -rf /Library/Frameworks/R.framework
+    cd /Library/Frameworks/
+    sudo rm -rf R.framework
 
 Download and install with:
 
@@ -730,8 +734,8 @@ Download and install with:
     sudo installer -pkg R-4.0.0.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
-*system-wide* installation of R i.e. it can be started with `R` from any
-account.
+*system-wide* installation of R i.e. it's in the `PATH` for all users on the
+machine so can be started with `R` from anywhere.
 
 #### Basic testing
 
@@ -765,6 +769,8 @@ From R:
 
     BiocManager::install("BiocCheck", type="source")  # required by SPB
 
+If some CRAN packages failed to compile, see _What if CRAN doesn't provide
+package binaries for macOS yet?_ below.
 
 #### [OPTIONAL] More testing
 
@@ -904,9 +910,8 @@ TESTING:
     cd ~/bbs-3.11-bioc/
     R/bin/R CMD config CC
     # Start R
-    pkgs <- c("rJava", "Cairo", "units", "sf", "gsl", "RMySQL", "gdtools",
-              "rsvg", "rtfbs", "magick", "rgeos", "V8", "pdftools",
-              "protolite", "RSQLite", "RPostgres", "glpkAPI")
+    pkgs <- c("rJava", "Cairo", "gsl", "V8", "magick", "rsvg", "pdftools",
+              "sf", "glpkAPI", "RPostgres", "RMySQL", "protolite")
     install.packages(pkgs, repos="https://cran.r-project.org")
     for (pkg in pkgs) library(pkg, character.only=TRUE)
 
@@ -919,9 +924,11 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Nov 2020):
 
-    pkgs <- c("rJava", "Cairo", "V8", "magick", "rsvg", "gmp", "proj4",
-              "textshaping", "ragg", "Rmpfr", "pdftools", "av", "sf",
-              "RcppAlgos")
+    pkgs <- c("XML", "rJava", "Cairo", "gsl", "V8", "magick", "rsvg", "gmp",
+              "xml2", "jpeg", "tiff", "ncdf4", "fftw", "fftwtools",
+              "proj4", "textshaping", "ragg", "Rmpfr", "pdftools", "av",
+              "rgeos", "sf", "RcppAlgos", "glpkAPI", "RGtk2", "RPostgres",
+              "RMySQL", "RMariaDB", "protolite")
 
 First try to install with:
 
@@ -936,9 +943,16 @@ Then try to install the binaries built with the current R release:
 
 NOTES:
 
-- Some packages (e.g. Cairo) contain a shared object (e.g. `libs/Cairo.so`)
-  that is linked to `libR.dylib` via an absolute path that is specific to
-  the version of R that was used when the object was compiled/linked e.g.
+- The binaries built with a previous version of R are not guaranteed to work
+  with R-devel but if they can be loaded then it's **very** likely that they
+  will. So make sure they can be loaded:
+
+    for (pkg in pkgs) library(pkg, character.only=TRUE)
+
+- Most binary packages in `pkgs` (e.g. XML, rJava, Cairo) contain a shared
+  object (e.g. `libs/Cairo.so`) that is linked to `libR.dylib` via an absolute
+  path that is specific to the version of R that was used when the object was
+  compiled/linked e.g.
 
     /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
 
@@ -958,12 +972,6 @@ NOTES:
 
     cd /Library/Frameworks/R.framework/Versions
     ln -s 4.1 4.0
-
-- The binaries built with a previous version of R are not guaranteed to work
-  with R-devel but if they can be loaded then it's **very** likely that they
-  will. So make sure they can be loaded:
-
-    for (pkg in pkgs) library(pkg, character.only=TRUE)
 
 
 ### 3.4 Add software builds to biocbuild crontab
@@ -1324,6 +1332,36 @@ Check this with:
 
 Hopefully this will still display the version of our primary Python 3
 installation.
+
+IMPORTANT NOTE: Note that as Nov 4, 2020, the automatic installation of
+`libpng` that `brew install open-babel` triggered seems to break `pkg-config`
+and many other things e.g. Python 3 module `h5pyd`:
+
+    pkg-config
+    # dyld: Symbol not found: __cg_png_create_info_struct
+    #   Referenced from: /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+    #   Expected in: /usr/local/lib/libPng.dylib
+    #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+    # Abort trap: 6
+
+    python3
+    # Python 3.8.6 (default, Oct 27 2020, 08:56:44) 
+    # [Clang 11.0.0 (clang-1100.0.33.17)] on darwin
+    # Type "help", "copyright", "credits" or "license" for more information.
+    >>> import h5pyd
+    # Traceback (most recent call last):
+    # ...
+    # from _scproxy import _get_proxy_settings, _get_proxies
+    # ImportError: dlopen(/usr/local/Cellar/python@3.8/3.8.6_1/Frameworks/Python.framework/Versions/3.8/lib/python3.8/lib-dynload/_scproxy.cpython-38-darwin.so, 2): Symbol not found: __cg_png_create_info_struct
+    #   Referenced from: /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+    #   Expected in: /usr/local/lib/libPng.dylib
+    #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+
+If you run into this issue, the hacky/dirty workaround for now is to
+uninstall `libpng`. Note that `libpng` it required by `cairo`, `fontconfig`,
+`freetype` and `open-babel`, so we must use `--ignore-dependencies`:
+
+    brew uninstall --ignore-dependencies libpng
 
 Initial testing:
 
