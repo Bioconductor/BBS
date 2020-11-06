@@ -300,7 +300,7 @@ capabilities will be missing):
     libgtk2.0-dev (for RGtk2)
     jags (for rjags)
     libprotobuf-dev and protobuf-compiler (for protolite)
-    cwltool (for Rcwl)
+    #cwltool (for Rcwl)  # nope! install with pip3 instead, see below
     libglpk-dev (for glpkAPI and to compile igraph with GLPK support)
 
     graphviz and libgraphviz-dev (for Rgraphviz)
@@ -383,16 +383,16 @@ Notes:
     ```
     hpages@nebbiolo1:~$ jupyter --version
     jupyter core     : 4.6.3
-    jupyter-notebook : 6.1.1
-    qtconsole        : 4.7.5
-    ipython          : 7.17.0
+    jupyter-notebook : 6.1.4
+    qtconsole        : 4.7.7
+    ipython          : 7.18.1
     ipykernel        : 5.3.4
-    jupyter client   : 6.1.6
+    jupyter client   : 6.1.7
     jupyter lab      : not installed
-    nbconvert        : 5.6.1
+    nbconvert        : 6.0.7
     ipywidgets       : 7.5.1
-    nbformat         : 5.0.7
-    traitlets        : 4.3.3
+    nbformat         : 5.0.8
+    traitlets        : 5.0.5
     ```
   It's ok if jupyter lab is not installed but everything else should be.
 
