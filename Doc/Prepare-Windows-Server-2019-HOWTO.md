@@ -71,8 +71,8 @@ The "file association" problem happens with both browsers, Google Chrome
 and Firefox.
 
 Until a solution is found it's been suggested to the maintainers of the
-BiocDockerManager and tRNAdbImport packages that they wrap the above calls
-inside `\donttest` statements.
+BiocDockerManager and tRNAdbImport packages that they put the problematic
+calls in an `if (interactive()) ...` statement.
 
 
 ### 1.2 Install Python 3 (for all users)
@@ -89,8 +89,10 @@ When running the installer:
   location from `C:\Program Files\Python38` to `C:\Python38`, then click
   on "Install".
 
-ALSO: You need to explicitly associate `.py` files with Python by:
-- Double-clicking on a `.py` file.
+ALSO: You might need to explicitly associate `.py` files with Python. To
+test whether the association works, go to `C:\Python38\Tools\demo` in the
+File Explorer, and double click on `hanoi`. If the program starts, then all
+is fine. If not:
 - A popup window will ask you: How do you want to open this type of file
   (`.py`)? Make sure the "Always use this app to open .py files" box is
   checked. Click on "More apps".
@@ -133,7 +135,10 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
     pip install h5pyd
     pip install cwltool
     pip install nbconvert
-    pip install matplotlib phate
+
+No longer needed (as of Nov. 2020):
+
+    #pip install matplotlib phate
 
 Notes:
 - `scipy` is needed by Bioconductor packages MOFA and MOFA2, but also by
@@ -161,7 +166,8 @@ Notes:
   Bioconductor package destiny.
 
 - `matplotlib` and `phate` are needed by CRAN package phateR which is itself
-  used by Bioconductor package phemd.
+  used by Bioconductor package phemd. UPDATE (2020/11/06): It looks like
+  recent versions of phateR no longer need this.
 
 
 ### 1.6 Create personal administrator accounts
@@ -176,11 +182,11 @@ Then in the Actions panel (on the right):
          -> More Actions
             -> New User
 
-- Username: mtmorgan / Full name: Martin Morgan
-
 - Username: hpages / Full name: Hervé Pagès
 
 - Username: lshepherd / Full name: Lori Shepherd
+
+- Username: mtmorgan / Full name: Martin Morgan
 
 For all these accounts:
 - [x] User must change password at next logon
@@ -223,20 +229,22 @@ Add `biocbuild` user.
 
 ### 1.9 Install 32-bit Cygwin (for all users)
 
-Cygwin is needed for: `ssh`, `rsync`, `curl`, and `vi`.
+Cygwin is needed for: `curl`, `ssh`, `rsync`, and `vi`.
 
-Download and run `setup-x86.exe` to install or update Cygwin.
+Go to https://www.cygwin.com/, click on Install Cygwin, then download
+and run `setup-x86.exe` to install or update Cygwin. Do NOT install the
+64-bit version.
 
-Install for all users.
+In the installer:
+- Install for all users.
+- Make sure packages `curl`, `openssh`, and `rsync` are selected (the 3 of
+  them are in the Net category). Note that the Cygwin 32-bit DLL will
+  automatically be installed.
+- Don't Create icon on Desktop.
 
-Make sure packages `openssh`, `rsync`, and `curl` are selected (the 3 of
-them are in the Net category).
-
-Note that this installs the Cygwin 32-bit DLL.
-
-Prepend `C:\cygwin\bin` to `Path` (see "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to do
-this).
+Finally **prepend** `C:\cygwin\bin` to `Path` (see "How to edit an
+environment variable" in "General information and tips" at the top
+of this document for how to do this).
 
 TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
 in it. Do this by just typing the name of the command followed by <Enter>.
@@ -252,7 +260,8 @@ interactively on a Windows build machine.
 
 Available at https://git-scm.com/download/win
 
-Keep all the default settings when running the installer.
+Keep all the default settings on all the screens (there are many) when
+running the installer.
 
 TESTING: Open a PowerShell window and try to run `git --version`
 
@@ -263,7 +272,7 @@ If this is a reinstallation of MiKTeX, make sure to uninstall it (from
 the Administrator account) before reinstalling.
 
 Go to https://miktex.org/download and download the latest Basic MiKTeX
-64-bit Installer (`basic-miktex-20.6.29-x64.exe` as of Aug. 2020).
+64-bit Installer (`basic-miktex-20.11-x64.exe` as of Nov. 2020).
 
 When running the installer:
 
@@ -287,7 +296,7 @@ Open the MiKTeX Console by going to the Windows start menu:
   click on "Update now"
 
 IMPORTANT: After each update, or if this is a reinstallation of MiKTeX,
-make sure to manually remove `C:\Users\biocbuild\AppData\Roaming\MiKTeX\`
+make sure to manually delete `C:\Users\biocbuild\AppData\Roaming\MiKTeX\`
 and `C:\Users\pkgbuild\AppData\Roaming\MiKTeX\` (better done from
 the `biocbuild` and `pkgbuild` accounts, respectively).
 
@@ -300,11 +309,20 @@ _personal administrator accounts_ instead of the Administrator account.**
 ## 2. From a personal administrator account
 
 
-Unless stated otherwise, everything in this section must be done **from
-a personal administrator account**.
+Most actions in this section must be done **from a personal administrator
+account**.
 
 
-### 2.1 Add loggon_biocbuild_at_startup task to Task Scheduler
+### 2.1 In biocbuild home: clone BBS git and create log folder
+
+**From the biocbuild account** in a PowerShell window:
+
+    cd D:\biocbuild
+    git clone https://github.com/Bioconductor/BBS
+    mkdir log
+
+
+### 2.2 Add loggon_biocbuild_at_startup task to Task Scheduler
 
 This task is a workaround for the following issue with the Task Scheduler.
 The issue happens under the following conditions:
@@ -325,7 +343,7 @@ to be enough to have the nightly builds run in the correct environment
 (i.e. the environment that is seen by the task when the `biocbuild` user
 is already logged on when the task starts).
 
-Configure the task as follow:
+**From a personal administrator account** configure the task as follow:
 
 - Open Task Scheduler
 
@@ -382,7 +400,7 @@ These should be the _only_ processes running as `biocbuild` when the
 builds are not running and the `biocbuild` user is not logged on.
 
 
-### 2.2 Schedule daily server reboot
+### 2.3 Schedule daily server reboot
 
 This is not mandatory but HIGHLY RECOMMENDED.
 
@@ -396,6 +414,8 @@ were still running on the Windows node, that would kill them before the
 prerun script starts. Which is good because otherwise the Windows node would
 still be sending build products to the "central folder" on the central node,
 and the prerun script would fail to delete this folder.
+
+**From a personal administrator account** configure the task as follow:
 
 - Open Task Scheduler
 
@@ -411,7 +431,8 @@ and the prerun script would fail to delete this folder.
     - Name: `DAILY REBOOT`
     - In Security options:
       - When running the task, use the following account: `SYSTEM`
-      - Run whether user is logged on or not
+      - Run whether user is logged on or not (note that this is not
+        configurable on Windows Server 2019)
       - Run with highest privileges
     - Configure for Windows Server 2019
 
@@ -427,7 +448,7 @@ and the prerun script would fail to delete this folder.
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `C:\WINDOWS\system32\shutdown.exe`
+      - Program/script: `C:\Windows\system32\shutdown.exe`
       - Add arguments: `-r -f -t 01`
 
   - Tab Conditions:
@@ -439,12 +460,14 @@ and the prerun script would fail to delete this folder.
   - Then click OK on bottom right
 
 
-### 2.3 Schedule installation of system updates before daily reboot
+### 2.4 Schedule installation of system updates before daily reboot
 
 This is not mandatory but HIGHLY RECOMMENDED.
 
 NOTE: Instructions below are for Windows Server 2012. TODO: Update them
 for Windows Server 2019.
+
+**From a personal administrator account**:
 
 - Open Control Panel.
 
@@ -471,55 +494,59 @@ for Windows Server 2019.
 - Then click OK on bottom.
 
 
-### 2.4 Install Rtools
+### 2.5 Install Rtools
 
-Download Rtools from https://CRAN.R-project.org/bin/windows/Rtools/
+**From a personal administrator account**:
 
-Choose rtools40 for Windows 64-bit: `rtools40-x86_64.exe`
+- Go to https://CRAN.R-project.org/bin/windows/Rtools/
 
-Run the installer and keep all the defaults. This will install rtools40
-in `C:\rtools40`.
+- Download Rtools40 for Windows 64-bit: `rtools40-x86_64.exe`
 
-Do **NOT** follow the "Putting Rtools on the PATH" instructions given
-on Rtools webpage as they put Rtools on the PATH only in the context of
-running R. We want Rtools to **always** be on the PATH, not just in the
-context of an R session.
+- Run the installer and keep all the defaults. This will install Rtools40
+  in `C:\rtools40`.
 
-Prepend `C:\rtools40\usr\bin;C:\rtools40\mingw32\bin;C:\rtools40\mingw64\bin;`
-to `Path` (see "How to edit an environment variable" in "General information
-and tips" at the top of this document for how to do this).
+- Do **NOT** follow the "Putting Rtools on the PATH" instructions given
+  on Rtools webpage as they put Rtools on the PATH only in the context of
+  running R. We want Rtools to **always** be on the PATH, not just in the
+  context of an R session.
 
-IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin;`,
-`C:\rtools40\mingw32\bin;` and `C:\rtools40\mingw64\bin;` should
-**always be first** in the `Path`.
+- **Prepend** `C:\rtools40\usr\bin`, C:\rtools40\mingw32\bin`, and
+  `C:\rtools40\mingw64\bin` to `Path` (see "How to edit an environment
+  variable" in "General information and tips" at the top of this document
+  for how to do this).
 
-Finally, rename the `perl.exe` file located in `C:\rtools40\usr\bin` to avoid
-any conflict with Strawberry Perl (we will install this later). E.g. rename
-to `perl_DO_NOT_USE.exe`.
+  IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin`,
+  `C:\rtools40\mingw32\bin`, and `C:\rtools40\mingw64\bin` should
+  **always be first** in the `Path`.
+
+- Finally, rename the `perl.exe` file located in `C:\rtools40\usr\bin` to
+  avoid any conflict with Strawberry Perl (we will install this later).
+  E.g. rename to `perl_DO_NOT_USE.exe`.
 
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
 
-    which which    # /usr/bin/which (provided by rtools40)
-    which ssh      # /c/cygwin/bin/ssh
-    which rsync    # /usr/bin/rsync, because rsync from rtools40 should be
-                   # before rsync from Cygwin in Path
-    which curl     # /usr/bin/curl, because curl from rtools40 should be
-                   # before curl from Cygwin in Path
-    which vi       # /usr/bin/vi, because vi from rtools40 should be
-                   # before vi from Cygwin in Path
-    rsync          # Will crash if 64-bit Cygwin was installed instead
-                   # of 32-bit!
-    which make     # /usr/bin/make (provided by rtools40)
-    which gcc      # /mingw32/bin/gcc (provided by rtools40)
-    gcc --version  # gcc.exe (Built by Jeroen for the R-project) 8.3.0
+    which which     # /usr/bin/which (provided by rtools40)
+    which ssh       # /c/cygwin/bin/ssh
+    which rsync     # /usr/bin/rsync, because rsync from rtools40 should be
+                    # before rsync from Cygwin in Path
+    which curl      # /usr/bin/curl, because curl from rtools40 should be
+                    # before curl from Cygwin in Path
+    which vi        # /c/cygwin/bin/vi
+    rsync           # Will crash if 64-bit Cygwin was installed instead
+                    # of 32-bit Cygwin!
+    which make      # /usr/bin/make (provided by rtools40)
+    make --version  # GNU Make 4.2.1
+    which gcc       # /mingw32/bin/gcc (provided by rtools40)
+    gcc --version   # gcc.exe (Built by Jeroen for the R-project) 8.3.0
+    which chmod     # /usr/bin/chmod
 
 Oh WAIT!! You also need to perform the step below (_Allow cc1plus.exe
 access to a 3GB address space_) or the mzR package won't compile in
 32-bit mode!
 
 
-### 2.5 Allow cc1plus.exe access to a 3GB address space
+### 2.6 Allow cc1plus.exe access to a 3GB address space
 
 `cc1plus.exe` is a 32-bit executable shipped with Rtools. It's located
 in `C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\`.
@@ -532,29 +559,36 @@ https://www.intel.com/content/www/us/en/programmable/support/support-resources/k
 But first we need to get the `editbin` command. We get the command by
 installing Visual Studio Community 2019 **from the Administrator account**:
 
-- Download it from https://www.microsoft.com/express/Windows/
+- Download it from https://visualstudio.microsoft.com/
 
 - Start the installer:
 
   - On the first screen, go to "Individual components" and select the
     latest "MSVC v142 - VS 2019 C++ x64/x86 build tools" in the "Compilers,
     build tools, and runtimes" section.
-    Total space required (bottom right) should go up from 699MB to 2.47GB.
+    Total space required (bottom right) should go up from 693MB to 2.46GB.
     Click Install. When asked "Do you want to continue without workloads?",
     click on "Continue".
 
-  - Click on Restart at the end of the installation.
+  - At the end of the installation, skip the Sign in step.
+
+  - Then click on Start Visual Studio, click on Continue without code,
+    and Exit.
+
+  - Close the Visual Studio Installer.
 
 Then **from the Administrator account** again, in the Developer Command
 Prompt for VS 2019:
 
     bcdedit /set IncreaseUserVa 3072
     editbin /LARGEADDRESSAWARE "C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\cc1plus.exe"
-    # Microsoft (R) COFF/PE Editor Version 14.27.29111.0
+    # Microsoft (R) COFF/PE Editor Version 14.27.29112.0
     # Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-### 2.6 Create and populate C:\extsoft
+### 2.7 Create and populate C:\extsoft
+
+**From a personal administrator account**:
 
 Download `local323.zip`, `spatial324.zip`, and `curl-7.40.0.zip` from
 https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/ and unzip them
@@ -566,12 +600,14 @@ files located in `lib\i386\` and `lib\x64\`, respectively). Choose "Skip
 these files".
 
 
-### 2.7 Install Pandoc
+### 2.8 Install Pandoc
+
+**From a personal administrator account**:
 
 Go to https://pandoc.org/installing.html#windows
 
 Download latest installer for Windows x86\_64
-(`pandoc-2.9-windows-x86_64.msi` as of Dec. 2019) and run it.
+(`pandoc-2.11.1-windows-x86_64.msi` as of Nov. 2020) and run it.
 
 Note: There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8.
 It caused build failures with the ERROR `Environment cslreferences undefined`.
@@ -604,8 +640,8 @@ Create the `.BBS/id_rsa` file as follow:
     mkdir .BBS
     cd .BBS
     
-    # Use vi (included in Rtools and Cygwin) to create the id_rsa file
-    # (copy/paste its content from another builder e.g. malbec1 or tokay1).
+    # Use vi (from Cygwin) to create the id_rsa file (copy/paste its content
+    # from another builder e.g. malbec1 or tokay1).
     
     chmod 400 id_rsa
 
@@ -630,20 +666,9 @@ Contact the IT folks at RPCI if this is blocked by RPCI's firewall (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-### 3.2 Clone BBS git tree and create bbs-x.y-bioc directory structure
+### 3.2 Create bbs-x.y-bioc directory structure
 
-All the steps described in this section must be performed in a PowerShell
-window and from the `biocbuild` account.
-
-#### Clone BBS git tree
-
-    cd D:\biocbuild
-    git clone https://github.com/Bioconductor/BBS
-
-
-#### Create bbs-x.y-bioc directory structure
-
-For example, for the BioC 3.12 software builds:
+**From the biocbuild account** in a PowerShell window:
 
     cd D:\biocbuild
     mkdir bbs-3.12-bioc
@@ -655,8 +680,7 @@ For example, for the BioC 3.12 software builds:
 
 ### 3.3 Install R
 
-All the steps described in this section must be performed in a PowerShell
-window and from the `biocbuild` account.
+**From the biocbuild account**:
 
 #### Get R Windows binary from CRAN
 
@@ -675,16 +699,21 @@ When running the installer:
 - Ignore warning about the current user not being an admin
 - Select destination location `D:\biocbuild\bbs-3.12-bioc\R`
 - Don't create a Start Menu Folder
-- Don't create a desktop or QuickLaunch shortcut
+- Don't create a desktop or Quick Launch shortcut
 
 #### Install BiocManager
 
-Start R (with `R\bin\R` from `D:\biocbuild\bbs-3.12-bioc`) and install
-BiocManager:
+In a PowerShell window, go to `D:\biocbuild\bbs-3.12-bioc` and start R:
+
+    cd D:\biocbuild\bbs-3.12-bioc
+    R\bin\R  # check version of R displayed by startup message
+
+Then from R:
 
     install.packages("BiocManager")
 
-Check that BiocManager is pointing at the correct version of Bioconductor:
+    ## Check that BiocManager is pointing at the correct version
+    ## of Bioconductor:
 
     library(BiocManager)  # This displays the version of Bioconductor
                           # that BiocManager is pointing at.
@@ -710,7 +739,7 @@ Quit R (do NOT save the workspace image).
 
 `LOCAL_SOFT` needs to be set to `C:/extsoft` in `R\etc\{i386,x64}\Makeconf`:
 
-- `R\etc\i386\Makeconf`
+- Edit `R\etc\i386\Makeconf`:
 
    From `D:\biocbuild\bbs-3.12-bioc`:
    ```
@@ -725,10 +754,10 @@ Quit R (do NOT save the workspace image).
    ```
    Check your changes with:
    ```
-   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
+   C:\rtools40\usr\bin\diff.exe Makeconf Makeconf.original
    ```
 
-- `R\etc\x64\Makeconf`
+- Edit `R\etc\x64\Makeconf`:
 
    From `D:\biocbuild\bbs-3.12-bioc`:
    ```
@@ -743,7 +772,7 @@ Quit R (do NOT save the workspace image).
    ```
    Check your changes with:
    ```
-   C:\rtools40\usr\bin\diff.exe Makeconf.original Makeconf
+   C:\rtools40\usr\bin\diff.exe Makeconf Makeconf.original
    ```
 
 TESTING:
@@ -823,7 +852,7 @@ Should we also remove package specific caches?
 
 ### 3.4 Add software builds to Task Scheduler
 
-IMPORTANT: Tasks must always be added **from a personal administrator account**.
+**From a personal administrator account** configure the task as follow:
 
 - Open Task Scheduler
 
@@ -1163,7 +1192,7 @@ In a PowerShell window from the `biocbuild` account:
     mkdir bbs-3.12-data-experiment
     mkdir bbs-3.12-data-experiment\log
 
-Then **from a personal administrator account**:
+Then **from a personal administrator account** configure the task as follow:
 
 - Open Task Scheduler
 
@@ -1211,7 +1240,7 @@ In a PowerShell window from the `biocbuild` account:
     mkdir bbs-3.12-workflows
     mkdir bbs-3.12-workflows\log
 
-Then **from a personal administrator account**:
+Then **from a personal administrator account** configure the task as follow:
 
 - Open Task Scheduler
 
@@ -1259,7 +1288,7 @@ In a PowerShell window from the `biocbuild` account:
     mkdir bbs-3.12-books
     mkdir bbs-3.12-books\log
 
-Then **from a personal administrator account**:
+Then **from a personal administrator account** configure the task as follow:
 
 - Open Task Scheduler
 
@@ -1307,7 +1336,7 @@ In a PowerShell window from the `biocbuild` account:
     mkdir bbs-3.12-bioc-longtests
     mkdir bbs-3.12-bioc-longtests\log
 
-Then **from a personal administrator account**:
+Then **from a personal administrator account** configure the task as follow:
 
 - Open Task Scheduler
 
