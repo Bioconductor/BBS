@@ -748,10 +748,12 @@ Start R, check the version displayed by the startup message, then:
 
     # --- install a few CRAN packages *from source* ---
 
-    # contains C++ code:
+    # Contains C++ code:
     install.packages("Rcpp", type="source", repos="https://cran.r-project.org")
-    # contains Fortran code:
+    # Contains Fortran code:
     install.packages("minqa", type="source", repos="https://cran.r-project.org")
+    # Only if CRAN doesn't provide the binary for macOS yet:
+    install.packages("Cairo", type="source", repos="https://cran.r-project.org")
 
 #### Install BiocManager + BiocCheck
 
@@ -776,7 +778,7 @@ package binaries for macOS yet?_ below.
 
 From R:
 
-    # always good to have; try this even if CRAN binaries are not available
+    # Always good to have; try this even if CRAN binaries are not available:
     install.packages("devtools", type="source", repos="https://cran.r-project.org")
     BiocManager::install("BiocStyle", type="source")
 
@@ -910,7 +912,7 @@ TESTING:
     cd ~/bbs-3.11-bioc/
     R/bin/R CMD config CC
     # Start R
-    pkgs <- c("rJava", "Cairo", "gsl", "V8", "magick", "rsvg", "pdftools",
+    pkgs <- c("rJava", "gsl", "V8", "magick", "rsvg", "pdftools",
               "sf", "glpkAPI", "RPostgres", "RMySQL", "protolite")
     install.packages(pkgs, repos="https://cran.r-project.org")
     for (pkg in pkgs) library(pkg, character.only=TRUE)
@@ -924,7 +926,7 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Nov 2020):
 
-    pkgs <- c("XML", "rJava", "Cairo", "gsl", "V8", "magick", "rsvg", "gmp",
+    pkgs <- c("XML", "rJava", "gsl", "V8", "magick", "rsvg", "gmp",
               "xml2", "jpeg", "tiff", "ncdf4", "fftw", "fftwtools",
               "proj4", "textshaping", "ragg", "Rmpfr", "pdftools", "av",
               "rgeos", "sf", "RcppAlgos", "glpkAPI", "RGtk2", "RPostgres",
@@ -943,14 +945,14 @@ Then try to install the binaries built with the current R release:
 
 NOTES:
 
-- The binaries built with a previous version of R are not guaranteed to work
+- The binaries built for a previous version of R are not guaranteed to work
   with R-devel but if they can be loaded then it's **very** likely that they
   will. So make sure they can be loaded:
 
     for (pkg in pkgs) library(pkg, character.only=TRUE)
 
-- Most binary packages in `pkgs` (e.g. XML, rJava, Cairo) contain a shared
-  object (e.g. `libs/Cairo.so`) that is linked to `libR.dylib` via an absolute
+- Most binary packages in `pkgs` (e.g. XML, rJava, etc) contain a shared
+  object (e.g. `libs/XML.so`) that is linked to `libR.dylib` via an absolute
   path that is specific to the version of R that was used when the object was
   compiled/linked e.g.
 
@@ -959,19 +961,29 @@ NOTES:
   So loading them in a different version of R (e.g. R 4.1) will fail with
   an error like this:
 
-    > library(Cairo)
-    Error: package or namespace load failed for ‘Cairo’:
-     .onLoad failed in loadNamespace() for 'Cairo', details:
+    > library(XML)
+    Error: package or namespace load failed for ‘XML’:
+     .onLoad failed in loadNamespace() for 'XML', details:
       call: dyn.load(file, DLLpath = DLLpath, ...)
-      error: unable to load shared object '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/Cairo/libs/Cairo.so':
-      dlopen(/Library/Frameworks/R.framework/Versions/4.1/Resources/library/Cairo/libs/Cairo.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
-      Referenced from: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/Cairo/libs/Cairo.so
+      error: unable to load shared object '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so':
+      dlopen(/Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
+      Referenced from: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so
       Reason: image not found
 
   However, they can easily be tricked by creating a symlink like this:
 
     cd /Library/Frameworks/R.framework/Versions
     ln -s 4.1 4.0
+
+- Do NOT install the Cairo binary built for a previous version of R (hopefully
+  you'll manage to install it from source). Even though it can be loaded,
+  it's most likely to not work properly e.g. it might produce errors like
+  this:
+
+    library(Cairo)
+    Cairo(600, 600, file="plot.png", type="png", bg="white")
+    # Error in Cairo(600, 600, file = "plot.png", type = "png", bg = "white") : 
+    #   Graphics API version mismatch
 
 
 ### 3.4 Add software builds to biocbuild crontab
@@ -1363,12 +1375,17 @@ uninstall `libpng`. Note that `libpng` it required by `cairo`, `fontconfig`,
 
     brew uninstall --ignore-dependencies libpng
 
-We also need to uninstall the brewed `freetype` to prevent the rgl
-package from linking to it (rgl is expected to compile and link against
-`libpng16.16.dylib` and `libfreetype.6.dylib` provided by XQuartz and
-both located in `/opt/X11/lib/`):
+But then we also need to uninstall the brewed `freetype` and `cairo`
+libs to prevent rgl and gdtools from linking to them if we need to install
+these packages from source (e.g. when CRAN doesn't provide package binaries
+for macOS yet):
 
     brew uninstall --ignore-dependencies freetype
+    brew uninstall --ignore-dependencies cairo
+
+Note that rgl and gdtools are normally expected to compile and link against
+the png, freetype, and cairo libraries provided by XQuartz and located
+in `/opt/X11/lib/`.
 
 Initial testing:
 
