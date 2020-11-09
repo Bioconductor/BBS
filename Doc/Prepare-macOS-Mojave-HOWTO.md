@@ -1334,8 +1334,8 @@ Hopefully this will still display the version of our primary Python 3
 installation.
 
 IMPORTANT NOTE: Note that as Nov 4, 2020, the automatic installation of
-`libpng` that `brew install open-babel` triggered seems to break `pkg-config`
-and many other things e.g. Python 3 module `h5pyd`:
+`libpng` that `brew install open-babel` triggers seems to break `pkg-config`
+and some other things e.g. Python 3 module `h5pyd`:
 
     pkg-config
     # dyld: Symbol not found: __cg_png_create_info_struct
@@ -1362,6 +1362,13 @@ uninstall `libpng`. Note that `libpng` it required by `cairo`, `fontconfig`,
 `freetype` and `open-babel`, so we must use `--ignore-dependencies`:
 
     brew uninstall --ignore-dependencies libpng
+
+We also need to uninstall the brewed `freetype` to prevent the rgl
+package from linking to it (rgl is expected to compile and link against
+`libpng16.16.dylib` and `libfreetype.6.dylib` provided by XQuartz and
+both located in `/opt/X11/lib/`):
+
+    brew uninstall --ignore-dependencies freetype
 
 Initial testing:
 
