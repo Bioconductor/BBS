@@ -214,11 +214,11 @@ def _install_is_multiarch():
     return "BBS_STAGE2_MODE" in os.environ and \
            os.environ['BBS_STAGE2_MODE'] == 'multiarch'
 
-def getSTAGE2cmdForNonTargetPkg(pkg):
+def get_install_cmd_for_non_target_pkg(pkg):
     script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
                                "installNonTargetPkg.R")
-    # Backslahes in the path injected in the R scripts will be seen as escape
+    # Backslahes in the path injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
     # contain backslahes.
@@ -228,6 +228,22 @@ def getSTAGE2cmdForNonTargetPkg(pkg):
         Rexpr += "installNonTargetPkg('%s',multiArch=TRUE)" % pkg
     else:
         Rexpr += "installNonTargetPkg('%s')" % pkg
+    return Rexpr2syscmd(Rexpr)
+
+def get_update_cmd_for_non_target_pkgs():
+    script_path = os.path.join(BBSvars.BBS_home,
+                               "utils",
+                               "installNonTargetPkg.R")
+    # Backslahes in the path injected in 'Rexpr' will be seen as escape
+    # characters by R so we need to replace them. Nothing will be replaced
+    # on a Unix-like platform, only on Windows where the paths can actually
+    # contain backslahes.
+    script_path = script_path.replace('\\', '/')
+    Rexpr = "source('%s');" % script_path
+    if sys.platform == "win32" and _install_is_multiarch():
+        Rexpr += "updateNonTargetPkgs(multiArch=TRUE)"
+    else:
+        Rexpr += "updateNonTargetPkgs()"
     return Rexpr2syscmd(Rexpr)
 
 def getSTAGE2cmd(pkg, version):

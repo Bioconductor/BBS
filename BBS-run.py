@@ -264,21 +264,6 @@ def get_installed_pkgs():
     print("BBS> [get_installed_pkgs] %s installed pkgs" % len(installed_pkgs))
     return installed_pkgs
 
-def CallRfunctionFromSTAGE2Script(Rfunction, out_file=None):
-    print("BBS> [%s] BEGIN ..." % Rfunction)
-    script_path = BBSvars.STAGE2_r_script
-    # Backslahes in the paths injected in 'Rexpr' will be seen as escape
-    # characters by R so we need to replace them. Nothing will be replaced
-    # on a Unix-like platform, only on Windows where the paths can actually
-    # contain backslahes.
-    script_path = script_path.replace('\\', '/')
-    Rexpr = "source('%s');%s()" % (script_path, Rfunction)
-    if out_file == None:
-        out_file = '%s.Rout' % Rfunction
-    bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file, 3600.0) # ignore retcode
-    print("BBS> [%s] END." % Rfunction)
-    return
-
 #def CreateREnvironFiles():
 #    archs = ("i386", "x64")
 #    for arch in archs:
@@ -317,7 +302,7 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
                 cmd = pkgdumps = None
                 nb_skipped_pkgs += 1
             else:
-                cmd = BBSbase.getSTAGE2cmdForNonTargetPkg(pkg)
+                cmd = BBSbase.get_install_cmd_for_non_target_pkg(pkg)
         job = BBSbase.InstallPkg_Job(pkg, version, cmd,
                                      pkgdumps, BBSvars.install_rdir)
         jobs.append(job)
@@ -405,9 +390,14 @@ def STAGE2():
     #  BBSvars.subbuilds == "bioc"):
     #    CreateREnvironFiles()
 
-    # Try to update all installed packages.
-    CallRfunctionFromSTAGE2Script("updateNonTargetPkgs",
-                                  "updateNonTargetPkgs1.Rout")
+    if BBSvars.subbuilds in ["bioc", "bioc-testing"]:
+        # Update non-target packages.
+        print("BBS> [STAGE2] Update non-target packages (1st run) ...", end=" ")
+        sys.stdout.flush()
+        cmd = BBSbase.get_update_cmd_for_non_target_pkgs()
+        bbs.jobs.runJob(cmd, 'updateNonTargetPkgs1.Rout', 3600.0)
+        print("OK")
+        sys.stdout.flush()
 
     # Extract list of target packages.
     target_pkgs = extractTargetPkgListFromMeatIndex()
@@ -444,10 +434,16 @@ def STAGE2():
 
     print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp")
     os.chdir(STAGE2_tmp)
-    # Try again to update all installed packages (some updates could have
-    # failed in the previous attempt because of dependency issues).
-    CallRfunctionFromSTAGE2Script("updateNonTargetPkgs",
-                                  "updateNonTargetPkgs2.Rout")
+
+    if BBSvars.subbuilds in ["bioc", "bioc-testing"]:
+        # Try again to update non-target packages (some updates could have
+        # failed in the previous attempt because of dependency issues).
+        print("BBS> [STAGE2] Update non-target packages (2nd run) ...", end=" ")
+        sys.stdout.flush()
+        cmd = BBSbase.get_update_cmd_for_non_target_pkgs()
+        bbs.jobs.runJob(cmd, 'updateNonTargetPkgs2.Rout', 3600.0)
+        print("OK")
+        sys.stdout.flush()
 
     print("BBS> [STAGE2] DONE at %s." % time.asctime())
     return

@@ -12,11 +12,20 @@
          non_target_repos, fixed=TRUE)
 }
 
+.get_INSTALL_opts <- function(multiArch=FALSE)
+{
+    if (multiArch)
+        return("--merge-multiarch")
+    if (grepl("^x86_64-apple-darwin", R.Version()$platform))
+        return("--no-multiarch --no-test-load")
+    return("")
+}
+
 installNonTargetPkg <- function(pkg, multiArch=FALSE)
 {
     ## On Windows and Mac we always try to install the binary first (even
-    ## when the source version is later). Only if it fails, we try to install
-    ## the source.
+    ## when the source version is later). Only if it fails, we will try to
+    ## install the source.
     if (getOption("pkgType") != "source") {
         ## Set 'type' to '.Platform$pkgType' to prevent install.packages()
         ## from setting it to 'getOption("pkgType")' (which is "both" by
@@ -34,14 +43,52 @@ installNonTargetPkg <- function(pkg, multiArch=FALSE)
         message("")
     }
     ## Try to install the source.
-    INSTALL_opts <- ""
-    if (multiArch)
-        INSTALL_opts <- "--merge-multiarch"
-    if (grepl("^x86_64-apple-darwin", R.Version()$platform))
-        INSTALL_opts <- "--no-multiarch --no-test-load"
     install.packages(pkg, repos=.get_non_target_repos(),
                           dependencies=FALSE,
                           type="source",
-                          INSTALL_opts=INSTALL_opts)
+                          INSTALL_opts=.get_INSTALL_opts(multiArch))
+}
+
+.remove_00LOCK_dirs <- function(lib.loc=NULL)
+{
+    if (is.null(lib.loc))
+        lib.loc <- .libPaths()[1L]
+    lock_dirs <- list.files(lib.loc, pattern="^00LOCK", full.names=TRUE)
+    if (length(lock_dirs) != 0L) {
+        message("deleting LOCK dirs:\n  ", paste(lock_dirs, collapse="\n  "))
+        if (unlink(lock_dirs, recursive=TRUE) != 0L)
+            warning("failed to remove LOCK dirs")
+    }
+    return(invisible(NULL))
+}
+
+updateNonTargetPkgs <- function(multiArch=FALSE)
+{
+    .remove_00LOCK_dirs()
+    ## Try to update using the binary packages.
+    if (getOption("pkgType") != "source") {
+        message("")
+        message("------------------------------------------------------------")
+        message("Trying to update using the binary packages ...")
+        message("------------------------------------------------------------")
+        message("")
+        ## See installNonTargetPkg() above for why we use
+        ## 'type=.Platform$pkgType'.
+        update.packages(repos=.get_non_target_repos(),
+                        type=.Platform$pkgType,
+                        ask=FALSE)
+        ## For these situations where there is no binary or the binary
+        ## version of some packages lags behind the source version.
+        message("")
+        message("------------------------------------------------------------")
+        message("Now trying to update again using the source packages ...")
+        message("------------------------------------------------------------")
+        message("")
+    }
+    ## Try to update using the source packages.
+    update.packages(repos=.get_non_target_repos(),
+                    type="source",
+                    INSTALL_opts=.get_INSTALL_opts(multiArch),
+                    ask=FALSE)
 }
 

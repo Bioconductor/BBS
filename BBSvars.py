@@ -135,8 +135,6 @@ update_MEAT0 = int(BBSutils.getenv('BBS_UPDATE_MEAT0', False, "0")) != 0
 
 ### Only needed by BBS-run.py
 
-STAGE2_r_script = BBSutils.getenv('BBS_STAGE2_R_SCRIPT')
-
 hostname0 = bbs.jobs.getHostname()
 node_hostname = BBSutils.getenv('BBS_NODE_HOSTNAME', False, hostname0)
 ### Check that 'node_hostname' matches the effective hostname:
