@@ -604,14 +604,52 @@ these files".
 
 **From a personal administrator account**:
 
-Go to https://pandoc.org/installing.html#windows
+Available at: https://pandoc.org/installing.html#windows
 
-Download latest installer for Windows x86\_64
-(`pandoc-2.11.1.1-windows-x86_64.msi` as of Nov. 2020) and run it.
+Do NOT download the latest installer for Windows x86\_64
+(`pandoc-2.11.1.1-windows-x86_64.msi` as of Nov. 2020). See
+IMPORTANT NOTE below. Instead pick the installer for version
+2.7.3 (`pandoc-2.7.3-windows-x86_64.msi`, available at
+https://github.com/jgm/pandoc/releases/tag/2.7.3) and run it.
 
-Note: There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8.
-It caused build failures with the ERROR `Environment cslreferences undefined`.
-Until we know it is resolved we have downgraded Pandoc to 2.7.3.
+IMPORTANT NOTE: Some recent versions of Pandoc are hopelessly broken/useless:
+
+- There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8.
+  It caused build failures with the ERROR `Environment cslreferences undefined`.
+  Until we know it is resolved we have downgraded Pandoc to 2.7.3.
+
+- The more recent versions of Pandoc are even worse. As of Nov. 2020, the
+  most recent versions are 2.11.1 and 2.11.1.1. They do NOT work with the
+  latest rmarkdown (2.5). More precisely:
+
+  1. They no longer include `pandoc-citeproc`, which causes rmarkdown to
+     complain during `R CMD build` with the following warning:
+        ```
+        Warning in engine$weave(file, quiet = quiet, encoding = enc) :
+          Pandoc (>= 1.12.3) and/or pandoc-citeproc not available. Falling back to R Markdown v1.
+        ```
+     This affects many packages.
+
+  2. Probably related to 1., `R CMD build` fails on dozens of packages (e.g.
+     ADAM, dagLogo, GRmetrics, Harman, and many more...) during creation of
+     the vignettes with the following error:
+        ```
+        Error: processing vignette 'IntroductionToHarman.Rmd' failed with diagnostics:
+        could not find function "doc_date"
+        ```
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) in a PowerShell window:
+
+    which pandoc           # /c/Program Files/Pandoc/pandoc
+    which pandoc-citeproc  # /c/Program Files/Pandoc/pandoc-citeproc
+
+Then, if you already have R installed, try to build a package that uses
+Pandoc e.g.:
+
+    cd D:\biocbuild\bbs-3.12-bioc\meat
+    ..\R\bin\R CMD build dagLogo
+    ..\R\bin\R CMD build Harman
 
 
 
