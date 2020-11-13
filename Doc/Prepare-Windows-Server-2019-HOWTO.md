@@ -820,18 +820,21 @@ TESTING:
 - Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
   open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
   (this folder should be automatically created after the 1st build run), then:
-
+    ```
     ..\R\bin\R CMD INSTALL Rhtslib
+    ```
 
 - Try to compile a package that uses the GSL (also provided by `C:\extsoft`):
-
+    ```
     ..\R\bin\R CMD INSTALL flowPeaks
     ..\R\bin\R CMD INSTALL GLAD
     ..\R\bin\R CMD INSTALL PICS
+    ```
 
 - Try to compile a package that uses netCDF (also provided by `C:\extsoft`):
-
+    ```
     ..\R\bin\R CMD INSTALL mzR  # will take about 10-15 min!
+    ```
 
 #### Install BiocCheck
 
