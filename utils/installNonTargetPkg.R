@@ -12,6 +12,8 @@
          non_target_repos, fixed=TRUE)
 }
 
+.NON_TARGET_REPOS <- .get_non_target_repos()
+
 .get_INSTALL_opts <- function(multiArch=FALSE)
 {
     if (multiArch)
@@ -30,7 +32,7 @@ installNonTargetPkg <- function(pkg, multiArch=FALSE)
         ## Set 'type' to '.Platform$pkgType' to prevent install.packages()
         ## from setting it to 'getOption("pkgType")' (which is "both" by
         ## default on Windows and Mac).
-        install.packages(pkg, repos=.get_non_target_repos(),
+        install.packages(pkg, repos=.NON_TARGET_REPOS,
                               dependencies=FALSE,
                               type=.Platform$pkgType)
         if (pkg %in% rownames(installed.packages()))
@@ -43,7 +45,7 @@ installNonTargetPkg <- function(pkg, multiArch=FALSE)
         message("")
     }
     ## Try to install the source.
-    install.packages(pkg, repos=.get_non_target_repos(),
+    install.packages(pkg, repos=.NON_TARGET_REPOS,
                           dependencies=FALSE,
                           type="source",
                           INSTALL_opts=.get_INSTALL_opts(multiArch))
@@ -74,7 +76,7 @@ updateNonTargetPkgs <- function(multiArch=FALSE)
         message("")
         ## See installNonTargetPkg() above for why we use
         ## 'type=.Platform$pkgType'.
-        update.packages(repos=.get_non_target_repos(),
+        update.packages(repos=.NON_TARGET_REPOS,
                         type=.Platform$pkgType,
                         ask=FALSE)
         ## For these situations where there is no binary or the binary
@@ -86,7 +88,7 @@ updateNonTargetPkgs <- function(multiArch=FALSE)
         message("")
     }
     ## Try to update using the source packages.
-    update.packages(repos=.get_non_target_repos(),
+    update.packages(repos=.NON_TARGET_REPOS,
                     type="source",
                     INSTALL_opts=.get_INSTALL_opts(multiArch),
                     ask=FALSE)
