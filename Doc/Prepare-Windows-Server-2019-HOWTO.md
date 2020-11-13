@@ -607,7 +607,7 @@ these files".
 Go to https://pandoc.org/installing.html#windows
 
 Download latest installer for Windows x86\_64
-(`pandoc-2.11.1-windows-x86_64.msi` as of Nov. 2020) and run it.
+(`pandoc-2.11.1.1-windows-x86_64.msi` as of Nov. 2020) and run it.
 
 Note: There is a Pandoc/rmarkdown issue that was introduced in Pandoc 2.8.
 It caused build failures with the ERROR `Environment cslreferences undefined`.
@@ -750,7 +750,8 @@ Quit R (do NOT save the workspace image).
    #     LOCAL_SOFT ?=
    # with
    #     LOCAL_SOFT = C:/extsoft
-   # Save and quit vi.
+   # Make sure to not introduce a trailing space!
+   # Then save and quit vi.
    ```
    Check your changes with:
    ```
@@ -768,7 +769,8 @@ Quit R (do NOT save the workspace image).
    #     LOCAL_SOFT ?=
    # with
    #     LOCAL_SOFT = C:/extsoft
-   # Save and quit vi.
+   # Make sure to not introduce a trailing space!
+   # Then save and quit vi.
    ```
    Check your changes with:
    ```
@@ -911,18 +913,19 @@ You need the JDK (Java Development Kit). Available at:
 
   https://www.oracle.com/technetwork/java/javase/downloads/index.html
 
-Choose "JDK Download" then download the "Windows x64 Installer".
-Note that Oracle no longer provides the JDK for 32-bit windows (see
+Choose "JDK Download" then download the "Windows x64 Installer"
+(`jdk-15.0.1_windows-x64_bin.exe` as of Nov. 2020). Note that
+Oracle no longer provides the JDK for 32-bit windows (see
 https://stackoverflow.com/questions/7019912/using-the-rjava-package-on-win7-64-bit-with-r
-for some details), so any Bioconductor package that depends on rJava/Java
-needs to be marked as unsupported on 32-bit Windows.
+for some details), so any Bioconductor package that depends on
+rJava/Java needs to be marked as unsupported on 32-bit Windows.
 
-Use the default settings when running the installers.
+Use the default settings when running the installer.
 
-Make sure that `C:\rtools40\usr\bin;`, `C:\rtools40\mingw32\bin;`
-and `C:\rtools40\mingw64\bin;` are still first in the `Path`. In case
+Make sure that `C:\rtools40\usr\bin`, `C:\rtools40\mingw32\bin`
+and `C:\rtools40\mingw64\bin` are still first in the `Path`. In case
 the installer prepended something to the `Path` (e.g. something like
-`C:\ProgramData\Oracle\Java\javapath;`), move it towards the end of
+`C:\ProgramData\Oracle\Java\javapath`), move it towards the end of
 `Path` (e.g. anywhere after `C:\Program Files\Git\cmd`). See "How to
 edit an environment variable" in "General information and tips" at the
 top of this document for how to do this.
@@ -970,7 +973,7 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 ### 4.3 Install JAGS
 
 Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
-on "Download Latest Version".
+on "Download Latest Version" (`JAGS-4.3.0.exe` as of Nov. 2020).
 
 Use the default settings when running the installer.
 
@@ -980,25 +983,32 @@ PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc`, start R (with
 `R\bin\R`), then:
 
     library(rjags)
+    # Loading required package: coda
+    # Linked to JAGS 4.3.0
+    # Loaded modules: basemod,bugs
 
 
 ### 4.4 Install Ghostscript
 
 Available at: https://www.ghostscript.com/download/gsdnld.html
 
-Choose Ghostscript AGPL Release for 64-bit Windows.
+Choose Ghostscript AGPL Release for 64-bit Windows (`gs9533w64.exe` as
+of Nov. 2020).
 
 Use the default settings when running the installer.
 
-Append `C:\Program Files\gs\gs9.52\bin` to `Path` (see "How to edit an
+Append `C:\Program Files\gs\gs9.53.3\bin` to `Path` (see "How to edit an
 environment variable" in "General information and tips" at the top of this
 document for how to do this).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to build a package that uses Ghostscript
-for its vignette e.g. open a PowerShell window, `cd` to
-`D:\biocbuild\bbs-3.12-bioc\meat` (this folder will be automatically
-created after the 1st build run), then:
+if you were already logged on):
+
+    which gswin64  # /c/Program Files/gs/gs9.53.3/bin/gswin64
+
+Then try to build a package that uses Ghostscript for its vignette e.g. open
+a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat` (this folder
+will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
     ..\R\bin\R CMD build MANOR
@@ -1055,9 +1065,10 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 
 ### 4.7 Install Strawberry Perl
 
-Download installer for Windows 64-bit (e.g.
-`strawberry-perl-5.32.0.1-64bit.msi`) from http://strawberryperl.com/
-(this site does not support HTTPS).
+Available at: http://strawberryperl.com (this site does not support HTTPS)
+
+Download installer for Windows 64-bit (`strawberry-perl-5.32.0.1-64bit.msi`
+as of Nov. 2020).
 
 When running the installer, keep all the default settings.
 Check that the perl executable is in `Path`:
@@ -1066,7 +1077,7 @@ Check that the perl executable is in `Path`:
 
 If `which perl` returns `/usr/bin/perl` then you MUST rename the `perl.exe`
 file located in `C:\rtools40\usr\bin` to avoid any conflict. See
-_Install Rtools_ section for more information.
+_Install Rtools_ section above for more information.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Perl e.g.
@@ -1080,8 +1091,10 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 
 ### 4.8 Install Clustal Omega
 
-Download precompiled binary for Windows 64-bit (zip file) from
-http://www.clustal.org/omega/ (this site does not support HTTPS).
+Available at: http://www.clustal.org/omega/ (this site does not support HTTPS)
+
+Download Windows 64-bit zip file (`clustal-omega-1.2.2-win64.zip` as
+of Nov. 2020).
 
 Extract all the files in `C:\ClustalO`. Make sure that the files
 get extracted in `C:\ClustalO\` and not in a subdirectory (e.g. in
@@ -1120,7 +1133,7 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 
 Download `gtkmm-win64-devel-2.22.0-2.exe` from
 
-  https://ftp.gnome.org/mirror/gnome.org/binaries/win64/gtkmm/2.22/
+  https://download.gnome.org/binaries/win64/gtkmm/2.22/
 
 Run it (use default settings). This installs gtkmm in `C:\gtkmm64`
 
@@ -1133,6 +1146,27 @@ for the x64 arch only e.g. open a PowerShell window, `cd` to
 created after the 1st build run), then:
 
     ..\R\bin\R --arch x64 CMD INSTALL --no-multiarch HilbertVisGUI
+
+NOV. 2020: The above fails at the linking step with a bunch of "undefined
+reference" errors:
+
+    C:/rtools40/mingw64/bin/g++ -std=gnu++11 -shared -s -static-libgcc -o HilbertVisGUI.dll tmp.def R_env_prot.o R_interface.o colorizers.o display.o ruler.o window.o -LC:/gtkmm64/lib -Lc:/devel/dist/win64/libpng-1.4.3-1/lib -lgtkmm-2.4 -latkmm-1.6 -lgdkmm-2.4 -lgiomm-2.4 -lpangomm-1.4 -lgtk-win32-2.0 -lglibmm-2.4 -lcairomm-1.0 -lsigc-2.0 -lgdk-win32-2.0 -latk-1.0 -lgio-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lpng14 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lglib-2.0 -lintl -LC:/extsoft/lib/x64 -LC:/extsoft/lib -LD:/biocbuild/bbs-3.13-bioc/R/bin/x64 -lR
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x119c): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x12d1): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x21de): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x2457): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x4c9): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5ac6): undefined reference to `Glib::file_test(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Glib::FileTest)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5b31): undefined reference to `Glib::filename_display_basename(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5b70): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5d45): undefined reference to `Gdk::Pixbuf::save(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Glib::ustring const&)'
+    collect2.exe: error: ld returned 1 exit status
+    no DLL was created
+
+I suspect that this is because of a binary incompatibility between the
+binaries provided by `gtkmm-win64-devel-2.22.0-2.exe` (which is 10 year old
+and was compiled with an old version of `gcc`) and the compilers provided
+by Rtools40 (`gcc` 8.3.0).
 
 
 
