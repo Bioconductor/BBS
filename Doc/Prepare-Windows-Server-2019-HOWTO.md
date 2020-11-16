@@ -1284,7 +1284,7 @@ Then **from a personal administrator account** configure the task as follow:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 9:30 AM -
+        Weekly - Start on <leave current date> at 9:25 AM -
         Recur every 1 week on Monday and Thursday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
@@ -1332,7 +1332,7 @@ Then **from a personal administrator account** configure the task as follow:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 9:00 AM -
+        Weekly - Start on <leave current date> at 9:05 AM -
         Recur every 1 week on Tuesday and Friday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
