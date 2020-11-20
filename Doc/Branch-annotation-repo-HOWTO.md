@@ -63,7 +63,8 @@ B. Set up master.bioconductor.org
 
 1. Log on master as webadmin
 
-    ssh webadmin@master.biocondcutor.org
+    ssh ubuntu@master.biocondcutor.org
+    sudo su - webadmin
     cd /extra/www/bioc/packages/3.7/data/annotation
 
 Products are sent to master from both malbec2 and staging.bioconductor.org.
@@ -74,7 +75,7 @@ we want to leave the products deposited by staging.bioconductor.org untouched.
 
 There will likely be a simlink at 
 
-    /extra/www/bioc/packages/3.7/data/annotation
+    /extra/www/bioc/packages/3.7/data/annotation -> ../../3.6/data/annotation
 
 pointing to the 3.6 annotation repo. Remove the symlink:
 
