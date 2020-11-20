@@ -41,7 +41,7 @@ every other version of BioC. If they are present, they will look something like
 this:
 
     ~/PACKAGES/3.7/data/annotation/bin/windows/contrib/3.5 -> 3.4
-    ~/PACKAGES/3.7/data/annotation/bin/macosx/el-capitan/contrib/3.5 -> 3.4
+    ~/PACKAGES/3.7/data/annotation/bin/macosx/contrib/3.5 -> 3.4
 
 Remove the symlinks and rename the folder with content to the version of 
 R being used by devel e.g., 
