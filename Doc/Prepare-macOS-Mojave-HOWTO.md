@@ -1540,7 +1540,7 @@ https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
   the MySQL client" above in this file).
 
 - According to ensembl-vep README, the following Perl modules are required:
-
+    ```
     ## Needed by both ensemblVEP and MMAPPR2:
     sudo cpan install Archive::Zip
     sudo cpan install File::Copy::Recursive
@@ -1552,9 +1552,9 @@ https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
     sudo cpan install Bio::SeqFeature::Lite
     brew install htslib
     sudo cpan install Bio::DB::HTS::Tabix
-
+    ```
 - Then:
-
+    ```
     cd /usr/local/
     sudo git clone https://github.com/Ensembl/ensembl-vep.git
     cd ensembl-vep/
@@ -1568,7 +1568,7 @@ https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
     # When asked if you want to install any cache files - say no
     # When asked if you want to install any FASTA files - say no
     # When asked if you want to install any plugins - say no
-
+    ```
 - Finally in `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
   Note that the `/etc/profile` file has read-only permissions (factory
   settings). To save changes you will need to force save, e.g., in the
