@@ -315,6 +315,7 @@ capabilities will be missing):
     libavfilter-dev (for av/spatialHeatmap)
     libfribidi-dev (for CRAN package textshaping which BioC package
                     EnhancedVolcano indirectly depends on via ragg and ggrastr)
+    infernal (for inferrnal)
 
 
 ### 1.7 Install Python 3 modules

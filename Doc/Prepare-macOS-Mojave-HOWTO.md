@@ -1668,7 +1668,28 @@ effect. Then try to install the RGtk2 package *from source*:
     install.packages("RGtk2", type="source", repos="https://cran.r-project.org")
 
 
-### 4.15 [OPTIONAL] Install JPEG system library
+### 4.15 Install Infernal
+
+Required by Bioconductor package inferrnal.
+
+Install with:
+
+    brew tap brewsci/bio
+    brew install infernal
+
+TESTING:
+
+    which cmsearch  # /usr/local/bin/cmsearch
+    which cmalign   # /usr/local/bin/cmalign
+    which cmbuild   # /usr/local/bin/cmbuild
+
+Then try to build the inferrnal package:
+
+    cd ~/bbs-3.11-bioc/meat/
+    R CMD build inferrnal
+
+
+### 4.16 [OPTIONAL] Install JPEG system library
 
 This is needed only if CRAN package jpeg needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
@@ -1692,7 +1713,7 @@ TESTING: Try to install the jpeg package *from source*:
     example(writeJPEG)
 
 
-### 4.16 [OPTIONAL] Install TIFF system library
+### 4.17 [OPTIONAL] Install TIFF system library
 
 This is needed only if CRAN package tiff needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
@@ -1716,7 +1737,7 @@ TESTING: Try to install the tiff package *from source*:
     example(writeTIFF)
 
 
-### 4.17 [OPTIONAL] Install FFTW system library
+### 4.18 [OPTIONAL] Install FFTW system library
 
 This is needed only if CRAN package fftwtools needs to be installed from
 source which is usually NOT the case (most of the time a Mac binary should
@@ -1737,7 +1758,7 @@ TESTING: Try to install the fftwtools package *from source*:
     install.packages("fftwtools", type="source", repos="https://cran.r-project.org")
 
 
-### 4.18 [OPTIONAL] Install autoconf & automake
+### 4.19 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -1757,7 +1778,7 @@ Then try to install the flowWorkspace package *from source*:
     BiocManager::install("flowWorkspace", type="source")
 
 
-### 4.19 Install ImageMagick
+### 4.20 Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
 package, which is now officially deprecated)
