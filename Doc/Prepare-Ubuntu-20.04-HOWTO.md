@@ -400,6 +400,12 @@ Notes:
 - `matplotlib` and `phate` are needed by CRAN package phateR which is itself
   used by Bioconductor package phemd.
 
+TESTING: From Python (start it with `python3`), check `tensorflow` version
+with:
+
+    import tensorflow
+    tensorflow.version.VERSION  # should be 2.x.y
+
 
 ### 1.8 Run Apache server as a service
 
