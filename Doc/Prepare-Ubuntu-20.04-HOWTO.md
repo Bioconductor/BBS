@@ -276,6 +276,26 @@ capabilities will be missing):
     biber
     #ttf-mscorefonts-installer
 
+#### Packages needed to support extra fonts (e.g. Helvetica)
+
+Some R code can fail with errors like:
+
+    Error in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)) :
+      X11 font -adobe-helvetica-%s-%s-*-*-%d-*-*-*-*-*-*-*, face 1 at size 11 could not be loaded
+
+This can be solved by installing the following packages:
+
+    gsfonts-x11
+    xfonts-base
+    xfonts-scalable
+    xfonts-100dpi
+    xfonts-75dpi
+    t1-xfree86-nonfree
+    ttf-xfree86-nonfree
+    ttf-xfree86-nonfree-syriac
+
+Note that a reboot is required to make the fix effective.
+
 #### Packages needed by some CRAN and/or BioC packages
 
     libglu1-mesa-dev (for rgl)
