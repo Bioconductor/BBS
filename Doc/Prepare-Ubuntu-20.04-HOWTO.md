@@ -318,6 +318,7 @@ Note that a reboot is required to make the fix effective.
     libgdal-dev (for sf)
     libpoppler-cpp-dev (for pdftools)
     libgtk2.0-dev (for RGtk2)
+    libgit2-dev (for gert)
     jags (for rjags)
     libprotobuf-dev and protobuf-compiler (for protolite)
     #cwltool (for Rcwl)  # nope! install with pip3 instead, see below
