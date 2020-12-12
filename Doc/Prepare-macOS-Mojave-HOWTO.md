@@ -929,8 +929,8 @@ as of Nov 2020):
     pkgs <- c("XML", "rJava", "gsl", "V8", "magick", "rsvg", "gmp",
               "xml2", "jpeg", "tiff", "ncdf4", "fftw", "fftwtools",
               "proj4", "textshaping", "ragg", "Rmpfr", "pdftools", "av",
-              "rgeos", "sf", "RcppAlgos", "glpkAPI", "RGtk2", "RPostgres",
-              "RMySQL", "RMariaDB", "protolite")
+              "rgeos", "sf", "RcppAlgos", "glpkAPI", "RGtk2", "gert",
+              "RPostgres", "RMySQL", "RMariaDB", "protolite")
 
 First try to install with:
 
