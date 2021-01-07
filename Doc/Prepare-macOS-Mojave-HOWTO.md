@@ -948,19 +948,20 @@ NOTES:
 - The binaries built for a previous version of R are not guaranteed to work
   with R-devel but if they can be loaded then it's **very** likely that they
   will. So make sure they can be loaded:
-
+    ```
     for (pkg in pkgs) library(pkg, character.only=TRUE)
+    ```
 
 - Most binary packages in `pkgs` (e.g. XML, rJava, etc) contain a shared
   object (e.g. `libs/XML.so`) that is linked to `libR.dylib` via an absolute
   path that is specific to the version of R that was used when the object was
   compiled/linked e.g.
-
+    ```
     /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
-
+    ```
   So loading them in a different version of R (e.g. R 4.1) will fail with
   an error like this:
-
+    ```
     > library(XML)
     Error: package or namespace load failed for ‘XML’:
      .onLoad failed in loadNamespace() for 'XML', details:
@@ -969,21 +970,23 @@ NOTES:
       dlopen(/Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
       Referenced from: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so
       Reason: image not found
-
+    ```
   However, they can easily be tricked by creating a symlink like this:
-
+    ```
     cd /Library/Frameworks/R.framework/Versions
     ln -s 4.1 4.0
+    ```
 
 - Do NOT install the Cairo binary built for a previous version of R (hopefully
   you'll manage to install it from source). Even though it can be loaded,
   it's most likely to not work properly e.g. it might produce errors like
   this:
-
+    ```
     library(Cairo)
     Cairo(600, 600, file="plot.png", type="png", bg="white")
     # Error in Cairo(600, 600, file = "plot.png", type = "png", bg = "white") : 
     #   Graphics API version mismatch
+    ```
 
 
 ### 3.4 Add software builds to biocbuild crontab
