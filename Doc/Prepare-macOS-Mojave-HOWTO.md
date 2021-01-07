@@ -926,8 +926,8 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Nov 2020):
 
-    pkgs <- c("XML", "rJava", "gsl", "V8", "magick", "rsvg", "gmp",
-              "xml2", "jpeg", "tiff", "ncdf4", "fftw", "fftwtools",
+    pkgs <- c("XML", "rJava", "units", "gsl", "V8", "magick", "rsvg",
+              "gmp", "xml2", "jpeg", "tiff", "ncdf4", "fftw", "fftwtools",
               "proj4", "textshaping", "ragg", "Rmpfr", "pdftools", "av",
               "rgeos", "sf", "RcppAlgos", "glpkAPI", "RGtk2", "gert",
               "RPostgres", "RMySQL", "RMariaDB", "protolite")
