@@ -337,6 +337,7 @@ Note that a reboot is required to make the fix effective.
     libfribidi-dev (for CRAN package textshaping which BioC package
                     EnhancedVolcano indirectly depends on via ragg and ggrastr)
     infernal (for inferrnal)
+    fuse and libfuse-dev (for Travel)
 
 
 ### 1.7 Install Python 3 modules
@@ -758,6 +759,7 @@ According to ensembl-vep README, the following Perl modules are required:
     
     ## Needed by MMAPPR2 only:
     sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
+    sudo cpan install IO::String
     sudo cpan install Bio::SeqFeature::Lite
     sudo apt-get install libhts-dev  # HTSlib
     cd /usr/lib/
@@ -791,13 +793,18 @@ Logout and login again so that the changes to `/etc/profile` take effect.
 
 #### Testing
 
-From the biocbuild account:
+From the biocbuild account, try to build and check the ensemblVEP and
+MMAPPR2 packages:
 
     cd ~/bbs-3.12-bioc/meat/
+
+    ## Takes about 4 min. to build and 8 min. to check:
     ../R/bin/R CMD build ensemblVEP
-    ../R/bin/R CMD check ensemblVEP_X.Y.Z.tar.gz  # replace X.Y.Z with current version
+    ../R/bin/R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
+
+    ## Takes about 2 min. to build and 4 min. to check:
     ../R/bin/R CMD build MMAPPR2
-    ../R/bin/R CMD check MMAPPR2_X.Y.Z.tar.gz     # replace X.Y.Z with current version
+    ../R/bin/R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
 
 
 ### 3.3 Install ViennaRNA

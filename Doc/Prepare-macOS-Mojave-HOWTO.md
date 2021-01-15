@@ -1539,6 +1539,8 @@ Required by Bioconductor packages ensemblVEP and MMAPPR2.
 Complete installation instructions are at
 https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
 
+#### Install Perl modules
+
 - Make sure the MySQL client is installed on the system (see "Install
   the MySQL client" above in this file).
 
@@ -1552,17 +1554,19 @@ https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
     
     ## Needed by MMAPPR2 only:
     sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
+    sudo cpan install IO::String
     sudo cpan install Bio::SeqFeature::Lite
     brew install htslib
     sudo cpan install Bio::DB::HTS::Tabix
     ```
-- Then:
-    ```
+
+#### Install ensembl-vep
+
     cd /usr/local/
     sudo git clone https://github.com/Ensembl/ensembl-vep.git
     cd ensembl-vep/
     sudo chown -R biocbuild:admin .
-    #sudo git checkout release/100  # select desired branch
+    #git checkout release/100  # select desired branch
 
     # Avoid the hassle of getting HTSlib to compile because ensemblVEP and
     # MMAPPR2 pass 'R CMD build' and 'R CMD check' without that and that's
@@ -1571,20 +1575,27 @@ https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
     # When asked if you want to install any cache files - say no
     # When asked if you want to install any FASTA files - say no
     # When asked if you want to install any plugins - say no
-    ```
-- Finally in `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
-  Note that the `/etc/profile` file has read-only permissions (factory
-  settings). To save changes you will need to force save, e.g., in the
-  `vi` editor this is `w!`.
 
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then:
+#### Edit /etc/profile
+
+In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
+Note that the `/etc/profile` file has read-only permissions (factory
+settings). To save changes you will need to force save, e.g., in the
+`vi` editor this is `w!`.
+
+Logout and login again so that the changes to `/etc/profile` take effect.
+
+#### Testing
+
+Try to build and check the ensemblVEP and MMAPPR2 packages:
 
     cd ~/bbs-3.11-bioc/meat/
+
     R CMD build ensemblVEP
-    R CMD check ensemblVEP_X.Y.Z.tar.gz  # replace X.Y.Z with current version
+    R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
+
     R CMD build MMAPPR2
-    R CMD check MMAPPR2_X.Y.Z.tar.gz     # replace X.Y.Z with current version
+    R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
 
 
 ### 4.12 Install ViennaRNA
