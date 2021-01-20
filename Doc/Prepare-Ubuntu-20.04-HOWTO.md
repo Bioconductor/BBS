@@ -64,7 +64,10 @@ as of Aug 2020.
 This should be set up as a regular account. In particular it should NOT have
 sudo privileges.
 
-Install devteam member public keys in biocbuild account.
+Login as biocbuild and install the following SSH keys (in the `~biocbuild/.ssh`
+folder):
+- biocbuild private and public keys (`id_rsa` and `id_rsa.pub` files)
+- devteam member public keys (in `authorized_keys` file)
 
 TESTING: Logout and try to login again as biocbuild. Then logout and login
 again as before (sudoer account).
@@ -217,64 +220,76 @@ environment. For now `echo $DISPLAY` should show nothing.
 
 Install with:
 
-    sudo apt-get install <pkg>
+    sudo apt-get install <pkg1> <pkg2> <pkg3> ...
 
 #### Always nice to have
 
-    tree
-    manpages-dev  (includes man pages for the C standard lib)
-    mlocate       (for the 'locate' command)
+    sudo apt-get install tree manpages-dev mlocate
+
+Notes:
+- `manpages-dev` provides the man pages for the C standard lib
+- `mlocate` provides the 'locate' command
 
 #### Packages required by the build system itself (BBS)
 
-    python3-minimal
-    python3-pip
-    git
+    sudo apt-get install python3-minimal python3-pip git
 
 #### Packages required to compile R
 
 Strictly required:
 
-    build-essential
-    gfortran
-    libreadline-dev
-    libx11-dev
-    libxt-dev
-    zlib1g-dev
-    libbz2-dev
-    liblzma-dev
-    libpcre2-dev
-    libcurl4-openssl-dev
+    sudo apt-get install build-essential \
+                         gfortran \
+                         libreadline-dev \
+                         libx11-dev \
+                         libxt-dev \
+                         zlib1g-dev \
+                         libbz2-dev \
+                         liblzma-dev \
+                         libpcre2-dev \
+                         libcurl4-openssl-dev
 
 Optional (still possible to compile R without these packages but some
 capabilities will be missing):
 
-    gobjc
-    libpng-dev
-    libjpeg-dev
-    libtiff-dev
-    libcairo2-dev
-    libicu-dev
-    tcl-dev
-    tk-dev
-    default-jdk
+    sudo apt-get install gobjc \
+                         libpng-dev \
+                         libjpeg-dev \
+                         libtiff-dev \
+                         libcairo2-dev \
+                         libicu-dev \
+                         tcl-dev \
+                         tk-dev \
+                         default-jdk
 
 #### Packages needed to build vignettes and reference manuals
 
-    texlive
-    texlive-font-utils (for epstopdf)
-    texlive-pstricks (for pstricks.sty)
-    texlive-latex-extra (for fullpage.sty)
-    texlive-fonts-extra (for incosolata.sty)
-    texlive-bibtex-extra (for unsrturl.bst)
-    texlive-science (for algorithm.sty)
-    texlive-luatex (for luatex85.sty)
-    texlive-lang-european (for language definition files e.g. swedish.ldf)
-    texi2html
-    texinfo
-    pandoc and pandoc-citeproc (used by CRAN package knitr)
-    biber
-    #ttf-mscorefonts-installer
+    sudo apt-get install texlive \
+                         texlive-font-utils \
+                         texlive-pstricks \
+                         texlive-latex-extra \
+                         texlive-fonts-extra \
+                         texlive-bibtex-extra \
+                         texlive-science \
+                         texlive-luatex \
+                         texlive-lang-european \
+                         texi2html \
+                         texinfo \
+                         pandoc \
+                         pandoc-citeproc \
+                         biber
+                         #ttf-mscorefonts-installer
+
+Notes:
+- `texlive-font-utils` is for epstopdf.
+- `texlive-pstricks` provides `pstricks.sty`.
+- `texlive-latex-extra` provides `fullpage.sty`.
+- `texlive-fonts-extra` provides `incosolata.sty`.
+- `texlive-bibtex-extra` provides `unsrturl.bst`.
+- `texlive-science` provides `algorithm.sty`.
+- `texlive-luatex` provides `luatex85.sty`.
+- `texlive-lang-european` provides language definition files e.g. `swedish.ldf`.
+- `pandoc` and `pandoc-citeproc` are needed by CRAN package knitr.
 
 #### Packages needed to support extra fonts (e.g. Helvetica)
 
@@ -285,59 +300,108 @@ Some R code can fail with errors like:
 
 This can be solved by installing the following packages:
 
-    gsfonts-x11
-    xfonts-base
-    xfonts-scalable
-    xfonts-100dpi
-    xfonts-75dpi
-    t1-xfree86-nonfree
-    ttf-xfree86-nonfree
-    ttf-xfree86-nonfree-syriac
+    sudo apt-get install gsfonts-x11 \
+                         xfonts-base \
+                         xfonts-scalable \
+                         xfonts-100dpi \
+                         xfonts-75dpi \
+                         t1-xfree86-nonfree \
+                         ttf-xfree86-nonfree \
+                         ttf-xfree86-nonfree-syriac
 
 Note that a reboot is required to make the fix effective.
 
 #### Packages needed by some CRAN and/or BioC packages
 
-    libglu1-mesa-dev (for rgl)
-    librsvg2-dev (for rsvg)
-    libgmp-dev (for gmp)
-    libssl-dev (for openssl and mongolite)
-    libsasl2-dev (for mongolite)
-    libxml2-dev (for XML)
-    libcurl4-openssl-dev (for RCurl and curl)
-    mpi-default-dev (for Rmpi)
-    libudunits2-dev (for units)
-    libv8-dev (for V8)
-    libmpfr-dev (for Rmpfr)
-    libfftw3-dev (for fftw and fftwtools)
-    libmysqlclient-dev (for RMySQL)
-    libpq-dev (for RPostgreSQL and RPostgres)
-    libmagick++-dev (for magick)
-    libgeos-dev (for rgeos)
-    libproj-dev (for proj4)
-    libgdal-dev (for sf)
-    libpoppler-cpp-dev (for pdftools)
-    libgtk2.0-dev (for RGtk2)
-    libgit2-dev (for gert)
-    jags (for rjags)
-    libprotobuf-dev and protobuf-compiler (for protolite)
-    #cwltool (for Rcwl)  # nope! install with pip3 instead, see below
-    libglpk-dev (for glpkAPI and to compile igraph with GLPK support)
+For CRAN packages:
 
-    graphviz and libgraphviz-dev (for Rgraphviz)
-    libgtkmm-2.4-dev (for HilbertVisGUI)
-    libgsl-dev (for all the packages that depend on the GSL)
-    libsbml5-dev (for rsbml)
-    automake (for RProtoBufLib)
-    libnetcdf-dev (for xcms, RNetCDF, etc...)
-    libopenbabel-dev and libeigen3-dev (for ChemmineOB)
-    clustalo (for LowMACA)
-    ocl-icd-opencl-dev (for gpuMagic)
-    libavfilter-dev (for av/spatialHeatmap)
-    libfribidi-dev (for CRAN package textshaping which BioC package
-                    EnhancedVolcano indirectly depends on via ragg and ggrastr)
-    infernal (for inferrnal)
-    fuse and libfuse-dev (for Travel)
+    sudo apt-get install libglu1-mesa-dev \
+                         librsvg2-dev \
+                         libgmp-dev \
+                         libssl-dev \
+                         libsasl2-dev \
+                         libxml2-dev \
+                         libcurl4-openssl-dev \
+                         mpi-default-dev \
+                         libudunits2-dev \
+                         libv8-dev \
+                         libmpfr-dev \
+                         libfftw3-dev \
+                         libmysqlclient-dev \
+                         libpq-dev \
+                         libmagick++-dev \
+                         libgeos-dev \
+                         libproj-dev \
+                         libgdal-dev \
+                         libpoppler-cpp-dev \
+                         libgtk2.0-dev \
+                         libgit2-dev \
+                         jags \
+                         libprotobuf-dev \
+                         protobuf-compiler \
+                         libglpk-dev
+
+Notes:
+- Do NOT install `cwltool` (for Rcwl)! Install with `pip3` instead (see below).
+- `libglu1-mesa-dev` is for rgl.
+- `librsvg2-dev` is for rsvg.
+- `libgmp-dev` is for gmp.
+- `libssl-dev` is for openssl and mongolite.
+- `libsasl2-dev` is for mongolite.
+- `libxml2-dev` is for XML.
+- `libcurl4-openssl-dev` is for RCurl and curl.
+- `mpi-default-dev` is for Rmpi.
+- `libudunits2-dev` is for units.
+- `libv8-dev` is for V8.
+- `libmpfr-dev` is for Rmpfr.
+- `libfftw3-dev` is for fftw and fftwtools.
+- `libmysqlclient-dev` is for RMySQL.
+- `libpq-dev` is for RPostgreSQL and RPostgres.
+- `libmagick++-dev` is for magick.
+- `libgeos-dev` is for rgeos.
+- `libproj-dev` is for proj4.
+- `libgdal-dev` is for sf.
+- `libpoppler-cpp-dev` is for pdftools.
+- `libgtk2.0-dev` is for RGtk2.
+- `libgit2-dev` is for gert.
+- `jags` is for rjags.
+- `libprotobuf-dev` and `protobuf-compiler` are for protolite.
+- `libglpk-dev` is for glpkAPI and to compile igraph with GLPK support.
+
+For BioC packages:
+
+    sudo apt-get install graphviz \
+                         libgraphviz-dev \
+                         libgtkmm-2.4-dev \
+                         libgsl-dev \
+                         libsbml5-dev \
+                         automake \
+                         libnetcdf-dev \
+                         libopenbabel-dev \
+                         libeigen3-dev \
+                         clustalo \
+                         ocl-icd-opencl-dev \
+                         libavfilter-dev \
+                         libfribidi-dev \
+                         infernal \
+                         fuse \
+                         libfuse-dev
+
+Notes:
+- `graphviz` and `libgraphviz-dev` are for Rgraphviz.
+- `libgtkmm-2.4-dev` is for HilbertVisGUI.
+- `libgsl-dev` is for all the packages that depend on the GSL.
+- `libsbml5-dev` is for rsbml.
+- `automake` is for RProtoBufLib.
+- `libnetcdf-dev` is for xcms, RNetCDF, etc...
+- `libopenbabel-dev` and `libeigen3-dev` are for ChemmineOB.
+- `clustalo` is for LowMACA.
+- `ocl-icd-opencl-dev` is for gpuMagic.
+- `libavfilter-dev` is for av/spatialHeatmap.
+- `libfribidi-dev` is for CRAN package textshaping which BioC package
+  EnhancedVolcano indirectly depends on via ragg and ggrastr.
+- `infernal` is for inferrnal.
+- `fuse` and `libfuse-dev` are for Travel.
 
 
 ### 1.7 Install Python 3 modules
@@ -360,7 +424,7 @@ only install _trusted_ modules, this should not be a security concern. See
 https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practice)
 
     sudo -H pip3 install numpy scipy sklearn h5py pandas mofapy mofapy2
-    sudo -H pip3 install tensorflow tensorflow_probability
+    sudo -H pip3 install testresources tensorflow tensorflow_probability
     sudo -H pip3 install h5pyd
     sudo -H pip3 install cwltool
     sudo -H pip3 install nbconvert jupyter
@@ -382,7 +446,8 @@ Notes:
   respectively.
 
 - `tensorflow` is needed by Bioconductor packages scAlign and netReg. Note that
-  trying to load the module in a Python 3 session might raise the following error:
+  trying to load the module in a Python 3 session might raise the following
+  error:
     ```
     >>> import tensorflow
     2020-08-08 16:52:56.617223: W tensorflow/stream_executor/platform/default/dso_loader.cc:59] Could not load dynamic library 'libcudart.so.10.1'; dlerror: libcudart.so.10.1: cannot open shared object file: No such file or directory
@@ -402,19 +467,19 @@ Notes:
 
 - `nbconvert` and `jupyter` are needed by CRAN package nbconvertR which is
   itself used by Bioconductor package destiny. Note that `jupyter --version`
-  should display something like this (as of Aug. 2020):
+  should display something like this (as of Jan. 2021):
     ```
     hpages@nebbiolo1:~$ jupyter --version
-    jupyter core     : 4.6.3
-    jupyter-notebook : 6.1.4
-    qtconsole        : 4.7.7
-    ipython          : 7.18.1
-    ipykernel        : 5.3.4
-    jupyter client   : 6.1.7
+    jupyter core     : 4.7.0
+    jupyter-notebook : 6.2.0
+    qtconsole        : 5.0.1
+    ipython          : 7.19.0
+    ipykernel        : 5.4.3
+    jupyter client   : 6.1.11
     jupyter lab      : not installed
     nbconvert        : 6.0.7
-    ipywidgets       : 7.5.1
-    nbformat         : 5.0.8
+    ipywidgets       : 7.6.3
+    nbformat         : 5.1.2
     traitlets        : 5.0.5
     ```
   It's ok if jupyter lab is not installed but everything else should be.
@@ -635,8 +700,9 @@ not one level up. Both locations have Makefiles.
     cd etc/
     ~/BBS/utils/R-fix-flags.sh
 
-This sets the C/C++ compilation flags appropriately for the build system,
-e.g., `-Wall`, which show additional warnings useful for package developers.
+This sets the C/C++/Fortran additional compilation flags to be used during
+the builds, e.g., `-Wall`, which will show useful additional warnings. These
+warnings will be included in the build report.
 
 #### Basic testing
 
