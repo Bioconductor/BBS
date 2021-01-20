@@ -299,17 +299,6 @@ TABLE.mainrep .even TD {
  * Node specific background colors
  */
 
-/* nebbiolo1 */
-DIV.nebbiolo1,
-TR.nebbiolo1 TD,
-TABLE.mainrep .nebbiolo1,
-TABLE.mainrep .odd .nebbiolo1 {
-    background: #B8E8F4;
-}
-TABLE.mainrep .even .nebbiolo1 {
-    background: #A8D8E4;
-}
-
 /* malbec1 */
 DIV.malbec1,
 TR.malbec1 TD,
@@ -332,15 +321,26 @@ TABLE.mainrep .even .malbec2 {
     background: #ACE;
 }
 
-/* riesling1 */
-DIV.riesling1,
-TR.riesling1 TD,
-TABLE.mainrep .riesling1,
-TABLE.mainrep .odd .riesling1 {
-    background: #EEE4CC;
+/* nebbiolo1 */
+DIV.nebbiolo1,
+TR.nebbiolo1 TD,
+TABLE.mainrep .nebbiolo1,
+TABLE.mainrep .odd .nebbiolo1 {
+    background: #B8E8F4;
 }
-TABLE.mainrep .even .riesling1 {
-    background: #DDD3BB;
+TABLE.mainrep .even .nebbiolo1 {
+    background: #A8D8E4;
+}
+
+/* rex3 */
+DIV.rex3,
+TR.rex3 TD,
+TABLE.mainrep .rex3,
+TABLE.mainrep .odd .rex3 {
+    background: #B8E8F4;
+}
+TABLE.mainrep .even .rex3 {
+    background: #A8D8E4;
 }
 
 /* tokay1 */
@@ -362,6 +362,17 @@ TABLE.mainrep .odd .tokay2 {
     background: #EEE4CC;
 }
 TABLE.mainrep .even .tokay2 {
+    background: #DDD3BB;
+}
+
+/* riesling1 */
+DIV.riesling1,
+TR.riesling1 TD,
+TABLE.mainrep .riesling1,
+TABLE.mainrep .odd .riesling1 {
+    background: #EEE4CC;
+}
+TABLE.mainrep .even .riesling1 {
     background: #DDD3BB;
 }
 
