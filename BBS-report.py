@@ -1025,7 +1025,7 @@ def make_node_LeafReports(allpkgs, node):
 def make_all_LeafReports(allpkgs):
     print("BBS> [make_all_LeafReports] Current working dir '%s'" % os.getcwd())
     print("BBS> [make_all_LeafReports] Creating report package subfolders " + \
-          "and populating them with the index.html files ...", end=" ")
+          "and populating them with index.html files ...", end=" ")
     sys.stdout.flush()
     for pkg in allpkgs:
         try:
