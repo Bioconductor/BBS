@@ -541,17 +541,17 @@ and make the following changes:
 
 - Set `DocumentRoot` to `/home/biocbuild/public_html`
 
-- Add the following lines inside the `VirtualHost` section:
+- Add the following lines at the bottom of the `VirtualHost` section:
     ```
     <VirtualHost *:80>
-            ...
+        ...
 
-            # Add the 5 lines below.
-            <Directory /home/biocbuild/public_html/>
-                    Options Indexes FollowSymLinks
-                    AllowOverride None
-                    Require all granted
-            </Directory>
+        # Add the 5 lines below.
+        <Directory /home/biocbuild/public_html/>
+                Options Indexes FollowSymLinks
+                AllowOverride None
+                Require all granted
+        </Directory>
 
     </VirtualHost>
     ```
@@ -562,8 +562,7 @@ Restart the Apache server:
 
 TESTING: From any account on the machine, you should be able to do:
 
-    # This should print an HTML document showing the index
-    # of the /home/biocbuild/public_html/BBS/ folder:
+    # Should print index of /home/biocbuild/public_html/BBS in HTML form:
     curl http://localhost/BBS/
 
 
@@ -774,13 +773,32 @@ Should we also remove package specific caches?
 
 Must be done from the biocbuild account.
 
-Add the following entry to biocbuild crontab:
+First make sure to have the following lines at the top of the crontab:
 
+    USER=biocbuild
+    
+    # By default, PATH is set to /usr/bin:/bin only. We need /usr/local/bin
+    # for things that we install locally (e.g. new versions of pandoc).
+    # It must be placed **before** /usr/bin.
+    PATH=/usr/local/bin:/usr/bin:/bin
+
+Then add the following entries to the crontab:
+
+    # BIOC 3.12 SOFTWARE BUILDS
+    # -------------------------
+
+    # prerun:
+    40 14 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.12-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+
+    # run:
     00 16 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.12-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
+    # postrun (this should start AFTER builds are finished on all nodes):
+    25 11 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.12-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+
 Now you can proceed to the next section or wait for a complete build run
-before doing so (great opportunity to catch up on your favorite Netflix
-show and relax).
+before doing so (great time to catch up on your favorite Netflix show and
+relax).
 
 
 
@@ -795,7 +813,7 @@ Everything in this section must be done **from a sudoer account**.
 Required by Bioconductor package destiny.
 
 Used to be part of earlier Ubuntu versions (in texlive-bibtex-extra) but
-is no longer here in Ubuntu 20.04.
+doesn't seem to be here anymore in Ubuntu 20.04.
 
 Install with:
 
@@ -826,11 +844,17 @@ According to ensembl-vep README, the following Perl modules are required:
     ## Needed by MMAPPR2 only:
     sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
     sudo cpan install IO::String
-    sudo cpan install Bio::SeqFeature::Lite
-    sudo apt-get install libhts-dev  # HTSlib
+    sudo cpan install Bio::SeqFeature::Lite  # takes a while...
+
+Install `libhts-dev` and create some symlinks (needed for Tabix Perl module):
+
+    sudo apt-get install libhts-dev
     cd /usr/lib/
     sudo ln -s x86_64-linux-gnu/libhts.so
     sudo ln -s x86_64-linux-gnu/libhts.a
+
+Then:
+
     sudo cpan install Bio::DB::HTS::Tabix
 
 #### Install ensembl-vep
@@ -881,8 +905,12 @@ Required by Bioconductor package GeneGA.
 
     ## No Ubuntu package for 20.04 yet (as of Aug. 2020) but the package for
     ## Ubuntu 19.04 seems to work alright.
-    wget https://www.tbi.univie.ac.at/RNA/download/ubuntu/ubuntu_19_04/viennarna_2.4.14-1_amd64.deb
-    sudo dpkg -i viennarna_2.4.14-1_amd64.deb
+    #wget https://www.tbi.univie.ac.at/RNA/download/ubuntu/ubuntu_19_04/viennarna_2.4.14-1_amd64.deb
+    #sudo dpkg -i viennarna_2.4.14-1_amd64.deb
+
+    ## There's one now! (Jan. 2021)
+    wget https://www.tbi.univie.ac.at/RNA/download/ubuntu/ubuntu_20_04/viennarna_2.4.17-1_amd64.deb
+    sudo dpkg -i viennarna_2.4.17-1_amd64.deb
 
 #### Testing
 
@@ -906,6 +934,8 @@ In `/etc/profile` add:
 
     export ISR_login=bioc@immunespace.org
     export ISR_pwd=1notCRAN
+
+Logout and login again so that the changes to `/etc/profile` take effect.
 
 #### Testing
 
