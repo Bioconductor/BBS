@@ -12,8 +12,8 @@ Everything in this section must be done **from a sudoer account**.
 
 The machine could either be configured as a _standalone_ builder or as
 a _non-standalone_ builder. A _non-standalone_ builder is a build node that
-participates to builds run by a group of build machines. For example the
-BioC 3.11 software builds are currently run by 3 nodes (as of Aug 2020):
+participates to builds run by a group of build machines. For example,
+3 machines participated to the BioC 3.11 software builds:
 https://bioconductor.org/checkResults/3.11/bioc-LATEST/
 
 When part of a group of build machines, one machine must be setup as the
@@ -579,8 +579,8 @@ Depending on whether the node you're ping'ing from is within RPCI's DMZ
 or not, use the central builder's short or long (i.e. hostname+domain)
 hostname. For example:
 
-    ping malbec1                                   # from within RPCI's DMZ
-    ping malbec1.bioconductor.org                  # from anywhere else
+    ping malbec2                                   # from within RPCI's DMZ
+    ping malbec2.bioconductor.org                  # from anywhere else
 
 #### Install biocbuild RSA private key
 
@@ -592,12 +592,12 @@ machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
 
 #### Check that you can ssh to the central builder
 
-    ssh -i ~/.BBS/id_rsa malbec1                   # from within RPCI's DMZ
-    ssh -i ~/.BBS/id_rsa malbec1.bioconductor.org  # from anywhere else
+    ssh -i ~/.BBS/id_rsa malbec2                   # from within RPCI's DMZ
+    ssh -i ~/.BBS/id_rsa malbec2.bioconductor.org  # from anywhere else
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
-    ssh: connect to host malbec1.bioconductor.org port 22: Connection timed out
+    ssh: connect to host malbec2.bioconductor.org port 22: Connection timed out
 
 Contact the IT folks at RPCI if that's the case:
 
@@ -606,12 +606,12 @@ Contact the IT folks at RPCI if that's the case:
 
 #### Check that you can send HTTPS requests to the central builder
 
-    curl https://malbec1                           # from within RPCI's DMZ
-    curl https://malbec1.bioconductor.org          # from anywhere else
+    curl https://malbec2                           # from within RPCI's DMZ
+    curl https://malbec2.bioconductor.org          # from anywhere else
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
-    curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to malbec1.bioconductor.org:443
+    curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to malbec2.bioconductor.org:443
 
 Contact the IT folks at RPCI if that's the case (see above).
 
@@ -629,11 +629,11 @@ Must be done from the biocbuild account.
 
 #### Create bbs-x.y-bioc directory structure
 
-For example, for the BioC 3.12 software builds:
+For example, for the BioC 3.13 software builds:
 
     cd
-    mkdir bbs-3.12-bioc
-    cd bbs-3.12-bioc/
+    mkdir bbs-3.13-bioc
+    cd bbs-3.13-bioc/
     mkdir rdownloads log
 
 
@@ -650,7 +650,7 @@ on Ubuntu).
 Move to the directory where we're going to download and extract the R source
 tarball from CRAN:
 
-    cd ~/bbs-3.12-bioc/rdownloads/
+    cd ~/bbs-3.13-bioc/rdownloads/
 
 The exact tarball to download depends on whether we're configuring the
 release or devel builds:
@@ -682,7 +682,7 @@ Check version and revision:
 
 #### Configure and compile R
 
-    cd ~/bbs-3.12-bioc/
+    cd ~/bbs-3.13-bioc/
     mkdir R         # preceded by 'rm -rf R.old && mv R R.old' if updating R
     cd R/
     ../rdownloads/R-4.0.2/configure --enable-R-shlib
@@ -693,7 +693,7 @@ Check version and revision:
 Do NOT run `make install`!
 
 Run a script to fix compilation flags by modifying `R/etc/Makeconf`. It's
-very important to run this from the `~/bbs-3.12-bioc/R/etc/` directory and
+very important to run this from the `~/bbs-3.13-bioc/R/etc/` directory and
 not one level up. Both locations have Makefiles.
 
     cd etc/
@@ -707,7 +707,7 @@ warnings will be included in the build report.
 
 Start R:
 
-    cd ~/bbs-3.12-bioc/
+    cd ~/bbs-3.13-bioc/
     R/bin/R         # check version displayed by startup message
 
 Then from R:
@@ -784,17 +784,17 @@ First make sure to have the following lines at the top of the crontab:
 
 Then add the following entries to the crontab:
 
-    # BIOC 3.12 SOFTWARE BUILDS
+    # BIOC 3.13 SOFTWARE BUILDS
     # -------------------------
 
     # prerun:
-    40 14 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.12-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    40 14 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
     # run:
-    00 16 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.12-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 16 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
     # postrun (this should start AFTER builds are finished on all nodes):
-    25 11 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.12-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    25 11 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run
 before doing so (great time to catch up on your favorite Netflix show and
@@ -886,7 +886,7 @@ Logout and login again so that the changes to `/etc/profile` take effect.
 From the biocbuild account, try to build and check the ensemblVEP and
 MMAPPR2 packages:
 
-    cd ~/bbs-3.12-bioc/meat/
+    cd ~/bbs-3.13-bioc/meat/
 
     ## Takes about 4 min. to build and 8 min. to check:
     ../R/bin/R CMD build ensemblVEP
@@ -920,7 +920,7 @@ From the biocbuild account:
 
 Finally try to build the GeneGA package:
 
-    cd ~/bbs-3.12-bioc/meat/
+    cd ~/bbs-3.13-bioc/meat/
     ../R/bin/R CMD build GeneGA
 
 
@@ -941,7 +941,7 @@ Logout and login again so that the changes to `/etc/profile` take effect.
 
 From the biocbuild account:
 
-    cd ~/bbs-3.12-bioc/meat/
+    cd ~/bbs-3.13-bioc/meat/
     ../R/bin/R CMD build ImmuneSpaceR
 
 
@@ -957,13 +957,13 @@ Required by Bioconductor package LowMACA.
 
 From the biocbuild account:
 
-    cd ~/bbs-3.12-bioc/meat/
+    cd ~/bbs-3.13-bioc/meat/
     ../R/bin/R CMD build LowMACA
 
 
 ### 3.6 Install ROOT
 
-SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (xps is deprecated in BioC 3.12)
+SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (xps was deprecated in BioC 3.12)
 
 Required by Bioconductor package xps.
 
@@ -1021,7 +1021,7 @@ From the biocbuild account:
 
 Finally try to install the xps package:
 
-    cd ~/bbs-3.12-bioc/meat/
+    cd ~/bbs-3.13-bioc/meat/
     ../R/bin/R CMD INSTALL xps
 
 As expected, this currently fails (with xps 1.49.0):
@@ -1232,23 +1232,87 @@ https://github.com/Rfam/rfam-website/issues/39
 
 From the biocbuild account:
 
-    cd
-    mkdir bbs-3.12-data-experiment
-    cd bbs-3.12-data-experiment/
-    mkdir log
+    mkdir -p ~/bbs-3.13-data-experiment/log
 
 Then add the following entries to biocbuild's crontab:
 
-    # BIOC 3.12 DATA EXPERIMENT BUILDS
+    # BIOC 3.13 DATA EXPERIMENT BUILDS
     # --------------------------------
     # run on Mondays and Thursdays
+    
+    # prerun:
+    00 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    
+    # run:
+    25 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    
+    # postrun (this should start AFTER builds are finished on all nodes):
+    45 15 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+
+
+### 5.3 Workflows builds
+
+From the biocbuild account:
+
+    mkdir -p ~/bbs-3.13-workflows/log
+
+Then add the following entries to biocbuild's crontab:
+
+    # BIOC 3.13 WORKFLOWS BUILDS
+    # --------------------------
+    # run on Tuesdays and Fridays
+    
+    # prerun:
+    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/workflows/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-workflows/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    
+    # run:
+    05 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/workflows/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-workflows/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    
+    # postrun (this should start AFTER builds are finished on all nodes):
+    45 15 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+
+
+### 5.4 Books builds
+
+From the biocbuild account:
+
+    mkdir -p ~/bbs-3.13-books/log
+
+Then add the following entries to biocbuild's crontab:
+
+    # BIOC 3.13 BOOKS BUILDS
+    # ----------------------
+    # run on Tuesdays and Fridays
 
     # prerun:
-    00 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.12-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
-    # run:
-    25 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.12-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    # run (start after the workflows builds to avoid concurrent INSTALLs and
+    # competing for resources):
+    30 10 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
     # postrun (this should start AFTER builds are finished on all nodes):
-    45 15 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.12-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 16 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+
+
+### 5.5 Long Tests builds
+
+From the biocbuild account:
+
+    mkdir -p ~/bbs-3.13-bioc-longtests/log
+
+Then add the following entries to biocbuild's crontab:
+
+    # BIOC 3.13 SOFTWARE LONGTESTS BUILDS
+    # -----------------------------------
+    # run every Saturday
+
+    # prerun:
+    00 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+
+    # run:
+    30 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+    # postrun (this should start AFTER builds are finished on all nodes):
+    30 17 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
