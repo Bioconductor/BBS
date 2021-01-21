@@ -560,7 +560,7 @@ def processJobQueue(job_queue, nb_slots=1,
     while len(processed_jobs) < nb_jobs:
         slot += 1
         if slot == nb_slots:
-            sleep(0.5)
+            sleep(0.1)
             slot = 0
         job = slots[slot]
         loop += 1
@@ -655,7 +655,7 @@ def dateString(tm):
         utc_offset = time.altzone # 7 hours in Seattle
     else:
         utc_offset = time.timezone # 8 hours in Seattle
-    utc_offset /= 3600
+    utc_offset //= 3600
     format = "%%Y-%%m-%%d %%H:%%M:%%S -0%d00 (%%a, %%d %%b %%Y)" % utc_offset
     return time.strftime(format, tm)
 
