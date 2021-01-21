@@ -769,7 +769,7 @@ However it also contributes to an increased runtime for the builds.
 Should we also remove package specific caches?
 
 
-### 2.5 Add software builds to biocbuild crontab
+### 2.5 Add software builds to biocbuild's crontab
 
 Must be done from the biocbuild account.
 
@@ -1219,4 +1219,36 @@ Easy way to reproduce:
 
 I reported the issue here on Aug 20, 2020:
 https://github.com/Rfam/rfam-website/issues/39
+
+
+
+## 5. Set up other builds
+
+
+### 5.1 Annotation builds
+
+
+### 5.2 Experimental data builds
+
+From the biocbuild account:
+
+    cd
+    mkdir bbs-3.12-data-experiment
+    cd bbs-3.12-data-experiment/
+    mkdir log
+
+Then add the following entries to biocbuild's crontab:
+
+    # BIOC 3.12 DATA EXPERIMENT BUILDS
+    # --------------------------------
+    # run on Mondays and Thursdays
+
+    # prerun:
+    00 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.12-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+
+    # run:
+    25 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.12-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+    # postrun (this should start AFTER builds are finished on all nodes):
+    45 15 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.12/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.12-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
