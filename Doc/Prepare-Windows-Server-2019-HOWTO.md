@@ -1251,7 +1251,7 @@ Affects Bioconductor packages:
 
 
 
-## 6. Add other builds to Task Scheduler
+## 6. Set up other builds
 
 
 ### 6.1 Annotation builds
