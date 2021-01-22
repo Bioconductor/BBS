@@ -3,11 +3,11 @@
 # control the behavior of R 4.1 for the BioC 3.13 builds
 # ====================================================================
 #
-# TO BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the
-# settings below on your machine when working on the master branch
-# of your package. Also make sure to use a recent version of R 4.1.
-# This should allow you to reproduce any error or warning you see on
-# the Bioconductor build reports. The easiest way to use the settings
+# BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the settings
+# below on your machine when working on the master branch of your
+# package. Also make sure to use a recent version of R 4.1. This
+# should allow you to reproduce any error or warning you see on the
+# Bioconductor build reports. The easiest way to use the settings
 # below is to add them to your .Renviron file. However, please note
 # that this will enable them for any R installation you have on your
 # system. To enable them for a particular R session only, put them
@@ -38,8 +38,3 @@ _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 R_DEFAULT_INTERNET_TIMEOUT=300
 OMP_THREAD_LIMIT=2
 
-# TO BIOCONDUCTOR CORE TEAM: Make sure the settings used by the
-# Bioconductor Devel Docker image are kept in sync with the settings
-# in this file. Please send a PR to
-#   https://github.com/Bioconductor/bioconductor_docker
-# each time you modify the settings in this file.
