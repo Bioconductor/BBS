@@ -75,11 +75,11 @@ again as before (sudoer account).
 
 ### 1.5 Run Xvfb as a service
 
-Some Bioconductor packages like adSplit, GeneAnswers, or maSigPro have examples
-that need access to an X11 display. However, when running `R CMD check` in the
-context of the daily builds, no X11 display is available. If R is already
-installed, an easy way to reproduce the CHECK error that will happen to the
-above packages during the builds is with:
+Some Bioconductor packages like adSplit, GeneAnswers, lmdme, or maSigPro
+contain examples that need access to an X11 display. However, when
+running `R CMD check` in the context of the daily builds, no X11 display
+is available. If R is already installed, an easy way to reproduce the
+CHECK error that will happen to the above packages during the builds is with:
 
     /path/to/Rscript -e 'png("fig2.png", type="Xlib")'
     #Error in .External2(C_X11, paste0("png::", filename), g$width, g$height,  :
@@ -209,7 +209,9 @@ environment. For now `echo $DISPLAY` should show nothing.
 
     sudo reboot
 
-#### Test
+#### Testing
+
+From the biocbuild account:
 
     service xvfb status  # should be up and running
     echo $DISPLAY        # :1.0
