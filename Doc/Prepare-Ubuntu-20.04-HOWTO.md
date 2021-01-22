@@ -879,7 +879,7 @@ Note that the `/etc/profile` file has read-only permissions (factory
 settings). To save changes you will need to force save, e.g., in the
 `vi` editor this is `w!`.
 
-Logout and login again so that the changes to `/etc/profile` take effect.
+Logout and login again for the changes to `/etc/profile` to take effect.
 
 #### Testing
 
@@ -924,7 +924,32 @@ Finally try to build the GeneGA package:
     ../R/bin/R CMD build GeneGA
 
 
-### 3.4 Install ImmuneSpace credentials
+### 3.4 Set LIBSBML_CFLAGS and LIBSBML_LIBS
+
+Required by Bioconductor package rsbml.
+
+Unfortunately `libsbml5-dev` doesn't include a pkg-config file (`libsbml.pc`)
+so we need to define environment variables LIBSBML_CFLAGS and LIBSBML_LIBS
+in order for rsbml to compile.
+
+#### Edit /etc/profile
+
+In `/etc/profile` add:
+
+    export LIBSBML_CFLAGS="-I/usr/include"
+    export LIBSBML_LIBS="-lsbml"
+
+Logout and login again for the changes to `/etc/profile` to take effect.
+
+#### Testing
+
+From the biocbuild account:
+
+    cd ~/bbs-3.13-bioc/meat/
+    ../R/bin/R CMD INSTALL rsbml
+
+
+### 3.5 Install ImmuneSpace credentials
 
 Required by Bioconductor package ImmuneSpaceR.
 
@@ -935,7 +960,7 @@ In `/etc/profile` add:
     export ISR_login=bioc@immunespace.org
     export ISR_pwd=1notCRAN
 
-Logout and login again so that the changes to `/etc/profile` take effect.
+Logout and login again for the changes to `/etc/profile` to take effect.
 
 #### Testing
 
@@ -945,7 +970,7 @@ From the biocbuild account:
     ../R/bin/R CMD build ImmuneSpaceR
 
 
-### 3.5 Install Perl module XML::Simple
+### 3.6 Install Perl module XML::Simple
 
 Required by Bioconductor package LowMACA.
 
@@ -961,7 +986,7 @@ From the biocbuild account:
     ../R/bin/R CMD build LowMACA
 
 
-### 3.6 Install ROOT
+### 3.7 Install ROOT
 
 SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (xps was deprecated in BioC 3.12)
 
