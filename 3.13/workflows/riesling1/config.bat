@@ -14,6 +14,10 @@ set BBS_NB_CPU=12
 
 set BBS_STAGE2_MODE=multiarch
 
+set BBS_CENTRAL_RHOST=malbec2.bioconductor.org
+set BBS_MEAT0_RHOST=malbec2.bioconductor.org
+set BBS_GITLOG_RHOST=malbec2.bioconductor.org
+
 
 
 @rem Shared settings (by all Windows nodes)

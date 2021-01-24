@@ -28,7 +28,6 @@ export BBS_BIOC_MANIFEST_CLONE_PATH="/home/biocbuild/bbs-3.13-bioc/manifest"
 export BBS_BIOC_MANIFEST_FILE="software.txt"
 
 # Where is the fresh meat to be stored by prerun (stage1)
-export BBS_MEAT0_RHOST=$BBS_CENTRAL_RHOST
 export BBS_MEAT0_RUSER=$BBS_CENTRAL_RUSER
 export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.13-bioc/MEAT0"
 
@@ -39,7 +38,6 @@ export BBS_UPDATE_MEAT0=1
 export BBS_MEAT_PATH="$BBS_WORK_TOPDIR/meat"
 
 # Where are the gitlog files stored by prerun (stage1)
-export BBS_GITLOG_RHOST=$BBS_CENTRAL_RHOST
 export BBS_GITLOG_RUSER=$BBS_CENTRAL_RUSER
 export BBS_GITLOG_RDIR="$BBS_CENTRAL_RDIR/gitlog"
 

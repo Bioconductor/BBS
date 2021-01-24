@@ -17,6 +17,10 @@ export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export BBS_NB_CPU=11        # 20 cores are available
 export BBS_CHECK_NB_CPU=15  # 20 cores are available
 
+export BBS_CENTRAL_RHOST="localhost"
+export BBS_MEAT0_RHOST="localhost"
+export BBS_GITLOG_RHOST="localhost"
+
 
 
 # Shared settings (by all Unix nodes).
@@ -27,11 +31,6 @@ cd ..
 cd "$wd0"
 
 
-
-# Overwrite values set in ../../config.sh and ../config.sh
-export BBS_CENTRAL_RHOST="localhost"
-export BBS_MEAT0_RHOST="localhost"
-export BBS_GITLOG_RHOST="localhost"
 
 # Needed only on the node performing stage6 (must be run on the
 # BBS_CENTRAL_RHOST machine).
