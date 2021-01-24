@@ -1,11 +1,11 @@
 #!/bin/bash
-# ====================
+# ===================
 # Settings for machv2
-# ====================
+# ===================
 
 
 
-#set -x # Print commands and their arguments as they are executed.
+#set -x  # print commands and their arguments as they are executed
 
 export BBS_DEBUG="0"
 
@@ -23,7 +23,7 @@ export BBS_GITLOG_RHOST="malbec2.bioconductor.org"
 
 
 
-# Shared settings (by all Unix nodes)
+# Shared settings (by all Unix nodes).
 
 wd0=$(pwd)
 cd ..
