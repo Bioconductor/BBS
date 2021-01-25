@@ -280,7 +280,7 @@ installed e.g.
     sys	0m0.032s
 
 
-### Failures that we should be able to control (hopefully)
+### Failures in our court
 
 This is the list of Bioconductor software packages that we've identified
 so far that fail to compile on taxco, despite having all their requirements
