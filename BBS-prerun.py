@@ -225,19 +225,8 @@ def collect_vcs_meta(snapshot_date):
         allpkgs = pkgs + skipped_pkgs
         for pkg in allpkgs:
             pkgsrctree = os.path.join(MEAT0_path, pkg)
-            git_cmd_pkg = '%s -C %s' % (vcs_cmd, pkgsrctree)
             gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
-            gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
-            date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
-            cmd = ' && '.join([
-            'echo -n "URL: "',
-            '%s remote get-url origin' % git_cmd_pkg,
-            'echo -n "Branch: "',
-            '%s rev-parse --abbrev-ref HEAD' % git_cmd_pkg,
-            '%s log --max-count=1 --date=%s --format=%s' % (git_cmd_pkg, date_format, gitlog_format)
-            ])
-            cmd = '(%s) >%s' % (cmd, gitlog_file)
-            bbs.jobs.doOrDie(cmd)
+            bbs.gitutils.collect_git_clone_meta(pkgsrctree, gitlog_file, snapshot_date)
     BBSvars.Central_rdir.Put(vcsmeta_dir, True, True)
     print("BBS> [collect_vcs_meta] DONE collecting vcs meta data.")
     sys.stdout.flush()

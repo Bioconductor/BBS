@@ -7,7 +7,7 @@
 ###   Andrzej Oleś <andrzej.oles@embl.de>
 ###   Hervé Pagès <hpages.on.github@gmail.com>
 ###
-### Last modification: Nov 5, 2019
+### Last modification: Jan 24, 2021
 ###
 ### bbs.gitutils module
 ###
@@ -25,14 +25,14 @@ try:
 except KeyError:
     git_cmd = 'git'
 
-### 'out_path' must be the path to file where to capture stdout. If 'wd' is
+### 'out_path' must be the path to file where to capture stdout. If 'cwd' is
 ### specified and 'out_path' is specified as a relative path, then 'out_path'
-### will be treated as relative to 'wd'.
-def _run(cmd, wd=None, out_path=None, prompt=''):
-    if wd != None:
-        previous_wd = os.getcwd()
-        print('%scd %s' % (prompt, wd))
-        os.chdir(wd)
+### will be treated as relative to 'cwd'.
+def _run(cmd, cwd=None, out_path=None, prompt=''):
+    if cwd != None:
+        previous_cwd = os.getcwd()
+        print('%scd %s' % (prompt, cwd))
+        os.chdir(cwd)
     cmd2 = cmd
     if out_path != None:
         cmd2 += ' >%s' % out_path
@@ -54,23 +54,28 @@ def _run(cmd, wd=None, out_path=None, prompt=''):
         run_error = None
     if out_path != None:
         out.close()
-    if wd != None:
-        print('%scd %s' % (prompt, previous_wd))
+    if cwd != None:
+        print('%scd %s' % (prompt, previous_cwd))
         sys.stdout.flush()
-        os.chdir(previous_wd)
+        os.chdir(previous_cwd)
     print()
     if run_error != None:
         raise run_error
     return
 
+def _run_gitcmd(gitcmd, cwd=None, out_path=None, prompt=''):
+    cmd = '%s %s' % (git_cmd, gitcmd)
+    _run(cmd, cwd=cwd, out_path=out_path, prompt=prompt)
+    return
+
 def _create_clone(clone_path, repo_url, branch=None, depth=None):
-    cmd = '%s clone' % git_cmd
+    gitcmd = 'clone'
     if branch != None:
-        cmd += ' --branch %s' % branch
+        gitcmd += ' --branch %s' % branch
     if depth != None:
-        cmd += ' --depth %s' % depth
-    cmd = '%s %s %s' % (cmd, repo_url, clone_path)
-    _run(cmd, prompt='bbs.gitutils._create_clone> ')
+        gitcmd += ' --depth %s' % depth
+    gitcmd = '%s %s %s' % (gitcmd, repo_url, clone_path)
+    _run_gitcmd(gitcmd, prompt='bbs.gitutils._create_clone> ')
     return
 
 def _new_commits_were_pulled(pull_output_path):
@@ -82,33 +87,33 @@ def _new_commits_were_pulled(pull_output_path):
 def _update_clone(clone_path, undo_changes=False, branch=None,
                   snapshot_date=None):
     if undo_changes:
-        cmd = '%s checkout -f' % git_cmd
-        _run(cmd, wd=clone_path, prompt='bbs.gitutils._update_clone> ')
+        gitcmd = 'checkout -f'
+        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_clone> ')
     if branch != None:
         ## checkout branch
-        cmd = '%s checkout %s' % (git_cmd, branch)
-        _run(cmd, wd=clone_path, prompt='bbs.gitutils._update_clone> ')
+        gitcmd = 'checkout %s' % branch
+        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_clone> ')
     if snapshot_date == None:
-        cmd = '%s pull' % git_cmd
+        gitcmd = 'pull'
         out_file = '.git_pull_output.txt'
-        _run(cmd, wd=clone_path, out_path=out_file,
-             prompt='bbs.gitutils._update_clone> ')
+        _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
+                    prompt='bbs.gitutils._update_clone> ')
         return _new_commits_were_pulled(os.path.join(clone_path, out_file))
     ## If 'snapshot_date' was supplied we fetch instead of pull so we can
     ## then merge up to snapshot date.
-    cmd = '%s fetch' % git_cmd
+    gitcmd = 'fetch'
     out_file = '.git_fetch_output.txt'
-    _run(cmd, wd=clone_path, out_path=out_file,
-         prompt='bbs.gitutils._update_clone> ')
+    _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
+                prompt='bbs.gitutils._update_clone> ')
     ## Andrzej: merge only up to snapshot date
     ##          (see https://stackoverflow.com/a/8223166/2792099)
     ## Hervé: That doesn't seem to work reliably. Switching to a
     ## simple 'git merge' for now...
-    #cmd = '%s merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, git_cmd, snapshot_date, branch)
-    cmd = '%s merge' % git_cmd
+    #gitcmd = 'merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, snapshot_date, branch)
+    gitcmd = 'merge'
     out_file = '.git_merge_output.txt'
-    _run(cmd, wd=clone_path, out_path=out_file,
-         prompt='bbs.gitutils._update_clone> ')
+    _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
+                prompt='bbs.gitutils._update_clone> ')
     return _new_commits_were_pulled(os.path.join(clone_path, out_file))
 
 def update_git_clone(clone_path, repo_url, branch=None, depth=None,
@@ -133,6 +138,36 @@ def update_git_clone(clone_path, repo_url, branch=None, depth=None,
             return branch_has_changed
     _create_clone(clone_path, repo_url, branch, depth)
     return False
+
+def collect_git_clone_meta(clone_path, out_path, snapshot_date):
+    previous_cwd = os.getcwd()
+    os.chdir(clone_path)
+
+    ## Get remote URL.
+    cmd = '%s remote get-url origin' % git_cmd
+    ret = subprocess.run(cmd, capture_output=True, shell=True, text=True)
+    URL = ret.stdout
+
+    ## Get branch.
+    cmd = '%s rev-parse --abbrev-ref HEAD' % git_cmd
+    ret = subprocess.run(cmd, capture_output=True, shell=True, text=True)
+    Branch = ret.stdout
+
+    ## Get Last Commit & Last Changed Date.
+    gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
+    date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
+    cmd = '%s log --max-count=1 --date=%s --format=%s' % (git_cmd, date_format, gitlog_format)
+    ret = subprocess.run(cmd, capture_output=True, shell=True, text=True)
+    Last_Commit_and_Last_Change_Date = ret.stdout
+    os.chdir(previous_cwd)
+
+    ## Dump meta as DCF file.
+    out = open(out_path, 'w')
+    out.write('URL: %s' % URL)
+    out.write('Branch: %s' % Branch)
+    out.write('%s\n' % Last_Commit_and_Last_Change_Date)
+    out.close()
+    return
 
 if __name__ == "__main__":
     sys.exit("ERROR: this Python module can't be used as a standalone script yet")
