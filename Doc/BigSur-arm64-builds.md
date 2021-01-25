@@ -292,30 +292,24 @@ target `arm64-apple-darwin20.1.0`).
 
 Last updated on Jan 25, 2021.
 
-| Package        | Native code | Nb of BioC rev deps | Nb of CRAN rev deps | Report |
-| :------------- | :---------- | ------------------: | ------------------: | :----- |
+| Package        | Native code | Nb of BioC rev deps | Nb of CRAN rev deps | INSTALL error log |
+| :------------- | :---------- | ------------------: | ------------------: | :---------------- |
 | affxparser     | C++         |                  16 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/affxparser/taxco-install.html |
 | bridge         | C           |                   0 |                  14 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/bridge/taxco-install.html |
 | CancerInSilico | C++         |                   0 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/CancerInSilico/taxco-install.html |
-
-
-                                  Nb of      Nb of
-                     Native    rev deps   rev deps
-    Package          code       in BioC    on CRAN
-    --------------   -------   --------   --------
-    CNORode          C                1          1
-    CoGAPS           C++              1          0
-    DeMixT           C                0          0
-    gmapR            C                2          0
-    iBBiG            C                1          1
-    LEA              C                0          0
-    msa              C                2          0
-    muscle           C++              0          1
-    NetPathMiner     C++              0          0
-    Rbowtie2         C++              2          0
-    Rhisat2          C++              1          0
-    rGADEM           C                0          0
-    seqbias          C                1          0
+| CNORode        | C           |                   1 |                   1 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/CNORode/taxco-install.html |
+| CoGAPS         | C++         |                   1 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/CoGAPS/taxco-install.html |
+| DeMixT         | C           |                   0 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/DeMixT/taxco-install.html |
+| gmapR          | C           |                   2 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/gmapR/taxco-install.html |
+| iBBiG          | C           |                   1 |                   1 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/iBBiG/taxco-install.html |
+| LEA            | C           |                   0 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/LEA/taxco-install.html |
+| msa            | C           |                   2 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/msa/taxco-install.html |
+| muscle         | C++         |                   0 |                   1 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/muscle/taxco-install.html |
+| NetPathMiner   | C++         |                   0 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/NetPathMiner/taxco-install.html |
+| Rbowtie2       | C++         |                   2 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/Rbowtie2/taxco-install.html |
+| Rhisat2        | C++         |                   1 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/Rhisat2/taxco-install.html |
+| rGADEM         | C           |                   0 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/rGADEM/taxco-install.html |
+| seqbias        | C           |                   1 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/seqbias/taxco-install.html |
 
 
 ### Failures due to a missing dependency (CRAN and/or system lib)
