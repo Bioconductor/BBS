@@ -8,11 +8,12 @@
 - 8 cores - 16 GB of RAM - 1 TB SSD drive
 
 
-### What is installed on the machine
+### What is installed on the system
 
 #### Xcode
 
-Xcode_12.4_Release_Candidate.xip (includes Python 3):
+I downloaded and installed `Xcode_12.4_Release_Candidate.xip` (includes
+Python 3):
 
     clang -v
     # Apple clang version 12.0.0 (clang-1200.0.32.29)
@@ -30,22 +31,24 @@ This is all available at https://mac.r-project.org/libs-arm64/
 - Fortran compiler:
 
   Install with:
-
+    ```
     sudo tar fvxz gfortran-f51f1da0-darwin20.0-arm64.tar.gz -C /
-
+    ```
   Then add `export PATH="/opt/R/arm64/bin:$PATH"` to `/etc/profile`.
   Logout and login again for the change to take effect.
 
   Test with:
-
+    ```
     which gfortran  # /opt/R/arm64/bin/gfortran
     gfortran -v
+    ```
 
 - Tcl/Tk:
 
   Install with:
-
+    ```
     sudo tar fvxz tcltk-8.6-b810c941-arm64-fw.tar.gz -C /
+    ```
 
   WARNING: Unfortunately, this Tcl/Tk seems to hang R forever when trying
   to load the tcltk package with `library(tcltk)` so I removed it for now.
@@ -57,7 +60,7 @@ This is all available at https://mac.r-project.org/libs-arm64/
   is available at https://mac.r-project.org/libs-4/
 
   Install with:
-
+    ```
     sudo tar fvxz pkgconfig-0.28-darwin.20-arm64.tar.gz -C /
     sudo tar fvxz zlib-system-stub.tar.gz -C /
     sudo tar fvxz xml2-2.9.10-darwin.20-arm64.tar.gz -C /
@@ -65,43 +68,47 @@ This is all available at https://mac.r-project.org/libs-arm64/
     sudo tar fvxz freetype-2.10.0-darwin.20-arm64.tar.gz -C /
     sudo tar fvxz fontconfig-2.13.1-darwin.20-arm64.tar.gz -C /
     sudo tar fvxz cairo-1.14.12-darwin.20-arm64.tar.gz -C /
-
+    ```
   Create symlink to `zlib.pc` with:
-
+    ```
     cd /opt/R/arm64/lib/pkgconfig
     sudo ln -s /usr/local/lib/pkgconfig/zlib.pc
-
+    ```
   Test with:
-
+    ```
     pkg-config cairo --cflags
     pkg-config cairo --libs
+    ```
 
 - JPEG, TIFF, WebP, and PNG libs:
 
   Install with:
-
+    ```
     sudo tar fvxz jpeg-9d-darwin.20-arm64.tar.gz -C /
     sudo tar fvxz tiff-4.1.0-darwin.20-arm64.tar.gz -C /
     sudo tar fvxz libwebp-1.1.0-darwin.20-arm64.tar.gz -C /
     sudo tar fvxz libpng-1.6.37-darwin.20-arm64.tar.gz -C /
+    ```
 
 - gmp and mpfr libs:
 
   Install with:
-
+    ```
     sudo tar fvxz gmp-6.2.1-darwin.20-arm64.tar.gz -C /
     sudo tar fvxz mpfr-4.1.0-darwin.20-arm64.tar.gz -C /
+    ```
 
 - XZ utils (include lzma lib required by Rhtslib):
 
   Install with::
-
+    ```
     sudo tar fvxz xz-5.2.4-darwin.20-arm64.tar.gz -C /
+    ```
 
 
 ### What is NOT installed on the system
 
-- NO Tcl/tk yet!
+- NO Tcl/tk yet! (see above)
 
 - NO XQuartz for arm64 yet! (see https://xquartz.macosforge.org/)
 
@@ -122,14 +129,20 @@ r79827) from https://mac.r-project.org/
 
 No installer image (`.pkg` file) is available at the moment (Jan 23, 2021)
 so I grabbed the tarball. Unlike the installer image, the tarball does NOT
-contain Tcl/Tk so it's important to install it separetely. However,  (see above).
+contain Tcl/Tk so it's important to install it separetely. Unfortunately,
+the Tcl/tk currently provided by Simon is causing problems (see above) so
+no Tcl/Tk for now.
 
-I created the symlink:
+Install with:
+
+    tar fvxz R-devel.tar.gz -C /
+
+Create symlink to `R` executable with:
 
     cd /opt/R/arm64/bin
     ln -s /Library/Frameworks/R.framework/Resources/bin/R
 
-Tested with:
+Test with:
 
     which R
 
@@ -152,49 +165,49 @@ a few R packages manually to get a taste of how bad things are.
 CRAN provides no Mac binaries at all (no `x86_64` and no `arm64`) for R devel
 so all CRAN packages must be installed **from source**.
 
-- Cairo           ok
-- jpeg            ok
-- tiff            ok but only after adding -lwebp to PKG_LIBS in
-                     the package's Makevars
-- png             ok
-- qpdf            ok
-- gmp             ok
-- Rmpfr           ok
-- Rcpp            ok
-- RcppParallel    NO! - compilation error (ld error)
-- minqa           ok - contains Fortran code
-- openssl         ok
-- ggplot2         ok
-- tidyverse       ok
-- httpuv          ok
-- RSQLite         ok
-- matrixStats     ok
-- RUnit           ok
-- RcppGSL         NO! - requires the GSL
-- ncdf4           NO! - requires the netcdf library
-- tiledb          NO! - configure error
-
-- BiocManager     ok
+    Cairo           ok
+    jpeg            ok
+    tiff            ok but only after adding -lwebp to PKG_LIBS in
+                       the package's Makevars
+    png             ok
+    qpdf            ok
+    gmp             ok
+    Rmpfr           ok
+    Rcpp            ok
+    RcppParallel    NO! compilation error (ld error)
+    minqa           ok (contains Fortran code)
+    openssl         ok
+    ggplot2         ok
+    tidyverse       ok
+    httpuv          ok
+    RSQLite         ok
+    matrixStats     ok
+    RUnit           ok
+    RcppGSL         NO! requires the GSL
+    ncdf4           NO! requires the NetCDF library
+    tiledb          NO! configure error
+    
+    BiocManager     ok
 
 
 ### Bioconductor packages
 
-- zlibbioc        ok
-- Biobase         ok
-- biocViews       ok
-- BiocCheck       ok
-- S4Vectors       ok
-- Biostrings      ok
-- BiocParallel    ok
-- Rhtslib         ok
-- Rsamtools       ok
-- rtracklayer     ok
-- Rhdf5lib        ok
-- beachmat        ok
-- scRNAseq        ok
-- mzR             NO! (depends on ncdf4 which requires the netcdf library)
-- RProtoBufLib    ok
-- cytolib         NO! (depends on RcppParallel)
+    zlibbioc        ok
+    Biobase         ok
+    biocViews       ok
+    BiocCheck       ok
+    S4Vectors       ok
+    Biostrings      ok
+    BiocParallel    ok
+    Rhtslib         ok
+    Rsamtools       ok
+    rtracklayer     ok
+    Rhdf5lib        ok
+    beachmat        ok
+    scRNAseq        ok
+    mzR             NO! (depends on ncdf4 which requires the NetCDF library)
+    RProtoBufLib    ok
+    cytolib         NO! (depends on RcppParallel)
 
 
 
@@ -207,7 +220,7 @@ to build a lot of vignettes if we decided to also run the BUILD stage).
 ### Some numbers for the record
 
 - 1st run (6 cpus):
-    ````
+    ```
     BBS> STAGE2 SUMMARY:
     BBS>   o Working dir: /Users/biocbuild/bbs-3.13-bioc/meat
     BBS>   o 3811 pkg dir(s) queued and processed
