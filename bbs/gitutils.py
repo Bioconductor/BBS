@@ -165,7 +165,7 @@ def collect_git_clone_meta(clone_path, out_path, snapshot_date):
     out = open(out_path, 'w')
     out.write('URL: %s' % URL)
     out.write('Branch: %s' % Branch)
-    out.write('%s\n' % Last_Commit_and_Last_Change_Date)
+    out.write('%s' % Last_Commit_and_Last_Change_Date)
     out.close()
     return
 
