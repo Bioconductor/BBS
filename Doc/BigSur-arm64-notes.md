@@ -217,7 +217,11 @@ so all CRAN packages must be installed **from source**.
 We run the devel software builds (1938 packages as of Jan 24, 2021), and
 we only perform the INSTALL stage (STAGE2) for now. No MacTeX means that
 we wouldn't be able to build a lot of vignettes if we decided to also run
-the BUILD stage.
+the BUILD stage (STAGE3).
+
+The builds are scheduled to run daily. A report will soon be published
+[here](https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/)
+and will get updated automatically every day.
 
 
 ### Some numbers for the record
