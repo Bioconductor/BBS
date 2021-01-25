@@ -105,7 +105,7 @@
          non_target_repos, fixed=TRUE)
 }
 
-.get_repos <- function()
+.get_all_repos <- function()
 {
     target_repo <- Sys.getenv('BBS_CENTRAL_BASEURL')
     non_target_repos <- .get_non_target_repos()
@@ -141,7 +141,7 @@ make_STAGE2_pkg_deps_list <- function(target_pkgs_file, outfile="",
 
     ## Fetch the available *source* packages (we use type="source" even on
     ## Windows or Mac).
-    contrib_url <- contrib.url(.get_repos(), type="source")
+    contrib_url <- contrib.url(.get_all_repos(), type="source")
     available_pkgs <- available.packages(contrib_url)
 
     ## Build the package deps list.

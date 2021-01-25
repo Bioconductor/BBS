@@ -1,0 +1,295 @@
+## System
+
+- Hostname: taxco
+- OS: Big Sur arm64
+- 8 cores - 16 GB of RAM - 1 TB SSD drive
+
+
+## Installed on the system
+
+### Xcode
+
+Xcode_12.4_Release_Candidate.xip (includes Python 3):
+
+    clang -v
+    # Apple clang version 12.0.0 (clang-1200.0.32.29)
+    # Target: arm64-apple-darwin20.1.0
+    # Thread model: posix
+    # InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+
+    python3 --version
+    # Python 3.8.2
+
+### A bunch of stuff provided by Simon at https://mac.r-project.org/libs-arm64/
+
+- Fortran compiler:
+
+  Installation:
+
+    sudo tar fvxz gfortran-f51f1da0-darwin20.0-arm64.tar.gz -C /
+
+  Then add `export PATH="/opt/R/arm64/bin:$PATH"` to `/etc/profile`.
+  Logout and login again for the change to take effect.
+  Test with:
+
+    which gfortran  # /opt/R/arm64/bin/gfortran
+    gfortran -v
+
+- Tcl/Tk:
+
+  Installation:
+
+    sudo tar fvxz tcltk-8.6-b810c941-arm64-fw.tar.gz -C /
+
+  Unfortunately, this Tcl/Tk seems to hang R forever when trying to
+  load the tcltk package with `library(tcltk)` so I removed it for now.
+  At least now `library(tcltk)` fails quickly instead of hanging forever.
+
+- cairo (and all its deps):
+
+  cairo also needs zlib-system-stub.tar.gz available at
+  https://mac.r-project.org/libs-4/
+
+  Installation:
+
+    sudo tar fvxz pkgconfig-0.28-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz zlib-system-stub.tar.gz -C /
+    sudo tar fvxz xml2-2.9.10-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz pixman-0.38.4-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz freetype-2.10.0-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz fontconfig-2.13.1-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz cairo-1.14.12-darwin.20-arm64.tar.gz -C /
+
+  Symlink to `zlib.pc` created with:
+
+    cd /opt/R/arm64/lib/pkgconfig
+    sudo ln -s /usr/local/lib/pkgconfig/zlib.pc
+
+  Testing:
+
+    pkg-config cairo --cflags
+    pkg-config cairo --libs
+
+- JPEG, TIFF, WebP, and PNG libs:
+
+  Installation:
+
+    sudo tar fvxz jpeg-9d-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz tiff-4.1.0-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz libwebp-1.1.0-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz libpng-1.6.37-darwin.20-arm64.tar.gz -C /
+
+- gmp and mpfr libs:
+
+    sudo tar fvxz gmp-6.2.1-darwin.20-arm64.tar.gz -C /
+    sudo tar fvxz mpfr-4.1.0-darwin.20-arm64.tar.gz -C /
+
+- XZ utils (include lzma lib required by Rhtslib):
+
+  Installation:
+
+    sudo tar fvxz xz-5.2.4-darwin.20-arm64.tar.gz -C /
+
+
+## Not installed on the system
+
+- NO XQuartz for arm64 yet!
+
+- NO JDK for arm64-based macOS yet!
+
+- NO MacTeX for arm64 yet! (so we won't be able to build many many vignettes)
+
+
+## Installation of R
+
+I downloaded Simon's latest R-devel binary for Big Sur arm64 (2021-01-14
+r79827) from https://mac.r-project.org/
+
+No installer image (`.pkg` file) is available so I grabbed the tarball. Unlike
+the installer image, the tarball does not contain Tcl/Tk so it's important
+to install it separetely (see above).
+
+I created the symlink:
+
+    cd /opt/R/arm64/bin
+    ln -s /Library/Frameworks/R.framework/Resources/bin/R
+
+Tested with:
+
+    which R
+
+    ## Then from R:
+
+    which(!capabilities())  # no X11, no long double!
+    library(tcltk)          # fails (no working Tcl/Tk for now, see above)
+
+
+## R packages manually installed for testing
+
+I manually tried to install a few CRAN and Bioconductor packages, just to see
+how that goes. There were already a few bad surprises.
+
+### CRAN packages
+
+CRAN provides no Mac binaries at all (no `x86_64` and no `arm64`) for R devel
+so all CRAN packages must be installed **from source**.
+
+- Cairo           ok
+- jpeg            ok
+- tiff            ok but only after adding -lwebp to PKG_LIBS in
+                     the package's Makevars
+- png             ok
+- qpdf            ok
+- gmp             ok
+- Rmpfr           ok
+- Rcpp            ok
+- RcppParallel    NO! - compilation error (ld error)
+- minqa           ok - contains Fortran code
+- openssl         ok
+- ggplot2         ok
+- tidyverse       ok
+- httpuv          ok
+- RSQLite         ok
+- matrixStats     ok
+- RUnit           ok
+- RcppGSL         NO! - requires the GSL
+- ncdf4           NO! - requires the netcdf library
+- tiledb          NO! - configure error
+
+- BiocManager     ok
+
+### Bioconductor packages
+
+- zlibbioc        ok
+- Biobase         ok
+- biocViews       ok
+- BiocCheck       ok
+- S4Vectors       ok
+- Biostrings      ok
+- BiocParallel    ok
+- Rhtslib         ok
+- Rsamtools       ok
+- rtracklayer     ok
+- Rhdf5lib        ok
+- beachmat        ok
+- scRNAseq        ok
+- mzR             NO! (depends on ncdf4 which requires the netcdf library)
+- RProtoBufLib    ok
+- cytolib         NO! (depends on RcppParallel)
+
+
+## BBS runs (INSTALL only)
+
+- 1st run (6 cpus):
+
+    BBS> STAGE2 SUMMARY:
+    BBS>   o Working dir: /Users/biocbuild/bbs-3.13-bioc/meat
+    BBS>   o 3811 pkg dir(s) queued and processed
+    BBS>   o 3568 pkg(s) to (re-)install: 2874 successes / 694 failures
+    BBS>   o Total time: 6800.46 seconds
+
+
+- 2nd BBS run (8 cpus):
+
+    BBS> STAGE2 SUMMARY:
+    BBS>   o Working dir: /Users/biocbuild/bbs-3.13-bioc/meat
+    BBS>   o 3811 pkg dir(s) queued and processed
+    BBS>   o 2077 pkg(s) to (re-)install: 1635 successes / 442 failures
+    BBS>   o Total time: 3172.16 seconds
+
+- 3rd BBS run (8 cpus):
+
+    BBS> STAGE2 SUMMARY:
+    BBS>   o Working dir: /Users/biocbuild/bbs-3.13-bioc/meat
+    BBS>   o 3811 pkg dir(s) queued and processed
+    BBS>   o 2043 pkg(s) to (re-)install: 1678 successes / 365 failures
+    BBS>   o Total time: 3254.15 seconds
+
+
+## Failures that we don't really control
+
+This is the list of Bioconductor packages that fail for a reason that
+we don't really control:
+
+- Packages that depend directly or indirectly on RcppParallel (65):
+  banocc, CATALYST, censcyt, cmapR, CONFESS, cydar, CytoDx, cytofast,
+  cytofWorkflow, cytolib, CytoML, CytoTree, dada2, ddPCRclust, diffcyt,
+  diffuStats, flowAI, flowBeads, flowBin, flowCHIC, flowClean, flowClust,
+  flowCore, flowCut, flowDensity, flowFP, flowMatch, flowMeans, flowMerge,
+  flowPloidy, FlowSOM, flowSpecs, flowStats, flowTime, flowTrans, flowUtils,
+  flowViz, flowWorkspace, GateFinder, genphen, ggcyto, HDCytoData,
+  healthyFlowData, HIBAG, highthroughputassays, IgGeneUsage, ILoReg,
+  ImmuneSpaceR, immunoClust, infinityFlow, MetaCyto, mina, ncdfFlow,
+  netboost, oneSENSE, openCyto, oposSOM, optimalFlow, SAIGEgds, scClassify,
+  scDataviz, scGPS, Sconify, simplifyEnrichment, ttgsea
+
+- Packages that depend directly or indirectly on netcdf (48):
+  adductomicsR, Autotuner, CAMERA, cliqueMS, CluMSID, cosmiq,
+  DAPAR, DAPARdata, DEP, DIAlignR, faahKO, flagme, IPO, LOBSTAHS,
+  MAIT, Metab, metaMS, MetCirc, MSGFgui, msmsEDA, msmsTests,
+  MSnbase, MSnID, msPurity, MSstatsQC, MSstatsQCgui, mzR, ncGTW,
+  peakPantheR, POMA, PrInCE, pRoloc, pRolocdata, pRolocGUI, Prostar,
+  ProteomicsAnnotationHubData, PtH2O2lipids, qPLEXanalyzer, qPLEXdata,
+  RforProteomics, Risa, RMassBank, SIMAT, TargetSearch, topdownr,
+  topdownrdata, xcms, yamss
+
+- Packages that depend directly or indirectly on tcltk (39):
+  ABAEnrichment, ABarray, affylmGUI, BioMM, CAFE, canceR, clustComp,
+  compcodeR, CONFESS, cycle, DAPAR, fdrame, flowMeans, flowMerge, GEM,
+  genArise, GOfuncR, IsoCorrectoRGUI, IsoGeneGUI, LedPred, limmaGUI,
+  MBCB, Mfuzz, MoonlightR, OLINgui, OpenStats, optimalFlow,
+  PharmacoGx, Pi, Prostar, RadioGx, scTensor, scTGIF, TimiRGeN, tkWidgets,
+  tscR, uSORT, widgetTools, Xeva
+
+- Packages that depend directly or indirectly on Java (21):
+  ArrayExpressHTS, BioMM, BridgeDbR, CHRONOS, DaMiRseq, debCAM, esATAC,
+  gaggle, GARS, IsoGeneGUI, miRSM, MSGFgui, OnassisJavaLibs, paxtoolsr,
+  Rcpi, ReQON, RGMQL, RMassBank, rmelting, sarks, SELEX
+
+- Packages that depend directly or indirectly on the fftw lib (18):
+  bnbc, Cardinal, CardinalWorkflows, CONFESS, CRImage, cytomapper,
+  DonaPLLP2013, EBImage, FISHalyseR, flowcatchR, flowCHIC, furrowSeg,
+  HD2013SGI, heatmaps, imageHTS, qusage, sojourner, yamss
+
+- Packages that depend directly or indirectly on the GSL (14):
+  ADaCGH2, AMOUNTAIN, covEB, DirichletMultinomial, flowPeaks, GLAD, ITALICS,
+  MANOR, powerTCR, RJMCMCNucleosomes, scBFA, scRepertoire, seqCNA, snapCGH
+
+- Packages that depend directly or indirectly on the udunits lib (4):
+  schex, scTensor, scTGIF, spicyR
+
+- Packages that depend directly or indirectly on libSBML (4):
+  rsbml, SBMLR, NetPathMiner, BiGGR
+
+- Packages that depend directly or indirectly on tiledb (1):
+  TileDBArray
+
+## Failures that we should be able to control (hopefully)
+
+This is the list of Bioconductor software packages that fail to compile on
+taxco, despite having all their requirements satisfied, and that compile
+sucessfully on all the other build machines. In other words, the native code
+in these packages compiles fine with the compilers included in Ubuntu 20.04
+and in Rtools40 but not with the compilers shipped with Xcode 12.4 RC
+(Apple clang version 12.0.0, target `arm64-apple-darwin20.1.0`):
+
+                                  Nb of      Nb of
+                     Native    rev deps   rev deps
+    Package          code       in BioC    on CRAN
+    --------------   -------   --------   --------
+    affxparser       C++             16          0
+    bridge           C                0         14 
+    CancerInSilico   C++              0          0
+    CNORode          C                1          1
+    CoGAPS           C++              1          0
+    DeMixT           C                0          0
+    gmapR            C                2          0
+    iBBiG            C                1          1
+    LEA              C                0          0
+    msa              C                2          0
+    muscle           C++              0          1
+    Rbowtie2         C++              2          0
+    Rhisat2          C++              1          0
+    rGADEM           C                0          0
+    seqbias          C                1          0
+

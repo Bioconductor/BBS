@@ -334,36 +334,56 @@ in the plist file, then kill the process.
     /path/to/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
 
 
-### 2.6 Install the Command Line Developer Tools
+### 2.6 Install Apple's Command Line Tools
 
 You only need this for the `ld`, `make`, and `clang` commands. Check whether
 you already have them or not with:
 
-    which ld     # /usr/bin/ld
-    which make   # /usr/bin/make
-    which clang  # /usr/bin/clang
-    clang -v     # Apple clang version 11.0.0 (clang-1100.0.33.17)
+    which ld       # /usr/bin/ld
+    ld -v          # BUILD 18:57:17 Dec 13 2019
+    which make     # /usr/bin/make
+    make -v        # GNU Make 3.81
+    which clang    # /usr/bin/clang
+    clang -v       # Apple clang version 11.0.0 (clang-1100.0.33.17)
+    which git      # /usr/bin/git
+    git --version  # git version 2.21.1 (Apple Git-122.3)
 
 If you do, skip this section.
 
 --------------------------------------------------------------------------
-The Command Line Developer Tools is a subset of Xcode that includes Apple
+The Command Line Tools for Xcode is a subset of Xcode that includes Apple
 LLVM compiler (with Clang front-end), linker, Make, and other developer
 tools that enable Unix-style development at the command line. It's all
 that is needed to install/compile R packages with native code in them (note
-that it even includes the svn and git clients).
+that it even includes the `svn` and `git` clients, and the most recent
+versions include `python3`).
 
-The full Xcode IDE is much bigger (2.6G vs 220M) and is not needed.
+The full Xcode IDE is much bigger (e.g. 10.8 GB for Xcode 12.3 vs 431MB
+for the Command Line Tools for Xcode 12.3) and is not needed.
 
 Go on https://developer.apple.com/ and pick up the last version for
 macOS Mojave (`Command_Line_Tools_for_Xcode_11.3.1.dmg` as of May 13, 2020,
 note that Command Line Tools for Xcode 11.4 requires Catalina or higher).
+More recent versions of Xcode and the Command Line Tools are provided
+as `xip` files.
 
-Install with:
+If you got a `dmg` file, install with:
 
     sudo hdiutil attach Command_Line_Tools_for_Xcode_11.3.1.dmg
     sudo installer -pkg "/Volumes/Command Line Developer Tools/Command Line Tools.pkg" -target /
     sudo hdiutil detach "/Volumes/Command Line Developer Tools"
+
+If you got an `xip` file, install with:
+
+    ## Check the file first:
+    pkgutil --verbose --check-signature path/to/xip
+
+    ## Install in /Applications
+    cd /Applications
+    xip --expand path/to/xip
+
+    ## Agree to the license:
+    sudo xcodebuild -license
 
 TESTING:
 
@@ -712,7 +732,9 @@ Must be done from the `biocbuild` account.
 #### Choose latest R binary for macOS
 
 If installing R devel: download R from https://mac.r-project.org/ (e.g.
-pick up `R-4.0-branch.pkg`).
+pick up `R-4.0-branch.pkg`). Unlike the installer image (`.pkg` file),
+the tarball (`.tar.gz` file) does NOT include Tcl/Tk (which is needed
+by R base package tcltk) so make sure to grab the former.
 
 If installing R release: download R from CRAN (e.g. from
 https://cloud.r-project.org/bin/macosx/). Pick up the 1st file

@@ -395,7 +395,7 @@ Notes:
 - `libgsl-dev` is for all the packages that depend on the GSL.
 - `libsbml5-dev` is for rsbml.
 - `automake` is for RProtoBufLib.
-- `libnetcdf-dev` is for xcms, RNetCDF, etc...
+- `libnetcdf-dev` is for mzR, RNetCDF, etc...
 - `libopenbabel-dev` and `libeigen3-dev` are for ChemmineOB.
 - `clustalo` is for LowMACA.
 - `ocl-icd-opencl-dev` is for gpuMagic.
