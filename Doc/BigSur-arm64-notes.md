@@ -280,10 +280,50 @@ installed e.g.
     sys	0m0.032s
 
 
-### Failures that we don't really control
+### Failures that we should be able to control (hopefully)
 
-This is the list of Bioconductor packages that fail for a reason that
-we don't really control:
+This is the list of Bioconductor software packages that we've identified
+so far that fail to compile on taxco, despite having all their requirements
+satisfied, and that compile sucessfully on all the other build machines.
+In other words, the native code in these packages compiles fine with the
+compilers included in Ubuntu 20.04 and in Rtools40, but not with the
+compilers shipped with Xcode 12.4 RC (Apple clang version 12.0.0,
+target `arm64-apple-darwin20.1.0`).
+
+Last updated on Jan 25, 2021.
+
+                                  Nb of      Nb of
+                     Native    rev deps   rev deps
+    Package          code       in BioC    on CRAN
+    --------------   -------   --------   --------
+    affxparser       C++             16          0
+    bridge           C                0         14
+    CancerInSilico   C++              0          0
+    CNORode          C                1          1
+    CoGAPS           C++              1          0
+    DeMixT           C                0          0
+    gmapR            C                2          0
+    iBBiG            C                1          1
+    LEA              C                0          0
+    msa              C                2          0
+    muscle           C++              0          1
+    NetPathMiner     C++              0          0
+    Rbowtie2         C++              2          0
+    Rhisat2          C++              1          0
+    rGADEM           C                0          0
+    seqbias          C                1          0
+
+
+### Failures due to a missing dependency (CRAN and/or system lib)
+
+Most installation failures we see on the
+[taxco build report](https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/)
+are due to dependencies missing on taxco.
+
+Here we summarize those installation failures that are due to missing
+CRAN packages or system libraries.
+
+Last updated on Jan 25, 2021.
 
 #### Packages that depend directly or indirectly on RcppParallel
 
@@ -317,6 +357,12 @@ installation of 48 Bioconductor software packages:
   RforProteomics, Risa, RMassBank, SIMAT, TargetSearch, topdownr,
   topdownrdata, xcms, yamss
 
+What we're going to do about it: Not much for now, just hope
+that an NetCDF binary for the arm64 arch will become available
+[here](https://mac.r-project.org/libs-arm64/) at some point like
+it's been available for years [here](https://mac.r-project.org/libs-4/)
+for the x86_64 arch. ("Let the experts do the hard work" strategy.)
+
 #### Packages that depend directly or indirectly on Tcl/Tk
 
 The unavaibility of Tcl/Tk on taxco currently blocks the
@@ -349,6 +395,9 @@ installation of 18 Bioconductor software packages:
   DonaPLLP2013, EBImage, FISHalyseR, flowcatchR, flowCHIC, furrowSeg,
   HD2013SGI, heatmaps, imageHTS, qusage, sojourner, yamss
 
+What we're going to do about it: "Let the experts do the hard work" like
+for NetCDF (see above).
+
 #### Packages that depend directly or indirectly on the GSL
 
 The unavaibility of the GSL on taxco currently blocks the
@@ -357,21 +406,39 @@ installation of 14 Bioconductor software packages:
   ADaCGH2, AMOUNTAIN, covEB, DirichletMultinomial, flowPeaks, GLAD, ITALICS,
   MANOR, powerTCR, RJMCMCNucleosomes, scBFA, scRepertoire, seqCNA, snapCGH
 
+What we're going to do about it: "Let the experts do the hard work" like
+for NetCDF (see above).
+
 #### Packages that depend directly or indirectly on the UDUNITS lib
 
 The unavaibility of the UDUNITS lib on taxco currently blocks the
 installation of 4 Bioconductor software packages: schex, scTensor, scTGIF,
 spicyR
 
+What we're going to do about it: "Let the experts do the hard work" like
+for NetCDF (see above).
+
 #### Packages that depend directly or indirectly on SBML lib
 
 The unavaibility of the SBML lib on taxco currently blocks the
 installation of 3 Bioconductor software packages: rsbml, SBMLR, BiGGR
 
+What we're going to do about it: rsbml is alreay officially no longer
+supported on Mac anyways (the SBML maintainers have failed to provide
+a working brew formula for years). We just forgot to mark SBMLR and BiGGR
+also as unsupported on Mac.
+
 #### Packages that depend directly or indirectly on Open Babel
 
 The unavaibility of Open Babel on taxco currently blocks the
 installation of Bioconductor software package ChemmineOB.
+
+What we're going to do about it: Nothing for now. Last time we
+installed OpenBabel on a Mac builder with brew
+[was a nightmare](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-macOS-Mojave-HOWTO.md#48-install-open-babel) (it broke many
+things on the system and it took a while to figure out what exactly
+and how to repair everything). So trying this on taxco will be delayed
+as much as it can be.
 
 #### Packages that depend directly or indirectly on tiledb
 
@@ -379,36 +446,4 @@ See [CRAN check log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/tiledb.out)
 for the full log of tiledb installation error.
 The unavaibility of tiledb for Big Sur arm64 currently blocks the
 installation of Bioconductor software package TileDBArray.
-
-
-### Failures that we should be able to control (hopefully)
-
-This is the list of Bioconductor software packages that we've identified
-so far that fail to compile on taxco, despite having all their requirements
-satisfied, and that compile sucessfully on all the other build machines.
-In other words, the native code in these packages compiles fine with the
-compilers included in Ubuntu 20.04 and in Rtools40, but not with the
-compilers shipped with Xcode 12.4 RC (Apple clang version 12.0.0,
-target `arm64-apple-darwin20.1.0`):
-
-                                  Nb of      Nb of
-                     Native    rev deps   rev deps
-    Package          code       in BioC    on CRAN
-    --------------   -------   --------   --------
-    affxparser       C++             16          0
-    bridge           C                0         14 
-    CancerInSilico   C++              0          0
-    CNORode          C                1          1
-    CoGAPS           C++              1          0
-    DeMixT           C                0          0
-    gmapR            C                2          0
-    iBBiG            C                1          1
-    LEA              C                0          0
-    msa              C                2          0
-    muscle           C++              0          1
-    NetPathMiner     C++              0          0
-    Rbowtie2         C++              2          0
-    Rhisat2          C++              1          0
-    rGADEM           C                0          0
-    seqbias          C                1          0
 
