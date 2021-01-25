@@ -9,8 +9,8 @@ echo "-------------------"
 
 # Fix perms
 cd $BBS_CENTRAL_RDIR
-/bin/chmod +r . -R
-/usr/bin/find nodes -type d -exec chmod 755 {} -c \;
+/bin/chmod -R +r .
+/usr/bin/find nodes -type d -exec chmod 755 {} \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
