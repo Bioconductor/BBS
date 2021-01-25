@@ -35,9 +35,5 @@ _R_CHECK_LENGTH_1_LOGIC2_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
 _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 #_R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
 #_R_CLASS_MATRIX_ARRAY_=true
+OMP_THREAD_LIMIT=2
 
-# TO THE BIOCONDUCTOR CORE TEAM: Make sure the settings used by
-# the Bioconductor Devel Docker image are kept in sync with the
-# settings in this file. Please send a PR to
-# https://github.com/Bioconductor/bioconductor_docker each time
-# you modify the settings in this file.
