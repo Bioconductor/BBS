@@ -292,11 +292,17 @@ target `arm64-apple-darwin20.1.0`).
 
 Last updated on Jan 25, 2021.
 
+| Package        | Native code | Nb of BioC rev deps | Nb of CRAN rev deps | Report |
+| -------------- | ----------- | ------------------- | ------------------- | ------ |
+| affxparser     | C++         |                  16 |                   0 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/affxparser/taxco-install.html |
+| bridge         | C           |                   0 |                  14 | https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/bridge/taxco-install.html |
+
+
                                   Nb of      Nb of
                      Native    rev deps   rev deps
     Package          code       in BioC    on CRAN
     --------------   -------   --------   --------
-    affxparser       C++             16          0   https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/affxparser/taxco-install.html
+    affxparser       C++             16          0
     bridge           C                0         14
     CancerInSilico   C++              0          0
     CNORode          C                1          1
