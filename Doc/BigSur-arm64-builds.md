@@ -290,7 +290,10 @@ compilers included in Ubuntu 20.04 and in Rtools40, but not with the
 compilers shipped with Xcode 12.4 RC (Apple clang version 12.0.0,
 target `arm64-apple-darwin20.1.0`).
 
-Last updated on Jan 25, 2021.
+Note that the number of reverse dependencies (rev deps) reported in the table
+below for a package includes its direct and indirect deps.
+
+Table last updated on Jan 25, 2021.
 
 | Package        | Native code | Nb of BioC rev deps | Nb of CRAN rev deps | INSTALL error log |
 | :------------- | :---------- | ------------------: | ------------------: | :---------------- |
