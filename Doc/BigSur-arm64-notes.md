@@ -327,8 +327,7 @@ Last updated on Jan 25, 2021.
 
 #### Packages that depend directly or indirectly on RcppParallel
 
-See [CRAN check log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/RcppParallel.log)
-for the full log of RcppParallel installation error.
+See [RcppParallel installation error log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/RcppParallel.log) on CRAN.
 The unavaibility of RcppParallel for Big Sur arm64 currently blocks the
 installation of 65 Bioconductor software packages:
 
@@ -377,8 +376,7 @@ installation of 39 Bioconductor software packages:
 
 #### Packages that depend directly or indirectly on Java/rJava
 
-See [CRAN check log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/rJava.log)
-for the full log of rJava installation error.
+See [rJava installation error log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/rJava.log) on CRAN.
 The unavaibility of Java/rJava for Big Sur arm64 currently blocks the
 installation of 21 Bioconductor software packages:
 
@@ -442,8 +440,7 @@ as much as it can be.
 
 #### Packages that depend directly or indirectly on tiledb
 
-See [CRAN check log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/tiledb.out)
-for the full log of tiledb installation error.
+See [tiledb installation error log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/tiledb.out) on CRAN.
 The unavaibility of tiledb for Big Sur arm64 currently blocks the
 installation of Bioconductor software package TileDBArray.
 
