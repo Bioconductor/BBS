@@ -296,7 +296,7 @@ Last updated on Jan 25, 2021.
                      Native    rev deps   rev deps
     Package          code       in BioC    on CRAN
     --------------   -------   --------   --------
-    affxparser       C++             16          0
+    affxparser       C++             16          0   https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/affxparser/taxco-install.html
     bridge           C                0         14
     CancerInSilico   C++              0          0
     CNORode          C                1          1
