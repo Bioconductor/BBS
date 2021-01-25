@@ -153,7 +153,7 @@ Test with:
 
 
 
-## 3. Manual testing
+## 3. Preliminary testing
 
 
 Before setting up BBS and running the builds, I tried to install
@@ -214,12 +214,15 @@ so all CRAN packages must be installed **from source**.
 ## 4. Running the Bioconductor builds (BBS)
 
 
-We only run the INSTALL stage for now (no MacTeX means we wouldn't be able
-to build a lot of vignettes if we decided to also run the BUILD stage).
+We run the devel software builds (1938 packages as of Jan 24, 2021), and
+we only perform the INSTALL stage (STAGE2) for now. No MacTeX means that
+we wouldn't be able to build a lot of vignettes if we decided to also run
+the BUILD stage.
+
 
 ### Some numbers for the record
 
-- 1st run (6 cpus):
+- 1st run (`BBS_NB_CPU` set to 6):
     ```
     BBS> STAGE2 SUMMARY:
     BBS>   o Working dir: /Users/biocbuild/bbs-3.13-bioc/meat
@@ -228,7 +231,7 @@ to build a lot of vignettes if we decided to also run the BUILD stage).
     BBS>   o Total time: 6800.46 seconds
     ```
 
-- 2nd BBS run (8 cpus):
+- 2nd BBS run (`BBS_NB_CPU` set to 8):
     ```
     BBS> STAGE2 SUMMARY:
     BBS>   o Working dir: /Users/biocbuild/bbs-3.13-bioc/meat
@@ -237,7 +240,7 @@ to build a lot of vignettes if we decided to also run the BUILD stage).
     BBS>   o Total time: 3172.16 seconds
     ```
 
-- 3rd BBS run (8 cpus):
+- 3rd BBS run (`BBS_NB_CPU` set to 8):
     ```
     BBS> STAGE2 SUMMARY:
     BBS>   o Working dir: /Users/biocbuild/bbs-3.13-bioc/meat
@@ -245,6 +248,32 @@ to build a lot of vignettes if we decided to also run the BUILD stage).
     BBS>   o 2043 pkg(s) to (re-)install: 1678 successes / 365 failures
     BBS>   o Total time: 3254.15 seconds
     ```
+
+Comparison with other builders:
+
+                                              BBS_NB_CPU  Time of
+    Machine    OS                              / nb cpus   STAGE2
+    ---------  -----------------------------  ----------  -------
+    malbec2    Ubuntu 20.04                        11/20    97min
+    rex3       Ubuntu 20.04                        40/80    32min
+    tokay2     Windows Server 2012 R2              16/40  4h16min
+    riesling1  Windows Server 2019                 36/80  1h29min
+    machv2     macOS 10.14.6 Mojave (x86_64)       14/24  1h36min
+    taxco      macOS 11.0.1 Big Sur (arm64)          8/8    54min
+
+Looks good but the comparison is not really fair since on taxco, unlike
+on the other builders, hundreds of packages are currently failing to
+install because of another package that they depend on could not be
+installed e.g.
+
+    taxco:meat biocbuild$ time R CMD INSTALL cytolib
+    * installing to library ‘/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library’
+    ERROR: dependency ‘RcppParallel’ is not available for package ‘cytolib’
+    * removing ‘/Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/library/cytolib’
+    
+    real	0m0.147s
+    user	0m0.103s
+    sys	0m0.032s
 
 
 ### Failures that we don't really control
