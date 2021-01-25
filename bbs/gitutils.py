@@ -20,6 +20,11 @@ import subprocess
 sys.path.insert(0, os.path.dirname(__file__))
 import fileutils
 
+try:
+    git_cmd = os.environ['BBS_GIT_CMD']
+except KeyError:
+    git_cmd = 'git'
+
 ### 'out_path' must be the path to file where to capture stdout. If 'wd' is
 ### specified and 'out_path' is specified as a relative path, then 'out_path'
 ### will be treated as relative to 'wd'.
@@ -59,10 +64,6 @@ def _run(cmd, wd=None, out_path=None, prompt=''):
     return
 
 def _create_clone(clone_path, repo_url, branch=None, depth=None):
-    try:
-        git_cmd = os.environ['BBS_GIT_CMD']
-    except KeyError:
-        git_cmd = 'git'
     cmd = '%s clone' % git_cmd
     if branch != None:
         cmd += ' --branch %s' % branch
@@ -80,10 +81,6 @@ def _new_commits_were_pulled(pull_output_path):
 
 def _update_clone(clone_path, undo_changes=False, branch=None,
                   snapshot_date=None):
-    try:
-        git_cmd = os.environ['BBS_GIT_CMD']
-    except KeyError:
-        git_cmd = 'git'
     if undo_changes:
         cmd = '%s checkout -f' % git_cmd
         _run(cmd, wd=clone_path, prompt='bbs.gitutils._update_clone> ')

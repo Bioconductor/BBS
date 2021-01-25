@@ -185,8 +185,14 @@ def update_svnlog():
 def collect_vcs_meta(snapshot_date):
     print("BBS> [collect_vcs_meta] START collecting vcs meta data...")
     sys.stdout.flush()
-    vcs = {1: 'svn', 3: 'git'}[BBSvars.MEAT0_type]
-    vcs_cmd = {'svn': os.environ['BBS_SVN_CMD'], 'git': os.environ['BBS_GIT_CMD']}[vcs]
+    if BBSvars.MEAT0_type == 1:
+        vcs = 'svn'
+        vcs_cmd = os.environ['BBS_SVN_CMD']
+    elif BBSvars.MEAT0_type == 3:
+        vcs = 'git'
+        vcs_cmd = bbs.gitutils.git_cmd
+    else:
+        sys.exit("ERROR: Invalid BBS_MEAT0_TYPE: %d" % BBSvars.MEAT0_type)
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     ## Get list of packages
     meat_index_path = os.path.join(BBSvars.work_topdir,
@@ -238,8 +244,8 @@ def collect_vcs_meta(snapshot_date):
     return
 
 def update_svn_MEAT0(MEAT0_path, snapshot_date):
-    vcs_cmd = os.environ['BBS_SVN_CMD']
-    cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (vcs_cmd, MEAT0_path)
+    svn_cmd = os.environ['BBS_SVN_CMD']
+    cmd = '%s up --set-depth infinity --non-interactive --username readonly --password readonly %s' % (svn_cmd, MEAT0_path)
     print("BBS> [update_svn_MEAT0] %s (at %s)" % (cmd, snapshot_date))
     bbs.jobs.doOrDie(cmd)
     return
@@ -314,6 +320,8 @@ def update_MEAT0(MEAT0_path, snapshot_date):
             update_svn_MEAT0(MEAT0_path, snapshot_date)
         elif BBSvars.MEAT0_type == 3:
             update_git_MEAT0(MEAT0_path, snapshot_date)
+        else:
+            sys.exit("ERROR: Invalid BBS_MEAT0_TYPE: %d" % BBSvars.MEAT0_type)
     return
 
 def writeAndUploadMeatInfo(work_topdir):
@@ -473,13 +481,15 @@ if __name__ == "__main__":
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "upload-meat-info"
-    if (arg1 == "" or arg1 == subtask) and (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
+    if (arg1 == "" or arg1 == subtask) and \
+       (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
         print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         writeAndUploadMeatInfo(work_topdir)
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "create-local-meat-dir"
-    if (arg1 == "" or arg1 == subtask) and (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
+    if (arg1 == "" or arg1 == subtask) and \
+       (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
         print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         ## Using rsync is better than "svn export": (1) it's incremental,
         ## (2) it works remotely, (3) it works with "nested working copies
