@@ -287,7 +287,11 @@ we don't really control:
 
 #### Packages that depend directly or indirectly on RcppParallel
 
-65 packages at the moment:
+See [CRAN check log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/RcppParallel.log)
+for the full log of RcppParallel installation error.
+The unavaibility of RcppParallel for Big Sur arm64 currently blocks the
+installation of 65 Bioconductor software packages:
+
   banocc, CATALYST, censcyt, cmapR, CONFESS, cydar, CytoDx, cytofast,
   cytofWorkflow, cytolib, CytoML, CytoTree, dada2, ddPCRclust, diffcyt,
   diffuStats, flowAI, flowBeads, flowBin, flowCHIC, flowClean, flowClust,
@@ -301,7 +305,9 @@ we don't really control:
 
 #### Packages that depend directly or indirectly on NetCDF
 
-48 packages at the moment:
+The unavaibility of NetCDF on taxco currently blocks the
+installation of 48 Bioconductor software packages:
+
   adductomicsR, Autotuner, CAMERA, cliqueMS, CluMSID, cosmiq,
   DAPAR, DAPARdata, DEP, DIAlignR, faahKO, flagme, IPO, LOBSTAHS,
   MAIT, Metab, metaMS, MetCirc, MSGFgui, msmsEDA, msmsTests,
@@ -313,7 +319,9 @@ we don't really control:
 
 #### Packages that depend directly or indirectly on Tcl/Tk
 
-39 packages at the moment:
+The unavaibility of Tcl/Tk on taxco currently blocks the
+installation of 39 Bioconductor software packages:
+
   ABAEnrichment, ABarray, affylmGUI, BioMM, CAFE, canceR, clustComp,
   compcodeR, CONFESS, cycle, DAPAR, fdrame, flowMeans, flowMerge, GEM,
   genArise, GOfuncR, IsoCorrectoRGUI, IsoGeneGUI, LedPred, limmaGUI,
@@ -321,51 +329,67 @@ we don't really control:
   PharmacoGx, Pi, Prostar, RadioGx, scTensor, scTGIF, TimiRGeN, tkWidgets,
   tscR, uSORT, widgetTools, Xeva
 
-#### Packages that depend directly or indirectly on Java
+#### Packages that depend directly or indirectly on Java/rJava
 
-21 packages at the moment:
+See [CRAN check log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/rJava.log)
+for the full log of rJava installation error.
+The unavaibility of Java/rJava for Big Sur arm64 currently blocks the
+installation of 21 Bioconductor software packages:
+
   ArrayExpressHTS, BioMM, BridgeDbR, CHRONOS, DaMiRseq, debCAM, esATAC,
   gaggle, GARS, IsoGeneGUI, miRSM, MSGFgui, OnassisJavaLibs, paxtoolsr,
   Rcpi, ReQON, RGMQL, RMassBank, rmelting, sarks, SELEX
 
 #### Packages that depend directly or indirectly on the FFTW lib
 
-18 packages at the moment:
+The unavaibility of the FFTW lib on taxco currently blocks the
+installation of 18 Bioconductor software packages:
+
   bnbc, Cardinal, CardinalWorkflows, CONFESS, CRImage, cytomapper,
   DonaPLLP2013, EBImage, FISHalyseR, flowcatchR, flowCHIC, furrowSeg,
   HD2013SGI, heatmaps, imageHTS, qusage, sojourner, yamss
 
 #### Packages that depend directly or indirectly on the GSL
 
-14 packages at the moment:
+The unavaibility of the GSL on taxco currently blocks the
+installation of 14 Bioconductor software packages:
+
   ADaCGH2, AMOUNTAIN, covEB, DirichletMultinomial, flowPeaks, GLAD, ITALICS,
   MANOR, powerTCR, RJMCMCNucleosomes, scBFA, scRepertoire, seqCNA, snapCGH
 
 #### Packages that depend directly or indirectly on the UDUNITS lib
 
-4 packages at the moment: schex, scTensor, scTGIF, spicyR
+The unavaibility of the UDUNITS lib on taxco currently blocks the
+installation of 4 Bioconductor software packages: schex, scTensor, scTGIF,
+spicyR
 
 #### Packages that depend directly or indirectly on SBML lib
 
-4 packages at the moment: rsbml, SBMLR, NetPathMiner, BiGGR
+The unavaibility of the SBML lib on taxco currently blocks the
+installation of 3 Bioconductor software packages: rsbml, SBMLR, BiGGR
 
 #### Packages that depend directly or indirectly on Open Babel
 
-1 package: ChemmineOB
+The unavaibility of Open Babel on taxco currently blocks the
+installation of Bioconductor software package ChemmineOB.
 
 #### Packages that depend directly or indirectly on tiledb
 
-1 package: TileDBArray
+See [CRAN check log](https://www.stats.ox.ac.uk/pub/bdr/M1mac/tiledb.out)
+for the full log of tiledb installation error.
+The unavaibility of tiledb for Big Sur arm64 currently blocks the
+installation of Bioconductor software package TileDBArray.
 
 
 ### Failures that we should be able to control (hopefully)
 
-This is the list of Bioconductor software packages that fail to compile on
-taxco, despite having all their requirements satisfied, and that compile
-sucessfully on all the other build machines. In other words, the native code
-in these packages compiles fine with the compilers included in Ubuntu 20.04
-and in Rtools40 but not with the compilers shipped with Xcode 12.4 RC
-(Apple clang version 12.0.0, target `arm64-apple-darwin20.1.0`):
+This is the list of Bioconductor software packages that we've identified
+so far that fail to compile on taxco, despite having all their requirements
+satisfied, and that compile sucessfully on all the other build machines.
+In other words, the native code in these packages compiles fine with the
+compilers included in Ubuntu 20.04 and in Rtools40, but not with the
+compilers shipped with Xcode 12.4 RC (Apple clang version 12.0.0,
+target `arm64-apple-darwin20.1.0`):
 
                                   Nb of      Nb of
                      Native    rev deps   rev deps
@@ -382,6 +406,7 @@ and in Rtools40 but not with the compilers shipped with Xcode 12.4 RC
     LEA              C                0          0
     msa              C                2          0
     muscle           C++              0          1
+    NetPathMiner     C++              0          0
     Rbowtie2         C++              2          0
     Rhisat2          C++              1          0
     rGADEM           C                0          0
