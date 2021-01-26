@@ -185,14 +185,6 @@ def update_svnlog():
 def collect_vcs_meta(snapshot_date):
     print("BBS> [collect_vcs_meta] START collecting vcs meta data...")
     sys.stdout.flush()
-    if BBSvars.MEAT0_type == 1:
-        vcs = 'svn'
-        vcs_cmd = os.environ['BBS_SVN_CMD']
-    elif BBSvars.MEAT0_type == 3:
-        vcs = 'git'
-        vcs_cmd = bbs.gitutils.git_cmd
-    else:
-        sys.exit("ERROR: Invalid BBS_MEAT0_TYPE: %d" % BBSvars.MEAT0_type)
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     ## Get list of packages
     meat_index_path = os.path.join(BBSvars.work_topdir,
@@ -205,18 +197,21 @@ def collect_vcs_meta(snapshot_date):
     f = open(vcsmeta_path, 'a')
     f.write('Snapshot Date: %s\n' % snapshot_date)
     f.close()
-    if vcs == 'svn':
+    if BBSvars.MEAT0_type == 1:
+        ## Get the meat from svn.
+        svn_cmd = os.environ['BBS_SVN_CMD']
         ## Top-level svn-info file
-        cmd = '%s info %s >>%s' % (vcs_cmd, MEAT0_path, vcsmeta_path)
+        cmd = '%s info %s >>%s' % (svn_cmd, MEAT0_path, vcsmeta_path)
         bbs.jobs.doOrDie(cmd)
         ## Create svn-info file for each package
         for pkg in pkgs:
             pkgsrctree = os.path.join(MEAT0_path, pkg)
             svninfo_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
-            cmd = '%s info %s >%s' % (vcs_cmd, pkgsrctree, svninfo_file)
+            cmd = '%s info %s >%s' % (svn_cmd, pkgsrctree, svninfo_file)
             bbs.jobs.doOrDie(cmd)
         update_svnlog()
-    if vcs == 'git':
+    elif BBSvars.MEAT0_type == 3:
+        ## Get the meat from git.
         ## Create git-log file for each package in meat-index.dcf and
         ## skipped-index.dcf
         skipped_index_path = os.path.join(BBSvars.work_topdir,
@@ -227,6 +222,8 @@ def collect_vcs_meta(snapshot_date):
             pkgsrctree = os.path.join(MEAT0_path, pkg)
             gitlog_file = "-%s.".join(vcsmeta_path.rsplit(".", 1)) % pkg
             bbs.gitutils.collect_git_clone_meta(pkgsrctree, gitlog_file, snapshot_date)
+    else:
+        sys.exit("ERROR: Invalid BBS_MEAT0_TYPE: %d" % BBSvars.MEAT0_type)
     BBSvars.Central_rdir.Put(vcsmeta_dir, True, True)
     print("BBS> [collect_vcs_meta] DONE collecting vcs meta data.")
     sys.stdout.flush()

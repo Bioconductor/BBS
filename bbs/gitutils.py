@@ -21,9 +21,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 import fileutils
 
 try:
-    git_cmd = os.environ['BBS_GIT_CMD']
+    _git_cmd = os.environ['BBS_GIT_CMD']
 except KeyError:
-    git_cmd = 'git'
+    _git_cmd = 'git'
 
 ### 'out_path' must be the path to file where to capture stdout. If 'cwd' is
 ### specified and 'out_path' is specified as a relative path, then 'out_path'
@@ -64,7 +64,7 @@ def _run(cmd, cwd=None, out_path=None, prompt=''):
     return
 
 def _run_gitcmd(gitcmd, cwd=None, out_path=None, prompt=''):
-    cmd = '%s %s' % (git_cmd, gitcmd)
+    cmd = '%s %s' % (_git_cmd, gitcmd)
     _run(cmd, cwd=cwd, out_path=out_path, prompt=prompt)
     return
 
@@ -109,7 +109,7 @@ def _update_clone(clone_path, undo_changes=False, branch=None,
     ##          (see https://stackoverflow.com/a/8223166/2792099)
     ## Hervé: That doesn't seem to work reliably. Switching to a
     ## simple 'git merge' for now...
-    #gitcmd = 'merge `%s rev-list -n 1 --before="%s" %s`' % (git_cmd, snapshot_date, branch)
+    #gitcmd = 'merge `%s rev-list -n 1 --before="%s" %s`' % (_git_cmd, snapshot_date, branch)
     gitcmd = 'merge'
     out_file = '.git_merge_output.txt'
     _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
@@ -153,13 +153,13 @@ def collect_git_clone_meta(clone_path, out_path, snapshot_date):
     ## we use the latter for the same reason.
 
     ## Get remote URL.
-    cmd = '%s remote get-url origin' % git_cmd
+    cmd = '%s remote get-url origin' % _git_cmd
     ret = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                          shell=True, universal_newlines=True)
     URL = ret.stdout
 
     ## Get branch.
-    cmd = '%s rev-parse --abbrev-ref HEAD' % git_cmd
+    cmd = '%s rev-parse --abbrev-ref HEAD' % _git_cmd
     ret = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                          shell=True, universal_newlines=True)
     Branch = ret.stdout
@@ -167,7 +167,7 @@ def collect_git_clone_meta(clone_path, out_path, snapshot_date):
     ## Get Last Commit & Last Changed Date.
     gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
     date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
-    cmd = '%s log --max-count=1 --date=%s --format=%s' % (git_cmd, date_format, gitlog_format)
+    cmd = '%s log --max-count=1 --date=%s --format=%s' % (_git_cmd, date_format, gitlog_format)
     ret = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                          shell=True, universal_newlines=True)
     Last_Commit_and_Last_Change_Date = ret.stdout
