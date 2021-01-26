@@ -103,7 +103,7 @@ TABLE.svn_info TR TD.svn_info {
     padding: 0px;
     padding-left: 2px;
     padding-right: 2px;
-    background: #EEC;
+    background: #EEFAF2;
     text-align: left;
 }
 SPAN.svn_info {
@@ -313,10 +313,10 @@ DIV.malbec2,
 TR.malbec2 TD,
 TABLE.mainrep .malbec2,
 TABLE.mainrep .odd .malbec2 {
-    background: #CCE2F6;
+    background: #D2E4F8;
 }
 TABLE.mainrep .even .malbec2 {
-    background: #BCD2E6;
+    background: #C2D4E8;
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
@@ -324,10 +324,10 @@ DIV.nebbiolo1,
 TR.nebbiolo1 TD,
 TABLE.mainrep .nebbiolo1,
 TABLE.mainrep .odd .nebbiolo1 {
-    background: #CCE2F6;
+    background: #D2E4F8;
 }
 TABLE.mainrep .even .nebbiolo1 {
-    background: #BCD2E6;
+    background: #C2D4E8;
 }
 
 /* rex3 (Ubuntu 20.04) */
@@ -335,10 +335,10 @@ DIV.rex3,
 TR.rex3 TD,
 TABLE.mainrep .rex3,
 TABLE.mainrep .odd .rex3 {
-    background: #CCE2F6;
+    background: #D2E4F8;
 }
 TABLE.mainrep .even .rex3 {
-    background: #BCD2E6;
+    background: #C2D4E8;
 }
 
 /* tokay1 */
@@ -368,10 +368,10 @@ DIV.riesling1,
 TR.riesling1 TD,
 TABLE.mainrep .riesling1,
 TABLE.mainrep .odd .riesling1 {
-    background: #EEE4CC;
+    background: #F4E8D8;
 }
 TABLE.mainrep .even .riesling1 {
-    background: #DDD3BB;
+    background: #E4D8C8;
 }
 
 /* merida1 */
@@ -390,9 +390,9 @@ DIV.machv2,
 TR.machv2 TD,
 TABLE.mainrep .machv2,
 TABLE.mainrep .odd .machv2 {
-    background: #D8CCEE;
+    background: #E4DDEE;
 }
 TABLE.mainrep .even .machv2 {
-    background: #C8BBDD;
+    background: #D4CCDD;
 }
 
