@@ -297,7 +297,7 @@ TABLE.mainrep .even TD {
  * Node specific background colors
  */
 
-/* malbec1 */
+/* malbec1 (Ubuntu 18.04) */
 DIV.malbec1,
 TR.malbec1 TD,
 TABLE.mainrep .malbec1,
@@ -308,37 +308,37 @@ TABLE.mainrep .even .malbec1 {
     background: #ACE;
 }
 
-/* malbec2 */
+/* malbec2 (Ubuntu 20.04) */
 DIV.malbec2,
 TR.malbec2 TD,
 TABLE.mainrep .malbec2,
 TABLE.mainrep .odd .malbec2 {
-    background: #BDF;
+    background: #CCE2F6;
 }
 TABLE.mainrep .even .malbec2 {
-    background: #ACE;
+    background: #BCD2E6;
 }
 
-/* nebbiolo1 */
+/* nebbiolo1 (Ubuntu 20.04) */
 DIV.nebbiolo1,
 TR.nebbiolo1 TD,
 TABLE.mainrep .nebbiolo1,
 TABLE.mainrep .odd .nebbiolo1 {
-    background: #B8E8F4;
+    background: #CCE2F6;
 }
 TABLE.mainrep .even .nebbiolo1 {
-    background: #A8D8E4;
+    background: #BCD2E6;
 }
 
-/* rex3 */
+/* rex3 (Ubuntu 20.04) */
 DIV.rex3,
 TR.rex3 TD,
 TABLE.mainrep .rex3,
 TABLE.mainrep .odd .rex3 {
-    background: #B8E8F4;
+    background: #CCE2F6;
 }
 TABLE.mainrep .even .rex3 {
-    background: #A8D8E4;
+    background: #BCD2E6;
 }
 
 /* tokay1 */
