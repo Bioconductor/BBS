@@ -292,7 +292,7 @@ compilers shipped with Xcode 12.4 RC (Apple clang version 12.0.0,
 target `arm64-apple-darwin20.1.0`).
 
 Note that the number of reverse dependencies (rev deps) reported in the
-table below for a package includes its direct and indirect deps.
+table below for a package includes its direct and indirect reverse deps.
 
 Table last updated on Jan 25, 2021.
 
