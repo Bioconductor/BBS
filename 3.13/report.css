@@ -82,28 +82,26 @@ TABLE.motd {
  * svn info
  */
 
-DIV.svn_info P {
-    margin: 0px;
-    font-weight: bold;
-    font-style: italic;
-}
 TABLE.svn_info {
     margin-top: 2pt;
     border-spacing: 0px;
     border-collapse: collapse;
 }
-DIV.svn_info TABLE.svn_info {
-    /* margin: auto; */
-    border: solid black 1px;
+DIV.svn_info TABLE.svn_info TD.svn_info {
+    background: #EEFAF2;
+    border: 0px;
+    border-radius: 10px;
+    padding: 10px;
 }
 TABLE.mainrep TABLE.svn_info {
     font-size: smaller;
 }
 TABLE.svn_info TR TD.svn_info {
+    background: #EEFAF2;
+    border: solid black 1px;
     padding: 0px;
     padding-left: 2px;
     padding-right: 2px;
-    background: #EEFAF2;
     text-align: left;
 }
 SPAN.svn_info {
