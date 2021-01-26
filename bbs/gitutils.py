@@ -143,21 +143,33 @@ def collect_git_clone_meta(clone_path, out_path, snapshot_date):
     previous_cwd = os.getcwd()
     os.chdir(clone_path)
 
+    ## Note that using 'capture_output=True' is equivalent to using
+    ## 'stdout=subprocess.PIPE' and 'stderr=subprocess.PIPE'. However
+    ## 'capture_output' was only introduced in Python 3.7 so we'll use
+    ## the latter in the various calls to subprocess.run() below to remain
+    ## compatible with older versions of Python (e.g. Ubuntu 18.04 has
+    ## Python 3.6.9).
+    ## Also 'text=True' is equivalent to 'universal_newlines=True' but
+    ## we use the latter for the same reason.
+
     ## Get remote URL.
     cmd = '%s remote get-url origin' % git_cmd
-    ret = subprocess.run(cmd, capture_output=True, shell=True, text=True)
+    ret = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         shell=True, universal_newlines=True)
     URL = ret.stdout
 
     ## Get branch.
     cmd = '%s rev-parse --abbrev-ref HEAD' % git_cmd
-    ret = subprocess.run(cmd, capture_output=True, shell=True, text=True)
+    ret = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         shell=True, universal_newlines=True)
     Branch = ret.stdout
 
     ## Get Last Commit & Last Changed Date.
     gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
     date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
     cmd = '%s log --max-count=1 --date=%s --format=%s' % (git_cmd, date_format, gitlog_format)
-    ret = subprocess.run(cmd, capture_output=True, shell=True, text=True)
+    ret = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                         shell=True, universal_newlines=True)
     Last_Commit_and_Last_Change_Date = ret.stdout
     os.chdir(previous_cwd)
 
