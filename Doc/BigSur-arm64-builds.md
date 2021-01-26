@@ -5,6 +5,7 @@
 
 - Hostname: taxco
 - OS: Big Sur arm64
+- Type of machine: Mac Mini
 - 8 cores - 16 GB of RAM - 1 TB SSD drive
 
 
@@ -219,9 +220,9 @@ we only perform the INSTALL stage (STAGE2) for now. No MacTeX means that
 we wouldn't be able to build a lot of vignettes if we decided to also run
 the BUILD stage (STAGE3).
 
-The builds are scheduled to run daily. A report will soon be published
+The builds are scheduled to run daily. A new report is published daily
 [here](https://bioconductor.org/checkResults/3.13/taxco/bioc-LATEST/)
-and will get updated automatically every day.
+at the end of each run.
 
 
 ### Some numbers for the record
@@ -255,15 +256,15 @@ and will get updated automatically every day.
 
 Comparison with other builders:
 
-                                              BBS_NB_CPU  Time of
-    Machine    OS                              / nb cpus   STAGE2
-    ---------  -----------------------------  ----------  -------
-    malbec2    Ubuntu 20.04                        11/20    97min
-    rex3       Ubuntu 20.04                        40/80    32min
-    tokay2     Windows Server 2012 R2              16/40  4h16min
-    riesling1  Windows Server 2019                 36/80  1h29min
-    machv2     macOS 10.14.6 Mojave (x86_64)       14/24  1h36min
-    taxco      macOS 11.0.1 Big Sur (arm64)          8/8    54min
+                                              BBS_NB_CPU  Time for
+    Machine    OS                              / nb cpus    STAGE2
+    ---------  -----------------------------  ----------  --------
+    malbec2    Ubuntu 20.04                        11/20     97min
+    rex3       Ubuntu 20.04                        40/80     32min
+    tokay2     Windows Server 2012 R2              16/40   4h16min
+    riesling1  Windows Server 2019                 36/80   1h29min
+    machv2     macOS 10.14.6 Mojave (x86_64)       14/24   1h36min
+    taxco      macOS 11.0.1 Big Sur (arm64)          8/8     54min
 
 Looks good but the comparison is not really fair since on taxco, unlike
 on the other builders, hundreds of packages are currently failing to
@@ -290,8 +291,8 @@ compilers included in Ubuntu 20.04 and in Rtools40, but not with the
 compilers shipped with Xcode 12.4 RC (Apple clang version 12.0.0,
 target `arm64-apple-darwin20.1.0`).
 
-Note that the number of reverse dependencies (rev deps) reported in the table
-below for a package includes its direct and indirect deps.
+Note that the number of reverse dependencies (rev deps) reported in the
+table below for a package includes its direct and indirect deps.
 
 Table last updated on Jan 25, 2021.
 
