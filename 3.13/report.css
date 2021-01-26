@@ -1,5 +1,5 @@
 BODY {
-    background: #f0d0c0;
+    background: #f0d8c8;
     font-family: sans-serif;
     font-size: 11pt;
     color: #2a2a2a;
@@ -72,11 +72,9 @@ TABLE.grid_layout DIV.hscrollable {
 TABLE.motd {
     width: 80%;
     margin: auto;
-    margin-bottom: 6pt;
-    border: solid red 4px;
-    background: white;
-    color: red;
+    margin-bottom: 4pt;
     text-align: center;
+    font-weight: bold;
 }
 
 
@@ -381,10 +379,10 @@ DIV.merida1,
 TR.merida1 TD,
 TABLE.mainrep .merida1,
 TABLE.mainrep .odd .merida1 {
-    background: #DCF;
+    background: #D8CCEE;
 }
 TABLE.mainrep .even .merida1 {
-    background: #CBE;
+    background: #C8BBDD;
 }
 
 /* machv2 */
@@ -392,9 +390,9 @@ DIV.machv2,
 TR.machv2 TD,
 TABLE.mainrep .machv2,
 TABLE.mainrep .odd .machv2 {
-    background: #DCF;
+    background: #D8CCEE;
 }
 TABLE.mainrep .even .machv2 {
-    background: #CBE;
+    background: #C8BBDD;
 }
 
