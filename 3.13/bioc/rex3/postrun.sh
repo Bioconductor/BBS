@@ -28,12 +28,13 @@ PROPAGATE_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATE_STATUS_DB.txt
 INTERNAL_REPOS=/home/biocadmin/PACKAGES/$BBS_BIOC_VERSIONED_REPO_PATH/
 $BBS_RSCRIPT_CMD --vanilla -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'bioc', '$INTERNAL_REPOS')"
 
-# Generate and publish HTML report
+# Generate the HTML report
 $BBS_PYTHON_CMD $BBS_HOME/BBS-report.py
 REPORT_DIRNAME=$(/usr/bin/dirname "$BBS_REPORT_PATH")
 REPORT_BASENAME=$(/usr/bin/basename "$BBS_REPORT_PATH")
 cd "$REPORT_DIRNAME"
-/bin/tar zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
+$BBS_TAR_CMD zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
 /bin/mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"
-# No more --delete here, too dangerous!
-/usr/bin/rsync -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_PUBLISHED_REPORT_DEST_DIR/"
+
+# Publish it (no more --delete here, too dangerous!)
+$BBS_RSYNC_CMD -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_PUBLISHED_REPORT_DEST_DIR/"
