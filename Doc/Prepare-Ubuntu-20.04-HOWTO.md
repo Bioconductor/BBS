@@ -1321,7 +1321,7 @@ Then add the following entries to biocbuild's crontab:
     30 10 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
     # postrun (this should start AFTER builds are finished on all nodes):
-    45 16 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 17 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 
 ### 5.5 Long Tests builds
