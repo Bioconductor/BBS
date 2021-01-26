@@ -226,10 +226,10 @@ TABLE.summary TD {
  */
 
 TABLE.big_letter {
+    border: solid black 1px;
     font-weight: bold;
     font-size: 16pt;
     padding: 3px;
-    background: #FFCC00;
 }
 
 TABLE.abc_dispatcher {
@@ -240,9 +240,9 @@ TABLE.abc_dispatcher {
 }
 
 TABLE.abc_dispatcher TD {
+    background: #EEE;
     width: 22px;
     text-align: center;
-    background: #FFCC00;
 }
 
 
