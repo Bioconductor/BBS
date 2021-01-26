@@ -937,11 +937,12 @@ def make_LeafReport(leafreport_ref, allpkgs):
     if os.path.exists('Renviron.bioc'):
         out.write('<DIV style="padding: 4px;">\n')
         out.write('<TABLE class="motd"><TR><TD>\n')
-        out.write('To the developers/maintainers of the <B>%s</B> package: ' % pkg)
+        out.write('To the developers/maintainers ')
+        out.write('of the %s package:<BR>' % pkg)
         out.write('Please make sure to use the ')
         out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
-        out.write('in order to reproduce any error or warning ')
-        out.write('you see on this page.\n')
+        out.write('in order to reproduce any error ')
+        out.write('or warning you see on this page.\n')
         out.write('</TD></TR></TABLE>\n')
         out.write('</DIV>\n')
 
