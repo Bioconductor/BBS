@@ -387,7 +387,8 @@ For BioC packages:
                          libfribidi-dev \
                          infernal \
                          fuse \
-                         libfuse-dev
+                         libfuse-dev \
+                         kallisto
 
 Notes:
 - `graphviz` and `libgraphviz-dev` are for Rgraphviz.
@@ -404,6 +405,7 @@ Notes:
   EnhancedVolcano indirectly depends on via ragg and ggrastr.
 - `infernal` is for inferrnal.
 - `fuse` and `libfuse-dev` are for Travel.
+- `kallisto` is for rkal.
 
 
 ### 1.7 Install Python 3 modules
