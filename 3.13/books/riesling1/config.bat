@@ -14,9 +14,10 @@ set BBS_NB_CPU=7
 
 set BBS_STAGE2_MODE=multiarch
 
-set BBS_CENTRAL_RHOST=malbec2.bioconductor.org
-set BBS_MEAT0_RHOST=malbec2.bioconductor.org
-set BBS_GITLOG_RHOST=malbec2.bioconductor.org
+@rem riesling1 does know how to resolve malbec2 so we use its IP address
+set BBS_CENTRAL_RHOST=172.29.0.4
+set BBS_MEAT0_RHOST=172.29.0.4
+set BBS_GITLOG_RHOST=172.29.0.4
 
 
 
