@@ -37,7 +37,7 @@ cd "$wd0"
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
 
-export BBS_REPORT_NODES="rex3"
+export BBS_REPORT_NODES="rex3 riesling1 machv2"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
