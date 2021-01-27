@@ -98,7 +98,7 @@ TABLE.mainrep TABLE.svn_info {
 }
 TABLE.svn_info TR TD.svn_info {
     background: #EEFAF2;
-    border: solid black 1px;
+    border: solid #CED 1px;
     padding: 0px;
     padding-left: 2px;
     padding-right: 2px;
