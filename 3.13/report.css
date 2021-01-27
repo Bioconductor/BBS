@@ -311,10 +311,10 @@ DIV.malbec2,
 TR.malbec2 TD,
 TABLE.mainrep .malbec2,
 TABLE.mainrep .odd .malbec2 {
-    background: #D2E4F8;
+    background: #DAECFA;
 }
 TABLE.mainrep .even .malbec2 {
-    background: #C2D4E8;
+    background: #CADCEA;
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
@@ -322,10 +322,10 @@ DIV.nebbiolo1,
 TR.nebbiolo1 TD,
 TABLE.mainrep .nebbiolo1,
 TABLE.mainrep .odd .nebbiolo1 {
-    background: #D2E4F8;
+    background: #DAECFA;
 }
 TABLE.mainrep .even .nebbiolo1 {
-    background: #C2D4E8;
+    background: #CADCEA;
 }
 
 /* rex3 (Ubuntu 20.04) */
@@ -333,10 +333,10 @@ DIV.rex3,
 TR.rex3 TD,
 TABLE.mainrep .rex3,
 TABLE.mainrep .odd .rex3 {
-    background: #D2E4F8;
+    background: #DAECFA;
 }
 TABLE.mainrep .even .rex3 {
-    background: #C2D4E8;
+    background: #CADCEA;
 }
 
 /* tokay1 */
@@ -366,10 +366,10 @@ DIV.riesling1,
 TR.riesling1 TD,
 TABLE.mainrep .riesling1,
 TABLE.mainrep .odd .riesling1 {
-    background: #F4E8D8;
+    background: #F4EFDF;
 }
 TABLE.mainrep .even .riesling1 {
-    background: #E4D8C8;
+    background: #E4DFCF;
 }
 
 /* merida1 */
@@ -388,9 +388,9 @@ DIV.machv2,
 TR.machv2 TD,
 TABLE.mainrep .machv2,
 TABLE.mainrep .odd .machv2 {
-    background: #E4DDEE;
+    background: #E4DFEE;
 }
 TABLE.mainrep .even .machv2 {
-    background: #D4CCDD;
+    background: #D4CFDD;
 }
 
