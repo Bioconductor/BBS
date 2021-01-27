@@ -90,7 +90,7 @@ TABLE.svn_info {
 DIV.svn_info TABLE.svn_info TD.svn_info {
     background: #EEFAF2;
     border: 0px;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 8px;
 }
 TABLE.mainrep TABLE.svn_info {
