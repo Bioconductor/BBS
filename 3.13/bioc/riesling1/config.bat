@@ -17,10 +17,10 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
-@rem riesling1 does know how to resolve malbec2 so we use its IP address
-set BBS_CENTRAL_RHOST=172.29.0.4
-set BBS_MEAT0_RHOST=172.29.0.4
-set BBS_GITLOG_RHOST=172.29.0.4
+@rem rex3 is not in the DNS so we use its IP address
+set BBS_CENTRAL_RHOST=155.52.173.35
+set BBS_MEAT0_RHOST=155.52.173.35
+set BBS_GITLOG_RHOST=155.52.173.35
 
 
 
