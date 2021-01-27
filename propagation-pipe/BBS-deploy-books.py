@@ -17,17 +17,29 @@ def _deploy_book(pkg, version, destdir):
     srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
     tar = tarfile.open(srcpkg_file)
     tar.extractall()
-    docs_path = os.path.join(pkg, 'vignettes', 'book', 'docs')
-    if not os.path.isdir(docs_path):
-        errmsg = 'directory \'%s\' not found in %s' % \
-                 (docs_path, srcpkg_file)
-        raise Exception(errmsg)
-    book_localroot = os.path.join(pkg, 'vignettes', 'book', pkg)
-    if os.path.exists(book_localroot):
-        shutil.rmtree(book_localroot, ignore_errors=True)
-    os.rename(docs_path, book_localroot)
-    cmd = "rsync --delete -q -ave ssh %s %s" % (book_localroot, destdir)
+
+    ## First we try to propagate the content of 'inst/doc/book/'.
+    ## If the package source tarball doesn't contain this folder, then
+    ## we try to deploy the content of 'vignettes/book/docs/' instead.
+    content_path = os.path.join(pkg, 'inst', 'doc', 'book')
+    if not os.path.isdir(content_path):
+        content_path2 = os.path.join(pkg, 'vignettes', 'book', 'docs')
+        if not os.path.isdir(content_path2):
+            errmsg = '%s has no \'%s\' or \'%s\' folder' % \
+                     (srcpkg_file, content_path, content_path2)
+            raise Exception(errmsg)
+        print('(tarball has no \'%s\' folder, deploying \'%s\' instead) ...' % \
+              (content_path, content_path2), end=' ')
+        content_path = content_path2
+
+    ## Deploy book content.
+    tmp_path = os.path.join(pkg, pkg)
+    if os.path.exists(tmp_path):
+        shutil.rmtree(tmp_path, ignore_errors=True)
+    os.rename(content_path, tmp_path)
+    cmd = "rsync --delete -q -ave ssh %s %s" % (tmp_path, destdir)
     bbs.jobs.call(cmd, check=True)
+
     shutil.rmtree(pkg, ignore_errors=True)
     print('OK')
     sys.stdout.flush()
