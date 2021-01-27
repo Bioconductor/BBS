@@ -10,17 +10,17 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import bbs.parse
 import bbs.jobs
 
-def _deploy_book(pkg, version, destdir):
-    book_destroot = os.path.join(destdir, pkg)
-    print('Deploying %s book at \'%s/\' ...' % (pkg, book_destroot), end=' ')
+def _deploy_book(pkg, version, dest_dir):
+    dest_subdir = os.path.join(dest_dir, pkg)
+    print('Deploying %s book at \'%s/\' ...' % (pkg, dest_subdir), end=' ')
     sys.stdout.flush()
     srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
     tar = tarfile.open(srcpkg_file)
     tar.extractall()
 
-    ## First we try to propagate the content of 'inst/doc/book/'.
-    ## If the package source tarball doesn't contain this folder, then
-    ## we try to deploy the content of 'vignettes/book/docs/' instead.
+    ## First we try to deploy the content of 'inst/doc/book/'. If the
+    ## book tarball doesn't contain this folder, then we try to deploy
+    ## the content of 'vignettes/book/docs/' instead.
     content_path = os.path.join(pkg, 'inst', 'doc', 'book')
     if not os.path.isdir(content_path):
         content_path2 = os.path.join(pkg, 'vignettes', 'book', 'docs')
@@ -37,7 +37,7 @@ def _deploy_book(pkg, version, destdir):
     if os.path.exists(tmp_path):
         shutil.rmtree(tmp_path, ignore_errors=True)
     os.rename(content_path, tmp_path)
-    cmd = "rsync --delete -q -ave ssh %s %s" % (tmp_path, destdir)
+    cmd = "rsync --delete -q -ave ssh %s %s" % (tmp_path, dest_dir)
     bbs.jobs.call(cmd, check=True)
 
     shutil.rmtree(pkg, ignore_errors=True)
@@ -47,11 +47,11 @@ def _deploy_book(pkg, version, destdir):
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        sys.exit('Usage: BBS-deploy-books.py <destdir>')
-    destdir = sys.argv[1]
+        sys.exit('Usage: BBS-deploy-books.py <dest_dir>')
+    dest_dir = sys.argv[1]
     PACKAGES = bbs.parse.parse_DCF('PACKAGES')
     for dcf_record in PACKAGES:
         pkg = dcf_record['Package']
         version = dcf_record['Version']
-        _deploy_book(pkg, version, destdir)
+        _deploy_book(pkg, version, dest_dir)
 
