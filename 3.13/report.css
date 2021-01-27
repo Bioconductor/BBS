@@ -91,7 +91,7 @@ DIV.svn_info TABLE.svn_info TD.svn_info {
     background: #EEFAF2;
     border: 0px;
     border-radius: 10px;
-    padding: 10px;
+    padding: 8px;
 }
 TABLE.mainrep TABLE.svn_info {
     font-size: smaller;
