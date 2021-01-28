@@ -3,7 +3,7 @@ BODY {
     padding: 10px;
     font-family: sans-serif;
     font-size: 11pt;
-    color: #2a2a2a;
+    color: #555;
 }
 
 H1 {
@@ -98,14 +98,14 @@ DIV.svn_info TABLE.svn_info TD.svn_info {
 }
 TABLE.svn_info TR TD.svn_info {
     background: #EEFAF2;
-    border: solid #CED 1px;
+    border: 1px solid #CED;
     padding: 0px;
     padding-left: 2px;
     padding-right: 2px;
     text-align: left;
 }
 SPAN.svn_info {
-    color: #800;
+    color: #B44;
 }
 DIV.svn_info SPAN.svn_info {
     font-weight: bold;
@@ -117,19 +117,20 @@ DIV.svn_info SPAN.svn_info {
  */
 
 TABLE.node_specs {
+    border-collapse: collapse;
     margin-left: auto;
     margin-right: auto;
-    border: solid black 1px;
-    font-size: smaller;
-}
-TABLE.node_specs TH {
     text-align: left;
-    vertical-align: top;
-    font-style: italic;
     font-size: smaller;
 }
-TABLE.node_specs TD.spec {
-    border: solid black 1px;
+
+TABLE.node_specs TH,
+TABLE.node_specs TD {
+    border: 1px solid #555;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 
@@ -186,7 +187,7 @@ TABLE.scard_list {
 }
 
 TABLE.scard_list TD {
-    /*border: solid black 1px;*/
+    /*border: 1px solid black;*/
     padding-left: 6px;
     padding-top: 2px;
     padding-bottom: 2px;
@@ -290,10 +291,15 @@ TR.scard.header {
 }
 TR.scard.header TD {
     /*background: #F6F6F6;*/
-    color: #AAA;
+    color: #999;
 }
 TR.compact.scard {
     height: 24px;
+}
+TR.compact.scard TD.row_number {
+    color: #999;
+    text-align: right;
+    padding-right: 4px;
 }
 TR.compact.scard.even_row TD {
     background: #EEE;
@@ -302,31 +308,31 @@ TR.compact.scard.even_row TD {
 TR.scard.header TD.top_left_corner {
     background: white;
     border-left: 0px;
-    width: 20px;
-    border-top-left-radius: 12px;
+    width: 14px;
+    border-top-left-radius: 10px;
 }
 TR.scard.header TD.top_right_corner {
-    width: 20px;
-    border-top-right-radius: 12px;
+    width: 14px;
+    border-top-right-radius: 10px;
 }
 TR.scard TD.bottom_left_corner {
     border-left: 0px;
-    border-bottom-left-radius: 12px;
+    border-bottom-left-radius: 10px;
 }
 TR.scard TD.bottom_right_corner {
-    border-bottom-right-radius: 12px;
+    border-bottom-right-radius: 10px;
 }
 
 TR.scard TD.left_border {
     border-left: 0px;
 }
 TR.compact.scard TD.left_border {
-    width: 20px;
+    width: 28px;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
 TR.compact.scard TD.right_border {
-    width: 20px;
+    width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }
@@ -336,8 +342,12 @@ TR.compact.scard TD.right_border {
  * ABC dispatcher
  */
 
+TABLE.scard_list TR.abc TD {
+    padding: 0px;
+}
+
 TABLE.big_letter {
-    border: solid black 1px;
+    border: 1px solid black;
     font-weight: bold;
     font-size: 16pt;
     padding: 3px;

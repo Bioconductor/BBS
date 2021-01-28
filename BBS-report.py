@@ -264,13 +264,13 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
             out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
             out.write(' (Bad DESCRIPTION file)</TD>')
         else:
-            out.write('<TD COLSPAN="%s" class="%s"><I>' % \
+            out.write('<TD COLSPAN="%s" class="%s"><B>' % \
                      (BBSreportutils.ncol_to_display(subbuilds), \
                       node.hostname.replace(".", "_")) )
             sep = '...'
             NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
             out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
-            out.write('</I></TD>')
+            out.write('</B></TD>')
     return
 
 def write_abc_dispatcher(out, href="", current_letter=None,
@@ -292,16 +292,16 @@ def write_abc_dispatcher(out, href="", current_letter=None,
 def write_pkg_index_as2fullTRs(out, current_letter):
     ## FH: Need the abc class to blend out the alphabetical selection when
     ## "ok" packages are unselected.
-    writeThinRowSeparator_asTR(out, "abc")
+    writeThinRowSeparator_asTR(out, "row_separator abc")
     out.write('<TR class="abc">')
-    out.write('<TD>')
+    out.write('<TD COLSPAN="2">')
     out.write('<TABLE class="big_letter"><TR><TD>')
     out.write('<A name="%s">%s</A>' % \
               (current_letter, current_letter))
     out.write('</TD></TR></TABLE>')
     out.write('</TD>')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 4
-    out.write('<TD COLSPAN="%s" style="background: inherit;">' % colspan)
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
+    out.write('<TD COLSPAN="%s">' % colspan)
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
     out.write('</TR>\n')
@@ -330,7 +330,7 @@ def write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     out.write('<TR class="scard header %s">' % pkg_status_classes)
     out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
-    out.write('<TD style="text-align: left">Hostname</TD>')
+    out.write('<TD>Hostname</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD class="top_right_corner"></TD>')
@@ -381,7 +381,7 @@ def write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
             is_first = False
-        write_node_spec_asTD(out, node, '<I>%s</I>' % node.node_id)
+        write_node_spec_asTD(out, node, '<B>%s</B>' % node.node_id)
         write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node))
         #if leafreport_ref == None:
         #    style = None
@@ -433,7 +433,7 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
             out.write('<TD class="bottom_left_corner"></TD>')
         else:
             out.write('<TD class="left_border"></TD>')
-        node_id_html = '<I>%s</I>' % node.node_id
+        node_id_html = '<B>%s</B>' % node.node_id
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.node_id
             node_id_html = '<A href="%s">%s</A>' % (node_index_file, node_id_html)
@@ -492,15 +492,14 @@ def write_scard_list(out, allpkgs, leafreport_ref=None):
 ### Compact scards (used for the node-specific reports).
 ##############################################################################
 
-### Produces on full TR.
-def write_compactreport_header_asfullTR(out):
+### Produces one full TR.
+def write_compact_scard_header(out):
     ## Using the abc class here too to blend out the alphabetical selection +
     ## this header when "ok" packages are unselected.
     out.write('<TR class="header abc">')
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
-    out.write('<TD>Maintainer</TD>')
-    out.write('<TD></TD>')
+    out.write('<TD COLSPAN="2">Maintainer</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD></TD>')
     out.write('</TR>\n')
@@ -518,7 +517,7 @@ def write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     else:
         classes += ' ' + statuses2classes(statuses)
     out.write('<TR class="compact scard %s">' % classes)
-    out.write('<TD class="left_border"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
+    out.write('<TD class="left_border row_number"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>')
     if statuses:
         dcf_record = meat_index[pkg]
@@ -537,8 +536,7 @@ def write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
         strike_close = ""
     out.write('%s<B>%s</B>%s&nbsp;<B>%s</B>' % (strike, pkgname_to_HTML(pkg), strike_close, version))
     out.write('</TD>')
-    out.write('<TD>%s</TD>' % maintainer)
-    out.write('<TD></TD>')
+    out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
     write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
     out.write('<TD class="right_border"></TD>')
     out.write('</TR>\n')
@@ -555,7 +553,7 @@ def write_compact_scard_list(out, node, allpkgs, leafreport_ref=None):
         writeThinRowSeparator_asTR(out)
         writeThinRowSeparator_asTR(out)
         if no_alphabet_dispatch:
-            write_compactreport_header_asfullTR(out)
+            write_compact_scard_header(out)
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
@@ -565,7 +563,7 @@ def write_compact_scard_list(out, node, allpkgs, leafreport_ref=None):
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
                 write_pkg_index_as2fullTRs(out, current_letter)
-                write_compactreport_header_asfullTR(out)
+                write_compact_scard_header(out)
         if full_table or pkg == leafreport_ref.pkg:
             write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TABLE>\n')
@@ -1333,12 +1331,12 @@ def write_node_specs_table(out):
         Rversion_html = read_Rversion(Node_rdir)
         Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
         out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
-        out.write('<TD><B><A href="%s"><I>%s</I></A></B></TD>' % (NodeInfo_page_path, node.node_id))
+        out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (NodeInfo_page_path, node.node_id))
         out.write('<TD>%s</TD>' % node.os_html)
         out.write('<TD>%s</TD>' % node.arch)
         out.write('<TD>%s</TD>' % node.platform)
-        out.write('<TD class="spec">%s</TD>' % Rversion_html)
-        out.write('<TD class="spec" style="text-align: right;">')
+        out.write('<TD>%s</TD>' % Rversion_html)
+        out.write('<TD style="text-align: right;">')
         out.write('<A href="%s">%s</A>' % Rinstpkgs_strings)
         out.write('</TD>')
         out.write('</TR>\n')
