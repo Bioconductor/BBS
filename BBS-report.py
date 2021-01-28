@@ -173,7 +173,7 @@ def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
 
 
 ##############################################################################
-### leaf-report and mainrep tables
+### leaf-report and status cards (scard)
 ##############################################################################
 
 def nodeOSArch_asSPAN(node):
@@ -308,30 +308,26 @@ def write_pkg_index_as2fullTRs(out, current_letter):
     return
 
 def statuses2classes(statuses):
-    classes = ""
+    classes = []
     if "TIMEOUT" in statuses:
-        classes += " timeout"  # string concatenation
+        classes.append("timeout")
     if "ERROR" in statuses:
-        classes += " error"
+        classes.append("error")
     if "WARNINGS" in statuses:
-        classes += " warnings"
+        classes.append("warnings")
     ## A package is tagged with the "ok" class if it's not tagged with any of
     ## the "timeout", "error" or "warnings". Note that this means that
     ## a package could end up being tagged with the "ok" class even if it
     ## doesn't have any OK in 'statuses' (e.g. if it's unsupported on all
     ## platforms).
-    if classes == "":
-        classes = " ok"
-    return classes
+    if len(classes) == 0:
+        classes = ["ok"]
+    return ' '.join(classes)
 
-### A standard mini card spans several table rows (TRs).
-def write_minicard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
-    statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
-    if pkg in skipped_pkgs:
-        extra_TRclasses = ' error'
-    else:
-        extra_TRclasses = statuses2classes(statuses)
-    out.write('<TR class="minicard header%s">' % extra_TRclasses)
+### A non-compact scard spans several table rows (TRs).
+def write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+                pkg_statuses, pkg_status_classes):
+    out.write('<TR class="scard header %s">' % pkg_status_classes)
     out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left">Hostname</TD>')
@@ -346,10 +342,10 @@ def write_minicard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
-        all_TRclasses = 'minicard'
+        all_TRclasses = 'scard'
         if leafreport_ref != None and node.node_id == leafreport_ref.node_id:
             all_TRclasses += ' selected_row'
-        all_TRclasses += extra_TRclasses
+        all_TRclasses += ' ' + pkg_status_classes
         out.write('<TR class="%s">' % all_TRclasses)
         if is_last:
             out.write('<TD class="bottom_left_corner"></TD>')
@@ -357,7 +353,7 @@ def write_minicard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             out.write('<TD class="left_border"></TD>')
         if is_first:
             pkgname_html = pkgname_to_HTML(pkg)
-            if statuses:
+            if pkg_statuses:
                 dcf_record = meat_index[pkg]
                 version = dcf_record['Version']
                 maintainer = dcf_record['Maintainer']
@@ -460,15 +456,14 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
         out.write('</TR>\n')
     return
 
-### When leafreport_ref is specified, then the mini table for this leaf-report
-### only is generated.
-def write_mainreport_asTABLE(out, allpkgs, leafreport_ref=None):
+### When leafreport_ref is specified, then a list of 1 scard is generated.
+def write_scard_list(out, allpkgs, leafreport_ref=None):
     full_table = not leafreport_ref
     nb_pkgs = len(allpkgs)
-    out.write('<TABLE class="mainrep">\n')
+    out.write('<TABLE class="scard_list">\n')
     if full_table:
         write_summary_asfullTRs(out, nb_pkgs)
-        writeThinRowSeparator_asTR(out, "minicard_separator")
+        writeThinRowSeparator_asTR(out, "row_separator")
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
@@ -478,16 +473,23 @@ def write_mainreport_asTABLE(out, allpkgs, leafreport_ref=None):
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
                 write_pkg_index_as2fullTRs(out, current_letter)
-        if full_table:
-            writeThinRowSeparator_asTR(out, "minicard_separator")
         if full_table or pkg == leafreport_ref.pkg:
-            write_minicard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref)
+            pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
+            if pkg in skipped_pkgs:
+                pkg_status_classes = 'error'
+            else:
+                pkg_status_classes = statuses2classes(pkg_statuses)
+            if full_table:
+                writeThinRowSeparator_asTR(out, "row_separator %s" % \
+                                                pkg_status_classes)
+            write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+                        pkg_statuses, pkg_status_classes)
     out.write('</TABLE>\n')
     return
 
 
 ##############################################################################
-### Compact report (the compact layout is used for the node-specific reports).
+### Compact scards (used for the node-specific reports).
 ##############################################################################
 
 ### Produces on full TR.
@@ -496,16 +498,16 @@ def write_compactreport_header_asfullTR(out):
     ## this header when "ok" packages are unselected.
     out.write('<TR class="header abc">')
     out.write('<TD></TD>')
-    out.write('<TD style="width: 50px;"></TD>')
-    out.write('<TD style="text-align: left;">Package</TD>')
-    out.write('<TD style="text-align: left;">Maintainer</TD>')
+    out.write('<TD>Package</TD>')
+    out.write('<TD>Maintainer</TD>')
+    out.write('<TD></TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD></TD>')
     out.write('</TR>\n')
     return
 
 ### Produces one full TR.
-def write_compact_minicard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
+def write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     if pkg_pos % 2 == 0 and not leafreport_ref:
         classes = "even_row"
     else:
@@ -514,12 +516,10 @@ def write_compact_minicard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     if pkg in skipped_pkgs:
         classes += ' error'
     else:
-        classes += statuses2classes(statuses)
-    out.write('<TR class="compact minicard %s">' % classes)
-    out.write('<TD class="left_border"></TD>')
-    out.write('<TD class="header" style="text-align: right;"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
-    out.write('<TD style="text-align: left;">')
-
+        classes += ' ' + statuses2classes(statuses)
+    out.write('<TR class="compact scard %s">' % classes)
+    out.write('<TD class="left_border"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
+    out.write('<TD>')
     if statuses:
         dcf_record = meat_index[pkg]
         version = dcf_record['Version']
@@ -537,18 +537,19 @@ def write_compact_minicard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
         strike_close = ""
     out.write('%s<B>%s</B>%s&nbsp;<B>%s</B>' % (strike, pkgname_to_HTML(pkg), strike_close, version))
     out.write('</TD>')
-    out.write('<TD style="text-align: left">%s</TD>' % maintainer)
+    out.write('<TD>%s</TD>' % maintainer)
+    out.write('<TD></TD>')
     write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
     out.write('<TD class="right_border"></TD>')
     out.write('</TR>\n')
     return
 
-### Same as write_mainreport_asTABLE(), but can be used to display results
+### Same as write_scard_list(), but can be used to display results
 ### for a single node with a more compact layout.
-def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
+def write_compact_scard_list(out, node, allpkgs, leafreport_ref=None):
     full_table = not leafreport_ref
     nb_pkgs = len(allpkgs)
-    out.write('<TABLE class="compact mainrep">\n')
+    out.write('<TABLE class="compact scard_list">\n')
     if full_table:
         write_summary_asfullTRs(out, nb_pkgs, node.node_id)
         writeThinRowSeparator_asTR(out)
@@ -566,7 +567,7 @@ def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
                 write_pkg_index_as2fullTRs(out, current_letter)
                 write_compactreport_header_asfullTR(out)
         if full_table or pkg == leafreport_ref.pkg:
-            write_compact_minicard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
+            write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TABLE>\n')
     return
 
@@ -645,7 +646,7 @@ def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
     out.write('</P>\n')
     write_motd_asTABLE(out)
 
-    write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
+    write_scard_list(out, allpkgs, leafreport_ref)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -975,11 +976,11 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('</TD></TR></TABLE>\n')
         out.write('</DIV>\n')
 
-    write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
+    write_scard_list(out, allpkgs, leafreport_ref)
     #if len(BBSreportutils.NODES) != 1:
-    #    write_mainreport_asTABLE(out, allpkgs, leafreport_ref)
+    #    write_scard_list(out, allpkgs, leafreport_ref)
     #else:
-    #    write_compactreport_asTABLE(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
+    #    write_compact_scard_list(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
@@ -1544,7 +1545,7 @@ def write_node_report(node, allpkgs):
 
     write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
-    write_compactreport_asTABLE(out, node, allpkgs)
+    write_compact_scard_list(out, node, allpkgs)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -1574,9 +1575,9 @@ def write_mainpage_asHTML(out, allpkgs):
     write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
     if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
-        write_mainreport_asTABLE(out, allpkgs)
+        write_scard_list(out, allpkgs)
     else:
-        write_compactreport_asTABLE(out, BBSreportutils.NODES[0], allpkgs)
+        write_compact_scard_list(out, BBSreportutils.NODES[0], allpkgs)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     return
