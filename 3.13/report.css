@@ -174,28 +174,72 @@ SPAN.skipped, SPAN.NA {
     font-weight: bold;
 }
 
+
+/****************************************************************************
+ * Main table (the big one)
+ */
+
+TABLE.mainrep {
+    width: 100%;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+TR.minicard_separator TD {
+    height: 5px;
+}
+
+TR.header TD {
+    font-style: italic;
+    font-size: smaller;
+}
+
+TR.header TD.STAGE {
+    padding: 0px;
+    text-align: center;
+    width: 120px;
+}
+TABLE.mainrep TD.status {
+    padding: 0px;
+    text-align: center;
+}
+
+TABLE.mainrep TR.selected_row {
+    font-weight: bold;
+}
+
+
+/****************************************************************************
+ * SUMMARY
+ */
+
+TABLE.SUMMARY TD.SUMMARY {
+    padding: 0px;
+    text-align: center;
+}
+
 .TIMEOUT,
-TABLE.summary TD.summary.TIMEOUT {
+TABLE.SUMMARY TD.SUMMARY.TIMEOUT {
     background: #A08;
 }
 .ERROR,
-TABLE.summary TD.summary.ERROR {
+TABLE.SUMMARY TD.SUMMARY.ERROR {
     background: #B33;
 }
 .WARNINGS,
-TABLE.summary TD.summary.WARNINGS {
+TABLE.SUMMARY TD.SUMMARY.WARNINGS {
     background: #D82;
 }
 .OK,
-TABLE.summary TD.summary.OK {
+TABLE.SUMMARY TD.SUMMARY.OK {
     background: #282;
 }
 .NotNeeded,
-TABLE.summary TD.summary.NotNeeded {
+TABLE.SUMMARY TD.SUMMARY.NotNeeded {
     background: #69C;
 }
 .NA,
-TABLE.summary TD.summary.NA {
+TABLE.SUMMARY TD.SUMMARY.NA {
     background: #8AA;
 }
 P.noresult {
@@ -206,16 +250,71 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-TABLE.summary {
+TABLE.SUMMARY {
     margin: auto;
     border-collapse: collapse;
     border-spacing: 0px;
     color: white;
 }
-TABLE.summary TD {
+TABLE.SUMMARY TD {
     width: 32px;
     padding: 0px;
     text-align: center;
+}
+
+
+/****************************************************************************
+ * Mini cards
+ */
+
+TABLE.mainrep TD {
+    /*border: solid black 1px;*/
+    padding-left: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+TR.minicard TD {
+    background: white;
+}
+TR.minicard.header {
+    height: 20px;
+}
+TR.minicard.header TD {
+    /*background: #F6F6F6;*/
+    color: #666;
+}
+TR.compact.minicard {
+    height: 24px;
+}
+TR.compact.minicard.even_row TD {
+    background: #EEE;
+}
+
+TR.minicard.header TD.top_left_corner {
+    background: white;
+    width: 20px;
+    border-top-left-radius: 16px;
+}
+TR.minicard.header TD.top_right_corner {
+    width: 20px;
+    border-top-right-radius: 16px;
+}
+TR.minicard TD.bottom_left_corner {
+    border-bottom-left-radius: 16px;
+}
+TR.minicard TD.bottom_right_corner {
+    border-bottom-right-radius: 16px;
+}
+
+TR.compact.minicard TD.left_border {
+    width: 20px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+TR.compact.minicard TD.right_border {
+    width: 20px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 
@@ -245,152 +344,96 @@ TABLE.abc_dispatcher TD {
 
 
 /****************************************************************************
- * Main table (the big one)
- */
-
-TABLE.mainrep {
-    width: 100%;
-    border-spacing: 0px;
-    border-collapse: collapse;
-}
-
-TABLE.mainrep TD {
-    padding: 0px;
-}
-TABLE.mainrep .node {
-    text-align: center;
-}
-TABLE.mainrep .stage {
-    width: 120px;
-}
-
-TABLE.mainrep TR.header TD,
-TABLE.mainrep TD.header {
-    /* border-top: solid black 1px; */
-    background: inherit;
-    font-style: italic;
-    font-size: smaller;
-}
-TABLE.mainrep TR.current,
-TABLE.mainrep TD.current {
-    font-weight: bold;
-}
-
-TABLE.mainrep TD.status {
-    /* border: inset 1pt; */
-    text-align: center;
-}
-
-TABLE.mainrep .odd TH,
-TABLE.mainrep .odd TD {
-    background: #FFF;
-}
-TABLE.mainrep .even TH,
-TABLE.mainrep .even TD {
-    background: #EEE;
-}
-
-
-/****************************************************************************
  * Node specific background colors
  */
 
 /* malbec1 (Ubuntu 18.04) */
 DIV.malbec1,
-TR.malbec1 TD,
-TABLE.mainrep .malbec1,
-TABLE.mainrep .odd .malbec1 {
+TR.malbec1,
+TR.minicard TD.malbec1 {
     background: #BDF;
 }
-TABLE.mainrep .even .malbec1 {
+TR.compact.minicard.even_row TD.malbec1 {
     background: #ACE;
 }
 
 /* malbec2 (Ubuntu 20.04) */
 DIV.malbec2,
-TR.malbec2 TD,
-TABLE.mainrep .malbec2,
-TABLE.mainrep .odd .malbec2 {
+TR.malbec2,
+TR.minicard TD.malbec2 {
     background: #DAECFA;
 }
-TABLE.mainrep .even .malbec2 {
+TR.compact.minicard.even_row TD.malbec2 {
     background: #CADCEA;
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
 DIV.nebbiolo1,
-TR.nebbiolo1 TD,
-TABLE.mainrep .nebbiolo1,
-TABLE.mainrep .odd .nebbiolo1 {
+TR.nebbiolo1,
+TR.minicard TD.nebbiolo1 {
     background: #DAECFA;
 }
-TABLE.mainrep .even .nebbiolo1 {
+TR.compact.minicard.even_row TD.nebbiolo1 {
     background: #CADCEA;
 }
 
 /* rex3 (Ubuntu 20.04) */
 DIV.rex3,
-TR.rex3 TD,
-TABLE.mainrep .rex3,
-TABLE.mainrep .odd .rex3 {
+TR.rex3,
+TR.minicard TD.rex3 {
     background: #DAECFA;
 }
-TABLE.mainrep .even .rex3 {
+TR.compact.minicard.even_row TD.rex3 {
     background: #CADCEA;
 }
 
 /* tokay1 */
 DIV.tokay1,
-TR.tokay1 TD,
-TABLE.mainrep .tokay1,
-TABLE.mainrep .odd .tokay1 {
+TR.tokay1,
+TR.minicard TD.tokay1 {
     background: #EDC;
 }
-TABLE.mainrep .even .tokay1 {
+TR.compact.minicard.even_row TD.tokay1 {
     background: #DCB;
 }
 
 /* tokay2 */
 DIV.tokay2,
-TR.tokay2 TD,
-TABLE.mainrep .tokay2,
-TABLE.mainrep .odd .tokay2 {
+TR.tokay2,
+TR.minicard TD.tokay2 {
     background: #EEE4CC;
 }
-TABLE.mainrep .even .tokay2 {
+TR.compact.minicard.even_row TD.tokay2 {
     background: #DDD3BB;
 }
 
 /* riesling1 */
 DIV.riesling1,
-TR.riesling1 TD,
-TABLE.mainrep .riesling1,
-TABLE.mainrep .odd .riesling1 {
+TR.riesling1,
+TR.minicard TD.riesling1 {
     background: #F4EFDF;
 }
-TABLE.mainrep .even .riesling1 {
+TR.compact.minicard.even_row TD.riesling1 {
     background: #E4DFCF;
 }
 
 /* merida1 */
 DIV.merida1,
-TR.merida1 TD,
-TABLE.mainrep .merida1,
-TABLE.mainrep .odd .merida1 {
+TR.merida1,
+TR.minicard TD.merida1 {
     background: #D8CCEE;
 }
-TABLE.mainrep .even .merida1 {
+TR.compact.minicard.even_row TD.merida1 {
     background: #C8BBDD;
 }
 
 /* machv2 */
 DIV.machv2,
-TR.machv2 TD,
-TABLE.mainrep .machv2,
-TABLE.mainrep .odd .machv2 {
+TR.machv2,
+TR.minicard TD.machv2 {
     background: #ECE6FA;
 }
-TABLE.mainrep .even .machv2 {
+TR.compact.minicard.even_row TD.machv2 {
     background: #DCD6EA;
 }
 

@@ -48,8 +48,8 @@ def writeThinRowSeparator_asTR(out, tr_class=None):
         tr_class = ' class="%s"' % tr_class
     else:
         tr_class = '';
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
-    out.write('<TR%s><TD COLSPAN="%s" style="height: 4pt; background: inherit;"></TD></TR>\n' % (tr_class, colspan))
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 5
+    out.write('<TR%s><TD COLSPAN="%s"></TD></TR>\n' % (tr_class, colspan))
     return
 
 def pkgname_to_HTML(pkg):
@@ -179,12 +179,9 @@ def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
 def nodeOSArch_asSPAN(node):
     return '<SPAN style="font-size: smaller;">%s&nbsp;/&nbsp;%s</SPAN>' % (node.os_html, node.arch)
 
-def write_node_spec_asTD(out, node, spec_html, leafreport_ref):
-    if leafreport_ref != None and node.node_id == leafreport_ref.node_id:
-        out.write('<TD class="node %s current"' % node.hostname.replace(".", "_"))
-    else:
-        out.write('<TD class="node %s"' % node.hostname.replace(".", "_"))
-    out.write(' style="text-align: left">%s&nbsp;</TD>' % spec_html)
+def write_node_spec_asTD(out, node, spec_html):
+    out.write('<TD class="%s">' % node.hostname.replace(".", "_"))
+    out.write('%s&nbsp;</TD>' % spec_html)
     return
 
 def status_asSPAN(status):
@@ -211,20 +208,20 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
         style = ""
     else:
         style = ' style="%s"' % style
-    out.write('<TD class="status %s %s"%s>%s</TD>' % (node.hostname, stage, style, status_html))
+    out.write('<TD class="status %s %s"%s>%s</TD>' % \
+              (node.hostname.replace(".", "_"), stage, style, status_html))
     return
 
-def write_stagelabel_asTD(out, stage, extra_style=""):
-    out.write('<TD class="stage %s" style="text-align: center%s">' % \
-              (stage, extra_style))
+def write_stagelabel_asTD(out, stage):
+    out.write('<TD class="STAGE %s">' % stage)
     out.write(BBSreportutils.stage_label(stage))
     out.write('</TD>')
     return
 
-def write_pkg_stagelabels_asTDs(out, extra_style=""):
+def write_pkg_stagelabels_asTDs(out):
     subbuilds = BBSvars.subbuilds
     for stage in BBSreportutils.stages_to_display(subbuilds):
-        write_stagelabel_asTD(out, stage, extra_style)
+        write_stagelabel_asTD(out, stage)
     if BBSreportutils.display_propagation_status(subbuilds):
         out.write('<TD style="width:11px;"></TD>')
     return
@@ -232,7 +229,8 @@ def write_pkg_stagelabels_asTDs(out, extra_style=""):
 def write_pkg_propagation_status_asTD(out, pkg, node):
     status = BBSreportutils.get_propagation_status_from_db(pkg, node.hostname)
     if (status is None):
-        out.write('<TD class="status %s" style="width: 11px;"></TD>' % node.hostname.replace(".", "_"))
+        out.write('<TD class="status %s" style="width: 11px;"></TD>' % \
+                  node.hostname.replace(".", "_"))
         return()
     if (status.startswith("YES")):
         color = "Green"
@@ -251,21 +249,22 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
     if BBSreportutils.is_supported(pkg, node):
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
-                out.write('<TD class="node %s"></TD>' % node.hostname.replace(".", "_"))
+                out.write('<TD class="%s"></TD>' % \
+                          node.hostname.replace(".", "_"))
             else:
                 write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style)
         if BBSreportutils.display_propagation_status(subbuilds):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
         if pkg in skipped_pkgs:
-            out.write('<TD COLSPAN="%s" class="node %s">' % \
+            out.write('<TD COLSPAN="%s" class="%s">' % \
                      (BBSreportutils.ncol_to_display(subbuilds), \
                       node.hostname.replace(".", "_")) )
             msg = 'ERROR'
             out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
             out.write(' (Bad DESCRIPTION file)</TD>')
         else:
-            out.write('<TD COLSPAN="%s" class="node %s"><I>' % \
+            out.write('<TD COLSPAN="%s" class="%s"><I>' % \
                      (BBSreportutils.ncol_to_display(subbuilds), \
                       node.hostname.replace(".", "_")) )
             sep = '...'
@@ -289,7 +288,7 @@ def write_abc_dispatcher(out, href="", current_letter=None,
     out.write('</TR></TABLE>')
     return
 
-### Produces 2 full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
+### Produces 2 full TRs.
 def write_pkg_index_as2fullTRs(out, current_letter):
     ## FH: Need the abc class to blend out the alphabetical selection when
     ## "ok" packages are unselected.
@@ -301,7 +300,7 @@ def write_pkg_index_as2fullTRs(out, current_letter):
               (current_letter, current_letter))
     out.write('</TD></TR></TABLE>')
     out.write('</TD>')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 2
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 4
     out.write('<TD COLSPAN="%s" style="background: inherit;">' % colspan)
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
@@ -325,31 +324,37 @@ def statuses2classes(statuses):
         classes = " ok"
     return classes
 
-### Produces full TRs (normally 8 TDs each, only 4 for longtests subbuilds)
-def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
-    if leafreport_ref == None and pkg_pos % 2 == 0:
-        classes = "even"
-    else:
-        classes = "odd"
+### A standard mini card spans several table rows (TRs).
+def write_minicard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
     statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
     if pkg in skipped_pkgs:
-        classes += ' error'
+        extra_TRclasses = ' error'
     else:
-        classes += statuses2classes(statuses)
-    out.write('<TR class="%s header">' % classes)
+        extra_TRclasses = statuses2classes(statuses)
+    out.write('<TR class="minicard header%s">' % extra_TRclasses)
+    out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="text-align: left">Hostname</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
-    if leafreport_ref == None:
-        extra_style = ""
-    else:
-        extra_style = "; width: 96px"
-    write_pkg_stagelabels_asTDs(out, extra_style)
+    write_pkg_stagelabels_asTDs(out)
+    out.write('<TD class="top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
-    for node in BBSreportutils.NODES:
-        out.write('<TR class="%s">' % classes)
+    nb_nodes = len(BBSreportutils.NODES)
+    last_i = nb_nodes - 1
+    for i in range(nb_nodes):
+        is_last = i == last_i
+        node = BBSreportutils.NODES[i]
+        all_TRclasses = 'minicard'
+        if leafreport_ref != None and node.node_id == leafreport_ref.node_id:
+            all_TRclasses += ' selected_row'
+        all_TRclasses += extra_TRclasses
+        out.write('<TR class="%s">' % all_TRclasses)
+        if is_last:
+            out.write('<TD class="bottom_left_corner"></TD>')
+        else:
+            out.write('<TD class="left_border"></TD>')
         if is_first:
             pkgname_html = pkgname_to_HTML(pkg)
             if statuses:
@@ -367,8 +372,8 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
             else:
                 strike = ''
                 strike_close = ''
-            out.write('<TD ROWSPAN="%d" style="padding-left: 12px; vertical-align: top;">' \
-                      % nb_nodes)
+            out.write('<TD ROWSPAN="%d" style="vertical-align: top;">' % \
+                      nb_nodes)
             #out.write('<H3>%s</H3>' % pkgname_html)
             #out.write('<H4>%s</H4>' % version)
             #out.write('<B><SPAN style="font-size: larger;">%s</SPAN>&nbsp;%s</B><BR>' % (pkgname_html, version))
@@ -380,53 +385,65 @@ def write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref):
                 write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
             is_first = False
-        write_node_spec_asTD(out, node, '<I>%s</I>' % node.node_id, leafreport_ref)
-        write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node), leafreport_ref)
+        write_node_spec_asTD(out, node, '<I>%s</I>' % node.node_id)
+        write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node))
         #if leafreport_ref == None:
         #    style = None
         #else:
         #    style = "font-size: smaller"
         write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
+        if is_last:
+            out.write('<TD class="bottom_right_corner"></TD>')
+        else:
+            out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
     return
 
 def write_summary_TD(out, node, stage):
     stats = status_summary[node.node_id][stage]
-    html = '<TABLE class="summary"><TR>'
-    html += '<TD class="summary %s">%d</TD>' % ("TIMEOUT", stats[0])
-    html += '<TD class="summary %s">%d</TD>' % ("ERROR", stats[1])
+    html = '<TABLE class="SUMMARY"><TR>'
+    html += '<TD class="SUMMARY %s">%d</TD>' % ("TIMEOUT", stats[0])
+    html += '<TD class="SUMMARY %s">%d</TD>' % ("ERROR", stats[1])
     if stage == 'checksrc':
-        html += '<TD class="summary %s">%d</TD>' % ("WARNINGS", stats[2])
-    html += '<TD class="summary %s">%d</TD>' % ("OK", stats[3])
+        html += '<TD class="SUMMARY %s">%d</TD>' % ("WARNINGS", stats[2])
+    html += '<TD class="SUMMARY %s">%d</TD>' % ("OK", stats[3])
     # Only relevant when "smart STAGE2" is enabled.
     #if stage == 'install':
-    #    html += '<TD class="summary %s">%d</TD>' % ("NotNeeded", stats[4])
+    #    html += '<TD class="SUMMARY %s">%d</TD>' % ("NotNeeded", stats[4])
     html += '</TR></TABLE>'
     #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stage, html))
-    out.write('<TD>%s</TD>' % html)
+    out.write('<TD class="status">%s</TD>' % html)
     return
 
-### Produces full TRs (normally 8 TDs each, only 7 for the workflow and book
-### subbuilds, and only 4 for the longtests subbuilds)
+### The SUMMARY spans several table rows (TRs).
 def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
-    out.write('<TR class="summary header">')
+    out.write('<TR class="SUMMARY header">')
+    out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD COLSPAN="2" style="background: inherit;">SUMMARY</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
+    out.write('<TD class="top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
-    for node in BBSreportutils.NODES:
+    last_i = nb_nodes - 1
+    for i in range(nb_nodes):
+        is_last = i == last_i
+        node = BBSreportutils.NODES[i]
         if current_node == node.node_id:
-            out.write('<TR class="summary %s current">\n' % node.hostname.replace(".", "_"))
+            out.write('<TR class="SUMMARY %s selected_row">\n' % node.hostname.replace(".", "_"))
         else:
-            out.write('<TR class="summary %s">\n' % node.hostname.replace(".", "_"))
+            out.write('<TR class="SUMMARY %s">\n' % node.hostname.replace(".", "_"))
+        if is_last:
+            out.write('<TD class="bottom_left_corner"></TD>')
+        else:
+            out.write('<TD class="left_border"></TD>')
         node_id_html = '<I>%s</I>' % node.node_id
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.node_id
             node_id_html = '<A href="%s">%s</A>' % (node_index_file, node_id_html)
             if current_node == node.node_id:
                 node_id_html = '[%s]' % node_id_html
-        out.write('<TD COLSPAN="2" style="padding-left: 12px;">%s</TD>\n' % node_id_html)
+        out.write('<TD COLSPAN="2">%s</TD>\n' % node_id_html)
         out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
         subbuilds = BBSvars.subbuilds
         for stage in BBSreportutils.stages_to_display(subbuilds):
@@ -436,6 +453,10 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
                 write_summary_TD(out, node, stage)
         if BBSreportutils.display_propagation_status(subbuilds):
             out.write('<TD style="width:11px;"></TD>')
+        if is_last:
+            out.write('<TD class="bottom_right_corner"></TD>')
+        else:
+            out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
     return
 
@@ -447,6 +468,7 @@ def write_mainreport_asTABLE(out, allpkgs, leafreport_ref=None):
     out.write('<TABLE class="mainrep">\n')
     if full_table:
         write_summary_asfullTRs(out, nb_pkgs)
+        writeThinRowSeparator_asTR(out, "minicard_separator")
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
@@ -456,8 +478,10 @@ def write_mainreport_asTABLE(out, allpkgs, leafreport_ref=None):
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
                 write_pkg_index_as2fullTRs(out, current_letter)
+        if full_table:
+            writeThinRowSeparator_asTR(out, "minicard_separator")
         if full_table or pkg == leafreport_ref.pkg:
-            write_pkg_allstatuses_asfullTRs(out, pkg, pkg_pos, nb_pkgs, leafreport_ref)
+            write_minicard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TABLE>\n')
     return
 
@@ -466,32 +490,35 @@ def write_mainreport_asTABLE(out, allpkgs, leafreport_ref=None):
 ### Compact report (the compact layout is used for the node-specific reports).
 ##############################################################################
 
-### Produces a full TR (normally 8 TDs, only 4 for longtests subbuilds)
+### Produces on full TR.
 def write_compactreport_header_asfullTR(out):
     ## Using the abc class here too to blend out the alphabetical selection +
     ## this header when "ok" packages are unselected.
     out.write('<TR class="header abc">')
+    out.write('<TD></TD>')
     out.write('<TD style="width: 50px;"></TD>')
-    out.write('<TD style="text-align: left; padding-left: 12px;">Package</TD>')
-    out.write('<TD style="text-align: left">Maintainer</TD>')
+    out.write('<TD style="text-align: left;">Package</TD>')
+    out.write('<TD style="text-align: left;">Maintainer</TD>')
     write_pkg_stagelabels_asTDs(out)
+    out.write('<TD></TD>')
     out.write('</TR>\n')
     return
 
-### Produces a full TR (normally 8 TDs, only 4 for longtests subbuilds)
-def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
+### Produces one full TR.
+def write_compact_minicard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     if pkg_pos % 2 == 0 and not leafreport_ref:
-        classes = "even"
+        classes = "even_row"
     else:
-        classes = "odd"
+        classes = "odd_row"
     statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
     if pkg in skipped_pkgs:
         classes += ' error'
     else:
         classes += statuses2classes(statuses)
-    out.write('<TR class="%s">' % classes)
+    out.write('<TR class="compact minicard %s">' % classes)
+    out.write('<TD class="left_border"></TD>')
     out.write('<TD class="header" style="text-align: right;"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
-    out.write('<TD style="text-align: left; padding-left: 12px;">')
+    out.write('<TD style="text-align: left;">')
 
     if statuses:
         dcf_record = meat_index[pkg]
@@ -512,6 +539,7 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TD>')
     out.write('<TD style="text-align: left">%s</TD>' % maintainer)
     write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
+    out.write('<TD class="right_border"></TD>')
     out.write('</TR>\n')
     return
 
@@ -520,9 +548,10 @@ def write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
 def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
     full_table = not leafreport_ref
     nb_pkgs = len(allpkgs)
-    out.write('<TABLE class="mainrep">\n')
+    out.write('<TABLE class="compact mainrep">\n')
     if full_table:
         write_summary_asfullTRs(out, nb_pkgs, node.node_id)
+        writeThinRowSeparator_asTR(out)
         writeThinRowSeparator_asTR(out)
         if no_alphabet_dispatch:
             write_compactreport_header_asfullTR(out)
@@ -537,7 +566,7 @@ def write_compactreport_asTABLE(out, node, allpkgs, leafreport_ref=None):
                 write_pkg_index_as2fullTRs(out, current_letter)
                 write_compactreport_header_asfullTR(out)
         if full_table or pkg == leafreport_ref.pkg:
-            write_compactreport_fullTR(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
+            write_compact_minicard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TABLE>\n')
     return
 
