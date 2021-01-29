@@ -60,5 +60,10 @@ allnodes = {
                    "x86_64",
                    "x86_64-apple-darwin18.7.0",
                    "mac.binary",
+                   "utf-8"),
+    'taxco':      ("macOS 11.0.1 Big Sur",
+                   "arm64",
+                   "arm64-apple-darwin20.1.0",
+                   "big-sur-arm64",
                    "utf-8")
 }

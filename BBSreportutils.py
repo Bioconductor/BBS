@@ -234,7 +234,7 @@ def _get_pkg_status_from_STATUS_DB(STATUS_DB, pkg, node_id, stage):
     return STATUS_DB[key]
 
 status_db = {}
-status_summary = {}
+quickstats = {}
 
 def _set_pkg_status(pkg, node_id, stage, status):
     if pkg not in status_db:
@@ -244,13 +244,13 @@ def _set_pkg_status(pkg, node_id, stage, status):
     status_db[pkg][node_id][stage] = status
     return
 
-def _update_STATUS_SUMMARY(pkg, node_id, stage, status):
-    if node_id not in status_summary:
-        status_summary[node_id] = { 'install':     (0, 0, 0, 0, 0), \
-                                    'buildsrc':    (0, 0, 0, 0, 0), \
-                                    'checksrc':    (0, 0, 0, 0, 0), \
-                                    'buildbin':    (0, 0, 0, 0, 0) }
-    x = status_summary[node_id][stage]
+def _update_quickstats(pkg, node_id, stage, status):
+    if node_id not in quickstats:
+        quickstats[node_id] = { 'install':     (0, 0, 0, 0, 0), \
+                                'buildsrc':    (0, 0, 0, 0, 0), \
+                                'checksrc':    (0, 0, 0, 0, 0), \
+                                'buildbin':    (0, 0, 0, 0, 0) }
+    x = quickstats[node_id][stage]
     x0 = x[0]
     x1 = x[1]
     x2 = x[2]
@@ -266,7 +266,7 @@ def _update_STATUS_SUMMARY(pkg, node_id, stage, status):
         x3 += 1
     if status == "NotNeeded":
         x4 += 1
-    status_summary[node_id][stage] = (x0, x1, x2, x3, x4)
+    quickstats[node_id][stage] = (x0, x1, x2, x3, x4)
     return
 
 def import_STATUS_DB(allpkgs):
@@ -280,13 +280,13 @@ def import_STATUS_DB(allpkgs):
                                                         pkg, node.node_id,
                                                         stage)
                 _set_pkg_status(pkg, node.node_id, stage, status)
-                _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
+                _update_quickstats(pkg, node.node_id, stage, status)
             # BUILD status
             stage = 'buildsrc'
             status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
                                                     pkg, node.node_id, stage)
             _set_pkg_status(pkg, node.node_id, stage, status)
-            _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
+            _update_quickstats(pkg, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
             if BBSvars.subbuilds not in ["workflows", "books"]:
@@ -298,7 +298,7 @@ def import_STATUS_DB(allpkgs):
                                                             pkg, node.node_id,
                                                             stage)
                 _set_pkg_status(pkg, node.node_id, stage, status)
-                _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
+                _update_quickstats(pkg, node.node_id, stage, status)
             # BUILD BIN status
             if is_doing_buildbin(node):
                 stage = 'buildbin'
@@ -309,8 +309,8 @@ def import_STATUS_DB(allpkgs):
                                                             pkg, node.node_id,
                                                             stage)
                 _set_pkg_status(pkg, node.node_id, stage, status)
-                _update_STATUS_SUMMARY(pkg, node.node_id, stage, status)
-    return status_summary
+                _update_quickstats(pkg, node.node_id, stage, status)
+    return quickstats
 
 def get_pkg_status(pkg, node_id, stage):
     if len(status_db) == 0:

@@ -173,7 +173,7 @@ def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
 
 
 ##############################################################################
-### leaf-report and status cards (scard)
+### Leaf-reports and glyph cards (gcards)
 ##############################################################################
 
 def nodeOSArch_asSPAN(node):
@@ -290,10 +290,10 @@ def write_abc_dispatcher(out, href="", current_letter=None,
 
 ### Produces 2 full TRs.
 def write_pkg_index_as2fullTRs(out, current_letter):
-    ## FH: Need the abc class to blend out the alphabetical selection when
-    ## "ok" packages are unselected.
-    writeThinRowSeparator_asTR(out, "row_separator abc")
-    out.write('<TR class="abc">')
+    ## FH: Need the collapsable_row class to blend out the alphabetical
+    ## selection when "ok" packages are unselected.
+    writeThinRowSeparator_asTR(out, "row_separator collapsable_row")
+    out.write('<TR class="abc collapsable_row">')
     out.write('<TD COLSPAN="2">')
     out.write('<TABLE class="big_letter"><TR><TD>')
     out.write('<A name="%s">%s</A>' % \
@@ -324,10 +324,10 @@ def statuses2classes(statuses):
         classes = ["ok"]
     return ' '.join(classes)
 
-### A non-compact scard spans several table rows (TRs).
-def write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+### A non-compact gcard spans several table rows (TRs).
+def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 pkg_statuses, pkg_status_classes):
-    out.write('<TR class="scard header %s">' % pkg_status_classes)
+    out.write('<TR class="gcard header %s">' % pkg_status_classes)
     out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
@@ -342,7 +342,7 @@ def write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
-        all_TRclasses = 'scard'
+        all_TRclasses = 'gcard'
         if leafreport_ref != None and node.node_id == leafreport_ref.node_id:
             all_TRclasses += ' selected_row'
         all_TRclasses += ' ' + pkg_status_classes
@@ -395,27 +395,26 @@ def write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         out.write('</TR>\n')
     return
 
-def write_summary_TD(out, node, stage):
-    stats = status_summary[node.node_id][stage]
-    html = '<TABLE class="SUMMARY"><TR>'
-    html += '<TD class="SUMMARY %s">%d</TD>' % ("TIMEOUT", stats[0])
-    html += '<TD class="SUMMARY %s">%d</TD>' % ("ERROR", stats[1])
+def write_quickstats_TD(out, node, stage):
+    stats = quickstats[node.node_id][stage]
+    html = '<TABLE class="quickstats"><TR>'
+    html += '<TD class="quickstats %s">%d</TD>' % ("TIMEOUT", stats[0])
+    html += '<TD class="quickstats %s">%d</TD>' % ("ERROR", stats[1])
     if stage == 'checksrc':
-        html += '<TD class="SUMMARY %s">%d</TD>' % ("WARNINGS", stats[2])
-    html += '<TD class="SUMMARY %s">%d</TD>' % ("OK", stats[3])
+        html += '<TD class="quickstats %s">%d</TD>' % ("WARNINGS", stats[2])
+    html += '<TD class="quickstats %s">%d</TD>' % ("OK", stats[3])
     # Only relevant when "smart STAGE2" is enabled.
     #if stage == 'install':
-    #    html += '<TD class="SUMMARY %s">%d</TD>' % ("NotNeeded", stats[4])
+    #    html += '<TD class="quickstats %s">%d</TD>' % ("NotNeeded", stats[4])
     html += '</TR></TABLE>'
     #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stage, html))
     out.write('<TD class="status">%s</TD>' % html)
     return
 
-### The SUMMARY spans several table rows (TRs).
-def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
-    out.write('<TR class="SUMMARY header">')
-    out.write('<TD class="top_left_corner"></TD>')
-    out.write('<TD COLSPAN="2" style="background: inherit;">SUMMARY</TD>')
+### The quick stats span several table rows (TRs).
+def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
+    out.write('<TR class="quickstats header">')
+    out.write('<TD class="top_left_corner" COLSPAN="3" style="padding-left: 0px;">QUICK STATS</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD class="top_right_corner"></TD>')
@@ -426,9 +425,9 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
         if current_node == node.node_id:
-            out.write('<TR class="SUMMARY %s selected_row">\n' % node.hostname.replace(".", "_"))
+            out.write('<TR class="quickstats %s selected_row">\n' % node.hostname.replace(".", "_"))
         else:
-            out.write('<TR class="SUMMARY %s">\n' % node.hostname.replace(".", "_"))
+            out.write('<TR class="quickstats %s">\n' % node.hostname.replace(".", "_"))
         if is_last:
             out.write('<TD class="bottom_left_corner"></TD>')
         else:
@@ -446,7 +445,7 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD></TD>')
             else:
-                write_summary_TD(out, node, stage)
+                write_quickstats_TD(out, node, stage)
         if BBSreportutils.display_propagation_status(subbuilds):
             out.write('<TD style="width:11px;"></TD>')
         if is_last:
@@ -456,13 +455,13 @@ def write_summary_asfullTRs(out, nb_pkgs, current_node=None):
         out.write('</TR>\n')
     return
 
-### When leafreport_ref is specified, then a list of 1 scard is generated.
-def write_scard_list(out, allpkgs, leafreport_ref=None):
+### When leafreport_ref is specified, then a list of 1 gcard is generated.
+def write_gcard_list(out, allpkgs, leafreport_ref=None):
     full_table = not leafreport_ref
     nb_pkgs = len(allpkgs)
-    out.write('<TABLE class="scard_list">\n')
+    out.write('<TABLE class="gcard_list">\n')
     if full_table:
-        write_summary_asfullTRs(out, nb_pkgs)
+        write_quickstats_asfullTRs(out, nb_pkgs)
         writeThinRowSeparator_asTR(out, "row_separator")
     pkg_pos = 0
     current_letter = None
@@ -482,21 +481,21 @@ def write_scard_list(out, allpkgs, leafreport_ref=None):
             if full_table:
                 writeThinRowSeparator_asTR(out, "row_separator %s" % \
                                                 pkg_status_classes)
-            write_scard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+            write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                         pkg_statuses, pkg_status_classes)
     out.write('</TABLE>\n')
     return
 
 
 ##############################################################################
-### Compact scards (used for the node-specific reports).
+### Compact gcards (used for the single node reports)
 ##############################################################################
 
 ### Produces one full TR.
-def write_compact_scard_header(out):
-    ## Using the abc class here too to blend out the alphabetical selection +
-    ## this header when "ok" packages are unselected.
-    out.write('<TR class="header abc">')
+def write_compact_gcard_header(out):
+    ## Using the collapsable_row class here too to blend out the alphabetical
+    ## selection + this header when "ok" packages are unselected.
+    out.write('<TR class="header collapsable_row">')
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD COLSPAN="2">Maintainer</TD>')
@@ -506,7 +505,7 @@ def write_compact_scard_header(out):
     return
 
 ### Produces one full TR.
-def write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
+def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     if pkg_pos % 2 == 0 and not leafreport_ref:
         classes = "even_row"
     else:
@@ -516,7 +515,7 @@ def write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
         classes += ' error'
     else:
         classes += ' ' + statuses2classes(statuses)
-    out.write('<TR class="compact scard %s">' % classes)
+    out.write('<TR class="compact gcard %s">' % classes)
     out.write('<TD class="left_border row_number"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>')
     if statuses:
@@ -542,18 +541,18 @@ def write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     out.write('</TR>\n')
     return
 
-### Same as write_scard_list(), but can be used to display results
+### Same as write_gcard_list(), but can be used to display results
 ### for a single node with a more compact layout.
-def write_compact_scard_list(out, node, allpkgs, leafreport_ref=None):
+def write_compact_gcard_list(out, node, allpkgs, leafreport_ref=None):
     full_table = not leafreport_ref
     nb_pkgs = len(allpkgs)
-    out.write('<TABLE class="compact scard_list">\n')
+    out.write('<TABLE class="compact gcard_list">\n')
     if full_table:
-        write_summary_asfullTRs(out, nb_pkgs, node.node_id)
+        write_quickstats_asfullTRs(out, nb_pkgs, node.node_id)
         writeThinRowSeparator_asTR(out)
         writeThinRowSeparator_asTR(out)
         if no_alphabet_dispatch:
-            write_compact_scard_header(out)
+            write_compact_gcard_header(out)
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
@@ -563,9 +562,9 @@ def write_compact_scard_list(out, node, allpkgs, leafreport_ref=None):
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
                 write_pkg_index_as2fullTRs(out, current_letter)
-                write_compact_scard_header(out)
+                write_compact_gcard_header(out)
         if full_table or pkg == leafreport_ref.pkg:
-            write_compact_scard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
+            write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
     out.write('</TABLE>\n')
     return
 
@@ -644,7 +643,7 @@ def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
     out.write('</P>\n')
     write_motd_asTABLE(out)
 
-    write_scard_list(out, allpkgs, leafreport_ref)
+    write_gcard_list(out, allpkgs, leafreport_ref)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -974,11 +973,11 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('</TD></TR></TABLE>\n')
         out.write('</DIV>\n')
 
-    write_scard_list(out, allpkgs, leafreport_ref)
+    write_gcard_list(out, allpkgs, leafreport_ref)
     #if len(BBSreportutils.NODES) != 1:
-    #    write_scard_list(out, allpkgs, leafreport_ref)
+    #    write_gcard_list(out, allpkgs, leafreport_ref)
     #else:
-    #    write_compact_scard_list(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
+    #    write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
@@ -1543,7 +1542,7 @@ def write_node_report(node, allpkgs):
 
     write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
-    write_compact_scard_list(out, node, allpkgs)
+    write_compact_gcard_list(out, node, allpkgs)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -1573,9 +1572,9 @@ def write_mainpage_asHTML(out, allpkgs):
     write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
     if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
-        write_scard_list(out, allpkgs)
+        write_gcard_list(out, allpkgs)
     else:
-        write_compact_scard_list(out, BBSreportutils.NODES[0], allpkgs)
+        write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     return
@@ -1643,7 +1642,7 @@ allpkgs.sort(key=str.lower)
 print("BBS> [stage8] Import package statuses from %s ..." % \
       BBSreportutils.STATUS_DB_file, end=" ")
 sys.stdout.flush()
-status_summary = BBSreportutils.import_STATUS_DB(allpkgs)
+quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 

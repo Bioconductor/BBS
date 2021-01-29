@@ -129,8 +129,14 @@ TABLE.node_specs TD {
     border: 1px solid #555;
     padding-left: 6px;
     padding-right: 6px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+}
+TABLE.node_specs TH {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+TABLE.node_specs TD {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 
@@ -177,47 +183,47 @@ SPAN.skipped, SPAN.NA {
 
 
 /****************************************************************************
- * List of status cards
+ * List of glyph cards (gcards)
  */
 
-TABLE.scard_list {
+TABLE.gcard_list {
     width: 100%;
     border-spacing: 0px;
     border-collapse: collapse;
 }
 
-TABLE.scard_list TD {
+TABLE.gcard_list TD {
     /*border: 1px solid black;*/
     padding-left: 6px;
     padding-top: 2px;
     padding-bottom: 2px;
 }
 
-TABLE.scard_list TR.row_separator {
+TABLE.gcard_list TR.row_separator {
     height: 4px;
 }
 
-TABLE.scard_list TR.header TD {
+TABLE.gcard_list TR.header TD {
     font-weight: bold;
     /* font-style: italic; */
     font-size: smaller;
 }
 
-TABLE.scard_list TR.header TD.STAGE {
+TABLE.gcard_list TR.header TD.STAGE {
     padding: 0px;
     text-align: center;
     width: 120px;
 }
-TABLE.scard_list TD.status {
+TABLE.gcard_list TD.status {
     padding: 0px;
     text-align: center;
 }
 
-TABLE.scard_list TR.selected_row {
+TABLE.gcard_list TR.selected_row {
     font-weight: bold;
 }
 
-TABLE.scard_list TABLE.svn_info {
+TABLE.gcard_list TABLE.svn_info {
     font-weight: normal;
     font-size: smaller;
     font-style: italic;
@@ -225,36 +231,36 @@ TABLE.scard_list TABLE.svn_info {
 
 
 /****************************************************************************
- * SUMMARY
+ * Quick stats
  */
 
-TABLE.SUMMARY TD.SUMMARY {
+TABLE.quickstats TD.quickstats {
     padding: 0px;
     text-align: center;
 }
 
 .TIMEOUT,
-TABLE.SUMMARY TD.SUMMARY.TIMEOUT {
+TABLE.quickstats TD.quickstats.TIMEOUT {
     background: #A08;
 }
 .ERROR,
-TABLE.SUMMARY TD.SUMMARY.ERROR {
+TABLE.quickstats TD.quickstats.ERROR {
     background: #B33;
 }
 .WARNINGS,
-TABLE.SUMMARY TD.SUMMARY.WARNINGS {
+TABLE.quickstats TD.quickstats.WARNINGS {
     background: #D82;
 }
 .OK,
-TABLE.SUMMARY TD.SUMMARY.OK {
+TABLE.quickstats TD.quickstats.OK {
     background: #282;
 }
 .NotNeeded,
-TABLE.SUMMARY TD.SUMMARY.NotNeeded {
+TABLE.quickstats TD.quickstats.NotNeeded {
     background: #69C;
 }
 .NA,
-TABLE.SUMMARY TD.SUMMARY.NA {
+TABLE.quickstats TD.quickstats.NA {
     background: #8AA;
 }
 P.noresult {
@@ -265,13 +271,13 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-TABLE.SUMMARY {
+TABLE.quickstats {
     margin: auto;
     border-collapse: collapse;
     border-spacing: 0px;
     color: white;
 }
-TABLE.SUMMARY TD {
+TABLE.quickstats TD {
     width: 32px;
     padding: 0px;
     text-align: center;
@@ -279,59 +285,59 @@ TABLE.SUMMARY TD {
 
 
 /****************************************************************************
- * Status cards (scard)
+ * Glyph card (gcard)
  */
 
-TR.scard TD {
+TR.gcard TD {
     background: white;
     border-left: 1px solid #DDD;
 }
-TR.scard.header {
+TR.gcard.header {
     height: 20px;
 }
-TR.scard.header TD {
+TR.gcard.header TD {
     /*background: #F6F6F6;*/
     color: #999;
 }
-TR.compact.scard {
+TR.compact.gcard {
     height: 24px;
 }
-TR.compact.scard TD.row_number {
+TR.compact.gcard TD.row_number {
     color: #999;
     text-align: right;
     padding-right: 4px;
 }
-TR.compact.scard.even_row TD {
+TR.compact.gcard.even_row TD {
     background: #EEE;
 }
 
-TR.scard.header TD.top_left_corner {
+TR.gcard.header TD.top_left_corner {
     background: white;
     border-left: 0px;
     width: 14px;
     border-top-left-radius: 10px;
 }
-TR.scard.header TD.top_right_corner {
+TR.gcard.header TD.top_right_corner {
     width: 14px;
     border-top-right-radius: 10px;
 }
-TR.scard TD.bottom_left_corner {
+TR.gcard TD.bottom_left_corner {
     border-left: 0px;
     border-bottom-left-radius: 10px;
 }
-TR.scard TD.bottom_right_corner {
+TR.gcard TD.bottom_right_corner {
     border-bottom-right-radius: 10px;
 }
 
-TR.scard TD.left_border {
+TR.gcard TD.left_border {
     border-left: 0px;
 }
-TR.compact.scard TD.left_border {
+TR.compact.gcard TD.left_border {
     width: 28px;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
-TR.compact.scard TD.right_border {
+TR.compact.gcard TD.right_border {
     width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
@@ -342,7 +348,7 @@ TR.compact.scard TD.right_border {
  * ABC dispatcher
  */
 
-TABLE.scard_list TR.abc TD {
+TABLE.gcard_list TR.abc TD {
     padding: 0px;
 }
 
@@ -374,90 +380,100 @@ TABLE.abc_dispatcher TD {
 /* malbec1 (Ubuntu 18.04) */
 DIV.malbec1,
 TR.malbec1,
-TR.scard TD.malbec1 {
+TR.gcard TD.malbec1 {
     background: #BDF;
 }
-TR.compact.scard.even_row TD.malbec1 {
+TR.compact.gcard.even_row TD.malbec1 {
     background: #ACE;
 }
 
 /* malbec2 (Ubuntu 20.04) */
 DIV.malbec2,
 TR.malbec2,
-TR.scard TD.malbec2 {
+TR.gcard TD.malbec2 {
     background: #DAECFA;
 }
-TR.compact.scard.even_row TD.malbec2 {
+TR.compact.gcard.even_row TD.malbec2 {
     background: #CADCEA;
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
 DIV.nebbiolo1,
 TR.nebbiolo1,
-TR.scard TD.nebbiolo1 {
+TR.gcard TD.nebbiolo1 {
     background: #DAECFA;
 }
-TR.compact.scard.even_row TD.nebbiolo1 {
+TR.compact.gcard.even_row TD.nebbiolo1 {
     background: #CADCEA;
 }
 
 /* rex3 (Ubuntu 20.04) */
 DIV.rex3,
 TR.rex3,
-TR.scard TD.rex3 {
+TR.gcard TD.rex3 {
     background: #DAECFA;
 }
-TR.compact.scard.even_row TD.rex3 {
+TR.compact.gcard.even_row TD.rex3 {
     background: #CADCEA;
 }
 
 /* tokay1 */
 DIV.tokay1,
 TR.tokay1,
-TR.scard TD.tokay1 {
+TR.gcard TD.tokay1 {
     background: #EDC;
 }
-TR.compact.scard.even_row TD.tokay1 {
+TR.compact.gcard.even_row TD.tokay1 {
     background: #DCB;
 }
 
 /* tokay2 */
 DIV.tokay2,
 TR.tokay2,
-TR.scard TD.tokay2 {
+TR.gcard TD.tokay2 {
     background: #EEE4CC;
 }
-TR.compact.scard.even_row TD.tokay2 {
+TR.compact.gcard.even_row TD.tokay2 {
     background: #DDD3BB;
 }
 
 /* riesling1 */
 DIV.riesling1,
 TR.riesling1,
-TR.scard TD.riesling1 {
+TR.gcard TD.riesling1 {
     background: #F4EFDF;
 }
-TR.compact.scard.even_row TD.riesling1 {
+TR.compact.gcard.even_row TD.riesling1 {
     background: #E4DFCF;
 }
 
 /* merida1 */
 DIV.merida1,
 TR.merida1,
-TR.scard TD.merida1 {
+TR.gcard TD.merida1 {
     background: #D8CCEE;
 }
-TR.compact.scard.even_row TD.merida1 {
+TR.compact.gcard.even_row TD.merida1 {
     background: #C8BBDD;
 }
 
 /* machv2 */
 DIV.machv2,
 TR.machv2,
-TR.scard TD.machv2 {
+TR.gcard TD.machv2 {
     background: #ECE6FA;
 }
-TR.compact.scard.even_row TD.machv2 {
+TR.compact.gcard.even_row TD.machv2 {
     background: #DCD6EA;
+}
+
+/* taxco */
+DIV.taxco,
+TR.taxco,
+TR.gcard TD.taxco {
+    background: #E8DAF4;
+}
+TR.compact.gcard.even_row TD.taxco {
+    background: #D8CAE4;
 }
 
