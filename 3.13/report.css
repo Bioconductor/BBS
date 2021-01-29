@@ -408,9 +408,8 @@ TR.compact.gcard.even_row TD.nebbiolo1 {
 }
 
 /* rex3 (Ubuntu 20.04) */
-DIV.rex3,
-TR.rex3,
-TD.rex3 {
+DIV.rex3, TR.rex3, TD.rex3,
+TR.gcard TD.rex3 {
     background: #DAECFA;
 }
 TR.compact.gcard.even_row TD.rex3 {
@@ -438,8 +437,7 @@ TR.compact.gcard.even_row TD.tokay2 {
 }
 
 /* riesling1 */
-DIV.riesling1,
-TR.riesling1,
+DIV.riesling1, TR.riesling1, TD.riesling1,
 TR.gcard TD.riesling1 {
     background: #F4EFDF;
 }
