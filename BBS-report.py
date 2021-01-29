@@ -352,12 +352,13 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
         all_TRclasses = 'gcard'
-        selected = False
+        selected = toned_down = False
         if leafreport_ref != None:
             if node.node_id == leafreport_ref.node_id:
                 selected = True
                 all_TRclasses += ' selected_row'
             else:
+                toned_down = True
                 all_TRclasses += ' toned_down'
         all_TRclasses += ' ' + pkg_status_classes
         out.write('<TR class="%s">' % all_TRclasses)
@@ -395,7 +396,10 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
             is_first = False
-        write_node_spec_asTD(out, node, node.node_id, selected)
+        node_html = node.node_id
+        if not toned_down:
+            node_html = '<B>%s</B>' % node_html
+        write_node_spec_asTD(out, node, node_html, selected)
         write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node))
         #if leafreport_ref == None:
         #    style = None
