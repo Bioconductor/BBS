@@ -378,8 +378,7 @@ TABLE.abc_dispatcher TD {
  */
 
 /* malbec1 (Ubuntu 18.04) */
-DIV.malbec1,
-TR.malbec1,
+.malbec1,
 TR.gcard TD.malbec1 {
     background: #BDF;
 }
@@ -388,8 +387,7 @@ TR.compact.gcard.even_row TD.malbec1 {
 }
 
 /* malbec2 (Ubuntu 20.04) */
-DIV.malbec2,
-TR.malbec2,
+.malbec2,
 TR.gcard TD.malbec2 {
     background: #DAECFA;
 }
@@ -398,8 +396,7 @@ TR.compact.gcard.even_row TD.malbec2 {
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
-DIV.nebbiolo1,
-TR.nebbiolo1,
+.nebbiolo1,
 TR.gcard TD.nebbiolo1 {
     background: #DAECFA;
 }
@@ -417,8 +414,7 @@ TR.compact.gcard.even_row TD.rex3 {
 }
 
 /* tokay1 */
-DIV.tokay1,
-TR.tokay1,
+.tokay1,
 TR.gcard TD.tokay1 {
     background: #EDC;
 }
@@ -427,8 +423,7 @@ TR.compact.gcard.even_row TD.tokay1 {
 }
 
 /* tokay2 */
-DIV.tokay2,
-TR.tokay2,
+.tokay2,
 TR.gcard TD.tokay2 {
     background: #EEE4CC;
 }
@@ -437,7 +432,7 @@ TR.compact.gcard.even_row TD.tokay2 {
 }
 
 /* riesling1 */
-DIV.riesling1, TR.riesling1, TD.riesling1,
+.riesling1,
 TR.gcard TD.riesling1 {
     background: #F4EFDF;
 }
@@ -446,8 +441,7 @@ TR.compact.gcard.even_row TD.riesling1 {
 }
 
 /* merida1 */
-DIV.merida1,
-TR.merida1,
+.merida1,
 TR.gcard TD.merida1 {
     background: #D8CCEE;
 }
@@ -456,8 +450,7 @@ TR.compact.gcard.even_row TD.merida1 {
 }
 
 /* machv2 */
-DIV.machv2,
-TR.machv2,
+.machv2,
 TR.gcard TD.machv2 {
     background: #ECE6FA;
 }
@@ -466,8 +459,7 @@ TR.compact.gcard.even_row TD.machv2 {
 }
 
 /* taxco */
-DIV.taxco,
-TR.taxco,
+.taxco,
 TR.gcard TD.taxco {
     background: #E8DAF4;
 }
