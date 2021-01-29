@@ -210,9 +210,11 @@ TABLE.gcard_list TR.header TD {
 }
 
 TABLE.gcard_list TR.header TD.STAGE {
-    padding: 0px;
     text-align: center;
-    width: 120px;
+    width: 125px;
+}
+TABLE.gcard_list TR.header TD.STAGE.selected {
+    font-weight: bold;
 }
 TABLE.gcard_list TD.status {
     padding: 0px;
