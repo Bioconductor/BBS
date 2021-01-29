@@ -503,6 +503,10 @@ def STAGE3_loop(job_queue, nb_cpu):
 def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
     BBSvars.buildsrc_rdir.RemakeMe(True)
+    # Even though we already generated the NodeInfo folder at end of STAGE2,
+    # we generate it again now just in case we are running builds that
+    # skipped STAGE2 (e.g. bioc-longtests builds).
+    makeNodeInfo()
     print("BBS> [STAGE3] cd BBS_MEAT_PATH")
     target_pkgs = extractTargetPkgListFromMeatIndex()
     meat_path = BBSvars.meat_path
