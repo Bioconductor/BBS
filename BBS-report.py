@@ -177,7 +177,7 @@ def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
 ##############################################################################
 
 def nodeOSArch_asSPAN(node):
-    return '<SPAN style="font-size: smaller;">%s&nbsp;/&nbsp;%s</SPAN>' % (node.os_html, node.arch)
+    return '<SPAN>%s&nbsp;/&nbsp;%s</SPAN>' % (node.os_html, node.arch)
 
 def write_node_spec_asTD(out, node, spec_html):
     out.write('<TD class="%s">' % node.hostname.replace(".", "_"))
