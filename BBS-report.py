@@ -416,9 +416,8 @@ def write_quickstats_TD(out, node, stage):
 ### The quick stats span several table rows (TRs).
 def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TR class="quickstats header">')
-    out.write('<TD COLSPAN="2"></TD>')
-    out.write('<TD class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
-    out.write('<TD style="width: 220px;">OS&nbsp;/&nbsp;Arch</TD>')
+    out.write('<TD COLSPAN="3" class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
+    out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD class="top_right_corner"></TD>')
     out.write('</TR>\n')
@@ -427,11 +426,10 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
-        TRclasses = 'quickstats'
+        TRclasses = 'quickstats ' + node.hostname.replace(".", "_")
         if current_node == node.node_id:
             TRclasses += ' selected_row'
         out.write('<TR class="%s">' % TRclasses)
-        out.write('<TD COLSPAN="2"></TD>')
         node_id_html = '<B>%s</B>' % node.node_id
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.node_id
@@ -440,14 +438,12 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
             if current_node == node.node_id:
                 node_id_html = '[%s]' % node_id_html
         if is_last:
-            TDclasses = 'bottom_left_corner'
+            TDclass = 'bottom_left_corner'
         else:
-            TDclasses = 'left_border'
-        TDclasses += ' ' + node.hostname.replace(".", "_")
-        TD_html = '<TD class="%s">%s</TD>' % (TDclasses, node_id_html)
+            TDclass = 'left_border'
+        TD_html = '<TD COLSPAN="3" class="%s">%s</TD>' % (TDclass, node_id_html)
         out.write(TD_html)
-        TD_html = '<TD class="%s">%s</TD>' % \
-                  (node.hostname.replace(".", "_"), nodeOSArch_asSPAN(node))
+        TD_html = '<TD>%s</TD>' % nodeOSArch_asSPAN(node)
         out.write(TD_html)
         subbuilds = BBSvars.subbuilds
         for stage in BBSreportutils.stages_to_display(subbuilds):
