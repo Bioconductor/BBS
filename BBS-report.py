@@ -188,8 +188,15 @@ def write_node_spec_asTD(out, node, spec_html):
 def status_asSPAN(status):
     return '<SPAN class="%s">&nbsp;%s&nbsp;</SPAN>' % (status, status)
 
-def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
+def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
     #print("  %s %s %s" % (pkg, node.node_id, stage))
+    selected = leafreport_ref != None and \
+               pkg == leafreport_ref.pkg and \
+               node.node_id == leafreport_ref.node_id and \
+               stage == leafreport_ref.stage
+    TDclasses = 'status %s %s' % (node.hostname.replace(".", "_"), stage)
+    if selected:
+        TDclasses += ' selected'
     status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
     if status in ["skipped", "NA"]:
         status_html = status_asSPAN(status)
@@ -200,17 +207,10 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style=None):
             pkgdir = pkg
         leafreport_rURL = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
         status_html = '<A href="%s">%s</A>' % (leafreport_rURL, status_asSPAN(status))
-        if leafreport_ref != None \
-           and pkg == leafreport_ref.pkg \
-           and node.node_id == leafreport_ref.node_id \
-           and stage == leafreport_ref.stage:
+        if selected:
             status_html = '[%s]' % status_html
-    if style == None:
-        style = ""
-    else:
-        style = ' style="%s"' % style
-    out.write('<TD class="status %s %s"%s>%s</TD>' % \
-              (node.hostname.replace(".", "_"), stage, style, status_html))
+    TD_html = '<TD class="%s">%s</TD>' % (TDclasses, status_html)
+    out.write(TD_html)
     return
 
 def write_stagelabel_asTD(out, stage):
@@ -245,7 +245,7 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
     out.write('<TD class="status %s" style="width: 11px;"><IMG border="0" width="10" height="10" alt="%s" title="%s" src="%s120px-%s_Light_Icon.svg.png"></TD>' \
         % (node.hostname.replace(".", "_"), status, status, path, color))
 
-def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
+def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref):
     subbuilds = BBSvars.subbuilds
     if BBSreportutils.is_supported(pkg, node):
         for stage in BBSreportutils.stages_to_display(subbuilds):
@@ -253,7 +253,7 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref, style=None):
                 out.write('<TD class="%s"></TD>' % \
                           node.hostname.replace(".", "_"))
             else:
-                write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref, style)
+                write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref)
         if BBSreportutils.display_propagation_status(subbuilds):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
