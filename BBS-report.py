@@ -424,22 +424,24 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
+        TRclasses = 'quickstats ' + node.hostname.replace(".", "_")
         if current_node == node.node_id:
-            out.write('<TR class="quickstats %s selected_row">\n' % node.hostname.replace(".", "_"))
-        else:
-            out.write('<TR class="quickstats %s">\n' % node.hostname.replace(".", "_"))
-        if is_last:
-            out.write('<TD class="bottom_left_corner"></TD>')
-        else:
-            out.write('<TD class="left_border"></TD>')
+            TRclasses += ' selected_row'
+        out.write('<TR class="%s">' % TRclasses)
         node_id_html = '<B>%s</B>' % node.node_id
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.node_id
-            node_id_html = '<A href="%s">%s</A>' % (node_index_file, node_id_html)
+            node_id_html = '<A href="%s">%s</A>' % \
+                           (node_index_file, node_id_html)
             if current_node == node.node_id:
                 node_id_html = '[%s]' % node_id_html
-        out.write('<TD COLSPAN="2">%s</TD>\n' % node_id_html)
-        out.write('<TD>%s&nbsp;</TD>' % nodeOSArch_asSPAN(node))
+        if is_last:
+            TDclass = 'bottom_left_corner'
+        else:
+            TDclass = 'left_border'
+        TD_html = '<TD COLSPAN="3" class="%s">%s</TD>' % (TDclass, node_id_html)
+        out.write(TD_html)
+        out.write('<TD>%s</TD>' % nodeOSArch_asSPAN(node))
         subbuilds = BBSvars.subbuilds
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
@@ -447,7 +449,7 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
             else:
                 write_quickstats_TD(out, node, stage)
         if BBSreportutils.display_propagation_status(subbuilds):
-            out.write('<TD style="width:11px;"></TD>')
+            out.write('<TD style="width:12px;"></TD>')
         if is_last:
             out.write('<TD class="bottom_right_corner"></TD>')
         else:
