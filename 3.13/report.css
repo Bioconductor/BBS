@@ -410,6 +410,7 @@ TR.gcard TD.rex3 {
     background: #DAECFA;
 }
 .rex3.toned_down,
+TR.gcard.toned_down TD.rex3,
 TR.compact.gcard.even_row TD.rex3 {
     background: #CADCEA;
 }
@@ -438,6 +439,7 @@ TR.gcard TD.riesling1 {
     background: #F4EFDF;
 }
 .riesling1.toned_down,
+TR.gcard.toned_down TD.riesling1,
 TR.compact.gcard.even_row TD.riesling1 {
     background: #E4DFCF;
 }
