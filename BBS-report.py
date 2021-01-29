@@ -414,8 +414,9 @@ def write_quickstats_TD(out, node, stage):
 ### The quick stats span several table rows (TRs).
 def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TR class="quickstats header">')
-    out.write('<TD class="top_left_corner" COLSPAN="3" style="padding-left: 0px;">QUICK STATS</TD>')
-    out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
+    out.write('<TD COLSPAN="2"></TD>')
+    out.write('<TD class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
+    out.write('<TD style="text-align: left; width: 280px">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD class="top_right_corner"></TD>')
     out.write('</TR>\n')
@@ -428,6 +429,7 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
         if current_node == node.node_id:
             TRclasses += ' selected_row'
         out.write('<TR class="%s">' % TRclasses)
+        out.write('<TD COLSPAN="2"></TD>')
         node_id_html = '<B>%s</B>' % node.node_id
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.node_id
@@ -436,10 +438,11 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
             if current_node == node.node_id:
                 node_id_html = '[%s]' % node_id_html
         if is_last:
-            TDclass = 'bottom_left_corner'
+            TDclasses = 'bottom_left_corner'
         else:
-            TDclass = 'left_border'
-        TD_html = '<TD COLSPAN="3" class="%s">%s</TD>' % (TDclass, node_id_html)
+            TDclasses = 'left_border'
+        TDclasses += node.hostname.replace(".", "_")
+        TD_html = '<TD class="%s">%s</TD>' % (TDclasses, node_id_html)
         out.write(TD_html)
         out.write('<TD>%s</TD>' % nodeOSArch_asSPAN(node))
         subbuilds = BBSvars.subbuilds
