@@ -213,16 +213,22 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
     out.write(TD_html)
     return
 
-def write_stagelabel_asTD(out, stage):
-    out.write('<TD class="STAGE %s">' % stage)
-    out.write(BBSreportutils.stage_label(stage))
-    out.write('</TD>')
+def write_stagelabel_asTD(out, stage, leafreport_ref):
+    selected = leafreport_ref != None and \
+               pkg == leafreport_ref.pkg and \
+               stage == leafreport_ref.stage
+    TDclasses = 'STAGE %s' % stage
+    if selected:
+        TDclasses += ' selected'
+    stage_label = BBSreportutils.stage_label(stage)
+    TD_html = '<TD class="%s">%s</TD>' % (TDclasses, stage_label)
+    out.write(TD_html)
     return
 
-def write_pkg_stagelabels_asTDs(out):
+def write_pkg_stagelabels_asTDs(out, leafreport_ref=None):
     subbuilds = BBSvars.subbuilds
     for stage in BBSreportutils.stages_to_display(subbuilds):
-        write_stagelabel_asTD(out, stage)
+        write_stagelabel_asTD(out, stage, leafreport_ref)
     if BBSreportutils.display_propagation_status(subbuilds):
         out.write('<TD style="width:11px;"></TD>')
     return
@@ -333,7 +339,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
     out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
-    write_pkg_stagelabels_asTDs(out)
+    write_pkg_stagelabels_asTDs(out, leafreport_ref)
     out.write('<TD class="top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
