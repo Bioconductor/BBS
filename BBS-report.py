@@ -344,8 +344,11 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
         all_TRclasses = 'gcard'
-        if leafreport_ref != None and node.node_id == leafreport_ref.node_id:
-            all_TRclasses += ' selected_row'
+        if leafreport_ref != None:
+            if node.node_id == leafreport_ref.node_id:
+                all_TRclasses += ' selected_row'
+            else:
+                all_TRclasses += ' toned_down'
         all_TRclasses += ' ' + pkg_status_classes
         out.write('<TR class="%s">' % all_TRclasses)
         if is_last:
