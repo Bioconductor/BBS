@@ -213,7 +213,7 @@ TABLE.gcard_list TR.header TD.STAGE {
     text-align: center;
     width: 125px;
 }
-TABLE.gcard_list TR.header TD.STAGE.selected {
+TABLE.gcard_list TD.selected {
     border: 1px solid black;
 }
 TABLE.gcard_list TD.status {
