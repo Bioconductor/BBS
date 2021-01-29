@@ -444,8 +444,9 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
         TDclasses += ' ' + node.hostname.replace(".", "_")
         TD_html = '<TD class="%s">%s</TD>' % (TDclasses, node_id_html)
         out.write(TD_html)
-        out.write('<TD class="%s">%s</TD>' % \
+        TD_html = '<TD class="%s">%s</TD>' % \
                   (node.hostname.replace(".", "_"), nodeOSArch_asSPAN(node))
+        out.write(TD_html)
         subbuilds = BBSvars.subbuilds
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
