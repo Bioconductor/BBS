@@ -181,7 +181,8 @@ def nodeOSArch_asSPAN(node):
            (node.os_html, node.arch)
 
 def write_node_spec_asTD(out, node, spec_html):
-    TD_html = '<TD class="%s">%s</TD>' % node.hostname.replace(".", "_")
+    TD_html = '<TD class="%s">%s</TD>' % \
+              (node.hostname.replace(".", "_"), spec_html)
     out.write(TD_html)
     return
 
