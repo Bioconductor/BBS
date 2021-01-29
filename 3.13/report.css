@@ -220,7 +220,7 @@ TABLE.gcard_list TD.status {
 }
 
 TABLE.gcard_list TR.selected_row {
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 
 TABLE.gcard_list TABLE.svn_info {
