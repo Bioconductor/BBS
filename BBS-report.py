@@ -418,7 +418,7 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
     out.write('<TR class="quickstats header">')
     out.write('<TD COLSPAN="2"></TD>')
     out.write('<TD class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
-    out.write('<TD style="text-align: left; width: 250px">OS&nbsp;/&nbsp;Arch</TD>')
+    out.write('<TD style="width: 220px;">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD class="top_right_corner"></TD>')
     out.write('</TR>\n')
