@@ -408,7 +408,7 @@ TR.compact.gcard.even_row TD.nebbiolo1 {
 }
 
 /* rex3 (Ubuntu 20.04) */
-DIV.rex3, TR.rex3, TD.rex3,
+.rex3,
 TR.gcard TD.rex3 {
     background: #DAECFA;
 }
