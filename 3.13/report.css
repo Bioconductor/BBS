@@ -391,6 +391,7 @@ TR.compact.gcard.even_row TD.malbec1 {
 TR.gcard TD.malbec2 {
     background: #DAECFA;
 }
+TR.gcard.toned_down TD.malbec2,
 TR.compact.gcard.even_row TD.malbec2 {
     background: #CADCEA;
 }
