@@ -336,7 +336,8 @@ def statuses2classes(statuses):
 ### A non-compact gcard spans several table rows (TRs).
 def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 pkg_statuses, pkg_status_classes):
-    out.write('<TR class="gcard header %s">' % pkg_status_classes)
+    out.write('<TBODY class="gcard">\n')
+    out.write('<TR class="header %s">' % pkg_status_classes)
     out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
@@ -351,7 +352,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
-        all_TRclasses = 'gcard'
+        all_TRclasses = pkg_status_classes
         selected = toned_down = False
         if leafreport_ref != None:
             if node.node_id == leafreport_ref.node_id:
@@ -360,7 +361,6 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             else:
                 toned_down = True
                 all_TRclasses += ' toned_down'
-        all_TRclasses += ' ' + pkg_status_classes
         out.write('<TR class="%s">' % all_TRclasses)
         if is_last:
             out.write('<TD class="bottom_left_corner"></TD>')
@@ -411,6 +411,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         else:
             out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
+    out.write('</TBODY>\n')
     return
 
 def write_quickstats_TD(out, node, stage):
@@ -529,16 +530,17 @@ def write_compact_gcard_header(out):
 
 ### Produces one full TR.
 def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
+    out.write('<TBODY class="compact gcard">\n')
     if pkg_pos % 2 == 0 and not leafreport_ref:
-        classes = "even_row"
+        TRclasses = "even_pkg_pos"
     else:
-        classes = "odd_row"
+        TRclasses = "odd_pkg_pos"
     statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
     if pkg in skipped_pkgs:
-        classes += ' error'
+        TRclasses += ' error'
     else:
-        classes += ' ' + statuses2classes(statuses)
-    out.write('<TR class="compact gcard %s">' % classes)
+        TRclasses += ' ' + statuses2classes(statuses)
+    out.write('<TR class="%s">' % TRclasses)
     out.write('<TD class="left_border row_number"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>')
     if statuses:
@@ -562,6 +564,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
     out.write('<TD class="right_border"></TD>')
     out.write('</TR>\n')
+    out.write('</TBODY>\n')
     return
 
 ### Same as write_gcard_list(), but can be used to display results

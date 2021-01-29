@@ -293,56 +293,56 @@ TABLE.quickstats TD {
  * Glyph card (gcard)
  */
 
-TR.gcard TD {
+TBODY.gcard TD {
     background: white;
     border-left: 1px solid #DDD;
 }
-TR.gcard.header {
+TBODY.gcard TR.header {
     height: 20px;
 }
-TR.gcard.header TD {
+TBODY.gcard TR.header TD {
     /*background: #F6F6F6;*/
     color: #999;
 }
-TR.compact.gcard {
+TBODY.compact.gcard TR {
     height: 24px;
 }
-TR.compact.gcard TD.row_number {
+TBODY.compact.gcard TD.row_number {
     color: #999;
     text-align: right;
     padding-right: 4px;
 }
-TR.compact.gcard.even_row TD {
+TBODY.compact.gcard.even_pkg_pos TD {
     background: #EEE;
 }
 
-TR.gcard.header TD.top_left_corner {
-    background: white;
+TBODY.gcard TR.header TD.top_left_corner {
     border-left: 0px;
     width: 14px;
     border-top-left-radius: 10px;
 }
-TR.gcard.header TD.top_right_corner {
+TBODY.gcard TR.header TD.top_right_corner {
     width: 14px;
     border-top-right-radius: 10px;
 }
-TR.gcard TD.bottom_left_corner {
+TBODY.gcard TD.bottom_left_corner {
     border-left: 0px;
     border-bottom-left-radius: 10px;
 }
-TR.gcard TD.bottom_right_corner {
+TBODY.gcard TD.bottom_right_corner {
     border-bottom-right-radius: 10px;
 }
 
-TR.gcard TD.left_border {
+TBODY.gcard TD.left_border {
     border-left: 0px;
 }
-TR.compact.gcard TD.left_border {
+
+TBODY.compact.gcard TD.left_border {
     width: 28px;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
-TR.compact.gcard TD.right_border {
+TBODY.compact.gcard TD.right_border {
     width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
@@ -384,96 +384,96 @@ TABLE.abc_dispatcher TD {
 
 /* malbec1 (Ubuntu 18.04) */
 .malbec1,
-TR.gcard TD.malbec1 {
+TBODY.gcard TD.malbec1 {
     background: #BDF;
 }
-TR.compact.gcard.even_row TD.malbec1 {
+TBODY.compact.gcard.even_pkg_pos TD.malbec1 {
     background: #ACE;
 }
 
 /* malbec2 (Ubuntu 20.04) */
 .malbec2,
-TR.gcard TD.malbec2 {
+TBODY.gcard TD.malbec2 {
     background: #DAECFA;
 }
-TR.gcard.toned_down TD.malbec2,
-TR.compact.gcard.even_row TD.malbec2 {
+TBODY.gcard TR.toned_down TD.malbec2,
+TBODY.compact.gcard.even_pkg_pos TD.malbec2 {
     background: #CADCEA;
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
 .nebbiolo1,
-TR.gcard TD.nebbiolo1 {
+TBODY.gcard TD.nebbiolo1 {
     background: #DAECFA;
 }
-TR.compact.gcard.even_row TD.nebbiolo1 {
+TBODY.compact.gcard.even_pkg_pos TD.nebbiolo1 {
     background: #CADCEA;
 }
 
 /* rex3 (Ubuntu 20.04) */
 .rex3,
-TR.gcard TD.rex3 {
+TBODY.gcard TD.rex3 {
     background: #DAECFA;
 }
 .rex3.toned_down,
-TR.gcard.toned_down TD.rex3,
-TR.compact.gcard.even_row TD.rex3 {
+TBODY.gcard TR.toned_down TD.rex3,
+TBODY.compact.gcard.even_pkg_pos TD.rex3 {
     background: #CADCEA;
 }
 
 /* tokay1 */
 .tokay1,
-TR.gcard TD.tokay1 {
+TBODY.gcard TD.tokay1 {
     background: #EDC;
 }
-TR.compact.gcard.even_row TD.tokay1 {
+TBODY.compact.gcard.even_pkg_pos TD.tokay1 {
     background: #DCB;
 }
 
 /* tokay2 */
 .tokay2,
-TR.gcard TD.tokay2 {
+TBODY.gcard TD.tokay2 {
     background: #EEE4CC;
 }
-TR.compact.gcard.even_row TD.tokay2 {
+TBODY.compact.gcard.even_pkg_pos TD.tokay2 {
     background: #DDD3BB;
 }
 
 /* riesling1 */
 .riesling1,
-TR.gcard TD.riesling1 {
+TBODY.gcard TD.riesling1 {
     background: #F4EFDF;
 }
 .riesling1.toned_down,
-TR.gcard.toned_down TD.riesling1,
-TR.compact.gcard.even_row TD.riesling1 {
+TBODY.gcard TR.toned_down TD.riesling1,
+TBODY.compact.gcard.even_pkg_pos TD.riesling1 {
     background: #E4DFCF;
 }
 
 /* merida1 */
 .merida1,
-TR.gcard TD.merida1 {
+TBODY.gcard TD.merida1 {
     background: #D8CCEE;
 }
-TR.compact.gcard.even_row TD.merida1 {
+TBODY.compact.gcard.even_pkg_pos TD.merida1 {
     background: #C8BBDD;
 }
 
 /* machv2 */
 .machv2,
-TR.gcard TD.machv2 {
+TBODY.gcard TD.machv2 {
     background: #ECE6FA;
 }
-TR.compact.gcard.even_row TD.machv2 {
+TBODY.compact.gcard.even_pkg_pos TD.machv2 {
     background: #DCD6EA;
 }
 
 /* taxco */
 .taxco,
-TR.gcard TD.taxco {
+TBODY.gcard TD.taxco {
     background: #E8DAF4;
 }
-TR.compact.gcard.even_row TD.taxco {
+TBODY.compact.gcard.even_pkg_pos TD.taxco {
     background: #D8CAE4;
 }
 
