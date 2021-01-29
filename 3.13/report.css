@@ -312,7 +312,7 @@ TBODY.compact.gcard TD.row_number {
     text-align: right;
     padding-right: 4px;
 }
-TBODY.compact.gcard.even_pkg_pos TD {
+TBODY.compact.gcard.even_row_number TD {
     background: #EEE;
 }
 
@@ -387,7 +387,7 @@ TABLE.abc_dispatcher TD {
 TBODY.gcard TD.malbec1 {
     background: #BDF;
 }
-TBODY.compact.gcard.even_pkg_pos TD.malbec1 {
+TBODY.compact.gcard.even_row_number TD.malbec1 {
     background: #ACE;
 }
 
@@ -397,7 +397,7 @@ TBODY.gcard TD.malbec2 {
     background: #DAECFA;
 }
 TBODY.gcard TR.toned_down TD.malbec2,
-TBODY.compact.gcard.even_pkg_pos TD.malbec2 {
+TBODY.compact.gcard.even_row_number TD.malbec2 {
     background: #CADCEA;
 }
 
@@ -406,7 +406,7 @@ TBODY.compact.gcard.even_pkg_pos TD.malbec2 {
 TBODY.gcard TD.nebbiolo1 {
     background: #DAECFA;
 }
-TBODY.compact.gcard.even_pkg_pos TD.nebbiolo1 {
+TBODY.compact.gcard.even_row_number TD.nebbiolo1 {
     background: #CADCEA;
 }
 
@@ -417,7 +417,7 @@ TBODY.gcard TD.rex3 {
 }
 .rex3.toned_down,
 TBODY.gcard TR.toned_down TD.rex3,
-TBODY.compact.gcard.even_pkg_pos TD.rex3 {
+TBODY.compact.gcard.even_row_number TD.rex3 {
     background: #CADCEA;
 }
 
@@ -426,7 +426,7 @@ TBODY.compact.gcard.even_pkg_pos TD.rex3 {
 TBODY.gcard TD.tokay1 {
     background: #EDC;
 }
-TBODY.compact.gcard.even_pkg_pos TD.tokay1 {
+TBODY.compact.gcard.even_row_number TD.tokay1 {
     background: #DCB;
 }
 
@@ -435,7 +435,7 @@ TBODY.compact.gcard.even_pkg_pos TD.tokay1 {
 TBODY.gcard TD.tokay2 {
     background: #EEE4CC;
 }
-TBODY.compact.gcard.even_pkg_pos TD.tokay2 {
+TBODY.compact.gcard.even_row_number TD.tokay2 {
     background: #DDD3BB;
 }
 
@@ -446,7 +446,7 @@ TBODY.gcard TD.riesling1 {
 }
 .riesling1.toned_down,
 TBODY.gcard TR.toned_down TD.riesling1,
-TBODY.compact.gcard.even_pkg_pos TD.riesling1 {
+TBODY.compact.gcard.even_row_number TD.riesling1 {
     background: #E4DFCF;
 }
 
@@ -455,7 +455,7 @@ TBODY.compact.gcard.even_pkg_pos TD.riesling1 {
 TBODY.gcard TD.merida1 {
     background: #D8CCEE;
 }
-TBODY.compact.gcard.even_pkg_pos TD.merida1 {
+TBODY.compact.gcard.even_row_number TD.merida1 {
     background: #C8BBDD;
 }
 
@@ -464,7 +464,7 @@ TBODY.compact.gcard.even_pkg_pos TD.merida1 {
 TBODY.gcard TD.machv2 {
     background: #ECE6FA;
 }
-TBODY.compact.gcard.even_pkg_pos TD.machv2 {
+TBODY.compact.gcard.even_row_number TD.machv2 {
     background: #DCD6EA;
 }
 
@@ -473,7 +473,7 @@ TBODY.compact.gcard.even_pkg_pos TD.machv2 {
 TBODY.gcard TD.taxco {
     background: #E8DAF4;
 }
-TBODY.compact.gcard.even_pkg_pos TD.taxco {
+TBODY.compact.gcard.even_row_number TD.taxco {
     background: #D8CAE4;
 }
 

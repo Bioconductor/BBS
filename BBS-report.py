@@ -532,9 +532,9 @@ def write_compact_gcard_header(out):
 def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     TBODYclasses = 'compact gcard'
     if pkg_pos % 2 == 0 and not leafreport_ref:
-        TBODYclasses = "even_pkg_pos"
+        TBODYclasses += ' even_row_number'
     else:
-        TBODYclasses = "odd_pkg_pos"
+        TBODYclasses += ' odd_row_number'
     out.write('<TBODY class="%s">\n' % TBODYclasses)
     statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
     if pkg in skipped_pkgs:
