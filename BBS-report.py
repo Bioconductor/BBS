@@ -441,7 +441,7 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
             TDclasses = 'bottom_left_corner'
         else:
             TDclasses = 'left_border'
-        TDclasses += node.hostname.replace(".", "_")
+        TDclasses += ' ' + node.hostname.replace(".", "_")
         TD_html = '<TD class="%s">%s</TD>' % (TDclasses, node_id_html)
         out.write(TD_html)
         out.write('<TD>%s</TD>' % nodeOSArch_asSPAN(node))
