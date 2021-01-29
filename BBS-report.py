@@ -530,18 +530,20 @@ def write_compact_gcard_header(out):
 
 ### Produces one full TR.
 def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
-    out.write('<TBODY class="compact gcard">\n')
+    TBODYclasses = 'compact gcard'
     if pkg_pos % 2 == 0 and not leafreport_ref:
-        TRclasses = "even_pkg_pos"
+        TBODYclasses = "even_pkg_pos"
     else:
-        TRclasses = "odd_pkg_pos"
+        TBODYclasses = "odd_pkg_pos"
+    out.write('<TBODY class="%s">\n' % TBODYclasses)
     statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
     if pkg in skipped_pkgs:
-        TRclasses += ' error'
+        TRclasses = 'error'
     else:
-        TRclasses += ' ' + statuses2classes(statuses)
+        TRclasses = statuses2classes(statuses)
     out.write('<TR class="%s">' % TRclasses)
-    out.write('<TD class="left_border row_number"><B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
+    out.write('<TD class="left_border row_number"><B>%d</B>/%d</TD>' % \
+              (pkg_pos, nb_pkgs))
     out.write('<TD>')
     if statuses:
         dcf_record = meat_index[pkg]
