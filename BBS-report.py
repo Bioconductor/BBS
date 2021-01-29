@@ -425,7 +425,7 @@ def write_quickstats_asfullTRs(out, nb_pkgs, current_node=None):
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
-        TRclasses = 'quickstats ' + node.hostname.replace(".", "_")
+        TRclasses = 'quickstats'
         if current_node == node.node_id:
             TRclasses += ' selected_row'
         out.write('<TR class="%s">' % TRclasses)
