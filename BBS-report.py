@@ -215,7 +215,6 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
 
 def write_stagelabel_asTD(out, stage, leafreport_ref):
     selected = leafreport_ref != None and \
-               pkg == leafreport_ref.pkg and \
                stage == leafreport_ref.stage
     TDclasses = 'STAGE %s' % stage
     if selected:
