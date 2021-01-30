@@ -1554,7 +1554,8 @@ def write_node_report(node, allpkgs):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    out.write('<H2>%s</H2>\n' % page_title)
+    out.write('<H2 class="%s">%s</H2>\n' % \
+              (node.hostname.replace(".", "_"), page_title))
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
