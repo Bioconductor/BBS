@@ -190,8 +190,8 @@ def write_node_spec_asTD(out, node, spec_html, selected=False):
     out.write(TD_html)
     return
 
-def status_asSPAN(status):
-    return '<SPAN class="%s" style="height: 24px;">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
+def status_asDIV(status):
+    return '<DIV class="%s">&nbsp;&nbsp;%s&nbsp;&nbsp;</DIV>' % \
            (status, status)
 
 def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
@@ -204,14 +204,14 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
         TDclasses += ' selected'
     status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
     if status in ["skipped", "NA"]:
-        TDcontent = status_asSPAN(status)
+        TDcontent = status_asDIV(status)
     else:
         if leafreport_ref != None:
             pkgdir = "."
         else:
             pkgdir = pkg
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        TDcontent = '<A href="%s">%s</A>' % (url, status_asSPAN(status))
+        TDcontent = '<A href="%s">%s</A>' % (url, status_asDIV(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
 
@@ -678,7 +678,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
         if not field_val:
             break
         if field_val[0] == 'Status':
-            field_val = (field_val[0], status_asSPAN(field_val[1]))
+            field_val = (field_val[0], status_asDIV(field_val[1]))
         out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % field_val)
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
@@ -1383,7 +1383,7 @@ def write_glyph_table(out):
            style += " width: 75px;"
         out.write('<TR>\n')
         out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
-                  (style, status_asSPAN(id)))
+                  (style, status_asDIV(id)))
         if checkbox:
             out.write('<TD>')
             out.write(msg)

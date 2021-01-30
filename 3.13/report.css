@@ -157,27 +157,27 @@ TABLE.Rconfig TD {
  * Glyph styles
  */
 
-SPAN.TIMEOUT {
+DIV.TIMEOUT {
     font-weight: bold;
     color: white;
 }
-SPAN.ERROR {
+DIV.ERROR {
     font-weight: bold;
     color: white;
 }
-SPAN.WARNINGS {
+DIV.WARNINGS {
     font-weight: bold;
     color: white;
 }
-SPAN.OK {
+DIV.OK {
     font-weight: bold;
     color: #DDD;
 }
-SPAN.NotNeeded {
+DIV.NotNeeded {
     font-weight: bold;
     color: #EEE;
 }
-SPAN.skipped, SPAN.NA {
+DIV.skipped, DIV.NA {
     font-weight: bold;
 }
 
