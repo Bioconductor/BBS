@@ -478,10 +478,12 @@ TBODY.compact.gcard.even_row_number TD.machv2 {
 
 /* taxco */
 .taxco,
-TBODY.gcard TD.taxco {
+TD.taxco {
     background: #E8DAF4;
 }
-TBODY.compact.gcard.even_row_number TD.taxco {
+.taxco.toned_down,
+TR.toned_down .taxco,
+TBODY.compact.gcard.even_row_number .taxco {
     background: #D8CAE4;
 }
 
