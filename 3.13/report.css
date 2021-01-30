@@ -332,7 +332,7 @@ TBODY.compact.gcard TD.right_border {
 }
 
 TBODY.gcard TD.STAGE.selected {
-    color: #777;
+    color: #666;
 }
 TBODY.gcard TD.status A {
     display: block;
