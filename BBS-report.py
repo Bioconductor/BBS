@@ -481,7 +481,9 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
     out.write('<TABLE class="gcard_list">\n')
     if full_table:
         write_quickstats_asfullTRs(out, nb_pkgs)
+        out.write('<TBODY>\n')
         writeThinRowSeparator_asTR(out, "row_separator")
+        out.write('</TBODY>\n')
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
