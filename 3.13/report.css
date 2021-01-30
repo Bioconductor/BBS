@@ -18,6 +18,9 @@ H2 {
 }
 H2 SPAN {
     padding: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 12px;
 }
 H3 {
     font-size: 13pt;
