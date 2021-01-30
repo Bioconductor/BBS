@@ -302,10 +302,10 @@ def write_abc_dispatcher(out, href="", current_letter=None,
 
 ### Produces 2 full TRs.
 def write_pkg_index_as2fullTRs(out, current_letter):
-    ## FH: Need the collapsable_row class to blend out the alphabetical
+    ## FH: Need the collapsable_rows class to blend out the alphabetical
     ## selection when "ok" packages are unselected.
-    writeThinRowSeparator_asTR(out, "row_separator collapsable_row")
-    out.write('<TR class="abc collapsable_row">')
+    writeThinRowSeparator_asTR(out, "row_separator collapsable_rows")
+    out.write('<TR class="abc collapsable_rows">')
     out.write('<TD COLSPAN="2">')
     out.write('<TABLE class="big_letter"><TR><TD>')
     out.write('<A name="%s">%s</A>' % \
@@ -508,9 +508,9 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
 
 ### Produces one full TR.
 def write_compact_gcard_header(out):
-    ## Using the collapsable_row class here too to blend out the alphabetical
+    ## Using the collapsable_rows class here too to blend out the alphabetical
     ## selection + this header when "ok" packages are unselected.
-    out.write('<TR class="header collapsable_row">')
+    out.write('<TR class="header collapsable_rows">')
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD COLSPAN="2">Maintainer</TD>')

@@ -55,18 +55,18 @@ function initialize(){
 }
 
 function toggle(theClass) {
-    var fullClass = "TABLE.gcard_list TR."+theClass;
+    var fullClass = "TABLE.gcard_list TBODY."+theClass;
     var element = "display";
     var show;
     if(document.getElementById(theClass).checked){
         show = "table-row";
         if(theClass=="ok"){
-            changecss("TABLE.gcard_list TR.collapsable_row", element, "table-row");
+            changecss("TABLE.gcard_list TBODY.collapsable_rows", element, "table-row");
         }
     }else{
         show = "none";
         if(theClass=="ok"){
-            changecss("TABLE.gcard_list TR.collapsable_row", element, "none");
+            changecss("TABLE.gcard_list TBODY.collapsable_rows", element, "none");
         }
     }
     changecss(fullClass, element, show)
