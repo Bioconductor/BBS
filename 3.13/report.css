@@ -255,18 +255,23 @@ TABLE.gcard_list TABLE.svn_info {
  * Quick stats
  */
 
+THEAD.quickstats TR {
+    height: 32px;
+}
+THEAD.quickstats TR.header {
+    height: 22px;
+}
+
 TABLE.quickstats {
     margin: auto;
     border-collapse: collapse;
     border-spacing: 0px;
     color: white;
 }
-
 TABLE.quickstats TR {
     height: 24px;
     text-align: center;
 }
-
 TABLE.quickstats TD {
     width: 36px;
 }
