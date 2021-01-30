@@ -621,7 +621,7 @@ def write_goback_asHTML(out, href, current_letter=None):
     title = BBSreportutils.make_report_title(report_nodes)
     out.write('<TABLE class="grid_layout"')
     out.write(' style="width: 100%; background: #EEE;"><TR>')
-    out.write('<TD style="text-align: left; padding-left: 5px; vertical-align: middle;">')
+    out.write('<TD style="text-align: left; padding: 5px; vertical-align: middle;">')
     out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % (href, title))
     out.write('</TD>')
     if not no_alphabet_dispatch and current_letter != None:
