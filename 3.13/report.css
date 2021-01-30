@@ -78,12 +78,16 @@ TABLE.grid_layout DIV.hscrollable {
  * Message of the day
  */
 
+DIV.motd {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border: 1px solid black;
+}
 DIV.motd TABLE {
     width: 80%;
     margin: auto;
-    margin-bottom: 5pt;
-    text-align: center;
-    font-weight: bold;
+    border: 1px solid black;
 }
 
 
