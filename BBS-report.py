@@ -447,8 +447,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
             node_html = '<B>%s</B>' % node_html
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.node_id
-            node_id_html = '<A href="%s">%s</A>' % \
-                           (node_index_file, node_id_html)
+            node_html = '<A href="%s">%s</A>' % (node_index_file, node_html)
         if is_last:
             TDclass = 'bottom_left_corner'
         else:
