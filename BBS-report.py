@@ -388,7 +388,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
         out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
-    out.write('<TR>')
+    out.write('<TR class="footer">')
     out.write('<TD class="bottom_left_corner"></TD>')
     colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 2
     out.write('<TD COLSPAN="%d"></TD>' % colspan)

@@ -305,6 +305,9 @@ TBODY.gcard TD {
 TBODY.gcard TR.header {
     height: 20px;
 }
+TBODY.gcard TR.footer {
+    height: 4px;
+}
 TBODY.gcard TR.header TD {
     /*background: #F6F6F6;*/
     color: #999;
