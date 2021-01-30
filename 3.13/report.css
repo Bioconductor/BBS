@@ -224,7 +224,7 @@ TABLE.gcard_list TD.status A {
     display: block;
     text-decoration: none;
 }
-TABLE.gcard_list TD.status A SPAN {
+TABLE.gcard_list TD.status A DIV {
     width: 100%;
     height: 100%;
 }

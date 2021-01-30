@@ -210,7 +210,7 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
         else:
             pkgdir = pkg
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        TDcontent = '<A href="%s"><SPAN>%s</SPAN></A>' % \
+        TDcontent = '<A href="%s"><DIV>%s</DIV></A>' % \
                     (url, status_asSPAN(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
