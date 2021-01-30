@@ -426,7 +426,8 @@ def write_quickstats_TD(out, node, stage):
 
 ### The quick stats span several table rows (TRs).
 def write_quickstats_asfullTRs(out, nb_pkgs, selected_node=None):
-    out.write('<TR class="quickstats header">')
+    out.write('<TBODY class="quickstats">\n')
+    out.write('<TR class="header">')
     out.write('<TD COLSPAN="3" class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
@@ -437,7 +438,7 @@ def write_quickstats_asfullTRs(out, nb_pkgs, selected_node=None):
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
-        TRclasses = 'quickstats ' + node.hostname.replace(".", "_")
+        TRclasses = node.hostname.replace(".", "_")
         if selected_node != None:
             if selected_node == node.node_id:
                 TRclasses += ' selected_row'
@@ -470,6 +471,7 @@ def write_quickstats_asfullTRs(out, nb_pkgs, selected_node=None):
         else:
             out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
+    out.write('</TBODY>\n')
     return
 
 ### When leafreport_ref is specified, then a list of 1 gcard is generated.
