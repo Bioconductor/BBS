@@ -313,18 +313,18 @@ TBODY.compact.gcard.even_row_number TD {
 TBODY.gcard TR.header TD.top_left_corner {
     border-left: 0px;
     width: 14px;
-    border-top-left-radius: 10px;
+    border-top-left-radius: 12px;
 }
 TBODY.gcard TR.header TD.top_right_corner {
     width: 14px;
-    border-top-right-radius: 10px;
+    border-top-right-radius: 12px;
 }
 TBODY.gcard TD.bottom_left_corner {
     border-left: 0px;
-    border-bottom-left-radius: 10px;
+    border-bottom-left-radius: 12px;
 }
 TBODY.gcard TD.bottom_right_corner {
-    border-bottom-right-radius: 10px;
+    border-bottom-right-radius: 12px;
 }
 
 TBODY.compact.gcard TD.left_border {
