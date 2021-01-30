@@ -16,6 +16,9 @@ H2 {
     margin-bottom: 3px;
     text-align: center;
 }
+H2 SPAN {
+    padding: 6px;
+}
 H3 {
     font-size: 13pt;
     margin-top: 2px;
