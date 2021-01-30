@@ -236,7 +236,7 @@ TABLE.gcard_list TD.status A {
     text-decoration: none;
 }
 TABLE.gcard_list TD.STAGE.selected,
-TABLE.gcard_list TD.status.selected {
+TABLE.gcard_list TD.status.selected A {
     border: 1px solid black;
 }
 
