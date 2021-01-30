@@ -305,7 +305,7 @@ def write_pkg_abc_index_as2fullTRs(out, current_letter):
     ## FH: Need the collapsable_rows class to blend out the alphabetical
     ## selection when "ok" packages are unselected.
     out.write('<TBODY class="collapsable_rows">\n')
-    writeThinRowSeparator_asTR(out, "row_separator")
+    writeThinRowSeparator_asTR(out, "vertical_space")
     out.write('<TR class="abc">')
     out.write('<TD COLSPAN="2">')
     out.write('<TABLE class="big_letter"><TR><TD>')
@@ -482,7 +482,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
     if full_table:
         write_quickstats_asfullTRs(out, nb_pkgs)
         out.write('<TBODY>\n')
-        writeThinRowSeparator_asTR(out, "row_separator")
+        writeThinRowSeparator_asTR(out, "vertical_space")
         out.write('</TBODY>\n')
     pkg_pos = 0
     current_letter = None
@@ -502,7 +502,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
             if full_table:
                 out.write('<TBODY class="gcard_separator %s">\n' % \
                           pkg_status_classes)
-                writeThinRowSeparator_asTR(out, "row_separator")
+                writeThinRowSeparator_asTR(out, "vertical_space")
                 out.write('</TBODY>\n')
             write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                         pkg_statuses, pkg_status_classes)

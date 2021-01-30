@@ -199,7 +199,7 @@ TABLE.gcard_list TD {
     padding-bottom: 2px;
 }
 
-TABLE.gcard_list TR.row_separator {
+TABLE.gcard_list TR.vertical_space {
     height: 4px;
 }
 
