@@ -402,14 +402,14 @@ def write_quickstats_TD(out, node, stage):
     stats = quickstats[node.node_id][stage]
     html = '<TABLE class="quickstats"><TR class="%s">' % \
            node.hostname.replace(".", "_")
-    html += '<TD class="quickstats %s">%d</TD>' % ("TIMEOUT", stats[0])
-    html += '<TD class="quickstats %s">%d</TD>' % ("ERROR", stats[1])
+    html += '<TD class="%s">%d</TD>' % ("TIMEOUT", stats[0])
+    html += '<TD class="%s">%d</TD>' % ("ERROR", stats[1])
     if stage == 'checksrc':
-        html += '<TD class="quickstats %s">%d</TD>' % ("WARNINGS", stats[2])
-    html += '<TD class="quickstats %s">%d</TD>' % ("OK", stats[3])
+        html += '<TD class="%s">%d</TD>' % ("WARNINGS", stats[2])
+    html += '<TD class="%s">%d</TD>' % ("OK", stats[3])
     # Only relevant when "smart STAGE2" is enabled.
     #if stage == 'install':
-    #    html += '<TD class="quickstats %s">%d</TD>' % ("NotNeeded", stats[4])
+    #    html += '<TD class="%s">%d</TD>' % ("NotNeeded", stats[4])
     html += '</TR></TABLE>'
     #out.write('<TD class="status %s %s">%s</TD>' % (node.hostname.replace(".", "_"), stage, html))
     out.write('<TD class="status">%s</TD>' % html)
@@ -417,7 +417,7 @@ def write_quickstats_TD(out, node, stage):
 
 ### The quick stats span several table rows (TRs).
 def write_quickstats(out, nb_pkgs, selected_node=None):
-    out.write('<TBODY class="quickstats">\n')
+    out.write('<THEAD class="quickstats">\n')
     out.write('<TR class="header">')
     out.write('<TD COLSPAN="3" class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
@@ -462,7 +462,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
         else:
             out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
-    out.write('</TBODY>\n')
+    out.write('</THEAD>\n')
     return
 
 ### When leafreport_ref is specified, then a list of 1 gcard is generated.

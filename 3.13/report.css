@@ -240,33 +240,41 @@ TABLE.gcard_list TABLE.svn_info {
  * Quick stats
  */
 
-TABLE.quickstats TD.quickstats {
+TABLE.quickstats {
+    margin: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    color: white;
+}
+
+TABLE.quickstats TD {
+    width: 35px;
     padding: 0px;
     text-align: center;
 }
 
 .TIMEOUT,
-TABLE.quickstats TD.quickstats.TIMEOUT {
+TABLE.quickstats TD.TIMEOUT {
     background: #A08;
 }
 .ERROR,
-TABLE.quickstats TD.quickstats.ERROR {
+TABLE.quickstats TD.ERROR {
     background: #B33;
 }
 .WARNINGS,
-TABLE.quickstats TD.quickstats.WARNINGS {
+TABLE.quickstats TD.WARNINGS {
     background: #D82;
 }
 .OK,
-TABLE.quickstats TD.quickstats.OK {
+TABLE.quickstats TD.OK {
     background: #282;
 }
 .NotNeeded,
-TABLE.quickstats TD.quickstats.NotNeeded {
+TABLE.quickstats TD.NotNeeded {
     background: #69C;
 }
 .NA,
-TABLE.quickstats TD.quickstats.NA {
+TABLE.quickstats TD.NA {
     background: #8AA;
 }
 P.noresult {
@@ -275,18 +283,6 @@ P.noresult {
 P.noresult SPAN {
     background: #8AA;
     padding: 4pt;
-}
-
-TABLE.quickstats {
-    margin: auto;
-    border-collapse: collapse;
-    border-spacing: 0px;
-    color: white;
-}
-TABLE.quickstats TD {
-    width: 32px;
-    padding: 0px;
-    text-align: center;
 }
 
 
