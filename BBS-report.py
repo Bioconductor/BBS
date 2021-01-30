@@ -637,9 +637,11 @@ def write_motd_asTABLE(out):
     motd = os.environ['BBS_REPORT_MOTD']
     if motd == "":
         return
-    out.write('<TABLE class="motd">')
+    out.write('<DIV class="motd">\n')
+    out.write('<TABLE>')
     out.write('<TR><TD>%s</TD></TR>' % motd)
     out.write('</TABLE>\n')
+    out.write('</DIV>\n')
     return
 
 def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
@@ -981,12 +983,13 @@ def make_LeafReport(leafreport_ref, allpkgs):
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
     out.write('</P>\n')
+
     write_motd_asTABLE(out)
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
     if os.path.exists('Renviron.bioc'):
-        out.write('<DIV style="padding: 4px;">\n')
-        out.write('<TABLE class="motd"><TR><TD>\n')
+        out.write('<DIV class="motd">\n')
+        out.write('<TABLE><TR><TD>\n')
         out.write('To the developers/maintainers ')
         out.write('of the %s package:<BR>' % pkg)
         out.write('Please make sure to use the ')

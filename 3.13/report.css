@@ -78,7 +78,7 @@ TABLE.grid_layout DIV.hscrollable {
  * Message of the day
  */
 
-TABLE.motd {
+DIV.motd TABLE {
     width: 80%;
     margin: auto;
     margin-bottom: 5pt;
