@@ -254,32 +254,29 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
         % (node.hostname.replace(".", "_"), status, status, path, color))
 
 def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref):
+    TDclass = node.hostname.replace(".", "_")
     subbuilds = BBSvars.subbuilds
-    if BBSreportutils.is_supported(pkg, node):
+    if pkg in skipped_pkgs:
+        TDattrs = 'COLSPAN="%s" class="%s" style="text-align: center;"' % \
+                  (BBSreportutils.ncol_to_display(subbuilds), TDclass)
+        TDcontent = '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
+        TDcontent += ' (Bad DESCRIPTION file)'
+        out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
+    elif BBSreportutils.is_supported(pkg, node):
         for stage in BBSreportutils.stages_to_display(subbuilds):
-            if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
-                out.write('<TD class="%s"></TD>' % \
-                          node.hostname.replace(".", "_"))
+            if stage == 'buildbin' and \
+               not BBSreportutils.is_doing_buildbin(node):
+                out.write('<TD class="%s"></TD>' % TDclass)
             else:
                 write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref)
         if BBSreportutils.display_propagation_status(subbuilds):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
-        if pkg in skipped_pkgs:
-            out.write('<TD COLSPAN="%s" class="%s">' % \
-                     (BBSreportutils.ncol_to_display(subbuilds), \
-                      node.hostname.replace(".", "_")) )
-            msg = 'ERROR'
-            out.write('<SPAN style="text-align: center" class=%s>&nbsp;%s&nbsp;</SPAN>' % (msg, msg))
-            out.write(' (Bad DESCRIPTION file)</TD>')
-        else:
-            out.write('<TD COLSPAN="%s" class="%s"><B>' % \
-                     (BBSreportutils.ncol_to_display(subbuilds), \
-                      node.hostname.replace(".", "_")) )
-            sep = '...'
-            NOT_SUPPORTED_string = sep + 1 * ('NOT SUPPORTED' + sep)
-            out.write(NOT_SUPPORTED_string.replace(' ', '&nbsp;'))
-            out.write('</B></TD>')
+        TDattrs = 'COLSPAN="%s" class="%s"' % \
+                  (BBSreportutils.ncol_to_display(subbuilds), TDclass)
+        TDcontent = '...NOT SUPPORTED...'
+        TDcontent = '<B>%s</B>' % TDcontent.replace(' ', '&nbsp;')
+        out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     return
 
 def write_abc_dispatcher(out, href="", current_letter=None,
