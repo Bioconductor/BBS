@@ -360,7 +360,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             TRattrs = ' class="toned_down"'
         out.write('<TR%s>' % TRattrs)
         if is_last:
-            out.write('<TD COLSPAN="2" class="bottom_left_corner"></TD>')
+            out.write('<TD ROWSPAN="2" class="bottom_left_corner"></TD>')
         else:
             out.write('<TD class="left_border"></TD>')
         if is_first:
@@ -392,7 +392,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         #    style = "font-size: smaller"
         write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
         if is_last:
-            out.write('<TD COLSPAN="2" class="bottom_right_corner"></TD>')
+            out.write('<TD ROWSPAN="2" class="bottom_right_corner"></TD>')
         else:
             out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
