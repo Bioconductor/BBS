@@ -191,7 +191,8 @@ def write_node_spec_asTD(out, node, spec_html, selected=False):
     return
 
 def status_asSPAN(status):
-    return '<SPAN class="%s">&nbsp;%s&nbsp;</SPAN>' % (status, status)
+    return '<SPAN class="%s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
+           (status, status)
 
 def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
     selected = leafreport_ref != None and \
@@ -210,8 +211,7 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
         else:
             pkgdir = pkg
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        TDcontent = '<A href="%s"><DIV>%s</DIV></A>' % \
-                    (url, status_asSPAN(status))
+        TDcontent = '<A href="%s">%s</A>' % (url, status_asSPAN(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
 
