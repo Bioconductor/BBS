@@ -255,10 +255,13 @@ TABLE.quickstats {
     color: white;
 }
 
-TABLE.quickstats TD {
-    width: 35px;
-    padding: 0px;
+TABLE.quickstats TR {
+    height: 24px;
     text-align: center;
+}
+TABLE.quickstats TD {
+    width: 36px;
+    padding: 2px;
 }
 
 .TIMEOUT,
