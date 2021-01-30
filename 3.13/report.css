@@ -220,7 +220,7 @@ TABLE.gcard_list TR.vertical_space {
     height: 10px;
 }
 TABLE.gcard_list TBODY.gcard_separator TR.vertical_space {
-    height: 2px;
+    height: 1px;
 }
 
 TABLE.gcard_list TR.header TD {
