@@ -387,6 +387,7 @@ TBODY.compact.gcard.even_row_number TD.malbec1 {
 TBODY.gcard TD.malbec2 {
     background: #DAECFA;
 }
+.malbec2.toned_down,
 TBODY.gcard TR.toned_down TD.malbec2,
 TBODY.compact.gcard.even_row_number TD.malbec2 {
     background: #CADCEA;
