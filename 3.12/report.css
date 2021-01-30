@@ -12,9 +12,15 @@ H1 {
 }
 H2 {
     font-size: 15pt;
-    margin-top: 4px;
-    margin-bottom: 3px;
+    margin-top: 10px;
+    margin-bottom: 6px;
     text-align: center;
+}
+H2 SPAN {
+    padding: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 12px;
 }
 H3 {
     font-size: 13pt;
@@ -72,12 +78,15 @@ TABLE.grid_layout DIV.hscrollable {
  * Message of the day
  */
 
-TABLE.motd {
-    width: 80%;
-    margin: auto;
-    margin-bottom: 5pt;
+DIV.motd {
+    padding-top: 5px;
+    padding-bottom: 15px;
     text-align: center;
     font-weight: bold;
+}
+DIV.motd TABLE {
+    width: 80%;
+    margin: auto;
 }
 
 
@@ -157,28 +166,39 @@ TABLE.Rconfig TD {
  * Glyph styles
  */
 
-SPAN.TIMEOUT {
+.glyph {
     font-weight: bold;
+}
+.glyph.TIMEOUT {
+    background: #A08;
     color: white;
 }
-SPAN.ERROR {
-    font-weight: bold;
+.glyph.ERROR {
+    background: #B33;
     color: white;
 }
-SPAN.WARNINGS {
-    font-weight: bold;
+.glyph.WARNINGS {
+    background: #D82;
     color: white;
 }
-SPAN.OK {
-    font-weight: bold;
+.glyph.OK {
+    background: #282;
     color: #DDD;
 }
-SPAN.NotNeeded {
-    font-weight: bold;
+.glyph.NotNeeded {
+    background: #69C;
     color: #EEE;
 }
-SPAN.skipped, SPAN.NA {
-    font-weight: bold;
+.glyph.NA {
+    background: #8AA;
+}
+
+P.noresult {
+    text-align: center;
+}
+P.noresult SPAN {
+    background: #8AA;
+    padding: 4pt;
 }
 
 
@@ -199,8 +219,14 @@ TABLE.gcard_list TD {
     padding-bottom: 2px;
 }
 
-TABLE.gcard_list TR.row_separator {
-    height: 4px;
+TABLE.gcard_list TR.vertical_space {
+    height: 10px;
+}
+TABLE.gcard_list TBODY.gcard_separator TR.vertical_space TD {
+    padding: 0px;
+}
+TABLE.gcard_list TBODY.gcard_separator TR.vertical_space {
+    height: 1px;
 }
 
 TABLE.gcard_list TR.header TD {
@@ -210,17 +236,16 @@ TABLE.gcard_list TR.header TD {
 }
 
 TABLE.gcard_list TR.header TD.STAGE {
-    padding: 0px;
     text-align: center;
-    width: 120px;
+    width: 125px;
 }
 TABLE.gcard_list TD.status {
-    padding: 0px;
     text-align: center;
+    padding: 0px;
 }
 
 TABLE.gcard_list TR.selected_row {
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 
 TABLE.gcard_list TABLE.svn_info {
@@ -234,41 +259,11 @@ TABLE.gcard_list TABLE.svn_info {
  * Quick stats
  */
 
-TABLE.quickstats TD.quickstats {
-    padding: 0px;
-    text-align: center;
+THEAD.quickstats TR {
+    height: 32px;
 }
-
-.TIMEOUT,
-TABLE.quickstats TD.quickstats.TIMEOUT {
-    background: #A08;
-}
-.ERROR,
-TABLE.quickstats TD.quickstats.ERROR {
-    background: #B33;
-}
-.WARNINGS,
-TABLE.quickstats TD.quickstats.WARNINGS {
-    background: #D82;
-}
-.OK,
-TABLE.quickstats TD.quickstats.OK {
-    background: #282;
-}
-.NotNeeded,
-TABLE.quickstats TD.quickstats.NotNeeded {
-    background: #69C;
-}
-.NA,
-TABLE.quickstats TD.quickstats.NA {
-    background: #8AA;
-}
-P.noresult {
-    text-align: center;
-}
-P.noresult SPAN {
-    background: #8AA;
-    padding: 4pt;
+THEAD.quickstats TR.header {
+    height: 22px;
 }
 
 TABLE.quickstats {
@@ -277,10 +272,12 @@ TABLE.quickstats {
     border-spacing: 0px;
     color: white;
 }
-TABLE.quickstats TD {
-    width: 32px;
-    padding: 0px;
+TABLE.quickstats TR {
+    height: 24px;
     text-align: center;
+}
+TABLE.quickstats TD {
+    width: 36px;
 }
 
 
@@ -288,59 +285,75 @@ TABLE.quickstats TD {
  * Glyph card (gcard)
  */
 
-TR.gcard TD {
+TBODY.gcard {
     background: white;
+}
+TBODY.gcard TD {
     border-left: 1px solid #DDD;
 }
-TR.gcard.header {
+TBODY.gcard TD.left_border {
+    border-left: 0px;
+}
+
+TBODY.gcard TR.header {
     height: 20px;
 }
-TR.gcard.header TD {
-    /*background: #F6F6F6;*/
+TBODY.gcard TR.footer {
+    height: 6px;
+}
+TBODY.gcard TR.header TD {
     color: #999;
 }
-TR.compact.gcard {
+TBODY.compact.gcard TR {
     height: 24px;
 }
-TR.compact.gcard TD.row_number {
+TBODY.compact.gcard TD.row_number {
     color: #999;
     text-align: right;
     padding-right: 4px;
 }
-TR.compact.gcard.even_row TD {
+TBODY.compact.gcard.even_row_number TD {
     background: #EEE;
 }
 
-TR.gcard.header TD.top_left_corner {
-    background: white;
+TBODY.gcard TR.header TD.top_left_corner {
     border-left: 0px;
     width: 14px;
-    border-top-left-radius: 10px;
+    border-top-left-radius: 12px;
 }
-TR.gcard.header TD.top_right_corner {
+TBODY.gcard TR.header TD.top_right_corner {
     width: 14px;
-    border-top-right-radius: 10px;
+    border-top-right-radius: 12px;
 }
-TR.gcard TD.bottom_left_corner {
+TBODY.gcard TD.bottom_left_corner {
     border-left: 0px;
-    border-bottom-left-radius: 10px;
+    border-bottom-left-radius: 12px;
 }
-TR.gcard TD.bottom_right_corner {
-    border-bottom-right-radius: 10px;
+TBODY.gcard TD.bottom_right_corner {
+    border-bottom-right-radius: 12px;
 }
 
-TR.gcard TD.left_border {
-    border-left: 0px;
-}
-TR.compact.gcard TD.left_border {
+TBODY.compact.gcard TD.left_border {
     width: 28px;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
-TR.compact.gcard TD.right_border {
+TBODY.compact.gcard TD.right_border {
     width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
+}
+
+TBODY.gcard TD.STAGE.selected {
+    color: #555;
+    border-top: 3px solid #AAA;
+}
+TBODY.gcard TD.status A {
+    display: block;
+    text-decoration: none;
+}
+TBODY.gcard TD.status.selected A {
+    border: 1px solid black;
 }
 
 
@@ -378,82 +391,101 @@ TABLE.abc_dispatcher TD {
  */
 
 /* malbec1 (Ubuntu 18.04) */
-DIV.malbec1,
-TR.malbec1,
-TR.gcard TD.malbec1 {
+.malbec1,
+TD.malbec1 {
     background: #BDF;
 }
-TR.compact.gcard.even_row TD.malbec1 {
+.malbec1.toned_down,
+TR.toned_down .malbec1,
+TBODY.compact.gcard.even_row_number .malbec1 {
     background: #ACE;
 }
 
 /* malbec2 (Ubuntu 20.04) */
-DIV.malbec2,
-TR.malbec2,
-TR.gcard TD.malbec2 {
+.malbec2,
+TD.malbec2 {
     background: #DAECFA;
 }
-TR.compact.gcard.even_row TD.malbec2 {
+.malbec2.toned_down,
+TR.toned_down .malbec2,
+TBODY.compact.gcard.even_row_number .malbec2 {
     background: #CADCEA;
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
-DIV.nebbiolo1,
-TR.nebbiolo1,
-TR.gcard TD.nebbiolo1 {
+.nebbiolo1,
+TD.nebbiolo1 {
     background: #DAECFA;
 }
-TR.compact.gcard.even_row TD.nebbiolo1 {
+.nebbiolo1.toned_down,
+TR.toned_down .nebbiolo1,
+TBODY.compact.gcard.even_row_number .nebbiolo1 {
+    background: #CADCEA;
+}
+
+/* rex3 (Ubuntu 20.04) */
+.rex3,
+TD.rex3 {
+    background: #DAECFA;
+}
+.rex3.toned_down,
+TR.toned_down .rex3,
+TBODY.compact.gcard.even_row_number .rex3 {
     background: #CADCEA;
 }
 
 /* tokay1 */
-DIV.tokay1,
-TR.tokay1,
-TR.gcard TD.tokay1 {
+.tokay1,
+TD.tokay1 {
     background: #EDC;
 }
-TR.compact.gcard.even_row TD.tokay1 {
+.tokay1.toned_down,
+TR.toned_down .tokay1,
+TBODY.compact.gcard.even_row_number .tokay1 {
     background: #DCB;
 }
 
 /* tokay2 */
-DIV.tokay2,
-TR.tokay2,
-TR.gcard TD.tokay2 {
+.tokay2,
+TD.tokay2 {
     background: #EEE4CC;
 }
-TR.compact.gcard.even_row TD.tokay2 {
+.tokay2.toned_down,
+TR.toned_down .tokay2,
+TBODY.compact.gcard.even_row_number .tokay2 {
     background: #DDD3BB;
 }
 
 /* riesling1 */
-DIV.riesling1,
-TR.riesling1,
-TR.gcard TD.riesling1 {
+.riesling1,
+TD.riesling1 {
     background: #F4EFDF;
 }
-TR.compact.gcard.even_row TD.riesling1 {
+.riesling1.toned_down,
+TR.toned_down .riesling1,
+TBODY.compact.gcard.even_row_number .riesling1 {
     background: #E4DFCF;
 }
 
 /* merida1 */
-DIV.merida1,
-TR.merida1,
-TR.gcard TD.merida1 {
+.merida1,
+TD.merida1 {
     background: #D8CCEE;
 }
-TR.compact.gcard.even_row TD.merida1 {
+.merida1.toned_down,
+TR.toned_down .merida1,
+TBODY.compact.gcard.even_row_number .merida1 {
     background: #C8BBDD;
 }
 
 /* machv2 */
-DIV.machv2,
-TR.machv2,
-TR.gcard TD.machv2 {
+.machv2,
+TD.machv2 {
     background: #ECE6FA;
 }
-TR.compact.gcard.even_row TD.machv2 {
+.machv2.toned_down,
+TR.toned_down .machv2,
+TBODY.compact.gcard.even_row_number .machv2 {
     background: #DCD6EA;
 }
 
