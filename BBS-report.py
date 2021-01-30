@@ -301,7 +301,7 @@ def write_abc_dispatcher(out, href="", current_letter=None,
     return
 
 ### Produces 2 full TRs.
-def write_pkg_index_as2fullTRs(out, current_letter):
+def write_pkg_abc_index_as2fullTRs(out, current_letter):
     ## FH: Need the collapsable_rows class to blend out the alphabetical
     ## selection when "ok" packages are unselected.
     out.write('<TBODY class="collapsable_rows">\n')
@@ -488,7 +488,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
         if first_letter != current_letter:
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
-                write_pkg_index_as2fullTRs(out, current_letter)
+                write_pkg_abc_index_as2fullTRs(out, current_letter)
         if full_table or pkg == leafreport_ref.pkg:
             pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
             if pkg in skipped_pkgs:
@@ -496,8 +496,9 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
             else:
                 pkg_status_classes = statuses2classes(pkg_statuses)
             if full_table:
-                writeThinRowSeparator_asTR(out, "row_separator %s" % \
-                                                pkg_status_classes)
+                out.write('<TBODY class="%s">\n' % pkg_status_classes)
+                writeThinRowSeparator_asTR(out, "row_separator")
+                out.write('</TBODY>\n')
             write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                         pkg_statuses, pkg_status_classes)
     out.write('</TABLE>\n')
@@ -577,7 +578,7 @@ def write_compact_gcard_list(out, node, allpkgs, leafreport_ref=None):
         if first_letter != current_letter:
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
-                write_pkg_index_as2fullTRs(out, current_letter)
+                write_pkg_abc_index_as2fullTRs(out, current_letter)
                 write_compact_gcard_header(out)
         if full_table or pkg == leafreport_ref.pkg:
             write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
