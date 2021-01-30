@@ -203,7 +203,7 @@ TABLE.gcard_list TR.vertical_space {
     height: 10px;
 }
 TABLE.gcard_list TBODY.gcard_separator TR.vertical_space {
-    height: 4px;
+    height: 2px;
 }
 
 TABLE.gcard_list TR.header TD {
@@ -306,7 +306,7 @@ TBODY.gcard TR.header {
     height: 20px;
 }
 TBODY.gcard TR.footer {
-    height: 4px;
+    height: 6px;
 }
 TBODY.gcard TR.header TD {
     /*background: #F6F6F6;*/
