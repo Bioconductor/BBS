@@ -432,14 +432,19 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
+        selected = toned_down = False
         TRclasses = node.hostname.replace(".", "_")
         if selected_node != None:
             if selected_node == node.node_id:
+                selected = True
                 TRclasses += ' selected_row'
             else:
+                toned_down = True
                 TRclasses += ' toned_down'
         out.write('<TR class="%s">' % TRclasses)
-        node_id_html = '<B>%s</B>' % node.node_id
+        node_html = node.node_id
+        if not toned_down:
+            node_html = '<B>%s</B>' % node_html
         if nb_nodes != 1:
             node_index_file = '%s-index.html' % node.node_id
             node_id_html = '<A href="%s">%s</A>' % \
@@ -448,7 +453,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
             TDclass = 'bottom_left_corner'
         else:
             TDclass = 'left_border'
-        TD_html = '<TD COLSPAN="3" class="%s">%s</TD>' % (TDclass, node_id_html)
+        TD_html = '<TD COLSPAN="3" class="%s">%s</TD>' % (TDclass, node_html)
         out.write(TD_html)
         TD_html = '<TD>%s</TD>' % nodeOSArch_asSPAN(node)
         out.write(TD_html)
