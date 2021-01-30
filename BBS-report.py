@@ -647,7 +647,7 @@ def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
     title = BBSreportutils.make_report_title(report_nodes)
 
     pkg = leafreport_ref.pkg
-    page_title = 'Results for %s' % pkg
+    page_title = 'Results for package %s' % pkg
     out_rURL = os.path.join(pkg, 'index.html')
     out = open(out_rURL, 'w')
 
@@ -1548,13 +1548,13 @@ def write_node_report(node, allpkgs):
     sys.stdout.flush()
     node_index_file = '%s-index.html' % node.node_id
     out = open(node_index_file, 'w')
-    page_title = "Results for %s" % node.node_id
+    page_title = "Results on %s" % node.node_id
 
     write_HTML_header(out, page_title, 'report.css', 'report.js')
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    out.write('<H2 class="%s">%s</H2>\n' % \
+    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
