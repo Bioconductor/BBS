@@ -976,7 +976,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
-              (node.hostname.replace(".", "_"), page_title))
+              (node_hostname.replace(".", "_"), page_title))
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
