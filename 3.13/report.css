@@ -228,16 +228,8 @@ TABLE.gcard_list TR.header TD.STAGE {
     width: 125px;
 }
 TABLE.gcard_list TD.status {
-    padding: 0px;
     text-align: center;
-}
-TABLE.gcard_list TD.status A {
-    display: block;
-    text-decoration: none;
-}
-TABLE.gcard_list TD.STAGE.selected,
-TABLE.gcard_list TD.status.selected A {
-    border: 1px solid black;
+    padding: 0px;
 }
 
 TABLE.gcard_list TR.selected_row {
@@ -337,6 +329,17 @@ TBODY.compact.gcard TD.right_border {
     width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
+}
+
+TBODY.gcard TD.STAGE.selected {
+    color: #777;
+}
+TBODY.gcard TD.status A {
+    display: block;
+    text-decoration: none;
+}
+TBODY.gcard TD.status.selected A {
+    border: 1px solid black;
 }
 
 
