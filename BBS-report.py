@@ -400,8 +400,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
 
 def write_quickstats_TD(out, node, stage):
     stats = quickstats[node.node_id][stage]
-    html = '<TABLE class="quickstats"><TR class="%s">' % \
-           node.hostname.replace(".", "_")
+    html = '<TABLE class="quickstats"><TR>'
     html += '<TD class="%s">%d</TD>' % ("TIMEOUT", stats[0])
     html += '<TD class="%s">%d</TD>' % ("ERROR", stats[1])
     if stage == 'checksrc':
