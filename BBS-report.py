@@ -374,7 +374,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 version = maintainer = status = ''
             deprecated = status == "Deprecated"
             out.write('<TD ROWSPAN="%d" style="vertical-align: top;">' % \
-                      (nb_nodes + 1))
+                      nb_nodes)
             out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
             out.write('<BR>%s' % maintainer)
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
@@ -397,7 +397,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
     out.write('<TR class="footer">')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 2
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
     out.write('<TD COLSPAN="%d"></TD>' % colspan)
     out.write('</TR>\n')
     out.write('</TBODY>\n')
