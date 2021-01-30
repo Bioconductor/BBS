@@ -291,7 +291,7 @@ TBODY.gcard {
 TBODY.gcard TD {
     border-left: 1px solid #DDD;
 }
-TBODY.gcard TD.left_border {
+TBODY.gcard TD.leftmost {
     border-left: 0px;
 }
 
@@ -317,7 +317,6 @@ TBODY.compact.gcard.even_row_number TD {
 }
 
 TBODY.gcard TR.header TD.top_left_corner {
-    border-left: 0px;
     width: 14px;
     border-top-left-radius: 12px;
 }
@@ -326,19 +325,18 @@ TBODY.gcard TR.header TD.top_right_corner {
     border-top-right-radius: 12px;
 }
 TBODY.gcard TD.bottom_left_corner {
-    border-left: 0px;
     border-bottom-left-radius: 12px;
 }
 TBODY.gcard TD.bottom_right_corner {
     border-bottom-right-radius: 12px;
 }
 
-TBODY.compact.gcard TD.left_border {
+TBODY.compact.gcard TD.leftmost {
     width: 28px;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
-TBODY.compact.gcard TD.right_border {
+TBODY.compact.gcard TD.rightmost {
     width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;

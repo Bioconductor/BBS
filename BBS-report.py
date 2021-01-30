@@ -336,7 +336,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 pkg_statuses, pkg_status_classes):
     out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
     out.write('<TR class="header">')
-    out.write('<TD class="top_left_corner"></TD>')
+    out.write('<TD class="leftmost top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
@@ -360,9 +360,9 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             TRattrs = ' class="toned_down"'
         out.write('<TR%s>' % TRattrs)
         if is_last:
-            out.write('<TD ROWSPAN="2" class="bottom_left_corner"></TD>')
+            out.write('<TD ROWSPAN="2" class="leftmost bottom_left_corner"></TD>')
         else:
-            out.write('<TD class="left_border"></TD>')
+            out.write('<TD class="leftmost"></TD>')
         if is_first:
             is_first = False
             if len(pkg_statuses) != 0:
@@ -394,7 +394,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         if is_last:
             out.write('<TD ROWSPAN="2" class="bottom_right_corner"></TD>')
         else:
-            out.write('<TD class="right_border"></TD>')
+            out.write('<TD class="rightmost"></TD>')
         out.write('</TR>\n')
     out.write('<TR class="footer">')
     colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
@@ -422,10 +422,10 @@ def write_quickstats_TD(out, node, stage):
 def write_quickstats(out, nb_pkgs, selected_node=None):
     out.write('<THEAD class="quickstats">\n')
     out.write('<TR class="header">')
-    out.write('<TD COLSPAN="3" class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
+    out.write('<TD COLSPAN="3" class="leftmost top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
-    out.write('<TD class="top_right_corner"></TD>')
+    out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     last_i = nb_nodes - 1
@@ -449,9 +449,9 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
             node_index_file = '%s-index.html' % node.node_id
             node_html = '<A href="%s">%s</A>' % (node_index_file, node_html)
         if is_last:
-            TDclass = 'bottom_left_corner'
+            TDclass = 'leftmost bottom_left_corner'
         else:
-            TDclass = 'left_border'
+            TDclass = 'leftmost'
         TD_html = '<TD COLSPAN="3" class="%s">%s</TD>' % (TDclass, node_html)
         out.write(TD_html)
         TD_html = '<TD>%s</TD>' % nodeOSArch_asSPAN(node)
@@ -465,9 +465,9 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
         if BBSreportutils.display_propagation_status(subbuilds):
             out.write('<TD style="width:12px;"></TD>')
         if is_last:
-            out.write('<TD class="bottom_right_corner"></TD>')
+            out.write('<TD class="rightmost bottom_right_corner"></TD>')
         else:
-            out.write('<TD class="right_border"></TD>')
+            out.write('<TD class="rightmost"></TD>')
         out.write('</TR>\n')
     out.write('</THEAD>\n')
     return
@@ -541,7 +541,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
         TBODYclasses += ' odd_row_number'
     out.write('<TBODY class="%s">\n' % TBODYclasses)
     out.write('<TR>')
-    out.write('<TD class="left_border row_number"><B>%d</B>/%d</TD>' % \
+    out.write('<TD class="leftmost row_number"><B>%d</B>/%d</TD>' % \
               (pkg_pos, nb_pkgs))
     out.write('<TD>')
     if len(pkg_statuses) != 0:
@@ -556,7 +556,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     out.write('</TD>')
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
     write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
-    out.write('<TD class="right_border"></TD>')
+    out.write('<TD class="rightmost"></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
