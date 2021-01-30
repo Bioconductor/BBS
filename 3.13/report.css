@@ -157,27 +157,27 @@ TABLE.Rconfig TD {
  * Glyph styles
  */
 
-DIV.TIMEOUT {
+.glyph.TIMEOUT {
     font-weight: bold;
     color: white;
 }
-DIV.ERROR {
+.glyph.ERROR {
     font-weight: bold;
     color: white;
 }
-DIV.WARNINGS {
+.glyph.WARNINGS {
     font-weight: bold;
     color: white;
 }
-DIV.OK {
+.glyph.OK {
     font-weight: bold;
     color: #DDD;
 }
-DIV.NotNeeded {
+.glyph.NotNeeded {
     font-weight: bold;
     color: #EEE;
 }
-DIV.skipped, DIV.NA {
+.glyph.skipped, .glyph.NA {
     font-weight: bold;
 }
 
@@ -223,10 +223,6 @@ TABLE.gcard_list TD.status {
 TABLE.gcard_list TD.status A {
     display: block;
     text-decoration: none;
-}
-TABLE.gcard_list TD.status A DIV {
-    width: 100%;
-    height: 100%;
 }
 TABLE.gcard_list TD.STAGE.selected,
 TABLE.gcard_list TD.status.selected {
