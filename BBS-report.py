@@ -965,7 +965,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
     node_hostname = leafreport_ref.node_hostname
     node_id = leafreport_ref.node_id
     stage = leafreport_ref.stage
-    page_title = '%s report for %s on %s' % (BBSreportutils.stage_label(stage), pkg, node_id)
+    page_title = '%s report for %s on %s' % \
+                 (BBSreportutils.stage_label(stage), pkg, node_id)
     out_rURL = BBSreportutils.get_leafreport_rel_path(pkg, node_id, stage)
     out = open(out_rURL, 'w')
 
@@ -974,7 +975,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    out.write('<H2>%s</H2>\n' % page_title)
+    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
+              (node.hostname.replace(".", "_"), page_title))
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
