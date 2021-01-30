@@ -79,9 +79,10 @@ TABLE.grid_layout DIV.hscrollable {
  */
 
 DIV.motd {
+    padding-top: 15px;
+    padding-bottom: 15px;
     text-align: center;
     font-weight: bold;
-    margin-bottom: 15px;
     border: 1px solid black;
 }
 DIV.motd TABLE {
