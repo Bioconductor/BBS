@@ -59,9 +59,9 @@ function toggle(theClass) {
     var element = "display";
     var show;
     if(document.getElementById(theClass).checked){
-        show = "table-row";
+        show = "table-row-group";
         if(theClass=="ok"){
-            changecss("TABLE.gcard_list TBODY.collapsable_rows", element, "table-row");
+            changecss("TABLE.gcard_list TBODY.collapsable_rows", element, "table-row-group");
         }
     }else{
         show = "none";
@@ -87,40 +87,40 @@ function toggle(theClass) {
     switch(selections)
     {
     case 1:
-        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row");
+        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row-group");
         break;    
     case 2:
-        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row");
+        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row-group");
         break;    
     case 3:
-        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row");
+        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row-group");
         break;   
     case 4:
-        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row");
+        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row-group");
         break;      
     case 5:
-        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row");
+        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row-group");
         break;
     case 6:
-        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row");
+        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row-group");
         // shouldn't there be a break here?
     case 7:
-        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row");
-        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row");
+        changecss("TABLE.gcard_list TBODY.warnings.error.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.error", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.warnings.timeout", element, "table-row-group");
+        changecss("TABLE.gcard_list TBODY.error.timeout", element, "table-row-group");
         break;
     }
     var on = [];
