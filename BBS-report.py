@@ -330,7 +330,8 @@ def statuses2classes(statuses):
         classes = ["ok"]
     return ' '.join(classes)
 
-### A non-compact gcard spans several table rows (TRs).
+### A non-compact gcard spans several table rows (TRs) grouped in a
+### TBODY element.
 def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 pkg_statuses, pkg_status_classes):
     out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
@@ -338,16 +339,13 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
-    out.write('<TD style="text-align: left; width: 290px">OS&nbsp;/&nbsp;Arch</TD>')
+    out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out, leafreport_ref)
     out.write('<TD class="top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
-    nb_nodes = len(BBSreportutils.NODES)
-    last_i = nb_nodes - 1
     for i in range(nb_nodes):
-        is_last = i == last_i
         node = BBSreportutils.NODES[i]
         selected = toned_down = False
         if leafreport_ref == None:
@@ -359,10 +357,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             toned_down = True
             TRattrs = ' class="toned_down"'
         out.write('<TR%s>' % TRattrs)
-        if is_last:
-            out.write('<TD class="bottom_left_corner"></TD>')
-        else:
-            out.write('<TD class="left_border"></TD>')
+        out.write('<TD class="left_border"></TD>')
         if is_first:
             is_first = False
             if len(pkg_statuses) != 0:
@@ -374,7 +369,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 version = maintainer = status = ''
             deprecated = status == "Deprecated"
             out.write('<TD ROWSPAN="%d" style="vertical-align: top;">' % \
-                      nb_nodes)
+                      nb_nodes + 1)
             out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
             out.write('<BR>%s' % maintainer)
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
@@ -391,11 +386,14 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         #else:
         #    style = "font-size: smaller"
         write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
-        if is_last:
-            out.write('<TD class="bottom_right_corner"></TD>')
-        else:
-            out.write('<TD class="right_border"></TD>')
+        out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
+    out.write('<TR>')
+    out.write('<TD class="bottom_left_corner"></TD>')
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 2
+    out.write('<TD COLSPAN="%s"></TD>' % colspan)
+    out.write('<TD class="bottom_right_corner"></TD>')
+    out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
 
