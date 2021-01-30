@@ -74,6 +74,12 @@ def pkgname_to_HTML(pkg):
             url = "/packages/%s/%s" % (bioc_version, pkg)
     return '<A href="%s">%s</A>' % (url, pkg)
 
+def pkgname_and_version_to_HTML(pkg, version, deprecated=False):
+    html = '<B>%s&nbsp;%s</B>' % (pkgname_to_HTML(pkg), version)
+    if deprecated:
+        html = '<s>%s</s>' % html
+    return html
+
 
 ##############################################################################
 ### VCS metadata HTMLization
@@ -333,8 +339,8 @@ def statuses2classes(statuses):
 ### A non-compact gcard spans several table rows (TRs).
 def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                 pkg_statuses, pkg_status_classes):
-    out.write('<TBODY class="gcard">\n')
-    out.write('<TR class="header %s">' % pkg_status_classes)
+    out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
+    out.write('<TR class="header">')
     out.write('<TD class="top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
@@ -349,50 +355,38 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
-        all_TRclasses = pkg_status_classes
         selected = toned_down = False
-        if leafreport_ref != None:
-            if node.node_id == leafreport_ref.node_id:
-                selected = True
-                all_TRclasses += ' selected_row'
-            else:
-                toned_down = True
-                all_TRclasses += ' toned_down'
-        out.write('<TR class="%s">' % all_TRclasses)
+        if leafreport_ref == None:
+            TRattrs = ''
+        elif node.node_id == leafreport_ref.node_id:
+            selected = True
+            TRattrs = ' class="selected_row"'
+        else:
+            toned_down = True
+            TRattrs = ' class="toned_down"'
+        out.write('<TR%s>' % TRattrs)
         if is_last:
             out.write('<TD class="bottom_left_corner"></TD>')
         else:
             out.write('<TD class="left_border"></TD>')
         if is_first:
-            pkgname_html = pkgname_to_HTML(pkg)
-            if pkg_statuses:
+            is_first = False
+            if len(pkg_statuses) != 0:
                 dcf_record = meat_index[pkg]
                 version = dcf_record['Version']
                 maintainer = dcf_record['Maintainer']
                 status = dcf_record.get('PackageStatus')
             else:
-                version = ''
-                maintainer = ''
-                status = ''
-            if status == "Deprecated":
-                strike = '<s>'
-                strike_close = '</s>'
-            else:
-                strike = ''
-                strike_close = ''
+                version = maintainer = status = ''
+            deprecated = status == "Deprecated"
             out.write('<TD ROWSPAN="%d" style="vertical-align: top;">' % \
                       nb_nodes)
-            #out.write('<H3>%s</H3>' % pkgname_html)
-            #out.write('<H4>%s</H4>' % version)
-            #out.write('<B><SPAN style="font-size: larger;">%s</SPAN>&nbsp;%s</B><BR>' % (pkgname_html, version))
-            out.write('<B>%s%s%s&nbsp;%s</B>' % (strike, pkgname_html, strike_close, version))
+            out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
             out.write('<BR>%s' % maintainer)
-
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
                 out.write('<BR>')
                 write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
-            is_first = False
         node_html = node.node_id
         if not toned_down:
             node_html = '<B>%s</B>' % node_html
@@ -527,37 +521,30 @@ def write_compact_gcard_header(out):
 
 ### Produces one full TR.
 def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
-    TBODYclasses = 'compact gcard'
+    pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
+    if pkg in skipped_pkgs:
+        pkg_status_classes = 'error'
+    else:
+        pkg_status_classes = statuses2classes(pkg_statuses)
+    TBODYclasses = 'compact gcard %s' % pkg_status_classes
     if pkg_pos % 2 == 0 and not leafreport_ref:
         TBODYclasses += ' even_row_number'
     else:
         TBODYclasses += ' odd_row_number'
     out.write('<TBODY class="%s">\n' % TBODYclasses)
-    statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
-    if pkg in skipped_pkgs:
-        TRclasses = 'error'
-    else:
-        TRclasses = statuses2classes(statuses)
-    out.write('<TR class="%s">' % TRclasses)
+    out.write('<TR>')
     out.write('<TD class="left_border row_number"><B>%d</B>/%d</TD>' % \
               (pkg_pos, nb_pkgs))
     out.write('<TD>')
-    if statuses:
+    if len(pkg_statuses) != 0:
         dcf_record = meat_index[pkg]
         version = dcf_record['Version']
         maintainer = dcf_record['Maintainer']
         status = dcf_record.get('PackageStatus')
     else:
-        version = ''
-        status = ''
-        maintainer = ''
-    if status == "Deprecated":
-        strike = "<s>"
-        strike_close = "</s>"
-    else:
-        strike = ""
-        strike_close = ""
-    out.write('%s<B>%s</B>%s&nbsp;<B>%s</B>' % (strike, pkgname_to_HTML(pkg), strike_close, version))
+        version = status = maintainer = ''
+    deprecated = status == "Deprecated"
+    out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
     out.write('</TD>')
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
     write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
