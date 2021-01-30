@@ -254,11 +254,11 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
         % (node.hostname.replace(".", "_"), status, status, path, color))
 
 def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref):
-    TDclass = node.hostname.replace(".", "_")
+    TDclasses = 'status %s' % node.hostname.replace(".", "_")
     subbuilds = BBSvars.subbuilds
     if pkg in skipped_pkgs:
-        TDattrs = 'COLSPAN="%s" class="%s" style="text-align: center;"' % \
-                  (BBSreportutils.ncol_to_display(subbuilds), TDclass)
+        TDattrs = 'COLSPAN="%s" class="%s"' % \
+                  (BBSreportutils.ncol_to_display(subbuilds), TDclasses)
         TDcontent = '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
         TDcontent += ' (Bad DESCRIPTION file)'
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
@@ -266,16 +266,16 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref):
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage == 'buildbin' and \
                not BBSreportutils.is_doing_buildbin(node):
-                out.write('<TD class="%s"></TD>' % TDclass)
+                out.write('<TD class="%s"></TD>' % TDclasses)
             else:
                 write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref)
         if BBSreportutils.display_propagation_status(subbuilds):
             write_pkg_propagation_status_asTD(out, pkg, node)
     else:
         TDattrs = 'COLSPAN="%s" class="%s"' % \
-                  (BBSreportutils.ncol_to_display(subbuilds), TDclass)
-        TDcontent = '...NOT SUPPORTED...'
-        TDcontent = '<B>%s</B>' % TDcontent.replace(' ', '&nbsp;')
+                  (BBSreportutils.ncol_to_display(subbuilds), TDclasses)
+        TDcontent = '... NOT SUPPORTED ...'
+        TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     return
 
