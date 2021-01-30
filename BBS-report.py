@@ -191,7 +191,7 @@ def write_node_spec_asTD(out, node, spec_html, selected=False):
     return
 
 def status_as_glyph(status):
-    return '<DIV class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</DIV>' % \
+    return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
            (status, status)
 
 def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
