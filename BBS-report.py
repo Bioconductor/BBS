@@ -43,13 +43,9 @@ def wopen_leafreport_input_file(pkg, node_id, stage, filename, return_None_on_er
 ### HTMLization
 ##############################################################################
 
-def writeThinRowSeparator_asTR(out, tr_class=None):
-    if tr_class:
-        tr_class = ' class="%s"' % tr_class
-    else:
-        tr_class = '';
+def write_vertical_space(out):
     colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 5
-    out.write('<TR%s><TD COLSPAN="%s"></TD></TR>\n' % (tr_class, colspan))
+    out.write('<TR class="vertical_space"><TD COLSPAN="%s"></TD></TR>\n' % colspan)
     return
 
 def pkgname_to_HTML(pkg):
@@ -301,11 +297,11 @@ def write_abc_dispatcher(out, href="", current_letter=None,
     return
 
 ### Produces 2 full TRs.
-def write_pkg_abc_index_as2fullTRs(out, current_letter):
+def write_abc_dispatcher_within_gcard_list(out, current_letter):
     ## FH: Need the collapsable_rows class to blend out the alphabetical
     ## selection when "ok" packages are unselected.
-    out.write('<TBODY class="collapsable_rows">\n')
-    writeThinRowSeparator_asTR(out, "vertical_space")
+    out.write('<TBODY class="abc_dispatcher collapsable_rows">\n')
+    write_vertical_space(out)
     out.write('<TR class="abc">')
     out.write('<TD COLSPAN="2">')
     out.write('<TABLE class="big_letter"><TR><TD>')
@@ -425,7 +421,7 @@ def write_quickstats_TD(out, node, stage):
     return
 
 ### The quick stats span several table rows (TRs).
-def write_quickstats_asfullTRs(out, nb_pkgs, selected_node=None):
+def write_quickstats(out, nb_pkgs, selected_node=None):
     out.write('<TBODY class="quickstats">\n')
     out.write('<TR class="header">')
     out.write('<TD COLSPAN="3" class="top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
@@ -480,9 +476,9 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
     nb_pkgs = len(allpkgs)
     out.write('<TABLE class="gcard_list">\n')
     if full_table:
-        write_quickstats_asfullTRs(out, nb_pkgs)
+        write_quickstats(out, nb_pkgs)
         out.write('<TBODY>\n')
-        writeThinRowSeparator_asTR(out, "vertical_space")
+        write_vertical_space(out)
         out.write('</TBODY>\n')
     pkg_pos = 0
     current_letter = None
@@ -492,7 +488,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
         if first_letter != current_letter:
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
-                write_pkg_abc_index_as2fullTRs(out, current_letter)
+                write_abc_dispatcher_within_gcard_list(out, current_letter)
         if full_table or pkg == leafreport_ref.pkg:
             pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
             if pkg in skipped_pkgs:
@@ -502,7 +498,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
             if full_table:
                 out.write('<TBODY class="gcard_separator %s">\n' % \
                           pkg_status_classes)
-                writeThinRowSeparator_asTR(out, "vertical_space")
+                write_vertical_space(out)
                 out.write('</TBODY>\n')
             write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
                         pkg_statuses, pkg_status_classes)
@@ -570,9 +566,10 @@ def write_compact_gcard_list(out, node, allpkgs, leafreport_ref=None):
     nb_pkgs = len(allpkgs)
     out.write('<TABLE class="compact gcard_list">\n')
     if full_table:
-        write_quickstats_asfullTRs(out, nb_pkgs, node.node_id)
-        writeThinRowSeparator_asTR(out)
-        writeThinRowSeparator_asTR(out)
+        write_quickstats(out, nb_pkgs, node.node_id)
+        out.write('<TBODY>\n')
+        write_vertical_space(out)
+        out.write('</TBODY>\n')
         if no_alphabet_dispatch:
             write_compact_gcard_header(out)
     pkg_pos = 0
@@ -583,7 +580,7 @@ def write_compact_gcard_list(out, node, allpkgs, leafreport_ref=None):
         if first_letter != current_letter:
             current_letter = first_letter
             if full_table and not no_alphabet_dispatch:
-                write_pkg_abc_index_as2fullTRs(out, current_letter)
+                write_abc_dispatcher_within_gcard_list(out, current_letter)
                 write_compact_gcard_header(out)
         if full_table or pkg == leafreport_ref.pkg:
             write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
