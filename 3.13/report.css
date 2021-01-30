@@ -221,10 +221,12 @@ TABLE.gcard_list TD.status {
     text-align: center;
 }
 TABLE.gcard_list TD.status A {
-    display: table-cell;
+    display: block;
+    text-decoration: none;
+}
+TABLE.gcard_list TD.status A SPAN {
     width: 100%;
     height: 100%;
-    text-decoration: none;
 }
 TABLE.gcard_list TD.STAGE.selected,
 TABLE.gcard_list TD.status.selected {
