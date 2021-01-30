@@ -279,10 +279,16 @@ TABLE.quickstats TD {
  * Glyph card (gcard)
  */
 
-TBODY.gcard TD {
+TBODY.gcard {
     background: white;
+}
+TBODY.gcard TD {
     border-left: 1px solid #DDD;
 }
+TBODY.gcard TD.left_border {
+    border-left: 0px;
+}
+
 TBODY.gcard TR.header {
     height: 20px;
 }
@@ -290,7 +296,6 @@ TBODY.gcard TR.footer {
     height: 6px;
 }
 TBODY.gcard TR.header TD {
-    /*background: #F6F6F6;*/
     color: #999;
 }
 TBODY.compact.gcard TR {
@@ -320,10 +325,6 @@ TBODY.gcard TD.bottom_left_corner {
 }
 TBODY.gcard TD.bottom_right_corner {
     border-bottom-right-radius: 10px;
-}
-
-TBODY.gcard TD.left_border {
-    border-left: 0px;
 }
 
 TBODY.compact.gcard TD.left_border {
@@ -385,21 +386,23 @@ TABLE.abc_dispatcher TD {
 
 /* malbec1 (Ubuntu 18.04) */
 .malbec1,
-TBODY.gcard TD.malbec1 {
+TD.malbec1 {
     background: #BDF;
 }
-TBODY.compact.gcard.even_row_number TD.malbec1 {
+.malbec1.toned_down,
+TR.toned_down .malbec1,
+TBODY.compact.gcard.even_row_number .malbec1 {
     background: #ACE;
 }
 
 /* malbec2 (Ubuntu 20.04) */
 .malbec2,
-TBODY.gcard TD.malbec2 {
+TD.malbec2 {
     background: #DAECFA;
 }
 .malbec2.toned_down,
-TBODY.gcard TR.toned_down TD.malbec2,
-TBODY.compact.gcard.even_row_number TD.malbec2 {
+TR.toned_down .malbec2,
+TBODY.compact.gcard.even_row_number .malbec2 {
     background: #CADCEA;
 }
 
