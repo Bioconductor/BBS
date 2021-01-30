@@ -500,7 +500,8 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
             else:
                 pkg_status_classes = statuses2classes(pkg_statuses)
             if full_table:
-                out.write('<TBODY class="%s">\n' % pkg_status_classes)
+                out.write('<TBODY class="gcard_separator %s">\n' % \
+                          pkg_status_classes)
                 writeThinRowSeparator_asTR(out, "row_separator")
                 out.write('</TBODY>\n')
             write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
