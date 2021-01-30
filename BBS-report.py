@@ -304,8 +304,9 @@ def write_abc_dispatcher(out, href="", current_letter=None,
 def write_pkg_index_as2fullTRs(out, current_letter):
     ## FH: Need the collapsable_rows class to blend out the alphabetical
     ## selection when "ok" packages are unselected.
-    writeThinRowSeparator_asTR(out, "row_separator collapsable_rows")
-    out.write('<TR class="abc collapsable_rows">')
+    out.write('<TBODY class="collapsable_rows">\n')
+    writeThinRowSeparator_asTR(out, "row_separator")
+    out.write('<TR class="abc">')
     out.write('<TD COLSPAN="2">')
     out.write('<TABLE class="big_letter"><TR><TD>')
     out.write('<A name="%s">%s</A>' % \
@@ -317,6 +318,7 @@ def write_pkg_index_as2fullTRs(out, current_letter):
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
     out.write('</TR>\n')
+    out.write('</TBODY>\n')
     return
 
 def statuses2classes(statuses):
@@ -510,13 +512,15 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
 def write_compact_gcard_header(out):
     ## Using the collapsable_rows class here too to blend out the alphabetical
     ## selection + this header when "ok" packages are unselected.
-    out.write('<TR class="header collapsable_rows">')
+    out.write('<TBODY class="collapsable_rows">\n')
+    out.write('<TR class="header">')
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD COLSPAN="2">Maintainer</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD></TD>')
     out.write('</TR>\n')
+    out.write('</TBODY>\n')
     return
 
 ### Produces one full TR.
