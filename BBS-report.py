@@ -345,7 +345,9 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
+    last_i = nb_nodes - 1
     for i in range(nb_nodes):
+        is_last = i == last_i
         node = BBSreportutils.NODES[i]
         selected = toned_down = False
         if leafreport_ref == None:
@@ -357,7 +359,10 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             toned_down = True
             TRattrs = ' class="toned_down"'
         out.write('<TR%s>' % TRattrs)
-        out.write('<TD class="left_border"></TD>')
+        if is_last:
+            out.write('<TD COLSPAN="2" class="bottom_left_corner"></TD>')
+        else:
+            out.write('<TD class="left_border"></TD>')
         if is_first:
             is_first = False
             if len(pkg_statuses) != 0:
@@ -386,13 +391,14 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         #else:
         #    style = "font-size: smaller"
         write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
-        out.write('<TD class="right_border"></TD>')
+        if is_last:
+            out.write('<TD COLSPAN="2" class="bottom_right_corner"></TD>')
+        else:
+            out.write('<TD class="right_border"></TD>')
         out.write('</TR>\n')
     out.write('<TR class="footer">')
-    out.write('<TD class="bottom_left_corner"></TD>')
     colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 2
     out.write('<TD COLSPAN="%d"></TD>' % colspan)
-    out.write('<TD class="bottom_right_corner"></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
