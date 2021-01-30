@@ -1550,7 +1550,7 @@ def write_node_report(node, allpkgs):
     sys.stdout.flush()
     node_index_file = '%s-index.html' % node.node_id
     out = open(node_index_file, 'w')
-    page_title = "Results on %s" % node.node_id
+    page_title = "All results on %s" % node.node_id
 
     write_HTML_header(out, page_title, 'report.css', 'report.js')
     out.write('<BODY>\n')
