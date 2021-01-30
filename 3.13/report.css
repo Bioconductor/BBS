@@ -157,28 +157,39 @@ TABLE.Rconfig TD {
  * Glyph styles
  */
 
-.glyph.TIMEOUT {
+.glyph {
     font-weight: bold;
+}
+.glyph.TIMEOUT {
+    background: #A08;
     color: white;
 }
 .glyph.ERROR {
-    font-weight: bold;
+    background: #B33;
     color: white;
 }
 .glyph.WARNINGS {
-    font-weight: bold;
+    background: #D82;
     color: white;
 }
 .glyph.OK {
-    font-weight: bold;
+    background: #282;
     color: #DDD;
 }
 .glyph.NotNeeded {
-    font-weight: bold;
+    background: #69C;
     color: #EEE;
 }
-.glyph.skipped, .glyph.NA {
-    font-weight: bold;
+.glyph.NA {
+    background: #8AA;
+}
+
+P.noresult {
+    text-align: center;
+}
+P.noresult SPAN {
+    background: #8AA;
+    padding: 4pt;
 }
 
 
@@ -255,40 +266,9 @@ TABLE.quickstats TR {
     height: 24px;
     text-align: center;
 }
+
 TABLE.quickstats TD {
     width: 36px;
-}
-
-.TIMEOUT,
-TABLE.quickstats TD.TIMEOUT {
-    background: #A08;
-}
-.ERROR,
-TABLE.quickstats TD.ERROR {
-    background: #B33;
-}
-.WARNINGS,
-TABLE.quickstats TD.WARNINGS {
-    background: #D82;
-}
-.OK,
-TABLE.quickstats TD.OK {
-    background: #282;
-}
-.NotNeeded,
-TABLE.quickstats TD.NotNeeded {
-    background: #69C;
-}
-.NA,
-TABLE.quickstats TD.NA {
-    background: #8AA;
-}
-P.noresult {
-    text-align: center;
-}
-P.noresult SPAN {
-    background: #8AA;
-    padding: 4pt;
 }
 
 
