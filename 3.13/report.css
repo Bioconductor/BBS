@@ -200,6 +200,9 @@ TABLE.gcard_list TD {
 }
 
 TABLE.gcard_list TR.vertical_space {
+    height: 10px;
+}
+TABLE.gcard_list TBODY.gcard_separator TR.vertical_space {
     height: 4px;
 }
 
