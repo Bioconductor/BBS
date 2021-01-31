@@ -653,7 +653,7 @@ def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
     out_rURL = os.path.join(pkg, 'index.html')
     out = open(out_rURL, 'w')
 
-    write_HTML_header(out, page_title, '../report.css')
+    write_HTML_header(out, page_title, '../report.css', '../report.js')
     out.write('<BODY>\n')
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
@@ -972,7 +972,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out_rURL = BBSreportutils.get_leafreport_rel_path(pkg, node_id, stage)
     out = open(out_rURL, 'w')
 
-    write_HTML_header(out, page_title, '../report.css')
+    write_HTML_header(out, page_title, '../report.css', '../report.js')
     out.write('<BODY>\n')
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
