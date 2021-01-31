@@ -219,6 +219,17 @@ TABLE.gcard_list TD {
     padding-bottom: 2px;
 }
 
+TABLE.gcard_list TR.header TD.leftmost,
+TABLE.gcard_list TR.header TD.rightmost {
+    width: 14px;
+}
+TABLE.compact.gcard_list TR.header TD.leftmost {
+    width: 28px;
+}
+TABLE.compact.gcard_list TR.header TD.rightmost {
+    width: 14px;
+}
+
 TABLE.gcard_list TR.vertical_space {
     height: 10px;
 }
@@ -270,7 +281,6 @@ TABLE.quickstats {
     margin: auto;
     border-collapse: collapse;
     border-spacing: 0px;
-    color: white;
 }
 TABLE.quickstats TR {
     height: 24px;
@@ -285,10 +295,8 @@ TABLE.quickstats TD {
  * Glyph card (gcard)
  */
 
-TBODY.gcard {
-    background: white;
-}
 TBODY.gcard TD {
+    background: white;
     border-left: 1px solid #DDD;
 }
 TBODY.gcard TD.leftmost {
@@ -317,11 +325,9 @@ TBODY.compact.gcard.even_row_number TD {
 }
 
 TBODY.gcard TR.header TD.top_left_corner {
-    width: 14px;
     border-top-left-radius: 12px;
 }
 TBODY.gcard TR.header TD.top_right_corner {
-    width: 14px;
     border-top-right-radius: 12px;
 }
 TBODY.gcard TD.bottom_left_corner {
@@ -332,12 +338,10 @@ TBODY.gcard TD.bottom_right_corner {
 }
 
 TBODY.compact.gcard TD.leftmost {
-    width: 28px;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
 TBODY.compact.gcard TD.rightmost {
-    width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }
@@ -390,100 +394,100 @@ TABLE.abc_dispatcher TD {
 
 /* malbec1 (Ubuntu 18.04) */
 .malbec1,
-TD.malbec1 {
+.gcard TD.malbec1 {
     background: #BDF;
 }
 .malbec1.toned_down,
 TR.toned_down .malbec1,
-TBODY.compact.gcard.even_row_number .malbec1 {
+TR.even_row_number .malbec1 {
     background: #ACE;
 }
 
 /* malbec2 (Ubuntu 20.04) */
 .malbec2,
-TD.malbec2 {
+.gcard TD.malbec2 {
     background: #DAECFA;
 }
 .malbec2.toned_down,
 TR.toned_down .malbec2,
-TBODY.compact.gcard.even_row_number .malbec2 {
+TR.even_row_number .malbec2 {
     background: #CADCEA;
 }
 
 /* nebbiolo1 (Ubuntu 20.04) */
 .nebbiolo1,
-TD.nebbiolo1 {
+.gcard TD.nebbiolo1 {
     background: #DAECFA;
 }
 .nebbiolo1.toned_down,
 TR.toned_down .nebbiolo1,
-TBODY.compact.gcard.even_row_number .nebbiolo1 {
+TR.even_row_number .nebbiolo1 {
     background: #CADCEA;
 }
 
 /* rex3 (Ubuntu 20.04) */
 .rex3,
-TD.rex3 {
+.gcard TD.rex3 {
     background: #DAECFA;
 }
 .rex3.toned_down,
 TR.toned_down .rex3,
-TBODY.compact.gcard.even_row_number .rex3 {
+TR.even_row_number .rex3 {
     background: #CADCEA;
 }
 
 /* tokay1 */
 .tokay1,
-TD.tokay1 {
+.gcard TD.tokay1 {
     background: #EDC;
 }
 .tokay1.toned_down,
 TR.toned_down .tokay1,
-TBODY.compact.gcard.even_row_number .tokay1 {
+TR.even_row_number .tokay1 {
     background: #DCB;
 }
 
 /* tokay2 */
 .tokay2,
-TD.tokay2 {
+.gcard TD.tokay2 {
     background: #EEE4CC;
 }
 .tokay2.toned_down,
 TR.toned_down .tokay2,
-TBODY.compact.gcard.even_row_number .tokay2 {
+TR.even_row_number .tokay2 {
     background: #DDD3BB;
 }
 
 /* riesling1 */
 .riesling1,
-TD.riesling1 {
+.gcard TD.riesling1 {
     background: #F4EFDF;
 }
 .riesling1.toned_down,
 TR.toned_down .riesling1,
-TBODY.compact.gcard.even_row_number .riesling1 {
+TR.even_row_number .riesling1 {
     background: #E4DFCF;
 }
 
 /* merida1 */
 .merida1,
-TD.merida1 {
+.gcard TD.merida1 {
     background: #D8CCEE;
 }
 .merida1.toned_down,
 TR.toned_down .merida1,
-TBODY.compact.gcard.even_row_number .merida1 {
+TR.even_row_number .merida1 {
     background: #C8BBDD;
 }
 
 /* machv2 */
 .machv2,
-TD.machv2 {
+.gcard TD.machv2 {
     background: #ECE6FA;
 }
 .machv2.toned_down,
 TR.toned_down .machv2,
-TBODY.compact.gcard.even_row_number .machv2 {
+TR.even_row_number .machv2 {
     background: #DCD6EA;
 }
 
