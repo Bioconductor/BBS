@@ -354,7 +354,8 @@ TBODY.gcard TD.status A {
     display: block;
     text-decoration: none;
 }
-TBODY.gcard TD.status.selected A {
+TBODY.gcard TD.status.selected A,
+TBODY.gcard TD.status A.selected {
     border: 1px solid black;
 }
 
