@@ -194,7 +194,7 @@ def status_as_glyph(status):
     return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
            (status, status)
 
-def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
+def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref=None):
     selected = leafreport_ref != None and \
                pkg == leafreport_ref.pkg and \
                node.node_id == leafreport_ref.node_id and \
@@ -255,7 +255,7 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
     out.write('<TD class="status %s" style="width: 11px;"><IMG border="0" width="10" height="10" alt="%s" title="%s" src="%s120px-%s_Light_Icon.svg.png"></TD>' \
         % (node.hostname.replace(".", "_"), status, status, path, color))
 
-def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref):
+def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref=None):
     TDclasses = 'status %s' % node.hostname.replace(".", "_")
     subbuilds = BBSvars.subbuilds
     if pkg in skipped_pkgs:
@@ -389,10 +389,6 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             node_html = '<B>%s</B>' % node_html
         write_node_spec_asTD(out, node, node_html, selected)
         write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node))
-        #if leafreport_ref == None:
-        #    style = None
-        #else:
-        #    style = "font-size: smaller"
         write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
         if is_last:
             out.write('<TD ROWSPAN="2" class="rightmost bottom_right_corner"></TD>')
@@ -475,12 +471,12 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
     out.write('</THEAD>\n')
     return
 
-### When leafreport_ref is specified, then a list of 1 gcard is generated.
+### When 'leafreport_ref' is specified, then a list of 1 gcard is generated.
 def write_gcard_list(out, allpkgs, leafreport_ref=None):
-    full_table = not leafreport_ref
+    full_list = not leafreport_ref
     nb_pkgs = len(allpkgs)
     out.write('<TABLE class="gcard_list">\n')
-    if full_table:
+    if full_list:
         write_quickstats(out, nb_pkgs)
         out.write('<TBODY>\n')
         write_vertical_space(out)
@@ -489,24 +485,32 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
     current_letter = None
     for pkg in allpkgs:
         pkg_pos += 1
-        first_letter = pkg[0:1].upper()
-        if first_letter != current_letter:
-            current_letter = first_letter
-            if full_table and not no_alphabet_dispatch:
-                write_abc_dispatcher_within_gcard_list(out, current_letter)
-        if full_table or pkg == leafreport_ref.pkg:
+        if full_list:
+            if not no_alphabet_dispatch:
+                first_letter = pkg[0:1].upper()
+                if first_letter != current_letter:
+                    current_letter = first_letter
+                    write_abc_dispatcher_within_gcard_list(out, current_letter)
             pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
             if pkg in skipped_pkgs:
                 pkg_status_classes = 'error'
             else:
                 pkg_status_classes = statuses2classes(pkg_statuses)
-            if full_table:
-                out.write('<TBODY class="gcard_separator %s">\n' % \
-                          pkg_status_classes)
-                write_vertical_space(out)
-                out.write('</TBODY>\n')
-            write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
-                        pkg_statuses, pkg_status_classes)
+            out.write('<TBODY class="gcard_separator %s">\n' % \
+                      pkg_status_classes)
+            write_vertical_space(out)
+            out.write('</TBODY>\n')
+        else if pkg == leafreport_ref.pkg:
+            # Display gcard for that package only.
+            pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
+            if pkg in skipped_pkgs:
+                pkg_status_classes = 'error'
+            else:
+                pkg_status_classes = statuses2classes(pkg_statuses)
+        else:
+            continue
+        write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+                    pkg_statuses, pkg_status_classes)
     out.write('</TABLE>\n')
     return
 
@@ -531,7 +535,7 @@ def write_compact_gcard_header(out):
     return
 
 ### Produces one full TR.
-def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
+def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
     if pkg in skipped_pkgs:
         pkg_status_classes = 'error'
@@ -539,7 +543,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
         pkg_status_classes = statuses2classes(pkg_statuses)
     TBODYclasses = 'compact gcard %s' % pkg_status_classes
     out.write('<TBODY class="%s">\n' % TBODYclasses)
-    if pkg_pos % 2 == 0 and not leafreport_ref:
+    if pkg_pos % 2 == 0:
         TRclass = 'even_row_number'
     else:
         TRclass = 'odd_row_number'
@@ -558,37 +562,36 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
     out.write('</TD>')
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
-    write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
+    write_pkg_statuses_asTDs(out, pkg, node)
     out.write('<TD class="rightmost"></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
 
-### Same as write_gcard_list(), but can be used to display results
-### for a single node with a more compact layout.
-def write_compact_gcard_list(out, node, allpkgs, leafreport_ref=None):
-    full_table = not leafreport_ref
+### Same as write_gcard_list(), but uses a more compact layout to display
+### results for a single node.
+### Also, unlike write_gcard_list(), write_compact_gcard_list() always
+### displays the full list (no 'leafreport_ref' argument).
+def write_compact_gcard_list(out, node, allpkgs):
     nb_pkgs = len(allpkgs)
     out.write('<TABLE class="compact gcard_list">\n')
-    if full_table:
-        write_quickstats(out, nb_pkgs, node.node_id)
-        out.write('<TBODY>\n')
-        write_vertical_space(out)
-        out.write('</TBODY>\n')
-        if no_alphabet_dispatch:
-            write_compact_gcard_header(out)
+    write_quickstats(out, nb_pkgs, node.node_id)
+    out.write('<TBODY>\n')
+    write_vertical_space(out)
+    out.write('</TBODY>\n')
+    if no_alphabet_dispatch:
+        write_compact_gcard_header(out)
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
         pkg_pos += 1
-        first_letter = pkg[0:1].upper()
-        if first_letter != current_letter:
-            current_letter = first_letter
-            if full_table and not no_alphabet_dispatch:
+        if not no_alphabet_dispatch:
+            first_letter = pkg[0:1].upper()
+            if first_letter != current_letter:
+                current_letter = first_letter
                 write_abc_dispatcher_within_gcard_list(out, current_letter)
                 write_compact_gcard_header(out)
-        if full_table or pkg == leafreport_ref.pkg:
-            write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref)
+        write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs)
     out.write('</TABLE>\n')
     return
 
@@ -1003,10 +1006,6 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('</DIV>\n')
 
     write_gcard_list(out, allpkgs, leafreport_ref)
-    #if len(BBSreportutils.NODES) != 1:
-    #    write_gcard_list(out, allpkgs, leafreport_ref)
-    #else:
-    #    write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs, leafreport_ref)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
