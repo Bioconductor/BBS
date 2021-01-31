@@ -320,7 +320,7 @@ TBODY.compact.gcard TD.row_number {
     text-align: right;
     padding-right: 4px;
 }
-TBODY.compact.gcard.even_row_number TD {
+TBODY.compact.gcard TR.even_row_number {
     background: #EEE;
 }
 
