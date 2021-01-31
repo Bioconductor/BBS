@@ -211,10 +211,10 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
         else:
             pkgdir = pkg
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        on_events = 'onmouseover="add_class_selected(this);" ' + \
-                    'onmouseout="remove_class_selected(this);"'
-        TDcontent = '<A href="%s" %s>%s</A>' % \
-                    (url, on_events, status_as_glyph(status))
+        onmouseover = 'add_class_mouseover(this);'
+        onmouseout = 'remove_class_mouseover(this);'
+        TDcontent = '<A href="%s" onmouseover="%s" onmouseout="%s">%s</A>' % \
+                    (url, onmouseover, onmouseout, status_as_glyph(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
 

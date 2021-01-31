@@ -1,10 +1,10 @@
-function add_class_selected(x)
+function add_class_mouseover(x)
 {
-    x.classList.add('selected');
+    x.classList.add('mouseover');
 }
-function remove_class_selected(x)
+function remove_class_mouseover(x)
 {
-    x.classList.remove('selected');
+    x.classList.remove('mouseover');
 }
 
 var vals = ["timeout", "error", "warnings", "ok"];

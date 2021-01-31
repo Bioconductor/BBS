@@ -1,3 +1,11 @@
+function add_class_mouseover(x)
+{
+    x.classList.add('mouseover');
+}
+function remove_class_mouseover(x)
+{
+    x.classList.remove('mouseover');
+}
 
 var vals = ["timeout", "error", "warnings", "ok"];
 

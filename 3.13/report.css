@@ -355,7 +355,7 @@ TBODY.gcard TD.status A {
     text-decoration: none;
 }
 TBODY.gcard TD.status.selected A,
-TBODY.gcard TD.status A.selected {
+TBODY.gcard TD.status A.mouseover {
     border: 1px solid black;
 }
 
