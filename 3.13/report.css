@@ -399,7 +399,7 @@ TABLE.abc_dispatcher TD {
 }
 .malbec1.toned_down,
 TR.toned_down .malbec1,
-TR.even_row_number .malbec1 {
+TBODY.compact.gcard TR.even_row_number .malbec1 {
     background: #ACE;
 }
 
@@ -410,7 +410,7 @@ TR.even_row_number .malbec1 {
 }
 .malbec2.toned_down,
 TR.toned_down .malbec2,
-TR.even_row_number .malbec2 {
+TBODY.compact.gcard TR.even_row_number .malbec2 {
     background: #CADCEA;
 }
 
@@ -421,7 +421,7 @@ TR.even_row_number .malbec2 {
 }
 .nebbiolo1.toned_down,
 TR.toned_down .nebbiolo1,
-TR.even_row_number .nebbiolo1 {
+TBODY.compact.gcard TR.even_row_number .nebbiolo1 {
     background: #CADCEA;
 }
 
@@ -432,7 +432,7 @@ TR.even_row_number .nebbiolo1 {
 }
 .rex3.toned_down,
 TR.toned_down .rex3,
-TR.even_row_number .rex3 {
+TBODY.compact.gcard TR.even_row_number .rex3 {
     background: #CADCEA;
 }
 
@@ -443,7 +443,7 @@ TR.even_row_number .rex3 {
 }
 .tokay1.toned_down,
 TR.toned_down .tokay1,
-TR.even_row_number .tokay1 {
+TBODY.compact.gcard TR.even_row_number .tokay1 {
     background: #DCB;
 }
 
@@ -454,7 +454,7 @@ TR.even_row_number .tokay1 {
 }
 .tokay2.toned_down,
 TR.toned_down .tokay2,
-TR.even_row_number .tokay2 {
+TBODY.compact.gcard TR.even_row_number .tokay2 {
     background: #DDD3BB;
 }
 
@@ -465,7 +465,7 @@ TR.even_row_number .tokay2 {
 }
 .riesling1.toned_down,
 TR.toned_down .riesling1,
-TR.even_row_number .riesling1 {
+TBODY.compact.gcard TR.even_row_number .riesling1 {
     background: #E4DFCF;
 }
 
@@ -476,7 +476,7 @@ TR.even_row_number .riesling1 {
 }
 .merida1.toned_down,
 TR.toned_down .merida1,
-TR.even_row_number .merida1 {
+TBODY.compact.gcard TR.even_row_number .merida1 {
     background: #C8BBDD;
 }
 
@@ -487,7 +487,7 @@ TR.even_row_number .merida1 {
 }
 .machv2.toned_down,
 TR.toned_down .machv2,
-TR.even_row_number .machv2 {
+TBODY.compact.gcard TR.even_row_number .machv2 {
     background: #DCD6EA;
 }
 
@@ -498,7 +498,7 @@ TR.even_row_number .machv2 {
 }
 .taxco.toned_down,
 TR.toned_down .taxco,
-TR.even_row_number .taxco {
+TBODY.compact.gcard TR.even_row_number .taxco {
     background: #D8CAE4;
 }
 
