@@ -219,6 +219,17 @@ TABLE.gcard_list TD {
     padding-bottom: 2px;
 }
 
+TABLE.gcard_list TR.header TD.leftmost,
+TABLE.gcard_list TR.header TD.rightmost {
+    width: 14px;
+}
+TABLE.compact.gcard_list TR.header TD.leftmost {
+    width: 28px;
+}
+TABLE.compact.gcard_list TR.header TD.rightmost {
+    width: 14px;
+}
+
 TABLE.gcard_list TR.vertical_space {
     height: 10px;
 }
@@ -317,11 +328,9 @@ TBODY.compact.gcard.even_row_number TD {
 }
 
 TBODY.gcard TR.header TD.top_left_corner {
-    width: 14px;
     border-top-left-radius: 12px;
 }
 TBODY.gcard TR.header TD.top_right_corner {
-    width: 14px;
     border-top-right-radius: 12px;
 }
 TBODY.gcard TD.bottom_left_corner {
@@ -332,12 +341,10 @@ TBODY.gcard TD.bottom_right_corner {
 }
 
 TBODY.compact.gcard TD.leftmost {
-    width: 28px;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
 }
 TBODY.compact.gcard TD.rightmost {
-    width: 14px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
 }
