@@ -175,7 +175,7 @@ def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
 
 
 ##############################################################################
-### Leaf-reports and glyph cards (gcards)
+### Glyph cards (gcards) and gcard lists
 ##############################################################################
 
 def nodeOSArch_asSPAN(node):
@@ -234,26 +234,31 @@ def write_pkg_stagelabels_asTDs(out, leafreport_ref=None):
     for stage in BBSreportutils.stages_to_display(subbuilds):
         write_stagelabel_asTD(out, stage, leafreport_ref)
     if BBSreportutils.display_propagation_status(subbuilds):
-        out.write('<TD style="width:11px;"></TD>')
+        out.write('<TD style="width:12px;"></TD>')
     return
 
 def write_pkg_propagation_status_asTD(out, pkg, node):
     status = BBSreportutils.get_propagation_status_from_db(pkg, node.hostname)
-    if (status is None):
-        out.write('<TD class="status %s" style="width: 11px;"></TD>' % \
-                  node.hostname.replace(".", "_"))
-        return()
-    if (status.startswith("YES")):
-        color = "Green"
-    elif (status.startswith("NO")):
-        color = "Red"
-    else: # "UNNEEDED"
-        color = "Blue"
-    path = ""
-    if "/" in out.name:
-        path = "../"
-    out.write('<TD class="status %s" style="width: 11px;"><IMG border="0" width="10" height="10" alt="%s" title="%s" src="%s120px-%s_Light_Icon.svg.png"></TD>' \
-        % (node.hostname.replace(".", "_"), status, status, path, color))
+    if status == None:
+        TDcontent = ''
+    else:
+        IMGstyle = 'border: 0px; width: 10px; height: 10px;'
+        if "/" in out.name:
+            path = "../"
+        else:
+            path = "./"
+        if status.startswith("YES"):
+            color = "Green"
+        elif status.startswith("NO"):
+            color = "Red"
+        else: # "UNNEEDED"
+            color = "Blue"
+        IMGsrc = '%s120px-%s_Light_Icon.svg.png' % (path, color)
+        TDcontent = '<IMG style="%s" alt="%s" title="%s" src="%s">' % \
+                    (IMGstyle, status, status, IMGsrc)
+    out.write('<TD class="status %s">%s</TD>' % \
+              (node.hostname.replace(".", "_"), TDcontent))
+    return
 
 def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref=None):
     TDclasses = 'status %s' % node.hostname.replace(".", "_")
@@ -333,76 +338,6 @@ def statuses2classes(statuses):
         classes = ["ok"]
     return ' '.join(classes)
 
-### A non-compact gcard spans several table rows (TRs) grouped in a
-### TBODY element.
-def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
-                pkg_statuses, pkg_status_classes):
-    out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
-    out.write('<TR class="header">')
-    out.write('<TD class="leftmost top_left_corner"></TD>')
-    out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
-    out.write('<TD>Hostname</TD>')
-    out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
-    write_pkg_stagelabels_asTDs(out, leafreport_ref)
-    out.write('<TD class="rightmost top_right_corner"></TD>')
-    out.write('</TR>\n')
-    nb_nodes = len(BBSreportutils.NODES)
-    is_first = True
-    last_i = nb_nodes - 1
-    for i in range(nb_nodes):
-        is_last = i == last_i
-        node = BBSreportutils.NODES[i]
-        selected = toned_down = False
-        if leafreport_ref == None or leafreport_ref.node_id == None:
-            TRattrs = ''
-        elif node.node_id == leafreport_ref.node_id:
-            selected = True
-            TRattrs = ' class="selected_row"'
-        else:
-            toned_down = True
-            TRattrs = ' class="toned_down"'
-        out.write('<TR%s>' % TRattrs)
-        if is_last:
-            TDattrs = 'ROWSPAN="2" class="leftmost bottom_left_corner"'
-        else:
-            TDattrs = 'class="leftmost"'
-        out.write('<TD %s></TD>' % TDattrs)
-        if is_first:
-            is_first = False
-            if len(pkg_statuses) != 0:
-                dcf_record = meat_index[pkg]
-                version = dcf_record['Version']
-                maintainer = dcf_record['Maintainer']
-                status = dcf_record.get('PackageStatus')
-            else:
-                version = maintainer = status = ''
-            deprecated = status == "Deprecated"
-            out.write('<TD ROWSPAN="%d" style="vertical-align: top;">' % \
-                      nb_nodes)
-            out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
-            out.write('<BR>%s' % maintainer)
-            if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
-                out.write('<BR>')
-                write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
-            out.write('</TD>')
-        node_html = node.node_id
-        if not toned_down:
-            node_html = '<B>%s</B>' % node_html
-        write_node_spec_asTD(out, node, node_html, selected)
-        write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node))
-        write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
-        if is_last:
-            out.write('<TD ROWSPAN="2" class="rightmost bottom_right_corner"></TD>')
-        else:
-            out.write('<TD class="rightmost"></TD>')
-        out.write('</TR>\n')
-    out.write('<TR class="footer">')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
-    out.write('<TD COLSPAN="%d"></TD>' % colspan)
-    out.write('</TR>\n')
-    out.write('</TBODY>\n')
-    return
-
 def write_quickstats_TD(out, node, stage):
     stats = quickstats[node.node_id][stage]
     html = '<TABLE class="quickstats"><TR>'
@@ -422,7 +357,10 @@ def write_quickstats_TD(out, node, stage):
 def write_quickstats(out, nb_pkgs, selected_node=None):
     out.write('<THEAD class="quickstats">\n')
     out.write('<TR class="header">')
-    out.write('<TD COLSPAN="3" class="leftmost top_left_corner" style="padding-left: 0px;">QUICK STATS</TD>')
+    TDclass = 'leftmost top_left_corner'
+    TDstyle = 'padding-left: 0px;'
+    out.write('<TD COLSPAN="3" class="%s" style="%s">QUICK STATS</TD>' % \
+              (TDclass, TDstyle))
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out)
     out.write('<TD class="rightmost top_right_corner"></TD>')
@@ -473,6 +411,77 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
     return
 
 ### When 'leafreport_ref' is specified, then a list of 1 gcard is generated.
+### A non-compact gcard spans several table rows (TRs) grouped in a
+### TBODY element.
+def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+                pkg_statuses, pkg_status_classes):
+    out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
+    out.write('<TR class="header">')
+    out.write('<TD class="leftmost top_left_corner"></TD>')
+    out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
+    out.write('<TD>Hostname</TD>')
+    out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
+    write_pkg_stagelabels_asTDs(out, leafreport_ref)
+    out.write('<TD class="rightmost top_right_corner"></TD>')
+    out.write('</TR>\n')
+    nb_nodes = len(BBSreportutils.NODES)
+    is_first = True
+    last_i = nb_nodes - 1
+    for i in range(nb_nodes):
+        is_last = i == last_i
+        node = BBSreportutils.NODES[i]
+        selected = toned_down = False
+        if leafreport_ref == None or leafreport_ref.node_id == None:
+            TRattrs = ''
+        elif node.node_id == leafreport_ref.node_id:
+            selected = True
+            TRattrs = ' class="selected_row"'
+        else:
+            toned_down = True
+            TRattrs = ' class="toned_down"'
+        out.write('<TR%s>' % TRattrs)
+        if is_last:
+            TDattrs = 'ROWSPAN="2" class="leftmost bottom_left_corner"'
+        else:
+            TDattrs = 'class="leftmost"'
+        out.write('<TD %s></TD>' % TDattrs)
+        if is_first:
+            is_first = False
+            if len(pkg_statuses) != 0:
+                dcf_record = meat_index[pkg]
+                version = dcf_record['Version']
+                maintainer = dcf_record['Maintainer']
+                status = dcf_record.get('PackageStatus')
+            else:
+                version = maintainer = status = ''
+            deprecated = status == "Deprecated"
+            TDstyle = 'vertical-align: top;'
+            out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
+            out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
+            out.write('<BR>%s' % maintainer)
+            if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
+                out.write('<BR>')
+                write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
+            out.write('</TD>')
+        node_html = node.node_id
+        if not toned_down:
+            node_html = '<B>%s</B>' % node_html
+        write_node_spec_asTD(out, node, node_html, selected)
+        write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node))
+        write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
+        if is_last:
+            TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
+        else:
+            TDattrs = 'class="rightmost"'
+        out.write('<TD %s></TD>' % TDattrs)
+        out.write('</TR>\n')
+    out.write('<TR class="footer">')
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
+    out.write('<TD COLSPAN="%d"></TD>' % colspan)
+    out.write('</TR>\n')
+    out.write('</TBODY>\n')
+    return
+
 def write_gcard_list(out, allpkgs, leafreport_ref=None):
     full_list = not leafreport_ref
     nb_pkgs = len(allpkgs)
@@ -598,7 +607,7 @@ def write_compact_gcard_list(out, node, allpkgs):
 
 
 ##############################################################################
-### leaf-reports
+### Leaf reports
 ##############################################################################
 
 def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
