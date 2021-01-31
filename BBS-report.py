@@ -353,7 +353,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
         selected = toned_down = False
-        if leafreport_ref == None:
+        if leafreport_ref == None or leafreport_ref.node_id == None:
             TRattrs = ''
         elif node.node_id == leafreport_ref.node_id:
             selected = True
@@ -363,9 +363,10 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             TRattrs = ' class="toned_down"'
         out.write('<TR%s>' % TRattrs)
         if is_last:
-            out.write('<TD ROWSPAN="2" class="leftmost bottom_left_corner"></TD>')
+            TDattrs = 'ROWSPAN="2" class="leftmost bottom_left_corner"'
         else:
-            out.write('<TD class="leftmost"></TD>')
+            TDattrs = 'class="leftmost"'
+        out.write('<TD %s></TD>' % TDattrs)
         if is_first:
             is_first = False
             if len(pkg_statuses) != 0:
@@ -650,11 +651,10 @@ def write_motd_asTABLE(out):
     out.write('</DIV>\n')
     return
 
-def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
+def make_MultiPlatformPkgIndexPage(pkg, allpkgs):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
 
-    pkg = leafreport_ref.pkg
     page_title = 'Results for package %s' % pkg
     out_rURL = os.path.join(pkg, 'index.html')
     out = open(out_rURL, 'w')
@@ -672,7 +672,9 @@ def make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs):
     out.write('</P>\n')
     write_motd_asTABLE(out)
 
+    leafreport_ref = LeafReportReference(pkg, None, None, None)
     write_gcard_list(out, allpkgs, leafreport_ref)
+
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -1085,8 +1087,7 @@ def make_all_LeafReports(allpkgs):
         except:
             print("mkdir failed in make_all_LeaveReports '%s'" % pkg)
             continue
-        leafreport_ref = LeafReportReference(pkg, None, None, None)
-        make_MultiPlatformPkgIndexPage(leafreport_ref, allpkgs)
+        make_MultiPlatformPkgIndexPage(pkg, allpkgs)
     print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
