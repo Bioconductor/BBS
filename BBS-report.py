@@ -25,20 +25,6 @@ import BBSvars
 import BBSreportutils
 
 
-class LeafReportReference:
-    def __init__(self, pkg, node_hostname, node_id, stage):
-        self.pkg = pkg
-        self.node_hostname = node_hostname
-        self.node_id = node_id
-        self.stage = stage
-
-def wopen_leafreport_input_file(pkg, node_id, stage, filename, return_None_on_error=False):
-    if pkg:
-        filename = "%s.%s-%s" % (pkg, stage, filename)
-    rdir = BBSvars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
-    return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
-
-
 ##############################################################################
 ### HTMLization
 ##############################################################################
@@ -169,8 +155,145 @@ def write_vcs_meta_for_pkg_as_TABLE(out, pkg, full_info=False):
 
 
 ##############################################################################
+### write_glyph_table()
+##############################################################################
+
+### FH: Create checkboxes to select display types
+def write_glyph_table(out):
+    def write_checkbox(checkbox_id):
+        out.write('<INPUT style="margin: 0px;" type="checkbox" ')
+        out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
+                  (checkbox_id, checkbox_id))
+        return
+
+    def write_glyph(id, msg, checkbox = False, first = False):
+        style = ""
+        if first:
+           style += " width: 75px;"
+        out.write('<TR>\n')
+        out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
+                  (style, _status_as_glyph(id)))
+        if checkbox:
+            out.write('<TD>')
+            out.write(msg)
+            out.write('</TD>\n')
+            out.write('<TD style="text-align: right; vertical-align: middle;">')
+            write_checkbox(id.lower())
+        else:
+            out.write('<TD COLSPAN="2">')
+            out.write(msg)
+        out.write('</TD>\n')
+        if first:
+            out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
+            out.write('Use the check boxes to show only packages with the selected status types.')
+            out.write('</TD>\n')
+        out.write('</TR>\n')
+        return
+
+    subbuilds = BBSvars.subbuilds
+
+    out.write('<FORM action="">\n')
+    out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
+
+    out.write('<TR>\n')
+    out.write('<TD COLSPAN="4" style="font-style: italic; border-bottom: solid black 1px;">')
+    out.write('<B>Package status is indicated by one of the following glyphs</B>')
+    out.write('</TD>\n')
+    out.write('</TR>\n')
+
+    ## "TIMEOUT" glyph
+    t1 = int(BBSvars.INSTALL_timeout  / 60.0)
+    t2 = int(BBSvars.BUILD_timeout    / 60.0)
+    t3 = int(BBSvars.CHECK_timeout    / 60.0)
+    t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
+    if subbuilds == "bioc-longtests":
+        msg = '<I>CHECK</I> of package took more than ' + \
+              '%d minutes' % t3
+    elif subbuilds in ["workflows", "books"]:
+        msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than '
+        if t1 == t2:
+            msg += '%d minutes' % t1
+        else:
+            msg += '%d or %d minutes, respectively' % (t1, t2)
+    else:
+        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' + \
+              '<I>BUILD BIN</I> of package took more than '
+        if t1 == t2 and t2 == t3 and t3 == t4:
+            msg += '%d minutes' % t1
+        else:
+            msg += '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
+    write_glyph("TIMEOUT", msg, True, True)
+
+    ## "ERROR" glyph
+    msg = 'Bad DESCRIPTION file or '
+    if subbuilds == "bioc-longtests":
+        msg += '<I>CHECK</I> of package produced errors'
+    elif subbuilds in ["workflows", "books"]:
+        msg += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
+    else:
+        msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
+        msg += ' or <I>CHECK</I> produced errors'
+    write_glyph("ERROR", msg, True)
+
+    ## "WARNINGS" glyph
+    if subbuilds not in ["workflows", "books"]:
+        msg = '<I>CHECK</I> of package produced warnings'
+        write_glyph("WARNINGS", msg, True)
+
+    ## "OK" glyph
+    if subbuilds == "bioc-longtests":
+        msg = '<I>CHECK</I>'
+    elif subbuilds in ["workflows", "books"]:
+        msg = '<I>INSTALL</I> or <I>BUILD</I>'
+    else:
+        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
+    msg += ' of package was OK'
+    write_glyph("OK", msg, True)
+
+    ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e. when
+    ## STAGE2 skips installation of target packages not needed by another
+    ## target package for build or check).
+    #if subbuilds not in ["workflows", "books", "bioc-longtests"]:
+    #    msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
+    #    write_glyph("NotNeeded", msg)
+
+    ## "skipped" glyph
+    if subbuilds != "bioc-longtests":
+        msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
+        msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
+        write_glyph("skipped", msg)
+
+    ## "NA" glyph
+    if subbuilds == "bioc-longtests":
+        msg = '<I>CHECK</I>'
+    elif subbuilds in ["workflows", "books"]:
+        msg = '<I>BUILD</I>'
+    else:
+        msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
+    msg += ' result is not available because of an anomaly in the Build System\n'
+    write_glyph("NA", msg)
+
+    out.write('<TR>\n')
+    out.write('<TD COLSPAN="4" style="font-style: italic; border-top: solid black 1px;">')
+    out.write('Click on any glyph in the report below')
+    out.write(' to access the detailed results.')
+    out.write('</TD>\n')
+    out.write('</TR>\n')
+    out.write('</TABLE>\n')
+    out.write('</FORM>\n')
+    return
+
+
+##############################################################################
 ### Glyph cards (gcards) and gcard lists
 ##############################################################################
+
+class LeafReportReference:
+    def __init__(self, pkg, node_hostname, node_id, stage):
+        self.pkg = pkg
+        self.node_hostname = node_hostname
+        self.node_id = node_id
+        self.stage = stage
 
 def _write_vertical_space(out):
     colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 5
@@ -605,6 +728,13 @@ def write_compact_gcard_list(out, node, allpkgs):
 ### Leaf reports
 ##############################################################################
 
+def _wopen_leafreport_input_file(pkg, node_id, stage, filename,
+                                 return_None_on_error=False):
+    if pkg:
+        filename = "%s.%s-%s" % (pkg, stage, filename)
+    rdir = BBSvars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
+    return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
+
 def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
@@ -686,7 +816,7 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs):
 
 def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<HR>\n<H3>Summary</H3>\n')
-    dcf = wopen_leafreport_input_file(pkg, node_id, stage, "summary.dcf")
+    dcf = _wopen_leafreport_input_file(pkg, node_id, stage, "summary.dcf")
     out.write('<DIV class="%s hscrollable">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
@@ -743,7 +873,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
     try:
-        f = wopen_leafreport_input_file(pkg, node_id, stage, "out.txt")
+        f = _wopen_leafreport_input_file(pkg, node_id, stage, "out.txt")
     except bbs.rdir.WOpenError:
         out.write('<P class="noresult"><SPAN>')
         out.write('Due to an anomaly in the Build System, this output ')
@@ -767,8 +897,8 @@ def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
         return
     filename = '00install.out'
     filepath = os.path.join(Rcheck_dir, filename)
-    f = wopen_leafreport_input_file(None, node_id, "checksrc", filepath,
-                                    return_None_on_error=True)
+    f = _wopen_leafreport_input_file(None, node_id, "checksrc", filepath,
+                                     return_None_on_error=True)
     if f != None:
         write_filepath_asHTML(out, Rcheck_dir, filename)
         write_file_asHTML(out, f, node_hostname)
@@ -1382,131 +1512,6 @@ def write_node_specs_table(out):
     out.write('</TD>')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
-    return
-
-### FH: Create checkboxes to select display types
-def write_glyph_table(out):
-    def write_checkbox(checkbox_id):
-        out.write('<INPUT style="margin: 0px;" type="checkbox" ')
-        out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
-                  (checkbox_id, checkbox_id))
-        return
-
-    def write_glyph(id, msg, checkbox = False, first = False):
-        style = ""
-        if first:
-           style += " width: 75px;"
-        out.write('<TR>\n')
-        out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
-                  (style, _status_as_glyph(id)))
-        if checkbox:
-            out.write('<TD>')
-            out.write(msg)
-            out.write('</TD>\n')
-            out.write('<TD style="text-align: right; vertical-align: middle;">')
-            write_checkbox(id.lower())
-        else:
-            out.write('<TD COLSPAN="2">')
-            out.write(msg)
-        out.write('</TD>\n')
-        if first:
-            out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
-            out.write('Use the check boxes to show only packages with the selected status types.')
-            out.write('</TD>\n')
-        out.write('</TR>\n')
-        return
-
-    subbuilds = BBSvars.subbuilds
-
-    out.write('<FORM action="">\n')
-    out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
-
-    out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="font-style: italic; border-bottom: solid black 1px;">')
-    out.write('<B>Package status is indicated by one of the following glyphs</B>')
-    out.write('</TD>\n')
-    out.write('</TR>\n')
-
-    ## "TIMEOUT" glyph
-    t1 = int(BBSvars.INSTALL_timeout  / 60.0)
-    t2 = int(BBSvars.BUILD_timeout    / 60.0)
-    t3 = int(BBSvars.CHECK_timeout    / 60.0)
-    t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
-    if subbuilds == "bioc-longtests":
-        msg = '<I>CHECK</I> of package took more than ' + \
-              '%d minutes' % t3
-    elif subbuilds in ["workflows", "books"]:
-        msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than '
-        if t1 == t2:
-            msg += '%d minutes' % t1
-        else:
-            msg += '%d or %d minutes, respectively' % (t1, t2)
-    else:
-        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' + \
-              '<I>BUILD BIN</I> of package took more than '
-        if t1 == t2 and t2 == t3 and t3 == t4:
-            msg += '%d minutes' % t1
-        else:
-            msg += '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
-    write_glyph("TIMEOUT", msg, True, True)
-
-    ## "ERROR" glyph
-    msg = 'Bad DESCRIPTION file or '
-    if subbuilds == "bioc-longtests":
-        msg += '<I>CHECK</I> of package produced errors'
-    elif subbuilds in ["workflows", "books"]:
-        msg += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
-    else:
-        msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
-        msg += ' or <I>CHECK</I> produced errors'
-    write_glyph("ERROR", msg, True)
-
-    ## "WARNINGS" glyph
-    if subbuilds not in ["workflows", "books"]:
-        msg = '<I>CHECK</I> of package produced warnings'
-        write_glyph("WARNINGS", msg, True)
-
-    ## "OK" glyph
-    if subbuilds == "bioc-longtests":
-        msg = '<I>CHECK</I>'
-    elif subbuilds in ["workflows", "books"]:
-        msg = '<I>INSTALL</I> or <I>BUILD</I>'
-    else:
-        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
-    msg += ' of package was OK'
-    write_glyph("OK", msg, True)
-
-    ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e. when
-    ## STAGE2 skips installation of target packages not needed by another
-    ## target package for build or check).
-    #if subbuilds not in ["workflows", "books", "bioc-longtests"]:
-    #    msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
-    #    write_glyph("NotNeeded", msg)
-
-    ## "skipped" glyph
-    if subbuilds != "bioc-longtests":
-        msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
-        msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
-        write_glyph("skipped", msg)
-
-    ## "NA" glyph
-    if subbuilds == "bioc-longtests":
-        msg = '<I>CHECK</I>'
-    elif subbuilds in ["workflows", "books"]:
-        msg = '<I>BUILD</I>'
-    else:
-        msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
-    msg += ' result is not available because of an anomaly in the Build System\n'
-    write_glyph("NA", msg)
-
-    out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="font-style: italic; border-top: solid black 1px;">')
-    out.write('Click on any glyph in the report below')
-    out.write(' to access the detailed results.')
-    out.write('</TD>\n')
-    out.write('</TR>\n')
-    out.write('</TABLE>\n')
-    out.write('</FORM>\n')
     return
 
 def write_propagation_LED_table(out):
