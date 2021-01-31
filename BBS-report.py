@@ -43,10 +43,9 @@ def wopen_leafreport_input_file(pkg, node_id, stage, filename, return_None_on_er
 ### HTMLization
 ##############################################################################
 
-def write_vertical_space(out):
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 5
-    out.write('<TR class="vertical_space"><TD COLSPAN="%s"></TD></TR>\n' % colspan)
-    return
+def _status_as_glyph(status):
+    return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
+           (status, status)
 
 def pkgname_to_HTML(pkg):
     subbuilds = BBSvars.subbuilds
@@ -78,98 +77,93 @@ def pkgname_and_version_to_HTML(pkg, version, deprecated=False):
 
 
 ##############################################################################
-### VCS metadata HTMLization
+### write_vcs_meta_for_pkg_as_TABLE()
 ##############################################################################
 
-def keyval_to_HTML(key, val):
+def _keyval_to_HTML(key, val):
     key = key.replace(' ', '&nbsp;')
     val = val.replace(' ', '&nbsp;')
     return '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
 
-def write_keyval_asTD(out, key, val):
-    html = keyval_to_HTML(key, val)
+def _write_keyval_as_TD(out, key, val):
+    html = _keyval_to_HTML(key, val)
     out.write('<TD class="svn_info">%s</TD>' % html)
     return
 
-def write_pkg_keyval_asTD(out, pkg, key):
+def _write_pkg_keyval_as_TD(out, pkg, key):
     val = BBSreportutils.get_vcs_meta(pkg, key)
-    write_keyval_asTD(out, key, val)
+    _write_keyval_as_TD(out, key, val)
     return
 
-def write_Date_asTD(out, pkg, key, full_line=True):
+def _write_Date_as_TD(out, pkg, key, full_line=True):
     val = BBSreportutils.get_vcs_meta(pkg, key)
     if not full_line:
         val = ' '.join(val.split(' ')[0:3])
-    write_keyval_asTD(out, key, val)
+    _write_keyval_as_TD(out, key, val)
     return
 
-def write_LastChange_asTD(out, pkg, key, with_Revision=False):
+def _write_LastChange_as_TD(out, pkg, key, with_Revision=False):
     val = BBSreportutils.get_vcs_meta(pkg, key)
-    html = keyval_to_HTML(key, val)
+    html = _keyval_to_HTML(key, val)
     if with_Revision:
         key2 = 'Revision'
         val2 = BBSreportutils.get_vcs_meta(pkg, key2)
-        html2 = keyval_to_HTML(key2, val2)
+        html2 = _keyval_to_HTML(key2, val2)
         html = '%s / %s' % (html, html2)
     out.write('<TD class="svn_info">%s</TD>' % html)
     return
 
-def write_svn_Changelog_asTD(out, url, pkg):
-    if pkg != None:
-        url = '%s/%s' % (url, pkg)
-    out.write('<TD class="svn_info"><A href="%s">Bioconductor Changelog</A></TD>' % url)
-    return
-
-def write_svn_info_for_pkg_asTRs(out, pkg, full_info=False):
+def _write_svn_info_for_pkg_as_TRs(out, pkg, full_info=False):
     if full_info:
         out.write('<TR>')
-        write_Date_asTD(out, None, 'Snapshot Date', full_info)
+        _write_Date_as_TD(out, None, 'Snapshot Date', full_info)
         out.write('</TR>\n')
         out.write('<TR>')
-        write_pkg_keyval_asTD(out, pkg, 'URL')
+        _write_pkg_keyval_as_TD(out, pkg, 'URL')
         out.write('</TR>\n')
     out.write('<TR>')
-    write_LastChange_asTD(out, pkg, 'Last Changed Rev', True)
+    _write_LastChange_as_TD(out, pkg, 'Last Changed Rev', True)
     out.write('</TR>\n')
     out.write('<TR>')
-    write_Date_asTD(out, pkg, 'Last Changed Date', full_info)
+    _write_Date_as_TD(out, pkg, 'Last Changed Date', full_info)
     out.write('</TR>\n')
     return
 
-def write_git_log_for_pkg_asTRs(out, pkg, full_info=False):
+def _write_git_log_for_pkg_as_TRs(out, pkg, full_info=False):
     ## metadata other than snapshot date exists only for individual pkg repos
     if pkg == None:
         out.write('<TR>')
+        key = 'Approx. Package Snapshot Date (git pull)'
         val = BBSreportutils.get_vcs_meta(None, 'Snapshot Date')
         if not full_info:
             val = ' '.join(val.split(' ')[0:3])
-        write_keyval_asTD(out, 'Approx. Package Snapshot Date (git pull)', val)
+        _write_keyval_as_TD(out, key, val)
         out.write('</TR>\n')
     else:
         if full_info:
             out.write('<TR>')
-            write_Date_asTD(out, None, 'Snapshot Date', full_info)
+            _write_Date_as_TD(out, None, 'Snapshot Date', full_info)
             out.write('</TR>\n')
             out.write('<TR>')
-            write_pkg_keyval_asTD(out, pkg, 'URL')
+            _write_pkg_keyval_as_TD(out, pkg, 'URL')
             out.write('</TR>\n')
             out.write('<TR>')
-            write_pkg_keyval_asTD(out, pkg, 'Branch')
+            _write_pkg_keyval_as_TD(out, pkg, 'Branch')
             out.write('</TR>\n')
         out.write('<TR>')
-        write_LastChange_asTD(out, pkg, 'Last Commit', False)
+        _write_LastChange_as_TD(out, pkg, 'Last Commit', False)
         out.write('</TR>\n')
         out.write('<TR>')
-        write_Date_asTD(out, pkg, 'Last Changed Date', full_info)
+        _write_Date_as_TD(out, pkg, 'Last Changed Date', full_info)
         out.write('</TR>\n')
     return
 
-def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
+def write_vcs_meta_for_pkg_as_TABLE(out, pkg, full_info=False):
     out.write('<TABLE class="svn_info">\n')
     if BBSvars.MEAT0_type == 1:
-        write_svn_info_for_pkg_asTRs(out, pkg, full_info)
+        _write_svn_info_for_pkg_as_TRs(out, pkg, full_info)
     else:
-        write_git_log_for_pkg_asTRs(out, pkg, full_info)
+        _write_git_log_for_pkg_as_TRs(out, pkg, full_info)
     out.write('</TABLE>\n')
     return
 
@@ -178,23 +172,24 @@ def write_vcs_meta_for_pkg_asTABLE(out, pkg, full_info=False):
 ### Glyph cards (gcards) and gcard lists
 ##############################################################################
 
-def nodeOSArch_asSPAN(node):
+def _write_vertical_space(out):
+    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 5
+    TD_html = '<TD COLSPAN="%s"></TD>' % colspan
+    out.write('<TR class="vertical_space">%s</TR>\n' % TD_html)
+    return
+
+def _node_OS_Arch_as_SPAN(node):
     return '<SPAN style="font-size: smaller;">%s&nbsp;/&nbsp;%s</SPAN>' % \
            (node.os_html, node.arch)
 
-def write_node_spec_asTD(out, node, spec_html, selected=False):
+def _write_node_spec_as_TD(out, node, spec_html, selected=False):
     TDclasses = node.hostname.replace(".", "_")
     if selected:
         TDclasses += ' selected'
-    TD_html = '<TD class="%s">%s</TD>' % (TDclasses, spec_html)
-    out.write(TD_html)
+    out.write('<TD class="%s">%s</TD>' % (TDclasses, spec_html))
     return
 
-def status_as_glyph(status):
-    return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
-           (status, status)
-
-def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref=None):
+def _write_pkg_status_as_TD(out, pkg, node, stage, leafreport_ref=None):
     selected = leafreport_ref != None and \
                pkg == leafreport_ref.pkg and \
                node.node_id == leafreport_ref.node_id and \
@@ -204,7 +199,7 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref=None):
         TDclasses += ' selected'
     status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
     if status in ["skipped", "NA"]:
-        TDcontent = status_as_glyph(status)
+        TDcontent = _status_as_glyph(status)
     else:
         if leafreport_ref != None:
             pkgdir = "."
@@ -214,11 +209,11 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref=None):
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
         TDcontent = '<A href="%s" onmouseover="%s" onmouseout="%s">%s</A>' % \
-                    (url, onmouseover, onmouseout, status_as_glyph(status))
+                    (url, onmouseover, onmouseout, _status_as_glyph(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
 
-def write_stagelabel_asTD(out, stage, leafreport_ref):
+def write_stagelabel_as_TD(out, stage, leafreport_ref):
     selected = leafreport_ref != None and \
                stage == leafreport_ref.stage
     TDclasses = 'STAGE %s' % stage
@@ -229,15 +224,15 @@ def write_stagelabel_asTD(out, stage, leafreport_ref):
     out.write(TD_html)
     return
 
-def write_pkg_stagelabels_asTDs(out, leafreport_ref=None):
+def write_pkg_stagelabels_as_TDs(out, leafreport_ref=None):
     subbuilds = BBSvars.subbuilds
     for stage in BBSreportutils.stages_to_display(subbuilds):
-        write_stagelabel_asTD(out, stage, leafreport_ref)
+        write_stagelabel_as_TD(out, stage, leafreport_ref)
     if BBSreportutils.display_propagation_status(subbuilds):
         out.write('<TD style="width:12px;"></TD>')
     return
 
-def write_pkg_propagation_status_asTD(out, pkg, node):
+def write_pkg_propagation_status_as_TD(out, pkg, node):
     status = BBSreportutils.get_propagation_status_from_db(pkg, node.hostname)
     if status == None:
         TDcontent = ''
@@ -260,7 +255,7 @@ def write_pkg_propagation_status_asTD(out, pkg, node):
               (node.hostname.replace(".", "_"), TDcontent))
     return
 
-def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref=None):
+def write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref=None):
     TDclasses = 'status %s' % node.hostname.replace(".", "_")
     subbuilds = BBSvars.subbuilds
     if pkg in skipped_pkgs:
@@ -278,11 +273,11 @@ def write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref=None):
     else:
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage != 'buildbin' or BBSreportutils.is_doing_buildbin(node):
-                write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref)
+                _write_pkg_status_as_TD(out, pkg, node, stage, leafreport_ref)
             else:
                 out.write('<TD class="%s"></TD>' % TDclasses)
         if BBSreportutils.display_propagation_status(subbuilds):
-            write_pkg_propagation_status_asTD(out, pkg, node)
+            write_pkg_propagation_status_as_TD(out, pkg, node)
     return
 
 def write_abc_dispatcher(out, href="", current_letter=None,
@@ -305,7 +300,7 @@ def write_abc_dispatcher_within_gcard_list(out, current_letter):
     ## FH: Need the collapsable_rows class to blend out the alphabetical
     ## selection when "ok" packages are unselected.
     out.write('<TBODY class="abc_dispatcher collapsable_rows">\n')
-    write_vertical_space(out)
+    _write_vertical_space(out)
     out.write('<TR class="abc">')
     out.write('<TD COLSPAN="2">')
     out.write('<TABLE class="big_letter"><TR><TD>')
@@ -362,7 +357,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
     out.write('<TD COLSPAN="3" class="%s" style="%s">QUICK STATS</TD>' % \
               (TDclass, TDstyle))
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
-    write_pkg_stagelabels_asTDs(out)
+    write_pkg_stagelabels_as_TDs(out)
     out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
@@ -392,7 +387,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
             TDclass = 'leftmost'
         TD_html = '<TD COLSPAN="3" class="%s">%s</TD>' % (TDclass, node_html)
         out.write(TD_html)
-        TD_html = '<TD>%s</TD>' % nodeOSArch_asSPAN(node)
+        TD_html = '<TD>%s</TD>' % _node_OS_Arch_as_SPAN(node)
         out.write(TD_html)
         subbuilds = BBSvars.subbuilds
         for stage in BBSreportutils.stages_to_display(subbuilds):
@@ -421,7 +416,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
-    write_pkg_stagelabels_asTDs(out, leafreport_ref)
+    write_pkg_stagelabels_as_TDs(out, leafreport_ref)
     out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
@@ -461,14 +456,14 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             out.write('<BR>%s' % maintainer)
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
                 out.write('<BR>')
-                write_vcs_meta_for_pkg_asTABLE(out, pkg, leafreport_ref != None)
+                write_vcs_meta_for_pkg_as_TABLE(out, pkg, leafreport_ref != None)
             out.write('</TD>')
         node_html = node.node_id
         if not toned_down:
             node_html = '<B>%s</B>' % node_html
-        write_node_spec_asTD(out, node, node_html, selected)
-        write_node_spec_asTD(out, node, nodeOSArch_asSPAN(node))
-        write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
+        write_node_spec_as_TD(out, node, node_html, selected)
+        write_node_spec_as_TD(out, node, _node_OS_Arch_as_SPAN(node))
+        write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref)
         if is_last:
             TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
         else:
@@ -489,7 +484,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
     if full_list:
         write_quickstats(out, nb_pkgs)
         out.write('<TBODY>\n')
-        write_vertical_space(out)
+        _write_vertical_space(out)
         out.write('</TBODY>\n')
     pkg_pos = 0
     current_letter = None
@@ -508,7 +503,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
                 pkg_status_classes = statuses2classes(pkg_statuses)
             out.write('<TBODY class="gcard_separator %s">\n' % \
                       pkg_status_classes)
-            write_vertical_space(out)
+            _write_vertical_space(out)
             out.write('</TBODY>\n')
         elif pkg == leafreport_ref.pkg:
             # Display gcard for that package only.
@@ -538,7 +533,7 @@ def write_compact_gcard_header(out):
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD COLSPAN="2">Maintainer</TD>')
-    write_pkg_stagelabels_asTDs(out)
+    write_pkg_stagelabels_as_TDs(out)
     out.write('<TD></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
@@ -572,7 +567,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
     out.write('</TD>')
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
-    write_pkg_statuses_asTDs(out, pkg, node)
+    write_pkg_statuses_as_TDs(out, pkg, node)
     out.write('<TD class="rightmost"></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
@@ -587,7 +582,7 @@ def write_compact_gcard_list(out, node, allpkgs):
     out.write('<TABLE class="compact gcard_list">\n')
     write_quickstats(out, nb_pkgs, node.node_id)
     out.write('<TBODY>\n')
-    write_vertical_space(out)
+    _write_vertical_space(out)
     out.write('</TBODY>\n')
     if no_alphabet_dispatch:
         write_compact_gcard_header(out)
@@ -700,7 +695,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
         if not field_val:
             break
         if field_val[0] == 'Status':
-            field_val = (field_val[0], status_as_glyph(field_val[1]))
+            field_val = (field_val[0], _status_as_glyph(field_val[1]))
         out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % field_val)
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
@@ -1136,7 +1131,7 @@ def write_BioC_mainpage_top_asHTML(out):
         #    vcs = 'git'
         #    heading = 'git log'
         #    out.write('<P style="text-align: center;">%s</P>\n' % heading)
-        write_vcs_meta_for_pkg_asTABLE(out, None, True)
+        write_vcs_meta_for_pkg_as_TABLE(out, None, True)
         out.write('</TD></TR></TABLE>\n')
         out.write('</DIV>\n')
     return
@@ -1403,7 +1398,7 @@ def write_glyph_table(out):
            style += " width: 75px;"
         out.write('<TR>\n')
         out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
-                  (style, status_as_glyph(id)))
+                  (style, _status_as_glyph(id)))
         if checkbox:
             out.write('<TD>')
             out.write(msg)
