@@ -461,8 +461,8 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         node_html = node.node_id
         if not toned_down:
             node_html = '<B>%s</B>' % node_html
-        write_node_spec_as_TD(out, node, node_html, selected)
-        write_node_spec_as_TD(out, node, _node_OS_Arch_as_SPAN(node))
+        _write_node_spec_as_TD(out, node, node_html, selected)
+        _write_node_spec_as_TD(out, node, _node_OS_Arch_as_SPAN(node))
         write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref)
         if is_last:
             TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
