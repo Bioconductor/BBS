@@ -341,7 +341,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     out.write('<TD>Hostname</TD>')
     out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_asTDs(out, leafreport_ref)
-    out.write('<TD class="top_right_corner"></TD>')
+    out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
@@ -392,7 +392,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
         #    style = "font-size: smaller"
         write_pkg_statuses_asTDs(out, pkg, node, leafreport_ref)
         if is_last:
-            out.write('<TD ROWSPAN="2" class="bottom_right_corner"></TD>')
+            out.write('<TD ROWSPAN="2" class="rightmost bottom_right_corner"></TD>')
         else:
             out.write('<TD class="rightmost"></TD>')
         out.write('</TR>\n')
