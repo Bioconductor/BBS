@@ -500,7 +500,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
                       pkg_status_classes)
             write_vertical_space(out)
             out.write('</TBODY>\n')
-        else if pkg == leafreport_ref.pkg:
+        elif pkg == leafreport_ref.pkg:
             # Display gcard for that package only.
             pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
             if pkg in skipped_pkgs:
