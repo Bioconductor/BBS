@@ -214,7 +214,7 @@ def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
         on_events = 'onmouseover="add_class_selected(this);" ' + \
                     'onmouseout="remove_class_selected(this);"'
         TDcontent = '<A href="%s" %s>%s</A>' % \
-                    (url, onevents, status_as_glyph(status))
+                    (url, on_events, status_as_glyph(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
 
