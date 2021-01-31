@@ -410,7 +410,7 @@ TBODY.compact.gcard.even_row_number .malbec1 {
 }
 .malbec2.toned_down,
 TR.toned_down .malbec2,
-TBODY.compact.gcard.even_row_number .malbec2 {
+TR.even_row_number .malbec2 {
     background: #CADCEA;
 }
 

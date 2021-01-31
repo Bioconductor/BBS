@@ -535,12 +535,12 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs, leafreport_ref):
     else:
         pkg_status_classes = statuses2classes(pkg_statuses)
     TBODYclasses = 'compact gcard %s' % pkg_status_classes
-    if pkg_pos % 2 == 0 and not leafreport_ref:
-        TBODYclasses += ' even_row_number'
-    else:
-        TBODYclasses += ' odd_row_number'
     out.write('<TBODY class="%s">\n' % TBODYclasses)
-    out.write('<TR>')
+    if pkg_pos % 2 == 0 and not leafreport_ref:
+        TRclass = 'even_row_number'
+    else:
+        TRclass = 'odd_row_number'
+    out.write('<TR class="%s">' % TRclass)
     out.write('<TD class="leftmost row_number"><B>%d</B>/%d</TD>' % \
               (pkg_pos, nb_pkgs))
     out.write('<TD>')
