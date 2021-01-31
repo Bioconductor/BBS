@@ -281,7 +281,6 @@ TABLE.quickstats {
     margin: auto;
     border-collapse: collapse;
     border-spacing: 0px;
-    color: white;
 }
 TABLE.quickstats TR {
     height: 24px;
@@ -296,10 +295,8 @@ TABLE.quickstats TD {
  * Glyph card (gcard)
  */
 
-TBODY.gcard {
-    background: white;
-}
 TBODY.gcard TD {
+    background: white;
     border-left: 1px solid #DDD;
 }
 TBODY.gcard TD.leftmost {
@@ -408,7 +405,7 @@ TBODY.compact.gcard.even_row_number .malbec1 {
 
 /* malbec2 (Ubuntu 20.04) */
 .malbec2,
-TD.malbec2 {
+.gcard TD.malbec2 {
     background: #DAECFA;
 }
 .malbec2.toned_down,
