@@ -1,3 +1,11 @@
+function add_class_selected(x)
+{
+    x.classList.add('selected');
+}
+function remove_class_selected(x)
+{
+    x.classList.remove('selected');
+}
 
 var vals = ["timeout", "error", "warnings", "ok"];
 
