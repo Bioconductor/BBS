@@ -193,6 +193,10 @@ TABLE.Rconfig TD {
     background: #8AA;
 }
 
+.glyph.selected {
+    border: 1px solid black;
+}
+
 P.noresult {
     text-align: center;
 }

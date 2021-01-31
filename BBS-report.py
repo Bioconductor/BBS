@@ -191,7 +191,7 @@ def write_node_spec_asTD(out, node, spec_html, selected=False):
     return
 
 def status_as_glyph(status):
-    return '<SPAN class="glyph %s" onmouseover="add_class_selected(this)" onmouseout="remove_class_selected(this)">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
+    return '<SPAN class="glyph %s" onmouseover="add_class_selected(this);" onmouseout="remove_class_selected(this);">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
            (status, status)
 
 def write_pkg_status_asTD(out, pkg, node, stage, leafreport_ref):
