@@ -137,11 +137,12 @@ def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
        style += " width: 75px;"
     out.write('<TR>\n')
     if checkbox:
+        button_id = '%s_button' % status.lower()
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
-        onclick = 'toggle2(this, \'%s\');' % status.lower()
-        TDcontent = '<BUTTON type="button" onmouseover="%s" onmouseout="%s" onclick="%s">%s</BUTTON>' % \
-                    (onmouseover, onmouseout, onclick, _status_as_glyph(status))
+        onclick = 'filter_gcards(\'%s\');' % status.lower()
+        TDcontent = '<BUTTON type="button" id="%s" onmouseover="%s" onmouseout="%s" onclick="%s">%s</BUTTON>' % \
+                    (button_id, onmouseover, onmouseout, onclick, _status_as_glyph(status))
         out.write('<TD class="button">%s</TD>\n' % TDcontent)
         out.write('<TD>')
         out.write(html)

@@ -50,25 +50,34 @@ var show_error_cards    = false;
 var show_warnings_cards = false;
 var show_ok_cards       = false;
 
-function toggle2(button, classname)
+function update_button(button_id, on)
 {
-    if (classname == 'timeout')
-        show = show_timeout_cards  = !show_timeout_cards;
-    if (classname == 'error')
-        show = show_error_cards    = !show_error_cards;
-    if (classname == 'warnings')
-        show = show_warnings_cards = !show_warnings_cards;
-    if (classname == 'ok')
-        show = show_ok_cards       = !show_ok_cards;
-    show_selected_gcards(show_timeout_cards,
-                         show_error_cards,
-                         show_warnings_cards,
-                         show_ok_cards);
-    if (show) {
+    var button = document.getElementById(button_id);
+    if (on) {
         button.classList.add('selected');
     } else {
         button.classList.remove('selected');
     }
+}
+
+function filter_gcards(classname)
+{
+    if (classname == 'timeout')
+        show_timeout_cards  = !show_timeout_cards;
+    if (classname == 'error')
+        show_error_cards    = !show_error_cards;
+    if (classname == 'warnings')
+        show_warnings_cards = !show_warnings_cards;
+    if (classname == 'ok')
+        show_ok_cards       = !show_ok_cards;
+    show_selected_gcards(show_timeout_cards,
+                         show_error_cards,
+                         show_warnings_cards,
+                         show_ok_cards);
+    update_button('timeout_button', show_timeout_cards);
+    update_button('error_button', show_error_cards);
+    update_button('warnings_button', show_warnings_cards);
+    update_button('ok_button', show_ok_cards);
 }
 
 var vals = ["timeout", "error", "warnings", "ok"];
