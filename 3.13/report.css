@@ -216,6 +216,9 @@ TD.button BUTTON {
 TD.button BUTTON.mouseover {
     border: 1px solid black;
 }
+TD.button BUTTON.selected {
+    border: 1px solid red;
+}
 
 
 /****************************************************************************

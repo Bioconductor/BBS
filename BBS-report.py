@@ -139,7 +139,7 @@ def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
     if checkbox:
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
-        onclick = 'toggle2(\'%s\');' % status.lower()
+        onclick = 'toggle2(this, \'%s\');' % status.lower()
         TDcontent = '<BUTTON type="button" onmouseover="%s" onmouseout="%s" onclick="%s">%s</BUTTON>' % \
                     (onmouseover, onmouseout, onclick, _status_as_glyph(status))
         out.write('<TD class="button">%s</TD>\n' % TDcontent)

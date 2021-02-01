@@ -62,8 +62,13 @@ function initialize(){
     }
 }
 
-function toggle2(classname)
+function toggle2(button, classname)
 {
+    if button.classList.includes('selected') {
+        button.classList.remove('selected');
+    } else {
+        button.classList.add('selected');
+    }
 }
 
 function toggle(theClass) {
