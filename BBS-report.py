@@ -121,11 +121,14 @@ def write_vcs_meta_for_pkg_as_TABLE(out, pkg, full_info=False):
 ### write_explain_glyph_table()
 ##############################################################################
 
+## Produce a SPAN element.
 def _status_as_glyph(status):
-    return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
-           (status, status)
+    html = status
+    if status != 'skipped':
+        html = '&nbsp;&nbsp;%s&nbsp;&nbsp;' % html
+    return '<SPAN class="glyph %s">%s</SPAN>' % (status, html)
 
-## Produce a table cell (TD).
+## Produce a TD element (table cell).
 def _write_glyph_box(out, status, toggleable=False):
     if toggleable:
         toggle_id = '%s_toggle' % status.lower()
