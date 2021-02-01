@@ -209,9 +209,11 @@ TD.glyph_box TABLE {
     width: 100%;
     height: 22px;
 }
-TD.glyph_box TABLE TD,
-TD.glyph_explain DIV {
+TD.glyph_box TABLE TD {
     vertical-align: middle;
+}
+TD.glyph_explain DIV {
+    height: 100%;
     border: 1px solid white;
 }
 TD.glyph_box.toggle TABLE {
