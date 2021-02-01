@@ -11,13 +11,21 @@ function remove_class_mouseover(x)
 function filter_gcards(classnames)
 {
     var table = document.getElementById("THE_BIG_GCARD_LIST");
+    for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
+        if (tbody.classList.contains(classnames)) {
+            display_val = 'table-row-group';
+        } else {
+            display_val = 'none';
+        }
+        tbody.style['display'] = display_val;
+    }
 }
 
 function toggle2(button, classname)
 {
     if (button.classList.contains('selected')) {
         button.classList.remove('selected');
-        filter_gcards(classname)
+        filter_gcards('')
     } else {
         button.classList.add('selected');
         filter_gcards(classname)
