@@ -201,11 +201,11 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-.toggle {
+TD.toggle TABLE {
     cursor: pointer;
 }
-.toggle.mouseover,
-.toggle.selected {
+TD.toggle.mouseover TABLE,
+TD.toggle.selected TABLE {
     border: 1px solid black;
 }
 
