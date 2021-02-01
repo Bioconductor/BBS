@@ -223,6 +223,10 @@ TD.glyph_box TABLE {
 TD.glyph_box TABLE TD {
     vertical-align: middle;
 }
+TD.glyph_explain {
+    background: #CCC;
+    vertical-align: middle;
+}
 TD.glyph_explain DIV {
     height: 100%;
     display: table-cell;
