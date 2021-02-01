@@ -149,7 +149,7 @@ def _status_as_glyph_box(status, toggleable=False):
 
 def _write_glyph_as_TR(out, status, html, toggleable=False):
     out.write('<TR>\n')
-    out.write('<TD>%s<TD>\n' % _status_as_glyph_box(status, toggleable))
+    out.write('<TD>%s</TD>\n' % _status_as_glyph_box(status, toggleable))
     out.write('<TD>%s</TD>\n' % html)
     out.write('</TR>\n')
     return
