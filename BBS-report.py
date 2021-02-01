@@ -165,17 +165,17 @@ def _explain_TIMEOUT_in_HTML():
     t3 = int(BBSvars.CHECK_timeout    / 60.0)
     t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
     if BBSvars.subbuilds == "bioc-longtests":
-        html = '<I>CHECK</I> of package took more than ' + \
+        html = 'CHECK of package took more than ' + \
               '%d minutes' % t3
     elif BBSvars.subbuilds in ["workflows", "books"]:
-        html = '<I>INSTALL</I> or <I>BUILD</I> of package took more than '
+        html = 'INSTALL or BUILD of package took more than '
         if t1 == t2:
             html += '%d minutes' % t1
         else:
             html += '%d or %d minutes, respectively' % (t1, t2)
     else:
-        html = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' + \
-              '<I>BUILD BIN</I> of package took more than '
+        html = 'INSTALL, BUILD, CHECK or BUILD BIN ' + \
+               'of package took more than '
         if t1 == t2 and t2 == t3 and t3 == t4:
             html += '%d minutes' % t1
         else:
@@ -185,43 +185,43 @@ def _explain_TIMEOUT_in_HTML():
 def _explain_ERROR_in_HTML():
     html = 'Bad DESCRIPTION file or '
     if BBSvars.subbuilds == "bioc-longtests":
-        html += '<I>CHECK</I> of package produced errors'
+        html += 'CHECK of package produced errors'
     elif BBSvars.subbuilds in ["workflows", "books"]:
-        html += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
+        html += 'INSTALL or BUILD of package failed'
     else:
-        html += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package '
-        html += 'failed, or <I>CHECK</I> produced errors'
+        html += 'INSTALL, BUILD or BUILD BIN of package '
+        html += 'failed, or CHECK produced errors'
     return html
 
 def _explain_WARNINGS_in_HTML():
-    return '<I>CHECK</I> of package produced warnings'
+    return 'CHECK of package produced warnings'
 
 def _explain_OK_in_HTML():
     if BBSvars.subbuilds == "bioc-longtests":
-        html = '<I>CHECK</I>'
+        html = 'CHECK'
     elif BBSvars.subbuilds in ["workflows", "books"]:
-        html = '<I>INSTALL</I> or <I>BUILD</I>'
+        html = 'INSTALL or BUILD'
     else:
-        html = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
-    html += ' of package was OK'
+        html = 'INSTALL, BUILD, CHECK or BUILD BIN ' + \
+               'of package was OK'
     return html
 
 def _explain_NotNeeded_in_HTML():
-    return '<I>INSTALL</I> of package was not needed ' + \
+    return 'INSTALL of package was not needed ' + \
            '(click on glyph to see why)'
 
 def _explain_skipped_in_HTML():
-    html = '<I>CHECK</I> or <I>BUILD BIN</I>'
-    html += ' of package was skipped because the <I>BUILD</I> step failed\n'
+    html = 'CHECK or BUILD BIN ' + \
+           'of package was skipped because the BUILD step failed\n'
     return html
 
 def _explain_NA_in_HTML():
     if BBSvars.subbuilds == "bioc-longtests":
-        html = '<I>CHECK</I>'
+        html = 'CHECK'
     elif BBSvars.subbuilds in ["workflows", "books"]:
-        html = '<I>BUILD</I>'
+        html = 'BUILD'
     else:
-        html = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
+        html = 'BUILD, CHECK or BUILD BIN'
     html += ' result is not available because of an anomaly ' + \
             'in the Build System\n'
     return html
