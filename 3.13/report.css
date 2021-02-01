@@ -380,7 +380,8 @@ TBODY.gcard TD.status A.mouseover {
 
 /* By default, all gcards are filtered out. */
 TBODY.gcard,
-TBODY.gcard_separator {
+TBODY.gcard_separator,
+TBODY.collapsable_rows {
     display: none;
 }
 TABLE.gcard_list.show_timeout_gcards  TBODY.gcard.timeout,
@@ -390,7 +391,8 @@ TABLE.gcard_list.show_error_gcards    TBODY.gcard_separator.error,
 TABLE.gcard_list.show_warnings_gcards TBODY.gcard.warnings,
 TABLE.gcard_list.show_warnings_gcards TBODY.gcard_separator.warnings,
 TABLE.gcard_list.show_ok_gcards       TBODY.gcard.ok,
-TABLE.gcard_list.show_ok_gcards       TBODY.gcard_separator.ok {
+TABLE.gcard_list.show_ok_gcards       TBODY.gcard_separator.ok,
+TABLE.gcard_list.show_ok_gcards       TBODY.collapsable_rows {
     display: table-row-group;
 }
 
