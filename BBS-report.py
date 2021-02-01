@@ -146,16 +146,15 @@ def _write_glyph_box(out, status, toggleable=False):
     else:
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
-    TRcontent  = '<TD style="width: 25px; vertical-align: middle;">%s</TD>' % \
+    TRcontent  = '<TD style="width: 25px;">%s</TD>' % \
                  checkbox_html
-    TRcontent += '<TD style="vertical-align: middle;">%s</TD>' % \
-                 _status_as_glyph(status)
-    TDcontent = '<TABLE style="background: white;"><TR>%s</TR></TABLE>' % TRcontent
+    TRcontent += '<TD>%s</TD>' % _status_as_glyph(status)
+    TDcontent = '<TABLE><TR>%s</TR></TABLE>' % TRcontent
     out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TDcontent))
     return
 
 def _write_glyph_as_TR(out, status, html, toggleable=False):
-    out.write('<TR>\n')
+    out.write('<TR style="vertical-align: middle;">\n')
     _write_glyph_box(out, status, toggleable)
     out.write('<TD>%s</TD>\n' % html)
     out.write('</TR>\n')

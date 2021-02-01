@@ -201,6 +201,13 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
+TD.glyph_box {
+    height: 24px;
+}
+TD.glyph_box TABLE {
+    background: white;
+}
+
 TD.toggle TABLE {
     cursor: pointer;
 }
