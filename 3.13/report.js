@@ -8,31 +8,36 @@ function remove_class_mouseover(x)
     x.classList.remove('mouseover');
 }
 
-function filter_gcards(classnames)
+function show_selected_gcards(timeout, error, warnings, ok)
 {
     var table = document.getElementById("THE_BIG_GCARD_LIST");
     for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
         if (tbody.classList.contains('collapsable_rows')) {
-            if (classnames == 'ok') {
-                display_val = 'table-row-group';
-            } else {
-                display_val = 'none';
-            }
-            tbody.style['display'] = display_val;
+            show = ok;
         } else if (tbody.classList.contains('gcard_separator')
                 || tbody.classList.contains('gcard'))
         {
-            if (tbody.classList.contains(classnames)) {
-                display_val = 'table-row-group';
-            } else {
-                display_val = 'none';
-            }
-            tbody.style['display'] = display_val;
+            show = false;
+            if (timeout)
+                show ||= tbody.classList.contains('timeout');
+            if (error)
+                show ||= tbody.classList.contains('error');
+            if (warnings)
+                show ||= tbody.classList.contains('warnings');
+            if (ok)
+                show ||= tbody.classList.contains('ok');
+        } else {
+            show = true;
+        }
+        if (show) {
+            tbody.style['display'] = 'table-row-group';
+        } else {
+            tbody.style['display'] = 'none';
         }
     }
 }
 
-function remove_gcard_filters()
+function show_all_gcards()
 {
     var table = document.getElementById("THE_BIG_GCARD_LIST");
     for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
@@ -43,14 +48,17 @@ function remove_gcard_filters()
 function toggle2(button, classname)
 {
     if (button.classList.contains('selected')) {
-        remove_gcard_filters();
+        show_all_gcards();
         button.classList.remove('selected');
     } else {
-        filter_gcards(classname)
+        timeout  = classname == 'timeout';
+        error    = classname == 'error';
+        warnings = classname == 'warnings';
+        ok       = classname == 'ok';
+        show_selected_gcards(timeout, error, warnings, ok)
         button.classList.add('selected');
     }
 }
-
 
 var vals = ["timeout", "error", "warnings", "ok"];
 
