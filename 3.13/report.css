@@ -206,6 +206,14 @@ TD.glyph_explain {
     height: 24px;
     border: 1px solid white;
 }
+TD.glyph_box.toggle {
+    cursor: pointer;
+}
+TD.glyph_box.toggle.mouseover,
+TD.glyph_box.toggle.selected {
+    border: 1px solid black;
+}
+
 TD.glyph_box TABLE {
     border-collapse: collapse;
     width: 100%;
@@ -217,13 +225,6 @@ TD.glyph_box TABLE TD {
 TD.glyph_explain DIV {
     height: 100%;
     vertical-align: middle;
-}
-TD.glyph_box.toggle TABLE {
-    cursor: pointer;
-}
-TD.glyph_box.toggle.mouseover,
-TD.glyph_box.toggle.selected {
-    border: 1px solid black;
 }
 
 
