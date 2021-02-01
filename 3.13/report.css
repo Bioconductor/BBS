@@ -210,16 +210,13 @@ A.button {
 
 A.button BUTTON {
     width: 100px;
-    border: none;
-    margin: 0px;
+    border: 1px solid white;
     text-decoration: none;
     cursor: pointer;
 }
-A.button BUTTON.mouseover {
-    border: 1px solid black;
-}
+A.button BUTTON.mouseover,
 A.button BUTTON.selected {
-    border: 1px solid red;
+    border: 1px solid black;
 }
 
 
