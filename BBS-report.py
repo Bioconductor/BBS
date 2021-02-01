@@ -132,24 +132,29 @@ def _write_checkbox(out, checkbox_id):
     return
 
 ## Produce a table cell (TD).
-def _status_as_glyph_box(status, toggleable=False):
+def _write_glyph_box(out, status, toggleable=False):
     if toggleable:
         toggle_id = '%s_toggle' % status.lower()
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
         onclick = 'filter_gcards(\'%s\');' % status.lower()
-        html = '<TD class="glyph_box toggle" id="%s" onmouseover="%s" onmouseout="%s" onclick="%s"><TABLE><TR>' % (toggle_id, onmouseover, onmouseout, onclick)
-        html += '<TD>%s</TD>' % '<INPUT type="checkbox">'
+        TD_attrs = ['class="glyph_box toggle"',
+                    'id="%s"' % toggle_id,
+                    'onmouseover="%s"' % onmouseover,
+                    'onmouseout="%s"' % onmouseout,
+                    'onclick="%s"' % onclick]
+        checkbox_html = '<INPUT type="checkbox">'
     else:
-        html = '<TD class="glyph_box"><TABLE><TR>'
-        html += '<TD></TD>'
-    html += '<TD>%s</TD>' % _status_as_glyph(status)
-    html += '</TR></TABLE></TD>'
-    return html
+        TD_attrs = ['class="glyph_box"']
+        checkbox_html = ''
+    TDcontent = '<TABLE><TR><TD>%s</TD><TD>%s</TD></TR><TABLE>' % \
+                (checkbox_html, _status_as_glyph(status))
+    out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TDcontent))
+    return
 
 def _write_glyph_as_TR(out, status, html, toggleable=False):
     out.write('<TR>\n')
-    out.write('%s\n' % _status_as_glyph_box(status, toggleable))
+    _write_glyph_box(out, status, toggleable))
     out.write('<TD>%s</TD>\n' % html)
     out.write('</TR>\n')
     return
