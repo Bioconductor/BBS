@@ -8,14 +8,14 @@ function remove_class_mouseover(x)
     x.classList.remove('mouseover');
 }
 
-function update_button(button_id, on)
+function update_toggle(toggle_id, on)
 {
-    var button = document.getElementById(button_id);
-    if (button != null) {
+    var toggle = document.getElementById(toggle_id);
+    if (toggle != null) {
         if (on) {
-            button.classList.add('selected');
+            toggle.classList.add('selected');
         } else {
-            button.classList.remove('selected');
+            toggle.classList.remove('selected');
         }
     }
 }
@@ -54,17 +54,17 @@ function show_selected_gcards()
     }
 }
 
-function update_filter_buttons()
+function update_filter_toggles()
 {
-    update_button('timeout_button', show_timeout_cards);
-    update_button('error_button', show_error_cards);
-    update_button('warnings_button', show_warnings_cards);
-    update_button('ok_button', show_ok_cards);
+    update_toggle('timeout_toggle', show_timeout_cards);
+    update_toggle('error_toggle', show_error_cards);
+    update_toggle('warnings_toggle', show_warnings_cards);
+    update_toggle('ok_toggle', show_ok_cards);
 }
 
 function initialize()
 {
-    update_filter_buttons();
+    update_filter_toggles();
 }
 
 function filter_gcards(classname)
@@ -98,7 +98,7 @@ function filter_gcards(classname)
         show_ok_cards = true;
     }
     show_selected_gcards();
-    update_filter_buttons();
+    update_filter_toggles();
 }
 
 var vals = ["timeout", "error", "warnings", "ok"];
