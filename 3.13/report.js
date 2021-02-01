@@ -8,12 +8,19 @@ function remove_class_mouseover(x)
     x.classList.remove('mouseover');
 }
 
+function filter_gcards(classnames)
+{
+    var table = document.getElementById("THE_BIG_GCARD_LIST");
+}
+
 function toggle2(button, classname)
 {
     if (button.classList.contains('selected')) {
         button.classList.remove('selected');
+        filter_gcards(classname)
     } else {
         button.classList.add('selected');
+        filter_gcards(classname)
     }
 }
 
