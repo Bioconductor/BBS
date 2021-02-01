@@ -202,9 +202,10 @@ P.noresult SPAN {
 }
 
 TD.glyph_box {
-    height: 24px;
+    height: 40px;
 }
-TD.glyph_box TABLE {
+TD.glyph_box TABLE TD {
+    vertical-align: middle;
     background: white;
 }
 
