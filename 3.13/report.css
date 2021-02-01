@@ -205,8 +205,7 @@ TD.button {
     text-align: center;
 }
 TD.button BUTTON {
-    display: block;
-    text-decoration: none;
+    margin: auto;
 }
 TD.button BUTTON.mouseover {
     border: 10px solid black;
