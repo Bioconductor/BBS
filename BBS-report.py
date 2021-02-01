@@ -133,7 +133,7 @@ def _write_checkbox(out, checkbox_id):
 
 def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
     out.write('<TR>\n')
-    TDstyle = 'width: 80px; height: 28px;'
+    TDstyle = 'width: 100px; height: 25px; text-align: center;'
     if checkbox:
         button_id = '%s_button' % status.lower()
         onmouseover = 'add_class_mouseover(this);'
