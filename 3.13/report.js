@@ -10,7 +10,7 @@ function remove_class_mouseover(x)
 
 function toggle2(button, classname)
 {
-    if button.classList.includes('selected') {
+    if (button.classList.includes('selected')) {
         button.classList.remove('selected');
     } else {
         button.classList.add('selected');
