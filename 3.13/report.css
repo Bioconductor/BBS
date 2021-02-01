@@ -202,9 +202,11 @@ P.noresult SPAN {
 }
 
 TD.button {
+    height: 30px;
     background: white;
     padding-left: 0px;
     padding-right: 0px;
+    vertical-align: middle;
 }
 TD.button BUTTON {
     width: 100%;
