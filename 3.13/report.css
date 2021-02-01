@@ -221,8 +221,8 @@ TD.glyph_explain DIV {
 TD.glyph_box.toggle TABLE {
     cursor: pointer;
 }
-TD.glyph_box.toggle.mouseover TABLE TD,
-TD.glyph_box.toggle.selected TABLE TD {
+TD.glyph_box.toggle.mouseover,
+TD.glyph_box.toggle.selected {
     border: 1px solid black;
 }
 
