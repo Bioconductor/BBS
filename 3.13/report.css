@@ -202,6 +202,7 @@ P.noresult SPAN {
 }
 
 TD.glyph_box {
+    padding: 2px;
     height: 40px;
 }
 TD.glyph_box TABLE {
