@@ -203,7 +203,8 @@ P.noresult SPAN {
 
 TD.button BUTTON {
     width: 100%;
-    border: 1px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 TD.button BUTTON.mouseover {
     border: 1px solid black;
