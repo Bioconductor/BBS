@@ -204,6 +204,7 @@ P.noresult SPAN {
 TD.glyph_box,
 TD.glyph_explain {
     height: 24px;
+    border: 1px solid white;
 }
 TD.glyph_box TABLE {
     border-collapse: collapse;
@@ -211,12 +212,10 @@ TD.glyph_box TABLE {
     height: 100%;
 }
 TD.glyph_box TABLE TD {
-    border: 1px solid white;
     vertical-align: middle;
 }
 TD.glyph_explain DIV {
     height: 100%;
-    border: 1px solid white;
     vertical-align: middle;
 }
 TD.glyph_box.toggle TABLE {
