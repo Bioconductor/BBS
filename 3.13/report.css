@@ -211,7 +211,7 @@ TD.glyph_box TABLE {
 }
 TD.glyph_box TABLE TD,
 TD.glyph_explain {
-    vertical-align: middle;
+    /*vertical-align: middle;*/
     border: 1px solid white;
 }
 TD.glyph_box.toggle TABLE {
