@@ -142,15 +142,13 @@ def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
         TDcontent = '<A class="button"><BUTTON type="button" id="%s" onmouseover="%s" onmouseout="%s" onclick="%s">%s</BUTTON></A>' % \
                     (button_id, onmouseover, onmouseout, onclick, _status_as_glyph(status))
         out.write('<TD style="%s">%s</TD>\n' % (TDstyle, TDcontent))
-        out.write('<TD>%s</TD>\n' % html)
-        out.write('<TD style="text-align: right; vertical-align: middle;">')
-        _write_checkbox(out, status.lower())
+        #out.write('<TD style="text-align: right; vertical-align: middle;">')
+        #_write_checkbox(out, status.lower())
+        #out.write('</TD>\n')
     else:
         out.write('<TD style="%s">%s</TD>\n' % \
                   (TDstyle, _status_as_glyph(status)))
-        out.write('<TD COLSPAN="2">')
-        out.write(html)
-    out.write('</TD>\n')
+    out.write('<TD>%s</TD>\n' % html)
     if first:
         out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
         out.write('Use the check boxes to show only packages with the selected status types.')
@@ -231,7 +229,7 @@ def write_explain_glyph_table(out):
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="font-style: italic; border-bottom: solid black 1px;">')
+    out.write('<TD COLSPAN="2" style="font-style: italic; border-bottom: solid black 1px;">')
     out.write('<B>Package status is indicated by one of the following glyphs</B>')
     out.write('</TD>\n')
     out.write('</TR>\n')
@@ -257,9 +255,9 @@ def write_explain_glyph_table(out):
     _write_glyph_as_TR(out, "NA", _explain_NA_in_HTML())
 
     out.write('<TR>\n')
-    out.write('<TD COLSPAN="4" style="font-style: italic; border-top: solid black 1px;">')
-    out.write('Click on any glyph in the report below')
-    out.write(' to access the detailed results.')
+    out.write('<TD COLSPAN="2" style="font-style: italic; border-top: solid black 1px;">')
+    out.write('Click on any glyph in the report below ')
+    out.write('to access the detailed report.')
     out.write('</TD>\n')
     out.write('</TR>\n')
     out.write('</TABLE>\n')
