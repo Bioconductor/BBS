@@ -201,7 +201,7 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-SPAN.button {
+DIV.button {
     width: 100%;
     height: 30px;
     background: white;
@@ -209,7 +209,7 @@ SPAN.button {
     padding-right: 0px;
 }
 
-SPAN.button BUTTON {
+DIV.button BUTTON {
     border: none;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -218,10 +218,10 @@ SPAN.button BUTTON {
     display: inline-block;
     cursor: pointer;
 }
-SPAN.button BUTTON.mouseover {
+DIV.button BUTTON.mouseover {
     border: 1px solid black;
 }
-SPAN.button BUTTON.selected {
+DIV.button BUTTON.selected {
     border: 1px solid red;
 }
 
