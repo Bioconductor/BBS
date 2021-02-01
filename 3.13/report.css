@@ -211,8 +211,9 @@ TD.glyph_box TABLE TD {
     vertical-align: middle;
 }
 TD.glyph_explain DIV {
-    height: 24px;
     border: 1px solid white;
+    height: 24px;
+    vertical-align: middle;
 }
 TD.glyph_box.toggle TABLE {
     cursor: pointer;
