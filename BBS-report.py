@@ -131,7 +131,7 @@ def _write_checkbox(out, checkbox_id):
               (checkbox_id, checkbox_id))
     return
 
-def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
+def _write_glyph_as_TR(out, status, html, checkbox = False):
     out.write('<TR>\n')
     TDstyle = 'height: 25px; text-align: center;'
     if checkbox:
@@ -149,10 +149,6 @@ def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
         out.write('<TD style="%s">%s</TD>\n' % \
                   (TDstyle, _status_as_glyph(status)))
     out.write('<TD>%s</TD>\n' % html)
-    if first:
-        out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
-        out.write('Use the check boxes to show only packages with the selected status types.')
-        out.write('</TD>\n')
     out.write('</TR>\n')
     return
 
@@ -234,7 +230,7 @@ def write_explain_glyph_table(out):
     out.write('</TD>\n')
     out.write('</TR>\n')
 
-    _write_glyph_as_TR(out, "TIMEOUT", _explain_TIMEOUT_in_HTML(), True, True)
+    _write_glyph_as_TR(out, "TIMEOUT", _explain_TIMEOUT_in_HTML(), True)
 
     _write_glyph_as_TR(out, "ERROR", _explain_ERROR_in_HTML(), True)
 
@@ -247,7 +243,7 @@ def write_explain_glyph_table(out):
     ## when STAGE2 skips installation of target packages not needed by
     ## another target package for build or check).
     #if subbuilds not in ["workflows", "books", "bioc-longtests"]:
-    #    _write_glyph_as_TR("NotNeeded", _explain_NotNeeded_in_HTML())
+    #    _write_glyph_as_TR(out, "NotNeeded", _explain_NotNeeded_in_HTML())
 
     if subbuilds != "bioc-longtests":
         _write_glyph_as_TR(out, "skipped", _explain_skipped_in_HTML())
