@@ -60,6 +60,7 @@ function update_buttons()
     update_button('error_button', show_error_cards);
     update_button('warnings_button', show_warnings_cards);
     update_button('ok_button', show_ok_cards);
+}
 
 function filter_gcards(classname)
 {
