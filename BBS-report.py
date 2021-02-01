@@ -140,7 +140,9 @@ def _write_glyph_box(out, status, toggleable=False):
                     'onmouseover="%s"' % onmouseover,
                     'onmouseout="%s"' % onmouseout,
                     'onclick="%s"' % onclick]
-        checkbox_html = '<INPUT type="checkbox">'
+        checkbox_id = '%s_checkbox' % status.lower()
+        checkbox_attrs = 'id="%s" style="padding: 0px;"' % checkbox_id
+        checkbox_html = '<INPUT type="checkbox" %s>' % checkbox_attrs
     else:
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
