@@ -146,7 +146,7 @@ def _write_glyph_box(out, status, toggleable=False):
     else:
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
-    TRcontent  = '<TD style="width:25px; vertical-align: middle;">%s</TD>' % \
+    TRcontent  = '<TD style="width: 25px; height: 30px; vertical-align: middle;">%s</TD>' % \
                  checkbox_html
     TRcontent += '<TD>%s</TD>' % _status_as_glyph(status)
     TDcontent = '<TABLE><TR>%s</TR></TABLE>' % TRcontent
