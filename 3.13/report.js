@@ -49,29 +49,53 @@ function update_button(button_id, on)
     }
 }
 
-var show_timeout_cards  = false;
-var show_error_cards    = false;
-var show_warnings_cards = false;
-var show_ok_cards       = false;
+var show_timeout_cards  = true;
+var show_error_cards    = true;
+var show_warnings_cards = true;
+var show_ok_cards       = true;
 
-function filter_gcards(classname)
+function update_buttons()
 {
-    if (classname == 'timeout')
-        show_timeout_cards  = !show_timeout_cards;
-    if (classname == 'error')
-        show_error_cards    = !show_error_cards;
-    if (classname == 'warnings')
-        show_warnings_cards = !show_warnings_cards;
-    if (classname == 'ok')
-        show_ok_cards       = !show_ok_cards;
-    show_selected_gcards(show_timeout_cards,
-                         show_error_cards,
-                         show_warnings_cards,
-                         show_ok_cards);
     update_button('timeout_button', show_timeout_cards);
     update_button('error_button', show_error_cards);
     update_button('warnings_button', show_warnings_cards);
     update_button('ok_button', show_ok_cards);
+
+function filter_gcards(classname)
+{
+    if (show_timeout_cards &&
+        show_error_cards &&
+        show_warnings_cards &&
+        show_ok_cards)
+    {
+        show_timeout_cards =
+        show_error_cards =
+        show_warnings_cards =
+        show_ok_cards = false;
+    }
+    if (classname == 'timeout')
+        show_timeout_cards = !show_timeout_cards;
+    if (classname == 'error')
+        show_error_cards = !show_error_cards;
+    if (classname == 'warnings')
+        show_warnings_cards = !show_warnings_cards;
+    if (classname == 'ok')
+        show_ok_cards = !show_ok_cards;
+    if (!show_timeout_cards &&
+        !show_error_cards &&
+        !show_warnings_cards &&
+        !show_ok_cards)
+    {
+        show_timeout_cards =
+        show_error_cards =
+        show_warnings_cards =
+        show_ok_cards = true;
+    }
+    show_selected_gcards(show_timeout_cards,
+                         show_error_cards,
+                         show_warnings_cards,
+                         show_ok_cards);
+    update_buttons();
 }
 
 var vals = ["timeout", "error", "warnings", "ok"];
