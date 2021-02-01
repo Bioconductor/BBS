@@ -208,7 +208,7 @@ A.button {
 }
 
 A.button BUTTON {
-    width: 100%;
+    width: 100px;
     border: none;
     text-decoration: none;
     cursor: pointer;
