@@ -8,35 +8,6 @@ function remove_class_mouseover(x)
     x.classList.remove('mouseover');
 }
 
-function show_selected_gcards(timeout, error, warnings, ok)
-{
-    var table = document.getElementById("THE_BIG_GCARD_LIST");
-    for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
-        if (tbody.classList.contains('collapsable_rows')) {
-            show = ok;
-        } else if (tbody.classList.contains('gcard_separator')
-                || tbody.classList.contains('gcard'))
-        {
-            show = false;
-            if (timeout)
-                show ||= tbody.classList.contains('timeout');
-            if (error)
-                show ||= tbody.classList.contains('error');
-            if (warnings)
-                show ||= tbody.classList.contains('warnings');
-            if (ok)
-                show ||= tbody.classList.contains('ok');
-        } else {
-            show = true;
-        }
-        if (show) {
-            tbody.style['display'] = 'table-row-group';
-        } else {
-            tbody.style['display'] = 'none';
-        }
-    }
-}
-
 function update_button(button_id, on)
 {
     var button = document.getElementById(button_id);
@@ -54,7 +25,36 @@ var show_error_cards    = true;
 var show_warnings_cards = true;
 var show_ok_cards       = true;
 
-function update_buttons()
+function show_selected_gcards()
+{
+    var table = document.getElementById("THE_BIG_GCARD_LIST");
+    for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
+        if (tbody.classList.contains('collapsable_rows')) {
+            show = show_ok_cards;
+        } else if (tbody.classList.contains('gcard_separator')
+                || tbody.classList.contains('gcard'))
+        {
+            show = false;
+            if (show_timeout_cards)
+                show ||= tbody.classList.contains('timeout');
+            if (show_error_cards)
+                show ||= tbody.classList.contains('error');
+            if (show_warnings_cards)
+                show ||= tbody.classList.contains('warnings');
+            if (show_ok_cards)
+                show ||= tbody.classList.contains('ok');
+        } else {
+            show = true;
+        }
+        if (show) {
+            tbody.style['display'] = 'table-row-group';
+        } else {
+            tbody.style['display'] = 'none';
+        }
+    }
+}
+
+function update_filter_buttons()
 {
     update_button('timeout_button', show_timeout_cards);
     update_button('error_button', show_error_cards);
@@ -92,11 +92,8 @@ function filter_gcards(classname)
         show_warnings_cards =
         show_ok_cards = true;
     }
-    show_selected_gcards(show_timeout_cards,
-                         show_error_cards,
-                         show_warnings_cards,
-                         show_ok_cards);
-    update_buttons();
+    show_selected_gcards();
+    update_filter_buttons();
 }
 
 var vals = ["timeout", "error", "warnings", "ok"];
