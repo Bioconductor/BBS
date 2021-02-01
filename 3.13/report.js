@@ -21,14 +21,22 @@ function filter_gcards(classnames)
     }
 }
 
+function remove_gcard_filters()
+{
+    var table = document.getElementById("THE_BIG_GCARD_LIST");
+    for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
+        tbody.style['display'] = 'table-row-group';
+    }
+}
+
 function toggle2(button, classname)
 {
     if (button.classList.contains('selected')) {
+        remove_gcard_filters();
         button.classList.remove('selected');
-        filter_gcards('')
     } else {
-        button.classList.add('selected');
         filter_gcards(classname)
+        button.classList.add('selected');
     }
 }
 
