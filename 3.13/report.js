@@ -45,18 +45,27 @@ function show_all_gcards()
     }
 }
 
+var show_timeout  = false;
+var show_error    = false;
+var show_warnings = false;
+var show_ok       = false;
+
 function toggle2(button, classname)
 {
-    if (button.classList.contains('selected')) {
-        show_all_gcards();
-        button.classList.remove('selected');
-    } else {
-        timeout  = classname == 'timeout';
-        error    = classname == 'error';
-        warnings = classname == 'warnings';
-        ok       = classname == 'ok';
-        show_selected_gcards(timeout, error, warnings, ok)
+    show = !button.classList.contains('selected')
+    if (classname == 'timeout')
+        show_timeout  = show;
+    if (classname == 'error')
+        show_error    = show;
+    if (classname == 'warnings')
+        show_warnings = show;
+    if (classname == 'ok')
+        show_ok       = show;
+    show_selected_gcards(show_timeout, show_error, show_warnings, show_ok)
+    if (show) {
         button.classList.add('selected');
+    } else {
+        button.classList.remove('selected');
     }
 }
 
