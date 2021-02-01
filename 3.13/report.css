@@ -201,26 +201,21 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-DIV.button {
-    width: 100%;
-    height: 30px;
+A.button {
+    display: block;
+    text-decoration: none;
     background: white;
-    padding-left: 0px;
-    padding-right: 0px;
 }
 
-DIV.button BUTTON {
-    margin: auto;
-    vertical-align: middle;
+A.button BUTTON {
     border: none;
     text-decoration: none;
-    display: inline-block;
     cursor: pointer;
 }
-DIV.button BUTTON.mouseover {
+A.button BUTTON.mouseover {
     border: 1px solid black;
 }
-DIV.button BUTTON.selected {
+A.button BUTTON.selected {
     border: 1px solid red;
 }
 
