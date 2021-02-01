@@ -201,6 +201,12 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
+TD.button {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 TD.button BUTTON {
     width: 100%;
     padding-top: 0px;
