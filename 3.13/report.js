@@ -20,6 +20,13 @@ function update_toggle(toggle_id, on)
     }
 }
 
+function update_checkbox(checkbox_id, checked)
+{
+    var checkbox = document.getElementById(checkbox_id);
+    if (checkbox != null)
+        checkbox.checked = checked;
+}
+
 var show_timeout_cards  = true;
 var show_error_cards    = true;
 var show_warnings_cards = true;
@@ -57,9 +64,16 @@ function show_selected_gcards()
 function update_filter_toggles()
 {
     update_toggle('timeout_toggle', show_timeout_cards);
+    update_checkbox('timeout_checkbox', show_timeout_cards);
+
     update_toggle('error_toggle', show_error_cards);
+    update_checkbox('error_checkbox', show_error_cards);
+
     update_toggle('warnings_toggle', show_warnings_cards);
+    update_checkbox('warnings_checkbox', show_warnings_cards);
+
     update_toggle('ok_toggle', show_ok_cards);
+    update_checkbox('ok_checkbox', show_ok_cards);
 }
 
 function initialize()
