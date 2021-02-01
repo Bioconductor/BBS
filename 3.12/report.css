@@ -201,6 +201,29 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
+TD.glyph_box,
+TD.glyph_explain {
+    height: 18px;
+    border: 1px solid transparent;
+    vertical-align: middle;
+}
+TD.glyph_box.toggle {
+    cursor: pointer;
+}
+TD.glyph_box.toggle.mouseover {
+    border: 1px solid black;
+}
+
+TD.glyph_box TABLE {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+TD.glyph_box TABLE TD {
+    padding: 0px;
+}
+
 
 /****************************************************************************
  * List of glyph cards (gcards)
@@ -253,10 +276,6 @@ TABLE.gcard_list TR.header TD.STAGE {
 TABLE.gcard_list TD.status {
     text-align: center;
     padding: 0px;
-}
-
-TABLE.gcard_list TR.selected_row {
-    /*font-weight: bold;*/
 }
 
 TABLE.gcard_list TABLE.svn_info {
@@ -357,6 +376,24 @@ TBODY.gcard TD.status A {
 TBODY.gcard TD.status.selected A,
 TBODY.gcard TD.status A.mouseover {
     border: 1px solid black;
+}
+
+/* By default, all gcards are filtered out. */
+TBODY.gcard,
+TBODY.gcard_separator,
+TBODY.collapsable_rows {
+    display: none;
+}
+TABLE.gcard_list.show_timeout_gcards  TBODY.gcard.timeout,
+TABLE.gcard_list.show_tiemout_gcards  TBODY.gcard_separator.timeout,
+TABLE.gcard_list.show_error_gcards    TBODY.gcard.error,
+TABLE.gcard_list.show_error_gcards    TBODY.gcard_separator.error,
+TABLE.gcard_list.show_warnings_gcards TBODY.gcard.warnings,
+TABLE.gcard_list.show_warnings_gcards TBODY.gcard_separator.warnings,
+TABLE.gcard_list.show_ok_gcards       TBODY.gcard.ok,
+TABLE.gcard_list.show_ok_gcards       TBODY.gcard_separator.ok,
+TABLE.gcard_list.show_ok_gcards       TBODY.collapsable_rows {
+    display: table-row-group;
 }
 
 
