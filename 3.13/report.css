@@ -210,7 +210,7 @@ TD.glyph_box TABLE {
     height: 22px;
 }
 TD.glyph_box TABLE TD,
-TD.glyph_explain {
+TD.glyph_explain DIV {
     vertical-align: middle;
     border: 1px solid white;
 }
