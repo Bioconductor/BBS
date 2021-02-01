@@ -210,10 +210,8 @@ DIV.button {
 }
 
 DIV.button BUTTON {
+    margin: auto;
     border: none;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    text-align: center;
     text-decoration: none;
     display: inline-block;
     cursor: pointer;
