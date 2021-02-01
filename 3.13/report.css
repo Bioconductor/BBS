@@ -206,9 +206,11 @@ TD.button {
 }
 TD.button BUTTON {
     margin: auto;
+    width: 100%;
+    border: 0px;
 }
 TD.button BUTTON.mouseover {
-    border: 10px solid black;
+    border: 1px solid black;
 }
 
 
