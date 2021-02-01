@@ -201,6 +201,13 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
+BUTTON {
+    display: block;
+}
+BUTTON.mouseover {
+    border: 10px solid black;
+}
+
 
 /****************************************************************************
  * List of glyph cards (gcards)
