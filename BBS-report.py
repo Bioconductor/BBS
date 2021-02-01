@@ -125,22 +125,33 @@ def _status_as_glyph(status):
     return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
            (status, status)
 
-def _write_glyph_as_TR(id, msg, checkbox = False, first = False):
+def _write_checkbox(out, checkbox_id):
+    out.write('<INPUT style="margin: 0px;" type="checkbox" ')
+    out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
+              (checkbox_id, checkbox_id))
+    return
+
+def _write_glyph_as_TR(out, id, html, checkbox = False, first = False):
     style = ""
     if first:
        style += " width: 75px;"
     out.write('<TR>\n')
-    out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
-              (style, _status_as_glyph(id)))
     if checkbox:
+        onmouseover = 'add_class_mouseover(this);'
+        onmouseout = 'remove_class_mouseover(this);'
+        TDcontent = '<A onmouseover="%s" onmouseout="%s">%s</A>' % \
+                    (onmouseover, onmouseout, _status_as_glyph(id))
+        out.write('<TD>%s</TD>\n' % TDcontent)
         out.write('<TD>')
-        out.write(msg)
+        out.write(html)
         out.write('</TD>\n')
         out.write('<TD style="text-align: right; vertical-align: middle;">')
-        write_checkbox(id.lower())
+        _write_checkbox(out, id.lower())
     else:
+        out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
+                  (style, _status_as_glyph(id)))
         out.write('<TD COLSPAN="2">')
-        out.write(msg)
+        out.write(html)
     out.write('</TD>\n')
     if first:
         out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
@@ -183,6 +194,9 @@ def _explain_ERROR_in_HTML():
         html += 'failed, or <I>CHECK</I> produced errors'
     return html
 
+def _explain_WARNINGS_in_HTML():
+    return '<I>CHECK</I> of package produced warnings'
+
 def _explain_OK_in_HTML():
     if BBSvars.subbuilds == "bioc-longtests":
         html = '<I>CHECK</I>'
@@ -191,6 +205,15 @@ def _explain_OK_in_HTML():
     else:
         html = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
     html += ' of package was OK'
+    return html
+
+def _explain_NotNeeded_in_HTML():
+    return '<I>INSTALL</I> of package was not needed ' + \
+           '(click on glyph to see why)'
+
+def _explain_skipped_in_HTML():
+    html = '<I>CHECK</I> or <I>BUILD BIN</I>'
+    html += ' of package was skipped because the <I>BUILD</I> step failed\n'
     return html
 
 def _explain_NA_in_HTML():
@@ -206,52 +229,34 @@ def _explain_NA_in_HTML():
 
 ### FH: Create checkboxes to select display types
 def write_explain_glyph_table(out):
-    def write_checkbox(checkbox_id):
-        out.write('<INPUT style="margin: 0px;" type="checkbox" ')
-        out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
-                  (checkbox_id, checkbox_id))
-        return
-
     subbuilds = BBSvars.subbuilds
-
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 670px; border-spacing: 1px; border: solid black 1px;">\n')
-
     out.write('<TR>\n')
     out.write('<TD COLSPAN="4" style="font-style: italic; border-bottom: solid black 1px;">')
     out.write('<B>Package status is indicated by one of the following glyphs</B>')
     out.write('</TD>\n')
     out.write('</TR>\n')
 
-    ## "TIMEOUT" glyph
-    _write_glyph_as_TR("TIMEOUT", _explain_TIMEOUT_in_HTML(), True, True)
+    _write_glyph_as_TR(out, "TIMEOUT", _explain_TIMEOUT_in_HTML(), True, True)
 
-    ## "ERROR" glyph
-    _write_glyph_as_TR("ERROR", _explain_ERROR_in_HTML(), True)
+    _write_glyph_as_TR(out, "ERROR", _explain_ERROR_in_HTML(), True)
 
-    ## "WARNINGS" glyph
     if subbuilds not in ["workflows", "books"]:
-        html = '<I>CHECK</I> of package produced warnings'
-        _write_glyph_as_TR("WARNINGS", html, True)
+        _write_glyph_as_TR(out, "WARNINGS", _explain_WARNINGS_in_HTML(), True)
 
-    ## "OK" glyph
-    _write_glyph_as_TR("OK", _explain_OK_in_HTML, True)
+    _write_glyph_as_TR(out, "OK", _explain_OK_in_HTML, True)
 
-    ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e. when
-    ## STAGE2 skips installation of target packages not needed by another
-    ## target package for build or check).
+    ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e.
+    ## when STAGE2 skips installation of target packages not needed by
+    ## another target package for build or check).
     #if subbuilds not in ["workflows", "books", "bioc-longtests"]:
-    #    html = '<I>INSTALL</I> of package was not needed ' + \
-    #           '(click on glyph to see why)'
-    #    _write_glyph_as_TR("NotNeeded", html)
+    #    _write_glyph_as_TR("NotNeeded", _explain_NotNeeded_in_HTML())
 
-    ## "skipped" glyph
     if subbuilds != "bioc-longtests":
-        html = '<I>CHECK</I> or <I>BUILD BIN</I>'
-        html += ' of package was skipped because the <I>BUILD</I> step failed\n'
-        _write_glyph_as_TR("skipped", html)
+        _write_glyph_as_TR(out, "skipped", _explain_skipped_in_HTML())
 
-    _write_glyph_as_TR("NA", _explain_NA_in_HTML())
+    _write_glyph_as_TR(out, "NA", _explain_NA_in_HTML())
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="4" style="font-style: italic; border-top: solid black 1px;">')
