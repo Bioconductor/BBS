@@ -278,10 +278,6 @@ TABLE.gcard_list TD.status {
     padding: 0px;
 }
 
-TABLE.gcard_list TR.selected_row {
-    /*font-weight: bold;*/
-}
-
 TABLE.gcard_list TABLE.svn_info {
     font-weight: normal;
     font-size: smaller;
@@ -380,6 +376,11 @@ TBODY.gcard TD.status A {
 TBODY.gcard TD.status.selected A,
 TBODY.gcard TD.status A.mouseover {
     border: 1px solid black;
+}
+
+TABLE.gcard_list.show_ok_gcards TBODY.gcard.ok TD,
+TABLE.gcard_list.show_ok_gcards TBODY.gcard_separator.ok TD {
+    background: blue;
 }
 
 

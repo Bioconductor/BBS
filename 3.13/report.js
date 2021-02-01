@@ -40,6 +40,10 @@ var ok_toggle_exists;
 function show_selected_gcards()
 {
     var table = document.getElementById("THE_BIG_GCARD_LIST");
+    if (show_ok_cards)
+        table.classList.add('show_ok_gcards');
+    else
+        table.classList.remove('show_ok_gcards');
     for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
         if (tbody.classList.contains('collapsable_rows')) {
             show = show_ok_cards;
@@ -53,8 +57,8 @@ function show_selected_gcards()
                 show ||= tbody.classList.contains('error');
             if (show_warnings_cards)
                 show ||= tbody.classList.contains('warnings');
-            if (show_ok_cards)
-                show ||= tbody.classList.contains('ok');
+            //if (show_ok_cards)
+            //    show ||= tbody.classList.contains('ok');
         } else {
             show = true;
         }
