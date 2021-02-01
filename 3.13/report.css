@@ -202,6 +202,7 @@ P.noresult SPAN {
 }
 
 TD.button {
+    border: 1px solid black;
     height: 32px;
     padding-left: 0px;
     padding-right: 0px;
