@@ -26,53 +26,16 @@ import BBSreportutils
 
 
 ##############################################################################
-### HTMLization
-##############################################################################
-
-def _status_as_glyph(status):
-    return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
-           (status, status)
-
-def pkgname_to_HTML(pkg):
-    subbuilds = BBSvars.subbuilds
-    if subbuilds == "cran":
-        url = "https://cran.rstudio.com/package=%s" % pkg
-    else:
-        bioc_version = BBSvars.bioc_version
-        if subbuilds == "books":
-            url = "/books/%s/%s/" % (bioc_version, pkg)
-        else:
-            #if subbuilds == "data-annotation":
-            #    repo = "data/annotation"
-            #elif subbuilds == "data-experiment":
-            #    repo = "data/experiment"
-            #elif subbuilds == "workflows":
-            #    repo = "workflows"
-            #else:
-            #    repo = "bioc"
-            #url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
-            ## Use short URL:
-            url = "/packages/%s/%s" % (bioc_version, pkg)
-    return '<A href="%s">%s</A>' % (url, pkg)
-
-def pkgname_and_version_to_HTML(pkg, version, deprecated=False):
-    html = '<B>%s&nbsp;%s</B>' % (pkgname_to_HTML(pkg), version)
-    if deprecated:
-        html = '<s>%s</s>' % html
-    return html
-
-
-##############################################################################
 ### write_vcs_meta_for_pkg_as_TABLE()
 ##############################################################################
 
-def _keyval_to_HTML(key, val):
+def _keyval_as_HTML(key, val):
     key = key.replace(' ', '&nbsp;')
     val = val.replace(' ', '&nbsp;')
     return '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
 
 def _write_keyval_as_TD(out, key, val):
-    html = _keyval_to_HTML(key, val)
+    html = _keyval_as_HTML(key, val)
     out.write('<TD class="svn_info">%s</TD>' % html)
     return
 
@@ -90,11 +53,11 @@ def _write_Date_as_TD(out, pkg, key, full_line=True):
 
 def _write_LastChange_as_TD(out, pkg, key, with_Revision=False):
     val = BBSreportutils.get_vcs_meta(pkg, key)
-    html = _keyval_to_HTML(key, val)
+    html = _keyval_as_HTML(key, val)
     if with_Revision:
         key2 = 'Revision'
         val2 = BBSreportutils.get_vcs_meta(pkg, key2)
-        html2 = _keyval_to_HTML(key2, val2)
+        html2 = _keyval_as_HTML(key2, val2)
         html = '%s / %s' % (html, html2)
     out.write('<TD class="svn_info">%s</TD>' % html)
     return
@@ -155,39 +118,98 @@ def write_vcs_meta_for_pkg_as_TABLE(out, pkg, full_info=False):
 
 
 ##############################################################################
-### write_glyph_table()
+### write_explain_glyph_table()
 ##############################################################################
 
+def _status_as_glyph(status):
+    return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
+           (status, status)
+
+def _write_glyph_as_TR(id, msg, checkbox = False, first = False):
+    style = ""
+    if first:
+       style += " width: 75px;"
+    out.write('<TR>\n')
+    out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
+              (style, _status_as_glyph(id)))
+    if checkbox:
+        out.write('<TD>')
+        out.write(msg)
+        out.write('</TD>\n')
+        out.write('<TD style="text-align: right; vertical-align: middle;">')
+        write_checkbox(id.lower())
+    else:
+        out.write('<TD COLSPAN="2">')
+        out.write(msg)
+    out.write('</TD>\n')
+    if first:
+        out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
+        out.write('Use the check boxes to show only packages with the selected status types.')
+        out.write('</TD>\n')
+    out.write('</TR>\n')
+    return
+
+def _explain_TIMEOUT_in_HTML():
+    t1 = int(BBSvars.INSTALL_timeout  / 60.0)
+    t2 = int(BBSvars.BUILD_timeout    / 60.0)
+    t3 = int(BBSvars.CHECK_timeout    / 60.0)
+    t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
+    if BBSvars.subbuilds == "bioc-longtests":
+        html = '<I>CHECK</I> of package took more than ' + \
+              '%d minutes' % t3
+    elif BBSvars.subbuilds in ["workflows", "books"]:
+        html = '<I>INSTALL</I> or <I>BUILD</I> of package took more than '
+        if t1 == t2:
+            html += '%d minutes' % t1
+        else:
+            html += '%d or %d minutes, respectively' % (t1, t2)
+    else:
+        html = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' + \
+              '<I>BUILD BIN</I> of package took more than '
+        if t1 == t2 and t2 == t3 and t3 == t4:
+            html += '%d minutes' % t1
+        else:
+            html += '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
+    return html
+
+def _explain_ERROR_in_HTML():
+    html = 'Bad DESCRIPTION file or '
+    if BBSvars.subbuilds == "bioc-longtests":
+        html += '<I>CHECK</I> of package produced errors'
+    elif BBSvars.subbuilds in ["workflows", "books"]:
+        html += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
+    else:
+        html += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package '
+        html += 'failed, or <I>CHECK</I> produced errors'
+    return html
+
+def _explain_OK_in_HTML():
+    if BBSvars.subbuilds == "bioc-longtests":
+        html = '<I>CHECK</I>'
+    elif BBSvars.subbuilds in ["workflows", "books"]:
+        html = '<I>INSTALL</I> or <I>BUILD</I>'
+    else:
+        html = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
+    html += ' of package was OK'
+    return html
+
+def _explain_NA_in_HTML():
+    if BBSvars.subbuilds == "bioc-longtests":
+        html = '<I>CHECK</I>'
+    elif BBSvars.subbuilds in ["workflows", "books"]:
+        html = '<I>BUILD</I>'
+    else:
+        html = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
+    html += ' result is not available because of an anomaly ' + \
+            'in the Build System\n'
+    return html
+
 ### FH: Create checkboxes to select display types
-def write_glyph_table(out):
+def write_explain_glyph_table(out):
     def write_checkbox(checkbox_id):
         out.write('<INPUT style="margin: 0px;" type="checkbox" ')
         out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
                   (checkbox_id, checkbox_id))
-        return
-
-    def write_glyph(id, msg, checkbox = False, first = False):
-        style = ""
-        if first:
-           style += " width: 75px;"
-        out.write('<TR>\n')
-        out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
-                  (style, _status_as_glyph(id)))
-        if checkbox:
-            out.write('<TD>')
-            out.write(msg)
-            out.write('</TD>\n')
-            out.write('<TD style="text-align: right; vertical-align: middle;">')
-            write_checkbox(id.lower())
-        else:
-            out.write('<TD COLSPAN="2">')
-            out.write(msg)
-        out.write('</TD>\n')
-        if first:
-            out.write('<TD ROWSPAN="5" style="width: 85px; text-align: left; font-style: italic;">\n')
-            out.write('Use the check boxes to show only packages with the selected status types.')
-            out.write('</TD>\n')
-        out.write('</TR>\n')
         return
 
     subbuilds = BBSvars.subbuilds
@@ -202,76 +224,34 @@ def write_glyph_table(out):
     out.write('</TR>\n')
 
     ## "TIMEOUT" glyph
-    t1 = int(BBSvars.INSTALL_timeout  / 60.0)
-    t2 = int(BBSvars.BUILD_timeout    / 60.0)
-    t3 = int(BBSvars.CHECK_timeout    / 60.0)
-    t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
-    if subbuilds == "bioc-longtests":
-        msg = '<I>CHECK</I> of package took more than ' + \
-              '%d minutes' % t3
-    elif subbuilds in ["workflows", "books"]:
-        msg = '<I>INSTALL</I> or <I>BUILD</I> of package took more than '
-        if t1 == t2:
-            msg += '%d minutes' % t1
-        else:
-            msg += '%d or %d minutes, respectively' % (t1, t2)
-    else:
-        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or ' + \
-              '<I>BUILD BIN</I> of package took more than '
-        if t1 == t2 and t2 == t3 and t3 == t4:
-            msg += '%d minutes' % t1
-        else:
-            msg += '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
-    write_glyph("TIMEOUT", msg, True, True)
+    _write_glyph_as_TR("TIMEOUT", _explain_TIMEOUT_in_HTML(), True, True)
 
     ## "ERROR" glyph
-    msg = 'Bad DESCRIPTION file or '
-    if subbuilds == "bioc-longtests":
-        msg += '<I>CHECK</I> of package produced errors'
-    elif subbuilds in ["workflows", "books"]:
-        msg += '<I>INSTALL</I> or <I>BUILD</I> of package failed'
-    else:
-        msg += '<I>INSTALL</I>, <I>BUILD</I> or <I>BUILD BIN</I> of package failed,'
-        msg += ' or <I>CHECK</I> produced errors'
-    write_glyph("ERROR", msg, True)
+    _write_glyph_as_TR("ERROR", _explain_ERROR_in_HTML(), True)
 
     ## "WARNINGS" glyph
     if subbuilds not in ["workflows", "books"]:
-        msg = '<I>CHECK</I> of package produced warnings'
-        write_glyph("WARNINGS", msg, True)
+        html = '<I>CHECK</I> of package produced warnings'
+        _write_glyph_as_TR("WARNINGS", html, True)
 
     ## "OK" glyph
-    if subbuilds == "bioc-longtests":
-        msg = '<I>CHECK</I>'
-    elif subbuilds in ["workflows", "books"]:
-        msg = '<I>INSTALL</I> or <I>BUILD</I>'
-    else:
-        msg = '<I>INSTALL</I>, <I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
-    msg += ' of package was OK'
-    write_glyph("OK", msg, True)
+    _write_glyph_as_TR("OK", _explain_OK_in_HTML, True)
 
     ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e. when
     ## STAGE2 skips installation of target packages not needed by another
     ## target package for build or check).
     #if subbuilds not in ["workflows", "books", "bioc-longtests"]:
-    #    msg = '<I>INSTALL</I> of package was not needed (click on glyph to see why)'
-    #    write_glyph("NotNeeded", msg)
+    #    html = '<I>INSTALL</I> of package was not needed ' + \
+    #           '(click on glyph to see why)'
+    #    _write_glyph_as_TR("NotNeeded", html)
 
     ## "skipped" glyph
     if subbuilds != "bioc-longtests":
-        msg = '<I>CHECK</I> or <I>BUILD BIN</I>'
-        msg += ' of package was skipped because the <I>BUILD</I> step failed\n'
-        write_glyph("skipped", msg)
+        html = '<I>CHECK</I> or <I>BUILD BIN</I>'
+        html += ' of package was skipped because the <I>BUILD</I> step failed\n'
+        _write_glyph_as_TR("skipped", html)
 
-    ## "NA" glyph
-    if subbuilds == "bioc-longtests":
-        msg = '<I>CHECK</I>'
-    elif subbuilds in ["workflows", "books"]:
-        msg = '<I>BUILD</I>'
-    else:
-        msg = '<I>BUILD</I>, <I>CHECK</I> or <I>BUILD BIN</I>'
-    msg += ' result is not available because of an anomaly in the Build System\n'
-    write_glyph("NA", msg)
+    _write_glyph_as_TR("NA", _explain_NA_in_HTML())
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="4" style="font-style: italic; border-top: solid black 1px;">')
@@ -300,6 +280,34 @@ def _write_vertical_space(out):
     TD_html = '<TD COLSPAN="%s"></TD>' % colspan
     out.write('<TR class="vertical_space">%s</TR>\n' % TD_html)
     return
+
+def _pkgname_as_HTML(pkg):
+    subbuilds = BBSvars.subbuilds
+    if subbuilds == "cran":
+        url = "https://cran.rstudio.com/package=%s" % pkg
+    else:
+        bioc_version = BBSvars.bioc_version
+        if subbuilds == "books":
+            url = "/books/%s/%s/" % (bioc_version, pkg)
+        else:
+            #if subbuilds == "data-annotation":
+            #    repo = "data/annotation"
+            #elif subbuilds == "data-experiment":
+            #    repo = "data/experiment"
+            #elif subbuilds == "workflows":
+            #    repo = "workflows"
+            #else:
+            #    repo = "bioc"
+            #url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
+            ## Use short URL:
+            url = "/packages/%s/%s" % (bioc_version, pkg)
+    return '<A href="%s">%s</A>' % (url, pkg)
+
+def _pkgname_and_version_as_HTML(pkg, version, deprecated=False):
+    html = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg), version)
+    if deprecated:
+        html = '<s>%s</s>' % html
+    return html
 
 def _node_OS_Arch_as_SPAN(node):
     return '<SPAN style="font-size: smaller;">%s&nbsp;/&nbsp;%s</SPAN>' % \
@@ -575,7 +583,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             deprecated = status == "Deprecated"
             TDstyle = 'vertical-align: top;'
             out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
-            out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
+            out.write(_pkgname_and_version_as_HTML(pkg, version, deprecated))
             out.write('<BR>%s' % maintainer)
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
                 out.write('<BR>')
@@ -687,7 +695,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     else:
         version = status = maintainer = ''
     deprecated = status == "Deprecated"
-    out.write(pkgname_and_version_to_HTML(pkg, version, deprecated))
+    out.write(_pkgname_and_version_as_HTML(pkg, version, deprecated))
     out.write('</TD>')
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
     write_pkg_statuses_as_TDs(out, pkg, node)
@@ -1541,7 +1549,7 @@ def write_glyph_and_propagation_LED_table(out):
     out.write('<DIV style="font-size: smaller;">\n')
     out.write('<TABLE class="grid_layout"><TR>')
     out.write('<TD>\n')
-    write_glyph_table(out)
+    write_explain_glyph_table(out)
     out.write('</TD>')
     if BBSreportutils.display_propagation_status(BBSvars.subbuilds):
         out.write('<TD style="padding-left: 6px;">\n')
