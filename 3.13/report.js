@@ -84,7 +84,7 @@ function show_selected_gcards()
 */
 }
 
-function update_filter_toggles()
+function update_selection_toggles()
 {
     update_toggle('timeout_toggle', show_timeout_gcards);
     update_checkbox('timeout_checkbox', show_timeout_gcards);
@@ -109,7 +109,8 @@ function initialize()
     error_toggle_exists    = document.getElementById('error_toggle') != null;
     warnings_toggle_exists = document.getElementById('warnings_toggle') != null;
     ok_toggle_exists       = document.getElementById('ok_toggle') != null;
-    update_filter_toggles();
+    show_selected_gcards();
+    update_selection_toggles();
 }
 
 function filter_gcards(classname)
@@ -152,7 +153,7 @@ function filter_gcards(classname)
             show_ok_gcards = true;
     }
     show_selected_gcards();
-    update_filter_toggles();
+    update_selection_toggles();
 }
 
 var vals = ["timeout", "error", "warnings", "ok"];

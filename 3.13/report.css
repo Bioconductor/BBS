@@ -315,7 +315,7 @@ TABLE.quickstats TD {
  */
 
 TBODY.gcard TD {
-    background: blue;
+    background: white;
     border-left: 1px solid #DDD;
 }
 TBODY.gcard TD.leftmost {
@@ -378,6 +378,11 @@ TBODY.gcard TD.status A.mouseover {
     border: 1px solid black;
 }
 
+/* By default, all gcards are filtered out. */
+TBODY.gcard,
+TBODY.gcard_separator {
+    display: none;
+}
 TABLE.gcard_list.show_timeout_gcards  TBODY.gcard.timeout TD,
 TABLE.gcard_list.show_tiemout_gcards  TBODY.gcard_separator.timeout TD,
 TABLE.gcard_list.show_error_gcards    TBODY.gcard.error TD,
@@ -386,7 +391,7 @@ TABLE.gcard_list.show_warnings_gcards TBODY.gcard.warnings TD,
 TABLE.gcard_list.show_warnings_gcards TBODY.gcard_separator.warnings TD,
 TABLE.gcard_list.show_ok_gcards       TBODY.gcard.ok TD,
 TABLE.gcard_list.show_ok_gcards       TBODY.gcard_separator.ok TD {
-    background: white;
+    display: table-row-group;
 }
 
 
