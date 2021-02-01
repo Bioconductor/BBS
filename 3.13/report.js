@@ -52,15 +52,14 @@ var show_ok_cards       = false;
 
 function toggle2(button, classname)
 {
-    show = !button.classList.contains('selected');
     if (classname == 'timeout')
-        show_timeout_cards  = show;
+        show = show_timeout_cards  = !show_timeout_cards;
     if (classname == 'error')
-        show_error_cards    = show;
+        show = show_error_cards    = !show_error_cards;
     if (classname == 'warnings')
-        show_warnings_cards = show;
+        show = show_warnings_cards = !show_warnings_cards;
     if (classname == 'ok')
-        show_ok_cards       = show;
+        show = show_ok_cards       = !show_ok_cards;
     show_selected_gcards(show_timeout_cards,
                          show_error_cards,
                          show_warnings_cards,
