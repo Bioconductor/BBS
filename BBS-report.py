@@ -245,7 +245,7 @@ def write_explain_glyph_table(out):
     if subbuilds not in ["workflows", "books"]:
         _write_glyph_as_TR(out, "WARNINGS", _explain_WARNINGS_in_HTML(), True)
 
-    _write_glyph_as_TR(out, "OK", _explain_OK_in_HTML, True)
+    _write_glyph_as_TR(out, "OK", _explain_OK_in_HTML(), True)
 
     ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e.
     ## when STAGE2 skips installation of target packages not needed by
