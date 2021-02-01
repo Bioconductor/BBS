@@ -37,11 +37,15 @@ function show_selected_gcards(timeout, error, warnings, ok)
     }
 }
 
-function show_all_gcards()
+function update_button(button_id, on)
 {
-    var table = document.getElementById("THE_BIG_GCARD_LIST");
-    for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
-        tbody.style['display'] = 'table-row-group';
+    var button = document.getElementById(button_id);
+    if (button != null) {
+        if (on) {
+            button.classList.add('selected');
+        } else {
+            button.classList.remove('selected');
+        }
     }
 }
 
@@ -49,16 +53,6 @@ var show_timeout_cards  = false;
 var show_error_cards    = false;
 var show_warnings_cards = false;
 var show_ok_cards       = false;
-
-function update_button(button_id, on)
-{
-    var button = document.getElementById(button_id);
-    if (on) {
-        button.classList.add('selected');
-    } else {
-        button.classList.remove('selected');
-    }
-}
 
 function filter_gcards(classname)
 {
