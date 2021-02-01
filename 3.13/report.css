@@ -212,12 +212,11 @@ TD.glyph_box TABLE TD {
     vertical-align: middle;
     background: white;
 }
-
-TD.toggle TABLE {
+TD.glyph_box.toggle TABLE {
     cursor: pointer;
 }
-TD.toggle.mouseover TABLE,
-TD.toggle.selected TABLE {
+TD.glyph_box.toggle.mouseover TABLE TD,
+TD.glyph_box.toggle.selected TABLE TD {
     border: 1px solid black;
 }
 
