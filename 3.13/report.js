@@ -45,23 +45,26 @@ function show_all_gcards()
     }
 }
 
-var show_timeout  = false;
-var show_error    = false;
-var show_warnings = false;
-var show_ok       = false;
+var show_timeout_cards  = false;
+var show_error_cards    = false;
+var show_warnings_cards = false;
+var show_ok_cards       = false;
 
 function toggle2(button, classname)
 {
-    show = !button.classList.contains('selected')
+    show = !button.classList.contains('selected');
     if (classname == 'timeout')
-        show_timeout  = show;
+        show_timeout_cards  = show;
     if (classname == 'error')
-        show_error    = show;
+        show_error_cards    = show;
     if (classname == 'warnings')
-        show_warnings = show;
+        show_warnings_cards = show;
     if (classname == 'ok')
-        show_ok       = show;
-    show_selected_gcards(show_timeout, show_error, show_warnings, show_ok)
+        show_ok_cards       = show;
+    show_selected_gcards(show_timeout_cards,
+                         show_error_cards,
+                         show_warnings_cards,
+                         show_ok_cards);
     if (show) {
         button.classList.add('selected');
     } else {
