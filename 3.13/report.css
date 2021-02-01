@@ -206,7 +206,8 @@ TD.glyph_box {
     height: 24px;
 }
 TD.glyph_box TABLE {
-    width: 46px;
+    width: 90%;
+    height: 22px;
 }
 TD.glyph_box TABLE TD {
     vertical-align: middle;
