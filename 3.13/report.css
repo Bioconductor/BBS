@@ -203,7 +203,7 @@ P.noresult SPAN {
 
 TD.glyph_box,
 TD.glyph_explain {
-    height: 20px;
+    height: 18px;
     border: 1px solid transparent;
     vertical-align: middle;
 }
