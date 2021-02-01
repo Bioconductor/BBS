@@ -44,6 +44,7 @@ function show_selected_gcards()
         table.classList.add('show_ok_gcards');
     else
         table.classList.remove('show_ok_gcards');
+/*
     for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
         if (tbody.classList.contains('collapsable_rows')) {
             show = show_ok_cards;
@@ -68,6 +69,7 @@ function show_selected_gcards()
             tbody.style['display'] = 'none';
         }
     }
+*/
 }
 
 function update_filter_toggles()
