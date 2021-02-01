@@ -12,12 +12,14 @@ function filter_gcards(classnames)
 {
     var table = document.getElementById("THE_BIG_GCARD_LIST");
     for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
-        if (tbody.classList.contains(classnames)) {
-            display_val = 'table-row-group';
-        } else {
-            display_val = 'none';
+        if (tbody.classList.contains('gcard')) {
+            if (tbody.classList.contains(classnames)) {
+                display_val = 'table-row-group';
+            } else {
+                display_val = 'none';
+            }
+            tbody.style['display'] = display_val;
         }
-        tbody.style['display'] = display_val;
     }
 }
 
@@ -25,7 +27,9 @@ function remove_gcard_filters()
 {
     var table = document.getElementById("THE_BIG_GCARD_LIST");
     for (var i = 0, tbody; tbody = table.tBodies[i]; i++) {
-        tbody.style['display'] = 'table-row-group';
+        if (tbody.classList.contains('gcard')) {
+            tbody.style['display'] = 'table-row-group';
+        }
     }
 }
 
