@@ -147,7 +147,7 @@ def _write_glyph_box(out, status, toggleable=False):
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
     TRcontent  = '<TD style="width: 25px;">%s</TD>' % checkbox_html
-    TRcontent += '<TD style="width: 80px;">%s</TD>' % _status_as_glyph(status)
+    TRcontent += '<TD style="width: 90px;">%s</TD>' % _status_as_glyph(status)
     TDcontent = '<TABLE><TR>%s</TR></TABLE>' % TRcontent
     out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TDcontent))
     return
@@ -230,7 +230,7 @@ def _explain_NA_in_HTML():
 def write_explain_glyph_table(out):
     subbuilds = BBSvars.subbuilds
     out.write('<FORM action="">\n')
-    out.write('<TABLE style="width: 660px; border-spacing: 1px; border: solid black 1px;">\n')
+    out.write('<TABLE style="width: 680px; border-spacing: 1px; border: solid black 1px;">\n')
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="font-style: italic; border-bottom: solid black 1px;">')
     out.write('<B>Package status is indicated by one of the following glyphs</B>')
