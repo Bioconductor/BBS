@@ -27,10 +27,15 @@ function update_checkbox(checkbox_id, checked)
         checkbox.checked = checked;
 }
 
-var show_timeout_cards  = true;
-var show_error_cards    = true;
-var show_warnings_cards = true;
-var show_ok_cards       = true;
+var show_timeout_cards;
+var show_error_cards;
+var show_warnings_cards;
+var show_ok_cards;
+
+var timeout_toggle_exists;
+var error_toggle_exists;
+var warnings_toggle_exists;
+var ok_toggle_exists;
 
 function show_selected_gcards()
 {
@@ -78,20 +83,33 @@ function update_filter_toggles()
 
 function initialize()
 {
+    show_timeout_cards  = true;
+    show_error_cards    = true;
+    show_warnings_cards = true;
+    show_ok_cards       = true;
+    timeout_toggle_exists  = document.getElementById('timeout_toggle') != null;
+    error_toggle_exists    = document.getElementById('error_toggle') != null;
+    warnings_toggle_exists = document.getElementById('warnings_toggle') != null;
+    ok_toggle_exists       = document.getElementById('ok_toggle') != null;
     update_filter_toggles();
 }
 
 function filter_gcards(classname)
 {
-    if (show_timeout_cards &&
-        show_error_cards &&
-        show_warnings_cards &&
-        show_ok_cards)
+
+    if ((!timeout_toggle_exists || show_timeout_cards) &&
+        (!error_toggle_exists || show_error_cards) &&
+        (!warnings_toggle_exists || show_warnings_cards) &&
+        (!ok_toggle_exists || show_ok_cards))
     {
-        show_timeout_cards =
-        show_error_cards =
-        show_warnings_cards =
-        show_ok_cards = false;
+        if (timeout_toggle_exists)
+            show_timeout_cards = false;
+        if (error_toggle_exists)
+            show_error_cards = false;
+        if (warnings_toggle_exists)
+            show_warnings_cards = false;
+        if (ok_toggle_exists)
+            show_ok_cards = false;
     }
     if (classname == 'timeout')
         show_timeout_cards = !show_timeout_cards;
@@ -101,15 +119,19 @@ function filter_gcards(classname)
         show_warnings_cards = !show_warnings_cards;
     if (classname == 'ok')
         show_ok_cards = !show_ok_cards;
-    if (!show_timeout_cards &&
-        !show_error_cards &&
-        !show_warnings_cards &&
-        !show_ok_cards)
+    if ((!timeout_toggle_exists || !show_timeout_cards) &&
+        (!error_toggle_exists || !show_error_cards) &&
+        (!warnings_toggle_exists || !show_warnings_cards) &&
+        (!ok_toggle_exists || !show_ok_cards))
     {
-        show_timeout_cards =
-        show_error_cards =
-        show_warnings_cards =
-        show_ok_cards = true;
+        if (timeout_toggle_exists)
+            show_timeout_cards = true;
+        if (error_toggle_exists)
+            show_error_cards = true;
+        if (warnings_toggle_exists)
+            show_warnings_cards = true;
+        if (ok_toggle_exists)
+            show_ok_cards = true;
     }
     show_selected_gcards();
     update_filter_toggles();
