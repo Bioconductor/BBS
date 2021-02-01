@@ -211,6 +211,7 @@ A.button {
 A.button BUTTON {
     width: 100px;
     border: none;
+    margin: 0px;
     text-decoration: none;
     cursor: pointer;
 }
