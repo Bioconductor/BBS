@@ -204,7 +204,7 @@ P.noresult SPAN {
 TD.glyph_box TABLE {
     border-collapse: collapse;
     width: 100%;
-    height: 22px;
+    height: 100%;
 }
 TD.glyph_box TABLE TD {
     border: 1px solid white;
