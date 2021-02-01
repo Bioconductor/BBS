@@ -209,6 +209,7 @@ TD.button {
 }
 TD.button BUTTON {
     width: 100%;
+    border: none;
     padding-top: 0px;
     padding-bottom: 0px;
     cursor: pointer;
