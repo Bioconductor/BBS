@@ -1555,7 +1555,7 @@ def write_propagation_LED_table(out):
 
 def write_glyph_and_propagation_LED_table(out):
     out.write('<DIV style="font-size: smaller;">\n')
-    out.write('<TABLE><TR>')
+    out.write('<TABLE style="margin-left: auto; margin-right: auto;"><TR>')
     out.write('<TD style="vertical-align: top;">\n')
     write_explain_glyph_table(out)
     out.write('</TD>')
