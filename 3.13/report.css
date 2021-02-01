@@ -201,11 +201,14 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-TD BUTTON A {
+TD.button {
+    text-align: center;
+}
+TD.button BUTTON {
     display: block;
     text-decoration: none;
 }
-TD BUTTON A.mouseover {
+TD.button BUTTON.mouseover {
     border: 10px solid black;
 }
 
