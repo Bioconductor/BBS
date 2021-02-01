@@ -2,10 +2,21 @@ function add_class_mouseover(x)
 {
     x.classList.add('mouseover');
 }
+
 function remove_class_mouseover(x)
 {
     x.classList.remove('mouseover');
 }
+
+function toggle2(button, classname)
+{
+    if button.classList.includes('selected') {
+        button.classList.remove('selected');
+    } else {
+        button.classList.add('selected');
+    }
+}
+
 
 var vals = ["timeout", "error", "warnings", "ok"];
 
@@ -38,36 +49,6 @@ function changecss(theClass,element,value)
                 document.styleSheets[S].addRule(theClass,element+': '+value+';');
             }
         }
-    }
-}
-
-function initialize(){
-    var show = [];
-    if (location.hash=="") {
-        show = [true, true, true, true];
-    } else if (location.hash.match(/^#show=/)) {
-        var s = location.hash.replace(/^#show=/, "");
-        s = s.replace(/ /g, "");
-        var segs = s.split(",");
-        for (i in vals) {
-            var val = vals[i];
-            var state = (segs.indexOf(val) > -1);
-            show.push(state);
-        }
-    }
-    for (i in show) {
-        document.getElementById(vals[i]).checked=show[i];
-        if(!show[i])
-            toggle(vals[i]);
-    }
-}
-
-function toggle2(button, classname)
-{
-    if button.classList.includes('selected') {
-        button.classList.remove('selected');
-    } else {
-        button.classList.add('selected');
     }
 }
 
@@ -153,5 +134,26 @@ function toggle(theClass) {
         location.hash = "#show=none";
     else 
         location.hash = "#show=" + on.join(",");
+}
+
+function initialize(){
+    var show = [];
+    if (location.hash=="") {
+        show = [true, true, true, true];
+    } else if (location.hash.match(/^#show=/)) {
+        var s = location.hash.replace(/^#show=/, "");
+        s = s.replace(/ /g, "");
+        var segs = s.split(",");
+        for (i in vals) {
+            var val = vals[i];
+            var state = (segs.indexOf(val) > -1);
+            show.push(state);
+        }
+    }
+    for (i in show) {
+        document.getElementById(vals[i]).checked=show[i];
+        if(!show[i])
+            toggle(vals[i]);
+    }
 }
 
