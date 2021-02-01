@@ -1288,7 +1288,7 @@ def write_CRAN_mainpage_top_asHTML(out):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
-    out.write('<BODY>\n')
+    out.write('<BODY onLoad="initialize();">\n')
     out.write('<H1>%s</H1>\n' % title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
@@ -1586,7 +1586,7 @@ def write_node_report(node, allpkgs):
     page_title = "All results on %s" % node.node_id
 
     write_HTML_header(out, page_title, 'report.css', 'report.js')
-    out.write('<BODY>\n')
+    out.write('<BODY onLoad="initialize();">\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \

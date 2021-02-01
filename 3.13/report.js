@@ -62,6 +62,11 @@ function update_filter_buttons()
     update_button('ok_button', show_ok_cards);
 }
 
+function initialize()
+{
+    update_filter_buttons();
+}
+
 function filter_gcards(classname)
 {
     if (show_timeout_cards &&
@@ -214,7 +219,7 @@ function toggle(theClass) {
         location.hash = "#show=" + on.join(",");
 }
 
-function initialize(){
+function OLD_initialize(){
     var show = [];
     if (location.hash=="") {
         show = [true, true, true, true];
