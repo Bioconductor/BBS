@@ -315,7 +315,7 @@ TABLE.quickstats TD {
  */
 
 TBODY.gcard TD {
-    background: white;
+    background: blue;
     border-left: 1px solid #DDD;
 }
 TBODY.gcard TD.leftmost {
@@ -378,9 +378,15 @@ TBODY.gcard TD.status A.mouseover {
     border: 1px solid black;
 }
 
+TABLE.gcard_list.show_timeout_gcards TBODY.gcard.ok TD,
+TABLE.gcard_list.show_tiemout_gcards TBODY.gcard_separator.ok TD {
+TABLE.gcard_list.show_error_gcards TBODY.gcard.ok TD,
+TABLE.gcard_list.show_error_gcards TBODY.gcard_separator.ok TD {
+TABLE.gcard_list.show_warning_gcards TBODY.gcard.ok TD,
+TABLE.gcard_list.show_warning_gcards TBODY.gcard_separator.ok TD {
 TABLE.gcard_list.show_ok_gcards TBODY.gcard.ok TD,
 TABLE.gcard_list.show_ok_gcards TBODY.gcard_separator.ok TD {
-    background: blue;
+    background: white;
 }
 
 
