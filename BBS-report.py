@@ -1556,11 +1556,11 @@ def write_propagation_LED_table(out):
 def write_glyph_and_propagation_LED_table(out):
     out.write('<DIV style="font-size: smaller;">\n')
     out.write('<TABLE><TR>')
-    out.write('<TD>\n')
+    out.write('<TD style="vertical-align: top;">\n')
     write_explain_glyph_table(out)
     out.write('</TD>')
     if BBSreportutils.display_propagation_status(BBSvars.subbuilds):
-        out.write('<TD style="padding-left: 6px;">\n')
+        out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
         out.write('A <s>crossed-out</s> package name indicates the package is')
