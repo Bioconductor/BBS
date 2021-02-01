@@ -204,7 +204,8 @@ P.noresult SPAN {
 TD.glyph_box,
 TD.glyph_explain {
     height: 16px;
-    border: 1px solid transparent;
+    /*border: 1px solid transparent;*/
+    border: 1px solid white;
     vertical-align: middle;
 }
 TD.glyph_box.toggle {
