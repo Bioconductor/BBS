@@ -132,9 +132,6 @@ def _write_checkbox(out, checkbox_id):
     return
 
 def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
-    style = ""
-    if first:
-       style += " width: 75px;"
     out.write('<TR>\n')
     if checkbox:
         button_id = '%s_button' % status.lower()
@@ -143,15 +140,15 @@ def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
         onclick = 'filter_gcards(\'%s\');' % status.lower()
         TDcontent = '<A class="button"><BUTTON type="button" id="%s" onmouseover="%s" onmouseout="%s" onclick="%s">%s</BUTTON></A>' % \
                     (button_id, onmouseover, onmouseout, onclick, _status_as_glyph(status))
-        out.write('<TD>%s</TD>\n' % TDcontent)
+        out.write('<TD style="height: 28px;">%s</TD>\n' % TDcontent)
         out.write('<TD>')
         out.write(html)
         out.write('</TD>\n')
         out.write('<TD style="text-align: right; vertical-align: middle;">')
         _write_checkbox(out, status.lower())
     else:
-        out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
-                  (style, _status_as_glyph(status)))
+        out.write('<TD style="height: 28px;">%s</TD>\n' % \
+                  _status_as_glyph(status))
         out.write('<TD COLSPAN="2">')
         out.write(html)
     out.write('</TD>\n')
