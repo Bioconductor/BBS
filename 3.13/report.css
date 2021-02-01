@@ -205,6 +205,7 @@ TD.button BUTTON {
     width: 100%;
     padding-top: 0px;
     padding-bottom: 0px;
+    cursor: pointer;
 }
 TD.button BUTTON.mouseover {
     border: 1px solid black;
