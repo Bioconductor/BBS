@@ -228,9 +228,6 @@ TD.glyph_explain {
     vertical-align: middle;
 }
 TD.glyph_explain DIV {
-    height: 100%;
-    display: table-cell;
-    vertical-align: middle;
     background: #DDD;
 }
 
