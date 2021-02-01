@@ -201,15 +201,15 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-TD.button {
+SPAN.button {
+    width: 100%;
     height: 30px;
     background: white;
     padding-left: 0px;
     padding-right: 0px;
-    vertical-align: middle;
 }
-TD.button BUTTON {
-    width: 100%;
+
+SPAN.button BUTTON {
     border: none;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -218,10 +218,10 @@ TD.button BUTTON {
     display: inline-block;
     cursor: pointer;
 }
-TD.button BUTTON.mouseover {
+SPAN.button BUTTON.mouseover {
     border: 1px solid black;
 }
-TD.button BUTTON.selected {
+SPAN.button BUTTON.selected {
     border: 1px solid red;
 }
 
