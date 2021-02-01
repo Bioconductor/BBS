@@ -201,21 +201,12 @@ P.noresult SPAN {
     padding: 4pt;
 }
 
-A.button {
-    display: block;
-    text-decoration: none;
-    padding: 0px;
-}
-
-A.button BUTTON {
-    width: 100px;
-    border: 2px solid white;
-    text-decoration: none;
+.toggle {
     cursor: pointer;
 }
-A.button BUTTON.mouseover,
-A.button BUTTON.selected {
-    border: 2px solid black;
+.toggle.mouseover,
+.toggle.selected {
+    border: 1px solid black;
 }
 
 

@@ -131,23 +131,25 @@ def _write_checkbox(out, checkbox_id):
               (checkbox_id, checkbox_id))
     return
 
-def _write_glyph_as_TR(out, status, html, checkbox = False):
-    out.write('<TR>\n')
-    TDstyle = 'height: 25px; text-align: center;'
-    if checkbox:
-        button_id = '%s_button' % status.lower()
+## Produce a 1-row x 2-cell table.
+def _status_as_glyph_box(status, toggleable=False):
+    if toggleable:
+        toggle_id = '%s_toggle' % status.lower()
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
         onclick = 'filter_gcards(\'%s\');' % status.lower()
-        TDcontent = '<A class="button"><BUTTON type="button" id="%s" onmouseover="%s" onmouseout="%s" onclick="%s">%s</BUTTON></A>' % \
-                    (button_id, onmouseover, onmouseout, onclick, _status_as_glyph(status))
-        out.write('<TD style="%s">%s</TD>\n' % (TDstyle, TDcontent))
-        #out.write('<TD style="text-align: right; vertical-align: middle;">')
-        #_write_checkbox(out, status.lower())
-        #out.write('</TD>\n')
+        html = '<TABLE class="glyph_box toggle" id="%s" onmouseover="%s" onmouseout="%s" onclick="%s"><TR>' % (toggle_id, onmouseover, onmouseout, onclick)
+        html += '<TD>%s</TD>' % '<INPUT type="checkbox">'
     else:
-        out.write('<TD style="%s">%s</TD>\n' % \
-                  (TDstyle, _status_as_glyph(status)))
+        html = '<TABLE class="glyph_box"><TR>'
+        html += '<TD></TD>'
+    html += '<TD>%s</TD>' % _status_as_glyph(status)
+    html += '</TR></TABLE>'
+    return html
+
+def _write_glyph_as_TR(out, status, html, toggleable=False):
+    out.write('<TR>\n')
+    out.write('<TD>%s<TD>\n' % _status_as_glyph_box(status, toggleable))
     out.write('<TD>%s</TD>\n' % html)
     out.write('</TR>\n')
     return
@@ -423,7 +425,7 @@ def write_abc_dispatcher(out, href="", current_letter=None,
     out.write('</TR></TABLE>')
     return
 
-### Produces 2 full TRs.
+### Produce 2 full TRs.
 def write_abc_dispatcher_within_gcard_list(out, current_letter):
     ## FH: Need the collapsable_rows class to blend out the alphabetical
     ## selection when "ok" packages are unselected.
