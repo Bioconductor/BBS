@@ -131,7 +131,7 @@ def _write_checkbox(out, checkbox_id):
               (checkbox_id, checkbox_id))
     return
 
-def _write_glyph_as_TR(out, id, html, checkbox = False, first = False):
+def _write_glyph_as_TR(out, status, html, checkbox = False, first = False):
     style = ""
     if first:
        style += " width: 75px;"
@@ -139,18 +139,18 @@ def _write_glyph_as_TR(out, id, html, checkbox = False, first = False):
     if checkbox:
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
-        onclick = 'toggle(\'%s\');' % id.lower()
+        onclick = 'toggle2(\'%s\');' % status.lower()
         TDcontent = '<BUTTON type="button" onmouseover="%s" onmouseout="%s" onclick="%s">%s</BUTTON>' % \
-                    (onmouseover, onmouseout, onclick, _status_as_glyph(id))
+                    (onmouseover, onmouseout, onclick, _status_as_glyph(status))
         out.write('<TD class="button">%s</TD>\n' % TDcontent)
         out.write('<TD>')
         out.write(html)
         out.write('</TD>\n')
         out.write('<TD style="text-align: right; vertical-align: middle;">')
-        _write_checkbox(out, id.lower())
+        _write_checkbox(out, status.lower())
     else:
         out.write('<TD style="text-align: right;%s">%s</TD>\n' % \
-                  (style, _status_as_glyph(id)))
+                  (style, _status_as_glyph(status)))
         out.write('<TD COLSPAN="2">')
         out.write(html)
     out.write('</TD>\n')

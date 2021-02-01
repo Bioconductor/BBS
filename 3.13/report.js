@@ -62,6 +62,10 @@ function initialize(){
     }
 }
 
+function toggle2(classname)
+{
+}
+
 function toggle(theClass) {
     var fullClass = "TABLE.gcard_list TBODY."+theClass;
     var element = "display";
