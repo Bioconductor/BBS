@@ -18,14 +18,17 @@ function filter_gcards(classnames)
             } else {
                 display_val = 'none';
             }
-        } else {
+            tbody.style['display'] = display_val;
+        } else if (tbody.classList.contains('gcard_separator')
+                || tbody.classList.contains('gcard'))
+        {
             if (tbody.classList.contains(classnames)) {
                 display_val = 'table-row-group';
             } else {
                 display_val = 'none';
             }
+            tbody.style['display'] = display_val;
         }
-        tbody.style['display'] = display_val;
     }
 }
 
