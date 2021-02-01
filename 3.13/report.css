@@ -211,6 +211,7 @@ DIV.button {
 
 DIV.button BUTTON {
     margin: auto;
+    vertical-align: middle;
     border: none;
     text-decoration: none;
     display: inline-block;
