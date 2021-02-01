@@ -202,8 +202,7 @@ P.noresult SPAN {
 }
 
 TD.button {
-    border: 1px solid black;
-    height: 32px;
+    background: white;
     padding-left: 0px;
     padding-right: 0px;
 }
@@ -212,6 +211,8 @@ TD.button BUTTON {
     border: none;
     padding-top: 0px;
     padding-bottom: 0px;
+    text-align: center;
+    text-decoration: none;
     display: inline-block;
     cursor: pointer;
 }
