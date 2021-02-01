@@ -125,12 +125,6 @@ def _status_as_glyph(status):
     return '<SPAN class="glyph %s">&nbsp;&nbsp;%s&nbsp;&nbsp;</SPAN>' % \
            (status, status)
 
-def _write_checkbox(out, checkbox_id):
-    out.write('<INPUT style="margin: 0px;" type="checkbox" ')
-    out.write('checked id="%s" onClick="toggle(\'%s\')">' % \
-              (checkbox_id, checkbox_id))
-    return
-
 ## Produce a table cell (TD).
 def _write_glyph_box(out, status, toggleable=False):
     if toggleable:
@@ -147,8 +141,9 @@ def _write_glyph_box(out, status, toggleable=False):
     else:
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
-    TDcontent = '<TABLE><TR><TD>%s</TD><TD>%s</TD></TR></TABLE>' % \
+    TDcontent = '<TD style="width:25px;">%s</TD><TD>%s</TD>' % \
                 (checkbox_html, _status_as_glyph(status))
+    TDcontent = '<TABLE><TR>%s</TR></TABLE>' % TDcontent
     out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TDcontent))
     return
 
