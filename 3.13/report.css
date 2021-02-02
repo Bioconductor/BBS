@@ -211,7 +211,7 @@ TD.glyph_box {
     height: 20px;
 }
 TD.glyph_explain {
-    padding-left: 6px;
+    padding-left: 4px;
 }
 TD.glyph_box.toggle {
     cursor: pointer;
