@@ -203,7 +203,7 @@ P.noresult SPAN {
 
 TD.glyph_box,
 TD.glyph_explain {
-    border: 1px dotted #555;
+    border-bottom: 1px dotted #555;
     vertical-align: middle;
 }
 TD.glyph_box {
