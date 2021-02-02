@@ -383,21 +383,21 @@ TBODY.gcard TD.status A.mouseover {
     border: 1px solid black;
 }
 
-/* By default, all gcards are filtered out. */
-TBODY.gcard,
-TBODY.gcard_separator,
-TBODY.collapsable_rows {
+/* By default, all gcards in THE_BIG_GCARD_LIST are filtered out. */
+#THE_BIG_GCARD_LIST TBODY.gcard,
+#THE_BIG_GCARD_LIST TBODY.gcard_separator,
+#THE_BIG_GCARD_LIST TBODY.collapsable_rows {
     display: none;
 }
-TABLE.gcard_list.show_timeout_gcards  TBODY.gcard.timeout,
-TABLE.gcard_list.show_tiemout_gcards  TBODY.gcard_separator.timeout,
-TABLE.gcard_list.show_error_gcards    TBODY.gcard.error,
-TABLE.gcard_list.show_error_gcards    TBODY.gcard_separator.error,
-TABLE.gcard_list.show_warnings_gcards TBODY.gcard.warnings,
-TABLE.gcard_list.show_warnings_gcards TBODY.gcard_separator.warnings,
-TABLE.gcard_list.show_ok_gcards       TBODY.gcard.ok,
-TABLE.gcard_list.show_ok_gcards       TBODY.gcard_separator.ok,
-TABLE.gcard_list.show_ok_gcards       TBODY.collapsable_rows {
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_timeout_gcards  TBODY.gcard.timeout,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_tiemout_gcards  TBODY.gcard_separator.timeout,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_error_gcards    TBODY.gcard.error,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_error_gcards    TBODY.gcard_separator.error,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_warnings_gcards TBODY.gcard.warnings,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_warnings_gcards TBODY.gcard_separator.warnings,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_ok_gcards       TBODY.gcard.ok,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_ok_gcards       TBODY.gcard_separator.ok,
+#THE_BIG_GCARD_LIST TABLE.gcard_list.show_ok_gcards       TBODY.collapsable_rows {
     display: table-row-group;
 }
 

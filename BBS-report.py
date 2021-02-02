@@ -616,7 +616,10 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
 
 def write_gcard_list(out, allpkgs, leafreport_ref=None):
     full_list = not leafreport_ref
-    out.write('<TABLE id="THE_GCARD_LIST" class="gcard_list">\n')
+    TABLEattrs = 'class="gcard_list"'
+    if full_list:
+        TABLEattrs += ' id="THE_BIG_GCARD_LIST"'
+    out.write('<TABLE %s>\n' % TABLEattrs)
     nb_pkgs = len(allpkgs)
     if full_list:
         write_quickstats(out, nb_pkgs)
@@ -716,7 +719,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
 ### displays the full list (no 'leafreport_ref' argument).
 def write_compact_gcard_list(out, node, allpkgs):
     nb_pkgs = len(allpkgs)
-    out.write('<TABLE id="THE_GCARD_LIST" class="compact gcard_list">\n')
+    out.write('<TABLE class="compact gcard_list" id="THE_BIG_GCARD_LIST">\n')
     write_quickstats(out, nb_pkgs, node.node_id)
     out.write('<TBODY>\n')
     _write_vertical_space(out)
