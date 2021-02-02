@@ -142,7 +142,7 @@ def _write_glyph_box(out, status, toggleable=False):
                     #'onkeypress="%s"' % onclick,
                     'onclick="%s"' % onclick]
         checkbox_id = '%s_checkbox' % status.lower()
-        checkbox_attrs = 'id="%s" style="margin: 0px; padding: 0px;"' % \
+        checkbox_attrs = 'id="%s" style="margin: 1px; padding: 0px;"' % \
                          checkbox_id
         checkbox_html = '<INPUT type="checkbox" %s>' % checkbox_attrs
     else:
@@ -150,7 +150,7 @@ def _write_glyph_box(out, status, toggleable=False):
         checkbox_html = ''
     TRcontent  = '<TD style="width: 100px; padding-left: 3px;">%s</TD>' % \
                  _status_as_glyph(status)
-    TRcontent += '<TD style="width: 22px;">%s</TD>' % checkbox_html
+    TRcontent += '<TD style="width: 16px;">%s</TD>' % checkbox_html
     TDcontent = '<TABLE><TR>%s</TR></TABLE>' % TRcontent
     out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TDcontent))
     return
