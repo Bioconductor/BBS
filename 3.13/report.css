@@ -207,6 +207,7 @@ TD.glyph_explain {
     vertical-align: middle;
 }
 TD.glyph_box {
+    border-left: 1px solid transparent;
     border-right: 1px solid transparent;
 }
 TD.glyph_box {
