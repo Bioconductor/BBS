@@ -205,6 +205,7 @@ TD.glyph_box,
 TD.glyph_explain {
     height: 16px;
     border: 1px dotted #555;
+    border-spacing: 0px;
     border-collapse: collapse;
     vertical-align: middle;
 }
