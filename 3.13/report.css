@@ -204,14 +204,10 @@ P.noresult SPAN {
 TD.glyph_box,
 TD.glyph_explain {
     border-bottom: 1px dotted #555;
+    padding: 1px;
     vertical-align: middle;
 }
 TD.glyph_box {
-    border-left: 1px solid transparent;
-    border-right: 1px solid transparent;
-}
-TD.glyph_box {
-    padding: 0px;
     height: 20px;
 }
 TD.glyph_explain {
@@ -221,7 +217,7 @@ TD.glyph_box.toggle {
     cursor: pointer;
 }
 TD.glyph_box.toggle.mouseover {
-    border: 1px solid black;
+    padding: 1px solid black;
 }
 
 TD.glyph_box TABLE {
