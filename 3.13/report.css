@@ -216,15 +216,16 @@ TD.glyph_explain {
 TD.glyph_box.toggle {
     cursor: pointer;
 }
-TD.glyph_box.toggle.mouseover {
-    padding: 1px solid black;
-}
 
 TD.glyph_box TABLE {
     border-spacing: 0px;
     border-collapse: collapse;
     width: 100%;
     height: 100%;
+    border: 1px solid transparent;
+}
+TD.glyph_box.toggle.mouseover TABLE {
+    border: 1px solid black;
 }
 TD.glyph_box TABLE TD {
     padding: 0px;
