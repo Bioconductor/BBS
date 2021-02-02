@@ -389,15 +389,15 @@ TBODY.gcard TD.status A.mouseover {
 #THE_BIG_GCARD_LIST TBODY.collapsable_rows {
     display: none;
 }
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_timeout_gcards  TBODY.gcard.timeout,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_tiemout_gcards  TBODY.gcard_separator.timeout,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_error_gcards    TBODY.gcard.error,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_error_gcards    TBODY.gcard_separator.error,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_warnings_gcards TBODY.gcard.warnings,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_warnings_gcards TBODY.gcard_separator.warnings,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_ok_gcards       TBODY.gcard.ok,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_ok_gcards       TBODY.gcard_separator.ok,
-#THE_BIG_GCARD_LIST TABLE.gcard_list.show_ok_gcards       TBODY.collapsable_rows {
+#THE_BIG_GCARD_LIST.show_timeout_gcards  TBODY.gcard.timeout,
+#THE_BIG_GCARD_LIST.show_tiemout_gcards  TBODY.gcard_separator.timeout,
+#THE_BIG_GCARD_LIST.show_error_gcards    TBODY.gcard.error,
+#THE_BIG_GCARD_LIST.show_error_gcards    TBODY.gcard_separator.error,
+#THE_BIG_GCARD_LIST.show_warnings_gcards TBODY.gcard.warnings,
+#THE_BIG_GCARD_LIST.show_warnings_gcards TBODY.gcard_separator.warnings,
+#THE_BIG_GCARD_LIST.show_ok_gcards       TBODY.gcard.ok,
+#THE_BIG_GCARD_LIST.show_ok_gcards       TBODY.gcard_separator.ok,
+#THE_BIG_GCARD_LIST.show_ok_gcards       TBODY.collapsable_rows {
     display: table-row-group;
 }
 
