@@ -38,7 +38,7 @@ var show_ok_gcards;
 
 function show_selected_gcards()
 {
-    var table = document.getElementById("THE_BIG_GCARD_LIST");
+    var table = document.getElementById("THE_GCARD_LIST");
     if (show_timeout_gcards)
         table.classList.add('show_timeout_gcards');
     else
