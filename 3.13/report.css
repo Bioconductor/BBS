@@ -203,10 +203,14 @@ P.noresult SPAN {
 
 TD.glyph_box,
 TD.glyph_explain {
-    /*height: 16px;*/
     border: 1px dotted #555;
-    padding-left: 6px;
     vertical-align: middle;
+}
+TD.glyph_box {
+    height: 16px;
+}
+TD.glyph_explain {
+    padding-left: 6px;
 }
 TD.glyph_box.toggle {
     cursor: pointer;
