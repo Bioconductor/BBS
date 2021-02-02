@@ -235,7 +235,7 @@ def _explain_NA_in_HTML():
 def write_explain_glyph_table(out):
     subbuilds = BBSvars.subbuilds
     out.write('<FORM action="">\n')
-    out.write('<TABLE style="width: 640px; border: solid black 1px; border-collapse: collapse;">\n')
+    out.write('<TABLE style="width: 590px; border: solid black 1px; border-collapse: collapse;">\n')
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="font-style: italic; border-bottom: solid black 1px;">')
     out.write('<B>Package status is indicated by one of the following glyphs</B>')
