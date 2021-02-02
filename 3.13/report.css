@@ -213,9 +213,6 @@ TD.glyph_box {
 TD.glyph_explain {
     padding-left: 4px;
 }
-TD.glyph_box.toggle {
-    cursor: pointer;
-}
 
 TD.glyph_box TABLE {
     border-spacing: 0px;
@@ -223,6 +220,9 @@ TD.glyph_box TABLE {
     width: 100%;
     height: 100%;
     border: 1px solid transparent;
+}
+TD.glyph_box.toggle TABLE {
+    cursor: pointer;
 }
 TD.glyph_box.toggle.mouseover TABLE {
     border: 1px solid black;
