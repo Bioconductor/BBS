@@ -147,9 +147,9 @@ def _write_glyph_box(out, status, toggleable=False):
     else:
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
-    TRcontent  = '<TD style="width: 95px; padding-left: 4px;">%s</TD>' % \
+    TRcontent  = '<TD style="width: 100px; padding-left: 3px;">%s</TD>' % \
                  _status_as_glyph(status)
-    TRcontent += '<TD style="width: 22px;">%s</TD>' % checkbox_html
+    TRcontent += '<TD style="width: 20px;">%s</TD>' % checkbox_html
     TDcontent = '<TABLE><TR>%s</TR></TABLE>' % TRcontent
     out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TDcontent))
     return
