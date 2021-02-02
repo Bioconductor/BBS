@@ -149,12 +149,11 @@ def _write_glyph_box(out, status, toggleable=False):
     else:
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
-    TRcontent  = '<TD style="text-align: left; padding-left: 3px;">%s</TD>' % \
-                 _status_as_glyph(status)
-    TRcontent += '<TD style="text-align: right;">%s</TD>' % \
-                 checkbox_html
-    TDcontent = '<TABLE><TR>%s</TR></TABLE>' % TRcontent
-    out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TDcontent))
+    TD1_style = 'text-align: left; padding-left: 3px; padding-right: 3px;'
+    TD1_html = '<TD style="%s">%s</TD>' % (TD1_style, _status_as_glyph(status))
+    TD2_html = '<TD style="text-align: right;">%s</TD>' % checkbox_html
+    TABLE_html = '<TABLE><TR>%s%s</TR></TABLE>' % (TD1_html, TD2_html)
+    out.write('<TD %s>%s</TD>\n' % (' '.join(TD_attrs), TABLE_html))
     return
 
 def _write_glyph_as_TR(out, status, explain_html, toggleable=False):
