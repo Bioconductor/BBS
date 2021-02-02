@@ -759,10 +759,6 @@ def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     out.write(' "http://www.w3.org/TR/html4/loose.dtd">\n')
     out.write('<HTML>\n')
     out.write('<HEAD>\n')
-    out.write('<script language="javascript">\n')
-    out.write('if (!/\.html$|\/$|#/.test(window.location.href))\n')
-    out.write('  window.location.href = window.location.href + "/";\n')
-    out.write('</script>\n')
     out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
     if page_title:
         title += " - " + page_title
