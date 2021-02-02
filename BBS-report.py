@@ -807,7 +807,7 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs):
     out = open(out_rURL, 'w')
 
     write_HTML_header(out, page_title, '../report.css', '../report.js')
-    out.write('<BODY>\n')
+    out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
@@ -1128,7 +1128,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out = open(out_rURL, 'w')
 
     write_HTML_header(out, page_title, '../report.css', '../report.js')
-    out.write('<BODY>\n')
+    out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
