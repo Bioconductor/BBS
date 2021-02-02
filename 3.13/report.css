@@ -221,6 +221,7 @@ TD.glyph_box.toggle.mouseover {
 }
 
 TD.glyph_box TABLE {
+    margin: 0px;
     border-spacing: 0px;
     border-collapse: collapse;
     width: 100%;
