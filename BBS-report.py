@@ -284,6 +284,10 @@ class LeafReportReference:
         self.node_id = node_id
         self.stage = stage
 
+def _get_all_show_classes():
+    status_classes = ['timeout', 'error', 'warnings', 'ok']
+    return ['show_%s_gcards' % status for status in status_classes]
+
 def _write_vertical_space(out):
     colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 5
     TD_html = '<TD COLSPAN="%s"></TD>' % colspan
@@ -619,9 +623,12 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
 
 def write_gcard_list(out, allpkgs, leafreport_ref=None):
     full_list = not leafreport_ref
-    TABLEattrs = 'class="gcard_list"'
+    TABLEclasses = 'gcard_list'
     if full_list:
-        TABLEattrs += ' id="THE_BIG_GCARD_LIST"'
+        TABLEclasses += ' %s' % ' '.join(_get_all_show_classes())
+        TABLEattrs = 'class="%s" id="THE_BIG_GCARD_LIST"' % TABLEclasses
+    else:
+        TABLEattrs = 'class="%s"' % TABLEclasses
     out.write('<TABLE %s>\n' % TABLEattrs)
     nb_pkgs = len(allpkgs)
     if full_list:
@@ -722,7 +729,8 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
 ### displays the full list (no 'leafreport_ref' argument).
 def write_compact_gcard_list(out, node, allpkgs):
     nb_pkgs = len(allpkgs)
-    out.write('<TABLE class="compact gcard_list" id="THE_BIG_GCARD_LIST">\n')
+    TABLEclasses = 'compact gcard_list %s' % ' '.join(_get_all_show_classes())
+    out.write('<TABLE class="%s" id="THE_BIG_GCARD_LIST">\n' % TABLEclasses)
     write_quickstats(out, nb_pkgs, node.node_id)
     out.write('<TBODY>\n')
     _write_vertical_space(out)
