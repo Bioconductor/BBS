@@ -126,7 +126,7 @@ function initialize()
            remained invisible during the loading, which could take a
            while (e.g. 5s) and was confusing. To avoid this long delay,
            THE_BIG_GCARD_LIST is now loaded "dressed" i.e. it **already**
-           has all the "show_*_gcards" classes on it by default so calling
+           has all the "show_*_gcards" classes on it by default. So calling
            show_selected_gcards2() is no longer necessary. */
         //show_selected_gcards2();
     }
