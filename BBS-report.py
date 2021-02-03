@@ -145,7 +145,7 @@ def _write_glyph_box(out, status, toggleable=False):
         checkbox_id = '%s_checkbox' % status.lower()
         checkbox_attrs = 'id="%s" style="margin: 0px; padding: 0px;"' % \
                          checkbox_id
-        checkbox_html = '<INPUT type="checkbox" %s>' % checkbox_attrs
+        checkbox_html = '<INPUT type="checkbox" checked %s>' % checkbox_attrs
     else:
         TD_attrs = ['class="glyph_box"']
         checkbox_html = ''
