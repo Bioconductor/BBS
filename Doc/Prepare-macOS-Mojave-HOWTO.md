@@ -473,7 +473,7 @@ Then in `/etc/profile`:
 
 ### 2.11 Install Python 3
 
-NOTE: As of Nov 3rd, 2020, the tensorflow module is not available yet for
+NOTE: As of Feb 3, 2021, the tensorflow module is not available yet for
 Python 3.9 so we install Python 3.8.
 
     #brew install python3  # don't do this yet, it will install Python 3.9!
@@ -1415,7 +1415,7 @@ in `/opt/X11/lib/`.
 
 Initial testing:
 
-    which obabel
+    which obabel  # /usr/local/bin/obabel
     obabel -V
     # dyld: Library not loaded: /usr/local/opt/boost/lib/libboost_iostreams-mt.dylib
     #   Referenced from: /usr/local/bin/obabel
@@ -1547,7 +1547,7 @@ And finally (needed only for some MySQL builds that seem broken):
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
 
-    which mysql_config
+    which mysql_config  # /usr/local/opt/mysql-client/bin/mysql_config
 
 Then try to install the RMySQL package *from source*:
 
