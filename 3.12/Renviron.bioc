@@ -3,16 +3,16 @@
 # control the behavior of R 4.0 for the BioC 3.12 builds
 # ====================================================================
 #
-# TO BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the
-# settings below on your machine when working on the RELEASE_3_12
-# branch of your package. Make sure to use a recent version of R 4.0.
-# This should allow you to reproduce any error or warning you see on
-# the Bioconductor build reports. The easiest way to use the settings
+# BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the settings
+# below on your machine when working on the RELEASE_3_12 branch of your
+# package. Also make sure to use a recent version of R 4.0. This
+# should allow you to reproduce any error or warning you see on the
+# Bioconductor build reports. The easiest way to use the settings
 # below is to add them to your .Renviron file. However, please note
-# that this will enable them for any R installation you have on your
-# system. To enable them for a particular R session only, put them
-# in a separate file (e.g. .Renviron.bioc, located in your home) and
-# start R with:
+# that this will enable them for **any** R installation you have on
+# your system. To enable them for a particular R session only, put
+# them in a separate file (e.g. .Renviron.bioc, located in your home),
+# then start R with:
 #
 #     R_ENVIRON_USER=~/.Renviron.bioc R
 #
@@ -35,5 +35,6 @@ _R_CHECK_LENGTH_1_LOGIC2_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
 _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 #_R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
 #_R_CLASS_MATRIX_ARRAY_=true
+R_DEFAULT_INTERNET_TIMEOUT=300
 OMP_THREAD_LIMIT=2
 

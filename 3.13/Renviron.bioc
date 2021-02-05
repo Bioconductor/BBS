@@ -9,10 +9,10 @@
 # should allow you to reproduce any error or warning you see on the
 # Bioconductor build reports. The easiest way to use the settings
 # below is to add them to your .Renviron file. However, please note
-# that this will enable them for any R installation you have on your
-# system. To enable them for a particular R session only, put them
-# in a separate file (e.g. .Renviron.bioc, located in your home) and
-# start R with:
+# that this will enable them for **any** R installation you have on
+# your system. To enable them for a particular R session only, put
+# them in a separate file (e.g. .Renviron.bioc, located in your home),
+# then start R with:
 #
 #     R_ENVIRON_USER=~/.Renviron.bioc R
 #
