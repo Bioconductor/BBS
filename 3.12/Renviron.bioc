@@ -36,6 +36,14 @@ _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 #_R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
 #_R_CLASS_MATRIX_ARRAY_=true
 R_DEFAULT_INTERNET_TIMEOUT=300
+
+# Setting OMP_THREAD_LIMIT to 2 apparently helps prevent a BayesSpace
+# TIMEOUT on Linux.
 OMP_THREAD_LIMIT=2
+# Setting **both** OMP_THREAD_LIMIT and OMP_NUM_THREADS to 2 apparently
+# helps prevent a snifter TIMEOUT on Mac.
 OMP_NUM_THREADS=2
+# The KMP_* settings apparently help prevent a velociraptor TIMEOUT on Mac.
+KMP_DEVICE_THREAD_LIMIT=2
+KMP_TEAMS_THREAD_LIMIT=2
 
