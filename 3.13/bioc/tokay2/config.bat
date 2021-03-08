@@ -17,9 +17,10 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
-set BBS_CENTRAL_RHOST=malbec2.bioconductor.org
-set BBS_MEAT0_RHOST=malbec2.bioconductor.org
-set BBS_GITLOG_RHOST=malbec2.bioconductor.org
+@rem rex3 is not in the DNS so we use its IP address
+set BBS_CENTRAL_RHOST=155.52.173.35
+set BBS_MEAT0_RHOST=155.52.173.35
+set BBS_GITLOG_RHOST=155.52.173.35
 
 
 
