@@ -14,7 +14,7 @@ export BBS_USER="biocbuild"
 export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.13-books"
 export BBS_R_HOME="/home/biocbuild/bbs-3.13-bioc/R"
-export BBS_NB_CPU=3  # 20 cores are available
+export BBS_NB_CPU=8  # 20 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_MEAT0_RHOST="localhost"
@@ -42,7 +42,7 @@ export BBS_OUTGOING_MAP="source:malbec2/buildsrc"
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
 
-export BBS_REPORT_NODES="malbec2"
+export BBS_REPORT_NODES="malbec2 riesling1"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
