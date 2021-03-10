@@ -50,14 +50,39 @@ Bioconductor grows). The above numbers reflect the current state of affairs
 as of Aug 2020.
 
 
-### 1.3 Apply any pending system updates and reboot
+### 1.3 Check /etc/hostname and /etc/hosts
+
+- `/etc/hostname` should contain the short name of the build machine as
+  it will appear on the build report (e.g. `nebbiolo1` or `rex3`).
+  Note that you will need to make sure to set `BBS_NODE_HOSTNAME` to the same
+  value when you configure BBS (see for example `BBS/3.13/bioc/rex3/config.sh`
+  in BBS git tree).
+
+- Check `/etc/hosts` and make sure that it contains an entry that maps
+  the name in `/etc/hostname` to 127.0.1.1 or to the permanent IP address
+  of the machine.
+
+TESTING: You should be able to ping yourself with:
+
+    ping rex3
+
+Note that not having this set properly will cause Bioconductor package RGMQL
+to fail. So if the software builds are already set up, you can start R from
+the biocbuild account and also try:
+
+    library(RGMQL)
+    init_gmql()  # will fail if the short name of the machine
+                 # does not resolve to itself
+
+
+### 1.4 Apply any pending system updates and reboot
 
     sudo apt-get update
     sudo apt-get upgrade
     sudo reboot
 
 
-### 1.4 Create the biocbuild account
+### 1.5 Create the biocbuild account
 
     sudo adduser biocbuild
 
@@ -73,7 +98,7 @@ TESTING: Logout and try to login again as biocbuild. Then logout and login
 again as before (sudoer account).
 
 
-### 1.5 Run Xvfb as a service
+### 1.6 Run Xvfb as a service
 
 Some Bioconductor packages like adSplit, GeneAnswers, lmdme, or maSigPro
 contain examples that need access to an X11 display. However, when
@@ -218,7 +243,7 @@ From the biocbuild account:
     /path/to/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
 
 
-### 1.6 Install Ubuntu/deb packages
+### 1.7 Install Ubuntu/deb packages
 
 Install with:
 
@@ -408,7 +433,7 @@ Notes:
 - `kallisto` is for rkal.
 
 
-### 1.7 Install Python 3 modules
+### 1.8 Install Python 3 modules
 
 #### Python 3 modules needed by the Single Package Builder only
 
@@ -498,7 +523,7 @@ with:
     tensorflow.version.VERSION  # should be 2.x.y
 
 
-### 1.8 Run Apache server as a service
+### 1.9 Run Apache server as a service
 
 Required only for a standalone or central builder.
 
@@ -517,7 +542,7 @@ Check its status:
 Service will automatically restart after each reboot.
 
 
-### 1.9 Logout and login again as biocbuild
+### 1.10 Logout and login again as biocbuild
 
 Almost everything in the next section must be done from the biocbuild account.
 
