@@ -11,7 +11,7 @@ call %BBS_HOME%\utils\clean-before-run.bat
 set YYYYMMDD=%date:~10,4%%date:~4,2%%date:~7,2%
 set LOG_FILE=%BBS_WORK_TOPDIR%\log\%BBS_NODE_HOSTNAME%-run-%YYYYMMDD%.log
 
-%BBS_PYTHON_CMD% %BBS_HOME%\BBS-run.py >>%LOG_FILE% 2>&1
+%BBS_PYTHON_CMD% %BBS_HOME%\BBS-run.py no-bin >>%LOG_FILE% 2>&1
 
 echo OFF
 echo --------------------------------------------------------
