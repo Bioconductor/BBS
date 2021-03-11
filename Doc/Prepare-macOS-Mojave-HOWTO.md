@@ -1726,7 +1726,28 @@ Then try to build the inferrnal package:
     R CMD build inferrnal
 
 
-### 4.16 [OPTIONAL] Install JPEG system library
+### 4.16 Install macFUSE
+
+Required by Bioconductor package Travel.
+
+Download latest stable release from https://osxfuse.github.io/ e.g.:
+
+    cd ~/Downloads/
+    curl -LO https://github.com/osxfuse/osxfuse/releases/download/macfuse-4.0.5/macfuse-4.0.5.dmg
+
+Install with:
+
+    sudo hdiutil attach macfuse-4.0.5.dmg
+    sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
+    sudo hdiutil detach /Volumes/macFUSE
+
+TESTING: Try to install the Travel package *from source*:
+
+    library(BiocManager)
+    BiocManager::install("Travel", type="source")
+
+
+### 4.17 [OPTIONAL] Install JPEG system library
 
 This is needed only if CRAN package jpeg needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
@@ -1750,7 +1771,7 @@ TESTING: Try to install the jpeg package *from source*:
     example(writeJPEG)
 
 
-### 4.17 [OPTIONAL] Install TIFF system library
+### 4.18 [OPTIONAL] Install TIFF system library
 
 This is needed only if CRAN package tiff needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
@@ -1774,7 +1795,7 @@ TESTING: Try to install the tiff package *from source*:
     example(writeTIFF)
 
 
-### 4.18 [OPTIONAL] Install FFTW system library
+### 4.19 [OPTIONAL] Install FFTW system library
 
 This is needed only if CRAN package fftwtools needs to be installed from
 source which is usually NOT the case (most of the time a Mac binary should
@@ -1795,7 +1816,7 @@ TESTING: Try to install the fftwtools package *from source*:
     install.packages("fftwtools", type="source", repos="https://cran.r-project.org")
 
 
-### 4.19 [OPTIONAL] Install autoconf & automake
+### 4.20 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -1815,7 +1836,7 @@ Then try to install the flowWorkspace package *from source*:
     BiocManager::install("flowWorkspace", type="source")
 
 
-### 4.20 Install ImageMagick
+### 4.21 Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
 package, which is now officially deprecated)
