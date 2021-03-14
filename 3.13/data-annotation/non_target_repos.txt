@@ -1,3 +1,5 @@
 https://bioconductor.org/packages/BBS_BIOC_VERSION/bioc
 https://bioconductor.org/packages/BBS_BIOC_VERSION/data/experiment
+https://bioconductor.org/packages/BBS_BIOC_VERSION/workflows
+https://bioconductor.org/packages/BBS_BIOC_VERSION/books
 https://cran.rstudio.com
