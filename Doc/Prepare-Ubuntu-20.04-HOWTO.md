@@ -84,8 +84,7 @@ the biocbuild account and also try:
 
 #### Not so quick way:
 
-Note this "not so quick way" might require up to 5 calls
-to `sudo apt-get upgrade`!
+This "not so quick way" might require up to 5 calls to `sudo apt-get upgrade`!
 
 - Let's start with the basic commands:
     ```
