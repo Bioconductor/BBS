@@ -5,26 +5,44 @@
 ## 0. General information and tips
 
 
-### 0.1 Disconnect vs logoff
+### 0.1 Disconnect vs Sign out
 
-Using Disconnect when ending your rdesktop session does NOT log you off.
-To log off, use the `logoff` command in a PowerShell window.
+When you're done working on a Windows builder it's important that you
+properly terminate your session by _signing out_ (a.k.a. _logging off_).
+Please keep in mind that using _Disconnect_ to end your rdesktop (or Remmina)
+session does NOT sign you out. Also if you accidentally loose your rdesktop
+(or Remmina) session, it's very likely that you're only disconnected but
+that your session on the remote machine is still open, in which case you
+need to reconnect and properly terminate your session.
+
+To properly terminate your session, you can either:
+- use the `logoff` command in a PowerShell window or
+- sign out via the Power User Task Menu (right-click on the Windows logo
+  at the very bottom-left corner of the screen, and go to "Shut down or
+  sign out", then choose "Sign out").
 
 
-### 0.2 How to open Task Manager
+### 0.2 How to open the Task Manager
 
-Use CTRL+Shift+Esc
+Quick way: CTRL+Shift+Esc
+
+Or via the Power User Task Menu: right-click on the Windows logo at the
+very bottom-left corner of the screen and click on "Task Manager".
 
 
 ### 0.3 Managing environment variables
 
-#### Display the value of an environment variable in a PowerShell window
+#### Print the value of an environment variable in a PowerShell window
 
-E.g. to see the `Path`:
+Print all environment variables with:
 ```
-Get-ChildItem Env:Path
+Get-ChildItem Env:
 ```
-Pretty bad though because it doesn't display the full thing.
+
+Print a particular environment variable (e.g. `Path`) with:
+```
+echo $Env:Path
+```
 
 #### Edit an environment variable
 
@@ -207,10 +225,11 @@ For this account:
 - [x] Password never expires
 - [ ] Account is disabled
 
-By default, the home folder will be `C:\Users\biocbuild`. If this needs to
-be changed (e.g. to `D:\biocbuild`), double-click on the biocbuild user and
-make the change in the Profile tab. Note that the `C:\Users\biocbuild` folder
-will still be created and populated at first logon.
+By default, the home folder will be `C:\Users\biocbuild`. If space on `C:` is
+limited this might need to be changed to something else (e.g. `D:\biocbuild`).
+To do this: double-click on the biocbuild user and make the change in the
+Profile tab. Note that the `C:\Users\biocbuild` folder will still be created
+and populated at first logon.
 
 Make the biocbuild user a member of the Remote Desktop Users group.
 
@@ -704,7 +723,41 @@ Contact the IT folks at RPCI if this is blocked by RPCI's firewall (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-### 3.2 Create bbs-x.y-bioc directory structure
+### 3.2 [OPTIONAL] Location of ExperimentHub cache
+
+Once the builds are up and running, they will typically download a
+big amount of data (about 70GB, as of March 2021) from ExperimentHub
+to the local ExperimentHub cache. By default, the location of the cache
+is `C:\Users\biocbuild\AppData\Local\ExperimentHub\ExperimentHub\Cache`.
+If R is already installed, you can check this from R with:
+```
+library(ExperimentHub)
+getExperimentHubOption("CACHE")
+```
+
+If space on `C:` is limited, you might want to consider changing this
+location to something else e.g. to `D:\biocbuild\ExperimentHub_cache`.
+The location of the cache can be controlled via environment
+variable `EXPERIMENT_HUB_CACHE` which you can set permanently
+by using the `setx.exe` command in a PowerShell window e.g.:
+```
+setx EXPERIMENT_HUB_CACHE "D:\biocbuild\ExperimentHub_cache"
+```
+Make sure to do this from the `biocbuild` account.
+
+TESTING: Open **another** PowerShell window and check that environment
+variable `EXPERIMENT_HUB_CACHE` is defined with:
+```
+echo $Env:EXPERIMENT_HUB_CACHE
+```
+If R is already installed, you can also check this from R with:
+```
+library(ExperimentHub)
+getExperimentHubOption("CACHE")
+```
+
+
+### 3.3 Create bbs-x.y-bioc directory structure
 
 **From the biocbuild account** in a PowerShell window:
 
@@ -716,7 +769,7 @@ More details on https implementation in `BBS/README.md`.
     mkdir tmpdir
 
 
-### 3.3 Install R
+### 3.4 Install R
 
 **From the biocbuild account**:
 
@@ -882,18 +935,23 @@ TESTING: Try to load the package (with `library(Cairo)`) on both archs:
 
 #### Flush the data caches
 
-When R is updated, it's a good time to flush the cache for AnnotationHub,
+When R is updated, it can be a good time to flush the cache for AnnotationHub,
 ExperimentHub, and BiocFileCache. This is done by removing the corresponding
-folders present in `C:\Users\biocbuild\AppData\Local`.
+folders present in `C:\Users\biocbuild\AppData\Local`. Note that the
+location of the ExperimentHub cache can be controlled via environment
+variable `EXPERIMENT_HUB_CACHE` which you can check with
+`echo $Env:EXPERIMENT_HUB_CACHE` in a PowerShell window (see
+_Location of ExperimentHub cache_ section above for more information).
 
-Removing these folders means all packages using these resources will have
-to re-download the files. This ensures that resources are still available.
-However it also contributes to an increased runtime for the builds.
+Removing these folders means that all packages using these resources will
+have to re-download the data. This is a way to check that resources are
+still available. However it also contributes to an increased runtime for
+the builds.
 
 Should we also remove package specific caches?
 
 
-### 3.4 Add software builds to Task Scheduler
+### 3.5 Add software builds to Task Scheduler
 
 **From a personal administrator account** configure the task as follow:
 
@@ -965,7 +1023,7 @@ Use the default settings when running the installer.
 
 Make sure that `C:\rtools40\usr\bin`, `C:\rtools40\mingw32\bin`
 and `C:\rtools40\mingw64\bin` are still first in the `Path`. In case
-the installer prepended something to the `Path` (e.g. something like
+the installer prepended something to `Path` (e.g. something like
 `C:\ProgramData\Oracle\Java\javapath`), move it towards the end of
 `Path` (e.g. anywhere after `C:\Program Files\Git\cmd`). See "How to
 edit an environment variable" in "General information and tips" at the
@@ -998,9 +1056,10 @@ Download libxml2 and google protocol buffer Windows binaries from
 
 Extract all the files to `C:\libxml2` and to `C:\protobuf` respectively.
 Set environment variables `LIB_XML2` and `LIB_PROTOBUF` to `C:/libxml2`
-and `C:/protobuf`, respectively (see "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to do
-this). Make sure to use `/` instead of `\` as the directory delimiter.
+and `C:/protobuf`, respectively (see _Edit an environment variable_
+in the _Managing environment variables_ section at the top of this document
+for how to do this). Make sure to use `/` instead of `\` as the directory
+delimiter.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the flowWorkspace package e.g.
@@ -1074,8 +1133,8 @@ Rename `C:\libsbml\win64` and `C:\libsbml\win32` -> `C:\libsbml\x64`
 and `C:\libsbml\i386`, respectively.
 
 Set environment variable `LIBSBML_PATH` to `C:/libsbml` (use slash,
-not backslash). See "How to edit an environment variable" in "General
-information and tips" at the top of this document for how to do this.
+not backslash). See _Edit an environment variable_ in the _Managing
+environment variables_ section at the top of this document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the rsbml package e.g.
@@ -1141,9 +1200,9 @@ Extract all the files in `C:\ClustalO`. Make sure that the files
 get extracted in `C:\ClustalO\` and not in a subdirectory (e.g. in
 `C:\ClustalO\clustal-omega-1.2.2-win64\`).
 
-Append `C:\ClustalO` to `Path` (see "How to edit an environment variable"
-in "General information and tips" at the top of this document for how
-to do this).
+Append `C:\ClustalO` to `Path` (see _Edit an environment variable_
+in the _Managing environment variables_ section at the top of this
+document for how to do this).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Clustal Omega
@@ -1158,9 +1217,9 @@ e.g. open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 ### 4.9 Install ImmuneSpace credentials
 
 Set environment variable `ISR_login` and `ISR_pwd` to `bioc@immunespace.org`
-and `1notCRAN`, respectively. See "How to edit an environment variable"
-in "General information and tips" at the top of this document for how to
-do this.
+and `1notCRAN`, respectively. See _Edit an environment variable_
+in the _Managing environment variables_ section at the top of this
+document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build the ImmuneSpaceR package e.g.
@@ -1179,6 +1238,14 @@ Download `gtkmm-win64-devel-2.22.0-2.exe` from
 Run it (use default settings). This installs gtkmm in `C:\gtkmm64`
 
 Set `GTK_PATH` to `C:\gtkmm64`
+
+Also make sure that `C:\rtools40\usr\bin`, `C:\rtools40\mingw32\bin`
+and `C:\rtools40\mingw64\bin` are still first in the `Path`. In case
+the installer prepended something to `Path` (e.g. something like
+`C:\gtkmm64\bin`), move it towards the end of `Path` (e.g. anywhere
+after `C:\ClustalO`). See _Edit an environment variable_ in
+the _Managing environment variables_ section at the top of this
+document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the HilbertVisGUI package
