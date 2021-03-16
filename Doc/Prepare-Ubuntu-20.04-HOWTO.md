@@ -77,9 +77,62 @@ the biocbuild account and also try:
 
 ### 1.4 Apply any pending system updates and reboot
 
+Note that a complete system update might require up to 5 calls
+to `sudo apt-get upgrade`!
+
+- Let's start with the basic commands:
+    ```
     sudo apt-get update
-    sudo apt-get upgrade
+    sudo apt-get upgrade  # 1st time
+    ```
+
+- Then try `sudo apt-get upgrade` again (2nd time) to see if more actions are
+  needed. It should display something like:
+    ```
+    0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+    ```
+  But if it displays something like:
+    ```
+    ...
+    The following packages have been kept back:
+      base-files linux-headers-generic netplan.io ubuntu-server
+    0 upgraded, 0 newly installed, 0 to remove and 4 not upgraded.
+    ```
+  then upgrade again with:
+    ```
+    sudo apt-get --with-new-pkgs upgrade  # 3rd time
+    ```
+
+- Then try `sudo apt-get upgrade` again (4th time). Now there shouldn't be
+  any "kept back packages" anymore. However you could still see some "no
+  longer required" packages:
+    ```
+    ...
+    The following packages were automatically installed and are no longer required:
+      linux-headers-4.15.0-136 linux-headers-4.15.0-136-generic
+    Use 'sudo apt autoremove' to remove them.
+    0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+    ```
+  in which case just use the suggested command:
+    ```
+    sudo apt autoremove
+    ```
+
+- Then try `sudo apt-get upgrade` for the last time (5th time) and you should
+  see something like this:
+    ```
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    Calculating upgrade... Done
+    0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+    ```
+  which indicates that everything is up-to-date.
+
+- Finally you can reboot with:
+    ```
     sudo reboot
+    ```
 
 
 ### 1.5 Create the biocbuild account
@@ -413,6 +466,7 @@ For BioC packages:
                          infernal \
                          fuse \
                          libfuse-dev \
+                         gcsfuse \
                          kallisto
 
 Notes:
@@ -430,6 +484,7 @@ Notes:
   EnhancedVolcano indirectly depends on via ragg and ggrastr.
 - `infernal` is for inferrnal.
 - `fuse` and `libfuse-dev` are for Travel.
+- `gcsfuse` is for GCSFilesystem.
 - `kallisto` is for rkal.
 
 
