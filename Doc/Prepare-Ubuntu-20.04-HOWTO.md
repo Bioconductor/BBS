@@ -77,7 +77,14 @@ the biocbuild account and also try:
 
 ### 1.4 Apply any pending system updates and reboot
 
-Note that a complete system update might require up to 5 calls
+#### Quick way:
+
+    sudo apt-get update && sudo apt-get --with-new-pkgs upgrade && sudo apt autoremove
+    sudo reboot
+
+#### Not so quick way:
+
+Note this "not so quick way" might require up to 5 calls
 to `sudo apt-get upgrade`!
 
 - Let's start with the basic commands:
