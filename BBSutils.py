@@ -77,6 +77,7 @@ debug.is_on = int(getenv('BBS_DEBUG', False, "0")) != 0
 
 meat_index_file = 'meat-index.dcf'
 skipped_index_file = 'skipped-index.dcf'
+pkg_dep_graph_file = 'pkg_dep_graph.txt'
 
 #sys.path.append(os.path.join(BBS_home, "nodes"))
 import nodes.nodespecs

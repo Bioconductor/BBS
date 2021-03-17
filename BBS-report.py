@@ -1685,13 +1685,20 @@ no_alphabet_dispatch = arg1 == "no-alphabet-dispatch"
 
 print("BBS> [stage8] remake_dir %s" % report_path)
 bbs.fileutils.remake_dir(report_path)
+
 print("BBS> [stage8] cd %s/" % report_path)
 os.chdir(report_path)
-print("BBS> [stage8] get %s from %s/" % (BBSutils.meat_index_file, BBSvars.Central_rdir.label))
+
+print("BBS> [stage8] get %s from %s/" % \
+      (BBSutils.meat_index_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSutils.meat_index_file)
-print("BBS> [stage8] get %s from %s/" % (BBSutils.skipped_index_file, BBSvars.Central_rdir.label))
+
+print("BBS> [stage8] get %s from %s/" % \
+      (BBSutils.skipped_index_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSutils.skipped_index_file)
-print("BBS> [stage8] get %s from %s/" % (BBSreportutils.STATUS_DB_file, BBSvars.Central_rdir.label))
+
+print("BBS> [stage8] get %s from %s/" % \
+      (BBSreportutils.STATUS_DB_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
@@ -1706,6 +1713,19 @@ print("BBS> [stage8] Import package statuses from %s ..." % \
       BBSreportutils.STATUS_DB_file, end=" ")
 sys.stdout.flush()
 quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
+print("OK")
+sys.stdout.flush()
+
+### Compute direct reverse deps.
+node0 = BBSreportutils.NODES[0]
+Node0_rdir = BBSvars.nodes_rdir.subdir(node0.node_id)
+print("BBS> [stage8] get %s from %s/" % \
+      (BBSutils.pkg_dep_graph_file, Node0_rdir.label))
+Node0_rdir.Get(BBSutils.pkg_dep_graph_file)
+print("BBS> [stage8] Loading %s file ..." % \
+      BBSutils.pkg_dep_graph_file, end=" ")
+sys.stdout.flush()
+pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
 print("OK")
 sys.stdout.flush()
 

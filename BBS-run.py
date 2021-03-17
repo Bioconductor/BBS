@@ -211,17 +211,16 @@ def build_pkg_dep_graph(target_pkgs):
     script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
                                "build_pkg_dep_graph.R")
-    STAGE2_pkg_dep_graph_path = "pkg_dep_graph.txt"
     print("BBS> [build_pkg_dep_graph]", end=" ")
     print("Calling %s() defined in %s to generate file %s ..." % \
-          (Rfunction, script_path, STAGE2_pkg_dep_graph_path), end=" ")
+          (Rfunction, script_path, BBSutils.pkg_dep_graph_file), end=" ")
     # Backslashes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
     # contain backslashes.
     script_path2 = script_path.replace('\\', '/')
     target_pkgs_file2 = target_pkgs_file.replace('\\', '/')
-    STAGE2_pkg_dep_graph_path2 = STAGE2_pkg_dep_graph_path.replace('\\', '/')
+    STAGE2_pkg_dep_graph_path2 = BBSutils.pkg_dep_graph_file.replace('\\', '/')
     # Use short.list=TRUE for "smart STAGE2" i.e. to skip installation of
     # target packages not needed by another target package for build or check.
     #Rexpr = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
@@ -234,12 +233,12 @@ def build_pkg_dep_graph(target_pkgs):
 
     # Send files 'target_pkgs.txt' and 'pkg_dep_graph.txt' to central
     # build node.
-    BBSvars.Node_rdir.Put(STAGE2_pkg_dep_graph_path, True, True)
+    BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, True, True)
 
     # Load file 'pkg_dep_graph.txt'.
     print("BBS> [build_pkg_dep_graph] Loading %s file ..." % \
-          STAGE2_pkg_dep_graph_path, end=" ")
-    pkg_dep_graph = bbs.parse.load_pkg_dep_graph(STAGE2_pkg_dep_graph_path)
+          BBSutils.pkg_dep_graph_file, end=" ")
+    pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
     print("OK (%s pkgs and their deps loaded)" % len(pkg_dep_graph))
 
     print("BBS> [build_pkg_dep_graph] DONE.")
