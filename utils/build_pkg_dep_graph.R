@@ -1,6 +1,5 @@
 ### =========================================================================
-### Used at the beginning of STAGE2 to generate the STAGE2_pkg_deps_list.txt
-### file
+### Used at the beginning of STAGE2 to generate the pkg_dep_graph.txt file
 ### -------------------------------------------------------------------------
 
 
@@ -124,8 +123,7 @@
 ### list of deps) but not on its left side, that is, we don't generate an entry
 ### for them.
 ### Note that the generated file can be seen as a kind of simplified Makefile.
-make_STAGE2_pkg_deps_list <- function(target_pkgs_file, outfile="",
-                                      short.list=FALSE)
+build_pkg_dep_graph <- function(target_pkgs_file, outfile="", short.list=FALSE)
 {
     if (is.character(outfile)) {
         if (identical(outfile, "")) {
@@ -159,14 +157,14 @@ make_STAGE2_pkg_deps_list <- function(target_pkgs_file, outfile="",
                                                 fields="Suggests")
         pkgs <- union(target_pkgs, suggested_pkgs)
     }
-    STAGE2_pkg_deps_list <- .buildPkgDepsList(pkgs, available_pkgs)
+    pkg_dep_graph <- .buildPkgDepsList(pkgs, available_pkgs)
 
     ## Write the package deps list to the output file.
-    for (i in seq_along(STAGE2_pkg_deps_list)) {
-        deps <- STAGE2_pkg_deps_list[[i]]
+    for (i in seq_along(pkg_dep_graph)) {
+        deps <- pkg_dep_graph[[i]]
         if (is.null(deps))
             next
-        pkg <- names(STAGE2_pkg_deps_list)[[i]]
+        pkg <- names(pkg_dep_graph)[[i]]
         cat(pkg, ": ", paste0(deps, collapse=" "), "\n", sep="", file=outfile)
     }
 }

@@ -4,7 +4,7 @@
 ### -------------------------------------------------------------------------
 
 
-### Same as in make_STAGE2_pkg_deps_list.R
+### Same as in build_pkg_dep_graph.R
 .get_non_target_repos <- function()
 {
     non_target_repos <- readLines(Sys.getenv('BBS_NON_TARGET_REPOS_FILE'))

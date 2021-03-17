@@ -196,59 +196,59 @@ def waitForTargetRepoToBeReady():
 ## STAGE2: Update ALL packages and re-install target packages + dependencies.
 ##############################################################################
 
-def make_STAGE2_pkg_deps_list(target_pkgs):
-    # Make 'target_pkgs.txt' file.
+def build_pkg_dep_graph(target_pkgs):
+    # Generate 'target_pkgs.txt' file.
     target_pkgs_file = "target_pkgs.txt"
     out = open(target_pkgs_file, 'w')
     for pkg in target_pkgs:
         out.write("%s\n" % pkg)
     out.close()
-    print("BBS> [make_STAGE2_pkg_deps_list]", end=" ")
+    print("BBS> [build_pkg_dep_graph]", end=" ")
     print("%s pkgs written to %s" % (len(target_pkgs), target_pkgs_file))
 
-    # Make 'STAGE2_pkg_deps_list.txt' file.
-    Rfunction = "make_STAGE2_pkg_deps_list"
+    # Generate 'pkg_dep_graph.txt' file.
+    Rfunction = "build_pkg_dep_graph"
     script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
-                               "make_STAGE2_pkg_deps_list.R")
-    STAGE2_pkg_deps_list_path = "STAGE2_pkg_deps_list.txt"
-    print("BBS> [make_STAGE2_pkg_deps_list]", end=" ")
+                               "build_pkg_dep_graph.R")
+    STAGE2_pkg_dep_graph_path = "pkg_dep_graph.txt"
+    print("BBS> [build_pkg_dep_graph]", end=" ")
     print("Calling %s() defined in %s to make %s file ..." % \
-          (Rfunction, script_path, STAGE2_pkg_deps_list_path), end=" ")
+          (Rfunction, script_path, STAGE2_pkg_dep_graph_path), end=" ")
     # Backslashes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
     # contain backslashes.
     script_path2 = script_path.replace('\\', '/')
     target_pkgs_file2 = target_pkgs_file.replace('\\', '/')
-    STAGE2_pkg_deps_list_path2 = STAGE2_pkg_deps_list_path.replace('\\', '/')
+    STAGE2_pkg_dep_graph_path2 = STAGE2_pkg_dep_graph_path.replace('\\', '/')
     # Use short.list=TRUE for "smart STAGE2" i.e. to skip installation of
     # target packages not needed by another target package for build or check.
     #Rexpr = "source('%s');%s('%s',outfile='%s',short.list=TRUE)" % \
     Rexpr = "source('%s');%s('%s',outfile='%s')" % \
               (script_path2, Rfunction, target_pkgs_file2,
-               STAGE2_pkg_deps_list_path2)
+               STAGE2_pkg_dep_graph_path2)
     out_file = Rfunction + ".Rout"
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
     print("OK")
 
-    # Load 'STAGE2_pkg_deps_list.txt' file.
-    print("BBS> [make_STAGE2_pkg_deps_list] Loading %s file ..." % \
-          STAGE2_pkg_deps_list_path, end=" ")
-    f = open(STAGE2_pkg_deps_list_path, 'r')
-    pkg_deps_list = {}
+    # Load 'pkg_dep_graph.txt' file.
+    print("BBS> [build_pkg_dep_graph] Loading %s file ..." % \
+          STAGE2_pkg_dep_graph_path, end=" ")
+    f = open(STAGE2_pkg_dep_graph_path, 'r')
+    pkg_dep_graph = {}
     EMPTY_STRING = ''
     for line in f:
         (pkg, deps) = line.split(":")
         deps = deps.strip().split(" ")
         if EMPTY_STRING in deps:
             deps.remove(EMPTY_STRING)
-        pkg_deps_list[pkg] = deps
+        pkg_dep_graph[pkg] = deps
     f.close()
-    print("OK (%s pkgs and their deps loaded)" % len(pkg_deps_list))
+    print("OK (%s pkgs and their deps loaded)" % len(pkg_dep_graph))
 
-    print("BBS> [make_STAGE2_pkg_deps_list] DONE.")
-    return pkg_deps_list
+    print("BBS> [build_pkg_dep_graph] DONE.")
+    return pkg_dep_graph
 
 def get_installed_pkgs():
     installed_pkgs_path = "installed_pkgs.txt"
@@ -283,13 +283,13 @@ def get_installed_pkgs():
 #        f.write("GRAPHVIZ_INSTALL_SUBMINOR=%s\n" % graphviz_install_subminor)
 #        f.close()
 
-def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
+def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph, installed_pkgs):
     print("BBS> Preparing STAGE2 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'install'
     jobs = []
     nb_target_pkgs_in_queue = nb_skipped_pkgs = 0
-    for pkg in pkg_deps_list.keys():
+    for pkg in pkg_dep_graph.keys():
         version = None
         pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(None, pkgdumps_prefix)
@@ -333,7 +333,7 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list, installed_pkgs):
     print("BBS> |                               dep=FALSE, ...)")
     print("BBS> | Total nb of packages to install: %d" % nb_pkgs_to_install)
     print("BBS>")
-    job_queue = bbs.jobs.JobQueue(stage, jobs, pkg_deps_list)
+    job_queue = bbs.jobs.JobQueue(stage, jobs, pkg_dep_graph)
     job_queue._nb_pkgs_to_install = nb_pkgs_to_install
     return job_queue
 
@@ -402,8 +402,8 @@ def STAGE2():
     # Extract list of target packages.
     target_pkgs = extractTargetPkgListFromMeatIndex()
 
-    # Get 'pkg_deps_list' and 'installed_pkgs'.
-    pkg_deps_list = make_STAGE2_pkg_deps_list(target_pkgs)
+    # Get 'pkg_dep_graph' and 'installed_pkgs'.
+    pkg_dep_graph = build_pkg_dep_graph(target_pkgs)
     installed_pkgs = get_installed_pkgs()
 
     # Inject additional fields into DESCRIPTION.
@@ -428,7 +428,7 @@ def STAGE2():
     print("BBS> [STAGE2] Re-install supporting packages")
     os.chdir(meat_path)
     BBSvars.install_rdir.RemakeMe(True)
-    job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_deps_list,
+    job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
                                          installed_pkgs)
     STAGE2_loop(job_queue, BBSvars.nb_cpu)
 

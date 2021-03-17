@@ -11,7 +11,7 @@
     return(invisible(NULL))
 }
 
-### Same as in BBS/utils/make_STAGE2_pkg_deps_list.R and in
+### Same as in BBS/utils/build_pkg_dep_graph.R and in
 ### BBS/utils/installNonTargetPkg.R
 .get_non_target_repos <- function()
 {
