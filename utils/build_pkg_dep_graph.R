@@ -123,7 +123,8 @@
 ### list of deps) but not on its left side, that is, we don't generate an entry
 ### for them.
 ### Note that the generated file can be seen as a kind of simplified Makefile.
-build_pkg_dep_graph <- function(target_pkgs_file, outfile="", short.list=FALSE)
+.build_pkg_dep_graph <- function(target_pkgs_file, repos,
+                                 outfile="", short.list=FALSE)
 {
     if (is.character(outfile)) {
         if (identical(outfile, "")) {
@@ -139,8 +140,8 @@ build_pkg_dep_graph <- function(target_pkgs_file, outfile="", short.list=FALSE)
 
     ## Fetch the available *source* packages (we use type="source" even on
     ## Windows or Mac).
-    contrib_url <- contrib.url(.get_all_repos(), type="source")
-    available_pkgs <- available.packages(contrib_url)
+    contrib_urls <- contrib.url(repos, type="source")
+    available_pkgs <- available.packages(contrib_urls)
 
     ## Build the package deps list.
     if (short.list) {
@@ -167,5 +168,11 @@ build_pkg_dep_graph <- function(target_pkgs_file, outfile="", short.list=FALSE)
         pkg <- names(pkg_dep_graph)[[i]]
         cat(pkg, ": ", paste0(deps, collapse=" "), "\n", sep="", file=outfile)
     }
+}
+
+build_pkg_dep_graph <- function(target_pkgs_file, outfile="", short.list=FALSE)
+{
+    .build_pkg_dep_graph(target_pkgs_file, .get_all_repos(),
+                         outfile=outfile, short.list=short.list)
 }
 
