@@ -96,21 +96,6 @@
     as.list(buf)
 }
 
-### Same as in installNonTargetPkg.R
-.get_non_target_repos <- function()
-{
-    non_target_repos <- readLines(Sys.getenv('BBS_NON_TARGET_REPOS_FILE'))
-    gsub("BBS_BIOC_VERSION", Sys.getenv('BBS_BIOC_VERSION'),
-         non_target_repos, fixed=TRUE)
-}
-
-.get_all_repos <- function()
-{
-    target_repo <- Sys.getenv('BBS_CENTRAL_BASEURL')
-    non_target_repos <- .get_non_target_repos()
-    c(target_repo, non_target_repos)
-}
-
 ### Write the STAGE2 package list and their deps to a file in a "key: values"
 ### format with one line per key. For example:
 ###   pkg1: pkg1a pkg1b
@@ -168,6 +153,21 @@
         pkg <- names(pkg_dep_graph)[[i]]
         cat(pkg, ": ", paste0(deps, collapse=" "), "\n", sep="", file=outfile)
     }
+}
+
+### Same as in installNonTargetPkg.R
+.get_non_target_repos <- function()
+{
+    non_target_repos <- readLines(Sys.getenv('BBS_NON_TARGET_REPOS_FILE'))
+    gsub("BBS_BIOC_VERSION", Sys.getenv('BBS_BIOC_VERSION'),
+         non_target_repos, fixed=TRUE)
+}
+
+.get_all_repos <- function()
+{
+    target_repo <- Sys.getenv('BBS_CENTRAL_BASEURL')
+    non_target_repos <- .get_non_target_repos()
+    c(target_repo, non_target_repos)
 }
 
 build_pkg_dep_graph <- function(target_pkgs_file, outfile="", short.list=FALSE)

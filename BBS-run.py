@@ -197,7 +197,7 @@ def waitForTargetRepoToBeReady():
 ##############################################################################
 
 def build_pkg_dep_graph(target_pkgs):
-    # Generate 'target_pkgs.txt' file.
+    # Generate file 'target_pkgs.txt'.
     target_pkgs_file = "target_pkgs.txt"
     out = open(target_pkgs_file, 'w')
     for pkg in target_pkgs:
@@ -206,7 +206,7 @@ def build_pkg_dep_graph(target_pkgs):
     print("BBS> [build_pkg_dep_graph]", end=" ")
     print("%s pkgs written to %s" % (len(target_pkgs), target_pkgs_file))
 
-    # Generate 'pkg_dep_graph.txt' file.
+    # Generate file 'pkg_dep_graph.txt'.
     Rfunction = "build_pkg_dep_graph"
     script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
@@ -232,22 +232,14 @@ def build_pkg_dep_graph(target_pkgs):
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
     print("OK")
 
-    # Send 'pkg_dep_graph.txt' file to central build node.
+    # Send files 'target_pkgs.txt' and 'pkg_dep_graph.txt' to central
+    # build node.
     BBSvars.Node_rdir.Put(STAGE2_pkg_dep_graph_path, True, True)
 
-    # Load 'pkg_dep_graph.txt' file.
+    # Load file 'pkg_dep_graph.txt'.
     print("BBS> [build_pkg_dep_graph] Loading %s file ..." % \
           STAGE2_pkg_dep_graph_path, end=" ")
-    f = open(STAGE2_pkg_dep_graph_path, 'r')
-    pkg_dep_graph = {}
-    EMPTY_STRING = ''
-    for line in f:
-        (pkg, deps) = line.split(":")
-        deps = deps.strip().split(" ")
-        if EMPTY_STRING in deps:
-            deps.remove(EMPTY_STRING)
-        pkg_dep_graph[pkg] = deps
-    f.close()
+    pkg_dep_graph = bbs.parse.load_pkg_dep_graph(STAGE2_pkg_dep_graph_path)
     print("OK (%s pkgs and their deps loaded)" % len(pkg_dep_graph))
 
     print("BBS> [build_pkg_dep_graph] DONE.")

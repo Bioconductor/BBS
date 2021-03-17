@@ -424,6 +424,29 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
 
 
 ##############################################################################
+### Load package dep graph
+###
+
+def load_pkg_dep_graph(filepath):
+    if isinstance(filepath, str):
+        f = open(filepath, 'r')
+    else:
+        ## We assume 'filepath' is a file-like object that was opened
+        ## with open() or urllib.request.urlopen().
+        f = filepath
+    pkg_dep_graph = {}
+    EMPTY_STRING = ''
+    for line in f:
+        (pkg, deps) = line.split(":")
+        deps = deps.strip().split(" ")
+        if EMPTY_STRING in deps:
+            deps.remove(EMPTY_STRING)
+        pkg_dep_graph[pkg] = deps
+    f.close()
+    return pkg_dep_graph
+
+
+##############################################################################
 ### Some utilities for parsing the tail of install.packages(), 'R CMD build',
 ### and 'R CMD check' output.
 ###
