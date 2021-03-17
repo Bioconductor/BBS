@@ -213,7 +213,7 @@ def build_pkg_dep_graph(target_pkgs):
                                "build_pkg_dep_graph.R")
     STAGE2_pkg_dep_graph_path = "pkg_dep_graph.txt"
     print("BBS> [build_pkg_dep_graph]", end=" ")
-    print("Calling %s() defined in %s to make %s file ..." % \
+    print("Calling %s() defined in %s to generate file %s ..." % \
           (Rfunction, script_path, STAGE2_pkg_dep_graph_path), end=" ")
     # Backslashes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
