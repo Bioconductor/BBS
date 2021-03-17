@@ -232,6 +232,9 @@ def build_pkg_dep_graph(target_pkgs):
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
     print("OK")
 
+    # Send 'pkg_dep_graph.txt' file to central build node.
+    BBSvars.Node_rdir.Put(STAGE2_pkg_dep_graph_path, True, True)
+
     # Load 'pkg_dep_graph.txt' file.
     print("BBS> [build_pkg_dep_graph] Loading %s file ..." % \
           STAGE2_pkg_dep_graph_path, end=" ")
