@@ -647,7 +647,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     out.write('</TBODY>\n')
     return
 
-def write_gcard_list(out, allpkgs, quickstats=False,
+def write_gcard_list(out, allpkgs, quickstats=False, alphabet_dispatch=False,
                      leafreport_ref=None, topdir='.'):
     full_list = not leafreport_ref
     TABLEclasses = 'gcard_list'
@@ -668,7 +668,7 @@ def write_gcard_list(out, allpkgs, quickstats=False,
     for pkg in allpkgs:
         pkg_pos += 1
         if full_list:
-            if not no_alphabet_dispatch:
+            if alphabet_dispatch:
                 first_letter = pkg[0:1].upper()
                 if first_letter != current_letter:
                     current_letter = first_letter
@@ -1669,7 +1669,8 @@ def write_mainpage_asHTML(out, allpkgs):
     write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
     if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
-        write_gcard_list(out, allpkgs, quickstats=True)
+        write_gcard_list(out, allpkgs, quickstats=True,
+                         alphabet_dispatch=not no_alphabet_dispatch)
     else:
         write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs)
     out.write('</BODY>\n')
