@@ -630,16 +630,17 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             TDstyle = 'vertical-align: top;'
             out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
             if leafreport_ref == None:
-                topdir2 = None
-            else:
                 topdir2 = topdir
+            else:
+                topdir2 = None
             html = _pkgname_and_version_as_HTML(pkg, version, topdir2,
                                                 deprecated)
             out.write(html)
             out.write('<BR>%s' % maintainer)
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
                 out.write('<BR>')
-                write_vcs_meta_for_pkg_as_TABLE(out, pkg, leafreport_ref != None)
+                write_vcs_meta_for_pkg_as_TABLE(out, pkg,
+                                                leafreport_ref != None)
             out.write('</TD>')
         node_html = node.node_id
         if not toned_down:
