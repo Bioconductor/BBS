@@ -317,32 +317,37 @@ def _write_vertical_space(out):
     out.write('<TR class="vertical_space">%s</TR>\n' % TD_html)
     return
 
-def _pkgname_as_HTML(pkg):
+def _url_to_pkg_landing_page(pkg):
     subbuilds = BBSvars.subbuilds
     if subbuilds == "cran":
-        url = "https://cran.rstudio.com/package=%s" % pkg
-    else:
-        bioc_version = BBSvars.bioc_version
-        if subbuilds == "books":
-            url = "/books/%s/%s/" % (bioc_version, pkg)
-        else:
-            #if subbuilds == "data-annotation":
-            #    repo = "data/annotation"
-            #elif subbuilds == "data-experiment":
-            #    repo = "data/experiment"
-            #elif subbuilds == "workflows":
-            #    repo = "workflows"
-            #else:
-            #    repo = "bioc"
-            #url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
-            ## Use short URL:
-            url = "/packages/%s/%s" % (bioc_version, pkg)
-    return '<A href="%s">%s</A>' % (url, pkg)
+        return "https://cran.rstudio.com/package=%s" % pkg
+    bioc_version = BBSvars.bioc_version
+    if subbuilds == "books":
+        return "/books/%s/%s/" % (bioc_version, pkg)
+    #if subbuilds == "data-annotation":
+    #    repo = "data/annotation"
+    #elif subbuilds == "data-experiment":
+    #    repo = "data/experiment"
+    #elif subbuilds == "workflows":
+    #    repo = "workflows"
+    #else:
+    #    repo = "bioc"
+    #url = "/packages/%s/%s/html/%s.html" % (bioc_version, repo, pkg)
+    ## Use short URL:
+    url = "/packages/%s/%s" % (bioc_version, pkg)
+    return url
+
+def _pkgname_as_HTML(pkg):
+    #url = _url_to_pkg_landing_page(pkg)
+    #return '<A href="%s">%s</A>' % (url, pkg)
+    return pkg
 
 def _pkgname_and_version_as_HTML(pkg, version, deprecated=False):
     html = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg), version)
     if deprecated:
         html = '<s>%s</s>' % html
+    url = _url_to_pkg_landing_page(pkg)
+    html += '&nbsp;<I>(<A href="%s">landing page</A>)</I>' % url
     return html
 
 def _node_OS_Arch_as_SPAN(node):
@@ -584,7 +589,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     out.write('<TR class="header">')
     out.write('<TD class="leftmost top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
-    out.write('<TD style="width: 80px;">Hostname</TD>')
+    out.write('<TD style="width: 75px;">Hostname</TD>')
     out.write('<TD style="width: 225px;">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_as_TDs(out, leafreport_ref)
     out.write('<TD class="rightmost top_right_corner"></TD>')
@@ -862,8 +867,10 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps):
 
     if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
         out.write('<HR>\n')
-        out.write('<H3>Results for Bioconductor software packages ')
-        out.write('that depend directly on package %s</H3>\n' % pkg)
+        out.write('<H3 style="padding: 18px;">')
+        out.write('Results for Bioconductor software packages ')
+        out.write('that depend directly on package %s' % pkg)
+        out.write('</H3>\n')
         write_gcard_list(out, pkg_rev_deps, topdir='..')
 
     out.write('</BODY>\n')
