@@ -340,7 +340,7 @@ def _url_to_pkg_landing_page(pkg):
 def _pkgname_as_HTML(pkg, topdir=None):
     if topdir == None:
         return pkg
-    return '<A href="%/%s">%s</A>' % (topdir, pkg, pkg)
+    return '<A href="%s/%s/">%s</A>' % (topdir, pkg, pkg)
 
 def _pkgname_and_version_as_HTML(pkg, version, topdir=None, deprecated=False):
     html1 = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg, topdir), version)
