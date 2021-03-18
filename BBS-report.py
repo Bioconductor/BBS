@@ -337,13 +337,13 @@ def _url_to_pkg_landing_page(pkg):
     url = "/packages/%s/%s" % (bioc_version, pkg)
     return url
 
-def _pkgname_as_HTML(pkg, topdir=None):
-    if topdir == None:
+def _pkgname_as_HTML(pkg, pkgdir=None):
+    if pkgdir == None:
         return pkg
-    return '<A href="%s/%s/">%s</A>' % (topdir, pkg, pkg)
+    return '<A href="%s/">%s</A>' % (pkgdir, pkg)
 
-def _pkgname_and_version_as_HTML(pkg, version, topdir=None, deprecated=False):
-    html1 = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg, topdir), version)
+def _pkgname_and_version_as_HTML(pkg, version, pkgdir=None, deprecated=False):
+    html1 = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg, pkgdir), version)
     if deprecated:
         html1 = '<s>%s</s>' % html1
     url = _url_to_pkg_landing_page(pkg)
@@ -377,9 +377,9 @@ def _write_pkg_status_as_TD(out, pkg, node, stage,
         TDcontent = _status_as_glyph(status)
     else:
         if leafreport_ref != None:
-            pkgdir = "."
+            pkgdir = '.'
         else:
-            pkgdir = "%s/%s" % (topdir, pkg)
+            pkgdir = '%s/%s' % (topdir, pkg)
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
@@ -629,11 +629,13 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             deprecated = status == "Deprecated"
             TDstyle = 'vertical-align: top;'
             out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
-            if leafreport_ref == None or leafreport_ref.node_id != None:
-                topdir2 = topdir
+            if leafreport_ref == None:
+                pkgdir = '%s/%s' % (topdir, pkg)
+            elif leafreport_ref.node_id != None:
+                pkgdir = '.'
             else:
-                topdir2 = None
-            html = _pkgname_and_version_as_HTML(pkg, version, topdir2,
+                pkgdir = None
+            html = _pkgname_and_version_as_HTML(pkg, version, pkgdir,
                                                 deprecated)
             out.write(html)
             out.write('<BR>%s' % maintainer)
@@ -755,7 +757,8 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     else:
         version = status = maintainer = ''
     deprecated = status == "Deprecated"
-    out.write(_pkgname_and_version_as_HTML(pkg, version, '.', deprecated))
+    html = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
+    out.write(html)
     out.write('</TD>')
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
     write_pkg_statuses_as_TDs(out, pkg, node)
