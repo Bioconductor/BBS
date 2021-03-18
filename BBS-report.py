@@ -337,18 +337,20 @@ def _url_to_pkg_landing_page(pkg):
     url = "/packages/%s/%s" % (bioc_version, pkg)
     return url
 
-def _pkgname_as_HTML(pkg):
-    #url = _url_to_pkg_landing_page(pkg)
-    #return '<A href="%s">%s</A>' % (url, pkg)
-    return pkg
+def _pkgname_as_HTML(pkg, topdir=None):
+    if topdir == None:
+        return pkg
+    return '<A href="%/%s">%s</A>' % (topdir, pkg, pkg)
 
-def _pkgname_and_version_as_HTML(pkg, version, deprecated=False):
-    html = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg), version)
+def _pkgname_and_version_as_HTML(pkg, version, topdir=None, deprecated=False):
+    html1 = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg, topdir), version)
     if deprecated:
-        html = '<s>%s</s>' % html
+        html1 = '<s>%s</s>' % html1
     url = _url_to_pkg_landing_page(pkg)
-    html += '&nbsp;<I>(<A href="%s">landing page</A>)</I>' % url
-    return html
+    SPANcontent = '(<A href="%s">landing page</A>)' % url
+    SPANstyle = 'font-size: smaller; font-style: italic;'
+    html2 = '<SPAN style="%s">%s</SPAN>' % (SPANstyle, SPANcontent)
+    return '%s&nbsp;&nbsp;%s' % (html1, html2)
 
 def _node_OS_Arch_as_SPAN(node):
     return '<SPAN style="font-size: smaller;">%s&nbsp;/&nbsp;%s</SPAN>' % \
@@ -627,7 +629,13 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             deprecated = status == "Deprecated"
             TDstyle = 'vertical-align: top;'
             out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
-            out.write(_pkgname_and_version_as_HTML(pkg, version, deprecated))
+            if leafreport_ref == None:
+                topdir2 = None
+            else:
+                topdir2 = topdir
+            html = _pkgname_and_version_as_HTML(pkg, version, topdir2,
+                                                deprecated)
+            out.write(html)
             out.write('<BR>%s' % maintainer)
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
                 out.write('<BR>')
@@ -746,7 +754,7 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     else:
         version = status = maintainer = ''
     deprecated = status == "Deprecated"
-    out.write(_pkgname_and_version_as_HTML(pkg, version, deprecated))
+    out.write(_pkgname_and_version_as_HTML(pkg, version, '.', deprecated))
     out.write('</TD>')
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
     write_pkg_statuses_as_TDs(out, pkg, node)
