@@ -356,7 +356,8 @@ def _write_node_spec_as_TD(out, node, spec_html, selected=False):
     out.write('<TD class="%s">%s</TD>' % (TDclasses, spec_html))
     return
 
-def _write_pkg_status_as_TD(out, pkg, node, stage, leafreport_ref=None):
+def _write_pkg_status_as_TD(out, pkg, node, stage,
+                            leafreport_ref=None, topdir='.'):
     selected = leafreport_ref != None and \
                pkg == leafreport_ref.pkg and \
                node.node_id == leafreport_ref.node_id and \
@@ -371,7 +372,7 @@ def _write_pkg_status_as_TD(out, pkg, node, stage, leafreport_ref=None):
         if leafreport_ref != None:
             pkgdir = "."
         else:
-            pkgdir = pkg
+            pkgdir = "%s/%s" % (topdir, pkg)
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
         onmouseover = 'add_class_mouseover(this);'
         onmouseout = 'remove_class_mouseover(this);'
@@ -422,7 +423,8 @@ def write_pkg_propagation_status_as_TD(out, pkg, node):
               (node.hostname.replace(".", "_"), TDcontent))
     return
 
-def write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref=None):
+def write_pkg_statuses_as_TDs(out, pkg, node,
+                              leafreport_ref=None, topdir='.'):
     TDclasses = 'status %s' % node.hostname.replace(".", "_")
     subbuilds = BBSvars.subbuilds
     if pkg in skipped_pkgs:
@@ -440,7 +442,8 @@ def write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref=None):
     else:
         for stage in BBSreportutils.stages_to_display(subbuilds):
             if stage != 'buildbin' or BBSreportutils.is_doing_buildbin(node):
-                _write_pkg_status_as_TD(out, pkg, node, stage, leafreport_ref)
+                _write_pkg_status_as_TD(out, pkg, node, stage,
+                                        leafreport_ref, topdir)
             else:
                 out.write('<TD class="%s"></TD>' % TDclasses)
         if BBSreportutils.display_propagation_status(subbuilds):
@@ -575,7 +578,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
 ### When 'leafreport_ref' is specified, then a list of 1 gcard is generated.
 ### A non-compact gcard spans several table rows (TRs) grouped in a
 ### TBODY element.
-def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
                 pkg_statuses, pkg_status_classes):
     out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
     out.write('<TR class="header">')
@@ -630,7 +633,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
             node_html = '<B>%s</B>' % node_html
         _write_node_spec_as_TD(out, node, node_html, selected)
         _write_node_spec_as_TD(out, node, _node_OS_Arch_as_SPAN(node))
-        write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref)
+        write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref, topdir)
         if is_last:
             TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
         else:
@@ -644,7 +647,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
     out.write('</TBODY>\n')
     return
 
-def write_gcard_list(out, allpkgs, leafreport_ref=None):
+def write_gcard_list(out, allpkgs, leafreport_ref=None, topdir='.'):
     full_list = not leafreport_ref
     TABLEclasses = 'gcard_list'
     if full_list:
@@ -687,7 +690,7 @@ def write_gcard_list(out, allpkgs, leafreport_ref=None):
                 pkg_status_classes = statuses2classes(pkg_statuses)
         else:
             continue
-        write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref,
+        write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
                     pkg_statuses, pkg_status_classes)
     out.write('</TABLE>\n')
     return
@@ -854,13 +857,13 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps):
     write_motd_asTABLE(out)
 
     leafreport_ref = LeafReportReference(pkg, None, None, None)
-    write_gcard_list(out, allpkgs, leafreport_ref)
+    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
     if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
         out.write('<HR>\n')
         out.write('<H3>Results for Bioconductor software packages ')
-        out.write('that depend directly on %s</H3>\n' % page_title)
-        write_gcard_list(out, pkg_rev_deps)
+        out.write('that depend directly on package %s</H3>\n' % pkg)
+        write_gcard_list(out, pkg_rev_deps, topdir='..')
 
     out.write('</BODY>\n')
     out.write('</HTML>\n')
