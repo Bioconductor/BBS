@@ -857,7 +857,7 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
 
-    page_title = 'Results for package %s' % pkg
+    page_title = 'All results for package %s' % pkg
     out_rURL = os.path.join(pkg, 'index.html')
     out = open(out_rURL, 'w')
 
