@@ -26,6 +26,29 @@ import BBSreportutils
 
 
 ##############################################################################
+### get_inner_reverse_deps()
+##############################################################################
+
+### Only report reverse deps that are **within** 'pkgs'.
+def get_inner_reverse_deps(pkgs, pkg_dep_graph):
+    inner_rev_deps = {}
+    for pkg in pkgs:
+        inner_rev_deps[pkg] = []
+    for pkg in pkg_dep_graph.keys():
+        if pkg not in pkgs:
+            continue
+        pkg_direct_deps = pkg_dep_graph[pkg]
+        for pkg_direct_dep in pkg_direct_deps:
+            if pkg_direct_dep not in pkgs or \
+               pkg in inner_rev_deps[pkg_direct_dep]:
+                continue
+            inner_rev_deps[pkg_direct_dep].append(pkg)
+    for pkg in pkgs:
+        inner_rev_deps[pkg].sort(key=str.lower)
+    return inner_rev_deps
+
+
+##############################################################################
 ### write_vcs_meta_for_pkg_as_TABLE()
 ##############################################################################
 
@@ -809,7 +832,7 @@ def write_motd_asTABLE(out):
     out.write('</DIV>\n')
     return
 
-def make_MultiPlatformPkgIndexPage(pkg, allpkgs):
+def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
 
@@ -832,6 +855,12 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs):
 
     leafreport_ref = LeafReportReference(pkg, None, None, None)
     write_gcard_list(out, allpkgs, leafreport_ref)
+
+    if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
+        out.write('<HR>\n')
+        out.write('<H3>Results for Bioconductor software packages ')
+        out.write('that depend directly on %s</H3>\n' % page_title)
+        write_gcard_list(out, pkg_rev_deps)
 
     out.write('</BODY>\n')
     out.write('</HTML>\n')
@@ -1234,7 +1263,7 @@ def make_node_LeafReports(allpkgs, node):
     sys.stdout.flush()
     return
 
-def make_all_LeafReports(allpkgs):
+def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps):
     print("BBS> [make_all_LeafReports] Current working dir '%s'" % os.getcwd())
     print("BBS> [make_all_LeafReports] Creating report package subfolders " + \
           "and populating them with index.html files ...", end=" ")
@@ -1245,7 +1274,8 @@ def make_all_LeafReports(allpkgs):
         except:
             print("mkdir failed in make_all_LeaveReports '%s'" % pkg)
             continue
-        make_MultiPlatformPkgIndexPage(pkg, allpkgs)
+        pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
+        make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps)
     print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
@@ -1689,15 +1719,15 @@ bbs.fileutils.remake_dir(report_path)
 print("BBS> [stage8] cd %s/" % report_path)
 os.chdir(report_path)
 
-print("BBS> [stage8] get %s from %s/" % \
+print("BBS> [stage8] Get %s from %s/" % \
       (BBSutils.meat_index_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSutils.meat_index_file)
 
-print("BBS> [stage8] get %s from %s/" % \
+print("BBS> [stage8] Get %s from %s/" % \
       (BBSutils.skipped_index_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSutils.skipped_index_file)
 
-print("BBS> [stage8] get %s from %s/" % \
+print("BBS> [stage8] Get %s from %s/" % \
       (BBSreportutils.STATUS_DB_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
@@ -1716,10 +1746,10 @@ quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 
-### Compute direct reverse deps.
+### Load package dep graph.
 node0 = BBSreportutils.NODES[0]
 Node0_rdir = BBSvars.nodes_rdir.subdir(node0.node_id)
-print("BBS> [stage8] get %s from %s/" % \
+print("BBS> [stage8] Get %s from %s/" % \
       (BBSutils.pkg_dep_graph_file, Node0_rdir.label))
 Node0_rdir.Get(BBSutils.pkg_dep_graph_file)
 print("BBS> [stage8] Loading %s file ..." % \
@@ -1727,6 +1757,7 @@ print("BBS> [stage8] Loading %s file ..." % \
 sys.stdout.flush()
 pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
 print("OK")
+allpkgs_inner_rev_deps = get_inner_reverse_deps(allpkgs, pkg_dep_graph)
 sys.stdout.flush()
 
 if r_environ_user != None:
@@ -1752,7 +1783,7 @@ for color in ["Red", "Green", "Blue"]:
 
 print("BBS> [stage8] Will generate HTML report for nodes: %s" % report_nodes)
 if arg1 != "skip-leaf-reports":
-    make_all_LeafReports(allpkgs)
+    make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps)
 make_all_NodeReports(allpkgs)
 if BBSvars.subbuilds != "cran":
     make_BioC_MainReport(allpkgs)
