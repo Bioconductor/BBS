@@ -397,7 +397,7 @@ def write_pkg_stagelabels_as_TDs(out, leafreport_ref=None):
     for stage in BBSreportutils.stages_to_display(subbuilds):
         write_stagelabel_as_TD(out, stage, leafreport_ref)
     if BBSreportutils.display_propagation_status(subbuilds):
-        out.write('<TD style="width:12px;"></TD>')
+        out.write('<TD style="width: 12px;"></TD>')
     return
 
 def write_pkg_propagation_status_as_TD(out, pkg, node):
@@ -566,7 +566,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
             else:
                 write_quickstats_TD(out, node, stage)
         if BBSreportutils.display_propagation_status(subbuilds):
-            out.write('<TD style="width:12px;"></TD>')
+            out.write('<TD style="width: 12px;"></TD>')
         if is_last:
             out.write('<TD class="rightmost bottom_right_corner"></TD>')
         else:
@@ -585,7 +585,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     out.write('<TD class="leftmost top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD>Hostname</TD>')
-    out.write('<TD>OS&nbsp;/&nbsp;Arch</TD>')
+    out.write('<TD style="width: 220px;">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_as_TDs(out, leafreport_ref)
     out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
