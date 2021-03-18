@@ -629,7 +629,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             deprecated = status == "Deprecated"
             TDstyle = 'vertical-align: top;'
             out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
-            if leafreport_ref == None:
+            if leafreport_ref == None or leafreport_ref.node_id != None:
                 topdir2 = topdir
             else:
                 topdir2 = None
