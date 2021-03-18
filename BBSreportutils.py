@@ -335,3 +335,26 @@ def get_distinct_pkg_statuses(pkg, nodes=None):
                 statuses.append(status)
     return statuses
 
+
+##############################################################################
+### Used in mini reports for direct reverse deps
+##############################################################################
+
+### Only report reverse deps that are **within** 'pkgs'.
+def get_inner_reverse_deps(pkgs, pkg_dep_graph):
+    inner_rev_deps = {}
+    for pkg in pkgs:
+        inner_rev_deps[pkg] = []
+    for pkg in pkg_dep_graph.keys():
+        if pkg not in pkgs:
+            continue
+        pkg_direct_deps = pkg_dep_graph[pkg]
+        for pkg_direct_dep in pkg_direct_deps:
+            if pkg_direct_dep not in pkgs or \
+               pkg in inner_rev_deps[pkg_direct_dep]:
+                continue
+            inner_rev_deps[pkg_direct_dep].append(pkg)
+    for pkg in pkgs:
+        inner_rev_deps[pkg].sort(key=str.lower)
+    return inner_rev_deps
+

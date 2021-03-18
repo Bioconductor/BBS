@@ -26,29 +26,6 @@ import BBSreportutils
 
 
 ##############################################################################
-### get_inner_reverse_deps()
-##############################################################################
-
-### Only report reverse deps that are **within** 'pkgs'.
-def get_inner_reverse_deps(pkgs, pkg_dep_graph):
-    inner_rev_deps = {}
-    for pkg in pkgs:
-        inner_rev_deps[pkg] = []
-    for pkg in pkg_dep_graph.keys():
-        if pkg not in pkgs:
-            continue
-        pkg_direct_deps = pkg_dep_graph[pkg]
-        for pkg_direct_dep in pkg_direct_deps:
-            if pkg_direct_dep not in pkgs or \
-               pkg in inner_rev_deps[pkg_direct_dep]:
-                continue
-            inner_rev_deps[pkg_direct_dep].append(pkg)
-    for pkg in pkgs:
-        inner_rev_deps[pkg].sort(key=str.lower)
-    return inner_rev_deps
-
-
-##############################################################################
 ### write_vcs_meta_for_pkg_as_TABLE()
 ##############################################################################
 
@@ -510,7 +487,7 @@ def statuses2classes(statuses):
         classes = ["ok"]
     return ' '.join(classes)
 
-def write_quickstats_TD(out, node, stage):
+def write_quickstats_TD(out, quickstats, node, stage):
     stats = quickstats[node.node_id][stage]
     html = '<TABLE class="quickstats"><TR>'
     html += '<TD class="glyph %s">%d</TD>' % ("TIMEOUT", stats[0])
@@ -526,7 +503,7 @@ def write_quickstats_TD(out, node, stage):
     return
 
 ### The quick stats span several table rows (TRs).
-def write_quickstats(out, nb_pkgs, selected_node=None):
+def write_quickstats(out, quickstats, nb_pkgs, selected_node=None):
     out.write('<THEAD class="quickstats">\n')
     out.write('<TR class="header">')
     TDclass = 'leftmost top_left_corner'
@@ -571,7 +548,7 @@ def write_quickstats(out, nb_pkgs, selected_node=None):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD></TD>')
             else:
-                write_quickstats_TD(out, node, stage)
+                write_quickstats_TD(out, quickstats, node, stage)
         if BBSreportutils.display_propagation_status(subbuilds):
             out.write('<TD style="width: 12px;"></TD>')
         if is_last:
@@ -663,7 +640,8 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     out.write('</TBODY>\n')
     return
 
-def write_gcard_list(out, allpkgs, quickstats=False, alphabet_dispatch=False,
+def write_gcard_list(out, allpkgs, quickstats=None,
+                     alphabet_dispatch=False,
                      leafreport_ref=None, topdir='.'):
     full_list = not leafreport_ref
     TABLEclasses = 'gcard_list'
@@ -674,8 +652,8 @@ def write_gcard_list(out, allpkgs, quickstats=False, alphabet_dispatch=False,
         TABLEattrs = 'class="%s"' % TABLEclasses
     out.write('<TABLE %s>\n' % TABLEattrs)
     nb_pkgs = len(allpkgs)
-    if quickstats:
-        write_quickstats(out, nb_pkgs)
+    if quickstats != None:
+        write_quickstats(out, quickstats, nb_pkgs)
         out.write('<TBODY>\n')
         _write_vertical_space(out)
         out.write('</TBODY>\n')
@@ -771,21 +749,23 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
 ### results for a single node.
 ### Also, unlike write_gcard_list(), write_compact_gcard_list() always
 ### displays the full list (no 'leafreport_ref' argument).
-def write_compact_gcard_list(out, node, allpkgs):
+def write_compact_gcard_list(out, node, allpkgs, quickstats=None,
+                             alphabet_dispatch=False):
     nb_pkgs = len(allpkgs)
     TABLEclasses = 'compact gcard_list %s' % ' '.join(_get_all_show_classes())
     out.write('<TABLE class="%s" id="THE_BIG_GCARD_LIST">\n' % TABLEclasses)
-    write_quickstats(out, nb_pkgs, node.node_id)
+    if quickstats != None:
+        write_quickstats(out, quickstats, nb_pkgs, node.node_id)
     out.write('<TBODY>\n')
     _write_vertical_space(out)
     out.write('</TBODY>\n')
-    if no_alphabet_dispatch:
+    if not alphabet_dispatch:
         write_compact_gcard_header(out)
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
         pkg_pos += 1
-        if not no_alphabet_dispatch:
+        if alphabet_dispatch:
             first_letter = pkg[0:1].upper()
             if first_letter != current_letter:
                 current_letter = first_letter
@@ -1637,7 +1617,7 @@ def write_glyph_and_propagation_LED_table(out):
 ### Node-specific reports
 ##############################################################################
 
-def write_node_report(node, allpkgs):
+def write_node_report(node, allpkgs, quickstats):
     print("BBS> [write_node_report] Node %s: BEGIN ..." % node.node_id)
     sys.stdout.flush()
     node_index_file = '%s-index.html' % node.node_id
@@ -1658,7 +1638,9 @@ def write_node_report(node, allpkgs):
 
     write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
-    write_compact_gcard_list(out, node, allpkgs)
+    write_compact_gcard_list(out, node,
+                             allpkgs, quickstats=quickstats,
+                             alphabet_dispatch=not no_alphabet_dispatch)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -1666,10 +1648,10 @@ def write_node_report(node, allpkgs):
     sys.stdout.flush()
     return node_index_file
 
-def make_all_NodeReports(allpkgs):
+def make_all_NodeReports(allpkgs, quickstats):
     if len(BBSreportutils.NODES) != 1:
         for node in BBSreportutils.NODES:
-            write_node_report(node, allpkgs)
+            write_node_report(node, allpkgs, quickstats)
     return
 
 
@@ -1677,7 +1659,7 @@ def make_all_NodeReports(allpkgs):
 ### Main page (multiple platform report)
 ##############################################################################
 
-def write_mainpage_asHTML(out, allpkgs):
+def write_mainpage_asHTML(out, allpkgs, quickstats):
     if BBSvars.subbuilds != "cran":
         write_BioC_mainpage_top_asHTML(out)
     else: # "cran" subbuilds
@@ -1688,28 +1670,30 @@ def write_mainpage_asHTML(out, allpkgs):
     write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
     if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
-        write_gcard_list(out, allpkgs, quickstats=True,
+        write_gcard_list(out, allpkgs, quickstats=quickstats,
                          alphabet_dispatch=not no_alphabet_dispatch)
     else:
-        write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs)
+        write_compact_gcard_list(out, BBSreportutils.NODES[0],
+                         allpkgs, quickstats=quickstats,
+                         alphabet_dispatch=not no_alphabet_dispatch)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     return
 
-def make_BioC_MainReport(allpkgs):
+def make_BioC_MainReport(allpkgs, quickstats):
     print("BBS> [make_BioC_MainReport] BEGIN ...")
     sys.stdout.flush()
     out = open('index.html', 'w')
-    write_mainpage_asHTML(out, allpkgs)
+    write_mainpage_asHTML(out, allpkgs, quickstats)
     out.close()
     print("BBS> [make_BioC_MainReport] END.")
     sys.stdout.flush()
     return
 
-def make_CRAN_MainReport(allpkgs):
+def make_CRAN_MainReport(allpkgs, quickstats):
     print("BBS> [make_CRAN_MainReport] BEGIN ...")
     out = open('index.html', 'w')
-    write_mainpage_asHTML(out, allpkgs)
+    write_mainpage_asHTML(out, allpkgs, quickstats)
     out.close()
     print("BBS> [make_CRAN_MainReport] END.")
     sys.stdout.flush()
@@ -1766,7 +1750,7 @@ allpkgs.sort(key=str.lower)
 print("BBS> [stage8] Import package statuses from %s ..." % \
       BBSreportutils.STATUS_DB_file, end=" ")
 sys.stdout.flush()
-quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
+allpkgs_quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 
@@ -1781,7 +1765,8 @@ print("BBS> [stage8] Loading %s file ..." % \
 sys.stdout.flush()
 pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
 print("OK")
-allpkgs_inner_rev_deps = get_inner_reverse_deps(allpkgs, pkg_dep_graph)
+allpkgs_inner_rev_deps = BBSreportutils.get_inner_reverse_deps(allpkgs,
+                                                               pkg_dep_graph)
 sys.stdout.flush()
 
 if r_environ_user != None:
@@ -1808,11 +1793,11 @@ for color in ["Red", "Green", "Blue"]:
 print("BBS> [stage8] Will generate HTML report for nodes: %s" % report_nodes)
 if arg1 != "skip-leaf-reports":
     make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps)
-make_all_NodeReports(allpkgs)
+make_all_NodeReports(allpkgs, allpkgs_quickstats)
 if BBSvars.subbuilds != "cran":
-    make_BioC_MainReport(allpkgs)
+    make_BioC_MainReport(allpkgs, allpkgs_quickstats)
 else: # "cran" subbuilds
-    make_CRAN_MainReport(allpkgs)
+    make_CRAN_MainReport(allpkgs, allpkgs_quickstats)
 
 print("BBS> [stage8] DONE at %s." % time.asctime())
 
