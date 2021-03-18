@@ -858,12 +858,13 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps):
     write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
     if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
+        quickstats = BBreportutils.compute_quickstats(pkg_rev_deps)
         #out.write('<HR>\n')
         out.write('<H3 style="padding: 18px;">')
         out.write('Results for Bioconductor software packages ')
         out.write('that depend directly on package %s' % pkg)
         out.write('</H3>\n')
-        write_gcard_list(out, pkg_rev_deps, topdir='..')
+        write_gcard_list(out, pkg_rev_deps, quickstats=quickstats, topdir='..')
 
     out.write('</BODY>\n')
     out.write('</HTML>\n')

@@ -234,7 +234,6 @@ def _get_pkg_status_from_STATUS_DB(STATUS_DB, pkg, node_id, stage):
     return STATUS_DB[key]
 
 status_db = {}
-allpkgs_quickstats = {}
 
 def _set_pkg_status(pkg, node_id, stage, status):
     if pkg not in status_db:
@@ -271,6 +270,7 @@ def _update_quickstats(quickstats, node_id, stage, status):
 
 def import_STATUS_DB(allpkgs):
     STATUS_DB = bbs.parse.parse_DCF(STATUS_DB_file, merge_records=True)
+    allpkgs_quickstats = {}
     for pkg in allpkgs:
         for node in supported_nodes(pkg):
             # INSTALL status
@@ -360,4 +360,36 @@ def get_inner_reverse_deps(pkgs, pkg_dep_graph):
     for pkg in pkgs:
         inner_rev_deps[pkg].sort(key=str.lower)
     return inner_rev_deps
+
+def compute_quickstats(pkgs):
+    quickstats = {}
+    for pkg in pkgs:
+        for node in supported_nodes(pkg):
+            # INSTALL status
+            if BBSvars.subbuilds != "bioc-longtests":
+                stage = 'install'
+                status = get_pkg_status(pkg, node.node_id, stage)
+                _update_quickstats(quickstats, node.node_id, stage, status)
+            # BUILD status
+            stage = 'buildsrc'
+            status = get_pkg_status(pkg, node.node_id, stage)
+            _update_quickstats(quickstats, node.node_id, stage, status)
+            skipped_is_OK = status in ["TIMEOUT", "ERROR"]
+            # CHECK status
+            if BBSvars.subbuilds not in ["workflows", "books"]:
+                stage = 'checksrc'
+                if skipped_is_OK:
+                    status = "skipped"
+                else:
+                    status = get_pkg_status(pkg, node.node_id, stage)
+                _update_quickstats(quickstats, node.node_id, stage, status)
+            # BUILD BIN status
+            if is_doing_buildbin(node):
+                stage = 'buildbin'
+                if skipped_is_OK:
+                    status = "skipped"
+                else:
+                    status = get_pkg_status(pkg, node.node_id, stage)
+                _update_quickstats(quickstats, node.node_id, stage, status)
+    return quickstats
 
