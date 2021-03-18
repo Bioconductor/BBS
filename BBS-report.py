@@ -1198,7 +1198,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('</TD></TR></TABLE>\n')
         out.write('</DIV>\n')
 
-    write_gcard_list(out, allpkgs, leafreport_ref)
+    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
