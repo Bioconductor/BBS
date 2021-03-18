@@ -503,7 +503,7 @@ def write_quickstats_TD(out, quickstats, node, stage):
     return
 
 ### The quick stats span several table rows (TRs).
-def write_quickstats(out, quickstats, nb_pkgs, selected_node=None):
+def write_quickstats(out, quickstats, no_links, selected_node=None):
     out.write('<THEAD class="quickstats">\n')
     out.write('<TR class="header">')
     TDclass = 'leftmost top_left_corner'
@@ -532,7 +532,7 @@ def write_quickstats(out, quickstats, nb_pkgs, selected_node=None):
         node_html = node.node_id
         if not toned_down:
             node_html = '<B>%s</B>' % node_html
-        if nb_nodes != 1:
+        if not no_links and nb_nodes != 1 and not selected:
             node_index_file = '%s-index.html' % node.node_id
             node_html = '<A href="%s">%s</A>' % (node_index_file, node_html)
         if is_last:
@@ -640,7 +640,8 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     out.write('</TBODY>\n')
     return
 
-def write_gcard_list(out, allpkgs, quickstats=None,
+def write_gcard_list(out, allpkgs,
+                     quickstats=None, no_quickstats_links=False,
                      alphabet_dispatch=False,
                      leafreport_ref=None, topdir='.'):
     full_list = not leafreport_ref
@@ -653,7 +654,7 @@ def write_gcard_list(out, allpkgs, quickstats=None,
     out.write('<TABLE %s>\n' % TABLEattrs)
     nb_pkgs = len(allpkgs)
     if quickstats != None:
-        write_quickstats(out, quickstats, nb_pkgs)
+        write_quickstats(out, quickstats, no_quickstats_links)
         out.write('<TBODY>\n')
         _write_vertical_space(out)
         out.write('</TBODY>\n')
@@ -749,13 +750,14 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
 ### results for a single node.
 ### Also, unlike write_gcard_list(), write_compact_gcard_list() always
 ### displays the full list (no 'leafreport_ref' argument).
-def write_compact_gcard_list(out, node, allpkgs, quickstats=None,
+def write_compact_gcard_list(out, node, allpkgs,
+                             quickstats=None, no_quickstats_links=False,
                              alphabet_dispatch=False):
     nb_pkgs = len(allpkgs)
     TABLEclasses = 'compact gcard_list %s' % ' '.join(_get_all_show_classes())
     out.write('<TABLE class="%s" id="THE_BIG_GCARD_LIST">\n' % TABLEclasses)
     if quickstats != None:
-        write_quickstats(out, quickstats, nb_pkgs, node.node_id)
+        write_quickstats(out, quickstats, no_quickstats_links, node.node_id)
     out.write('<TBODY>\n')
     _write_vertical_space(out)
     out.write('</TBODY>\n')
@@ -859,12 +861,13 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps):
 
     if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
         quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
-        #out.write('<HR>\n')
         out.write('<H3 style="padding: 18px;">')
         out.write('Results for Bioconductor software packages ')
         out.write('that depend directly on package %s' % pkg)
         out.write('</H3>\n')
-        write_gcard_list(out, pkg_rev_deps, quickstats=quickstats, topdir='..')
+        write_gcard_list(out, pkg_rev_deps,
+                         quickstats=quickstats, no_quickstats_links=True,
+                         topdir='..')
 
     out.write('</BODY>\n')
     out.write('</HTML>\n')
