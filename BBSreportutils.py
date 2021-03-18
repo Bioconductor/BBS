@@ -243,12 +243,16 @@ def _set_pkg_status(pkg, node_id, stage, status):
     status_db[pkg][node_id][stage] = status
     return
 
+def _zero_quickstats():
+    quickstats = {}
+    for node in NODES:
+        quickstats[node.node_id] = { 'install':     (0, 0, 0, 0, 0), \
+                                     'buildsrc':    (0, 0, 0, 0, 0), \
+                                     'checksrc':    (0, 0, 0, 0, 0), \
+                                     'buildbin':    (0, 0, 0, 0, 0) }
+    return quickstats
+
 def _update_quickstats(quickstats, node_id, stage, status):
-    if node_id not in quickstats:
-        quickstats[node_id] = { 'install':     (0, 0, 0, 0, 0), \
-                                'buildsrc':    (0, 0, 0, 0, 0), \
-                                'checksrc':    (0, 0, 0, 0, 0), \
-                                'buildbin':    (0, 0, 0, 0, 0) }
     x = quickstats[node_id][stage]
     x0 = x[0]
     x1 = x[1]
@@ -270,7 +274,7 @@ def _update_quickstats(quickstats, node_id, stage, status):
 
 def import_STATUS_DB(allpkgs):
     STATUS_DB = bbs.parse.parse_DCF(STATUS_DB_file, merge_records=True)
-    allpkgs_quickstats = {}
+    allpkgs_quickstats = _zero_quickstats()
     for pkg in allpkgs:
         for node in supported_nodes(pkg):
             # INSTALL status
@@ -362,7 +366,7 @@ def get_inner_reverse_deps(pkgs, pkg_dep_graph):
     return inner_rev_deps
 
 def compute_quickstats(pkgs):
-    quickstats = {}
+    quickstats = _zero_quickstats()
     for pkg in pkgs:
         for node in supported_nodes(pkg):
             # INSTALL status
