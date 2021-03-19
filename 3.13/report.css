@@ -440,12 +440,12 @@ TABLE.abc_dispatcher TD {
 /* malbec1 (Ubuntu 18.04) */
 .malbec1,
 .gcard TD.malbec1 {
-    background: #BDF;
+    background: #CADCFA;
 }
 .malbec1.toned_down,
 TR.toned_down .malbec1,
 TBODY.compact.gcard TR.even_row_number .malbec1 {
-    background: #ACE;
+    background: #BACCEA;
 }
 
 /* malbec2 (Ubuntu 20.04) */
@@ -484,12 +484,12 @@ TBODY.compact.gcard TR.even_row_number .rex3 {
 /* tokay1 */
 .tokay1,
 .gcard TD.tokay1 {
-    background: #EDC;
+    background: #EEE4CC;
 }
 .tokay1.toned_down,
 TR.toned_down .tokay1,
 TBODY.compact.gcard TR.even_row_number .tokay1 {
-    background: #DCB;
+    background: #DDD3BB;
 }
 
 /* tokay2 */
@@ -517,12 +517,12 @@ TBODY.compact.gcard TR.even_row_number .riesling1 {
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
-    background: #D8CCEE;
+    background: #ECE6FA;
 }
 .merida1.toned_down,
 TR.toned_down .merida1,
 TBODY.compact.gcard TR.even_row_number .merida1 {
-    background: #C8BBDD;
+    background: #DCD6EA;
 }
 
 /* machv2 */
