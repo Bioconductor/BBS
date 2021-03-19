@@ -358,6 +358,7 @@ def STAGE2():
     # not finish on the main node, in which case we want to wait before we
     # sync the local meat dir with the central MEAT0 dir).
     waitForTargetRepoToBeReady()
+    BBSvars.install_rdir.RemakeMe(True)
 
     meat_path = BBSvars.meat_path
     BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
@@ -421,7 +422,6 @@ def STAGE2():
     # Then re-install the supporting packages.
     print("BBS> [STAGE2] Re-install supporting packages")
     os.chdir(meat_path)
-    BBSvars.install_rdir.RemakeMe(True)
     job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
                                          installed_pkgs)
     STAGE2_loop(job_queue, BBSvars.nb_cpu)
