@@ -34,16 +34,6 @@ cd "$wd0"
 
 # Needed only on the node performing stage6 (must be run on the
 # BBS_CENTRAL_RHOST machine).
-#
-
-# If you are NOT using a bi-arch builder (i.e. moscato1 or moscato2) to
-# create your Windows build products, the following note applies:
-
-# IMPORTANT NOTE: The win.binary mapping must either include the 2
-# Windows nodes (win32 and win64) or not be present at all. Temporarily
-# dropping a Windows node will allow some single-arch Windows binary
-# packages to propagate and to later not be replaced by the bi-arch when
-# the dropped node is back.
 
 export BBS_OUTGOING_MAP="source:malbec1/buildsrc win.binary:tokay1/buildbin mac.binary:merida1/buildbin"
 
