@@ -30,7 +30,7 @@ export BBS_NON_TARGET_REPOS_FILE="$BBS_HOME/$BBS_BIOC_VERSIONED_REPO_PATH/non_ta
 
 export BBS_CENTRAL_RUSER="biocbuild"
 export BBS_CENTRAL_RDIR="/home/biocbuild/public_html/BBS/$BBS_BIOC_VERSIONED_REPO_PATH"
-export BBS_CENTRAL_BASEURL="https://$BBS_CENTRAL_RHOST/BBS/$BBS_BIOC_VERSIONED_REPO_PATH"
+export BBS_CENTRAL_BASEURL="http://$BBS_CENTRAL_RHOST/BBS/$BBS_BIOC_VERSIONED_REPO_PATH"
 
 
 # Define some environment variables to control the behavior of R
