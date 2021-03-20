@@ -14,6 +14,11 @@ set BBS_NB_CPU=4
 
 set BBS_STAGE4_MODE=multiarch
 
+@rem We use malbec1 internal IP address (DMZ-IP)
+set BBS_CENTRAL_RHOST=172.29.0.3
+set BBS_MEAT0_RHOST=172.29.0.3
+set BBS_GITLOG_RHOST=172.29.0.3
+
 
 
 @rem Shared settings (by all Windows nodes)

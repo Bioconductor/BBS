@@ -16,6 +16,10 @@ export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.12-bioc-longtests"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Versions/Current/Resources"
 export BBS_NB_CPU=4  # 24 cores are available
 
+export BBS_CENTRAL_RHOST="malbec1.roswellpark.org"
+export BBS_MEAT0_RHOST="malbec1.roswellpark.org"
+export BBS_GITLOG_RHOST="malbec1.roswellpark.org"
+
 
 
 # Shared settings (by all Unix nodes).
@@ -24,4 +28,3 @@ wd0=$(pwd)
 cd ..
 . ./config.sh
 cd "$wd0"
-

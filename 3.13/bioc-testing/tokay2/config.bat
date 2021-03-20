@@ -17,9 +17,10 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
-set BBS_CENTRAL_RHOST=malbec2.bioconductor.org
-set BBS_MEAT0_RHOST=malbec2.bioconductor.org
-set BBS_GITLOG_RHOST=malbec2.bioconductor.org
+@rem We use malbec2 internal IP address (DMZ-IP)
+set BBS_CENTRAL_RHOST=172.29.0.4
+set BBS_MEAT0_RHOST=172.29.0.4
+set BBS_GITLOG_RHOST=172.29.0.4
 
 
 
