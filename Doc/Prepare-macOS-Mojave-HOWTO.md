@@ -670,8 +670,8 @@ machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
 
 #### Check that you can ssh to the central build node
 
-    ssh -i .BBS/id_rsa malbec2                   # from within RPCI's DMZ
-    ssh -i .BBS/id_rsa malbec2.bioconductor.org  # from anywhere else
+    ssh -i ~/.BBS/id_rsa malbec2                   # from within RPCI's DMZ
+    ssh -i ~/.BBS/id_rsa malbec2.bioconductor.org  # from anywhere else
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
