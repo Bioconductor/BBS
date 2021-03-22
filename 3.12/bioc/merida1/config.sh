@@ -17,9 +17,9 @@ export BBS_R_HOME="/Library/Frameworks/R.framework/Versions/Current/Resources"
 export BBS_NB_CPU=14        # 24 cores are available
 export BBS_CHECK_NB_CPU=16  # 24 cores are available
 
-export BBS_CENTRAL_RHOST="malbec1.roswellpark.org"
-export BBS_MEAT0_RHOST="malbec1.roswellpark.org"
-export BBS_GITLOG_RHOST="malbec1.roswellpark.org"
+export BBS_CENTRAL_RHOST="malbec1.bioconductor.org"
+export BBS_MEAT0_RHOST="malbec1.bioconductor.org"
+export BBS_GITLOG_RHOST="malbec1.bioconductor.org"
 
 
 
