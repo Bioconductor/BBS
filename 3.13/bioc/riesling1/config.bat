@@ -20,6 +20,7 @@ set BBS_STAGE5_MODE=multiarch
 set BBS_CENTRAL_RHOST=nebbiolo1
 set BBS_SSH_CONFIG_FILE=D:\\biocbuild\\.ssh\\config
 set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -F %BBS_SSH_CONFIG_FILE%
+set BBS_CENTRAL_ROOT_URL=http://155.52.207.165
 
 
 

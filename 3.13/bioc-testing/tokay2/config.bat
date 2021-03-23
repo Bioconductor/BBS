@@ -16,14 +16,11 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
-@rem Central build node is malbec2 at RPCI. We use its internal IP
-@rem address (DMZ-IP).
-set BBS_CENTRAL_RHOST=172.29.0.4
-
-@rem When used with StrictHostKeyChecking=no, ssh will automatically add new
-@rem host keys to the user known hosts files (so it doesn't get stalled waiting
-@rem for an answer when not run interactively).
-set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -qi C:\Users\bioctesting\.BBS\id_rsa -o UserKnownHostsFile=C:\Users\bioctesting\.BBS\known_hosts -o StrictHostKeyChecking=no
+@rem Central build node is malbec2 at RPCI.
+set BBS_CENTRAL_RHOST=malbec2
+set BBS_SSH_CONFIG_FILE=C:\\Users\\bioctesting\\.ssh\\config
+set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -F %BBS_SSH_CONFIG_FILE%
+set BBS_CENTRAL_ROOT_URL=http://172.29.0.4
 
 
 

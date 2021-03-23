@@ -23,6 +23,8 @@ export BBS_CENTRAL_RHOST="155.52.173.35"
 # for an answer when not run interactively).
 export BBS_RSH_CMD="/usr/bin/ssh -qi /Users/biocbuild/.BBS/id_rsa -o StrictHostKeyChecking=no -J biocbuild@ada.dfci.harvard.edu"
 
+export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
+
 
 
 # Shared settings (by all Unix nodes).

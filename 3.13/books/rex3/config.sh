@@ -16,6 +16,7 @@ export BBS_R_HOME="/home/biocbuild/bbs-3.13-bioc/R"
 export BBS_NB_CPU=15  # 80 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
+export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
 
 
 

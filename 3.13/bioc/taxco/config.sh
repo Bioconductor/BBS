@@ -17,6 +17,7 @@ export BBS_NB_CPU=7        # 8 cores are available
 export BBS_CHECK_NB_CPU=7  # 8 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
+export BBS_CENTRAL_ROOT_URL="file:/Users/biocbuild/public_html"
 
 
 
@@ -32,7 +33,6 @@ cd "$wd0"
 export BBS_MEAT0_RDIR="/Users/biocbuild/bbs-3.13-bioc/MEAT0"
 export BBS_CENTRAL_RDIR="/Users/biocbuild/public_html/BBS/$BBS_BIOC_VERSIONED_REPO_PATH"
 export BBS_GITLOG_RDIR="$BBS_CENTRAL_RDIR/gitlog"
-export BBS_CENTRAL_BASEURL="file:/Users/biocbuild/public_html/BBS/$BBS_BIOC_VERSIONED_REPO_PATH"
 
 
 # Needed only on the node performing stage6 (must be run on the

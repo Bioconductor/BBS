@@ -17,6 +17,7 @@ export BBS_NB_CPU=11        # 20 cores are available
 export BBS_CHECK_NB_CPU=15  # 20 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
+export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
 
 
 
