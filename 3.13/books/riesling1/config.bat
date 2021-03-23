@@ -15,7 +15,7 @@ set BBS_STAGE2_MODE=multiarch
 
 @rem Central build node is malbec2 at RPCI.
 set BBS_CENTRAL_RHOST=malbec2
-set BBS_SSH_CONFIG_FILE=D:\biocbuild\.ssh\config
+set BBS_SSH_CONFIG_FILE=D:\\biocbuild\\.ssh\\config
 set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -F %BBS_SSH_CONFIG_FILE%
 
 

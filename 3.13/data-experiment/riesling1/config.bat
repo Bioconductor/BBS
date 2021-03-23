@@ -18,7 +18,7 @@ set BBS_STAGE5_MODE=multiarch
 
 @rem Central build node is rex3 at BHW.
 set BBS_CENTRAL_RHOST=rex3
-set BBS_SSH_CONFIG_FILE=D:\biocbuild\.ssh\config
+set BBS_SSH_CONFIG_FILE=D:\\biocbuild\\.ssh\\config
 set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -F %BBS_SSH_CONFIG_FILE%
 
 @rem Source tarballs produced during STAGE3 are BIG and won't be propagated
