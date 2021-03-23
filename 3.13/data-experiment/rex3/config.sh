@@ -11,15 +11,12 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="rex3"
 export BBS_USER="biocbuild"
-export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.13-data-experiment"
 export BBS_R_HOME="/home/biocbuild/bbs-3.13-bioc/R"
 export BBS_NB_CPU=15        # 80 cores are available
 export BBS_CHECK_NB_CPU=20  # 80 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
-export BBS_MEAT0_RHOST="localhost"
-export BBS_GITLOG_RHOST="localhost"
 
 
 

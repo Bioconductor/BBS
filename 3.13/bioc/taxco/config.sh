@@ -11,15 +11,12 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="taxco"
 export BBS_USER="biocbuild"
-export BBS_RSAKEY="/Users/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.13-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Versions/Current/Resources"
 export BBS_NB_CPU=7        # 8 cores are available
 export BBS_CHECK_NB_CPU=7  # 8 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
-export BBS_MEAT0_RHOST="localhost"
-export BBS_GITLOG_RHOST="localhost"
 
 
 

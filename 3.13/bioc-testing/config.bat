@@ -27,6 +27,7 @@ set BBS_BIOC_MANIFEST_CLONE_PATH=%BBS_WORK_TOPDIR%\manifest
 set BBS_BIOC_MANIFEST_FILE=software-testing.txt
 
 @rem Where is the fresh meat to be stored by prerun (stage1)
+set BBS_MEAT0_RHOST=%BBS_CENTRAL_RHOST%
 set BBS_MEAT0_RUSER=%BBS_CENTRAL_RUSER%
 set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.13-bioc-testing/MEAT0
 
@@ -37,6 +38,7 @@ set BBS_UPDATE_MEAT0=1
 set BBS_MEAT_PATH=%BBS_WORK_TOPDIR%\meat
 
 @rem Where are the gitlog files stored by prerun (stage1)
+set BBS_GITLOG_RHOST=%BBS_CENTRAL_RHOST%
 set BBS_GITLOG_RUSER=%BBS_CENTRAL_RUSER%
 set BBS_GITLOG_RDIR=%BBS_CENTRAL_RDIR%/gitlog
 

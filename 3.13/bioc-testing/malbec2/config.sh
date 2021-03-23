@@ -11,7 +11,6 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="malbec2"
 export BBS_USER="biocbuild"
-export BBS_RSAKEY="/home/biocbuild/.BBS/id_rsa"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.13-bioc-testing"
 # We use the same R instance that is used for the nightly software
 # subbuilds (because it's convenient) but we don't want the bioc-testing
@@ -29,8 +28,6 @@ export BBS_NB_CPU=2        # 20 cores are available
 export BBS_CHECK_NB_CPU=4  # 20 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
-export BBS_MEAT0_RHOST="localhost"
-export BBS_GITLOG_RHOST="localhost"
 
 
 

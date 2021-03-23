@@ -7,7 +7,6 @@ set BBS_DEBUG=0
 
 set BBS_NODE_HOSTNAME=riesling1
 set BBS_USER=biocbuild
-set BBS_RSAKEY=D:\biocbuild\.BBS\id_rsa
 set BBS_WORK_TOPDIR=D:\biocbuild\bbs-3.13-data-experiment
 set BBS_R_HOME=D:\biocbuild\bbs-3.13-bioc\R
 set BBS_NB_CPU=12
@@ -17,10 +16,13 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
-@rem rex3 is not in the DNS so we use its IP address
+@rem Central build node is rex3 at BHW.
 set BBS_CENTRAL_RHOST=155.52.173.35
-set BBS_MEAT0_RHOST=155.52.173.35
-set BBS_GITLOG_RHOST=155.52.173.35
+
+@rem When used with StrictHostKeyChecking=no, ssh will automatically add new
+@rem host keys to the user known hosts files (so it doesn't get stalled waiting
+@rem for an answer when not run interactively).
+set BBS_SSH_CMD=C:\cygwin\bin\ssh.exe -qi D:\biocbuild\.BBS\id_rsa -o StrictHostKeyChecking=no
 
 @rem Source tarballs produced during STAGE3 are BIG and won't be propagated
 @rem so we don't need to push them to the central builder.

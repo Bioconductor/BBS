@@ -28,7 +28,8 @@ export BBS_BIOC_MANIFEST_CLONE_PATH="$BBS_WORK_TOPDIR/manifest"
 export BBS_BIOC_MANIFEST_FILE="data-annotation.txt"
 
 # Where is the fresh meat to be stored by prerun (stage1)
-export BBS_MEAT0_RUSER=$BBS_CENTRAL_RUSER
+export BBS_MEAT0_RHOST="$BBS_CENTRAL_RHOST"
+export BBS_MEAT0_RUSER="$BBS_CENTRAL_RUSER"
 export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.13-data-annotation/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
@@ -38,7 +39,8 @@ export BBS_UPDATE_MEAT0=1
 export BBS_MEAT_PATH="$BBS_WORK_TOPDIR/meat"
 
 # Where are the gitlog files stored by prerun (stage1)
-export BBS_GITLOG_RUSER=$BBS_CENTRAL_RUSER
+export BBS_GITLOG_RHOST="$BBS_CENTRAL_RHOST"
+export BBS_GITLOG_RUSER="$BBS_CENTRAL_RUSER"
 export BBS_GITLOG_RDIR="$BBS_CENTRAL_RDIR/gitlog"
 
 # Local gitlog copy
