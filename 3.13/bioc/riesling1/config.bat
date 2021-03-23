@@ -16,14 +16,10 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
-@rem Central build node is nebbiolo1 at DFCI (ssh connections must be made via
-@rem jump host ada.dfci.harvard.edu, see BBS_RSH_CMD below).
-set BBS_CENTRAL_RHOST=155.52.47.135
-
-@rem When used with StrictHostKeyChecking=no, ssh will automatically add new
-@rem host keys to the user known hosts files (so it doesn't get stalled waiting
-@rem for an answer when not run interactively).
-set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -qi D:\biocbuild\.BBS\id_rsa -o StrictHostKeyChecking=no -J biocbuild@ada.dfci.harvard.edu
+@rem Central build node is nebbiolo1 at DFCI.
+set BBS_CENTRAL_RHOST=nebbiolo1
+set BBS_SSH_CONFIG_FILE=D:\biocbuild\.ssh\config
+set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -F %BBS_SSH_CONFIG_FILE%
 
 
 

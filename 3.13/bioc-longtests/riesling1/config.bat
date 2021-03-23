@@ -14,12 +14,9 @@ set BBS_NB_CPU=10
 set BBS_STAGE4_MODE=multiarch
 
 @rem Central build node is rex3 at BHW.
-set BBS_CENTRAL_RHOST=155.52.173.35
-
-@rem When used with StrictHostKeyChecking=no, ssh will automatically add new
-@rem host keys to the user known hosts files (so it doesn't get stalled waiting
-@rem for an answer when not run interactively).
-set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -qi D:\biocbuild\.BBS\id_rsa -o StrictHostKeyChecking=no
+set BBS_CENTRAL_RHOST=rex3
+set BBS_SSH_CONFIG_FILE=D:\biocbuild\.ssh\config
+set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -F %BBS_SSH_CONFIG_FILE%
 
 
 
