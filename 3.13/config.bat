@@ -9,7 +9,7 @@
 call ..\nodes\%BBS_NODE_HOSTNAME%\local-settings.bat
 
 set BBS_RSYNC_CMD=%BBS_RSYNC_CMD% -r --delete --exclude='.svn' --exclude='.git' --exclude='.github' --exclude='.git_*'
-set BBS_RSYNC_RSH_CMD=%BBS_RSYNC_CMD% --rsh '%BBS_RSH_OPTION%'
+set BBS_RSYNC_RSH_CMD=%BBS_RSYNC_CMD% --rsh '%BBS_RSH_CMD%'
 
 set BBS_R_CMD=%BBS_R_HOME%\bin\R.exe
 set BBS_RSCRIPT_CMD=%BBS_R_HOME%\bin\Rscript.exe

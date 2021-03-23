@@ -22,7 +22,7 @@ set BBS_CENTRAL_RHOST=155.52.173.35
 @rem When used with StrictHostKeyChecking=no, ssh will automatically add new
 @rem host keys to the user known hosts files (so it doesn't get stalled waiting
 @rem for an answer when not run interactively).
-set BBS_RSH_OPTION=C:\cygwin\bin\ssh.exe -qi D:\biocbuild\.BBS\id_rsa -o StrictHostKeyChecking=no
+set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -qi D:\biocbuild\.BBS\id_rsa -o StrictHostKeyChecking=no
 
 @rem Source tarballs produced during STAGE3 are BIG and won't be propagated
 @rem so we don't need to push them to the central builder.

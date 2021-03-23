@@ -36,18 +36,18 @@ class WOpenError(Exception):
 class RemoteDir:
 
     # When passed None to the 'host' arg, then degrades to a local dir (and
-    # then the 'ssh_cmd' arg. is ignored).
+    # then the 'rsh_cmd' arg. is ignored).
     # When passed None to the 'path' arg, then degrades to a web-based only
     # remote dir (located at the URL specified by 'url'). In that case all
     # the remaining args are ignored and the remote dir can only be accessed
     # in read-only mode (via the WOpen method).
-    def __init__(self, label, url, path, host, user, ssh_cmd, rsync_cmd, rsync_rsh_cmd):
+    def __init__(self, label, url, path, host, user, rsh_cmd, rsync_cmd, rsync_rsh_cmd):
         self.label = label
         self.url = url
         self.path = path
         self.host = host
         self.user = user
-        self.ssh_cmd = ssh_cmd
+        self.rsh_cmd = rsh_cmd
         self.rsync_cmd = rsync_cmd
         self.rsync_rsh_cmd = rsync_rsh_cmd
 
@@ -61,7 +61,7 @@ class RemoteDir:
         return RemoteDir(self.label + '/' + subdir,
                          url, path,
                          self.host, self.user,
-                         self.ssh_cmd, self.rsync_cmd, self.rsync_rsh_cmd)
+                         self.rsh_cmd, self.rsync_cmd, self.rsync_rsh_cmd)
 
     # Open local or remote file in binary mode.
     def WOpen(self, file, return_None_on_error=False):
@@ -131,9 +131,9 @@ class RemoteDir:
         else:
             # self is a remote dir => remote execution
             if self.user != None:
-                cmd = self.ssh_cmd + " " + self.user + "@" + self.host + " '" + remote_cmd + "'"
+                cmd = self.rsh_cmd + " " + self.user + "@" + self.host + " '" + remote_cmd + "'"
             else:
-                cmd = self.ssh_cmd + " " + self.host + " '" + remote_cmd + "'"
+                cmd = self.rsh_cmd + " " + self.host + " '" + remote_cmd + "'"
         return jobs.call(cmd)
 
     def MakeMe(self, verbose=False):
