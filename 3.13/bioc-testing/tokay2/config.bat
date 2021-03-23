@@ -18,8 +18,7 @@ set BBS_STAGE5_MODE=multiarch
 
 @rem Central build node is malbec2 at RPCI.
 set BBS_CENTRAL_RHOST=malbec2
-set BBS_SSH_CONFIG_FILE=C:\\Users\\bioctesting\\.ssh\\config
-set BBS_RSH_CMD=C:\cygwin\bin\ssh.exe -F %BBS_SSH_CONFIG_FILE%
+set BBS_RSH_CMD=ssh -F /cygdrive/c/Users/bioctesting/.ssh/config
 set BBS_CENTRAL_ROOT_URL=http://172.29.0.4
 
 
