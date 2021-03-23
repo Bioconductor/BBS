@@ -20,7 +20,7 @@ set BBS_CENTRAL_RHOST=172.29.0.4
 @rem When used with StrictHostKeyChecking=no, ssh will automatically add new
 @rem host keys to the user known hosts files (so it doesn't get stalled waiting
 @rem for an answer when not run interactively).
-set BBS_SSH_CMD=C:\cygwin\bin\ssh.exe -qi D:\biocbuild\.BBS\id_rsa -o StrictHostKeyChecking=no
+set BBS_RSH_OPTION=C:\cygwin\bin\ssh.exe -qi D:\biocbuild\.BBS\id_rsa -o StrictHostKeyChecking=no
 
 
 
