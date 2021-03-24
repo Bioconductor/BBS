@@ -215,9 +215,9 @@ For all these accounts:
 Then make these users members of the Administrators group.
 
 
-### 1.7 Create the biocbuild account
+### 1.7 Create the `biocbuild` account
 
-Username: biocbuild
+Username: `biocbuild`
 
 For this account:
 - [ ] User must change password at next logon
@@ -227,14 +227,14 @@ For this account:
 
 By default, the home folder will be `C:\Users\biocbuild`. If space on `C:` is
 limited this might need to be changed to something else (e.g. `D:\biocbuild`).
-To do this: double-click on the biocbuild user and make the change in the
+To do this: double-click on the `biocbuild` user and make the change in the
 Profile tab. Note that the `C:\Users\biocbuild` folder will still be created
 and populated at first logon.
 
-Make the biocbuild user a member of the Remote Desktop Users group.
+Make the `biocbuild` user a member of the Remote Desktop Users group.
 
 
-### 1.8 Grant the biocbuild user "Log on as batch job" rights
+### 1.8 Grant the `biocbuild` user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `biocbuild`
 user.)
@@ -308,7 +308,7 @@ Open the MiKTeX Console by going to the Windows start menu:
 - Switch to administrator mode
 - In Settings: select "Always install missing packages on-the-fly" and make
   sure that "For anyone who uses this computer (all users)" is NOT checked
-  (otherwise running `R CMD build` from a non-admin account like biocbuild
+  (otherwise running `R CMD build` from a non-admin account like `biocbuild`
   will fail to install missing packages on-the-fly because it doesn't have
   admin privileges)
 - In Updates: click on "Check for updates", and, if any updates,
@@ -332,9 +332,9 @@ Most actions in this section must be done **from a personal administrator
 account**.
 
 
-### 2.1 In biocbuild home: clone BBS git and create log folder
+### 2.1 In `biocbuild`'s home: clone BBS git and create log folder
 
-**From the biocbuild account** in a PowerShell window:
+**From the `biocbuild` account** in a PowerShell window:
 
     cd D:\biocbuild
     git clone https://github.com/Bioconductor/BBS
@@ -398,7 +398,7 @@ is already logged on when the task starts).
       nothing should be checked except 'Allow task to be run on demand' and
       'If the running task does not end when requested force it to stop'
 
-  - Then click OK on bottom right (requires `biocbuild` password)
+  - Then click OK on bottom right (requires `biocbuild`'s password)
 
 Before the task can be started, the `D:\biocbuild\log` folder should
 be created from the `biocbuild` account. The first time the task will be
@@ -689,7 +689,7 @@ hostname. For example:
     ping malbec1                                   # from within RPCI's DMZ
     ping malbec1.bioconductor.org                  # from anywhere else
 
-#### Install biocbuild RSA private key
+#### Install `biocbuild`'s RSA private key
 
 Create the `.BBS/id_rsa` file as follow:
 
@@ -723,43 +723,62 @@ Contact the IT folks at RPCI if this is blocked by RPCI's firewall (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-### 3.2 [OPTIONAL] Location of ExperimentHub cache
+### 3.2 [OPTIONAL] Customize locations of AnnotationHub & ExperimentHub caches
 
-Once the builds are up and running, they will typically download a
-big amount of data (about 70GB, as of March 2021) from ExperimentHub
-to the local ExperimentHub cache. By default, the location of the cache
-is `C:\Users\biocbuild\AppData\Local\ExperimentHub\ExperimentHub\Cache`.
+Once the builds are up and running, they will typically download
+big amount of data from the data hubs (AnnotationHub & ExperimentHub).
+For example, as of March 2021, about 70GB of data gets downloaded from
+ExperimentHub to the local ExperimentHub cache.
+
+By default, the locations of the caches are
+
+    C:\Users\biocbuild\AppData\Local\AnnotationHub\AnnotationHub\Cache
+
+and
+
+    C:\Users\biocbuild\AppData\Local\ExperimentHub\ExperimentHub\Cache
+
+even if the home folder of the `biocbuild` account was explicitely set to
+something other than `C:\Users\biocbuild`! (See "Create the `biocbuild`
+account" section above in this file for more information about using a
+customized `biocbuild`'s home folder.)
+
 If R is already installed, you can check this from R with:
-```
-library(ExperimentHub)
-getExperimentHubOption("CACHE")
-```
 
-If space on `C:` is limited, you might want to consider changing this
-location to something else e.g. to `D:\biocbuild\ExperimentHub_cache`.
-The location of the cache can be controlled via environment
-variable `EXPERIMENT_HUB_CACHE` which you can set permanently
-by using the `setx.exe` command in a PowerShell window e.g.:
-```
-setx EXPERIMENT_HUB_CACHE "D:\biocbuild\ExperimentHub_cache"
-```
-Make sure to do this from the `biocbuild` account.
+    library(AnnotationHub)
+    getAnnotationHubOption("CACHE")
+    library(ExperimentHub)
+    getExperimentHubOption("CACHE")
 
-TESTING: Open **another** PowerShell window and check that environment
-variable `EXPERIMENT_HUB_CACHE` is defined with:
-```
-echo $Env:EXPERIMENT_HUB_CACHE
-```
+If space on `C:` is limited, you might want to consider changing these
+locations to something else e.g. to `D:\biocbuild\AnnotationHub_cache`
+and `D:\biocbuild\ExperimentHub_cache`. The location of the caches can
+be controlled via environment variables `ANNOTATION_HUB_CACHE`
+and `EXPERIMENT_HUB_CACHE`, which you can set permanently by using
+the `setx.exe` command in a PowerShell window e.g.:
+
+    setx ANNOTATION_HUB_CACHE "D:\biocbuild\AnnotationHub_cache"
+    setx EXPERIMENT_HUB_CACHE "D:\biocbuild\ExperimentHub_cache"
+
+IMPORTANT: Make sure to do this from the `biocbuild` account!
+
+TESTING: Open **another** PowerShell window and check that the environment
+variables are defined. Do this with:
+
+    echo $Env:ANNOTATION_HUB_CACHE
+    echo $Env:EXPERIMENT_HUB_CACHE
+
 If R is already installed, you can also check this from R with:
-```
-library(ExperimentHub)
-getExperimentHubOption("CACHE")
-```
+
+    library(AnnotationHub)
+    getAnnotationHubOption("CACHE")
+    library(ExperimentHub)
+    getExperimentHubOption("CACHE")
 
 
 ### 3.3 Create bbs-x.y-bioc directory structure
 
-**From the biocbuild account** in a PowerShell window:
+**From the `biocbuild` account** in a PowerShell window:
 
     cd D:\biocbuild
     mkdir bbs-3.12-bioc
@@ -771,7 +790,7 @@ getExperimentHubOption("CACHE")
 
 ### 3.4 Install R
 
-**From the biocbuild account**:
+**From the `biocbuild` account**:
 
 #### Get R Windows binary from CRAN
 
@@ -995,7 +1014,7 @@ Should we also remove package specific caches?
       nothing should be checked except 'Allow task to be run on demand' and
       'If the running task does not end when requested force it to stop'
 
-  - Then click OK on bottom right (requires `biocbuild` password)
+  - Then click OK on bottom right (requires `biocbuild`'s password)
 
 
 
@@ -1371,7 +1390,7 @@ Then **from a personal administrator account** configure the task as follow:
       nothing should be checked except 'Allow task to be run on demand' and
       'If the running task does not end when requested force it to stop'
 
-  - Then click OK on bottom right (requires `biocbuild` password)
+  - Then click OK on bottom right (requires `biocbuild`'s password)
 
 
 ### 6.3 Worflows builds
@@ -1419,7 +1438,7 @@ Then **from a personal administrator account** configure the task as follow:
       nothing should be checked except 'Allow task to be run on demand' and
       'If the running task does not end when requested force it to stop'
 
-  - Then click OK on bottom right (requires `biocbuild` password)
+  - Then click OK on bottom right (requires `biocbuild`'s password)
 
 
 ### 6.4 Books builds
@@ -1467,7 +1486,7 @@ Then **from a personal administrator account** configure the task as follow:
       nothing should be checked except 'Allow task to be run on demand' and
       'If the running task does not end when requested force it to stop'
 
-  - Then click OK on bottom right (requires `biocbuild` password)
+  - Then click OK on bottom right (requires `biocbuild`'s password)
 
 
 ### 6.5 Long Tests builds
@@ -1515,16 +1534,16 @@ Then **from a personal administrator account** configure the task as follow:
       nothing should be checked except 'Allow task to be run on demand' and
       'If the running task does not end when requested force it to stop'
 
-  - Then click OK on bottom right (requires `biocbuild` password)
+  - Then click OK on bottom right (requires `biocbuild`'s password)
 
 
 
 ## 7. Single Package Builder Requirements
 
 
-### 7.1 Create the pkgbuild account:
+### 7.1 Create the `pkgbuild` account
 
-Username: pkgbuild
+Username: `pkgbuild`
 
 For this account:
 - [ ] User must change password at next logon
@@ -1532,15 +1551,16 @@ For this account:
 - [x] Password never expires
 - [ ] Account is disabled
 
-By default, the home folder will be `C:\Users\pkgbuild`. If this needs to
-be changed (e.g. to `D:\pkgbuild`), double-click on the pkgbuild user and
-make the change in the Profile tab. Note that the `C:\Users\pkgbuild` folder
-will still be created and populated at first logon.
+By default, the home folder will be `C:\Users\pkgbuild`. If space on `C:` is
+limited this might need to be changed to something else (e.g. `D:\pkgbuild`).
+To do this: double-click on the `pkgbuild` user and make the change in the
+Profile tab. Note that the `C:\Users\pkgbuild` folder will still be created
+and populated at first logon.
 
-Make the pkgbuild user a member of the Remote Desktop Users group.
+Make the `pkgbuild` user a member of the Remote Desktop Users group.
 
 
-### 7.2 Grant the biocbuild user "Log on as batch job" rights
+### 7.2 Grant the `pkgbuild` user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `pkgbuild`
 user.)
@@ -1549,10 +1569,10 @@ Go in Local Security Policy -> Local Policies -> User Rights Assignment
 
 In the right pane, right-click on 'Log on as a batch job' -> Properties
 
-Add `pkgbuild` user
+Add `pkgbuild` user.
 
 
-### 7.3 Grant the pkgbuild user permissions within the biocbuild user folder
+### 7.3 Grant the `pkgbuild` user permissions within the `biocbuild` user folder
 
 Grant the `pkgbuild` user permissions within the `biocbuild` user folder
 using the Users security group.
@@ -1610,7 +1630,7 @@ are not actually needed (in any case they shouldn't).
 ###############################################################################
 
 
-### 7.4 Grant the pkgbuild user permissions within the Windows\Temp folder
+### 7.4 Grant the `pkgbuild` user permissions within the `Windows\Temp` folder
 
 Grant the `pkgbuild` user permissions within the `Windows\Temp` folder using
 the Users security group. This is for BiocCheck.
