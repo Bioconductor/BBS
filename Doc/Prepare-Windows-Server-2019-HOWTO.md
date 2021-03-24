@@ -341,7 +341,7 @@ account**.
     mkdir log
 
 
-### 2.2 Add loggon_biocbuild_at_startup task to Task Scheduler
+### 2.2 Add `loggon_biocbuild_at_startup` task to Task Scheduler
 
 This task is a workaround for the following issue with the Task Scheduler.
 The issue happens under the following conditions:
@@ -740,8 +740,8 @@ and
 
 even if the home folder of the `biocbuild` account was explicitely set to
 something other than `C:\Users\biocbuild`! (See "Create the `biocbuild`
-account" section above in this file for more information about using a
-customized `biocbuild`'s home folder.)
+account" section above in this document for more information about using
+a customized `biocbuild`'s home folder.)
 
 If R is already installed, you can check this from R with:
 
