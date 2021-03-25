@@ -10,8 +10,16 @@ echo "-------------------"
 script_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . "${script_dir}"/config.sh
 
-# Fix perms
 cd "$BBS_CENTRAL_RDIR"
+
+# Remove target repo (no-vignettes source packages). It's no longer
+# needed so we can make room before we generate the HTML report below
+# and before we propagate packages (this will be done later by the
+# updateReposPkgs-bioc.sh script that we run from the biocadmin
+# account). Can help significantly if the machine has limited disk capacity.
+/usr/bin/rm -rf src
+
+# Fix perms
 /bin/chmod -R +r .
 /usr/bin/find nodes -type d -exec chmod 755 {} \;
 

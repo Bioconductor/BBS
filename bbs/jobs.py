@@ -305,6 +305,11 @@ def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.
     print("%d failed attempts => never mind, let's keep going..." % nb_attempts)
     return retcode
 
+
+##############################################################################
+### processJobQueue()
+###
+
 ### Objects passed to the processJobQueue() function must be QueuedJob objects.
 ### The QueuedJob class contains the strictly minimal stuff needed by the
 ### processJobQueue() in order to work.
@@ -550,7 +555,7 @@ def processJobQueue(job_queue, nb_slots=1,
         print("bbs.jobs.processJobQueue>", end=" ")
         print("%d jobs in the queue. Start processing them using %d slots" % \
               (nb_jobs, nb_slots))
-    slotevents_logfile = open(job_queue._name + '-slot-events.log', 'w')
+    slotevents_logfile = open('JobQueue-' + job_queue._name + '-slot-events.log', 'w')
     processed_jobs = []
     nb_busy_slots = 0
     slots = nb_slots * [None]
@@ -623,8 +628,8 @@ def processJobQueue(job_queue, nb_slots=1,
 
 
 ##############################################################################
-## Other stuff
-##
+### Other stuff
+###
 
 def getHostname():
     if sys.platform == "win32":
