@@ -532,9 +532,9 @@ def prepare_STAGE4_job_queue(srcpkg_paths):
         cmd = BBSbase.getSTAGE4cmd(srcpkg_path)
         pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
         version = bbs.parse.get_version_from_srcpkg_path(srcpkg_path)
-        check_dir = pkg + '.Rcheck'
+        Rcheck_dir = pkg + '.Rcheck'
         pkgdumps_prefix = pkg + '.' + stage
-        pkgdumps = BBSbase.PkgDumps(check_dir, pkgdumps_prefix)
+        pkgdumps = BBSbase.PkgDumps(Rcheck_dir, pkgdumps_prefix)
         job = BBSbase.CheckSrc_Job(pkg, version, cmd,
                                    pkgdumps, BBSvars.checksrc_rdir)
         jobs.append(job)

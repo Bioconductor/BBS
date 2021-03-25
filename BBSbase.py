@@ -563,8 +563,8 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.summary.startedat = self._startedat
         self.summary.endedat = self._endedat
         self.summary.dt = self._t2 - self._t1
-        check_dir = self.pkgdumps.product_path
-        if os.path.exists(check_dir):
+        Rcheck_dir = self.pkgdumps.product_path
+        if os.path.exists(Rcheck_dir):
             # Before we push the .Rcheck/ folder to the central node, we
             # remove 2 subfolders from it (that are not needed downstream):
             #   1) the .Rcheck/00_pkg_src/ folder (contains a copy of the
@@ -573,15 +573,15 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
             # This can significantly reduce the size of the .Rcheck/ folder,
             # especially for data experiment packages. It also reduces disk
             # usage on both, the local node and the central node.
-            pkg_src_tree = os.path.join(check_dir, "00_pkg_src")
+            pkg_src_tree = os.path.join(Rcheck_dir, "00_pkg_src")
             if os.path.exists(pkg_src_tree):
                 bbs.fileutils.nuke_tree(pkg_src_tree)
-            pkg_install_dir = os.path.join(check_dir, self.pkg)
+            pkg_install_dir = os.path.join(Rcheck_dir, self.pkg)
             if os.path.exists(pkg_install_dir):
                 bbs.fileutils.nuke_tree(pkg_install_dir)
         else:
-            check_dir = 'None'
-        self.summary.Append('CheckDir', check_dir)
+            Rcheck_dir = 'None'
+        self.summary.Append('CheckDir', Rcheck_dir)
         self.summary.Append('Warnings', self.warnings)
         self.summary.Write(self.pkgdumps.summary_file)
         self.pkgdumps.Push(self.rdir)
