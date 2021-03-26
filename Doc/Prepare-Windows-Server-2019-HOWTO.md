@@ -1163,9 +1163,34 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
     ..\R\bin\R CMD INSTALL rsbml
 
 
-### 4.6 Install Open Babel
+### 4.6 Install Open Babel 3
 
-Follow instructions in `ChemmineOB/INSTALL` for this.
+This is needed in order to compile the ChemmineOB package.
+
+Depending on whether the Girke lab provides pre-compiled Windows binaries
+for Open Babel 3 or not, you'll need to follow one of the two methods below.
+
+#### Method 1: Install Open Babel 3 pre-compiled Windows binaries
+
+Download the pre-compiled Windows binaries from
+
+  https://github.com/girke-lab/ChemmineOB/releases/tag/3.0.0
+
+Extract all the files to `C:\openbabel3`.
+
+Set environment variables `OPEN_BABEL_BIN` and `OPEN_BABEL_SRC` to
+`c:/openbabel/bin` and `c:/openbabel/src`, respectively (see _Edit an
+environment variable_ in the _Managing environment variables_ section
+at the top of this document for how to do this). Make sure to use `/`
+instead of `\` as the directory delimiter.
+
+#### Method 2: Install Open Babel 3 from source
+
+Hopefully you manage to install pre-compiled Windows binaries (see above)
+so you don't need to do this.
+
+Follow instructions in `ChemmineOB/INSTALL` for how to compile Open Babel 3
+on Windows.
 
 IMPORTANT: Unlike all the other things here that need to be installed from
 a personal administrator account, this one needs to be installed from the
@@ -1174,7 +1199,9 @@ a personal administrator account, this one needs to be installed from the
 
     c:/Users/biocbuild/bbs-3.12-bioc/R/library/zlibbioc/
 
-TESTING: From the `biocbuild` account (log out and on again from this account
+#### Testing
+
+From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the ChemmineOB package e.g.
 open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.12-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
