@@ -58,9 +58,8 @@ def Rexpr2syscmd(Rexpr):
 # send to the central node are small.
 # Stuff to keep:
 #   - 00install.out
-#   - tests/
-#   - tests_i386/
-#   - tests_x64/
+#   - everything in tests/, tests_i386/, and tests_x64/, except
+#     the 'testthat/' subdir
 #   - <pkg>-Ex.timings
 #   - examples_i386/<pkg>-Ex.timings
 #   - examples_x64/<pkg>-Ex.timings
@@ -77,6 +76,13 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
     for filename in os.listdir(Rcheck_dir):
         if filename not in top_level_stuff_to_keep:
             to_remove.append(filename)
+    # Collect stuff to remove from 'tests/', 'tests_i386/', and 'tests_x64/'.
+    for subdir in ['tests', 'tests_i386', 'tests_x64']:
+        path = os.path.join(Rcheck_dir, subdir)
+        if os.path.isdir(path):
+            testthat_path = os.path.join(path, 'testthat')
+            if os.path.isdir(testthat_path):
+                to_remove.append(testthat_path)
     # Collect stuff to remove from 'examples_i386/' and 'examples_x64/'.
     to_keep = '%s-Ex.timings' % pkg
     for subdir in ['examples_i386', 'examples_x64']:
