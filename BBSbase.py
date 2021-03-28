@@ -58,8 +58,8 @@ def Rexpr2syscmd(Rexpr):
 # send to the central node are small.
 # Stuff to keep:
 #   - 00install.out
-#   - everything in tests/, tests_i386/, and tests_x64/, except
-#     the 'testthat/' subdir
+#   - only files in tests/, tests_i386/, and tests_x64/, but no
+#     subdirs (e.g. 'tests/testthat/' can be big and is not needed)
 #   - <pkg>-Ex.timings
 #   - examples_i386/<pkg>-Ex.timings
 #   - examples_x64/<pkg>-Ex.timings
@@ -75,27 +75,28 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
                                'examples_x64']
     for filename in os.listdir(Rcheck_dir):
         if filename not in top_level_stuff_to_keep:
-            dangling_paths.append(os.path.join(Rcheck_dir, filename))
+            path = os.path.join(Rcheck_dir, filename)
+            dangling_paths.append(path)
     # Collect stuff to remove from 'tests/', 'tests_i386/', and 'tests_x64/'.
     for subdir in ['tests', 'tests_i386', 'tests_x64']:
         path = os.path.join(Rcheck_dir, subdir)
         if os.path.isdir(path):
-            testthat_path = os.path.join(path, 'testthat')
-            if os.path.isdir(testthat_path):
-                dangling_paths.append(testthat_path)
+            for filename in os.listdir(path):
+                path2 = os.path.join(path, filename)
+                if os.path.isdir(path2):
+                    dangling_paths.append(path2)
     # Collect stuff to remove from 'examples_i386/' and 'examples_x64/'.
-    to_keep = '%s-Ex.timings' % pkg
+    file_to_keep = '%s-Ex.timings' % pkg
     for subdir in ['examples_i386', 'examples_x64']:
         path = os.path.join(Rcheck_dir, subdir)
         if os.path.isdir(path):
             for filename in os.listdir(path):
-                if filename != to_keep:
-                    dangling_paths.append(os.path.join(path, filename))
+                if filename != file_to_keep:
+                    path2 = os.path.join(path, filename)
+                    dangling_paths.append(path2)
     # Remove collected stuff.
-    #print(dangling_paths)
     for path in dangling_paths:
         if os.path.isdir(path):
-            #shutil.rmtree(path)
             bbs.fileutils.nuke_tree(path)
         else:
             os.remove(path)
