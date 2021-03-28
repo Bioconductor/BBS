@@ -53,6 +53,49 @@ def Rexpr2syscmd(Rexpr):
             syscmd = '%s -e "%s"' % (BBSvars.rscript_cmd, Rexpr)
     return syscmd
 
+# The <pkg>.Rcheck/ folder can be huge (several GB for some packages, even
+# for some software packages!) but, fortunately, the things that we need to
+# send to the central node are small.
+# Stuff to keep:
+#   - 00install.out
+#   - tests/
+#   - tests_i386/
+#   - tests_x64/
+#   - <pkg>-Ex.timings
+#   - examples_i386/<pkg>-Ex.timings
+#   - examples_x64/<pkg>-Ex.timings
+def _clean_Rcheck_dir(Rcheck_dir, pkg):
+    to_remove = []
+    # Collect top-level stuff to remove.
+    top_level_stuff_to_keep = ['00install.out',
+                               'tests',
+                               'tests_i386',
+                               'tests_x64',
+                               '%s-Ex.timings' % pkg,
+                               'examples_i386',
+                               'examples_x64']
+    for filename in os.listdir(Rcheck_dir):
+        if filename not in top_level_stuff_to_keep:
+            to_remove.append(filename)
+    # Collect stuff to remove from 'examples_i386/' and 'examples_x64/'.
+    to_keep = '%s-Ex.timings' % pkg
+    for subdir in ['examples_i386', 'examples_x64']:
+        path = os.path.join(Rcheck_dir, subdir)
+        if os.path.isdir(path):
+            for filename in os.listdir(path):
+                if filename != to_keep:
+                    to_remove.append(os.path.join(subdir, filename))
+    # Remove collected stuff.
+    #print(to_remove)
+    for filename in to_remove:
+        path = os.path.join(Rcheck_dir, filename)
+        if os.path.isdir(path):
+            #shutil.rmtree(path)
+            bbs.fileutils.nuke_tree(path)
+        else:
+            os.remove(path)
+    return
+
 
 ##############################################################################
 ### Generate the system commands used for installing (STAGE2), building
@@ -334,7 +377,7 @@ def getSTAGE4cmd(srcpkg_path):
     ##      whose output was captured in the former. This will generally be
     ##      the case unless the package got re-installed after its STAGE2
     ##      installation (which could happen e.g. if another package contains
-    ##      code that calls BiocManager::install() to install a possibly 
+    ##      code that calls BiocManager::install() to install a possibly
     ##      different version of the package). Unlikely but possible.
     install_out = pkg + '.install-out.txt'
     if os.path.exists(install_out):
@@ -565,20 +608,7 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.summary.dt = self._t2 - self._t1
         Rcheck_dir = self.pkgdumps.product_path
         if os.path.exists(Rcheck_dir):
-            # Before we push the .Rcheck/ folder to the central node, we
-            # remove 2 subfolders from it (that are not needed downstream):
-            #   1) the .Rcheck/00_pkg_src/ folder (contains a copy of the
-            #      package source tree);
-            #   2) the .Rcheck/<pkg>/ folder (contains the installed package).
-            # This can significantly reduce the size of the .Rcheck/ folder,
-            # especially for data experiment packages. It also reduces disk
-            # usage on both, the local node and the central node.
-            pkg_src_tree = os.path.join(Rcheck_dir, "00_pkg_src")
-            if os.path.exists(pkg_src_tree):
-                bbs.fileutils.nuke_tree(pkg_src_tree)
-            pkg_install_dir = os.path.join(Rcheck_dir, self.pkg)
-            if os.path.exists(pkg_install_dir):
-                bbs.fileutils.nuke_tree(pkg_install_dir)
+            _clean_Rcheck_dir(Rcheck_dir, self.pkg)
         else:
             Rcheck_dir = 'None'
         self.summary.Append('CheckDir', Rcheck_dir)
