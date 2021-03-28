@@ -64,7 +64,7 @@ def Rexpr2syscmd(Rexpr):
 #   - examples_i386/<pkg>-Ex.timings
 #   - examples_x64/<pkg>-Ex.timings
 def _clean_Rcheck_dir(Rcheck_dir, pkg):
-    to_remove = []
+    dangling_paths = []
     # Collect top-level stuff to remove.
     top_level_stuff_to_keep = ['00install.out',
                                'tests',
@@ -75,14 +75,14 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
                                'examples_x64']
     for filename in os.listdir(Rcheck_dir):
         if filename not in top_level_stuff_to_keep:
-            to_remove.append(filename)
+            dangling_paths.append(os.path.join(Rcheck_dir, filename))
     # Collect stuff to remove from 'tests/', 'tests_i386/', and 'tests_x64/'.
     for subdir in ['tests', 'tests_i386', 'tests_x64']:
         path = os.path.join(Rcheck_dir, subdir)
         if os.path.isdir(path):
             testthat_path = os.path.join(path, 'testthat')
             if os.path.isdir(testthat_path):
-                to_remove.append(testthat_path)
+                dangling_paths.append(testthat_path)
     # Collect stuff to remove from 'examples_i386/' and 'examples_x64/'.
     to_keep = '%s-Ex.timings' % pkg
     for subdir in ['examples_i386', 'examples_x64']:
@@ -90,11 +90,10 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
         if os.path.isdir(path):
             for filename in os.listdir(path):
                 if filename != to_keep:
-                    to_remove.append(os.path.join(subdir, filename))
+                    dangling_paths.append(os.path.join(path, filename))
     # Remove collected stuff.
-    #print(to_remove)
-    for filename in to_remove:
-        path = os.path.join(Rcheck_dir, filename)
+    #print(dangling_paths)
+    for path in dangling_paths:
         if os.path.isdir(path):
             #shutil.rmtree(path)
             bbs.fileutils.nuke_tree(path)
