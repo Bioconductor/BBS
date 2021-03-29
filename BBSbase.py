@@ -58,8 +58,9 @@ def Rexpr2syscmd(Rexpr):
 # send to the central node are small.
 # Stuff to keep:
 #   - 00install.out
-#   - only files in tests/, tests_i386/, and tests_x64/, but no
-#     subdirs (e.g. 'tests/testthat/' can be big and is not needed)
+#   - all the top-level files in tests/, tests_i386/, and tests_x64/,
+#     except 'startup.Rs', and no subdir (e.g. 'tests/testthat/' can be
+#     big and is not needed)
 #   - <pkg>-Ex.timings
 #   - examples_i386/<pkg>-Ex.timings
 #   - examples_x64/<pkg>-Ex.timings
@@ -83,7 +84,7 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
         if os.path.isdir(path):
             for filename in os.listdir(path):
                 path2 = os.path.join(path, filename)
-                if os.path.isdir(path2):
+                if os.path.isdir(path2) or filename == 'startup.Rs':
                     dangling_paths.append(path2)
     # Collect stuff to remove from 'examples_i386/' and 'examples_x64/'.
     file_to_keep = '%s-Ex.timings' % pkg
