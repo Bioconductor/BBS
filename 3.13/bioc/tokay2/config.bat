@@ -16,10 +16,10 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 
-@rem Central build node is nebbiolo1 at DFCI.
-set BBS_CENTRAL_RHOST=nebbiolo1
-set BBS_RSH_CMD=ssh -F /cygdrive/c/Users/biocbuild/.ssh/config
-set BBS_CENTRAL_ROOT_URL=http://155.52.207.165
+@rem Central build node is rex3 at BHW.
+set BBS_CENTRAL_RHOST=rex3
+set BBS_RSH_CMD=ssh -F /cygdrive/d/biocbuild/.ssh/config
+set BBS_CENTRAL_ROOT_URL=http://155.52.173.35
 
 
 
