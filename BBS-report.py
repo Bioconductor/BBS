@@ -835,7 +835,7 @@ def write_motd_asTABLE(out):
     out.write('</DIV>\n')
     return
 
-def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps):
+def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
 
@@ -1270,7 +1270,7 @@ def make_node_LeafReports(allpkgs, node):
     sys.stdout.flush()
     return
 
-def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps):
+def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
     print("BBS> [make_all_LeafReports] Current working dir '%s'" % os.getcwd())
     print("BBS> [make_all_LeafReports] Creating report package subfolders " + \
           "and populating them with index.html files ...", end=" ")
@@ -1281,7 +1281,10 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps):
         except:
             print("mkdir failed in make_all_LeaveReports '%s'" % pkg)
             continue
-        pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
+        if allpkgs_inner_rev_deps != None:
+            pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
+        else:
+            pkg_rev_deps = None
         make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps)
     print("OK")
     sys.stdout.flush()
@@ -1758,20 +1761,25 @@ allpkgs_quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 
-### Load package dep graph.
-node0 = BBSreportutils.NODES[0]
-Node0_rdir = BBSvars.nodes_rdir.subdir(node0.node_id)
-print("BBS> [stage8] Get %s from %s/" % \
-      (BBSutils.pkg_dep_graph_file, Node0_rdir.label))
-Node0_rdir.Get(BBSutils.pkg_dep_graph_file)
-print("BBS> [stage8] Loading %s file ..." % \
-      BBSutils.pkg_dep_graph_file, end=" ")
-sys.stdout.flush()
-pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
-print("OK")
-allpkgs_inner_rev_deps = BBSreportutils.get_inner_reverse_deps(allpkgs,
-                                                               pkg_dep_graph)
-sys.stdout.flush()
+### Set 'allpkgs_inner_rev_deps'.
+if BBSvars.subbuilds == "bioc":
+    ### Load package dep graph.
+    node0 = BBSreportutils.NODES[0]
+    Node0_rdir = BBSvars.nodes_rdir.subdir(node0.node_id)
+    print("BBS> [stage8] Get %s from %s/" % \
+          (BBSutils.pkg_dep_graph_file, Node0_rdir.label))
+    Node0_rdir.Get(BBSutils.pkg_dep_graph_file)
+    print("BBS> [stage8] Loading %s file ..." % \
+          BBSutils.pkg_dep_graph_file, end=" ")
+    sys.stdout.flush()
+    pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
+    print("OK")
+    allpkgs_inner_rev_deps = BBSreportutils.get_inner_reverse_deps(
+                                 allpkgs,
+                                 pkg_dep_graph)
+    sys.stdout.flush()
+else:
+    allpkgs_inner_rev_deps = None
 
 if r_environ_user != None:
     dst = os.path.join(report_path, 'Renviron.bioc')
