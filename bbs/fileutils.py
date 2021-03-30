@@ -60,7 +60,10 @@ def nuke_tree(dir):
             for file in files:
                 filename = os.path.join(path, file)
                 if not os.access(filename, os.W_OK):
-                    os.chmod(filename, 0o777)
+                    try:
+                        os.chmod(filename, 0o777)
+                    except:
+                        pass
     shutil.rmtree(dir, ignore_errors=True)
     return
 

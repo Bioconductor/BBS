@@ -1396,7 +1396,7 @@ and some other things e.g. Python 3 module `h5pyd`:
     #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
 
 If you run into this issue, the hacky/dirty workaround for now is to
-uninstall `libpng`. Note that `libpng` it required by `cairo`, `fontconfig`,
+uninstall `libpng`. Note that `libpng` is required by `cairo`, `fontconfig`,
 `freetype` and `open-babel`, so we must use `--ignore-dependencies`:
 
     brew uninstall --ignore-dependencies libpng
