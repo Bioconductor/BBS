@@ -331,7 +331,7 @@ in the plist file, then kill the process.
 
     sudo launchctl list | grep xvfb                     # should be running
     echo $DISPLAY                                       # :1.0
-    /path/to/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
+    /path/to/Rscript -e 'png(tempfile(), type="Xlib")'  # no more error!
 
 
 ### 2.6 Install Apple's Command Line Tools
@@ -851,7 +851,7 @@ of `no font could be found for family "Arial"` warnings on macOS High Sierra
 or higher:
 
     library(ggplot2)
-    png(type="quartz")
+    png(tempfile(), type="quartz")
     ggplot(data.frame(), aes(1, 1))
     dev.off()
 
@@ -862,31 +862,47 @@ This breaks `R CMD build` on hundreds of Bioconductor packages!
 Simpler code (that doesn't involve ggplot2) that reproduces the warnings
 about the missing font family:
 
-    png(type="quartz")
+    png(tempfile(), type="quartz")
     plot(density(rnorm(1000)))
     dev.off()
 
-We don't really have a fix for this yet, only a dirty workaround. The workaround
-is to avoid the use of the `"quartz"` device, which is the default on macOS.
-However we can't do this via an `Rprofile` file (it's ignored by `R CMD build`
-and `R CMD check`) so we use the following hack:
+We don't have a clean fix for this yet, only a hacky workaround. The workaround
+is to avoid the use of the `"quartz"` type, which seems to be the default
+for the macOS builds from CRAN and mac.r-project.org. The other supported types
+are `"Xlib"` and `"cairo"`. Using `"Xlib"` solves the above issue but introduces
+another one:
 
-Put:
+    png(tempfile(), type="Xlib")
+    plot.new()
+    lines(c(0, 15), c(0, 15), col="#FF000088")
+    # Warning message:
+    # In plot.xy(xy.coords(x, y), type = type, ...) :
+    #   semi-transparency is not supported on this device: reported only once per page
+    dev.off()
 
-    options(bitmapType="Xlib")
+so we'll use `"cairo"` (which is the default on Linux).
+
+One caveat is that this default cannot be changed via an `Rprofile` file (this
+file is ignored by `R CMD build` and `R CMD check`).
+
+So we use the following hack. Put:
+
+    options(bitmapType="cairo")
 
 in `/Library/Frameworks/R.framework/Resources/library/grDevices/R/grDevices`
 at the beginning of the `local()` block.
 
 Not a totally satisfying solution because code that explicitly resets the
-device to `"quartz"` will still fail.
+type to `"quartz"` will still fail.
 
 TESTING:
 
 - Start R, then:
     ```
     getOption("bitmapType")  # would show "quartz" without our hack
-    png()
+    png(tempfile())
+    plot.new()
+    lines(c(0, 15), c(0, 15), col="#FF000088")
     plot(density(rnorm(1000)))
     library(ggplot2)
     ggplot(data.frame(), aes(1, 1))
