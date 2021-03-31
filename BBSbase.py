@@ -57,17 +57,23 @@ def Rexpr2syscmd(Rexpr):
 # for some software packages!) but, fortunately, the things that we need to
 # send to the central node are small.
 # Stuff to keep:
-#   - 00install.out
-#   - all the top-level files in tests/, tests_i386/, and tests_x64/,
+#   - '00check.log': Note that trying to remove this file with os.remove()
+#       can fail for some packages on Windows with an error like:
+#           PermissionError: [WinError 32] The process cannot
+#           access the file because it is being used by another
+#           process: 'scTHI.Rcheck\\00check.log'
+#   - '00install.out'
+#   - All the top-level files in 'tests/', 'tests_i386/', and 'tests_x64/',
 #     except 'startup.Rs', and no subdir (e.g. 'tests/testthat/' can be
-#     big and is not needed)
-#   - <pkg>-Ex.timings
-#   - examples_i386/<pkg>-Ex.timings
-#   - examples_x64/<pkg>-Ex.timings
+#     big and is not needed).
+#   - '<pkg>-Ex.timings'
+#   - 'examples_i386/<pkg>-Ex.timings'
+#   - 'examples_x64/<pkg>-Ex.timings'
 def _clean_Rcheck_dir(Rcheck_dir, pkg):
     dangling_paths = []
     # Collect top-level stuff to remove.
-    top_level_stuff_to_keep = ['00install.out',
+    top_level_stuff_to_keep = ['00check.log',
+                               '00install.out',
                                'tests',
                                'tests_i386',
                                'tests_x64',
