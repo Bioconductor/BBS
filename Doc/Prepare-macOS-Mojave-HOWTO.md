@@ -880,7 +880,8 @@ another one:
     #   semi-transparency is not supported on this device: reported only once per page
     dev.off()
 
-so we'll use `"cairo"` (which is the default on Linux).
+Note that this semi-transparency problem breaks `R CMD build` on the chimeraviz
+package. So we'll use `"cairo"` (which is the default on Linux).
 
 One caveat is that this default cannot be changed via an `Rprofile` file (this
 file is ignored by `R CMD build` and `R CMD check`).
