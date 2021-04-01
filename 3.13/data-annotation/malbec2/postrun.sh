@@ -14,11 +14,11 @@ cd $BBS_CENTRAL_RDIR
 # and before we propagate packages (this will be done later by the
 # updateReposPkgs-data-annotation.sh script that we run from the biocadmin
 # account). Can help significantly if the machine has limited disk capacity.
-/usr/bin/rm -rf src
+rm -rf src
 
 # Fix perms
-/bin/chmod -R +r .
-/usr/bin/find nodes -type d -exec chmod 755 {} \;
+chmod -R +r .
+find nodes -type d -exec chmod 755 {} \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
@@ -35,11 +35,11 @@ $BBS_RSCRIPT_CMD --vanilla -e "source('$BBS_HOME/utils/createPropagationDB.R');c
 
 # Generate the HTML report
 $BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch
-REPORT_DIRNAME=$(/usr/bin/dirname $BBS_REPORT_PATH)
-REPORT_BASENAME=$(/usr/bin/basename $BBS_REPORT_PATH)
+REPORT_DIRNAME=$(dirname $BBS_REPORT_PATH)
+REPORT_BASENAME=$(basename $BBS_REPORT_PATH)
 cd "$REPORT_DIRNAME"
 $BBS_TAR_CMD zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
-/bin/mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"
+mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"
 
 # Publish it (no more --delete here, too dangerous!)
 $BBS_RSYNC_CMD -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_PUBLISHED_REPORT_DEST_DIR/"
