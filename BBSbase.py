@@ -56,42 +56,42 @@ def Rexpr2syscmd(Rexpr):
 # The <pkg>.Rcheck/ folder can be huge (several GB for some packages, even
 # for some software packages!) but, fortunately, the things that we need to
 # send to the central node are small.
+# NOTE: Trying to remove some of the files in <pkg>.Rcheck/ with os.remove()
+# can fail for some packages on Windows with an error like:
+#     PermissionError: [WinError 32] The process cannot
+#     access the file because it is being used by another
+#     process: 'scTHI.Rcheck\\00check.log'
 # Stuff to keep:
-#   - '00check.log': Note that trying to remove this file with os.remove()
-#       can fail for some packages on Windows with an error like:
-#           PermissionError: [WinError 32] The process cannot
-#           access the file because it is being used by another
-#           process: 'scTHI.Rcheck\\00check.log'
+#   - '00check.log': Trying to remove this file could fail on Windows (see
+#     NOTE above).
 #   - '00install.out'
-#   - All the top-level files in 'tests/', 'tests_i386/', and 'tests_x64/',
-#     except 'startup.Rs', and no subdir (e.g. 'tests/testthat/' can be
-#     big and is not needed).
+#   - '<pkg>-Ex.Rout'
+#   - '<pkg>-Ex_i386.Rout', '<pkg>-Ex_x64.Rout': Trying to remove these files
+#     could fail (see NOTE above).
 #   - '<pkg>-Ex.timings'
 #   - 'examples_i386/<pkg>-Ex.timings'
 #   - 'examples_x64/<pkg>-Ex.timings'
+#   - All the top-level files in 'tests/', 'tests_i386/', and 'tests_x64/',
+#     except 'startup.Rs', and no subdir (e.g. 'tests/testthat/' can be
+#     big and is not needed).
 def _clean_Rcheck_dir(Rcheck_dir, pkg):
     dangling_paths = []
     # Collect top-level stuff to remove.
     top_level_stuff_to_keep = ['00check.log',
                                '00install.out',
-                               'tests',
-                               'tests_i386',
-                               'tests_x64',
+                               '%s-Ex.Rout' % pkg,
+                               '%s-Ex_i386.Rout' % pkg,
+                               '%s-Ex_x64.Rout' % pkg,
                                '%s-Ex.timings' % pkg,
                                'examples_i386',
-                               'examples_x64']
+                               'examples_x64',
+                               'tests',
+                               'tests_i386',
+                               'tests_x64']
     for filename in os.listdir(Rcheck_dir):
         if filename not in top_level_stuff_to_keep:
             path = os.path.join(Rcheck_dir, filename)
             dangling_paths.append(path)
-    # Collect stuff to remove from 'tests/', 'tests_i386/', and 'tests_x64/'.
-    for subdir in ['tests', 'tests_i386', 'tests_x64']:
-        path = os.path.join(Rcheck_dir, subdir)
-        if os.path.isdir(path):
-            for filename in os.listdir(path):
-                path2 = os.path.join(path, filename)
-                if os.path.isdir(path2) or filename == 'startup.Rs':
-                    dangling_paths.append(path2)
     # Collect stuff to remove from 'examples_i386/' and 'examples_x64/'.
     file_to_keep = '%s-Ex.timings' % pkg
     for subdir in ['examples_i386', 'examples_x64']:
@@ -101,12 +101,23 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
                 if filename != file_to_keep:
                     path2 = os.path.join(path, filename)
                     dangling_paths.append(path2)
+    # Collect stuff to remove from 'tests/', 'tests_i386/', and 'tests_x64/'.
+    for subdir in ['tests', 'tests_i386', 'tests_x64']:
+        path = os.path.join(Rcheck_dir, subdir)
+        if os.path.isdir(path):
+            for filename in os.listdir(path):
+                path2 = os.path.join(path, filename)
+                if os.path.isdir(path2) or filename == 'startup.Rs':
+                    dangling_paths.append(path2)
     # Remove collected stuff.
     for path in dangling_paths:
         if os.path.isdir(path):
             bbs.fileutils.nuke_tree(path)
         else:
-            os.remove(path)
+            try:
+                os.remove(path)
+            except:
+                pass
     return
 
 
