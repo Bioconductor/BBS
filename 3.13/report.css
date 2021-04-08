@@ -514,6 +514,17 @@ TBODY.compact.gcard TR.even_row_number .riesling1 {
     background: #E4DFCF;
 }
 
+/* debina */
+.debina,
+.gcard TD.debina {
+    background: #F4EFDF;
+}
+.debina.toned_down,
+TR.toned_down .debina,
+TBODY.compact.gcard TR.even_row_number .debina {
+    background: #E4DFCF;
+}
+
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
