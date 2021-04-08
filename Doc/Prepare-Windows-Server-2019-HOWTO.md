@@ -84,17 +84,17 @@ Known problem: There are some "file association" problems on Windows Server
 2019 when running `R CMD check` on packages that contain calls to browseURL()
 in their examples. For example running `R CMD check` on BiocDockerManager
 or tRNAdbImport produces:
-    ```
+
     > BiocDockerManager::help()
     Error in shell.exec(url) :
       file association for 'https://hub.docker.com/r/bioconductor/bioconductor_docker' not available or invalid
-    ```
-or
-    ```
+
+or:
+
     > tRNAdbImport::open_tdbID("tdbD00000785")
     Error in shell.exec(url) :
       file association for 'http://trna.bioinf.uni-leipzig.de/DataOutput/Result?ID=tdbD00000785' not available or invalid
-    ```
+
 when checking the examples. Note that these errors only happen in the context
 of the daily builds i.e. they can't be reproduced by running `R CMD check` on
 BiocDockerManager or tRNAdbImport in an interactive session in a PowerShell
