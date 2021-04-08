@@ -1,6 +1,12 @@
 # How to set up a Windows Server 2019 system for the daily builds
 
 
+This document describes the process of setting up a Windows Server 2019
+machine to run the Bioconductor daily builds. It's been used to configure
+machines running Windows Server 2019 Standard or Windows Server 2019
+Datacenter.
+
+
 
 ## 0. General information and tips
 
@@ -61,7 +67,16 @@ existing variables. Do not add or edit user variables (at the top).
 Everything in this section must be done **from the Administrator account**.
 
 
-### 1.1 Install a decent web browser (for all users)
+### 1.1 Check time and time zone
+
+In Settings, go to Time & Language and make sure date, time, and time zone
+are correct. Note that using the same time zone for all the build machines
+makes things easier, less confusing, and less error-prone for everybody. All
+our build machines use the "(UTC-05:00) Eastern Time (US & Canada)" time zone
+at the moment.
+
+
+### 1.2 Install a decent web browser (for all users)
 
 E.g. Google Chrome or Firefox.
 
@@ -93,7 +108,36 @@ BiocDockerManager and tRNAdbImport packages that they put the problematic
 calls in an `if (interactive()) ...` statement.
 
 
-### 1.2 Install Python 3 (for all users)
+### 1.3 Install Visual Studio Community 2019
+
+Provides the `editbin` command, plus some DLLs apparently needed by the
+most recent versions of the `tensorflow` Python module.
+
+**From the Administrator account**:
+
+- Download Visual Studio Community 2019 from
+  https://visualstudio.microsoft.com/ (it's a free download)
+
+- Start the installer:
+
+  - On the first screen, go to "Individual components" and select the
+    latest "MSVC v142 - VS 2019 C++ x64/x86 build tools" in the "Compilers,
+    build tools, and runtimes" section.
+    Total space required (bottom right) should go up from 693MB to 2.46GB.
+    Click Install. When asked "Do you want to continue without workloads?",
+    click on "Continue".
+
+  - At the end of the installation, skip the Sign in step.
+
+  - Then click on Start Visual Studio, click on Continue without code,
+    and Exit.
+
+  - Close the Visual Studio Installer.
+
+
+### 1.4 Install Python 3 (for all users)
+
+**From the Administrator account**:
 
 Download the Latest Python 3 Release from
 https://www.python.org/downloads/windows/
@@ -120,14 +164,14 @@ is fine. If not:
   double-click on it.
 
 
-### 1.3 Upgrade to the latest pip
+### 1.5 Upgrade to the latest pip
 
 **From the Administrator account** in a PowerShell window:
 
     python -m pip install --upgrade pip
 
 
-### 1.4 Install Python 3 modules
+### 1.6 Install Python 3 modules
 
 #### Python 3 modules needed by BBS
 
@@ -187,8 +231,33 @@ Notes:
   used by Bioconductor package phemd. UPDATE (2020/11/06): It looks like
   recent versions of phateR no longer need this.
 
+TESTING: In a PowerShell window, start Python and try to import the
+`tensorflow` module. You should see something like this:
 
-### 1.6 Create personal administrator accounts
+    >>> import tensorflow
+    2021-04-07 22:29:19.150396: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
+    2021-04-07 22:29:19.158058: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+    INFO:tensorflow:Enabling eager execution
+    INFO:tensorflow:Enabling v2 tensorshape
+    INFO:tensorflow:Enabling resource variables
+    INFO:tensorflow:Enabling tensor equality
+    INFO:tensorflow:Enabling control flow v2
+    >>>
+
+If instead of the above you get an error like this:
+
+    ImportError: Could not find the DLL(s) 'msvcp140.dll or msvcp140_1.dll'.
+    TensorFlow requires that these DLLs be installed in a directory that is
+    named in your %PATH% environment variable. You may install these DLLs by
+    downloading "Microsoft C++ Redistributable for Visual Studio 2015, 2017
+    and 2019" for your platform from this URL:
+    https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
+
+then please refer to the _Install Visual Studio Community 2019_ section above
+in this document for how to fix this.
+
+
+### 1.7 Create personal administrator accounts
 
 Go in Computer Management
       -> System Tools
@@ -212,10 +281,13 @@ For all these accounts:
 - [ ] Password never expires
 - [ ] Account is disabled
 
-Then make these users members of the Administrators group.
+Then make these users members of the `Administrators` group.
+
+TESTING: Try to access these accounts via a remote desktop client (e.g.
+rdesktop or Remmina on Linux).
 
 
-### 1.7 Create the `biocbuild` account
+### 1.8 Create the `biocbuild` account
 
 Username: `biocbuild`
 
@@ -231,10 +303,13 @@ To do this: double-click on the `biocbuild` user and make the change in the
 Profile tab. Note that the `C:\Users\biocbuild` folder will still be created
 and populated at first logon.
 
-Make the `biocbuild` user a member of the Remote Desktop Users group.
+Then make the `biocbuild` user a member of the `Remote Desktop Users` group.
+This is needed to allow RDP access to the `biocbuild` account. Note that the
+personal administrator accounts created earlier don't need this because members
+of the `Administrators` group automatically allow RDP.
 
 
-### 1.8 Grant the `biocbuild` user "Log on as batch job" rights
+### 1.9 Grant the `biocbuild` user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `biocbuild`
 user.)
@@ -246,13 +321,13 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 Add `biocbuild` user.
 
 
-### 1.9 Install 32-bit Cygwin (for all users)
+### 1.10 Install 32-bit Cygwin (for all users)
 
 Cygwin is needed for: `curl`, `ssh`, `rsync`, and `vi`.
 
 Go to https://www.cygwin.com/, click on Install Cygwin, then download
-and run `setup-x86.exe` to install or update Cygwin. Do NOT install the
-64-bit version.
+and run `setup-x86.exe` to install or update Cygwin. IMPORTANT: Do NOT
+install the 64-bit version!
 
 In the installer:
 - Install for all users.
@@ -261,9 +336,10 @@ In the installer:
   automatically be installed.
 - Don't Create icon on Desktop.
 
-Finally **prepend** `C:\cygwin\bin` to `Path` (see "How to edit an
-environment variable" in "General information and tips" at the top
-of this document for how to do this).
+Finally **prepend** `C:\cygwin\bin` to `Path` (see _Edit an environment
+variable_ in the _Managing environment variables_ section at the top of
+this document for how to do this). At this point `C:\cygwin\bin` should
+be first in `Path`, right before `C:\Python38\Scripts\` and `C:\Python38\`.
 
 TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
 in it. Do this by just typing the name of the command followed by <Enter>.
@@ -275,7 +351,7 @@ the PowerShell window is the preferred command line environment when working
 interactively on a Windows build machine.
 
 
-### 1.10 Install git client for Windows
+### 1.11 Install git client for Windows
 
 Available at https://git-scm.com/download/win
 
@@ -285,7 +361,7 @@ running the installer.
 TESTING: Open a PowerShell window and try to run `git --version`
 
 
-### 1.11 Install MiKTeX
+### 1.12 Install MiKTeX
 
 If this is a reinstallation of MiKTeX, make sure to uninstall it (from
 the Administrator account) before reinstalling.
@@ -307,10 +383,10 @@ Open the MiKTeX Console by going to the Windows start menu:
 
 - Switch to administrator mode
 - In Settings: select "Always install missing packages on-the-fly" and make
-  sure that "For anyone who uses this computer (all users)" is NOT checked
-  (otherwise running `R CMD build` from a non-admin account like `biocbuild`
-  will fail to install missing packages on-the-fly because it doesn't have
-  admin privileges)
+  sure that the "For anyone who uses this computer (all users)" box is NOT
+  checked (otherwise running `R CMD build` from a non-admin account like
+  `biocbuild` will fail to install missing packages on-the-fly because it
+  doesn't have admin privileges)
 - In Updates: click on "Check for updates", and, if any updates,
   click on "Update now"
 
@@ -319,6 +395,8 @@ make sure to manually delete `C:\Users\biocbuild\AppData\Roaming\MiKTeX\`
 and `C:\Users\pkgbuild\AppData\Roaming\MiKTeX\` (better done from
 the `biocbuild` and `pkgbuild` accounts, respectively).
 
+
+### 1.13 Sign out from the Administrator account
 
 **From now on, all administrative tasks must be performed from one of the
 _personal administrator accounts_ instead of the Administrator account.**
@@ -529,9 +607,9 @@ for Windows Server 2019.
   running R. We want Rtools to **always** be on the PATH, not just in the
   context of an R session.
 
-- **Prepend** `C:\rtools40\usr\bin`, C:\rtools40\mingw32\bin`, and
-  `C:\rtools40\mingw64\bin` to `Path` (see "How to edit an environment
-  variable" in "General information and tips" at the top of this document
+- **Prepend** `C:\rtools40\usr\bin`, `C:\rtools40\mingw32\bin`, and
+  `C:\rtools40\mingw64\bin` to `Path` (see _Edit an environment variable_
+  in the _Managing environment variables_ section at the top of this document
   for how to do this).
 
   IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin`,
@@ -558,7 +636,7 @@ in a PowerShell window:
     make --version  # GNU Make 4.2.1
     which gcc       # /mingw32/bin/gcc (provided by rtools40)
     gcc --version   # gcc.exe (Built by Jeroen for the R-project) 8.3.0
-    which chmod     # /usr/bin/chmod
+    which chmod     # /usr/bin/chmod (provided by rtools40)
 
 Oh WAIT!! You also need to perform the step below (_Allow cc1plus.exe
 access to a 3GB address space_) or the mzR package won't compile in
@@ -575,26 +653,10 @@ order to be able to compile large software projects (e.g. mzR) on 32-bit
 Windows, it needs to be able to access to a 3GB address space. See:
 https://www.intel.com/content/www/us/en/programmable/support/support-resources/knowledge-base/embedded/2016/cc1plus-exe--out-of-memory-allocating-65536-bytes.html
 
-But first we need to get the `editbin` command. We get the command by
-installing Visual Studio Community 2019 **from the Administrator account**:
-
-- Download it from https://visualstudio.microsoft.com/
-
-- Start the installer:
-
-  - On the first screen, go to "Individual components" and select the
-    latest "MSVC v142 - VS 2019 C++ x64/x86 build tools" in the "Compilers,
-    build tools, and runtimes" section.
-    Total space required (bottom right) should go up from 693MB to 2.46GB.
-    Click Install. When asked "Do you want to continue without workloads?",
-    click on "Continue".
-
-  - At the end of the installation, skip the Sign in step.
-
-  - Then click on Start Visual Studio, click on Continue without code,
-    and Exit.
-
-  - Close the Visual Studio Installer.
+But first we need to get the `editbin` command. We get this command by
+installing Visual Studio Community 2019 **from the Administrator account**.
+Refer to the _Install Visual Studio Community 2019_ section above
+in this document for how to do this.
 
 Then **from the Administrator account** again, in the Developer Command
 Prompt for VS 2019:
@@ -613,7 +675,7 @@ Download `local323.zip`, `spatial324.zip`, and `curl-7.40.0.zip` from
 https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/ and unzip them
 **in that order** in `C:\extsoft`.
 
-When extacting all file from `curl-7.40.0.zip`, you'll be asked if you want
+When extacting all files from `curl-7.40.0.zip`, you'll be asked if you want
 to replace or skip the files with the same names (these are the `libz.a`
 files located in `lib\i386\` and `lib\x64\`, respectively). Choose "Skip
 these files".
@@ -739,8 +801,8 @@ and
     C:\Users\biocbuild\AppData\Local\ExperimentHub\ExperimentHub\Cache
 
 even if the home folder of the `biocbuild` account was explicitely set to
-something other than `C:\Users\biocbuild`! (See "Create the `biocbuild`
-account" section above in this document for more information about using
+something other than `C:\Users\biocbuild`! (See _Create the `biocbuild`
+account_ section above in this document for more information about using
 a customized `biocbuild`'s home folder.)
 
 If R is already installed, you can check this from R with:
@@ -1044,9 +1106,9 @@ Make sure that `C:\rtools40\usr\bin`, `C:\rtools40\mingw32\bin`
 and `C:\rtools40\mingw64\bin` are still first in the `Path`. In case
 the installer prepended something to `Path` (e.g. something like
 `C:\ProgramData\Oracle\Java\javapath`), move it towards the end of
-`Path` (e.g. anywhere after `C:\Program Files\Git\cmd`). See "How to
-edit an environment variable" in "General information and tips" at the
-top of this document for how to do this.
+`Path` (e.g. anywhere after `C:\Program Files\Git\cmd`). See _Edit an
+environment variable_ in the _Managing environment variables_ section
+at the top of this document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this
 account if you were already logged on) try to load the rJava package for
@@ -1116,8 +1178,8 @@ of Nov. 2020).
 
 Use the default settings when running the installer.
 
-Append `C:\Program Files\gs\gs9.53.3\bin` to `Path` (see "How to edit an
-environment variable" in "General information and tips" at the top of this
+Append `C:\Program Files\gs\gs9.53.3\bin` to `Path` (see _Edit an environment
+variable_ in the _Managing environment variables_ section at the top of this
 document for how to do this).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
@@ -1584,7 +1646,7 @@ To do this: double-click on the `pkgbuild` user and make the change in the
 Profile tab. Note that the `C:\Users\pkgbuild` folder will still be created
 and populated at first logon.
 
-Make the `pkgbuild` user a member of the Remote Desktop Users group.
+Make the `pkgbuild` user a member of the `Remote Desktop Users` group.
 
 
 ### 7.2 Grant the `pkgbuild` user "Log on as batch job" rights

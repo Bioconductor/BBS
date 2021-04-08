@@ -863,7 +863,7 @@ Simpler code (that doesn't involve ggplot2) that reproduces the warnings
 about the missing font family:
 
     png(tempfile(), type="quartz")
-    plot(density(rnorm(1000)))
+    plot(density(rnorm(1000)))  # generates a bunch of warnings
     dev.off()
 
 We don't have a clean fix for this yet, only a hacky workaround. The workaround
