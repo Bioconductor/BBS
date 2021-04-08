@@ -424,7 +424,7 @@ def STAGE2():
     os.chdir(meat_path)
     job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
                                          installed_pkgs)
-    STAGE2_loop(job_queue, BBSvars.nb_cpu)
+    STAGE2_loop(job_queue, BBSvars.install_nb_cpu)
 
     print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp")
     os.chdir(STAGE2_tmp)

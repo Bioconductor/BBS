@@ -10,6 +10,7 @@ set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=D:\biocbuild\bbs-3.13-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=24
+set BBS_INSTALL_NB_CPU=36
 set BBS_CHECK_NB_CPU=32
 
 set BBS_STAGE2_MODE=multiarch
