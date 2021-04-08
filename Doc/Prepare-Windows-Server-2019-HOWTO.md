@@ -1241,7 +1241,7 @@ Download the pre-compiled Windows binaries from
 Extract all the files to `C:\openbabel3`.
 
 Set environment variables `OPEN_BABEL_BIN` and `OPEN_BABEL_SRC` to
-`c:/openbabel/bin` and `c:/openbabel/src`, respectively (see _Edit an
+`c:/openbabel3/bin` and `c:/openbabel3/src`, respectively (see _Edit an
 environment variable_ in the _Managing environment variables_ section
 at the top of this document for how to do this). Make sure to use `/`
 instead of `\` as the directory delimiter.
