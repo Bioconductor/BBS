@@ -227,7 +227,7 @@ class RemoteDir:
     def syncLocalDir(self, local_dir, verbose=False):
         if os.path.exists(local_dir):
             if not os.path.isdir(local_dir):
-                sys.exit("'%s' already exists and is not a directory => EXIT." % local_dir)
+                sys.exit("'%s' already exists but is not a directory => EXIT." % local_dir)
         else:
             os.mkdir(local_dir)
         oldcwd = os.getcwd()
@@ -262,7 +262,10 @@ class RemoteDir:
         ## to make 'tar' work again on it.
         if sys.platform == "win32":
             cmd = "chmod a+r . -R"  # from Cygwin (or Rtools)
-            jobs.runJob(cmd, None, 300.0, verbose)
+            ## This can time out on Azure VM debina when syncing the local
+            ## meat folder with central MEAT0 if 'maxtime' is set to 5 min
+            ## so now we allow 6 min.
+            jobs.runJob(cmd, None, 360.0, verbose)
         os.chdir(oldcwd)
         return
 

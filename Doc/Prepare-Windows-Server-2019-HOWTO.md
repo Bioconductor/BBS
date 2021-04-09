@@ -323,7 +323,7 @@ Add `biocbuild` user.
 
 ### 1.10 Install 32-bit Cygwin (for all users)
 
-Cygwin is needed for: `curl`, `ssh`, `rsync`, and `vi`.
+Cygwin is needed for `ssh`, `rsync`, `curl`, and `vi`.
 
 Go to https://www.cygwin.com/, click on Install Cygwin, then download
 and run `setup-x86.exe` to install or update Cygwin. IMPORTANT: Do NOT
