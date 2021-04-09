@@ -432,8 +432,8 @@ def _writeRunHeader(out, cmd, nb_runs):
 def _runQueuedJob(job, verbose, nb_jobs, nb_slots, job_deps):
     if verbose:
         _logActionOnQueuedJob("START", job, nb_jobs, nb_slots, job_deps)
-    job._t1 = job._t2 = time.time()
-    job._startedat = dateString(time.localtime(job._t1))
+    job._t1 = time.time()
+    job._started_at = dateString(time.localtime(job._t1))
     job._output = open(job._output_file, 'w')
     job._nb_runs = 1
     _writeRunHeader(job._output, job._cmd, job._nb_runs)
@@ -509,12 +509,13 @@ def _logSlotEvent(logfile, event_type, job0, slot0, slots):
     logfile.write("  - job command: %s\n" % job0._cmd)
     logfile.write("  - job output file: %s\n" % job0._output_file)
     logfile.write("-------------------------------------------------------------------------------\n")
+    t2 = time.time()
     for slot in range(len(slots)):
         logfile.write("SLOT %s:" % (slot + 1))
         job = slots[slot]
         if job != None:
-            dt = job._t2 - job._t1
-            logfile.write(" %s [pid=%d / StartedAt: %s / %.1f seconds ago]" % (job._name, job._proc.pid, job._startedat, dt))
+            dt = t2 - job._t1
+            logfile.write(" %s [pid=%d / StartedAt: %s / %.1f seconds ago]" % (job._name, job._proc.pid, job._started_at, dt))
         logfile.write("\n")
     logfile.flush()
     return
@@ -584,10 +585,10 @@ def processJobQueue(job_queue, nb_slots=1,
                     slots[slot] = _rerunQueuedJob(job, verbose,
                                                   nb_jobs, nb_slots)
                     continue
-                job._endedat = dateString(time.localtime(job._t2))
+                job._ended_at = dateString(time.localtime(job._t2))
                 cumul += job.AfterRun()
             else: # timed out
-                job._endedat = dateString(time.localtime(job._t2))
+                job._ended_at = dateString(time.localtime(job._t2))
                 job.AfterTimeout(maxtime_per_job)
             processed_jobs.append(job._name)
             slots[slot] = None

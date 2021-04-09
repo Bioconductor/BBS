@@ -497,8 +497,8 @@ class Summary:
         f.write('Package: %s\n' % self.pkg)
         f.write('Version: %s\n' % self.version)
         f.write('Command: %s\n' % self.cmd)
-        f.write('StartedAt: %s\n' % self.startedat)
-        f.write('EndedAt: %s\n' % self.endedat)
+        f.write('StartedAt: %s\n' % self.started_at)
+        f.write('EndedAt: %s\n' % self.ended_at)
         f.write('EllapsedTime: %.1f seconds\n' % self.dt)
         if self.retcode == None:
             f.write('RetCode: None\n')
@@ -537,8 +537,8 @@ class InstallPkg_Job(bbs.jobs.QueuedJob):
         rerun_me = locking_pkg != None and locking_pkg != self.pkg
         return rerun_me
     def _MakeSummary(self):
-        self.summary.startedat = self._startedat
-        self.summary.endedat = self._endedat
+        self.summary.started_at = self._started_at
+        self.summary.ended_at = self._ended_at
         self.summary.dt = self._t2 - self._t1
         self.summary.Write(self.pkgdumps.summary_file)
         self.pkgdumps.Push(self.rdir)
@@ -571,8 +571,8 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.rdir = rdir
         self.summary = Summary(pkg, version, cmd)
     def _MakeSummary(self):
-        self.summary.startedat = self._startedat
-        self.summary.endedat = self._endedat
+        self.summary.started_at = self._started_at
+        self.summary.ended_at = self._ended_at
         self.summary.dt = self._t2 - self._t1
         pkg_file = self.pkgdumps.product_path
         if os.path.exists(pkg_file):
@@ -627,8 +627,8 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         #and we already push this dir to self.rdir as part of self.pkgdumps
         #self.install_out = os.path.join('%s.Rcheck' % pkg, '00install.out')
     def _MakeSummary(self):
-        self.summary.startedat = self._startedat
-        self.summary.endedat = self._endedat
+        self.summary.started_at = self._started_at
+        self.summary.ended_at = self._ended_at
         self.summary.dt = self._t2 - self._t1
         Rcheck_dir = self.pkgdumps.product_path
         if os.path.exists(Rcheck_dir):
