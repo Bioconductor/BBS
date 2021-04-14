@@ -14,7 +14,7 @@ set -e
 HN=$(hostname)
 
 function verifyBuildFinished {
-  cd "$HOME"/public_html/BBS/"${BBS_BIOC_VERSION}"/bioc/nodes
+  cd "$HOME"/public_html/BBS/"${BBS_BIOC_VERSION}"/bioc/products-in
   node_finished=$(find . -maxdepth 2 -type f -exec ls -1 {} \;|grep "BBS_EndOfRun"| grep -c "${HN}")
   if [ "${node_finished}" -eq 1 ]; then
     # 0 = true

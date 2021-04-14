@@ -2,7 +2,7 @@
 #
 # Typical use:
 #   ssh biocbuild@lamb2
-#   cd ~/public_html/BBS/2.7/bioc/nodes/liverpool/buildsrc
+#   cd ~/public_html/BBS/2.7/bioc/products-in/liverpool/buildsrc
 #   ~/BBS/utils/extract-build-times.sh
 #
 

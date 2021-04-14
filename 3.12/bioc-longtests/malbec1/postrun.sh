@@ -12,8 +12,8 @@ script_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # Fix perms
 cd "$BBS_CENTRAL_RDIR"
-/bin/chmod +r . -R
-/usr/bin/find nodes -type d -exec chmod 755 {} -c \;
+chmod +r . -R
+find products-in -type d -exec chmod 755 {} -c \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
@@ -22,10 +22,10 @@ $BBS_PYTHON_CMD $BBS_HOME/BBS-make-STATUS_DB.py
 
 # Generate and publish HTML report
 $BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch
-REPORT_DIRNAME=$(/usr/bin/dirname "$BBS_REPORT_PATH")
-REPORT_BASENAME=$(/usr/bin/basename "$BBS_REPORT_PATH")
+REPORT_DIRNAME=$(dirname "$BBS_REPORT_PATH")
+REPORT_BASENAME=$(basename "$BBS_REPORT_PATH")
 cd "$REPORT_DIRNAME"
-/bin/tar zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
-/bin/mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"
+tar zcf "$REPORT_BASENAME.tgz" "$REPORT_BASENAME"
+mv "$REPORT_BASENAME.tgz" "$BBS_REPORT_PATH"
 # No more --delete here, too dangerous!
-/usr/bin/rsync -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_PUBLISHED_REPORT_DEST_DIR/"
+$BBS_RSYNC_CMD -ave 'ssh -o StrictHostKeyChecking=no' "$BBS_REPORT_PATH/" "$BBS_PUBLISHED_REPORT_DEST_DIR/"

@@ -92,7 +92,7 @@ else:
                     central_ruser,
                     rsh_cmd, rsync_cmd, rsync_rsh_cmd)
 
-nodes_rdir = Central_rdir.subdir('nodes')
+products_in_rdir = Central_rdir.subdir('products-in')
 
 ### Only needed by BBS-prerun.py and BBS-run.py
 
@@ -143,7 +143,7 @@ if node_hostname.lower() != hostname0.lower():
     sys.exit("==> EXIT")
 
 node_id = BBSutils.getenv('BBS_NODE_ID', False, node_hostname)
-Node_rdir = nodes_rdir.subdir(node_id)
+Node_rdir = products_in_rdir.subdir(node_id)
 install_rdir = Node_rdir.subdir('install')
 buildsrc_rdir = Node_rdir.subdir('buildsrc')
 checksrc_rdir = Node_rdir.subdir('checksrc')

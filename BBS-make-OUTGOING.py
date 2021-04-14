@@ -22,7 +22,7 @@ def is_doing_buildbin(node_hostname):
     return BBSutils.getNodeSpec(node_hostname, 'pkgType') != "source"
 
 def pkgMustBeRejected(node_hostname, node_id, pkg):
-    nodes_path = BBSvars.nodes_rdir.path
+    nodes_path = BBSvars.products_in_rdir.path
     node_path = os.path.join(nodes_path, node_id)
     summary_file0 = "%s.%%s-summary.dcf" % pkg
 
@@ -77,7 +77,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     node_id = tmp[0]
     node_hostname = node_id.split("-")[0]
     fileext = BBSutils.getNodeSpec(node_hostname, 'pkgFileExt')
-    fresh_pkgs_subdir = os.path.join(BBSvars.nodes_rdir.path, fresh_pkgs_subdir)
+    fresh_pkgs_subdir = os.path.join(BBSvars.products_in_rdir.path, fresh_pkgs_subdir)
 
     ## Workflow and book packages do not have manuals/ because we do not run
     ## `R CMD check`.

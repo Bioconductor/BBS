@@ -786,7 +786,7 @@ def _wopen_leafreport_input_file(pkg, node_id, stage, filename,
                                  return_None_on_error=False):
     if pkg:
         filename = "%s.%s-%s" % (pkg, stage, filename)
-    rdir = BBSvars.nodes_rdir.subdir('%s/%s' % (node_id, stage))
+    rdir = BBSvars.products_in_rdir.subdir('%s/%s' % (node_id, stage))
     return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
 
 def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
@@ -947,7 +947,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
 def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Installation output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "nodes",
+    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "products-in",
                                node_id, "checksrc", Rcheck_dir)
     if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
@@ -1065,7 +1065,7 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Tests output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "nodes",
+    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "products-in",
                                node_id, "checksrc", Rcheck_dir)
     if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
@@ -1112,7 +1112,7 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Example timings</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
-    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "nodes",
+    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "products-in",
                                node_id, "checksrc", Rcheck_dir)
     if not os.path.exists(Rcheck_path):
         out.write('<P class="noresult"><SPAN>')
@@ -1550,9 +1550,9 @@ def write_node_specs_table(out):
     out.write('<TH>R&nbsp;version</TH>')
     out.write('<TH style="text-align: right;">Installed&nbsp;pkgs</TH>')
     out.write('</TR>\n')
-    nodes_rdir = BBSvars.nodes_rdir
+    products_in_rdir = BBSvars.products_in_rdir
     for node in BBSreportutils.NODES:
-        Node_rdir = nodes_rdir.subdir(node.node_id)
+        Node_rdir = products_in_rdir.subdir(node.node_id)
         NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
         Rversion_html = read_Rversion(Node_rdir)
         Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
@@ -1765,7 +1765,7 @@ sys.stdout.flush()
 if BBSvars.subbuilds == "bioc":
     ### Load package dep graph.
     node0 = BBSreportutils.NODES[0]
-    Node0_rdir = BBSvars.nodes_rdir.subdir(node0.node_id)
+    Node0_rdir = BBSvars.products_in_rdir.subdir(node0.node_id)
     print("BBS> [stage8] Get %s from %s/" % \
           (BBSutils.pkg_dep_graph_file, Node0_rdir.label))
     Node0_rdir.Get(BBSutils.pkg_dep_graph_file)

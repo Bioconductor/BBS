@@ -18,7 +18,7 @@ import BBSreportutils
 
 def _read_status_from_summary_file(pkg, node_id, stage):
     summary_file = '%s.%s-summary.dcf' % (pkg, stage)
-    summary_path = os.path.join('nodes', node_id, stage, summary_file)
+    summary_path = os.path.join('products-in', node_id, stage, summary_file)
     try:
         summary = bbs.parse.parse_DCF(summary_path, merge_records=True)
     except FileNotFoundError:
@@ -79,8 +79,8 @@ def make_STATUS_DB(pkgs):
 
 if __name__ == "__main__":
     print()
-    if not os.path.isdir('nodes'):
-        print('mmh.. I don\'t see the \'nodes\' subdirectory ' + \
+    if not os.path.isdir('products-in'):
+        print('mmh.. I don\'t see the \'products-in\' subdirectory ' + \
               'in the current directory!')
         print('Make sure to be in \'%s/\' ' % BBSvars.Central_rdir.path)
         print('before running the BBS-make-STATUS_DB.py script.')

@@ -10,7 +10,7 @@ echo "-------------------"
 # Fix the perms
 cd $BBS_CENTRAL_RDIR
 /bin/chmod +r . -R
-cd nodes
+cd products-in
 /usr/bin/find . -type d -exec chmod 755 {} -c \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.

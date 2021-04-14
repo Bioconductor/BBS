@@ -19,7 +19,7 @@ rm -rf src
 
 # Fix perms
 chmod -R +r .
-find nodes -type d -exec chmod 755 {} \;
+find products-in -type d -exec chmod 755 {} \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
