@@ -755,7 +755,7 @@ For example:
 Note that the source tarball you download should have a unique and descriptive
 name, including a version or a date, such as `R-3.2.r67960.tar.gz`
 or `R-3.2-2015-10-26.tar.gz`. If it does not have such a name (e.g.
-it's just caled R-devel.tar.gz) please rename it after downloading and
+it's just called `R-devel.tar.gz`) please rename it after downloading and
 before extracting.
 
     tar zxvf R-4.0.2.tar.gz
