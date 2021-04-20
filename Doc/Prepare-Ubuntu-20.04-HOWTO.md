@@ -535,9 +535,9 @@ Notes:
 - `mofapy` and `mofapy2` are needed by Bioconductor packages MOFA and MOFA2,
   respectively.
 
-- `tensorflow` is needed by Bioconductor packages scAlign and netReg. Note that
-  trying to load the module in a Python 3 session might raise the following
-  error:
+- `tensorflow` is needed by Bioconductor packages scAlign, netReg, and
+  DeepPINCS. Note that trying to load the module in a Python 3 session might
+  raise the following error:
     ```
     >>> import tensorflow
     2020-08-08 16:52:56.617223: W tensorflow/stream_executor/platform/default/dso_loader.cc:59] Could not load dynamic library 'libcudart.so.10.1'; dlerror: libcudart.so.10.1: cannot open shared object file: No such file or directory
