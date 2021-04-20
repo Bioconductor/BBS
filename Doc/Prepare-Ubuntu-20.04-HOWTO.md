@@ -859,7 +859,7 @@ From R:
     BiocManager::install("VariantAnnotation")
     BiocManager::install("rhdf5")
 
-#### Flush the data caches
+#### [OPTIONAL] Flush the data caches
 
 When R is updated, it's a good time to flush the cache for AnnotationHub,
 ExperimentHub, and BiocFileCache. This is done by removing the corresponding
