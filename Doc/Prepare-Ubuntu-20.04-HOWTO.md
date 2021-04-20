@@ -778,6 +778,15 @@ Check version and revision:
     ../rdownloads/R-4.0.2/configure --enable-R-shlib
     make -j10       # or 'make -j' to use all cores
 
+Note: Using the `-j` option allows `make` to run in parallel. The nb following
+the option specifies the nb of jobs to run simultaneously. See `man make` for
+the details. Don't try to use a nb of jobs that is more than the nb of logical
+cores available on the machine. It might still work but it won't be optimal (it
+might actually slow things down). To get the nb of logical cores on a Linux
+system:
+
+    cat /proc/cpuinfo | grep processor | wc -l
+
 #### After compilation
 
 Do NOT run `make install`!
