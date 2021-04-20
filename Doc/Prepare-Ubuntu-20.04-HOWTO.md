@@ -791,16 +791,20 @@ system:
 
 Do NOT run `make install`!
 
-Run a script to fix compilation flags by modifying `R/etc/Makeconf`. It's
-very important to run this from the `~/bbs-3.13-bioc/R/etc/` directory and
-not one level up. Both locations have Makefiles.
+Run the `R-fix-flags.sh` script to modify the compiler flags that will be used
+during package compilation. The script will modify `R/etc/Makeconf`. It's
+important to run this from the `~/bbs-3.13-bioc/R/etc/` directory and not one
+level up. Both locations contain `Makeconf` files but we only want to modify
+the `Makeconf` file located in `~/bbs-3.13-bioc/R/etc/`:
 
     cd etc/
     ~/BBS/utils/R-fix-flags.sh
 
-This sets the C/C++/Fortran additional compilation flags to be used during
-the builds, e.g., `-Wall`, which will show useful additional warnings. These
-warnings will be included in the build report.
+The script adds the `-Wall` flag to the compilation commands that will be used
+to compile package native code (i.e. C/C++/Fortran code). The flag tells the
+compiler to display additional warnings that can help package maintainers find
+potential problems in their code. These warnings will be included in the HTML
+report that gets generated at the end of the builds.
 
 #### Basic testing
 
