@@ -165,7 +165,7 @@ to `en_GB` like this:
     sudo locale-gen "en_GB"
     sudo update-locale LC_TIME="en_GB"
 
-Then logout and login again for the change to take effect and try:
+Then logout and login again for the change to take effect, and try:
 
     date
     # Tue 20 Apr 16:26:10 EDT 2021
