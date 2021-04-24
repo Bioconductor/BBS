@@ -52,11 +52,11 @@ as of Aug 2020.
 
 ### 1.3 Check /etc/hostname and /etc/hosts
 
-- `/etc/hostname` should contain the short name of the build machine as
-  it will appear on the build report (e.g. `nebbiolo1` or `rex3`).
-  Note that you will need to make sure to set `BBS_NODE_HOSTNAME` to the same
-  value when you configure BBS (see for example `BBS/3.13/bioc/rex3/config.sh`
-  in BBS git tree).
+- `/etc/hostname` should contain the short name of the build
+  machine as it will appear on the build report (e.g. `nebbiolo1`).
+  Note that you will need to make sure to set `BBS_NODE_HOSTNAME`
+  to the same value when you configure BBS (see for example
+  `3.13/bioc/nebbiolo1/config.sh` in BBS git tree).
 
 - Check `/etc/hosts` and make sure that it contains an entry that maps
   the name in `/etc/hostname` to 127.0.1.1 or to the permanent IP address
@@ -64,7 +64,7 @@ as of Aug 2020.
 
 TESTING: You should be able to ping yourself with:
 
-    ping rex3
+    ping nebbiolo1
 
 Note that not having this set properly will cause Bioconductor package RGMQL
 to fail. So if the software builds are already set up, you can start R from

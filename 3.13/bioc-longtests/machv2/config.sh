@@ -15,8 +15,9 @@ export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.13-bioc-longtests"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Versions/Current/Resources"
 export BBS_NB_CPU=4  # 24 cores are available
 
-# Central build node is rex3 at BHW.
-export BBS_CENTRAL_RHOST="155.52.173.35"
+# Central build node is malbec2 at RPCI. We use its internal IP
+# address (DMZ-IP).
+export BBS_CENTRAL_RHOST="172.29.0.4"
 
 # When used with StrictHostKeyChecking=no, ssh will automatically add new
 # host keys to the user known hosts files (so it doesn't get stalled waiting

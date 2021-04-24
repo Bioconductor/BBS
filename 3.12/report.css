@@ -470,17 +470,6 @@ TBODY.compact.gcard TR.even_row_number .nebbiolo1 {
     background: #CADCEA;
 }
 
-/* rex3 (Ubuntu 20.04) */
-.rex3,
-.gcard TD.rex3 {
-    background: #DAECFA;
-}
-.rex3.toned_down,
-TR.toned_down .rex3,
-TBODY.compact.gcard TR.even_row_number .rex3 {
-    background: #CADCEA;
-}
-
 /* tokay1 */
 .tokay1,
 .gcard TD.tokay1 {
