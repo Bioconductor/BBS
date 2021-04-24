@@ -23,7 +23,7 @@ export BBS_CENTRAL_RHOST="155.52.47.135"
 # When used with StrictHostKeyChecking=no, ssh will automatically add new
 # host keys to the user known hosts files (so it doesn't get stalled waiting
 # for an answer when not run interactively).
-export BBS_RSH_CMD="/usr/bin/ssh -qi /Users/biocbuild/.BBS/id_rsa -o StrictHostKeyChecking=no -J biocbuild@ada.dfci.harvard.edu"
+export BBS_RSH_CMD="/usr/bin/ssh -q -o StrictHostKeyChecking=no -J biocbuild@ada.dfci.harvard.edu"
 
 export BBS_CENTRAL_ROOT_URL="http://155.52.207.165"
 
