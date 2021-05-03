@@ -502,7 +502,6 @@ For BioC packages:
                          infernal \
                          fuse \
                          libfuse-dev \
-                         gcsfuse \
                          kallisto
 
 Notes:
@@ -520,7 +519,6 @@ Notes:
   EnhancedVolcano indirectly depends on via ragg and ggrastr.
 - `infernal` is for inferrnal.
 - `fuse` and `libfuse-dev` are for Travel.
-- `gcsfuse` is for GCSFilesystem.
 - `kallisto` is for rkal.
 
 
