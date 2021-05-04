@@ -53,18 +53,18 @@ as of Aug 2020.
 ### 1.3 Check /etc/hostname and /etc/hosts
 
 - `/etc/hostname` should contain the short name of the build
-  machine as it will appear on the build report (e.g. `nebbiolo1`).
+  machine as it will appear on the build report (e.g. `nebbiolo2`).
   Note that you will need to make sure to set `BBS_NODE_HOSTNAME`
   to the same value when you configure BBS (see for example
-  `3.13/bioc/nebbiolo1/config.sh` in BBS git tree).
+  `3.14/bioc/nebbiolo2/config.sh` in BBS git tree).
 
 - Check `/etc/hosts` and make sure that it contains an entry that maps
   the name in `/etc/hostname` to 127.0.1.1 or to the permanent IP address
   of the machine.
 
-TESTING: You should be able to ping yourself with:
+TESTING: You should be able to ping yourself with e.g.:
 
-    ping nebbiolo1
+    ping nebbiolo2
 
 Note that not having this set properly will cause Bioconductor package RGMQL
 to fail. So if the software builds are already set up, you can start R from
@@ -153,7 +153,7 @@ should display:
     LANG="en_US.UTF-8"
 
 Note that with the above setting (`LANG="en_US.UTF-8"`), and if the `LC_TIME`
-variable is not defined in the `/etc/default/locale` file, the `date` comand
+variable is not defined in the `/etc/default/locale` file, the `date` command
 prints the time in AM/PM format on Ubuntu 20.04:
 
     date
@@ -587,17 +587,17 @@ Notes:
   itself used by Bioconductor package destiny. Note that `jupyter --version`
   should display something like this (as of Jan. 2021):
     ```
-    hpages@nebbiolo1:~$ jupyter --version
-    jupyter core     : 4.7.0
-    jupyter-notebook : 6.2.0
-    qtconsole        : 5.0.1
-    ipython          : 7.19.0
-    ipykernel        : 5.4.3
-    jupyter client   : 6.1.11
+    hpages@nebbiolo2:~$ jupyter --version
+    jupyter core     : 4.7.1
+    jupyter-notebook : 6.3.0
+    qtconsole        : 5.1.0
+    ipython          : 7.23.0
+    ipykernel        : 5.5.3
+    jupyter client   : 6.1.12
     jupyter lab      : not installed
     nbconvert        : 6.0.7
     ipywidgets       : 7.6.3
-    nbformat         : 5.1.2
+    nbformat         : 5.1.3
     traitlets        : 5.0.5
     ```
   It's ok if jupyter lab is not installed but everything else should be.
@@ -702,16 +702,17 @@ hostname. For example:
 
 #### Install biocbuild RSA private key
 
-Add `~/.BBS/id_rsa` to the biocbuild home (copy `id_rsa` from another build
-machine). Then `chmod 400 ~/.BBS/id_rsa` so permissions look like this:
+Copy biocbuild RSA private key to `~biocbuild/.ssh/id_rsa` (e.g. copy it from
+another build machine). Then `chmod 400 ~/.ssh/id_rsa` so permissions look
+like this:
 
-    biocbuild@nebbiolo1:~$ ls -l .BBS/id_rsa
-    -r-------- 1 biocbuild biocbuild 883 Aug  6 17:21 .BBS/id_rsa
+    biocbuild@nebbiolo2:~$ ls -l .ssh/id_rsa
+    -r-------- 1 biocbuild biocbuild 1679 Apr 30 15:20 .ssh/id_rsa
 
 #### Check that you can ssh to the central builder
 
-    ssh -i ~/.BBS/id_rsa malbec2                   # from within RPCI's DMZ
-    ssh -i ~/.BBS/id_rsa malbec2.bioconductor.org  # from anywhere else
+    ssh malbec2                   # from within RPCI's DMZ
+    ssh malbec2.bioconductor.org  # from anywhere else
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
@@ -747,11 +748,11 @@ Must be done from the biocbuild account.
 
 #### Create bbs-x.y-bioc directory structure
 
-For example, for the BioC 3.13 software builds:
+For example, for the BioC 3.14 software builds:
 
     cd
-    mkdir bbs-3.13-bioc
-    cd bbs-3.13-bioc/
+    mkdir bbs-3.14-bioc
+    cd bbs-3.14-bioc/
     mkdir rdownloads log
 
 
@@ -763,47 +764,62 @@ Note that we always build R **from source** on a Linux builder. We do not
 install a package for a Linux distribution (i.e. we don't use `apt-get`
 on Ubuntu).
 
-#### Get R source from CRAN
+#### Get R source tarball from CRAN
 
 Move to the directory where we're going to download and extract the R source
 tarball from CRAN:
 
-    cd ~/bbs-3.13-bioc/rdownloads/
+    cd ~/bbs-3.14-bioc/rdownloads/
 
-The exact tarball to download depends on whether we're configuring the
-release or devel builds:
-- Current release: https://cran.r-project.org/
-- Latest R devel: https://stat.ethz.ch/R/daily/
-- R alpha, beta, RC, etc: https://cran.r-project.org/src/base-prerelease/
+The exact tarball to download depends on whether we're configuring builds
+for BioC release or devel:
+- BioC release always uses the latest release of R. The source tarball
+  for the latest release of R is normally available on the CRAN home page
+  at: https://cran.r-project.org/
+- For BioC devel it depends:
+  * The BioC devel cycle that runs from Spring to Fall uses the same R
+    as the current BioC release.
+  * The BioC devel cycle that runs from Fall to Spring uses R devel.
+    So in this case you need to pick up the latest daily snapshot of
+    R devel [available here](https://stat.ethz.ch/R/daily/), or,
+    if we're close to the release of the next major version of R,
+    pick up the latest daily snapshot of R alpha/beta/RC
+    [available here](https://cran.r-project.org/src/base-prerelease/).
 
-For example:
-
-    wget https://cran.r-project.org/src/base/R-4/R-4.0.2.tar.gz
+IMPORTANT NOTE: If we are only a few weeks before the Spring release and
+you are configuring the Bioconductor builds for the **future devel builds**
+(i.e. for the upcoming Spring-to-Fall devel cycle), then you need to pick
+up the same R that you would pick up for the devel builds. For example, if
+we are a few weeks before the BioC 3.13 release, and you are configuring
+the future BioC 3.14 builds, then you need to pick up the latest daily
+snapshot of R alpha/beta/RC.
 
 Note that the source tarball you download should have a unique and descriptive
-name, including a version or a date, such as `R-3.2.r67960.tar.gz`
-or `R-3.2-2015-10-26.tar.gz`. If it does not have such a name (e.g.
-it's just called `R-devel.tar.gz`) please rename it after downloading and
-before extracting.
+name, including a version and/or a date, such as `R-3.2.r67960.tar.gz`,
+`R-3.2-2015-10-26.tar.gz`, or `R-alpha_2021-04-28_r80240.tar.gz`. If it does
+not have such a name (e.g. it's just called `R-devel.tar.gz`) please rename
+it after downloading and before extracting.
 
-    tar zxvf R-4.0.2.tar.gz
+### Extract the source tarball
+
+    tar zxvf R-alpha_2021-04-28_r80240.tar.gz
 
 If the directory created by untarring is called something like `R-devel`
-and does not have a unique and descriptive name (containing a date or svn
-revision number) then please rename accordingly. Directory should have a
-name like `R-3.2.r67960` or `R-3.2-2015-10-26`.
+or `R-alpha`, we should rename it to a unique and descriptive name that
+contains an svn revision number or a date e.g. to something like `R-4.1.r80240`
+or `R-4.1-2021-04-28`.
 
-Check version and revision:
+Check version and revision with:
 
-    cat R-4.0.2/VERSION
-    cat R-4.0.2/SVN-REVISION
+    cat R-alpha/VERSION
+    cat R-alpha/SVN-REVISION
 
 #### Configure and compile R
 
-    cd ~/bbs-3.13-bioc/
+    cd ~/bbs-3.14-bioc/
     mkdir R         # preceded by 'rm -rf R.old && mv R R.old' if updating R
     cd R/
-    ../rdownloads/R-4.0.2/configure --enable-R-shlib
+    ../rdownloads/R-4.1.r80240/configure --enable-R-shlib
     make -j10       # or 'make -j' to use all cores
 
 Note: Using the `-j` option allows `make` to run in parallel. The nb following
@@ -821,9 +837,9 @@ Do NOT run `make install`!
 
 Run the `R-fix-flags.sh` script to modify the compiler flags that will be used
 during package compilation. The script will modify `R/etc/Makeconf`. It's
-important to run this from the `~/bbs-3.13-bioc/R/etc/` directory and not one
+important to run this from the `~/bbs-3.14-bioc/R/etc/` directory and not one
 level up. Both locations contain `Makeconf` files but we only want to modify
-the `Makeconf` file located in `~/bbs-3.13-bioc/R/etc/`:
+the `Makeconf` file located in `~/bbs-3.14-bioc/R/etc/`:
 
     cd etc/
     ~/BBS/utils/R-fix-flags.sh
@@ -838,7 +854,7 @@ report that gets generated at the end of the builds.
 
 Start R:
 
-    cd ~/bbs-3.13-bioc/
+    cd ~/bbs-3.14-bioc/
     R/bin/R         # check version displayed by startup message
 
 Then from R:
@@ -915,17 +931,18 @@ First make sure to have the following lines at the top of the crontab:
 
 Then add the following entries to the crontab:
 
-    # BIOC 3.13 SOFTWARE BUILDS
+    # BIOC 3.14 SOFTWARE BUILDS
     # -------------------------
 
     # prerun:
-    40 14 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    50 14 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
     # run:
-    00 16 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 16 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
-    # postrun (this should start AFTER builds are finished on all nodes):
-    25 11 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    # postrun (make sure this starts AFTER 'biocbuild' has finished its "run.sh"
+    # job on ALL the nodes):
+    00 12 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run
 before doing so (great time to catch up on your favorite Netflix show and
@@ -1017,7 +1034,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 From the biocbuild account, try to build and check the ensemblVEP and
 MMAPPR2 packages:
 
-    cd ~/bbs-3.13-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
 
     ## Takes about 4 min. to build and 8 min. to check:
     ../R/bin/R CMD build ensemblVEP
@@ -1051,7 +1068,7 @@ From the biocbuild account:
 
 Finally try to build the GeneGA package:
 
-    cd ~/bbs-3.13-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD build GeneGA
 
 
@@ -1076,7 +1093,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 From the biocbuild account:
 
-    cd ~/bbs-3.13-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD INSTALL rsbml
 
 
@@ -1097,7 +1114,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 From the biocbuild account:
 
-    cd ~/bbs-3.13-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD build ImmuneSpaceR
 
 
@@ -1113,7 +1130,7 @@ Required by Bioconductor package LowMACA.
 
 From the biocbuild account:
 
-    cd ~/bbs-3.13-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD build LowMACA
 
 
@@ -1177,7 +1194,7 @@ From the biocbuild account:
 
 Finally try to install the xps package:
 
-    cd ~/bbs-3.13-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD INSTALL xps
 
 As expected, this currently fails (with xps 1.49.0):
@@ -1219,256 +1236,97 @@ As expected, this currently fails (with xps 1.49.0):
 
 
 
-## 4. Known issues
+## 4. Set up other builds
 
 
-### 4.1 curl SSLv3 alert handshake failure
-
-Affects several Bioconductor packages on Ubuntu 20.04: MouseFM, martini,
-AnnotationHubData, and rfaRm. See below for the details. Maintainers of
-these packages have been notified on Sept 8, 2020, with the suggested
-temporary workaround to use HTTP instead of HTTPS.
-
-Note that the following fix at the system level also makes the issue go away
-https://askubuntu.com/questions/1233186/ubuntu-20-04-how-to-set-lower-ssl-security-level
-However most Ubuntu 20.04 users won't know about this, and, even if they
-did, they won't necessarily be in a position to apply the fix (requires
-sudo access). System administrators wouldn't necessarily agree to apply
-such a fix either. So do NOT apply the fix on the Ubuntu 20.04 build machine.
-This way the packages below get an error on the build report and this is
-an incentive for their maintainers to fix them by applying the suggested
-workaround (use HTTP instead of HTTPS).
-
-#### MouseFM and martini
-
-An Ensembl server misconfiguration + increased security level
-in Ubuntu 20.04 + a bug in OpenSSL 1.1.1 cause the examples in
-`?MouseFM::annotate_consequences` and some unit test in martini to fail:
-
-    library(curl)
-    
-    ## At a very low level the examples in `?MouseFM::annotate_consequences` do:
-    url <- "https://rest.ensembl.org/vep/mouse/id"
-    curl_fetch_memory(url)
-    #Error in curl_fetch_memory(url) :
-    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
-    
-    ## The code in test_snp2gene.R in martini does:
-    url <- "https://rest.ensembl.org/taxonomy/id/9606?content-type=application/json"
-    curl_fetch_memory(url)
-    #Error in curl_fetch_memory(url) :
-    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
-
-See https://github.com/Ensembl/ensembl-rest/issues/427 for the details.
-
-Easy way to reproduce:
-
-    curl https://rest.ensembl.org  # works fine on Ubuntu < 20.04
-
-#### AnnotationHubData
-
-Internally `test_GencodeFasta()` does:
-
-    library(RCurl)
-    getURL("https://www.gencodegenes.org/human/releases")
-    #Error in function (type, msg, asError = TRUE)  :
-    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
-
-This causes AnnotationHubData's unit tests to fail.
-
-Easy way to reproduce:
-
-    curl https://www.gencodegenes.org  # works fine on Ubuntu < 20.04
-
-I reported the issue by filling a form here https://www.gencodegenes.org/pages/contact.html on Aug 20, 2020. Message sent:
-
---------------------------------------------------------------------------
-Subject: curl SSLv3 alert handshake failure when accessing the
-gencodegenes.org website from Ubuntu 20.04
-
-Hi,
-
-This fails with Ubuntu 20.04:
-
-    curl https://www.gencodegenes.org
-    #curl: (35) error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
-
-but works fine with Ubuntu < 20.04 and on Windows and macOS Mojave.
-
-This seems to happen with some websites because of a combination of three reasons: server misconfiguration, increased TLS security level in Ubuntu 20.04 by default, and a bug in OpenSSL 1.1.1. See https://github.com/Ensembl/ensembl-rest/issues/427 for a similar issue with the Ensembl server.
-
-FWIW this breaks Bioconductor package AnnotationHubData: https://bioconductor.org/checkResults/3.12/bioc-LATEST/AnnotationHubData/nebbiolo1-checksrc.html
-
-Internally the package tries to access www.gencodegenes.org with the following R code:
-
-    > library(RCurl)
-
-    > getURL("https://www.gencodegenes.org/human/releases")
-    Error in function (type, msg, asError = TRUE)  :
-      error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
-
-    > sessionInfo()
-    R version 4.0.2 Patched (2020-08-04 r78971)
-    Platform: x86_64-pc-linux-gnu (64-bit)
-    Running under: Ubuntu 20.04.1 LTS
-
-    Matrix products: default
-    BLAS:   /home/hpages/R/R-4.0.r78971/lib/libRblas.so
-    LAPACK: /home/hpages/R/R-4.0.r78971/lib/libRlapack.so
-
-    locale:
-     [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-     [3] LC_TIME=en_GB              LC_COLLATE=en_US.UTF-8    
-     [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-     [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-     [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-    [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-
-    attached base packages:
-    [1] stats     graphics  grDevices utils     datasets  methods   base     
-
-    other attached packages:
-    [1] RCurl_1.98-1.2
-
-    loaded via a namespace (and not attached):
-    [1] compiler_4.0.2 bitops_1.0-6  
-
-Thanks!
-
-Hervé Pagès
-
-Program in Computational Biology
-
-Division of Public Health Sciences
-
-Fred Hutchinson Cancer Research Center
-
-1100 Fairview Ave. N, M1-B514
-
-P.O. Box 19024
-
-Seattle, WA 98109-1024
-
-E-mail: xxxxxx@xxxxxxxxx.org
-
-Phone:  (XXX) XXX-XXXX
-
-Fax:    (XXX) XXX-XXXX
-
---------------------------------------------------------------------------
-
-#### rfaRm
-
-Internally `rfaRm:::rfamGetClanDefinitions()` does:
-
-    library(xml2)
-    read_xml("https://rfam.xfam.org/clans")
-    #Error in open.connection(x, "rb") :
-    #  error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
-
-Note that `rfaRm:::rfamGetClanDefinitions()` is called at **installation time**
-so rfaRm doesn't even install!
-
-Easy way to reproduce:
-
-    curl https://rfam.xfam.org  # works fine on Ubuntu < 20.04
-
-I reported the issue here on Aug 20, 2020:
-https://github.com/Rfam/rfam-website/issues/39
+### 4.1 Annotation builds
 
 
-
-## 5. Set up other builds
-
-
-### 5.1 Annotation builds
-
-
-### 5.2 Experimental data builds
+### 4.2 Experimental data builds
 
 From the biocbuild account:
 
-    mkdir -p ~/bbs-3.13-data-experiment/log
+    mkdir -p ~/bbs-3.14-data-experiment/log
 
 Then add the following entries to biocbuild's crontab:
 
-    # BIOC 3.13 DATA EXPERIMENT BUILDS
+    # BIOC 3.14 DATA EXPERIMENT BUILDS
     # --------------------------------
     # run on Mondays and Thursdays
     
     # prerun:
-    00 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    25 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    25 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (this should start AFTER builds are finished on all nodes):
-    45 15 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 15 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 
-### 5.3 Workflows builds
+### 4.3 Workflows builds
 
 From the biocbuild account:
 
-    mkdir -p ~/bbs-3.13-workflows/log
+    mkdir -p ~/bbs-3.14-workflows/log
 
 Then add the following entries to biocbuild's crontab:
 
-    # BIOC 3.13 WORKFLOWS BUILDS
+    # BIOC 3.14 WORKFLOWS BUILDS
     # --------------------------
     # run on Tuesdays and Fridays
     
     # prerun:
-    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/workflows/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-workflows/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    05 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/workflows/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-workflows/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    05 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (this should start AFTER builds are finished on all nodes):
-    45 15 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 15 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 
-### 5.4 Books builds
+### 4.4 Books builds
 
 From the biocbuild account:
 
-    mkdir -p ~/bbs-3.13-books/log
+    mkdir -p ~/bbs-3.14-books/log
 
 Then add the following entries to biocbuild's crontab:
 
-    # BIOC 3.13 BOOKS BUILDS
+    # BIOC 3.14 BOOKS BUILDS
     # ----------------------
     # run on Tuesdays and Fridays
 
     # prerun:
-    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
     # run (start after the workflows builds to avoid concurrent INSTALLs and
     # competing for resources):
-    30 10 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    30 10 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
     # postrun (this should start AFTER builds are finished on all nodes):
-    45 17 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 17 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 
-### 5.5 Long Tests builds
+### 4.5 Long Tests builds
 
 From the biocbuild account:
 
-    mkdir -p ~/bbs-3.13-bioc-longtests/log
+    mkdir -p ~/bbs-3.14-bioc-longtests/log
 
 Then add the following entries to biocbuild's crontab:
 
-    # BIOC 3.13 SOFTWARE LONGTESTS BUILDS
+    # BIOC 3.14 SOFTWARE LONGTESTS BUILDS
     # -----------------------------------
     # run every Saturday
 
     # prerun:
-    00 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.13-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
     # run:
-    30 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.13-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    30 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
     # postrun (this should start AFTER builds are finished on all nodes):
-    30 17 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.13/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.13-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    30 17 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
