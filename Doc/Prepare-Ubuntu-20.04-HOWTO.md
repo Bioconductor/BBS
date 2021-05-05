@@ -772,10 +772,18 @@ tarball from CRAN:
     cd ~/bbs-3.14-bioc/rdownloads/
 
 The exact tarball to download depends on whether we're configuring builds
-for BioC release or devel:
-- BioC release always uses the latest release of R. The source tarball
-  for the latest release of R is normally available on the CRAN home page
-  at: https://cran.r-project.org/
+for BioC release or devel. Remember that each version of Bioconductor is
+tight to a given version of R e.g. BioC 3.11 & BioC 3.12 are tight to R 4.0,
+BioC 3.13 & BioC 3.14 will be tight to R 4.1, etc... The reason two consecutive
+versions of Bioconductor are tight to the same version of R is because R has
+one major release per year (every Spring) and Bioconductor has two (one in
+Spring and one in Fall). This is key to understand the following:
+
+- The latest BioC release always uses the latest release of R. The source
+  tarball for the latest release of R is normally available on the CRAN home
+  page at: https://cran.r-project.org/
+  So if you are installing/updating R for the release builds, use that.
+
 - For BioC devel it depends:
   * The BioC devel cycle that runs from Spring to Fall uses the same R
     as the current BioC release.
