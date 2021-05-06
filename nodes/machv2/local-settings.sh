@@ -4,7 +4,7 @@
 # =========================
 
 
-if [ "$BBS_HOME" == "" ]; then
+if [ -z "$BBS_HOME" ]; then
     export BBS_HOME="/Users/biocbuild/BBS"
 fi
 
