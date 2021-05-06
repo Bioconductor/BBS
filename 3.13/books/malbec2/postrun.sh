@@ -25,16 +25,18 @@ find products-in -type d -exec chmod 755 {} \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
-$BBS_PYTHON_CMD $BBS_HOME/BBS-make-OUTGOING.py
-
 # Generate STATUS_DB.txt file
 $BBS_PYTHON_CMD $BBS_HOME/BBS-make-STATUS_DB.py
 
-# Generate PROPAGATE_STATUS_DB.txt
-OUTGOING_DIR=$BBS_CENTRAL_RDIR/OUTGOING
-PROPAGATE_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATE_STATUS_DB.txt
-INTERNAL_REPOS=/home/biocadmin/PACKAGES/$BBS_BIOC_VERSIONED_REPO_PATH/
-$BBS_RSCRIPT_CMD --vanilla -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'books', '$INTERNAL_REPOS')"
+if [ -n "$BBS_OUTGOING_MAP" ]; then
+    # Create and populate OUTGOING dir
+    $BBS_PYTHON_CMD $BBS_HOME/BBS-make-OUTGOING.py
+    # Generate PROPAGATE_STATUS_DB.txt
+    OUTGOING_DIR=$BBS_CENTRAL_RDIR/OUTGOING
+    PROPAGATE_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATE_STATUS_DB.txt
+    INTERNAL_REPOS=/home/biocadmin/PACKAGES/$BBS_BIOC_VERSIONED_REPO_PATH/
+    $BBS_RSCRIPT_CMD --vanilla -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'books', '$INTERNAL_REPOS')"
+fi
 
 # Generate the HTML report
 $BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch
