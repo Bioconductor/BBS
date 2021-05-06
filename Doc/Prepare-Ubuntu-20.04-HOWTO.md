@@ -808,7 +808,7 @@ name, including a version and/or a date, such as `R-3.2.r67960.tar.gz`,
 not have such a name (e.g. it's just called `R-devel.tar.gz`) please rename
 it after downloading and before extracting.
 
-### Extract the source tarball
+#### Extract the source tarball
 
     tar zxvf R-alpha_2021-04-28_r80240.tar.gz
 
