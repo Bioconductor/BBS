@@ -737,7 +737,7 @@ Contact the IT folks at RPCI if that's the case (see above).
 More details on https implementation in `BBS/README.md`.
 
 
-### 2.3 Clone BBS git tree and create bbs-x.y-bioc directory structure
+### 2.3 Clone BBS git tree and create bbs-X.Y-bioc directory structure
 
 Must be done from the biocbuild account.
 
@@ -746,19 +746,25 @@ Must be done from the biocbuild account.
     cd
     git clone https://github.com/bioconductor/BBS
 
-IMPORTANT NOTE: If we are only a few weeks before the next Bioconductor
-release (Spring or Fall) and you are setting up the **future devel builds**,
-then you are setting up builds for a version of Bioconductor that doesn't
-exist yet. This means that the public package repositories for this version of
-Bioconductor (i.e. the package repos under https://bioconductor.org/packages/)
-don't exist yet either (or if they do, they're probably empty). If this is the
-case, then `~/BBS/X.Y/bioc/non_target_repos.txt` needs to be temporarily
-modified to point to current devel repositories.
+#### Edit non_target_repos.txt
+
+Only if we are a few weeks before the next Bioconductor release (Spring or
+Fall) and you are setting up the **future devel builds**.
+
+In this case you are setting up builds for a version of Bioconductor
+that doesn't exist yet. This means that the public package repositories
+for this version of Bioconductor (i.e. the package repos under
+https://bioconductor.org/packages/) don't exist yet either (or if they do,
+they're probably empty).
+
+If this is the case, then `~/BBS/X.Y/bioc/non_target_repos.txt` needs to
+be temporarily modified to point to current devel repositories.
 
 For example, if we are a few weeks before the BioC 3.13 release,
 and you are setting up the future BioC 3.14 builds, then you need to
 make the following change to `~/BBS/3.14/bioc/non_target_repos.txt`:
 **replace every occurences of `BBS_BIOC_VERSION` with 3.13**.
+
 The modified file should look like this:
 
     https://bioconductor.org/packages/3.13/data/annotation
@@ -773,7 +779,7 @@ use `BiocManager::install()` for that).
 Note that the change is only temporary (don't commit it!), until the 3.14
 public repos exist and get populated.
 
-#### Create bbs-x.y-bioc directory structure
+#### Create bbs-X.Y-bioc directory structure
 
 For example, for the BioC 3.14 software builds:
 
