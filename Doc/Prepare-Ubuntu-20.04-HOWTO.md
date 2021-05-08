@@ -637,7 +637,7 @@ Almost everything in the next section must be done from the biocbuild account.
 
 
 
-## 2. Configure the Bioconductor software builds
+## 2. Set up the Bioconductor software builds
 
 
 ### 2.1 Set Apache server DocumentRoot
@@ -746,6 +746,33 @@ Must be done from the biocbuild account.
     cd
     git clone https://github.com/bioconductor/BBS
 
+IMPORTANT NOTE: If we are only a few weeks before the next Bioconductor
+release (Spring or Fall) and you are setting up the **future devel builds**,
+then you are setting up builds for a version of Bioconductor that doesn't
+exist yet. This means that the public package repositories for this version of
+Bioconductor (i.e. the package repos under https://bioconductor.org/packages/)
+don't exist yet either (or if they do, they're probably empty). If this is the
+case, then `~/BBS/X.Y/bioc/non_target_repos.txt` needs to be temporarily
+modified to point to current devel repositories.
+
+For example, if we are a few weeks before the BioC 3.13 release,
+and you are setting up the future BioC 3.14 builds, then you need to
+make the following change to `~/BBS/3.14/bioc/non_target_repos.txt`:
+**replace every occurences of `BBS_BIOC_VERSION` with 3.13**.
+The modified file should look like this:
+
+    https://bioconductor.org/packages/3.13/data/annotation
+    https://bioconductor.org/packages/3.13/data/experiment
+    https://bioconductor.org/packages/3.13/workflows
+    https://bioconductor.org/packages/3.13/books
+
+The reason we need to do this is for the build system to be able to find and
+install all the dependencies of the software packages (BBS doesn't and cannot
+use `BiocManager::install()` for that).
+
+Note that the change is only temporary (don't commit it!), until the 3.14
+public repos exist and get populated.
+
 #### Create bbs-x.y-bioc directory structure
 
 For example, for the BioC 3.14 software builds:
@@ -794,11 +821,11 @@ Spring and one in Fall). This is key to understand the following:
     pick up the latest daily snapshot of R alpha/beta/RC
     [available here](https://cran.r-project.org/src/base-prerelease/).
 
-IMPORTANT NOTE: If we are only a few weeks before the Spring release and
-you are configuring the Bioconductor builds for the **future devel builds**
-(i.e. for the upcoming Spring-to-Fall devel cycle), then you need to pick
+IMPORTANT NOTE: If we are only a few weeks before the Spring release of
+Bioconductor and you are setting up the **future devel builds** (i.e.
+builds for the upcoming Spring-to-Fall devel cycle), then you need to pick
 up the same R that you would pick up for the devel builds. For example, if
-we are a few weeks before the BioC 3.13 release, and you are configuring
+we are a few weeks before the BioC 3.13 release, and you are setting up
 the future BioC 3.14 builds, then you need to pick up the latest daily
 snapshot of R alpha/beta/RC.
 
