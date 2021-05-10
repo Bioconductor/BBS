@@ -217,7 +217,7 @@ command by **going to the biocbuild account** and do:
     cd ~/bbs-3.14-bioc/
     R/bin/Rscript -e 'png("fig2.png", type="Xlib")'
 
-Running Xvfb as a service addresses this problem.
+Running Xvfb (X virtual framebuffer) as a service addresses this problem.
 
 #### Install Xvfb
 
