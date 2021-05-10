@@ -338,11 +338,12 @@ environment. For now `echo $DISPLAY` should show nothing.
 
 #### Testing
 
-From the biocbuild account:
+**From the biocbuild account**:
 
     service xvfb status  # should be up and running
     echo $DISPLAY        # :1.0
-    /path/to/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
+    cd ~/bbs-3.14-bioc/
+    R/bin/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
 
 
 ### 1.8 Install Ubuntu/deb packages
