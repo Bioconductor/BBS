@@ -212,7 +212,7 @@ problem is with:
     #Execution halted
 
 If the software builds are already set up, you can access the `Rscript`
-command with:
+command by **going to the biocbuild account** and do:
 
     cd ~/bbs-3.14-bioc/
     R/bin/Rscript -e 'png("fig2.png", type="Xlib")'
