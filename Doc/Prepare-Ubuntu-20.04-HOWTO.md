@@ -189,11 +189,18 @@ again as before (sudoer account).
 
 ### 1.7 Run Xvfb as a service
 
-Some Bioconductor packages like adSplit, GeneAnswers, lmdme, or maSigPro
-contain examples that need access to an X11 display. However, when
-running `R CMD check` in the context of the daily builds, no X11 display
-is available. If R is already installed, an easy way to reproduce the
-CHECK error that will happen to the above packages during the builds is with:
+Some Bioconductor packages like adSplit, GeneAnswers, or lmdme, contain
+examples that need access to an X11 display. However, when running
+`R CMD check` in the context of the daily builds, no X11 display is
+available. This will cause the above packages to fail on the build report.
+Here is the full list of packages affected by this (as of May 2021): adSplit,
+clippda, DaMiRseq, fCI, GARS, GeneAnswers, lmdme, NormqPCR, OMICsPCA,
+Rcade, tscR, and TTMap. Note that for some packages we will only see a
+warning but for some others it will be an ERROR (either during the BUILD
+or CHECK stage).
+
+If R is already installed on the machine, an easy way to reproduce the
+problem is with:
 
     /path/to/Rscript -e 'png("fig2.png", type="Xlib")'
     #Error in .External2(C_X11, paste0("png::", filename), g$width, g$height,  :
@@ -204,7 +211,13 @@ CHECK error that will happen to the above packages during the builds is with:
     #  unable to open connection to X11 display ''
     #Execution halted
 
-Running Xvfb as a service addresses that.
+If the software builds are already set up, you can access the `Rscript`
+command with:
+
+    cd ~/bbs-3.14-bioc/
+    R/bin/Rscript -e 'png("fig2.png", type="Xlib")'
+
+Running Xvfb as a service addresses this problem.
 
 #### Install Xvfb
 
