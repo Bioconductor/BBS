@@ -186,6 +186,15 @@ folder):
 TESTING: Logout and try to login again as biocbuild. Then logout and login
 again as before (sudoer account).
 
+NOTE: Rather than using `sudo su -` to access the biocbuild account, it's
+strongly recommended that you always use the following method to access the
+biocbuild account, where `username` is replaced by your username and
+`nebbiolo2` is replaced by its address:
+
+    ssh -A -J username@ada.dfci.harvard.edu biocbuild@nebbiolo2
+
+Otherwise, you may have issues when attempting subsequent configurations.
+
 
 ### 1.7 Run Xvfb as a service
 
@@ -820,9 +829,9 @@ tarball from CRAN:
 
 The exact tarball to download depends on whether we're configuring builds
 for BioC release or devel. Remember that each version of Bioconductor is
-tight to a given version of R e.g. BioC 3.11 & BioC 3.12 are tight to R 4.0,
-BioC 3.13 & BioC 3.14 will be tight to R 4.1, etc... The reason two consecutive
-versions of Bioconductor are tight to the same version of R is because R has
+tied to a given version of R e.g. BioC 3.11 & BioC 3.12 are tied to R 4.0,
+BioC 3.13 & BioC 3.14 will be tied to R 4.1, etc... The reason two consecutive
+versions of Bioconductor are tied to the same version of R is because R has
 one major release per year (every Spring) and Bioconductor has two (one in
 Spring and one in Fall). This is key to understand the following:
 
@@ -1148,6 +1157,12 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 From the biocbuild account:
 
+    echo $LIBSBML_CFLAGS
+    # -I/usr/include
+    echo $LIBSBML_CFLAGS
+    # -lsbml
+    # Check libsbml5-dev is installed
+    dpkg-query -s libsbml5-dev
     cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD INSTALL rsbml
 
