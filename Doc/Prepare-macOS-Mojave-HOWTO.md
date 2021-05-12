@@ -499,10 +499,19 @@ Python 3.9 is now the main Python 3 installation (it's in the `PATH`):
     python3 --version  # Python 3.9.0
 
 HOWEVER, WE DON'T WANT THIS! We want to make Python 3.8 the main Python 3
-installation. To do this, `cd` to `/usr/local/bin/` and replace all the links
-that point to stuff in `../Cellar/python@3.9/3.9.0_1/bin/` with links that
-point to the equivalent stuff in `../Cellar/python@3.8/3.8.6_1/bin/`. Do the
-same thing in `/usr/local/lib/pkgconfig/`.
+installation. To do this, we need to manually fix a bunch of symlinks:
+
+- In `/usr/local/bin/`: Fix symlinks `2to3`, `idle3`, `pip3`, `pydoc3`,
+  `python3`, `python3-config`, and `wheel3` (e.g. have them point to
+   stuff in `../Cellar/python@3.8/3.8.7_2/bin/` instead of stuff in
+   `../Cellar/python@3.9/3.9.5/bin/`).
+
+- In `/usr/local/lib/pkgconfig/`: Fix symlinks `python3-embed.pc`
+  and `python3.pc` in the same manner.
+
+- In `/usr/local/opt/`: Fix symlinks `python`, `python3`, and `python@3`
+  (e.g. have them point to `../Cellar/python@3.8/3.8.7_2` instead of
+  `../Cellar/python@3.9/3.9.5`).
 
 TESTING:
 
@@ -1204,6 +1213,11 @@ TESTING: Try to install the rjags package *from source*:
 
 ### 4.6 Install libSBML
 
+SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (starting with BioC 3.12, rsbml is
+no longer supported on macOS)
+
+Required by Bioconductor package rsbml.
+
 #### Install a more recent libxml-2.0
 
 libSBML/rsbml require libxml-2.0 >= 2.6.22 but the version that comes with
@@ -1304,6 +1318,22 @@ Check that `pkg-config` picks the new settings:
 
     export DYLD_LIBRARY_PATH="/usr/local/lib"
 
+WARNING!!! Unfortunately setting `DYLD_LIBRARY_PATH` to `/usr/local/lib`
+will put `/usr/local/lib/libPng.dylib` before
+`/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources/libPng.dylib`
+and this will break things like `pkg-config` or Python module `h5pyd` with the
+following error:
+
+    dyld: Symbol not found: __cg_png_create_info_struct
+
+Note that `/usr/local/lib/libPng.dylib` is a symlink to
+
+    /usr/local/lib/Cellar/libpng/1.6.37/lib/libpng.dylib
+
+that gets created by things like 'brew install cairo'.
+See IMPORTANT NOTE in _4.8 Install Open Babel_ section below in this
+document for more information.
+
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then try to install the rsbml package *from source*:
 
@@ -1376,6 +1406,7 @@ of dependencies e.g. `python@3.9`, `glib`, `cairo`, `eigen`, and possibly
 many more (e.g. `libpng`, `freetype`, `fontconfig`, `gettext`, `libffi`,
 `pcre`, `lzo`, `sqlite`, `pixman`) depending on what's already installed:
 
+    brew install eigen
     brew install open-babel
 
 If another Python 3 was already installed via `brew` (e.g. `python@3.8`),
@@ -1388,9 +1419,9 @@ Check this with:
 Hopefully this will still display the version of our primary Python 3
 installation.
 
-IMPORTANT NOTE: Note that as Nov 4, 2020, the automatic installation of
-`libpng` that `brew install open-babel` triggers seems to break `pkg-config`
-and some other things e.g. Python 3 module `h5pyd`:
+IMPORTANT NOTE: The automatic installation of `libpng` triggered by
+`brew install open-babel` can break `pkg-config` and some other things
+like Python 3 module `h5pyd`:
 
     pkg-config
     # dyld: Symbol not found: __cg_png_create_info_struct
@@ -1412,23 +1443,10 @@ and some other things e.g. Python 3 module `h5pyd`:
     #   Expected in: /usr/local/lib/libPng.dylib
     #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
 
-If you run into this issue, the hacky/dirty workaround for now is to
-uninstall `libpng`. Note that `libpng` is required by `cairo`, `fontconfig`,
-`freetype` and `open-babel`, so we must use `--ignore-dependencies`:
-
-    brew uninstall --ignore-dependencies libpng
-
-But then we also need to uninstall the brewed `freetype` and `cairo`
-libs to prevent rgl and gdtools from linking to them if we need to install
-these packages from source (e.g. when CRAN doesn't provide package binaries
-for macOS yet):
-
-    brew uninstall --ignore-dependencies freetype
-    brew uninstall --ignore-dependencies cairo
-
-Note that rgl and gdtools are normally expected to compile and link against
-the png, freetype, and cairo libraries provided by XQuartz and located
-in `/opt/X11/lib/`.
+This will happen if `DYLD_LIBRARY_PATH` is set to `/usr/local/lib` so make
+sure that this is not the case. Note that we used to need this setting for
+Bioconductor package rsbml but luckily not anymore (rsbml is no longer
+supported on macOS).
 
 Initial testing:
 
@@ -1445,6 +1463,11 @@ properly specify its dependencies).
 Install `boost` (this will install `icu4c` if not already installed):
 
     brew install boost
+
+Finally create the following symlink:
+
+    cd /usr/local/lib
+    ln -s ../Cellar/open-babel/3.1.1_1/lib openbabel3
 
 TESTING:
 
