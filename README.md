@@ -350,7 +350,7 @@ performed by the *biocpush* user and involve the master builder only.
 
 Looking at *biocpush*'s crontab, we see:
 
-    35 14 * * * cd /home/biocpush/propagation-pipe/3.6 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.6/updateRepos-bioc-`date +\%Y\%m\%d`.log 2>&1
+    35 14 * * * cd /home/biocpush/propagation/3.6 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.6/updateRepos-bioc-`date +\%Y\%m\%d`.log 2>&1
 
 Notice the job starts at 14:35. This is hopefully enough time for
 the `postrun.sh` script (above) to have finished; otherwise we'll have to

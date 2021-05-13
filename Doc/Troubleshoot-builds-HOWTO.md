@@ -355,7 +355,7 @@ But if that has already happened, you need to do the following:
 ssh biocpush@linux1.bioconductor.org
 # or ssh ubuntu@linux1.bioconductor.org and then
 # sudo su - biocpush
-cd propagation-pipe/3.2
+cd propagation/3.2
  ./updateReposPkgs-bioc.sh  && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh 
 ```
 

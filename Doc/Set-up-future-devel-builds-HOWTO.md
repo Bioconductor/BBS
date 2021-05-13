@@ -73,16 +73,16 @@ git add 3.14
 ```
 
 
-### In `BBS/propagation-pipe/` folder
+### In `BBS/propagation/` folder
 
-#### Copy `BBS/propagation-pipe/3.13/` to `BBS/propagation-pipe/3.14/`
+#### Copy `BBS/propagation/3.13/` to `BBS/propagation/3.14/`
 
 ```
-cd propagation-pipe
+cd propagation
 cp -r 3.13 3.14
 ```
 
-#### From inside `BBS/propagation-pipe/3.14` folder
+#### From inside `BBS/propagation/3.14` folder
 
 ```
 cd 3.14
@@ -95,11 +95,11 @@ replace every occurence of `4.0` with `4.1`.
 
 Set new background color in `config.sh`.
 
-#### `git add` new `propagation-pipe/3.14` folder
+#### `git add` new `propagation/3.14` folder
 
 ```
 cd ../..
-git add propagation-pipe/3.14
+git add propagation/3.14
 ```
 
 
