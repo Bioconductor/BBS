@@ -107,7 +107,7 @@ in _this_ order
 
 - All contributed annotation packages added to the to-be-release repo.
 
-- Install latest biocViews on biocadmin account on to-be-release master builder.
+- Install latest biocViews on biocpush account on to-be-release master builder.
 
 - Create the manifest files for new devel and remove the deprecated packages
   BEFORE the first build.
@@ -117,7 +117,7 @@ in _this_ order
 
 - Start setting up new devel builders and repositories.
 
-  Make sure that the R that runs as biocadmin is current, has the
+  Make sure that the R that runs as biocpush is current, has the
   most current biocViews and that 'knitcitations' is installed.
 
   Note about Simlinks to old devel:
@@ -305,7 +305,7 @@ in _this_ order
   The relevant script is BBS/utils/list.old.packages.R
   which depends on BiocManagerto determine if
   archiving should happen. Example location to look
-  `biocadmin@malbec2:~$ ls PACKAGES/3.9/bioc/src/contrib/Archive/`
+  `biocpush@malbec2:~$ ls PACKAGES/3.9/bioc/src/contrib/Archive/`
 
 - Build AMIs for new release and devel
 

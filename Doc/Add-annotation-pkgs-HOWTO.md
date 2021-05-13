@@ -12,7 +12,7 @@ demonstrates the steps using the Bioconductor 3.10 release.
 ## What should be added <a name="added"/>
 
 In order for the package to be built, the tarball for the package should be 
-located in `/home/biocadmin/PACKAGES/3.10/data/annotation/src/crontrib/`. If 
+located in `/home/biocpush/PACKAGES/3.10/data/annotation/src/crontrib/`. If 
 there is an older version of the package located here it should be removed. Be 
 sure to only remove versions that are getting replaced with a newer version 
 because once they are removed it's very difficult to recover them.
@@ -30,7 +30,7 @@ If there is a `propagate-data-annotation-*.log` with a timestamp that is the
 current date and time then that means the job is currently running. 
 
 Once the correct version of the package is in 
-`home/biocadmin/PACKAGES/3.10/data/annotation/src/contrib` (and no other jobs 
+`home/biocpush/PACKAGES/3.10/data/annotation/src/contrib` (and no other jobs 
 are running) then the crontab job must be run so that the VIEWS are updated. 
 This can be done by doing the following steps.
 
@@ -64,7 +64,7 @@ when it turns to the time put in for the job, it will get run.
 To be sure the job is running, you can use the command
 
 ```sh
-tail /home/biocadmin/crontab.log/3.10/propagate-data-annotation-20191028.log
+tail /home/biocpush/crontab.log/3.10/propagate-data-annotation-20191028.log
 ```
 
 where the date should be changed to the day that it is being run. 

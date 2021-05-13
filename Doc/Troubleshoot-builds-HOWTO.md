@@ -111,7 +111,7 @@ to what has gone wrong. The respective possibilities are:
   on one or more of them is later than the postrun script,
   you will need to run the postrun.sh script by hand (
   and then afterwards you will need to run the 
-  update/prepare/push scripts on biocadmin by hand).
+  update/prepare/push scripts on biocpush by hand).
 
 #### Taking a deeper look
 
@@ -219,7 +219,7 @@ at FHCRC. We need to investigate and fix this.
 If nothing is done, the postrun script will fail because
 it can't find the build products from all build nodes.
 Then, the steps that propagate the build products to
-our web site (the steps that are run as biocadmin) will
+our web site (the steps that are run as biocpush) will
 fail to propagate them.
 
 However, we still want a build report every day and
@@ -346,15 +346,15 @@ it for any long-running script. You can then detach from
 the tmux session and revert config.sh, then reattach 
 to the session to monitor the script's progress.
 
-Now, if the biocadmin scripts have not yet been run by
+Now, if the biocpush scripts have not yet been run by
 crontab, you don't have to do anything more.
 
 But if that has already happened, you need to do the following:
 
 ```
-ssh biocadmin@linux1.bioconductor.org
+ssh biocpush@linux1.bioconductor.org
 # or ssh ubuntu@linux1.bioconductor.org and then
-# sudo su - biocadmin
+# sudo su - biocpush
 cd propagation-pipe/3.2
  ./updateReposPkgs-bioc.sh  && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh 
 ```
@@ -363,7 +363,7 @@ cd propagation-pipe/3.2
 the builds took longer than the time allotted.
 In this case you do not need to edit `config.sh` but
 you will need to manually run `postrun.sh` and the
-biocadmin update/prepare/push scripts, after all build nodes
+biocpush update/prepare/push scripts, after all build nodes
 have finished. You can determine if all build nodes have finished by
 running this command (again assuming you are working
 with the 3.2 build on `linux1.bioconductor.org`):

@@ -492,7 +492,7 @@ doesReposNeedPkg <- function(pkg, type, outgoingDirPath, internalRepos)
 }
 
 ## This function is called by the updateReposPkgs-*.sh scripts,
-## running as biocadmin. Instead of just a straight cp --no-clobber --verbose,
+## running as biocpush. Instead of just a straight cp --no-clobber --verbose,
 ## we consult the propagation DB to determine what can be copied,
 ## and then copy it (without overwriting existing files.) As before, we
 ## display what has been copied, but we also display what has

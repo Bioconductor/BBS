@@ -193,7 +193,7 @@ The builds are on Eastern Standard Time.
 ## How the build system works
 
 The build system has 2 distinct parts: building and propagation. The first
-is managed by the *biocbuild* user and the second by the *biocadmin* user.
+is managed by the *biocbuild* user and the second by the *biocpush* user.
 
 ### Builds
 
@@ -299,7 +299,7 @@ variables as described above and then runs the following 3 python scripts:
 This script performs STAGE6:
 
 * STAGE6: [Linux only] Copy build products to OUTGOING folder for later
-          transfer to the website by *biocadmin*.
+          transfer to the website by *biocpush*.
 
 ##### BBS-make-STATUS_DB.py
 
@@ -346,11 +346,11 @@ moving build products from the master builder to the website. The products are
 the package tarballs and binaries that will become available via
 `BiocManager::install()`
 as well as information used to build the landing pages. These steps are
-performed by the *biocadmin* user and involve the master builder only.
+performed by the *biocpush* user and involve the master builder only.
 
-Looking at *biocadmin*'s crontab, we see:
+Looking at *biocpush*'s crontab, we see:
 
-    35 14 * * * cd /home/biocadmin/propagation-pipe/3.6 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocadmin/cron.log/3.6/updateRepos-bioc-`date +\%Y\%m\%d`.log 2>&1
+    35 14 * * * cd /home/biocpush/propagation-pipe/3.6 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.6/updateRepos-bioc-`date +\%Y\%m\%d`.log 2>&1
 
 Notice the job starts at 14:35. This is hopefully enough time for
 the `postrun.sh` script (above) to have finished; otherwise we'll have to
@@ -362,7 +362,7 @@ The `cron` job above runs three scripts, to *update*, *prepare*, and *push*.
 
 The *update* script moves the build products that can be propagated from
 `/home/biobuild/public_html/BBS/X.Y/REPO/OUTGOING/` into
-`/home/biocadmin/PACKAGES/X.Y/REPO/` where `X.Y` is the version of
+`/home/biocpush/PACKAGES/X.Y/REPO/` where `X.Y` is the version of
 Bioconductor and `REPO` is the type of package, e.g., bioc or data.
 
 If a package has been updated, with an appropriate version bump, the older

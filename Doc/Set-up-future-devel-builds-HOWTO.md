@@ -12,9 +12,9 @@ have been up and running for 6 months but now it's time to set up the 3.14
 builds. In our scenario, the 3.12 builds have been stopped recently so the
 machines that were running them are now available for the 3.14 builds.
 
-These machines are malbec1 (Linux), tokay1 (Windows), and merida1 (Mac).
+These machines are nebbiolo2 (Linux), tokay1 (Windows), and merida1 (Mac).
 
-malbec1 will be the _central builder_ for the 3.14 builds (like it was for
+nebbiolo2 will be the _central builder_ for the 3.14 builds (like it was for
 the 3.12 builds). This is where the build products from all the build nodes
 will be collected. The central builder generates the build reports and
 propagates packages (source tarballs and binaries) produced by the builds
@@ -54,7 +54,7 @@ the latest versions of the config files and scripts.
 cd 3.14
 ```
 
-Rename machines to reflect new names e.g. malbec2 -> malbec1, tokay2 -> tokay1,
+Rename machines to reflect new names e.g. nebbiolo1 -> nebbiolo2, tokay2 -> tokay1,
 machv2 -> merida1. This means renaming the directories inside `bioc/`,
 `data-experiment/`, `workflows/`, and `bioc-longtests/`, and replacing
 every occurence in every file except in `report.css`.
@@ -176,13 +176,13 @@ This is where the build reports will be published.
 
 The central builder should be running Linux or other Unix-like OS.
 
-In our scenario (i.e. 3.14 builds), malbec1 is the central builder.
+In our scenario (i.e. 3.14 builds), nebbiolo2 is the central builder.
 
 Builds on all machines are run under dedicated user account `biocbuild`.
 
-Connect to the `biocbuild` account on malbec1:
+Connect to the `biocbuild` account on nebbiolo2:
 ```
-ssh -A biocbuild@malbec1.bioconductor.org
+ssh -A biocbuild@nebbiolo2.bioconductor.org
 ```
 
 Pull latest changes to BBS:
@@ -210,8 +210,8 @@ Download latest R 4.0 source tarball in `~/bbs-3.14-bioc/rdownloads`
 and install in `~/bbs-3.14-bioc/R` (using the usual procedure, see
 Update-R-on-Linux-HOWTO.md).
 
-In `~/BBS/3.14/bioc/malbec1/config.sh` remove Windows and Mac builders
-from `BBS_OUTGOING_MAP` and `BBS_REPORT_NODES` to keep only malbec1.
+In `~/BBS/3.14/bioc/nebbiolo2/config.sh` remove Windows and Mac builders
+from `BBS_OUTGOING_MAP` and `BBS_REPORT_NODES` to keep only nebbiolo2.
 This is a local and temporary edit (until the other nodes are added to
 the software builds), so don't commit!
 
@@ -252,7 +252,7 @@ are `bbs-3.14-workflows` and `bbs-3.14-bioc-longtests`.
 
 In the end, the home of the `biocbuild` user should look like this:
 ```
-biocbuild@malbec1:~$ ls
+biocbuild@nebbiolo2:~$ ls
 BBS	       bbs-3.14-bioc-longtests	 bbs-3.14-workflows  Desktop
 bbs-3.14-bioc  bbs-3.14-data-experiment  bin		     public_html
 ```
@@ -281,9 +281,9 @@ to them.
 ## 5. Activate propagation pipes
 
 
-Connect to the `biocadmin` account on malbec1:
+Connect to the `biocpush` account on nebbiolo2:
 ```
-ssh -A biocadmin@malbec1.bioconductor.org
+ssh -A biocpush@nebbiolo2.bioconductor.org
 ```
 
 Pull latest changes to BBS:
@@ -306,7 +306,7 @@ mkdir ~/PACKAGES/3.14/workflows
 
 Each repo must have the following structure:
 ```
-biocadmin@malbec1:~/PACKAGES/3.14/data/experiment$ tree
+biocpush@nebbiolo2:~/PACKAGES/3.14/data/experiment$ tree
 .
 ├── bin
 │   ├── macosx
@@ -420,16 +420,16 @@ Remove the old task schedule job for previous version.
 
 #### From the `biocbuild` account on the central builder
 
-In our scenario (i.e. 3.14 builds), malbec1 is the central builder.
+In our scenario (i.e. 3.14 builds), nebbiolo2 is the central builder.
 
-Connect to the `biocbuild` account on malbec1:
+Connect to the `biocbuild` account on nebbiolo2:
 ```
-ssh -A biocbuild@malbec1.bioconductor.org
+ssh -A biocbuild@nebbiolo2.bioconductor.org
 ```
 
 Make sure tokay1 will be included in the next build report:
 ```
-cd ~/BBS/3.14/bioc/malbec1/
+cd ~/BBS/3.14/bioc/nebbiolo2/
 git diff config.sh
 vi config.sh  # tokay1 should be in BBS_OUTGOING_MAP and BBS_REPORT_NODES
 ```
@@ -470,16 +470,16 @@ Remove `~/bbs-3.12-bioc` folder.
 
 #### From the `biocbuild` account on the central builder
 
-In our scenario (i.e. 3.14 builds), malbec1 is the central builder.
+In our scenario (i.e. 3.14 builds), nebbiolo2 is the central builder.
 
-Connect to the `biocbuild` account on malbec1:
+Connect to the `biocbuild` account on nebbiolo2:
 ```
-ssh -A biocbuild@malbec1.bioconductor.org
+ssh -A biocbuild@nebbiolo2.bioconductor.org
 ```
 
 Make sure merida1 will be included in the next build report:
 ```
-cd ~/BBS/3.14/bioc/malbec1/
+cd ~/BBS/3.14/bioc/nebbiolo2/
 git diff config.sh  # see local edits
 vi config.sh  # merida1 should be in BBS_OUTGOING_MAP and BBS_REPORT_NODES
 ```

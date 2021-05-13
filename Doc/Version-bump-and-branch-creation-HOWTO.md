@@ -51,7 +51,7 @@ in sections **C.** and **D.**.
   `sudo` privileges.
   Make sure to pick up a machine that has fast and reliable internet access.
   The Linux build machines are a good choice. If you want to use one of
-  them, use your personal account or the `biocadmin` account. Do NOT use
+  them, use your personal account or the `biocpush` account. Do NOT use
   the `biocbuild` account to not interfere with the builds. Using a Mac
   server might work but was not tested.
 
