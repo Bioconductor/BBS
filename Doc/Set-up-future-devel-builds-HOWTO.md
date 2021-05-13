@@ -206,7 +206,7 @@ Remove `~/bbs-3.12-bioc` folder and create `~/bbs-3.14-bioc` folder.
 
 In `~/bbs-3.14-bioc` create `log` and `rdownloads` folders.
 
-Download latest R 4.0 source tarball in `~/bbs-3.14-bioc/rdownloads`
+Download latest R 4.1 source tarball in `~/bbs-3.14-bioc/rdownloads`
 and install in `~/bbs-3.14-bioc/R` (using the usual procedure, see
 Update-R-on-Linux-HOWTO.md).
 
@@ -281,12 +281,14 @@ to them.
 ## 5. Activate propagation pipes
 
 
-Connect to the `biocpush` account on nebbiolo2:
-```
-ssh -A biocpush@nebbiolo2.bioconductor.org
-```
+Connect to the `biocpush` account on nebbiolo2. Note that if the account
+doesn't exist yet, you need to use your personal account on the machine
+to create it. This should be created as a regular account, like the `biocbuild`
+account. See section _Create the biocbuild account_ in
+Prepare-Ubuntu-20.04-HOWTO.md for the details.
 
-Pull latest changes to BBS:
+Once in the `biocpush` account, pull the latest changes to BBS (or clone BBS
+git tree if you just created the `biocpush` account):
 ```
 cd ~/BBS
 git pull --all
@@ -311,11 +313,11 @@ biocpush@nebbiolo2:~/PACKAGES/3.14/data/experiment$ tree
 ├── bin
 │   ├── macosx
 │   │   └── contrib
-│   │       └── 4.0
+│   │       └── 4.1
 │   │           └── PACKAGES
 │   └── windows
 │       └── contrib
-│           └── 4.0
+│           └── 4.1
 │               └── PACKAGES
 └── src
     └── contrib
@@ -329,21 +331,21 @@ where `PACKAGES` are empty files.
 ### Install latest R
 
 This is an R that is only used to run the propagation pipe. Must be a
-version with same X.Y than the R used for the builds (so 4.0 in our case).
+version with same X.Y than the R used for the builds (so 4.1 in our case).
 It doesn't have to be the same exact version though. Unlike the R we use
 for the builds, we won't update it i.e. we'll keep this same installation
 for the entire life of the 3.14 builds (i.e. for about 1 year).
 
-Download latest R 4.0 source tarball in `~/rdownloads` then run `configure`
-and `make` in `~/R-4.0`.
+Download latest R 4.1 source tarball in `~/rdownloads` then run `configure`
+and `make` in `~/R-4.1`.
 
 In `~/bin`, create symlink:
 ```
-ln -s ~/R-4.0/bin/R R-4.0
+ln -s ~/R-4.1/bin/R R-4.1
 ```
 Make sure you can start R with:
 ```
-R-4.0
+R-4.1
 ```
 
 
