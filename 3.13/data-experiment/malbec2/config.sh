@@ -56,6 +56,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # Needed only on the node performing stage9 (BBS-notify.py)
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-#export BBS_NOTIFY_NODES="malbec2"
-#export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
+export BBS_NOTIFY_NODES="malbec2"
+export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
