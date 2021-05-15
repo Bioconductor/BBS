@@ -45,6 +45,25 @@ msg_footnote = "Notes:\n\n" \
              + "https://bioconductor.org/developers/rss-feeds/\n\n" \
              + "Thanks for contributing to the Bioconductor project!\n\n" 
 
+def collect_problems(pkg, node):
+    stage2command = {'install': 'R CMD INSTALL',
+                     'buildsrc': 'R CMD build',
+                     'checksrc': 'R CMD check'}
+    stages_on_report = BBSreportutils.stages_to_display(BBSvars.subbuilds)
+    stages_to_collect = list(stage2command.keys() & stages_on_report)
+    problem_descs = []
+    for stage in stages_to_collect:
+        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
+        if status in ["TIMEOUT", "ERROR"]:
+            problem_desc = "%s for '%s' on %s" % \
+                           (status, stage2command[stage], node.node_id)
+            rurl = BBSreportutils.get_leafreport_rel_url(pkg, node.node_id,
+                                                         stage)
+            problem_desc = "  o %s. See the details here:\n      %s%s\n" % \
+                           (problem_desc, published_report_url, rurl)
+            problem_descs.append(problem_desc)
+    return problem_descs
+
 def send_notification(dcf_record):
     pkg = dcf_record['Package']
     package_status = dcf_record.get('PackageStatus')
@@ -56,32 +75,10 @@ def send_notification(dcf_record):
     #last_changed_date = BBSreportutils.get_vcs_meta(pkg, key)
     #key = 'Last Changed Rev'
     #last_changed_rev = BBSreportutils.get_vcs_meta(pkg, key)
+
     problem_descs = []
     for node in BBSreportutils.supported_nodes(pkg):
-        stage = 'install'
-        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
-        if status in ["TIMEOUT", "ERROR"]:
-            leafreport_rURL = \
-                BBSreportutils.get_leafreport_rel_url(pkg, node.node_id, stage)
-            problem_desc = "  o %s for 'R CMD INSTALL' on %s. See the details here:\n" % (status, node.node_id) \
-                         + "      %s%s\n" % (published_report_url, leafreport_rURL)
-            problem_descs.append(problem_desc)
-        stage = 'buildsrc'
-        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
-        if status in ["TIMEOUT", "ERROR"]:
-            leafreport_rURL = \
-                BBSreportutils.get_leafreport_rel_url(pkg, node.node_id, stage)
-            problem_desc = "  o %s for 'R CMD build' on %s. See the details here:\n" % (status, node.node_id) \
-                         + "      %s%s\n" % (published_report_url, leafreport_rURL)
-            problem_descs.append(problem_desc)
-        stage = 'checksrc'
-        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
-        if status in ["TIMEOUT", "ERROR"]:
-            leafreport_rURL = \
-                BBSreportutils.get_leafreport_rel_url(pkg, node.node_id, stage)
-            problem_desc = "  o %s for 'R CMD check' on %s. See the details here:\n" % (status, node.node_id) \
-                         + "      %s%s\n" % (published_report_url, leafreport_rURL)
-            problem_descs.append(problem_desc)
+        problem_descs += collect_problems(pkg, node)
     if len(problem_descs) == 0:
         return
 
