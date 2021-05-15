@@ -14,6 +14,7 @@ import time
 import bbs.parse
 import bbs.notify
 import BBSutils
+import BBSvars
 import BBSreportutils
 
 published_report_url = BBSutils.getenv('BBS_PUBLISHED_REPORT_URL')
