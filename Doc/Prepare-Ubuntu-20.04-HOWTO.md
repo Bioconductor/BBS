@@ -945,15 +945,18 @@ From R:
 
     install.packages("BiocManager", repos="https://cran.r-project.org")
 
-    library(BiocManager)  # This displays the version of Bioconductor
-                          # that BiocManager is pointing at.
+    library(BiocManager)    # This displays the version of Bioconductor
+                            # that BiocManager is pointing at.
+    BiocManager::install()  # This installs the BiocVersion package. Make
+                            # sure its version matches Bioconductor version.
 
-    ## IMPORTANT: Switch to "devel" **ONLY** if you are installing R for
-    ## the devel builds and if BioC devel uses the same version of R as
-    ## BioC release!
-    BiocManager::install(version="devel")
+    ## IMPORTANT: Do this ONLY if BiocManager is pointing at the wrong version
+    ## of Bioconductor. This will happen if you are installing R for the devel
+    ## builds during the devel cycle that runs from Spring to Fall (these
+    ## builds use the same version of R as the release builds).
+    BiocManager::install(version="devel")  # see IMPORTANT note above!
 
-    BiocManager::install("BiocCheck")    # required by SPB
+    BiocManager::install("BiocCheck")  # required by SPB
 
 #### [OPTIONAL] More testing
 
