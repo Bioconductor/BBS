@@ -776,6 +776,23 @@ Start R, check the version displayed by the startup message, then:
 
     capabilities()  # all should be TRUE
     X11()           # nothing visible should happen
+    dev.off()
+
+    # --- install rgl and try to load it ---
+    install.packages("rgl", repos="https://cran.r-project.org")
+    library(rgl)
+
+If `library(rgl)` fails with an error like:
+
+    Error: package or namespace load failed for ‘rgl’:
+     .onLoad failed in loadNamespace() for 'rgl', details:
+      call: grDevices::quartz()
+      error: unable to create quartz() device target, given type may not be supported
+    In addition: Warning message:
+    In grDevices::quartz() : No displays are available
+
+then add `export RGL_USE_NULL=TRUE` to `/etc/profile`, logout and login
+again (so that the change takes effect), and try `library(rgl)` again.
 
     # --- install a few CRAN packages *from source* ---
 
