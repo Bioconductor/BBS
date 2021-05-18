@@ -460,7 +460,7 @@ Then in `/etc/profile`:
 
 - Add the following line, replacing '1.1.1h' with the version installed:
     ```
-    export OPENSSL_LIBS="/usr/local/Cellar/openssl@1.1/1.1.1h/lib/libssl.a /usr/local/Cellar/openssl@1.1/1.1.1h/lib/libcrypto.a"
+    export OPENSSL_LIBS="/usr/local/opt/openssl@1.1/lib/libssl.a /usr/local/opt/openssl@1.1/lib/libcrypto.a"
     ```
   This will trigger statically linking of the rtracklayer package against
   the openssl libraries.
@@ -503,19 +503,19 @@ installation. To do this, we need to manually fix a bunch of symlinks:
 
 - In `/usr/local/bin/`: Fix symlinks `2to3`, `idle3`, `pip3`, `pydoc3`,
   `python3`, `python3-config`, and `wheel3` (e.g. have them point to
-   stuff in `../Cellar/python@3.8/3.8.7_2/bin/` instead of stuff in
+   stuff in `../Cellar/python@3.8/3.8.10/bin/` instead of stuff in
    `../Cellar/python@3.9/3.9.5/bin/`).
 
 - In `/usr/local/lib/pkgconfig/`: Fix symlinks `python3-embed.pc`
   and `python3.pc` in the same manner.
 
 - In `/usr/local/opt/`: Fix symlinks `python`, `python3`, and `python@3`
-  (e.g. have them point to `../Cellar/python@3.8/3.8.7_2` instead of
+  (e.g. have them point to `../Cellar/python@3.8/3.8.10` instead of
   `../Cellar/python@3.9/3.9.5`).
 
 TESTING:
 
-    python3 --version  # Python 3.8.6
+    python3 --version  # Python 3.8.10
 
 
 ### 2.12 Install Python 3 modules
