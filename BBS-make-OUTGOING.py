@@ -85,9 +85,9 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     if BBSvars.subbuilds in ["workflows", "books"]:
         pass
     elif source_node:
-        print("BBS> [stage6] mkdir %s" % manuals_dir)
+        print("BBS> [stage6b] mkdir %s" % manuals_dir)
         os.mkdir(manuals_dir)
-    print("BBS> [stage6] BEGIN copying outgoing packages from %s." % \
+    print("BBS> [stage6b] BEGIN copying outgoing packages from %s." % \
           fresh_pkgs_subdir)
     pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
     meat_index_path = os.path.join(BBSvars.Central_rdir.path,
@@ -103,29 +103,29 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         ## Copy pkg from 'fresh_pkgs_subdir2'.
         pkg_file = "%s_%s.%s" % (pkg, version, fileext)
         pkg_file = os.path.join(fresh_pkgs_subdir, pkg_file)
-        print("BBS> [stage6]   - copying %s to OUTGOING folder ..." % pkg_file)
+        print("BBS> [stage6b]   - copying %s to OUTGOING folder ..." % pkg_file)
         if os.path.exists(pkg_file):
             shutil.copy(pkg_file, ".")
         else:
-            print("BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pkg_file)
+            print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pkg_file)
         ## Get reference manual from pkg.Rcheck directory.
         if BBSvars.subbuilds in ["workflows", "books"]:
             pass
         elif source_node:
             pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \
                        (BBSutils.getenv('BBS_WORK_TOPDIR'), pkg, pkg)
-            print("BBS> [stage6]   - copying %s manual to OUTGOING/manuals folder..." % pkg)
+            print("BBS> [stage6b]   - copying %s manual to OUTGOING/manuals folder..." % pkg)
             if os.path.exists(pdf_file):
                 shutil.copy(pdf_file, "%s/%s.pdf" % (manuals_dir, pkg))
             else:
-                print("BBS> [stage6]     SKIPPED (file %s doesn't exist)" % pdf_file)
-    print("BBS> [stage6] END copying outgoing packages from %s." % fresh_pkgs_subdir)
+                print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pdf_file)
+    print("BBS> [stage6b] END copying outgoing packages from %s." % fresh_pkgs_subdir)
     return
 
 def stage6_make_OUTGOING():
     ## Create working directory
     OUTGOING_dir = os.path.join(BBSvars.Central_rdir.path, "OUTGOING")
-    print("BBS> [stage6] remake_dir %s" % OUTGOING_dir)
+    print("BBS> [stage6b] remake_dir %s" % OUTGOING_dir)
     bbs.fileutils.remake_dir(OUTGOING_dir)
     ## Loop over each element of the OUTGOING map
     OUTGOING_map = BBSutils.getenv('BBS_OUTGOING_MAP')
@@ -138,9 +138,9 @@ def stage6_make_OUTGOING():
         if tmp[0] == "source":
             source_node = True
         OUTGOING_subdir = os.path.join(OUTGOING_dir, tmp[0])
-        print("BBS> [stage6] mkdir %s" % OUTGOING_subdir)
+        print("BBS> [stage6b] mkdir %s" % OUTGOING_subdir)
         os.mkdir(OUTGOING_subdir)
-        print("BBS> [stage6] cd %s/" % OUTGOING_subdir)
+        print("BBS> [stage6b] cd %s/" % OUTGOING_subdir)
         os.chdir(OUTGOING_subdir)
         copy_outgoing_pkgs(tmp[1], source_node)
     return
@@ -153,9 +153,9 @@ def stage6_make_OUTGOING():
 
 print()
 print("BBS> ==================================================================")
-print("BBS> [stage6] STARTING stage6 at %s..." % time.asctime())
+print("BBS> [stage6b] STARTING stage6b at %s..." % time.asctime())
 
 stage6_make_OUTGOING()
 
-print("BBS> [stage6] DONE at %s." % time.asctime())
+print("BBS> [stage6b] DONE at %s." % time.asctime())
 

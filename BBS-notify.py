@@ -127,7 +127,7 @@ def send_CRAN_notifications(allpkgs):
 ### MAIN SECTION
 ##############################################################################
 
-print("BBS> [stage9] STARTING stage9 at %s..." % time.asctime())
+print("BBS> [stage7] STARTING stage7 at %s..." % time.asctime())
 
 notify_nodes = BBSutils.getenv('BBS_NOTIFY_NODES')
 report_path = BBSutils.getenv('BBS_REPORT_PATH')
@@ -155,19 +155,19 @@ for dcf_record in meat_index:
 allpkgs = list(meat_pkgs.keys())
 allpkgs.sort(key=str.lower)
 
-print("BBS> [stage9] Import package statuses from %s ..." % \
+print("BBS> [stage7] Import package statuses from %s ..." % \
       BBSreportutils.STATUS_DB_file, end=" ")
 sys.stdout.flush()
 BBSreportutils.import_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 
-print("BBS> [stage9] Notifying package maintainers for nodes: %s" % notify_nodes)
+print("BBS> [stage7] Notifying package maintainers for nodes: %s" % notify_nodes)
 subbuilds = BBSutils.getenv('BBS_SUBBUILDS', False, "bioc")
 if subbuilds == "cran":
     send_CRAN_notifications(allpkgs)
 else:
     send_BioC_notifications(allpkgs)
 
-print("BBS> [stage9] DONE at %s." % time.asctime())
+print("BBS> [stage7] DONE at %s." % time.asctime())
 

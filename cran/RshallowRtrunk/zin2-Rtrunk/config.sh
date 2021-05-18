@@ -39,7 +39,7 @@ cd "$wd0"
 
 
 
-# Needed only on the node performing stage6 (must be run on the
+# Needed only on the node performing stage6b (must be run on the
 # BBS_CENTRAL_RHOST machine).
 #
 
@@ -54,7 +54,7 @@ cd "$wd0"
 
 export BBS_OUTGOING_MAP="source:zin2-Rtrunk/buildsrc"
 
-# Needed only on the node performing stage8 (BBS-report.py)
+# Needed only on the node performing stage6c (BBS-report.py)
 #
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.

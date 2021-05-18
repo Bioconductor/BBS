@@ -30,13 +30,13 @@ cd "$wd0"
 
 
 
-# Needed only on the node performing stage6 (must be run on the
+# Needed only on the node performing stage6b (must be run on the
 # BBS_CENTRAL_RHOST machine).
 
 export BBS_OUTGOING_MAP="source:nebbiolo1/buildsrc win.binary:riesling1/buildbin mac.binary:machv2/buildbin"
 
-# Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
-# stage8 (BBS-report.py)
+# Needed only on the node performing stage6a (BBS-make-STATUS_DB.py) and
+# stage6c (BBS-report.py)
 #
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
@@ -53,7 +53,7 @@ export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/$BBS_SUB
 export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
 
-# Needed only on the node performing stage9 (BBS-notify.py)
+# Needed only on the node performing stage7 (BBS-notify.py)
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
 export BBS_NOTIFY_NODES="nebbiolo1"

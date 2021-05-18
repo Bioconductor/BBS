@@ -20,7 +20,7 @@ cd ..
 cd "$wd0"
 
 
-# Needed only on the node performing stage8 (BBS-report.py)
+# Needed only on the node performing stage6c (BBS-report.py)
 #
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path.
 

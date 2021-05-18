@@ -1725,7 +1725,7 @@ def make_CRAN_MainReport(allpkgs, quickstats):
 ### MAIN SECTION
 ##############################################################################
 
-print("BBS> [stage8] STARTING stage8 at %s..." % time.asctime())
+print("BBS> [stage6c] STARTING stage6c at %s..." % time.asctime())
 
 report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
 report_path = BBSutils.getenv('BBS_REPORT_PATH')
@@ -1742,21 +1742,21 @@ else:
 
 no_alphabet_dispatch = arg1 == "no-alphabet-dispatch"
 
-print("BBS> [stage8] remake_dir %s" % report_path)
+print("BBS> [stage6c] remake_dir %s" % report_path)
 bbs.fileutils.remake_dir(report_path)
 
-print("BBS> [stage8] cd %s/" % report_path)
+print("BBS> [stage6c] cd %s/" % report_path)
 os.chdir(report_path)
 
-print("BBS> [stage8] Get %s from %s/" % \
+print("BBS> [stage6c] Get %s from %s/" % \
       (BBSutils.meat_index_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSutils.meat_index_file)
 
-print("BBS> [stage8] Get %s from %s/" % \
+print("BBS> [stage6c] Get %s from %s/" % \
       (BBSutils.skipped_index_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSutils.skipped_index_file)
 
-print("BBS> [stage8] Get %s from %s/" % \
+print("BBS> [stage6c] Get %s from %s/" % \
       (BBSreportutils.STATUS_DB_file, BBSvars.Central_rdir.label))
 BBSvars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
 
@@ -1768,7 +1768,7 @@ skipped_pkgs = bbs.parse.get_meat_packages(BBSutils.skipped_index_file)
 allpkgs = list(meat_index.keys()) + skipped_pkgs
 allpkgs.sort(key=str.lower)
 
-print("BBS> [stage8] Import package statuses from %s ..." % \
+print("BBS> [stage6c] Import package statuses from %s ..." % \
       BBSreportutils.STATUS_DB_file, end=" ")
 sys.stdout.flush()
 allpkgs_quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
@@ -1780,10 +1780,10 @@ if BBSvars.subbuilds == "bioc":
     ### Load package dep graph.
     node0 = BBSreportutils.NODES[0]
     Node0_rdir = BBSvars.products_in_rdir.subdir(node0.node_id)
-    print("BBS> [stage8] Get %s from %s/" % \
+    print("BBS> [stage6c] Get %s from %s/" % \
           (BBSutils.pkg_dep_graph_file, Node0_rdir.label))
     Node0_rdir.Get(BBSutils.pkg_dep_graph_file)
-    print("BBS> [stage8] Loading %s file ..." % \
+    print("BBS> [stage6c] Loading %s file ..." % \
           BBSutils.pkg_dep_graph_file, end=" ")
     sys.stdout.flush()
     pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
@@ -1797,26 +1797,26 @@ else:
 
 if r_environ_user != None:
     dst = os.path.join(report_path, 'Renviron.bioc')
-    print("BBS> [stage8] cp %s %s" % (r_environ_user, dst))
+    print("BBS> [stage6c] cp %s %s" % (r_environ_user, dst))
     shutil.copy(r_environ_user, dst)
 
 if css_file != None:
-    print("BBS> [stage8] cp %s %s/" % (css_file, report_path))
+    print("BBS> [stage6c] cp %s %s/" % (css_file, report_path))
     shutil.copy(css_file, report_path)
 
 if bgimg_file != None:
-    print("BBS> [stage8] cp %s %s/" % (bgimg_file, report_path))
+    print("BBS> [stage6c] cp %s %s/" % (bgimg_file, report_path))
     shutil.copy(bgimg_file, report_path)
 
 if js_file != None:
-    print("BBS> [stage8] cp %s %s/" % (js_file, report_path))
+    print("BBS> [stage6c] cp %s %s/" % (js_file, report_path))
     shutil.copy(js_file, report_path)
 
 for color in ["Red", "Green", "Blue"]:
     icon = "%s/images/120px-%s_Light_Icon.svg.png" % (os.getenv("BBS_HOME"), color)
     shutil.copy(icon, report_path)
 
-print("BBS> [stage8] Will generate HTML report for nodes: %s" % report_nodes)
+print("BBS> [stage6c] Will generate HTML report for nodes: %s" % report_nodes)
 if arg1 != "skip-leaf-reports":
     make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps)
 make_all_NodeReports(allpkgs, allpkgs_quickstats)
@@ -1825,6 +1825,6 @@ if BBSvars.subbuilds != "cran":
 else: # "cran" subbuilds
     make_CRAN_MainReport(allpkgs, allpkgs_quickstats)
 
-print("BBS> [stage8] DONE at %s." % time.asctime())
+print("BBS> [stage6c] DONE at %s." % time.asctime())
 
 #from IPython.core.debugger import Tracer;Tracer()()

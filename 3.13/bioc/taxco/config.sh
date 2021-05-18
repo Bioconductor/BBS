@@ -35,7 +35,7 @@ export BBS_CENTRAL_RDIR="/Users/biocbuild/public_html/BBS/$BBS_BIOC_VERSIONED_RE
 export BBS_GITLOG_RDIR="$BBS_CENTRAL_RDIR/gitlog"
 
 
-# Needed only on the node performing stage6 (must be run on the
+# Needed only on the node performing stage6b (must be run on the
 # BBS_CENTRAL_RHOST machine).
 #
 
@@ -50,8 +50,8 @@ export BBS_GITLOG_RDIR="$BBS_CENTRAL_RDIR/gitlog"
 
 #export BBS_OUTGOING_MAP=""
 
-# Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
-# stage8 (BBS-report.py)
+# Needed only on the node performing stage6a (BBS-make-STATUS_DB.py) and
+# stage6c (BBS-report.py)
 #
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
@@ -68,7 +68,7 @@ export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/taxco/$B
 export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
 
-# Needed only on the node performing stage9 (BBS-notify.py)
+# Needed only on the node performing stage7 (BBS-notify.py)
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
 #export BBS_NOTIFY_NODES="taxco"

@@ -33,7 +33,7 @@ export BBS_CENTRAL_RHOST="localhost"
 export BBS_MEAT0_RHOST="localhost"
 export BBS_GITLOG_RHOST="localhost"
 
-# Needed only on the node performing stage6 (must be run on the
+# Needed only on the node performing stage6b (must be run on the
 # BBS_CENTRAL_RHOST machine).
 #
 
@@ -48,8 +48,8 @@ export BBS_GITLOG_RHOST="localhost"
 
 export BBS_OUTGOING_MAP="source:malbec2/buildsrc"
 
-# Needed only on the node performing stage7a (BBS-make-STATUS_DB.py) and
-# stage8 (BBS-report.py)
+# Needed only on the node performing stage6a (BBS-make-STATUS_DB.py) and
+# stage6c (BBS-report.py)
 #
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.
@@ -62,7 +62,7 @@ export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
 export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
 #export BBS_REPORT_MOTD="Happy new year to all Bioconductor developers!"
 
-# Needed only on the node performing stage9 (BBS-notify.py)
+# Needed only on the node performing stage7 (BBS-notify.py)
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
 export BBS_NOTIFY_NODES="malbec2"

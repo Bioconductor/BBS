@@ -294,19 +294,12 @@ be (as there often is) some manual steps to do at this point.
 The build system will now run `postrun.sh` which initializes environment
 variables as described above and then runs the following 3 python scripts:
 
-##### BBS-make-OUTGOING.py
-
-This script performs STAGE6:
-
-* STAGE6: [Linux only] Copy build products to OUTGOING folder for later
-          transfer to the website by *biocpush*.
-
 ##### BBS-make-STATUS_DB.py
 
-This script performs STAGE7a (don't think there is a 7b):
+This script performs stage6a:
 
-* STAGE7a: [Linux only] Create `STATUS_DB.txt` file which records the status of
-           STAGES 2-4 on all platforms.
+* stage6a: [Linux only] Create `STATUS_DB.txt` file which records the status of
+           STAGES 2-5 on all platforms.
 
     biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head STATUS_DB.txt
     a4#malbec1#install: NotNeeded
@@ -325,11 +318,18 @@ will be pushed to the website.
     a4#mac.binary.el-capitan#propagate: UNNEEDED, same version exists in internal repository
     a4Base#source#propagate: UNNEEDED, same version exists in internal repository
 
+##### BBS-make-OUTGOING.py
+
+This script performs stage6b:
+
+* stage6b: [Linux only] Copy build products to OUTGOING folder for later
+           transfer to the website by *biocpush*.
+
 ##### BBS-report.py
 
-This script performs STAGE8:
+This script performs stage6c:
 
-* STAGE8: [Linux only] Generate and publish HTML report to the website.
+* stage6c: [Linux only] Generate and publish HTML report to the website.
 
 
 The crontab contains essentially the same entries for the
