@@ -1189,15 +1189,28 @@ def make_LeafReport(leafreport_ref, allpkgs):
     write_motd_asTABLE(out)
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
-    if os.path.exists('Renviron.bioc'):
+    if BBSvars.subbuilds == "bioc" or os.path.exists('Renviron.bioc'):
         out.write('<DIV class="motd">\n')
         out.write('<TABLE><TR><TD>\n')
         out.write('To the developers/maintainers ')
         out.write('of the %s package:<BR>' % pkg)
-        out.write('Please make sure to use the ')
-        out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
-        out.write('in order to reproduce any error ')
-        out.write('or warning you see on this page.\n')
+        if BBSvars.subbuilds == "bioc" and os.path.exists('Renviron.bioc'):
+            prefix = '- '
+        else:
+            prefix = ''
+        if BBSvars.subbuilds == "bioc":
+            url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
+            out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
+            out.write('48 hours) for your latest push to ')
+            out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
+            out.write('to be reflected on this report. See "How and When does ')
+            out.write('the builder pull? When will my changes propagate?" ')
+            out.write('<A href="%s">here</A> for more information.<BR>\n' % url)
+        if os.path.exists('Renviron.bioc'):
+            out.write('%sMake sure to use the ' % prefix)
+            out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
+            out.write('in order to reproduce any error ')
+            out.write('or warning you see on this page.<BR>\n')
         out.write('</TD></TR></TABLE>\n')
         out.write('</DIV>\n')
 
