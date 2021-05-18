@@ -1325,16 +1325,17 @@ Then add the following entries to biocbuild's crontab:
 
     # BIOC 3.14 DATA EXPERIMENT BUILDS
     # --------------------------------
-    # run on Mondays and Thursdays
+    # run on Tuesdays, Thursdays, and Saturdays
     
     # prerun:
-    00 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
-    
+    30 09 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+
     # run:
-    25 09 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
-    
-    # postrun (this should start AFTER builds are finished on all nodes):
-    45 15 * * 1,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 11 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+    # postrun (make sure this starts AFTER 'biocbuild' has finished its "run.sh"
+    # job on ALL the nodes):
+    45 15 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 
 ### 4.3 Workflows builds
