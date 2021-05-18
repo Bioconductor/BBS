@@ -13,8 +13,8 @@ export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.14-data-experiment"
 export BBS_R_HOME="/home/biocbuild/bbs-3.14-bioc/R"
-export BBS_NB_CPU=6        # 20 cores are available
-export BBS_CHECK_NB_CPU=8  # 20 cores are available
+export BBS_NB_CPU=12        # 72 ores are available
+export BBS_CHECK_NB_CPU=16  # 72 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
