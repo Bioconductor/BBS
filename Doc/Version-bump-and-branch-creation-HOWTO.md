@@ -170,14 +170,14 @@ that people must stop committing/pushing changes to the BioC git server
 
 ### C2. Modify packages.conf to block all commits
 
-The `RELEASE_3_11` lines in `gitolite-admin/conf/packages.conf` were commented
+The `RELEASE_3_12` lines in `gitolite-admin/conf/packages.conf` were commented
 out when the release builds were frozen. At this point, only the `master`
 lines are still active.
 
 Deactivate all push access by commenting out the `master` lines in
 `gitolite-admin/conf/packages.conf`.
 
-NOTE: Do not change the branch from RELEASE_3_11 to RELEASE_3_13, it is
+NOTE: Do not change the branch from RELEASE_3_12 to RELEASE_3_13, it is
 not a good solution. Maintainers now will be able to push their own
 RELEASE_3_13 branch before we are able to create it at release
 time. This issue reflects the issue
@@ -314,7 +314,7 @@ as follows**:
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`).
 
-- If not done already, replace all instances of `RELEASE_3_11` with
+- If not done already, replace all instances of `RELEASE_3_12` with
   `RELEASE_3_13`.
 
 - Uncomment all `RELEASE_3_13` and `master` lines.
