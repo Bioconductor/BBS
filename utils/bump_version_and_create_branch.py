@@ -67,7 +67,7 @@ def _replace_version(pkgsrctree, new_version):
     return
 
 def _run_git_cmd(pkgsrctree, args, check=True):
-    cmd = "%s -C %s %s" % (bbs.gitutils.git_cmd, pkgsrctree, args)
+    cmd = "%s -C %s %s" % (bbs.gitutils._git_cmd, pkgsrctree, args)
     print("%s$ %s" % (os.getcwd(), cmd))
     retcode = bbs.jobs.call(cmd, check=check)
     print()
