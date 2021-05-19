@@ -10,7 +10,7 @@ order**:
 - **First version bump**: bump x.y.z version to even y **in the `master`
   branch**
 - **Branch creation**: create the release branch
-- **Second version bump**: bump x.y.z version to odd y **in the `master
+- **Second version bump**: bump x.y.z version to odd y **in the `master`
   branch**
 
 For example, for the BioC 3.13 release, we will need to do this for all
@@ -271,7 +271,7 @@ Notes:
 
 * A typical error is `Error: duplicate commits` (happened for affyPLM and
   Rdisop first time I tested this). Report these errors to `gitolite`
-  experts Nitesh and Martin. Once the problem is fixed, re-run the script.
+  experts Nitesh or Martin. Once the problem is fixed, re-run the script.
 
 ### C8. Check `bump_version_and_create_branch.log`
 
@@ -284,7 +284,7 @@ looks ok.
 
 ### Data-experiment packages
 
-Repeat steps C6 to C8 above **but for C6 define the environment variables
+Repeat steps C5 to C8 above **but for C6 define the environment variables
 as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/data-experiment"
@@ -292,7 +292,7 @@ as follows**:
 
 ### Workflows
 
-Repeat steps C6 to C8 above **but for C6 define the environment variables
+Repeat steps C5 to C8 above **but for C6 define the environment variables
 as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/workflows"
@@ -300,7 +300,7 @@ as follows**:
 
 ### Books
 
-Repeat steps C6 to C8 above **but for C6 define the environment variables
+Repeat steps C5 to C8 above **but for C6 define the environment variables
 as follows**:
 
     export WORKING_DIR="$HOME/git.bioconductor.org/books"
