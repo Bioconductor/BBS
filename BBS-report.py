@@ -1203,7 +1203,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
             out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
             out.write('48 hours) for your latest push to ')
             out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
-            out.write('to be<BR>reflected on this report. ')
+            out.write('to<BR>reflect on this report. ')
             out.write('See "How and When does the builder pull? ')
             out.write('When will my changes propagate?" ')
             out.write('<A href="%s">here</A> for more information.<BR>\n' % url)
