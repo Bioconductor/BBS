@@ -480,6 +480,9 @@ TR.toned_down .nebbiolo2,
 TBODY.compact.gcard TR.even_row_number .nebbiolo2 {
     background: #CAD6EC;
 }
+DIV.nebbiolo2 {
+    color: #005;
+}
 
 /* tokay1 */
 .tokay1,
@@ -534,6 +537,9 @@ TBODY.compact.gcard TR.even_row_number .debina {
 TR.toned_down .merida1,
 TBODY.compact.gcard TR.even_row_number .merida1 {
     background: #CBE2D9;
+}
+DIV.merida1 {
+    color: #050;
 }
 
 /* machv2 */
