@@ -1,5 +1,5 @@
 BODY {
-    background: #ecd4fa;
+    background: #edddf2;
     padding: 8px;
     font-family: sans-serif;
     font-size: 11pt;
@@ -100,14 +100,14 @@ TABLE.svn_info {
     border-collapse: collapse;
 }
 DIV.svn_info TABLE.svn_info TD.svn_info {
-    background: #EEFAF2;
+    background: #FFFFE0;
     border: 0px;
     border-radius: 12px;
     padding: 8px;
 }
 TABLE.svn_info TR TD.svn_info {
-    background: #EEFAF2;
-    border: 1px solid #CED;
+    background: #FFFFE0;
+    border: 1px solid #DCB;
     padding: 0px;
     padding-left: 2px;
     padding-right: 2px;
@@ -473,12 +473,12 @@ TBODY.compact.gcard TR.even_row_number .nebbiolo1 {
 /* nebbiolo2 (Ubuntu 20.04) */
 .nebbiolo2,
 .gcard TD.nebbiolo2 {
-    background: #DAECFA;
+    background: #DAE6FC;
 }
 .nebbiolo2.toned_down,
 TR.toned_down .nebbiolo2,
 TBODY.compact.gcard TR.even_row_number .nebbiolo2 {
-    background: #CADCEA;
+    background: #CAD6EC;
 }
 
 /* tokay1 */
@@ -528,12 +528,12 @@ TBODY.compact.gcard TR.even_row_number .debina {
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
-    background: #ECE6FA;
+    background: #DBF2E9;
 }
 .merida1.toned_down,
 TR.toned_down .merida1,
 TBODY.compact.gcard TR.even_row_number .merida1 {
-    background: #DCD6EA;
+    background: #CBE2D9;
 }
 
 /* machv2 */
