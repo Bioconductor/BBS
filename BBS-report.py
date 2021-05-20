@@ -1169,7 +1169,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     node_hostname = leafreport_ref.node_hostname
     node_id = leafreport_ref.node_id
     stage = leafreport_ref.stage
-    page_title = '%s report for %s on %s' % \
+    page_title = '%s results for %s on %s' % \
                  (BBSreportutils.stage_label(stage), pkg, node_id)
     out_rURL = BBSreportutils.get_leafreport_rel_path(pkg, node_id, stage)
     out = open(out_rURL, 'w')
