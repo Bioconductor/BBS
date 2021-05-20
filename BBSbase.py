@@ -72,8 +72,9 @@ def Rexpr2syscmd(Rexpr):
 #   - 'examples_i386/<pkg>-Ex.timings'
 #   - 'examples_x64/<pkg>-Ex.timings'
 #   - All the top-level files in 'tests/', 'tests_i386/', and 'tests_x64/',
-#     except 'startup.Rs', and no subdir (e.g. 'tests/testthat/' can be
+#     except 'startup.Rs', and no subdirs (e.g. 'tests/testthat/' can be
 #     big and is not needed).
+#   - '<pkg>-manual.pdf'
 def _clean_Rcheck_dir(Rcheck_dir, pkg):
     dangling_paths = []
     # Collect top-level stuff to remove.
@@ -87,7 +88,8 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
                                'examples_x64',
                                'tests',
                                'tests_i386',
-                               'tests_x64']
+                               'tests_x64',
+                               '%s-manual.pdf' % pkg]
     for filename in os.listdir(Rcheck_dir):
         if filename not in top_level_stuff_to_keep:
             path = os.path.join(Rcheck_dir, filename)
