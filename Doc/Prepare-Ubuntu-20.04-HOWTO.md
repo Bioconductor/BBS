@@ -525,7 +525,8 @@ For BioC packages:
                          infernal \
                          fuse \
                          libfuse-dev \
-                         kallisto
+                         kallisto \
+                         mono-runtime
 
 Notes:
 - `graphviz` and `libgraphviz-dev` are for Rgraphviz.
@@ -543,6 +544,7 @@ Notes:
 - `infernal` is for inferrnal.
 - `fuse` and `libfuse-dev` are for Travel.
 - `kallisto` is for rkal.
+- `mono-runtime` is for rawrr.
 
 
 ### 1.9 Install Python 3 modules
