@@ -531,12 +531,12 @@ TBODY.compact.gcard TR.even_row_number .debina {
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
-    background: #DBF2E9;
+    background: #DDF0EA;
 }
 .merida1.toned_down,
 TR.toned_down .merida1,
 TBODY.compact.gcard TR.even_row_number .merida1 {
-    background: #CBE2D9;
+    background: #CDE0DA;
 }
 DIV.merida1 {
     color: #050;
