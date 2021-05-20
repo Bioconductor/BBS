@@ -1204,8 +1204,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
             out.write('48 hours) for your latest push to ')
             out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
             out.write('to<BR>reflect on this report. ')
-            out.write('See "How and When does the builder pull? ')
-            out.write('When will my changes propagate?" ')
+            out.write('See <I>How and When does the builder pull? ')
+            out.write('When will my changes propagate?</I> ')
             out.write('<A href="%s">here</A> for more information.<BR>\n' % url)
         if os.path.exists('Renviron.bioc'):
             out.write('%sMake sure to use the ' % prefix)
