@@ -848,8 +848,8 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps=None):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    out.write('<H1>%s</H1>\n' % page_title)
-    #out.write('<H2>(%s)</H2>\n' % title)
+    #out.write('<H1>%s</H1>\n' % title)
+    out.write('<H2>%s</H2>\n' % page_title)
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
     out.write('This page was generated on %s.\n' % date)
@@ -861,10 +861,10 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps=None):
 
     if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
         quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
-        out.write('<H2 style="padding: 18px;">')
+        out.write('<H3 style="padding: 18px;">')
         out.write('Results for Bioconductor software packages ')
         out.write('that depend directly on package %s' % pkg)
-        out.write('</H2>\n')
+        out.write('</H3>\n')
         write_gcard_list(out, pkg_rev_deps,
                          quickstats=quickstats, no_quickstats_links=True,
                          topdir='..')
