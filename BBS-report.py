@@ -1193,7 +1193,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
         out.write('<DIV class="motd">\n')
         out.write('<TABLE><TR><TD>\n')
         out.write('To the developers/maintainers ')
-        out.write('of the %s package:<BR>' % pkg)
+        out.write('of the %s package:<BR>\n' % pkg)
         if BBSvars.subbuilds == "bioc" and os.path.exists('Renviron.bioc'):
             prefix = '- '
         else:
