@@ -298,11 +298,34 @@ Then check the layout with `tree`.
 
 
 
-## 6. Add propagation scripts to crontab
+## 6. Add propagation scripts to biocpush's crontab
 
-- create ~/cron.log/3.14
+From the biocpush account.
 
-TODO
+The propagation scripts for BioC 3.14 are located in the `~/propagation/3.14/`
+folder. For the software packages, they are: `updateReposPkgs-bioc.sh`,
+`prepareRepos-bioc.sh`, and `pushRepos-bioc.sh`.
+
+IMPORTANT: Two things before we can run these scripts.
+
+1. Create `~/cron.log/3.14`.
+
+2. From the biocbuild account: Make sure to uncomment the
+   `export BBS_OUTGOING_MAP=...` line in `~/BBS/3.14/bioc/nebbiolo2/config.sh`
+   before `postrun.sh` runs. If `postrun.sh` has run already and the report
+   has already been published, uncomment the line anyway and rerun `postrun.sh`.
+   This 2nd run of `postrun.sh` will take much longer because the script now
+   needs to do a few more things that are related to propagation. One of them
+   is to generate the propagation status db.
+   Once `postrun.sh` is finished, check the build report again (reload the
+   page in your browser if you already had it there). Now you should see
+   many little green LEDs in the rightmost column of the report indicating
+   propagation status.
+
+TODO: more details about how to run the scripts manually the first time and
+make sure that each of them completed successfully
+
+TODO: show line to put in the crontab
 
 
 ## 7. Update https://bioconductor.org/config.yaml

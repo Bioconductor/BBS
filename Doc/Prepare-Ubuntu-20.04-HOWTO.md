@@ -771,6 +771,20 @@ Must be done from the biocbuild account.
     cd
     git clone https://github.com/bioconductor/BBS
 
+#### Temporarily disable propagation
+
+Propagation is documented in a separate document: Set-up-propagation-HOWTO.md
+
+Until we've set it up, we need to comment out the `export BBS_OUTGOING_MAP=...`
+line in `~/BBS/3.14/bioc/nebbiolo2/config.sh`.
+
+One visible effect of doing this is that the daily build reports generated
+by the `postrun.sh` script won't have the little LEDs in the rightmost column
+indicating propagation status.
+
+Note that the change is only temporary (don't commit it!), until we've set up
+propagation of the 3.14 software packages.
+
 #### Edit non_target_repos.txt
 
 Only if we are a few weeks before the next Bioconductor release (Spring or
@@ -783,7 +797,7 @@ https://bioconductor.org/packages/) don't exist yet either (or if they do,
 they're probably empty).
 
 If this is the case, then `~/BBS/X.Y/bioc/non_target_repos.txt` needs to
-be temporarily modified to point to current devel repositories.
+be temporarily modified to point to the current devel repositories.
 
 For example, if we are a few weeks before the BioC 3.13 release,
 and you are setting up the future BioC 3.14 builds, then you need to
