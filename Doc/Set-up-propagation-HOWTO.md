@@ -1,12 +1,64 @@
-# How to propagate packages from the central builder to master.bioconductor.org
+# How to propagate packages from the build system to master.bioconductor.org
 
 
 
 ## Introduction
 
-- what's propagation
-- from where to where
-- what
+
+### What we propagate
+
+The Bioconductor daily builds (a.k.a. software builds) produce 3 types of
+packages:
+- **source packages** a.k.a. _package source tarballs_ (`tar.gz` extension)
+- **Windows binary packages** (`zip` extension)
+- **Mac binary packages** (`tgz` extension)
+At the end of a daily run, packages that pass the _propagation criteria_
+are propagated to the CRAN-style repositories hosted on
+master.bioconductor.org. The public URLs for these repositories
+are of the form https://bioconductor.org/packages/X.Y/bioc where X.Y
+is the Bioconductor version. These are the repositories used by
+`BiocManager::install()` to install packages.
+
+Other builds (e.g. data-experiment, workflows, and books) also produce
+packages, but, unlike the daily builds, they only produce **source packages**.
+
+Some builds like the Long Test builds don't produce any package so there's
+nothing propagate.
+
+
+### The propagation scripts
+
+The scripts we use for propagating packages are called the _propagation
+scripts_. They are run on the _central_ builder which is where all the build
+products are collected during a build run. (Note that the central builder is
+always the Linux builder.)
+
+The propagation scripts are run after the builds are finished and after
+the central builder has generated the build report. Note that, like running
+the builds, generating the report is done from the biocbuild account (by
+running the `postrun.sh` script). However, the propagation scripts are run
+from a different account, the biocpush account.
+
+
+### The propagation criteria
+
+A given package is allowed to propagate for a given platform if the 3
+following conditions are satisfied:
+1. It has no ERROR or TIMEOUT on that platform.
+2. Its version was bumped since the last time it propagated. In other words,
+   its current version must be strictly greater than the version that is
+   already publicly available via `BiocManager::install()`.
+3. The propagated package will not have _impossible dependencies_.
+   An impossible dependency is a dependency that `BiocManager::install()`
+   won't be able to satisfy because it's not available or because it does
+   not have the minimum requested version.
+
+The criteria is used independently for each platform so for example it
+could be that for a given package, the source tarball and Mac binary are
+allowed to propagate but not the Windows binary.
+
+The little LED in the rightmost column of the build report indicates the
+propagation status e.g. a green LED means that propagation is allowed.
 
 
 
@@ -67,7 +119,7 @@ done
 ```
 
 
-### TESTING
+### Testing
 
 `tree` should show the following:
 ```
