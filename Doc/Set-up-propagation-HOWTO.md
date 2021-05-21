@@ -186,8 +186,8 @@ This tricks `install.packages()` into believing that the 3.14 repos exist
 even though they don't. So for example now this should work but it will
 install the version of the BiocGenerics package that belongs to BioC 3.13:
 ```
-repo <- "https://bioconductor.org/packages/3.14/bioc"
 ## From R:
+repo <- "https://bioconductor.org/packages/3.14/bioc"
 install.packages("BiocGenerics", repos=repo)
 ```
 This is a temprary situation only, until we propagate the packages produced
