@@ -198,10 +198,10 @@ by the 3.14 daily builds.
 ## 4. Install R
 
 
-Choose the version of R that matches the version of Bioconductor that we're
-going to propagate. For example, for BioC 3.14, this is R 4.1.
-
 From the biocpush account:
+
+- Choose the version of R that matches the version of Bioconductor that
+  we're going to propagate. For example, for BioC 3.14, this is R 4.1.
 
 - Create folders `rdownloads`, `R-4.1`, `bin`, and `pkgs_to_install` in
   biocpush's home. Note that `~/bin` will automatically be added to the
@@ -254,10 +254,47 @@ From the biocpush account:
 
 ## 5. Create the staging package repositories
 
-    cd
-    mkdir PACKAGES
 
-TODO
+From the biocpush account.
+
+Create `~/PACKAGES/3.14` and the 4 CRAN-style package repos: `bioc` (software),
+`data/experiment`, `workflows`, and `books` below it. No `data/annotation`
+repo for now:
+
+    mkdir -p ~/PACKAGES/3.14/bioc
+    mkdir -p ~/PACKAGES/3.14/data/experiment/
+    mkdir -p ~/PACKAGES/3.14/workflows
+    mkdir -p ~/PACKAGES/3.14/books
+
+Each repo must be set up as a CRAN-style repository so must follow the
+official CRAN layout. For an empty repo, this layout is:
+```
+.
+├── bin
+│   ├── macosx
+│   │   └── contrib
+│   │       └── 4.1
+│   │           └── PACKAGES
+│   └── windows
+│       └── contrib
+│           └── 4.1
+│               └── PACKAGES
+└── src
+    └── contrib
+        └── PACKAGES
+```
+where `PACKAGES` are empty files.
+
+The above layout needs to be manually created inside each repo. For example
+to create inside the software repository:
+
+    cd ~/PACKAGES/3.14/bioc
+    mkdir -p src/contrib bin/windows/contrib/4.1 bin/macosx/contrib/4.1
+    touch src/contrib/PACKAGES
+    touch bin/windows/contrib/4.1/PACKAGES
+    touch bin/macosx/contrib/4.1/PACKAGES
+
+Then check the layout with `tree`.
 
 
 
@@ -266,4 +303,12 @@ TODO
 - create ~/cron.log/3.14
 
 TODO
+
+
+## 7. Update https://bioconductor.org/config.yaml
+
+
+This file needs to be updated to reflect availability of new public
+repositories (so the corresponding package landing pages are generated).
+Ask Lori to help with this.
 
