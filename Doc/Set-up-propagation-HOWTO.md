@@ -2,7 +2,12 @@
 
 
 
-## Introduction
+This document explains how to propagate the packages produced by the build
+system to the public CRAN-style repositories hosted on master.bioconductor.org.
+
+
+
+## 1. Introduction
 
 
 ### What we propagate
@@ -13,9 +18,9 @@ packages:
 - **Windows binary packages** (`zip` extension)
 - **Mac binary packages** (`tgz` extension)
 At the end of a daily run, packages that pass the _propagation criteria_
-are propagated to the CRAN-style repositories hosted on
-master.bioconductor.org. The public URLs for these repositories
-are of the form https://bioconductor.org/packages/X.Y/bioc where X.Y
+are propagated to the public CRAN-style repositories hosted on
+master.bioconductor.org. The URLs for these repositories are of
+the form https://bioconductor.org/packages/X.Y/bioc where X.Y
 is the Bioconductor version. These are the repositories used by
 `BiocManager::install()` to install packages.
 
@@ -60,30 +65,63 @@ allowed to propagate but not the Windows binary.
 The little LED in the rightmost column of the build report indicates the
 propagation status e.g. a green LED means that propagation is allowed.
 
+The rest of this document explains how to achieve this setup.
 
 
-## Set up the biocpush account
+
+## 2. Set up the biocpush account
+
+
+If the central builder is a new machine that was recently configured to run
+the builds, it should already have the biocbuild account from which the builds
+are run, as well as some personal accounts for the Bioconductor Core Team
+members in charge of the machine. Note that these personal accounts should
+have sudo rights.
+
+If the biocpush account doesn't exist yet, we need to create it.
+
 
 ### Create the account
 
-From your personal account (sudoer)
+From your personal account (sudoer), create the biocpush user. Use the same
+commands that were used to create the biocbuild user. See _Set up the
+biocbuild account_ section in the Prepare-Ubuntu-20.04-HOWTO.md document
+for the details (replace `biocbuild` with `biocpush`). Use the same password
+as for biocbuild.
 
-- create biocpush (use same password as for biocbuild)
 
 ### Install SSH keys
 
-From the biocpush account
+From the biocpush account:
 
-- create `~/.ssh` folder and copy `authorized_keys` and `id_rsa` from the
-  biocbuild account.
+- Create `~/.ssh` folder.
+- Copy `authorized_keys` and `id_rsa` from the biocbuild account.
+- Make sure `~/.ssh/id_rsa` is readonly by its owner only:
+  `chmod 400 ~/.ssh/id_rsa`
+
+TESTING: You should be able to ssh to master from the biocpush account. Try:
+
+    ssh -A webadmin@master.bioconductor.org
+
+
+### Clone BBS
+
+Clone BBS in biocpush's home:
+
+    cd
+    git clone https://github.com/bioconductor/BBS
+
+Then create symlink:
+
+    ln -s BBS/propagation
 
 
 
-## Create 3.14 destination on master.bioconductor.org
+## 3. Create the destination folder on master
 
 
-We need to create the folder where all the 3.14 package repositories will
-be located on master.bioconductor.org.
+This is the the folder at https://bioconductor.org/packages/X.Y where X.Y
+is the Bioconductor version.
 
 
 ### Go on master
@@ -96,27 +134,27 @@ ssh -A webadmin@master.bioconductor.org
 
 ### Once on master
 
-```
-cd /extra/www/bioc/packages
-```
+Say we're setting up propagation for Bioconductor 3.14:
+
+    cd /extra/www/bioc/packages
+
 If the `3.14` folder doesn't exist yet:
-```
-mkdir 3.14
-```
+
+    mkdir 3.14
+
 Create empty package repositories inside 3.14:
-```
-cd 3.14
-repos="bioc data/annotation data/experiment workflows books"
-mkdir -p $repos
-```
+
+    cd 3.14
+    repos="bioc data/annotation data/experiment workflows books"
+    mkdir -p $repos
+
 For now we'll just populate them with symlinks that redirect to the 3.13 repos:
-```
-previous_release=/extra/www/bioc/packages/3.13
-for repo in $repos; do
-    mkdir -p $repo/src
-    ln -s $previous_release/$repo/src/contrib $repo/src
-done
-```
+
+    previous_release=/extra/www/bioc/packages/3.13
+    for repo in $repos; do
+        mkdir -p $repo/src
+        ln -s $previous_release/$repo/src/contrib $repo/src
+    done
 
 
 ### Testing
@@ -145,37 +183,42 @@ done
 ```
 
 This tricks `install.packages()` into believing that the 3.14 repos exist
-even though they don't. So for example this should work now:
+even though they don't. So for example now this should work but it will
+install the version of the BiocGenerics package that belongs to BioC 3.13:
 ```
 repo <- "https://bioconductor.org/packages/3.14/bioc"
 ## From R:
 install.packages("BiocGenerics", repos=repo)
 ```
+This is a temprary situation only, until we propagate the packages produced
+by the 3.14 daily builds.
 
 
 
-## From the biocpush account
+## 4. Install R
 
 
-### Install R
+Choose the version of R that matches the version of Bioconductor that we're
+going to propagate. For example, for BioC 3.14, this is R 4.1.
 
-- create folders `rdownloads`, `R-4.1`, `bin`, and `pkgs_to_install` in home.
+From the biocpush account:
 
-  Note that `~/bin` will automatically be added to the PATH next time you
-  login as biocpush, but it's a good idea to logout and login again now so
-  it takes effect now.
+- Create folders `rdownloads`, `R-4.1`, `bin`, and `pkgs_to_install` in
+  biocpush's home. Note that `~/bin` will automatically be added to the
+  `PATH` next time you login as biocpush, but it's a good idea to logout
+  and login again now so it takes effect now.
 
-- download and extract latest R source tarball to `~/rdownloads`
+- Download and extract latest R source tarball to `~/rdownloads`.
 
-- configure and compile in R-4.1
+- Configure and compile in `~/R-4.1`.
 
-- create symlinks in `~/bin`:
-
+- Create symlinks in `~/bin`:
+    ```
     cd ~/bin
     ln -s ~/R-4.1/bin/R R-4.1
     ln -s ~/R-4.1/bin/Rscript Rscript-4.1
-
-- install the most current version of the biocViews package:
+    ```
+- Install the most current version of the biocViews package:
     ```
     ## First install it from R with BiocManager::install(). This is the
     ## easiest way to get all the dependencies installed:
@@ -194,12 +237,12 @@ install.packages("BiocGenerics", repos=repo)
     R-4.1 CMD INSTALL biocViews
     ```
 
-- install Bioconductor package DynDoc:
+- Install Bioconductor package DynDoc:
     ```
     BiocManager::install("DynDoc")
     ```
 
-- install CRAN packages knitr, knitcitations, and commonmark:
+- Install CRAN packages knitr, knitcitations, and commonmark:
     ```
     ## From R:
     install.packages("knitr", repos="https://cran.r-project.org")
@@ -208,26 +251,19 @@ install.packages("BiocGenerics", repos=repo)
     ```
 
 
-### Clone BBS
 
-- clone BBS in biocpush's home:
-
-    cd
-    git clone https://github.com/bioconductor/BBS
-
-  Then create symlink:
-
-    ln -s BBS/propagation
-
-
-### Create the staging package repositories
+## 5. Create the staging package repositories
 
     cd
     mkdir PACKAGES
 
+TODO
 
 
-### Add propagation scripts to crontab
+
+## 6. Add propagation scripts to crontab
 
 - create ~/cron.log/3.14
+
+TODO
 

@@ -171,7 +171,7 @@ Then logout and login again for the change to take effect, and try:
     # Tue 20 Apr 16:26:10 EDT 2021
 
 
-### 1.6 Create the biocbuild account
+### 1.6 Set up the biocbuild account
 
     sudo adduser biocbuild
 
