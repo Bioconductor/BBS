@@ -10,19 +10,99 @@
 
 
 
-## From your personal account (sudoer)
+## Set up the biocpush account
+
+### Create the account
+
+From your personal account (sudoer)
 
 - create biocpush (use same password as for biocbuild)
+
+### Install SSH keys
+
+From the biocpush account
+
+- create `~/.ssh` folder and copy `authorized_keys` and `id_rsa` from the
+  biocbuild account.
+
+
+
+## Create 3.14 destination on master.bioconductor.org
+
+
+We need to create the folder where all the 3.14 package repositories will
+be located on master.bioconductor.org.
+
+
+### Go on master
+
+From the biocpush account:
+```
+ssh -A webadmin@master.bioconductor.org
+```
+
+
+### Once on master
+
+```
+cd /extra/www/bioc/packages
+```
+If the `3.14` folder doesn't exist yet:
+```
+mkdir 3.14
+```
+Create empty package repositories inside 3.14:
+```
+cd 3.14
+repos="bioc data/annotation data/experiment workflows books"
+mkdir -p $repos
+```
+For now we'll just populate them with symlinks that redirect to the 3.13 repos:
+```
+previous_release=/extra/www/bioc/packages/3.13
+for repo in $repos; do
+    mkdir -p $repo/src
+    ln -s $previous_release/$repo/src/contrib $repo/src
+done
+```
+
+
+### TESTING
+
+`tree` should show the following:
+```
+.
+├── bioc
+│   └── src
+│       └── contrib -> /extra/www/bioc/packages/3.13/bioc/src/contrib
+├── books
+│   └── src
+│       └── contrib -> /extra/www/bioc/packages/3.13/books/src/contrib
+├── data
+│   ├── annotation
+│   │   └── src
+│   │       └── contrib -> /extra/www/bioc/packages/3.13/data/annotation/src/contrib
+│   └── experiment
+│       └── src
+│           └── contrib -> /extra/www/bioc/packages/3.13/data/experiment/src/contrib
+└── workflows
+    └── src
+        └── contrib -> /extra/www/bioc/packages/3.13/workflows/src/contrib
+
+11 directories, 5 files
+```
+
+This tricks `install.packages()` into believing that the 3.14 repos exist
+even though they don't. So for example this should work now:
+```
+repo <- "https://bioconductor.org/packages/3.14/bioc"
+## From R:
+install.packages("BiocGenerics", repos=repo)
+```
 
 
 
 ## From the biocpush account
-
-
-### Install SSH keys
-
-- create `~/.ssh` folder and copy `authorized_keys` and `id_rsa` from the
-  biocbuild account.
 
 
 ### Install R
