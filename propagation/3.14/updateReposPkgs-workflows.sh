@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e  # exit immediately if a simple command returns a non-zero status
+
 cd "$HOME/propagation/3.14"
 
 . ./config.sh
@@ -23,7 +25,7 @@ update_repo()
 	if [ "$?" != "0" ]; then
 		exit 1
 	fi
-	$Rscript -e "$PROPAGATION_R_EXPR; copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT')"
+	$Rscript -e "$PROPAGATION_R_EXPR; try(copyPropagatableFiles('$outgoing_subdir', '$fileext', '$PROPAGATION_DB_FILE', '$REPOS_ROOT'))"
 	$Rscript -e "$R_EXPR; oldpkgs <- list.old.pkgs(suffix='.$fileext'); removed <- file.remove(oldpkgs); names(removed) <- oldpkgs; removed"
 }
 
@@ -36,4 +38,7 @@ echo ""
 echo "Updating $BIOC_VERSION/workflows repo with source packages..."
 update_repo "$SRC_CONTRIB" "source" "tar.gz"
 
+echo ""
+
+echo "DONE."
 exit 0
