@@ -200,7 +200,53 @@ by the 3.14 daily builds.
 
 
 
-## 4. Install R
+## 4. Create the staging package repositories
+
+
+From the biocpush account.
+
+Create `~/PACKAGES/3.14` and the 4 CRAN-style package repos: `bioc` (software),
+`data/experiment`, `workflows`, and `books` below it. No `data/annotation`
+repo for now:
+
+    mkdir -p ~/PACKAGES/3.14/bioc
+    mkdir -p ~/PACKAGES/3.14/data/experiment/
+    mkdir -p ~/PACKAGES/3.14/workflows
+    mkdir -p ~/PACKAGES/3.14/books
+
+Each repo must be set up as a CRAN-style repository so must follow the
+official CRAN layout. For an empty repo, this layout is:
+```
+.
+├── bin
+│   ├── macosx
+│   │   └── contrib
+│   │       └── 4.1
+│   │           └── PACKAGES
+│   └── windows
+│       └── contrib
+│           └── 4.1
+│               └── PACKAGES
+└── src
+    └── contrib
+        └── PACKAGES
+```
+where `PACKAGES` are empty files.
+
+The above layout needs to be manually created inside each repo. For example
+to create it inside the software repository:
+
+    cd ~/PACKAGES/3.14/bioc
+    mkdir -p src/contrib bin/windows/contrib/4.1 bin/macosx/contrib/4.1
+    touch src/contrib/PACKAGES
+    touch bin/windows/contrib/4.1/PACKAGES
+    touch bin/macosx/contrib/4.1/PACKAGES
+
+Then check the layout with `tree`.
+
+
+
+## 5. Install R
 
 
 From the biocpush account:
@@ -254,52 +300,6 @@ From the biocpush account:
     install.packages("knitcitations", repos="https://cran.r-project.org")
     install.packages("commonmark", repos="https://cran.r-project.org")
     ```
-
-
-
-## 5. Create the staging package repositories
-
-
-From the biocpush account.
-
-Create `~/PACKAGES/3.14` and the 4 CRAN-style package repos: `bioc` (software),
-`data/experiment`, `workflows`, and `books` below it. No `data/annotation`
-repo for now:
-
-    mkdir -p ~/PACKAGES/3.14/bioc
-    mkdir -p ~/PACKAGES/3.14/data/experiment/
-    mkdir -p ~/PACKAGES/3.14/workflows
-    mkdir -p ~/PACKAGES/3.14/books
-
-Each repo must be set up as a CRAN-style repository so must follow the
-official CRAN layout. For an empty repo, this layout is:
-```
-.
-├── bin
-│   ├── macosx
-│   │   └── contrib
-│   │       └── 4.1
-│   │           └── PACKAGES
-│   └── windows
-│       └── contrib
-│           └── 4.1
-│               └── PACKAGES
-└── src
-    └── contrib
-        └── PACKAGES
-```
-where `PACKAGES` are empty files.
-
-The above layout needs to be manually created inside each repo. For example
-to create inside the software repository:
-
-    cd ~/PACKAGES/3.14/bioc
-    mkdir -p src/contrib bin/windows/contrib/4.1 bin/macosx/contrib/4.1
-    touch src/contrib/PACKAGES
-    touch bin/windows/contrib/4.1/PACKAGES
-    touch bin/macosx/contrib/4.1/PACKAGES
-
-Then check the layout with `tree`.
 
 
 
