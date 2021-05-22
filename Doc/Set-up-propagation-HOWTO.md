@@ -152,9 +152,14 @@ For now we'll just populate them with symlinks that redirect to the 3.13 repos:
 
     previous_release=/extra/www/bioc/packages/3.13
     for repo in $repos; do
+        ln -s $previous_release/$repo/VIEWS $repo/
         mkdir -p $repo/src
-        ln -s $previous_release/$repo/src/contrib $repo/src
+        ln -s $previous_release/$repo/src/contrib $repo/src/
     done
+
+Note that this is temporary only, until each repository gets populated by the
+propagation scripts. When this happens, the symlinks will get automatically
+replaced with real content.
 
 
 ### Testing
@@ -300,13 +305,17 @@ Then check the layout with `tree`.
 
 ## 6. Add propagation scripts to biocpush's crontab
 
+
 From the biocpush account.
 
 The propagation scripts for BioC 3.14 are located in the `~/propagation/3.14/`
 folder. For the software packages, they are: `updateReposPkgs-bioc.sh`,
 `prepareRepos-bioc.sh`, and `pushRepos-bioc.sh`.
 
-IMPORTANT: Two things before we can run these scripts.
+
+### Before running the scripts
+
+Three important things before we run these scripts:
 
 1. Create `~/cron.log/3.14`.
 
@@ -322,10 +331,127 @@ IMPORTANT: Two things before we can run these scripts.
    many little green LEDs in the rightmost column of the report indicating
    propagation status.
 
-TODO: more details about how to run the scripts manually the first time and
-make sure that each of them completed successfully
+3. Check that `~/bin/Rscript-4.1` works and that it can load the biocViews
+   package:
+    ```
+    ~/bin/Rscript-4.1 -e 'library(biocViews);cat("SUCCESS!\n")'
+    ```
 
-TODO: show line to put in the crontab
+
+### Manual run
+
+It's a good idea to try to run the scripts manually the first time so we can
+make sure that they work as expected. We'll run them in the following order:
+- updateReposPkgs-bioc.sh
+- prepareRepos-bioc.sh
+- pushRepos-bioc.sh
+(Adjust the names if setting up propagation for other builds e.g. replace
+`-bioc.sh` with `-data-experiment.sh`.)
+
+#### Manual run of updateReposPkgs-bioc.sh
+
+We can only run the first script (`updateReposPkgs-bioc.sh`) after the
+`postrun.sh` script was run (from the biocbuild account) and before the
+next builds start (`prerun.sh` script). Note that in the case of the software
+builds which are run every day, this leaves us with a limited time window
+that goes from about 12:20 pm EST to 14:50 pm EST.
+
+Run it with:
+
+    cd ~/propagation/3.14
+    ./updateReposPkgs-bioc.sh >>~/cron.log/3.14/updateReposPkgs-bioc.first-run.log 2>&1 &
+
+This script should not take long, typically < 1 min.
+
+Check that it was successful with:
+
+    tail ~/cron.log/3.14/updateReposPkgs-bioc.first-run.log
+
+The last line should be:
+
+    DONE.
+
+Also if some packages were allowed ot propagate, you should see them in
+`~/PACKAGES/3.14/bioc`.
+
+#### Manual run of prepareRepos-bioc.sh
+
+This script can be run any time, except when another instance of the script
+is already running. Run it with:
+
+    cd ~/propagation/3.14
+    ./prepareRepos-bioc.sh >>~/cron.log/3.14/prepareRepos-bioc.first-run.log 2>&1 &
+
+For big repositories like software and data-experiment, it can take a while
+e.g. between 15 min. (software) and more than 1 hour (data-experiment).
+
+Check that it was successful with:
+
+    tail ~/cron.log/3.14/prepareRepos-bioc.first-run.log
+
+The last line should be:
+
+    DONE.
+
+#### Manual run of pushRepos-bioc.sh
+
+This script should be run right after `prepareRepos-bioc.sh`. All it does
+is rsync the content of the public software repo on master (https://bioconductor.org/packages/3.14/bioc) with the local `~/PACKAGES/3.14/bioc` repo (a.k.a.
+staging software repo).
+
+    cd ~/propagation/3.14
+    ./pushRepos-bioc.sh
+
+If you run it a 2nd time after that, it should only display something like
+this:
+
+    sending incremental file list
+    
+    sent 888,710 bytes  received 14,229 bytes  85,994.19 bytes/sec
+    total size is 15,023,471,508  speedup is 16,638.41
+
+which indicates that nothing was transferred (because the public repo is
+already in sync with the staging repo).
+
+
+### Add crontab entry
+
+Add the following lines to the crontab:
+
+- For propagation of software packages:
+    ```
+    # PROPAGATE BIOC 3.14 SOFTWARE PACKAGES
+    # -------------------------------------
+    
+    # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
+    45 13 * * 1-6 cd /home/biocpush/propagation/3.14 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.14/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1
+    ```
+- For propagation of data experiment packages:
+    ```
+    # PROPAGATE BIOC 3.14 DATA EXPERIMENT PACKAGES
+    # --------------------------------------------
+    
+    # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
+    45 16 * * 2,4,6 cd /home/biocadmin/propagation/3.14 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocadmin/cron.log/3.14/propagate-data-experiment-`date +\%Y\%m\%d`.log 2>&1
+    ```
+- For propagation of workflow packages:
+    ```
+    # PROPAGATE BIOC 3.14 WORKFLOWS
+    # -----------------------------
+    
+    # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
+    35 16 * * 2,5 cd /home/biocpush/propagation/3.14 && (./updateReposPkgs-workflows.sh && ./prepareRepos-workflows.sh && ./pushRepos-workflows.sh) >>/home/biocpush/cron.log/3.14/propagate-workflows-`date +\%Y\%m\%d`.log 2>&1
+    ```
+- For propagation of books:
+    ```
+    # PROPAGATE BIOC 3.14 BOOKS
+    # -------------------------
+    
+    # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
+    00 13 * * 1,3,5 cd /home/biocadmin/propagation/3.14 && (./updateReposPkgs-books.sh && ./prepareRepos-books.sh && ./pushRepos-books.sh && ./deploy-books.sh) >>/home/biocadmin/cron.log/3.14/propagate-books-`date +\%Y\%m\%d`.log 2>&1
+    ```
+  Note that for books, we run one more script, the `deploy-books.sh` script.
+
 
 
 ## 7. Update https://bioconductor.org/config.yaml
