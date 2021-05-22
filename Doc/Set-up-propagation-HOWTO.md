@@ -432,7 +432,7 @@ Add the following lines to the crontab:
     # --------------------------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    45 16 * * 2,4,6 cd /home/biocadmin/propagation/3.14 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocadmin/cron.log/3.14/propagate-data-experiment-`date +\%Y\%m\%d`.log 2>&1
+    45 16 * * 2,4,6 cd /home/biocpush/propagation/3.14 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocpush/cron.log/3.14/propagate-data-experiment-`date +\%Y\%m\%d`.log 2>&1
     ```
 - For propagation of workflow packages:
     ```
@@ -448,7 +448,7 @@ Add the following lines to the crontab:
     # -------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    00 13 * * 1,3,5 cd /home/biocadmin/propagation/3.14 && (./updateReposPkgs-books.sh && ./prepareRepos-books.sh && ./pushRepos-books.sh && ./deploy-books.sh) >>/home/biocadmin/cron.log/3.14/propagate-books-`date +\%Y\%m\%d`.log 2>&1
+    00 13 * * 1,3,5 cd /home/biocpush/propagation/3.14 && (./updateReposPkgs-books.sh && ./prepareRepos-books.sh && ./pushRepos-books.sh && ./deploy-books.sh) >>/home/biocpush/cron.log/3.14/propagate-books-`date +\%Y\%m\%d`.log 2>&1
     ```
   Note that for books, we run one more script, the `deploy-books.sh` script.
 
