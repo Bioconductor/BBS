@@ -341,10 +341,10 @@ Three important things before we run these scripts:
 ### Manual run
 
 It's a good idea to try to run the scripts manually the first time so we can
-make sure that they work as expected. We'll run them in the following order:
-- updateReposPkgs-bioc.sh
-- prepareRepos-bioc.sh
-- pushRepos-bioc.sh
+make sure that they work as expected. They must be run in the following order:
+1. `updateReposPkgs-bioc.sh`
+2. `prepareRepos-bioc.sh`
+3. `pushRepos-bioc.sh`
 (Adjust the names if setting up propagation for other builds e.g. replace
 `-bioc.sh` with `-data-experiment.sh`.)
 
