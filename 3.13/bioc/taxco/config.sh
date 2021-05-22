@@ -50,7 +50,7 @@ export BBS_GITLOG_RDIR="$BBS_CENTRAL_RDIR/gitlog"
 
 #export BBS_OUTGOING_MAP=""
 
-# Needed only on the node performing stage6a (BBS-make-STATUS_DB.py) and
+# Needed only on the node performing stage6a (BBS-make-BUILD_STATUS_DB.py) and
 # stage6c (BBS-report.py)
 #
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it

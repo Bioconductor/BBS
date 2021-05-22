@@ -17,8 +17,8 @@ find products-in -type d -exec chmod 755 {} -c \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
-# Generate STATUS_DB.txt file
-$BBS_PYTHON_CMD $BBS_HOME/BBS-make-STATUS_DB.py
+# Generate BUILD_STATUS_DB.txt file
+$BBS_PYTHON_CMD $BBS_HOME/BBS-make-BUILD_STATUS_DB.py
 
 # Generate and publish HTML report
 $BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch

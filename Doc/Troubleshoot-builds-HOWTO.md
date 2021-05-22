@@ -266,7 +266,7 @@ index b7a14b5..490f8b4 100644
  
 -export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
 +export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin"
- # Needed only on the node performing stage6a (BBS-make-STATUS_DB.py) and
+ # Needed only on the node performing stage6a (BBS-make-BUILD_STATUS_DB.py) and
  # stage6c (BBS-report.py)
  #
  # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it

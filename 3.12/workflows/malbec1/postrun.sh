@@ -19,8 +19,8 @@ set -e # Exit immediately if a simple command exits with a non-zero status.
 
 $BBS_PYTHON_CMD $BBS_HOME/BBS-make-OUTGOING.py
 
-# Generate STATUS_DB.txt file
-$BBS_PYTHON_CMD $BBS_HOME/BBS-make-STATUS_DB.py
+# Generate BUILD_STATUS_DB.txt file
+$BBS_PYTHON_CMD $BBS_HOME/BBS-make-BUILD_STATUS_DB.py
 
 # Generate PROPAGATE_STATUS_DB.txt
 OUTGOING_DIR=$BBS_CENTRAL_RDIR/OUTGOING

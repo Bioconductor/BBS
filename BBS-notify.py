@@ -156,9 +156,9 @@ allpkgs = list(meat_pkgs.keys())
 allpkgs.sort(key=str.lower)
 
 print("BBS> [stage7] Import package statuses from %s ..." % \
-      BBSreportutils.STATUS_DB_file, end=" ")
+      BBSreportutils.BUILD_STATUS_DB_file, end=" ")
 sys.stdout.flush()
-BBSreportutils.import_STATUS_DB(allpkgs)
+BBSreportutils.import_BUILD_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 

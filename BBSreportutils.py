@@ -154,7 +154,7 @@ def ncol_to_display(subbuilds):
 
 ##############################################################################
 
-STATUS_DB_file = 'STATUS_DB.txt'
+BUILD_STATUS_DB_file = 'BUILD_STATUS_DB.txt'
 PROPAGATE_STATUS_DB_file = '../PROPAGATE_STATUS_DB.txt'
 
 
@@ -224,23 +224,23 @@ def get_leafreport_rel_url(pkg, node_id, stage):
 
 ##############################################################################
 ###
-### import_STATUS_DB()
+### import_BUILD_STATUS_DB()
 ### get_pkg_status()
 ###
 ##############################################################################
 
-def _get_pkg_status_from_STATUS_DB(STATUS_DB, pkg, node_id, stage):
+def _get_pkg_status_from_BUILD_STATUS_DB(BUILD_STATUS_DB, pkg, node_id, stage):
     key = '%s#%s#%s' % (pkg, node_id, stage)
-    return STATUS_DB[key]
+    return BUILD_STATUS_DB[key]
 
-status_db = {}
+_build_status_db = {}
 
 def _set_pkg_status(pkg, node_id, stage, status):
-    if pkg not in status_db:
-        status_db[pkg] = {}
-    if node_id not in status_db[pkg]:
-        status_db[pkg][node_id] = {}
-    status_db[pkg][node_id][stage] = status
+    if pkg not in _build_status_db:
+        _build_status_db[pkg] = {}
+    if node_id not in _build_status_db[pkg]:
+        _build_status_db[pkg][node_id] = {}
+    _build_status_db[pkg][node_id][stage] = status
     return
 
 def _zero_quickstats():
@@ -272,24 +272,26 @@ def _update_quickstats(quickstats, node_id, stage, status):
     quickstats[node_id][stage] = (x0, x1, x2, x3, x4)
     return
 
-def import_STATUS_DB(allpkgs):
-    STATUS_DB = bbs.parse.parse_DCF(STATUS_DB_file, merge_records=True)
+def import_BUILD_STATUS_DB(allpkgs):
+    BUILD_STATUS_DB = bbs.parse.parse_DCF(BUILD_STATUS_DB_file,
+                                          merge_records=True)
     allpkgs_quickstats = _zero_quickstats()
     for pkg in allpkgs:
         for node in supported_nodes(pkg):
             # INSTALL status
             if BBSvars.subbuilds != "bioc-longtests":
                 stage = 'install'
-                status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                        pkg, node.node_id,
-                                                        stage)
+                status = _get_pkg_status_from_BUILD_STATUS_DB(
+                                  BUILD_STATUS_DB,
+                                  pkg, node.node_id, stage)
                 _set_pkg_status(pkg, node.node_id, stage, status)
                 _update_quickstats(allpkgs_quickstats,
                                    node.node_id, stage, status)
             # BUILD status
             stage = 'buildsrc'
-            status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                    pkg, node.node_id, stage)
+            status = _get_pkg_status_from_BUILD_STATUS_DB(
+                              BUILD_STATUS_DB,
+                              pkg, node.node_id, stage)
             _set_pkg_status(pkg, node.node_id, stage, status)
             _update_quickstats(allpkgs_quickstats, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
@@ -299,9 +301,9 @@ def import_STATUS_DB(allpkgs):
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                            pkg, node.node_id,
-                                                            stage)
+                    status = _get_pkg_status_from_BUILD_STATUS_DB(
+                                      BUILD_STATUS_DB,
+                                      pkg, node.node_id, stage)
                 _set_pkg_status(pkg, node.node_id, stage, status)
                 _update_quickstats(allpkgs_quickstats,
                                    node.node_id, stage, status)
@@ -311,20 +313,20 @@ def import_STATUS_DB(allpkgs):
                 if skipped_is_OK:
                     status = "skipped"
                 else:
-                    status = _get_pkg_status_from_STATUS_DB(STATUS_DB,
-                                                            pkg, node.node_id,
-                                                            stage)
+                    status = _get_pkg_status_from_BUILD_STATUS_DB(
+                                      BUILD_STATUS_DB,
+                                      pkg, node.node_id, stage)
                 _set_pkg_status(pkg, node.node_id, stage, status)
                 _update_quickstats(allpkgs_quickstats,
                                    node.node_id, stage, status)
     return allpkgs_quickstats
 
 def get_pkg_status(pkg, node_id, stage):
-    if len(status_db) == 0:
+    if len(_build_status_db) == 0:
         sys.exit("You must import package statuses with " + \
-                 "BBSreportutils.import_STATUS_DB() before " + \
+                 "BBSreportutils.import_BUILD_STATUS_DB() before " + \
                  "using BBSreportutils.get_pkg_status() => EXIT.")
-    return status_db[pkg][node_id][stage]
+    return _build_status_db[pkg][node_id][stage]
 
 def get_distinct_pkg_statuses(pkg, nodes=None):
     if nodes == None:

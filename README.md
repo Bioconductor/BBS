@@ -294,20 +294,20 @@ be (as there often is) some manual steps to do at this point.
 The build system will now run `postrun.sh` which initializes environment
 variables as described above and then runs the following 3 python scripts:
 
-##### BBS-make-STATUS_DB.py
+##### BBS-make-BUILD_STATUS_DB.py
 
 This script performs stage6a:
 
-* stage6a: [Linux only] Create `STATUS_DB.txt` file which records the status of
+* stage6a: [Linux only] Create `BUILD_STATUS_DB.txt` file which records the status of
            STAGES 2-5 on all platforms.
 
-    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head STATUS_DB.txt
+    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head BUILD_STATUS_DB.txt
     a4#malbec1#install: NotNeeded
     a4#malbec1#buildsrc: OK
     a4#malbec1#checksrc: OK
     a4#tokay1#install: NotNeeded
 
-After the `STATUS_DB.txt` is created the script calls
+After the `BUILD_STATUS_DB.txt` is created the script calls
 `BBS/utils/createPropagationDB.R` which creates the `PROPAGATE_STATUS_DB.txt` file.
 This file identifies which packages and what format, e.g., source or binary,
 will be pushed to the website.

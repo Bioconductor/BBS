@@ -1757,8 +1757,8 @@ print("BBS> [stage6c] Get %s from %s/" % \
 BBSvars.Central_rdir.Get(BBSutils.skipped_index_file)
 
 print("BBS> [stage6c] Get %s from %s/" % \
-      (BBSreportutils.STATUS_DB_file, BBSvars.Central_rdir.label))
-BBSvars.Central_rdir.Get(BBSreportutils.STATUS_DB_file)
+      (BBSreportutils.BUILD_STATUS_DB_file, BBSvars.Central_rdir.label))
+BBSvars.Central_rdir.Get(BBSreportutils.BUILD_STATUS_DB_file)
 
 BBSreportutils.set_NODES(report_nodes)
 
@@ -1769,9 +1769,9 @@ allpkgs = list(meat_index.keys()) + skipped_pkgs
 allpkgs.sort(key=str.lower)
 
 print("BBS> [stage6c] Import package statuses from %s ..." % \
-      BBSreportutils.STATUS_DB_file, end=" ")
+      BBSreportutils.BUILD_STATUS_DB_file, end=" ")
 sys.stdout.flush()
-allpkgs_quickstats = BBSreportutils.import_STATUS_DB(allpkgs)
+allpkgs_quickstats = BBSreportutils.import_BUILD_STATUS_DB(allpkgs)
 print("OK")
 sys.stdout.flush()
 
