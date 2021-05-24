@@ -3,6 +3,20 @@
 ### -------------------------------------------------------------------------
 
 
+.BASE_PACKAGES <- NULL
+
+.get_base_packages <- function()
+{
+    if (is.null(.BASE_PACKAGES)) {
+        installed_pkgs <- installed.packages()
+        Priority <- installed_pkgs[ , "Priority"]
+        base_packages <- installed_pkgs[Priority %in% "base", "Package"]
+        .BASE_PACKAGES <<- unname(base_packages)
+    }
+    .BASE_PACKAGES
+}
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### explain_propagation_status()
 ###
@@ -41,51 +55,98 @@
     setNames(strsplit(deps, " *, *"), pkgs[ , "Package"])
 }
 
-.extract_pkg_names <- function(deps)
+.extract_required_pkgs <- function(deps)
 {
     pattern <- " *([^ ]+).*"
     sub(pattern, "\\1", deps)
 }
 
-.extract_pkg_minversions <- function(deps)
+.extract_required_versions <- function(deps)
 {
-    minversions <- character(length(deps))
+    required_versions <- rep.int(NA_character_, length(deps))
     pattern <- ".*\\((.*)\\).*"
     idx <- grep(pattern, deps)
-    minversions[idx] <- sub(pattern, "\\1", deps[idx])
-    minversions
+    required_versions[idx] <- sub(pattern, "\\1", deps[idx])
+    required_versions
 }
 
 ### Return TRUE or a single string describing the impossible dep.
-.check_deps <- function(pkg, required_pkgs, required_minversions,
+.check_required_version <- function(required_pkg, required_version,
+                                    available_version)
+{
+    if (is.na(required_version))
+        return(TRUE)
+    pattern <- "^ *([>=]+) *([0-9.-]+) *$"
+    if (!grepl(pattern, required_version))
+        return(TRUE)
+    op <- sub(pattern, "\\1", required_version)
+    version <- numeric_version(sub(pattern, "\\2", required_version))
+    available_version <- numeric_version(available_version)
+    fmt <- paste0("NO, package requires version %s %s of '%s' ",
+                  "but only version %s is available")
+    if (op == ">=") {
+        if (available_version >= version)
+            return(TRUE)
+        ans <- sprintf(fmt, op, version, required_pkg, available_version)
+        return(ans)
+    }
+    if (op == ">") {
+        if (available_version > version)
+            return(TRUE)
+        ans <- sprintf(fmt, op, version, required_pkg, available_version)
+        return(ans)
+    }
+    TRUE
+}
+
+### Return TRUE or a single string describing the impossible dep.
+.check_deps <- function(pkg, required_pkgs, required_versions,
                         available_pkgs)
 {
-    stopifnot(length(required_pkgs) == length(required_minversions))
+    stopifnot(length(required_pkgs) == length(required_versions))
+    ignored_deps <- c("R", .get_base_packages())
+    for (j in seq_along(required_pkgs)) {
+        required_pkg <- required_pkgs[[j]]
+        if (required_pkg %in% ignored_deps)
+            next
+        m <- match(required_pkg, available_pkgs[ , "Package"])
+        if (is.na(m)) {
+            ans <- sprintf("NO, package depends on '%s' which is not available",
+                           required_pkg)
+            return(ans)
+        }
+        required_version <- required_versions[[j]]
+        available_version <- available_pkgs[m, "Version"]
+        res <- .check_required_version(required_pkg, required_version,
+                                       available_version)
+        if (!isTRUE(res))
+            return(res)
+    }
     TRUE
 }
 
 .update_candidate_status <- function(candidate_status,
-                                     candidate_deps_pkgs,
-                                     candidate_deps_minversions,
+                                     candidate_required_pkgs,
+                                     candidate_required_versions,
                                      available_pkgs)
 {
     stopifnot(is.data.frame(candidate_status),
               identical(colnames(candidate_status),
                         c("Package", "approved", "explain")),
-              is.list(candidate_deps_pkgs),
-              identical(names(candidate_deps_pkgs),
+              is.list(candidate_required_pkgs),
+              identical(names(candidate_required_pkgs),
                         candidate_status[ , "Package"]),
-              is.list(candidate_deps_minversions),
-              identical(lengths(candidate_deps_pkgs),
-                        lengths(candidate_deps_minversions)))
+              is.list(candidate_required_versions),
+              identical(lengths(candidate_required_pkgs),
+                        lengths(candidate_required_versions)))
     .stop_if_bad_available_pkgs(available_pkgs)
 
-    NO_idx <- which(!candidate_status$approved)
-    for (i in NO_idx) {
+    unapproved_idx <- which(!candidate_status$approved)
+    for (i in unapproved_idx) {
         pkg <- candidate_status[i, "Package"]
-        required_pkgs <- candidate_deps_pkgs[[i]]
-        required_minversions <- candidate_deps_minversions[[i]]
-        res <- .check_deps(pkg, required_pkgs, required_minversions,
+        required_pkgs <- candidate_required_pkgs[[i]]
+        required_versions <- candidate_required_versions[[i]]
+        res <- .check_deps(pkg, required_pkgs, required_versions,
                            available_pkgs)
         if (isTRUE(res)) {
             candidate_status$approved[i] <- TRUE
@@ -107,14 +168,13 @@
                                    explain=rep.int(NA_character_,
                                                    nrow(candidate_pkgs)))
     candidate_deps <- .extract_deps(candidate_pkgs)
-    candidate_deps_pkgs <- lapply(candidate_deps,
-                                  .extract_pkg_names)
-    candidate_deps_minversions <- lapply(candidate_deps,
-                                         .extract_pkg_minversions)
+    candidate_required_pkgs <- lapply(candidate_deps, .extract_required_pkgs)
+    candidate_required_versions <- lapply(candidate_deps,
+                                          .extract_required_versions)
     while (TRUE) {
         new_candidate_status <- .update_candidate_status(candidate_status,
-                                        candidate_deps_pkgs,
-                                        candidate_deps_minversions,
+                                        candidate_required_pkgs,
+                                        candidate_required_versions,
                                         available_pkgs)
         if (identical(new_candidate_status$approved, candidate_status$approved))
             break
@@ -203,6 +263,8 @@ createPropagationStatusDb <- function(OUTGOING_dirpath, OUTGOING_type,
 ###
 
 if (FALSE) {
+  library(BiocManager)
+
   #OUTGOING_dirpath <- "~/public_html/BBS/3.13/bioc/OUTGOING"
   #OUTGOING_type <- "win.binary"
   #staging_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
@@ -210,8 +272,6 @@ if (FALSE) {
   OUTGOING_dirpath <- "~/public_html/BBS/3.13/workflows/OUTGOING"
   OUTGOING_type <- "source"
   staging_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
-
-  library(BiocManager)
   ## We can't just use BiocManager::repositories() here because of the
   ## following issue:
   ##   https://github.com/Bioconductor/BiocManager/issues/46#issuecomment-548017624
