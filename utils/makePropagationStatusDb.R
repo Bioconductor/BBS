@@ -3,6 +3,8 @@
 ### -------------------------------------------------------------------------
 
 
+.MESSAGE_INDENT <- "  [R] "
+
 .BASE_PACKAGES <- NULL
 
 .get_base_packages <- function()
@@ -195,7 +197,7 @@
                                           .extract_required_versions)
     pass <- 1L
     while (TRUE) {
-        message("  - pass #", pass, " ... ", appendLF=FALSE)
+        message(.MESSAGE_INDENT, "  - pass #", pass, " ... ", appendLF=FALSE)
         updated_statuses <- .update_candidate_statuses(candidate_statuses,
                                     candidate_required_pkgs,
                                     candidate_required_versions,
@@ -249,7 +251,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     ## impossible dependencies.
     candidate_idx <- which(is.na(outgoing2available) |
                            OUTGOING_version > published_version)
-    message("  - nb of candidates = ", length(candidate_idx),
+    message(.MESSAGE_INDENT, "  - nb of candidates = ", length(candidate_idx),
             " (based on version > published version)")
     if (length(candidate_idx) != 0L) {
         candidate_pkgs <- OUTGOING_pkgs[candidate_idx, , drop=FALSE]
@@ -269,11 +271,12 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 {
     PACKAGES_path <- file.path(OUTGOING_subdir, "PACKAGES")
     if (file.exists(PACKAGES_path)) {
-        message("- File ", PACKAGES_path, " exists!")
-        message("    ==> skip write_PACKAGES()")
+        message(.MESSAGE_INDENT, "- File ", PACKAGES_path, " exists!")
+        message(.MESSAGE_INDENT, "    ==> skip write_PACKAGES()")
         return(invisible(NULL))
     }
-    message("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ", appendLF=FALSE)
+    message(.MESSAGE_INDENT, "- write_PACKAGES() to ",
+            OUTGOING_subdir, "/ ... ", appendLF=FALSE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
 }
@@ -315,7 +318,7 @@ makePropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
 {
     if (!file.exists(OUTGOING_dir))
         stop("directory ", OUTGOING_dir, "/ not found")
-    message("START creating ", db_filepath, " ...")
+    message(.MESSAGE_INDENT, "START creating ", db_filepath, " ...")
     out <- file(db_filepath, "w")
     on.exit(close(out))
     OUTGOING_types <- c("source", "win.binary", "mac.binary")
@@ -325,18 +328,21 @@ makePropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
             next
         .write_PACKAGES_to_OUTGOING_subdir(OUTGOING_subdir, type)
         OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_subdir, type)
-        message("- Start computing propagation statuses for \"",
+        message(.MESSAGE_INDENT,
+                "- Start computing propagation statuses for \"",
                 type, "\" packages:")
         available_pkgs <- .fetch_available_pkgs(staging_repo, type)
         statuses <- compute_propagation_statuses(OUTGOING_pkgs, available_pkgs)
-        message("- Done computing propagation statuses for \"",
+        message(.MESSAGE_INDENT,
+                "- Done computing propagation statuses for \"",
                 type, "\" packages.")
-        message("- Write computed statuses to ", db_filepath, " ... ",
+        message(.MESSAGE_INDENT,
+                "- Write computed statuses to ", db_filepath, " ... ",
                 appendLF=FALSE)
         .write_statuses_to_db(statuses, type, out)
         message("OK")
     }
-    message("DONE creating ", db_filepath, ".")
+    message(.MESSAGE_INDENT, "DONE creating ", db_filepath, ".")
 }
 
 
