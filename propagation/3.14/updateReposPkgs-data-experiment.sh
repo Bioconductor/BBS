@@ -9,7 +9,7 @@ cd "$HOME/propagation/3.14"
 BBS_OUTGOING_DIR="/home/biocbuild/public_html/BBS/$BIOC_VERSION/data-experiment/OUTGOING"
 R_EXPR="source('/home/biocbuild/BBS/utils/list.old.pkgs.R')"
 PROPAGATION_R_EXPR="source('/home/biocbuild/BBS/utils/createPropagationDB.R')"
-PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATE_STATUS_DB.txt"
+PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATION_STATUS_DB.txt"
 
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/data/experiment"
 SRC_CONTRIB="$REPOS_ROOT/src/contrib"

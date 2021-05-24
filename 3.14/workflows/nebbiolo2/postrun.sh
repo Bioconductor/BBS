@@ -25,17 +25,11 @@ find products-in -type d -exec chmod 755 {} \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
-# Generate BUILD_STATUS_DB.txt file
 $BBS_PYTHON_CMD $BBS_HOME/BBS-make-BUILD_STATUS_DB.py
 
 if [ -n "$BBS_OUTGOING_MAP" ]; then
-    # Create and populate OUTGOING dir
     $BBS_PYTHON_CMD $BBS_HOME/BBS-make-OUTGOING.py
-    # Generate PROPAGATE_STATUS_DB.txt
-    OUTGOING_DIR=$BBS_CENTRAL_RDIR/OUTGOING
-    PROPAGATE_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATE_STATUS_DB.txt
-    INTERNAL_REPOS=/home/biocpush/PACKAGES/$BBS_BIOC_VERSIONED_REPO_PATH/
-    $BBS_RSCRIPT_CMD --vanilla -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'workflows', '$INTERNAL_REPOS')"
+    $BBS_PYTHON_CMD $BBS_HOME/BBS-make-PROPAGATION_STATUS_DB.py
 fi
 
 # Generate the HTML report

@@ -16,7 +16,7 @@ import BBSutils
 import BBSvars
 import BBSbase
 
-def make_PROPAGATION_STATUS_DB(staging_repo):
+def make_PROPAGATION_STATUS_DB(final_repo):
     Rfunction = 'makePropagationStatusDb'
     OUTGOING_dir = 'OUTGOING'
     db_filepath = 'PROPAGATION_STATUS_DB.txt'
@@ -24,7 +24,7 @@ def make_PROPAGATION_STATUS_DB(staging_repo):
                                "utils",
                                "makePropagationStatusDb.R")
     Rexpr = "source('%s');%s('%s','%s','%s')" % \
-            (script_path, Rfunction, OUTGOING_dir, staging_repo, db_filepath)
+            (script_path, Rfunction, OUTGOING_dir, final_repo, db_filepath)
     cmd = BBSbase.Rexpr2syscmd(Rexpr)
     ## Nasty things (that I don't really understand) can happen with
     ## subprocess.run() if this code is runned by the Task Scheduler
@@ -41,9 +41,9 @@ def make_PROPAGATION_STATUS_DB(staging_repo):
 if __name__ == "__main__":
     argc = len(sys.argv)
     if argc > 1:
-        staging_repo = sys.argv[1]
+        final_repo = sys.argv[1]
     else:
-        staging_repo = BBSutils.getenv('BBS_STAGING_REPO')
+        final_repo = BBSutils.getenv('BBS_FINAL_REPO')
     print()
     if not os.path.isdir('OUTGOING'):
         print('mmh.. I don\'t see the \'OUTGOING\' subdirectory ' + \
@@ -53,6 +53,6 @@ if __name__ == "__main__":
         sys.exit('=> EXIT.')
     print('BBS> ==============================================================')
     print('BBS> [stage6bb] STARTING stage6bb at %s...' % time.asctime())
-    make_PROPAGATION_STATUS_DB(staging_repo)
+    make_PROPAGATION_STATUS_DB(final_repo)
     print('BBS> [stage6bb] DONE at %s.' % time.asctime())
 

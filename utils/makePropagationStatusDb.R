@@ -295,7 +295,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     read.dcf(PACKAGES_path, fields=fields)
 }
 
-.fetch_available_pkgs <- function(staging_repo, type)
+.fetch_available_pkgs <- function(final_repo, type)
 {
     if (!requireNamespace("BiocManager", quietly=TRUE))
         install.packages("BiocManager", repos="https://cran.rstudio.com")
@@ -304,7 +304,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     ##   https://github.com/Bioconductor/BiocManager/issues/46#issuecomment-548017624
     bioc_version <- BiocManager::version()
     bioc_repos <- BiocManager:::.repositories(character(), version=bioc_version)
-    all_repos <- c(staging_repo, bioc_repos)
+    all_repos <- c(final_repo, bioc_repos)
     contrib_urls <- contrib.url(all_repos, type=type)
     available_pkgs <- available.packages(contrib_urls)
     available_pkgs[ , c("Package", "Version")]
@@ -321,7 +321,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     cat(lines, file=out, sep="\n")
 }
 
-makePropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
+makePropagationStatusDb <- function(OUTGOING_dir, final_repo, db_filepath)
 {
     if (!file.exists(OUTGOING_dir))
         stop("directory ", OUTGOING_dir, "/ not found")
@@ -337,7 +337,7 @@ makePropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
         OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_subdir, type)
         .prettymsg("- Start computing propagation statuses for \"",
                    type, "\" packages:\n")
-        available_pkgs <- .fetch_available_pkgs(staging_repo, type)
+        available_pkgs <- .fetch_available_pkgs(final_repo, type)
         statuses <- compute_propagation_statuses(OUTGOING_pkgs, available_pkgs)
         .prettymsg("- Done computing propagation statuses for \"",
                    type, "\" packages.\n")
@@ -355,10 +355,10 @@ makePropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
 
 if (FALSE) {
   #OUTGOING_dir <- "~/public_html/BBS/3.13/bioc/OUTGOING"
-  #staging_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
+  #final_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
   OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
-  staging_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
+  final_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
   db_filepath <- "PROPAGATION_STATUS_DB.txt"
-  makePropagationStatusDb(OUTGOING_dir, staging_repo, db_filepath)
+  makePropagationStatusDb(OUTGOING_dir, final_repo, db_filepath)
 }
 

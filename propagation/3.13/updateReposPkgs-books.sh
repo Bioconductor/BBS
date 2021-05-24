@@ -7,7 +7,7 @@ cd "$HOME/propagation/3.13"
 BBS_OUTGOING_DIR="/home/biocbuild/public_html/BBS/$BIOC_VERSION/books/OUTGOING"
 R_EXPR="source('/home/biocbuild/BBS/utils/list.old.pkgs.R')"
 PROPAGATION_R_EXPR="source('/home/biocbuild/BBS/utils/createPropagationDB.R')"
-PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATE_STATUS_DB.txt"
+PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATION_STATUS_DB.txt"
 
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/books"
 SRC_CONTRIB="$REPOS_ROOT/src/contrib"

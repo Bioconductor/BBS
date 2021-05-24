@@ -307,23 +307,25 @@ This script performs stage6a:
     a4#malbec1#checksrc: OK
     a4#tokay1#install: NotNeeded
 
-After the `BUILD_STATUS_DB.txt` is created the script calls
-`BBS/utils/createPropagationDB.R` which creates the `PROPAGATE_STATUS_DB.txt` file.
-This file identifies which packages and what format, e.g., source or binary,
-will be pushed to the website.
-
-    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head PROPAGATE_STATUS_DB.txt
-    a4#source#propagate: UNNEEDED, same version exists in internal repository
-    a4#win.binary#propagate: UNNEEDED, same version exists in internal repository
-    a4#mac.binary.el-capitan#propagate: UNNEEDED, same version exists in internal repository
-    a4Base#source#propagate: UNNEEDED, same version exists in internal repository
-
 ##### BBS-make-OUTGOING.py
 
 This script performs stage6b:
 
 * stage6b: [Linux only] Copy build products to OUTGOING folder for later
            transfer to the website by *biocpush*.
+
+##### BBS-make-PROPAGATION_STATUS_DB.py
+
+This script calls `BBS/utils/makePropagationStatusDb.R` which
+creates the `PROPAGATION_STATUS_DB.txt` file.
+This file identifies which packages and what format, e.g., source or binary,
+will be pushed to the website.
+
+    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head PROPAGATION_STATUS_DB.txt
+    a4#source#propagate: UNNEEDED, same version is already published
+    a4#win.binary#propagate: UNNEEDED, same version is already published
+    a4#mac.binary.el-capitan#propagate: UNNEEDED, same version is already published
+    a4Base#source#propagate: UNNEEDED, same version is already published
 
 ##### BBS-report.py
 
