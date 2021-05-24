@@ -198,10 +198,11 @@
         ## propagate at the next iteration.
         approved_pkgs <- candidate_pkgs[candidate_statuses$propagate,
                                         c("Package", "Version"), drop=FALSE]
-        add_idx <- which(!(approved_pkgs[ , "Package"] %in%
-                           available_pkgs[ , "Package"]))
-        available_pkgs <- rbind(available_pkgs,
-                                approved_pkgs[add_idx, , drop=FALSE])
+        replace_idx <- which(available_pkgs[ , "Package"] %in%
+                             approved_pkgs[ , "Package"])
+        if (length(replace_idx) != 0L)
+            available_pkgs <- available_pkgs[-replace_idx, , drop=FALSE]
+        available_pkgs <- rbind(available_pkgs, approved_pkgs)
         pass <- pass + 1L
     }
     updated_statuses
