@@ -189,7 +189,7 @@
                                     candidate_required_versions,
                                     available_pkgs)
         total_approved <- sum(updated_statuses$propagate)
-        message("OK ==> ", total_approved, " total approved candidates")
+        message("OK ==> total approved candidates = ", total_approved)
         if (identical(updated_statuses$propagate, candidate_statuses$propagate))
             break
         candidate_statuses <- updated_statuses
@@ -236,8 +236,8 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     ## impossible dependencies.
     candidate_idx <- which(is.na(outgoing2available) |
                            OUTGOING_version > published_version)
-    message("  - nb of candidates (based on version > published version) = ",
-            length(candidate_idx))
+    message("  - nb of candidates = ", length(candidate_idx),
+            " (based on version > published version)")
     if (length(candidate_idx) != 0L) {
         candidate_pkgs <- OUTGOING_pkgs[candidate_idx, , drop=FALSE]
         candidate_statuses <- .compute_candidate_statuses(candidate_pkgs,
