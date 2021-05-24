@@ -18,7 +18,7 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### explain_propagation_status()
+### compute_propagation_statuses()
 ###
 ### The workhorse behind createPropagationStatusDb().
 ###
@@ -35,6 +35,20 @@
 {
     stopifnot(is.matrix(available_pkgs),
               identical(colnames(available_pkgs), c("Package", "Version")))
+}
+
+.init_statuses <- function(pkgnames)
+{
+    data.frame(Package=pkgnames,
+               propagate=logical(length(pkgnames)),
+               explain=rep.int(NA_character_, length(pkgnames)))
+}
+
+.stop_if_bad_statuses <- function(statuses)
+{
+    stopifnot(is.data.frame(statuses),
+              identical(colnames(statuses),
+                        c("Package", "propagate", "explain")))
 }
 
 .extract_deps <- function(pkgs)
@@ -125,74 +139,71 @@
     TRUE
 }
 
-.update_candidate_status <- function(candidate_status,
-                                     candidate_required_pkgs,
-                                     candidate_required_versions,
-                                     available_pkgs)
+.update_candidate_statuses <- function(candidate_statuses,
+                                       candidate_required_pkgs,
+                                       candidate_required_versions,
+                                       available_pkgs)
 {
-    stopifnot(is.data.frame(candidate_status),
-              identical(colnames(candidate_status),
-                        c("Package", "approved", "explain")),
-              is.list(candidate_required_pkgs),
+    .stop_if_bad_statuses(candidate_statuses)
+    stopifnot(is.list(candidate_required_pkgs),
               identical(names(candidate_required_pkgs),
-                        candidate_status[ , "Package"]),
+                        candidate_statuses[ , "Package"]),
               is.list(candidate_required_versions),
               identical(lengths(candidate_required_pkgs),
                         lengths(candidate_required_versions)))
     .stop_if_bad_available_pkgs(available_pkgs)
 
-    unapproved_idx <- which(!candidate_status$approved)
+    unapproved_idx <- which(!candidate_statuses$propagate)
     for (i in unapproved_idx) {
-        pkg <- candidate_status[i, "Package"]
+        pkg <- candidate_statuses[i, "Package"]
         required_pkgs <- candidate_required_pkgs[[i]]
         required_versions <- candidate_required_versions[[i]]
         res <- .check_deps(pkg, required_pkgs, required_versions,
                            available_pkgs)
         if (isTRUE(res)) {
-            candidate_status$approved[i] <- TRUE
-            candidate_status$explain[i] <- "YES"
+            candidate_statuses$propagate[i] <- TRUE
+            candidate_statuses$explain[i] <- "YES"
         } else {
-            candidate_status$explain[i] <- res
+            candidate_statuses$explain[i] <- res
         }
     }
-    candidate_status
+    candidate_statuses
 }
 
-.compute_candidate_status <- function(candidate_pkgs, available_pkgs)
+### Return a data.frame with 3 cols: Package, propagate, explain.
+.compute_candidate_statuses <- function(candidate_pkgs, available_pkgs)
 {
     .stop_if_bad_OUTGOING_pkgs(candidate_pkgs)
     .stop_if_bad_available_pkgs(available_pkgs)
 
-    candidate_status <- data.frame(Package=candidate_pkgs[ , "Package"],
-                                   approved=logical(nrow(candidate_pkgs)),
-                                   explain=rep.int(NA_character_,
-                                                   nrow(candidate_pkgs)))
+    candidate_statuses <- .init_statuses(candidate_pkgs[ , "Package"])
     candidate_deps <- .extract_deps(candidate_pkgs)
     candidate_required_pkgs <- lapply(candidate_deps, .extract_required_pkgs)
     candidate_required_versions <- lapply(candidate_deps,
                                           .extract_required_versions)
     while (TRUE) {
-        new_candidate_status <- .update_candidate_status(candidate_status,
+        new_statuses <- .update_candidate_statuses(candidate_statuses,
                                         candidate_required_pkgs,
                                         candidate_required_versions,
                                         available_pkgs)
-        if (identical(new_candidate_status$approved, candidate_status$approved))
+        if (identical(new_statuses$propagate, candidate_statuses$propagate))
             break
-        candidate_status <- new_candidate_status
+        candidate_statuses <- new_statuses
         ## We simulate propagation by adding approved candidates
         ## to 'available_pkgs'. This might allow other candidates to
         ## propagate at the next iteration.
-        approved_pkgs <- candidate_pkgs[candidate_status$approved,
+        approved_pkgs <- candidate_pkgs[candidate_statuses$propagate,
                                         c("Package", "Version"), drop=FALSE]
         add_idx <- which(!(approved_pkgs[ , "Package"] %in%
                            available_pkgs[ , "Package"]))
         available_pkgs <- rbind(available_pkgs,
                                 approved_pkgs[add_idx, , drop=FALSE])
     }
-    candidate_status
+    candidate_statuses
 }
 
-explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
+### Return a data.frame with 3 cols: Package, propagate, explain.
+compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 {
     .stop_if_bad_OUTGOING_pkgs(OUTGOING_pkgs)
     .stop_if_bad_available_pkgs(available_pkgs)
@@ -204,15 +215,14 @@ explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
     published_version <- available_pkgs[outgoing2available, "Version"]
     published_version <- numeric_version(published_version, strict=FALSE)
 
-    explain_status <- rep.int(NA_character_, nrow(OUTGOING_pkgs))
-    names(explain_status) <- OUTGOING_pkgs[ , "Package"]
+    statuses <- .init_statuses(OUTGOING_pkgs[ , "Package"])
 
     ## Handle "OUTGOING version < published version" case.
     lower_version_idx <- which(!is.na(outgoing2available) &
                                OUTGOING_version < published_version)
     fmt <- paste0("NO, version to propagate (%s) is ",
                   "lower than published version (%s)")
-    explain_status[lower_version_idx] <-
+    statuses$explain[lower_version_idx] <-
         sprintf(fmt, OUTGOING_version[lower_version_idx],
                      published_version[lower_version_idx])
 
@@ -222,10 +232,10 @@ explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
     candidate_idx <- which(is.na(outgoing2available) |
                            OUTGOING_version > published_version)
     candidate_pkgs <- OUTGOING_pkgs[candidate_idx, , drop=FALSE]
-    candidate_status <- .compute_candidate_status(candidate_pkgs,
-                                                  available_pkgs)
-    explain_status[candidate_idx] <- candidate_status$explain
-    explain_status
+    candidate_statuses <- .compute_candidate_statuses(candidate_pkgs,
+                                                      available_pkgs)
+    statuses[candidate_idx, ] <- candidate_statuses
+    statuses
 }
 
 
@@ -235,6 +245,11 @@ explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
 
 .write_PACKAGES_to_OUTGOING_subdir <- function(OUTGOING_subdir, type)
 {
+    PACKAGES_path <- file.path(OUTGOING_subdir, "PACKAGES")
+    if (file.exists(PACKAGES_path)) {
+        message(PACKAGES_path, " exists! ==> Skip write_PACKAGES()")
+        return(invisible(NULL))
+    }
     message("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ", appendLF=FALSE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
@@ -247,25 +262,37 @@ explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
     read.dcf(PACKAGES_path, fields=fields)
 }
 
-.fetch_available_pkgs <- function(staging_repo, bioc_repos, type)
+.fetch_available_pkgs <- function(staging_repo, type)
 {
+    if (!requireNamespace("BiocManager", quietly=TRUE))
+        install.packages("BiocManager", repos="https://cran.rstudio.com")
+    ## We can't just use BiocManager::repositories() here because of the
+    ## following issue:
+    ##   https://github.com/Bioconductor/BiocManager/issues/46#issuecomment-548017624
+    bioc_version <- BiocManager::version()
+    bioc_repos <- BiocManager:::.repositories(character(), version=bioc_version)
     all_repos <- c(staging_repo, bioc_repos)
     contrib_urls <- contrib.url(all_repos, type=type)
     available_pkgs <- available.packages(contrib_urls)
     available_pkgs[ , c("Package", "Version")]
 }
 
-.write_statuses_to_db <- function(explain_status, type, out)
+.write_statuses_to_db <- function(statuses, type, out)
 {
-    if (length(explain_status) == 0L)
+    if (nrow(statuses) == 0L)
         return(invisible(NULL))
-    lines <- sprintf("%s#%s: %s", names(explain_status), type, explain_status)
+    lines <- sprintf("%s#%s#propagate: %s", statuses$Package, type,
+                                            statuses$explain)
     cat(lines, file=out, sep="\n")
 }
 
-createPropagationStatusDb <- function(OUTGOING_dir,
-                                      staging_repo, bioc_repos, db_filepath)
+createPropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
 {
+    if (!file.exists(OUTGOING_dir)) {
+        message(OUTGOING_dir, "/ not found! ==> Skip creation of ", db_filepath)
+        return(invisible(NULL))
+    }
+    message("START creating ", db_filepath, " ...")
     out <- file(db_filepath, "w")
     on.exit(close(out))
     OUTGOING_types <- c("source", "win.binary", "mac.binary")
@@ -277,15 +304,15 @@ createPropagationStatusDb <- function(OUTGOING_dir,
         OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_subdir, type)
         message("- compute propagation status for packages in ",
                 OUTGOING_subdir, "/ ... ", appendLF=FALSE)
-        available_pkgs <- .fetch_available_pkgs(staging_repo, bioc_repos, type)
-        explain_status <- explain_propagation_status(OUTGOING_pkgs,
-                                                     available_pkgs)
+        available_pkgs <- .fetch_available_pkgs(staging_repo, type)
+        statuses <- compute_propagation_statuses(OUTGOING_pkgs, available_pkgs)
         message("OK")
-        message("- write \"", type, "\" propagation statuses to ",
+        message("- write statuses of \"", type, "\" packages to ",
                 db_filepath, " ... ", appendLF=FALSE)
-        .write_statuses_to_db(explain_status, type, out)
+        .write_statuses_to_db(statuses, type, out)
         message("OK")
     }
+    message("DONE creating ", db_filepath, ".")
 }
 
 
@@ -294,21 +321,11 @@ createPropagationStatusDb <- function(OUTGOING_dir,
 ###
 
 if (FALSE) {
-  library(BiocManager)
-
   #OUTGOING_dir <- "~/public_html/BBS/3.13/bioc/OUTGOING"
   #staging_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
-
   OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
   staging_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
-  ## We can't just use BiocManager::repositories() here because of the
-  ## following issue:
-  ##   https://github.com/Bioconductor/BiocManager/issues/46#issuecomment-548017624
-  bioc_version <- BiocManager::version()
-  bioc_repos <- BiocManager:::.repositories(character(), version=bioc_version)
   db_filepath <- "PROPAGATE_STATUS_DB.txt"
-
-  createPropagationStatusDb(OUTGOING_dir,
-                            staging_repo, bioc_repos, db_filepath)
+  createPropagationStatusDb(OUTGOING_dir, staging_repo, db_filepath)
 }
 
