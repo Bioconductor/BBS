@@ -247,7 +247,8 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 {
     PACKAGES_path <- file.path(OUTGOING_subdir, "PACKAGES")
     if (file.exists(PACKAGES_path)) {
-        message(PACKAGES_path, " exists! ==> Skip write_PACKAGES()")
+        message("- File ", PACKAGES_path, " exists!")
+        message("    ==> skip write_PACKAGES()")
         return(invisible(NULL))
     }
     message("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ", appendLF=FALSE)
@@ -289,7 +290,8 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 createPropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
 {
     if (!file.exists(OUTGOING_dir)) {
-        message(OUTGOING_dir, "/ not found! ==> Skip creation of ", db_filepath)
+        message("Directory ", OUTGOING_dir, "/ not found!")
+        message("  ==> skip creation of ", db_filepath)
         return(invisible(NULL))
     }
     message("START creating ", db_filepath, " ...")
@@ -302,12 +304,12 @@ createPropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
             next
         .write_PACKAGES_to_OUTGOING_subdir(OUTGOING_subdir, type)
         OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_subdir, type)
-        message("- compute propagation status for packages in ",
-                OUTGOING_subdir, "/ ... ", appendLF=FALSE)
+        message("- Compute propagation statuses of \"",
+                type, "\"packages ... ", appendLF=FALSE)
         available_pkgs <- .fetch_available_pkgs(staging_repo, type)
         statuses <- compute_propagation_statuses(OUTGOING_pkgs, available_pkgs)
         message("OK")
-        message("- write statuses of \"", type, "\" packages to ",
+        message("- Write statuses of \"", type, "\" packages to ",
                 db_filepath, " ... ", appendLF=FALSE)
         .write_statuses_to_db(statuses, type, out)
         message("OK")
@@ -325,7 +327,7 @@ if (FALSE) {
   #staging_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
   OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
   staging_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
-  db_filepath <- "PROPAGATE_STATUS_DB.txt"
+  db_filepath <- "PROPAGATION_STATUS_DB.txt"
   createPropagationStatusDb(OUTGOING_dir, staging_repo, db_filepath)
 }
 
