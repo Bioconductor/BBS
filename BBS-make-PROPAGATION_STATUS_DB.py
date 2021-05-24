@@ -12,6 +12,7 @@ import os
 import time
 import subprocess
 
+import BBSutils
 import BBSvars
 import BBSbase
 
@@ -42,9 +43,9 @@ if __name__ == "__main__":
     if argc > 1:
         staging_repo = sys.argv[1]
     else:
-        staging_repo = os.environ['BBS_STAGING_REPO']
+        staging_repo = BBSutils.getenv('BBS_STAGING_REPO')
     print()
-    if not os.path.isdir('OUTGOING\'):
+    if not os.path.isdir('OUTGOING'):
         print('mmh.. I don\'t see the \'OUTGOING\' subdirectory ' + \
               'in the current directory!')
         print('Make sure to be in \'%s/\' ' % BBSvars.Central_rdir.path)
