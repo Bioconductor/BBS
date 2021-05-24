@@ -100,7 +100,7 @@
                  is_or_will_become)
 }
 
-### Return TRUE or a single string describing the impossible dep.
+### Return TRUE or a single string explaining the impossible dep.
 .check_required_version <- function(required_pkg, required_version,
                                     available_version, candidate_statuses)
 {
@@ -126,7 +126,7 @@
                                             candidate_statuses)
 }
 
-### Return TRUE or a single string describing the impossible dep.
+### Return TRUE or a single string explaining the impossible dep.
 .check_candidate_deps <- function(pkg, required_pkgs, required_versions,
                                   available_pkgs, candidate_statuses)
 {
@@ -138,9 +138,8 @@
             next
         m <- match(required_pkg, available_pkgs[ , "Package"])
         if (is.na(m)) {
-            ans <- sprintf("NO, package depends on '%s' which is not available",
-                           required_pkg)
-            return(ans)
+            fmt <- "NO, package depends on '%s' which is not available"
+            return(sprintf(fmt, required_pkg))
         }
         required_version <- required_versions[[j]]
         available_version <- available_pkgs[m, "Version"]
@@ -306,8 +305,9 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     .stop_if_bad_statuses(statuses)
     if (nrow(statuses) == 0L)
         return(invisible(NULL))
-    lines <- sprintf("%s#%s#propagate: %s", statuses$Package, type,
-                                            statuses$explain)
+    explain <- statuses$explain
+    explain[is.na(explain)] <- "UNNEEDED, same version is already published"
+    lines <- sprintf("%s#%s#propagate: %s", statuses$Package, type, explain)
     cat(lines, file=out, sep="\n")
 }
 
