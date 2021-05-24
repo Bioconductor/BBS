@@ -663,9 +663,9 @@ def stages_to_run():
     return stages
 
 if __name__ == "__main__":
+    stages = stages_to_run()
     print()
     print("BBS> ==============================================================")
-    stages = stages_to_run()
     if stages in ["all", "all-no-bin"]:
         BBSvars.Node_rdir.RemakeMe(True)
     ticket = []

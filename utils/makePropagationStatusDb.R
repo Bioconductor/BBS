@@ -20,7 +20,7 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### compute_propagation_statuses()
 ###
-### The workhorse behind createPropagationStatusDb().
+### The workhorse behind makePropagationStatusDb().
 ###
 
 .stop_if_bad_OUTGOING_pkgs <- function(OUTGOING_pkgs)
@@ -262,7 +262,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### createPropagationStatusDb()
+### makePropagationStatusDb()
 ###
 
 .write_PACKAGES_to_OUTGOING_subdir <- function(OUTGOING_subdir, type)
@@ -311,13 +311,10 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     cat(lines, file=out, sep="\n")
 }
 
-createPropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
+makePropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
 {
-    if (!file.exists(OUTGOING_dir)) {
-        message("Directory ", OUTGOING_dir, "/ not found!")
-        message("  ==> skip creation of ", db_filepath)
-        return(invisible(NULL))
-    }
+    if (!file.exists(OUTGOING_dir))
+        stop("directory ", OUTGOING_dir, "/ not found")
     message("START creating ", db_filepath, " ...")
     out <- file(db_filepath, "w")
     on.exit(close(out))
@@ -353,6 +350,6 @@ if (FALSE) {
   OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
   staging_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
   db_filepath <- "PROPAGATION_STATUS_DB.txt"
-  createPropagationStatusDb(OUTGOING_dir, staging_repo, db_filepath)
+  makePropagationStatusDb(OUTGOING_dir, staging_repo, db_filepath)
 }
 
