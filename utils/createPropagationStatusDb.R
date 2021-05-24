@@ -181,14 +181,18 @@
     candidate_required_pkgs <- lapply(candidate_deps, .extract_required_pkgs)
     candidate_required_versions <- lapply(candidate_deps,
                                           .extract_required_versions)
+    pass <- 1L
     while (TRUE) {
-        new_statuses <- .update_candidate_statuses(candidate_statuses,
-                                        candidate_required_pkgs,
-                                        candidate_required_versions,
-                                        available_pkgs)
-        if (identical(new_statuses$propagate, candidate_statuses$propagate))
+        message("  - pass #", pass, " ... ", appendLF=FALSE)
+        updated_statuses <- .update_candidate_statuses(candidate_statuses,
+                                    candidate_required_pkgs,
+                                    candidate_required_versions,
+                                    available_pkgs)
+        total_approved <- sum(updated_statuses$propagate)
+        message("OK (total approved candidates = ", total_approved, ")")
+        if (identical(updated_statuses$propagate, candidate_statuses$propagate))
             break
-        candidate_statuses <- new_statuses
+        candidate_statuses <- updated_statuses
         ## We simulate propagation by adding approved candidates
         ## to 'available_pkgs'. This might allow other candidates to
         ## propagate at the next iteration.
@@ -198,8 +202,9 @@
                            available_pkgs[ , "Package"]))
         available_pkgs <- rbind(available_pkgs,
                                 approved_pkgs[add_idx, , drop=FALSE])
+        pass <- pass + 1L
     }
-    candidate_statuses
+    updated_statuses
 }
 
 ### Return a data.frame with 3 cols: Package, propagate, explain.
@@ -231,10 +236,13 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     ## impossible dependencies.
     candidate_idx <- which(is.na(outgoing2available) |
                            OUTGOING_version > published_version)
-    candidate_pkgs <- OUTGOING_pkgs[candidate_idx, , drop=FALSE]
-    candidate_statuses <- .compute_candidate_statuses(candidate_pkgs,
-                                                      available_pkgs)
-    statuses[candidate_idx, ] <- candidate_statuses
+    message("  - nb of candidates: ", length(candidate_idx))
+    if (length(candidate_idx) != 0L) {
+        candidate_pkgs <- OUTGOING_pkgs[candidate_idx, , drop=FALSE]
+        candidate_statuses <- .compute_candidate_statuses(candidate_pkgs,
+                                                          available_pkgs)
+        statuses[candidate_idx, ] <- candidate_statuses
+    }
     statuses
 }
 
@@ -280,6 +288,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 
 .write_statuses_to_db <- function(statuses, type, out)
 {
+    .stop_if_bad_statuses(statuses)
     if (nrow(statuses) == 0L)
         return(invisible(NULL))
     lines <- sprintf("%s#%s#propagate: %s", statuses$Package, type,
@@ -304,13 +313,14 @@ createPropagationStatusDb <- function(OUTGOING_dir, staging_repo, db_filepath)
             next
         .write_PACKAGES_to_OUTGOING_subdir(OUTGOING_subdir, type)
         OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_subdir, type)
-        message("- Compute propagation statuses of \"",
-                type, "\"packages ... ", appendLF=FALSE)
+        message("- Start computing propagation statuses for \"",
+                type, "\" packages:")
         available_pkgs <- .fetch_available_pkgs(staging_repo, type)
         statuses <- compute_propagation_statuses(OUTGOING_pkgs, available_pkgs)
-        message("OK")
-        message("- Write statuses of \"", type, "\" packages to ",
-                db_filepath, " ... ", appendLF=FALSE)
+        message("- Done computing propagation statuses for \"",
+                type, "\" packages.")
+        message("- Write computed statuses to ", db_filepath, " ... ",
+                appendLF=FALSE)
         .write_statuses_to_db(statuses, type, out)
         message("OK")
     }
