@@ -210,10 +210,11 @@ explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
     ## Handle "OUTGOING version < published version" case.
     lower_version_idx <- which(!is.na(outgoing2available) &
                                OUTGOING_version < published_version)
+    fmt <- paste0("NO, version to propagate (%s) is ",
+                  "lower than published version (%s)")
     explain_status[lower_version_idx] <-
-        sprintf("NO, version to propagate (%s) is lower than published version (%s)",
-                OUTGOING_version[lower_version_idx],
-                published_version[lower_version_idx])
+        sprintf(fmt, OUTGOING_version[lower_version_idx],
+                     published_version[lower_version_idx])
 
     ## Handle "OUTGOING version > published version" case.
     ## In this case, propagate only if the propagated package will not have
@@ -232,9 +233,16 @@ explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
 ### createPropagationStatusDb()
 ###
 
-.load_OUTGOING_pkgs <- function(OUTGOING_dirpath, OUTGOING_type)
+.write_PACKAGES_to_OUTGOING_subdir <- function(OUTGOING_subdir, type)
 {
-    PACKAGES_path <- file.path(OUTGOING_dirpath, OUTGOING_type, "PACKAGES")
+    message("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ", appendLF=FALSE)
+    tools::write_PACKAGES(OUTGOING_subdir, type=type)
+    message("OK")
+}
+
+.load_OUTGOING_pkgs <- function(OUTGOING_subdir, type)
+{
+    PACKAGES_path <- file.path(OUTGOING_subdir, "PACKAGES")
     fields <- c("Package", "Version", "Depends", "Imports", "LinkingTo")
     read.dcf(PACKAGES_path, fields=fields)
 }
@@ -247,14 +255,37 @@ explain_propagation_status <- function(OUTGOING_pkgs, available_pkgs)
     available_pkgs[ , c("Package", "Version")]
 }
 
-createPropagationStatusDb <- function(OUTGOING_dirpath, OUTGOING_type,
+.write_statuses_to_db <- function(explain_status, type, out)
+{
+    if (length(explain_status) == 0L)
+        return(invisible(NULL))
+    lines <- sprintf("%s#%s: %s", names(explain_status), type, explain_status)
+    cat(lines, file=out, sep="\n")
+}
+
+createPropagationStatusDb <- function(OUTGOING_dir,
                                       staging_repo, bioc_repos, db_filepath)
 {
-    OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_dirpath, OUTGOING_type)
-    available_pkgs <- .fetch_available_pkgs(staging_repo, bioc_repos,
-                                            OUTGOING_type)
-    explain_status <- explain_propagation_status(OUTGOING_pkgs, available_pkgs)
-    explain_status
+    out <- file(db_filepath, "w")
+    on.exit(close(out))
+    OUTGOING_types <- c("source", "win.binary", "mac.binary")
+    for (type in OUTGOING_types) {
+        OUTGOING_subdir <- file.path(OUTGOING_dir, type)
+        if (!file.exists(OUTGOING_subdir))
+            next
+        .write_PACKAGES_to_OUTGOING_subdir(OUTGOING_subdir, type)
+        OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_subdir, type)
+        message("- compute propagation status for packages in ",
+                OUTGOING_subdir, "/ ... ", appendLF=FALSE)
+        available_pkgs <- .fetch_available_pkgs(staging_repo, bioc_repos, type)
+        explain_status <- explain_propagation_status(OUTGOING_pkgs,
+                                                     available_pkgs)
+        message("OK")
+        message("- write \"", type, "\" propagation statuses to ",
+                db_filepath, " ... ", appendLF=FALSE)
+        .write_statuses_to_db(explain_status, type, out)
+        message("OK")
+    }
 }
 
 
@@ -265,12 +296,10 @@ createPropagationStatusDb <- function(OUTGOING_dirpath, OUTGOING_type,
 if (FALSE) {
   library(BiocManager)
 
-  #OUTGOING_dirpath <- "~/public_html/BBS/3.13/bioc/OUTGOING"
-  #OUTGOING_type <- "win.binary"
+  #OUTGOING_dir <- "~/public_html/BBS/3.13/bioc/OUTGOING"
   #staging_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
 
-  OUTGOING_dirpath <- "~/public_html/BBS/3.13/workflows/OUTGOING"
-  OUTGOING_type <- "source"
+  OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
   staging_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
   ## We can't just use BiocManager::repositories() here because of the
   ## following issue:
@@ -279,7 +308,7 @@ if (FALSE) {
   bioc_repos <- BiocManager:::.repositories(character(), version=bioc_version)
   db_filepath <- "PROPAGATE_STATUS_DB.txt"
 
-  createPropagationStatusDb(OUTGOING_dirpath, OUTGOING_type,
+  createPropagationStatusDb(OUTGOING_dir,
                             staging_repo, bioc_repos, db_filepath)
 }
 
