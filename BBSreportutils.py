@@ -155,7 +155,7 @@ def ncol_to_display(subbuilds):
 ##############################################################################
 
 BUILD_STATUS_DB_file = 'BUILD_STATUS_DB.txt'
-PROPAGATE_STATUS_DB_file = '../PROPAGATE_STATUS_DB.txt'
+PROPAGATION_STATUS_DB_file = '../PROPAGATION_STATUS_DB.txt'
 
 
 ##############################################################################
@@ -189,7 +189,7 @@ def get_status(dcf, pkg, node_id, stage):
 
 def get_propagation_status_from_db(pkg, node_id):
     try:
-        dcf = open(PROPAGATE_STATUS_DB_file, 'rb')
+        dcf = open(PROPAGATION_STATUS_DB_file, 'rb')
     except FileNotFoundError:
         return None
     status = get_status(dcf, pkg,
