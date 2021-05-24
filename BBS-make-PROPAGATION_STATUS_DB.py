@@ -30,7 +30,7 @@ def make_PROPAGATION_STATUS_DB(staging_repo):
     ## subprocess.run() if this code is runned by the Task Scheduler
     ## on Windows (the child process tends to almost always return an
     ## error). Apparently using 'stderr=subprocess.STDOUT' fixes this pb.
-    subprocess.run(cmd, stdout=out, stderr=subprocess.STDOUT, shell=True,
+    subprocess.run(cmd, stdout=None, stderr=subprocess.STDOUT, shell=True,
                    check=True)
     return
 
