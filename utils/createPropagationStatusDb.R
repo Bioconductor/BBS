@@ -84,9 +84,25 @@
     required_versions
 }
 
+.explain_insufficient_available_version <-
+    function(required_pkg, version, op, available_version, candidate_statuses)
+{
+    m <- match(required_pkg, candidate_statuses$Package)
+    required_pkg_is_approved <- !is.na(m) && candidate_statuses$propagate[m]
+    if (required_pkg_is_approved) {
+        is_or_will_become <- "will become"
+    } else {
+        is_or_will_become <- "is"
+    }
+    fmt <- paste0("NO, package requires version %s %s of '%s' ",
+                  "but only version %s %s available")
+    sprintf(fmt, op, version, required_pkg, available_version,
+                 is_or_will_become)
+}
+
 ### Return TRUE or a single string describing the impossible dep.
 .check_required_version <- function(required_pkg, required_version,
-                                    available_version)
+                                    available_version, candidate_statuses)
 {
     if (is.na(required_version))
         return(TRUE)
@@ -96,26 +112,23 @@
     op <- sub(pattern, "\\1", required_version)
     version <- numeric_version(sub(pattern, "\\2", required_version))
     available_version <- numeric_version(available_version)
-    fmt <- paste0("NO, package requires version %s %s of '%s' ",
-                  "but only version %s is available")
     if (op == ">=") {
         if (available_version >= version)
             return(TRUE)
-        ans <- sprintf(fmt, op, version, required_pkg, available_version)
-        return(ans)
-    }
-    if (op == ">") {
+    } else if (op == ">") {
         if (available_version > version)
             return(TRUE)
-        ans <- sprintf(fmt, op, version, required_pkg, available_version)
-        return(ans)
+    } else {
+        return(TRUE)
     }
-    TRUE
+    .explain_insufficient_available_version(required_pkg, version, op,
+                                            available_version,
+                                            candidate_statuses)
 }
 
 ### Return TRUE or a single string describing the impossible dep.
-.check_deps <- function(pkg, required_pkgs, required_versions,
-                        available_pkgs)
+.check_candidate_deps <- function(pkg, required_pkgs, required_versions,
+                                  available_pkgs, candidate_statuses)
 {
     stopifnot(length(required_pkgs) == length(required_versions))
     ignored_deps <- c("R", .get_base_packages())
@@ -132,7 +145,7 @@
         required_version <- required_versions[[j]]
         available_version <- available_pkgs[m, "Version"]
         res <- .check_required_version(required_pkg, required_version,
-                                       available_version)
+                                       available_version, candidate_statuses)
         if (!isTRUE(res))
             return(res)
     }
@@ -147,7 +160,7 @@
     .stop_if_bad_statuses(candidate_statuses)
     stopifnot(is.list(candidate_required_pkgs),
               identical(names(candidate_required_pkgs),
-                        candidate_statuses[ , "Package"]),
+                        candidate_statuses$Package),
               is.list(candidate_required_versions),
               identical(lengths(candidate_required_pkgs),
                         lengths(candidate_required_versions)))
@@ -158,8 +171,8 @@
         pkg <- candidate_statuses[i, "Package"]
         required_pkgs <- candidate_required_pkgs[[i]]
         required_versions <- candidate_required_versions[[i]]
-        res <- .check_deps(pkg, required_pkgs, required_versions,
-                           available_pkgs)
+        res <- .check_candidate_deps(pkg, required_pkgs, required_versions,
+                                     available_pkgs, candidate_statuses)
         if (isTRUE(res)) {
             candidate_statuses$propagate[i] <- TRUE
             candidate_statuses$explain[i] <- "YES"
