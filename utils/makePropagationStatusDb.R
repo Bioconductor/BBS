@@ -89,7 +89,7 @@
 
 .extract_required_pkgs <- function(deps)
 {
-    pattern <- " *([^ ]+).*"
+    pattern <- " *([[:alpha:]][A-Za-z0-9.]*).*"
     sub(pattern, "\\1", deps)
 }
 
