@@ -71,19 +71,21 @@
 
 .extract_deps <- function(pkgs)
 {
-    Depends <- pkgs[ , "Depends"]
-    Depends[is.na(Depends)] <- ""
-    Imports <- pkgs[ , "Imports"]
-    Imports[is.na(Imports)] <- ""
-    LinkingTo <- pkgs[ , "LinkingTo"]
-    LinkingTo[is.na(LinkingTo)] <- ""
+    clean_field <- function(x) {
+        x <- gsub("\n", "", x)
+        x <- sub(" *(, *)*$", "", x)  # remove trailing commas
+        x[is.na(x)] <- ""
+        x
+    }
+    Depends <- clean_field(pkgs[ , "Depends"])
+    Imports <- clean_field(pkgs[ , "Imports"])
+    LinkingTo <- clean_field(pkgs[ , "LinkingTo"])
 
     sep1 <- sep2 <- character(nrow(pkgs))
     sep1[nzchar(Depends) & nzchar(Imports)] <- ","
     sep2[(nzchar(Depends) | nzchar(Imports)) & nzchar(LinkingTo)] <- ","
     deps <- paste0(Depends, sep1, Imports, sep2, LinkingTo)
 
-    deps <- gsub("\n", "", deps, fixed=TRUE)
     setNames(strsplit(deps, " *, *"), pkgs[ , "Package"])
 }
 
@@ -322,7 +324,8 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     cat(lines, file=out, sep="\n")
 }
 
-makePropagationStatusDb <- function(OUTGOING_dir, final_repo, db_filepath)
+makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
+                                    db_filepath="PROPAGATION_STATUS_DB.txt")
 {
     if (!file.exists(OUTGOING_dir))
         stop("directory ", OUTGOING_dir, "/ not found")
@@ -359,7 +362,6 @@ if (FALSE) {
   #final_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
   OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
   final_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
-  db_filepath <- "PROPAGATION_STATUS_DB.txt"
-  makePropagationStatusDb(OUTGOING_dir, final_repo, db_filepath)
+  makePropagationStatusDb(OUTGOING_dir, final_repo)
 }
 
