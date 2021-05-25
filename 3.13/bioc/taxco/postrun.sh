@@ -15,7 +15,7 @@ cd "$BBS_CENTRAL_RDIR"
 # Remove target repo (no-vignettes source packages). It's no longer
 # needed so we can make room before we generate the HTML report below
 # and before we propagate packages (this will be done later by the
-# updateReposPkgs-bioc.sh script that we run from the biocadmin
+# updateReposPkgs-bioc.sh script that we run from the biocpush
 # account). Can help significantly if the machine has limited disk capacity.
 rm -rf src
 
@@ -25,17 +25,11 @@ find products-in -type d -exec chmod 755 {} \;
 
 set -e # Exit immediately if a simple command exits with a non-zero status.
 
-# Generate BUILD_STATUS_DB.txt file
 $BBS_PYTHON_CMD $BBS_HOME/BBS-make-BUILD_STATUS_DB.py
 
 if [ -n "$BBS_OUTGOING_MAP" ]; then
-    # Create and populate OUTGOING dir
     $BBS_PYTHON_CMD $BBS_HOME/BBS-make-OUTGOING.py
-    # Generate PROPAGATE_STATUS_DB.txt
-    OUTGOING_DIR=$BBS_CENTRAL_RDIR/OUTGOING
-    PROPAGATE_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATE_STATUS_DB.txt
-    INTERNAL_REPOS=/home/biocadmin/PACKAGES/$BBS_BIOC_VERSIONED_REPO_PATH/
-    $BBS_RSCRIPT_CMD --vanilla -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'bioc', '$INTERNAL_REPOS')"
+    $BBS_PYTHON_CMD $BBS_HOME/BBS-make-PROPAGATION_STATUS_DB.py
 fi
 
 # Generate the HTML report
