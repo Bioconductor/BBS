@@ -4,6 +4,11 @@
 ### Author: Dan Tenenbaum, May/June 2015
 
 
+### getRversion() returns R version in X.Y.Z format (e.g. 4.1.0), but we
+### want X.Y (e.g. 4.1).
+.get_R_version_as_X.Y <- function()
+    paste(getRversion()$major, getRversion()$minor, sep=".")
+
 ## This function is called by the updateReposPkgs-*.sh scripts,
 ## running as biocpush. Instead of just a straight cp --no-clobber --verbose,
 ## we consult the propagation DB to determine what can be copied,
@@ -13,6 +18,7 @@
 copyPropagatableFiles <- function(srcDir, fileExt, propagationDb, destDir=".")
 {
     stopifnot(file.exists(propagationDb))
+    rvers <- .get_R_version_as_X.Y()
     contribpaths <- c(
         'source'="src/contrib",
         'win.binary'=paste0("bin/windows/contrib/", rvers),
