@@ -53,6 +53,7 @@ if __name__ == "__main__":
         sys.exit('=> EXIT.')
     print('BBS> ==============================================================')
     print('BBS> [stage6c] STARTING stage6c at %s...' % time.asctime())
+    sys.stdout.flush()
     make_PROPAGATION_STATUS_DB(final_repo)
     print('BBS> [stage6c] DONE at %s.' % time.asctime())
 

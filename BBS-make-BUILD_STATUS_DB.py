@@ -91,6 +91,7 @@ if __name__ == "__main__":
         sys.exit('=> EXIT.')
     print('BBS> ==============================================================')
     print('BBS> [stage6a] STARTING stage6a at %s...' % time.asctime())
+    sys.stdout.flush()
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     BBSreportutils.set_NODES(report_nodes)
     pkgs = bbs.parse.get_meat_packages(BBSutils.meat_index_file)
