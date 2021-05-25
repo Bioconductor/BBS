@@ -55,6 +55,9 @@
               identical(colnames(available_pkgs), c("Package", "Version")))
 }
 
+### Return a data.frame with 3 cols: Package, propagate, explain.
+### The "propagate" and "explain" cols are initialized with FALSE's
+### and NA_character_'s, respectively.
 .init_statuses <- function(pkgnames)
 {
     data.frame(Package=pkgnames,
@@ -203,6 +206,8 @@
 }
 
 ### Return a data.frame with 3 cols: Package, propagate, explain.
+### The "explain" col should contain "YES" or "NO, some explanation" strings
+### for **all** packages, so no NA_character_'s.
 .compute_candidate_statuses <- function(candidate_pkgs, available_pkgs)
 {
     .stop_if_bad_OUTGOING_pkgs(candidate_pkgs)
@@ -275,6 +280,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
         candidate_pkgs <- OUTGOING_pkgs[candidate_idx, , drop=FALSE]
         candidate_statuses <- .compute_candidate_statuses(candidate_pkgs,
                                                           available_pkgs)
+        stopifnot(!any(is.na(candidate_statuses$explain)))
         statuses[candidate_idx, ] <- candidate_statuses
     }
     statuses
