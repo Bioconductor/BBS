@@ -1,3 +1,5 @@
+# WARNING: SUPERSEDED BY THE makePropagationStatusDb.R FILE!
+
 # This file contains a function createPropagationList() which
 # will produce a file containing entries like
 
@@ -312,6 +314,8 @@ recur <- function(pkg)
 
 
 # The main entry point to this file.
+# WARNING: THIS FUNCTION IS SUPERSEDED BY makePropagationStatusDb() FROM
+# THE makePropagationStatusDb.R FILE!
 # outgoingDirPath is a directory that normally contains under it
 # source, win.binary, mac.binary, mac.binary.mavericks, and
 # mac.binary.el-capitan directories.
