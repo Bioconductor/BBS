@@ -14,7 +14,7 @@
 .prettymsg <- function(...)
 {
     if (nzchar(Sys.getenv("BBS_HOME"))) {
-        indent <- "  [R] "
+        indent <- "  Rscript> "
     } else {
         indent <- ""
     }
