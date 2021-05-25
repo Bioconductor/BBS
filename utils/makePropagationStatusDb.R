@@ -1,5 +1,5 @@
 ### =========================================================================
-### Used during stage6b to compute package propagation status
+### Used by stage6c to compute package propagation status
 ### -------------------------------------------------------------------------
 
 

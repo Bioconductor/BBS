@@ -6,7 +6,7 @@ cd "$HOME/propagation/3.11"
 
 BBS_OUTGOING_DIR="/home/biocbuild/public_html/BBS/$BIOC_VERSION/data-experiment/OUTGOING"
 R_SCRIPT="source('/home/biocbuild/BBS/utils/list.old.pkgs.R')"
-PROPAGATION_R_SCRIPT="source('/home/biocbuild/BBS/utils/createPropagationDB.R')"
+PROPAGATION_R_SCRIPT="source('/home/biocbuild/BBS/utils/copyPropagatableFiles.R')"
 PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATION_STATUS_DB.txt"
 
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/data/experiment"
