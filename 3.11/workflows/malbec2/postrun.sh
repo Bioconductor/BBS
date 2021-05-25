@@ -22,11 +22,11 @@ set -e # Exit immediately if a simple command exits with a non-zero status.
 # Generate BUILD_STATUS_DB.txt file
 "$BBS_HOME"/BBS-make-BUILD_STATUS_DB.py
 
-# Generate PROPAGATE_STATUS_DB.txt
+# Generate PROPAGATION_STATUS_DB.txt
 OUTGOING_DIR=$BBS_CENTRAL_RDIR/OUTGOING
-PROPAGATE_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATE_STATUS_DB.txt
+PROPAGATION_STATUS_DB=$BBS_CENTRAL_RDIR/PROPAGATION_STATUS_DB.txt
 INTERNAL_REPOS=/home/biocadmin/PACKAGES/$BBS_BIOC_VERSIONED_REPO_PATH/
-$BBS_R_CMD -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATE_STATUS_DB', 'workflows', '$INTERNAL_REPOS')"
+$BBS_R_CMD -e "source('$BBS_HOME/utils/createPropagationDB.R');createPropagationList('$OUTGOING_DIR', '$PROPAGATION_STATUS_DB', 'workflows', '$INTERNAL_REPOS')"
 
 # Generate and publish HTML report
 "$BBS_HOME"/BBS-report.py no-alphabet-dispatch

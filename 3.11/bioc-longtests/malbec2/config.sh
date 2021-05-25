@@ -33,7 +33,7 @@ export BBS_MEAT0_RHOST="localhost"
 export BBS_GITLOG_RHOST="localhost"
 
 # Needed only on the node performing stage6a (BBS-make-BUILD_STATUS_DB.py) and
-# stage6c (BBS-report.py)
+# stage6d (BBS-report.py)
 #
 # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
 # must be run on the BBS_CENTRAL_RHOST machine.

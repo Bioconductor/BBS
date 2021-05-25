@@ -52,7 +52,7 @@ if __name__ == "__main__":
         print('before running the BBS-make-PROPAGATION_STATUS_DB.py script.')
         sys.exit('=> EXIT.')
     print('BBS> ==============================================================')
-    print('BBS> [stage6bb] STARTING stage6bb at %s...' % time.asctime())
+    print('BBS> [stage6c] STARTING stage6c at %s...' % time.asctime())
     make_PROPAGATION_STATUS_DB(final_repo)
-    print('BBS> [stage6bb] DONE at %s.' % time.asctime())
+    print('BBS> [stage6c] DONE at %s.' % time.asctime())
 

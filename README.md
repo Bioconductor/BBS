@@ -329,9 +329,9 @@ will be pushed to the website.
 
 ##### BBS-report.py
 
-This script performs stage6c:
+This script performs stage6d:
 
-* stage6c: [Linux only] Generate and publish HTML report to the website.
+* stage6d: [Linux only] Generate and publish HTML report to the website.
 
 
 The crontab contains essentially the same entries for the

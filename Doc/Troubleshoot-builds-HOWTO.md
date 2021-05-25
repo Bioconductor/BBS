@@ -261,17 +261,14 @@ index b7a14b5..490f8b4 100644
 --- a/3.2/bioc/linux1.bioconductor.org/config.sh
 +++ b/3.2/bioc/linux1.bioconductor.org/config.sh
 @@ -51,14 +51,14 @@ cd "$wd0"
- # packages to propagate and to later not be replaced by the bi-arch when
- # the dropped node is back.
- 
+ # The variables below control postrun.sh so only need to be defined on the
+ # central node
+
+ # Control propagation:
 -export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
 +export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin"
- # Needed only on the node performing stage6a (BBS-make-BUILD_STATUS_DB.py) and
- # stage6c (BBS-report.py)
- #
- # IMPORTANT: BBS-report.py will treat BBS_REPORT_PATH as a _local_ path so it
- # must be run on the BBS_CENTRAL_RHOST machine.
- 
+
+ # Control generation of the report: 
 -export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin oaxaca:bin"
 +export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin"
  export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
