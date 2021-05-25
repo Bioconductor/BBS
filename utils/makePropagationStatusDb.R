@@ -72,9 +72,9 @@
 .extract_deps <- function(pkgs)
 {
     clean_field <- function(x) {
-        x <- gsub("\n", "", x)
-        x <- sub(" *(, *)*$", "", x)  # remove trailing commas
         x[is.na(x)] <- ""
+        x <- gsub("[ \n\t]", "", x)
+        x <- sub(",*$", "", x)  # remove trailing commas
         x
     }
     Depends <- clean_field(pkgs[ , "Depends"])
@@ -86,12 +86,12 @@
     sep2[(nzchar(Depends) | nzchar(Imports)) & nzchar(LinkingTo)] <- ","
     deps <- paste0(Depends, sep1, Imports, sep2, LinkingTo)
 
-    setNames(strsplit(deps, " *, *"), pkgs[ , "Package"])
+    setNames(strsplit(deps, ",", fixed=TRUE), pkgs[ , "Package"])
 }
 
 .extract_required_pkgs <- function(deps)
 {
-    pattern <- " *([[:alpha:]][A-Za-z0-9.]*).*"
+    pattern <- "([[:alpha:]][A-Za-z0-9.]*).*"
     sub(pattern, "\\1", deps)
 }
 
@@ -126,7 +126,7 @@
 {
     if (is.na(required_version))
         return(TRUE)
-    pattern <- "^ *([>=]+) *([0-9.-]+) *$"
+    pattern <- "^([>=]+)([0-9.-]+)$"
     if (!grepl(pattern, required_version))
         return(TRUE)
     op <- sub(pattern, "\\1", required_version)
