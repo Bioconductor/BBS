@@ -3,6 +3,14 @@
 ### -------------------------------------------------------------------------
 
 
+### Same as in build_pkg_dep_graph.R and installNonTargetPkg.R
+.get_non_target_repos <- function()
+{
+    non_target_repos <- readLines(Sys.getenv('BBS_NON_TARGET_REPOS_FILE'))
+    gsub("BBS_BIOC_VERSION", Sys.getenv('BBS_BIOC_VERSION'),
+         non_target_repos, fixed=TRUE)
+}
+
 .prettymsg <- function(...)
 {
     if (nzchar(Sys.getenv("BBS_HOME"))) {
@@ -297,14 +305,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 
 .fetch_available_pkgs <- function(final_repo, type)
 {
-    if (!requireNamespace("BiocManager", quietly=TRUE))
-        install.packages("BiocManager", repos="https://cran.rstudio.com")
-    ## We can't just use BiocManager::repositories() here because of the
-    ## following issue:
-    ##   https://github.com/Bioconductor/BiocManager/issues/46#issuecomment-548017624
-    bioc_version <- BiocManager::version()
-    bioc_repos <- BiocManager:::.repositories(character(), version=bioc_version)
-    all_repos <- c(final_repo, bioc_repos)
+    all_repos <- c(final_repo, .get_non_target_repos())
     contrib_urls <- contrib.url(all_repos, type=type)
     available_pkgs <- available.packages(contrib_urls)
     available_pkgs[ , c("Package", "Version")]

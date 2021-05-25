@@ -155,7 +155,7 @@
     }
 }
 
-### Same as in installNonTargetPkg.R
+### Same as in installNonTargetPkg.R and makePropagationStatusDb.R
 .get_non_target_repos <- function()
 {
     non_target_repos <- readLines(Sys.getenv('BBS_NON_TARGET_REPOS_FILE'))
