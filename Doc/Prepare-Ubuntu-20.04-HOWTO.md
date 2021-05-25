@@ -793,11 +793,20 @@ Fall) and you are setting up the **future devel builds**.
 In this case you are setting up builds for a version of Bioconductor
 that doesn't exist yet. This means that the public package repositories
 for this version of Bioconductor (i.e. the package repos under
-https://bioconductor.org/packages/) don't exist yet either (or if they do,
-they're probably empty).
+https://bioconductor.org/packages/X.Y) don't exist yet either. Or maybe
+some of them exist (e.g. software) but others are still missing (e.g.
+data-experiment).
 
-If this is the case, then `~/BBS/X.Y/bioc/non_target_repos.txt` needs to
-be temporarily modified to point to the current devel repositories.
+NOTE: The procedure described below is no longer needed. A better, simpler way
+to handle this is by creating "fake X.Y repositories". See _Create fake X.Y
+repositories_ section in the Set-up-propagation-HOWTO.md document for how to
+do this.
+
+Kept only for the record:
+
+If we are in the situation described above (i.e. no X.Y repositories yet),
+then `~/BBS/X.Y/bioc/non_target_repos.txt` needs to be temporarily modified
+to point to the current devel repositories.
 
 For example, if we are a few weeks before the BioC 3.13 release,
 and you are setting up the future BioC 3.14 builds, then you need to

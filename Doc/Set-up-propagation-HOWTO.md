@@ -117,14 +117,14 @@ Then create symlink:
 
 
 
-## 3. Create the destination folder on master
+## 3. Create https://bioconductor.org/packages/X.Y on master
 
 
 This is the the folder at https://bioconductor.org/packages/X.Y where X.Y
 is the Bioconductor version.
 
 
-### Go on master
+### Go to master
 
 From the biocpush account:
 ```
@@ -132,7 +132,7 @@ ssh -A webadmin@master.bioconductor.org
 ```
 
 
-### Once on master
+### Create https://bioconductor.org/packages/X.Y
 
 Say we're setting up propagation for Bioconductor 3.14:
 
@@ -141,6 +141,13 @@ Say we're setting up propagation for Bioconductor 3.14:
 If the `3.14` folder doesn't exist yet:
 
     mkdir 3.14
+
+Note that we cannot test the https://bioconductor.org/packages/X.Y URL
+because trying to open it in a browser is not expected to work at this
+moment.
+
+
+### Create fake X.Y repositories
 
 Create empty package repositories inside 3.14:
 
@@ -160,9 +167,6 @@ For now we'll just populate them with symlinks that redirect to the 3.13 repos:
 Note that this is temporary only, until each repository gets populated by the
 propagation scripts. When this happens, the symlinks will get automatically
 replaced with real content.
-
-
-### Testing
 
 `tree` should show the following:
 ```
@@ -187,16 +191,26 @@ replaced with real content.
 11 directories, 5 files
 ```
 
-This tricks `install.packages()` into believing that the 3.14 repos exist
-even though they don't. So for example now this should work but it will
-install the version of the BiocGenerics package that belongs to BioC 3.13:
-```
-## From R:
-repo <- "https://bioconductor.org/packages/3.14/bioc"
-install.packages("BiocGenerics", repos=repo)
-```
+The symlinks will trick `install.packages()` into believing that the 3.14
+repos exist even though they don't.
+
+
+### Testing
+
+Thanks to the symlinks, the following should work. However it's important
+to realize that it will install the version of the BiocGenerics package
+that belongs to BioC 3.13:
+
+    ## From R:
+    repo <- "https://bioconductor.org/packages/3.14/bioc"
+    install.packages("BiocGenerics", repos=repo)
+
 This is a temprary situation only, until we propagate the packages produced
 by the 3.14 daily builds.
+
+Note that trying to open the https://bioconductor.org/packages/3.14/bioc
+URL in a browser is not expected to work at this point (you should get
+"Error 403 - Access Forbidden").
 
 
 
