@@ -1041,13 +1041,13 @@ Then add the following entries to the crontab:
 
     # BIOC 3.14 SOFTWARE BUILDS
     # -------------------------
-
+    
     # prerun:
     50 14 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
-
+    
     # run:
     00 16 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
-
+    
     # postrun (make sure this starts AFTER 'biocbuild' has finished its "run.sh"
     # job on ALL the nodes):
     00 12 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
@@ -1386,10 +1386,10 @@ Then add the following entries to biocbuild's crontab:
     
     # prerun:
     30 09 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
-
+    
     # run:
     00 11 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
-
+    
     # postrun (make sure this starts AFTER 'biocbuild' has finished its "run.sh"
     # job on ALL the nodes):
     45 15 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
@@ -1416,13 +1416,14 @@ Then add the following entries to biocbuild's crontab:
     # run on Tuesdays and Fridays
     
     # prerun:
-    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    50 08 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
-    # run:
-    05 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    # run (start after the books builds to avoid concurrent INSTALLs and
+    # competing for resources):
+    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (this should start AFTER builds are finished on all nodes):
-    45 15 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 15 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
@@ -1443,17 +1444,17 @@ Then add the following entries to biocbuild's crontab:
 
     # BIOC 3.14 BOOKS BUILDS
     # ----------------------
-    # run on Tuesdays and Fridays
-
+    # run on Mondays, Wednesdays, and Fridays
+    
     # prerun:
-    00 09 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
-
-    # run (start after the workflows builds to avoid concurrent INSTALLs and
+    50 07 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    
+    # run (start before the workflows builds to avoid concurrent INSTALLs and
     # competing for resources):
-    30 10 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
-
+    00 08 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    
     # postrun (this should start AFTER builds are finished on all nodes):
-    45 17 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 15 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
@@ -1475,13 +1476,13 @@ Then add the following entries to biocbuild's crontab:
     # BIOC 3.14 SOFTWARE LONGTESTS BUILDS
     # -----------------------------------
     # run every Saturday
-
+    
     # prerun:
     00 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
-
+    
     # run:
     30 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
-
+    
     # postrun (this should start AFTER builds are finished on all nodes):
     30 17 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
