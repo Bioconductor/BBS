@@ -84,13 +84,14 @@ If the biocpush account doesn't exist yet, we need to create it.
 ### Create the account
 
 From your personal account (sudoer), create the biocpush user. Use the same
-commands that were used to create the biocbuild user. See _Set up the
-biocbuild account_ section in the Prepare-Ubuntu-20.04-HOWTO.md document
-for the details (replace `biocbuild` with `biocpush`). Use the same password
-as for biocbuild.
+commands that were used to create the biocbuild account. In particular, like
+the biocbuild account, biocpush should be set up as a regular account i.e it
+should NOT have sudo privileges. See _Set up the biocbuild account_ section
+in the Prepare-Ubuntu-20.04-HOWTO.md document for the details (replace
+`biocbuild` with `biocpush`). Use the same password as for biocbuild.
 
 
-### Install SSH keys
+### Install RSA keys
 
 From the biocpush account:
 
@@ -127,9 +128,8 @@ is the Bioconductor version.
 ### Go to master
 
 From the biocpush account:
-```
-ssh -A webadmin@master.bioconductor.org
-```
+
+    ssh -A webadmin@master.bioconductor.org
 
 
 ### Create https://bioconductor.org/packages/X.Y

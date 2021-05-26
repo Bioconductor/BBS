@@ -164,8 +164,8 @@ procedure should take about 2.5 hours. Make sure to reserve enough time.
 
 ### C1. Ask people to stop committing/pushing changes to the BioC git server
 
-Announce or ask a team member to announce on the bioc-devel mailing list
-that people must stop committing/pushing changes to the BioC git server
+Announce or ask a core team member to announce on the bioc-devel mailing
+list that people must stop committing/pushing changes to the BioC git server
 (git.bioconductor.org) for the next 2.5 hours.
 
 ### C2. Modify packages.conf to block all commits
@@ -333,7 +333,7 @@ Check:
 
 ### E2. Tell people that committing/pushing to the BioC git server can resume
 
-Announce or ask a team member to announce on the bioc-devel mailing list
+Announce or ask a core team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 

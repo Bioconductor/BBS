@@ -173,20 +173,45 @@ Then logout and login again for the change to take effect, and try:
 
 ### 1.6 Set up the biocbuild account
 
+#### Create the account
+
     sudo adduser biocbuild
 
 This should be set up as a regular account. In particular it should NOT have
-sudo privileges.
+sudo privileges. Ask a core team member what password to use for biocbuild.
 
-Login as biocbuild and install the following SSH keys (in the `~biocbuild/.ssh`
+#### Install RSA keys
+
+Login as biocbuild and install the following RSA keys (in the `~biocbuild/.ssh/`
 folder):
-- biocbuild private and public keys (`id_rsa` and `id_rsa.pub` files)
-- devteam member public keys (in `authorized_keys` file)
+- biocbuild RSA private and public keys (`id_rsa` and `id_rsa.pub` files)
+- core team member public keys (in `authorized_keys` file)
 
-TESTING: Logout and try to login again as biocbuild. Then logout and login
-again as before (sudoer account).
+Easiest way to do this is to copy the keys from another build machine.
 
-NOTE: Rather than using `sudo su -` to access the biocbuild account, it's
+Then `chmod 400 ~/.ssh/id_rsa` so permissions look like this:
+
+    biocbuild@nebbiolo2:~$ ls -l .ssh/id_rsa
+    -r-------- 1 biocbuild biocbuild 1679 Apr 30 15:20 .ssh/id_rsa
+
+#### Testing
+
+- Logout and try to login again as biocbuild. If your public key was
+  added to `~biocbuild/.ssh/authorized_keys` then you should no longer
+  need to enter the biocbuild password or your passphrase.
+
+- You should be able to ssh to master from the biocbuild account. Try:
+    ```
+    ssh -A webadmin@master.bioconductor.org
+    ```
+  It's important to make sure that this works otherwise the build system
+  won't be able to push the daily build reports to master.
+
+Then logout completely (i.e. first from the webadmin account on master, then
+from the biocbuild account on the Linux builder) and go back to your personal
+account on the machine (sudoer account).
+
+TIP: Rather than using `sudo su -` to access the biocbuild account, it's
 strongly recommended that you always use the following method to access the
 biocbuild account, where `username` is replaced by your username and
 `nebbiolo2` is replaced by its address:
@@ -725,15 +750,6 @@ hostname. For example:
     ping malbec2                                   # from within RPCI's DMZ
     ping malbec2.bioconductor.org                  # from anywhere else
 
-#### Install biocbuild RSA private key
-
-Copy biocbuild RSA private key to `~biocbuild/.ssh/id_rsa` (e.g. copy it from
-another build machine). Then `chmod 400 ~/.ssh/id_rsa` so permissions look
-like this:
-
-    biocbuild@nebbiolo2:~$ ls -l .ssh/id_rsa
-    -r-------- 1 biocbuild biocbuild 1679 Apr 30 15:20 .ssh/id_rsa
-
 #### Check that you can ssh to the central builder
 
     ssh malbec2                   # from within RPCI's DMZ
@@ -1036,9 +1052,22 @@ Then add the following entries to the crontab:
     # job on ALL the nodes):
     00 12 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
-Now you can proceed to the next section or wait for a complete build run
-before doing so (great time to catch up on your favorite Netflix show and
-relax).
+
+### 2.6 First build report
+
+On the day after adding the software builds to biocbuild's crontab, you
+should get the first build report at:
+
+  https://master.bioconductor.org/checkResults/3.14/bioc-LATEST/
+
+Some red on the report is to be expected (the purpose of the next section is
+to minimize the amount of red) but if you are happy with the result so far
+and want to show it to the world, link the report from this page:
+
+  https://master.bioconductor.org/checkResults/
+
+To do this, go on master (`ssh -A webadmin@master.bioconductor.org`) and
+edit `/extra/www/bioc/checkResults/index.html` (backup the file first).
 
 
 
@@ -1339,6 +1368,8 @@ As expected, this currently fails (with xps 1.49.0):
 
 ### 4.1 Annotation builds
 
+We're not building annotation packages at the moment.
+
 
 ### 4.2 Experimental data builds
 
@@ -1362,6 +1393,14 @@ Then add the following entries to biocbuild's crontab:
     # job on ALL the nodes):
     45 15 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
+After the builds complete, you should get the first build report at:
+
+  https://master.bioconductor.org/checkResults/3.14/data-experiment-LATEST/
+
+If you're happy with the result, link the report from this page:
+
+  https://master.bioconductor.org/checkResults/
+
 
 ### 4.3 Workflows builds
 
@@ -1383,6 +1422,14 @@ Then add the following entries to biocbuild's crontab:
     
     # postrun (this should start AFTER builds are finished on all nodes):
     45 15 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+
+After the builds complete, you should get the first build report at:
+
+  https://master.bioconductor.org/checkResults/3.14/workflows-LATEST/
+
+If you're happy with the result, link the report from this page:
+
+  https://master.bioconductor.org/checkResults/
 
 
 ### 4.4 Books builds
@@ -1407,6 +1454,14 @@ Then add the following entries to biocbuild's crontab:
     # postrun (this should start AFTER builds are finished on all nodes):
     45 17 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
+After the builds complete, you should get the first build report at:
+
+  https://master.bioconductor.org/checkResults/3.14/books-LATEST/
+
+If you're happy with the result, link the report from this page:
+
+  https://master.bioconductor.org/checkResults/
+
 
 ### 4.5 Long Tests builds
 
@@ -1428,4 +1483,12 @@ Then add the following entries to biocbuild's crontab:
 
     # postrun (this should start AFTER builds are finished on all nodes):
     30 17 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+
+After the builds complete, you should get the first build report at:
+
+  https://master.bioconductor.org/checkResults/3.14/bioc-longtests-LATEST/
+
+If you're happy with the result, link the report from this page:
+
+  https://master.bioconductor.org/checkResults/
 

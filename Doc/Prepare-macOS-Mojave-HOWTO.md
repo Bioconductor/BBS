@@ -16,8 +16,8 @@
 This section describes the very first steps that need to be performed on
 a pristine macOS Mojave installation (e.g. after creating a Mac instance on
 MacStadium). Skip them and go directly to the next section if the biocbuild
-account was created by someone else and if the devteam member public keys were
-already installed.
+account was created by someone else and if the core team member public keys
+were already installed.
 
 Everything in this section must be done **from the administrator account**
 (the only account that should exist on the machine at this point).
@@ -90,7 +90,7 @@ So all the configuration and management of the builds can and should be done
 from the biocbuild account.
 
 
-### 1.5 Install devteam member public keys in the biocbuild account
+### 1.5 Install core team member public keys in the biocbuild account
 
 TESTING: Logout and try to login again as biocbuild.
 
@@ -761,8 +761,8 @@ Remove the previous R installation:
 Download and install with:
 
     cd ~/Downloads/
-    curl -O https://cloud.r-project.org/bin/macosx/R-4.0.0.pkg
-    sudo installer -pkg R-4.0.0.pkg -target /
+    curl -O https://cran.r-project.org/bin/macosx/base/R-4.1.0.pkg
+    sudo installer -pkg R-4.1.0.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
 *system-wide* installation of R i.e. it's in the `PATH` for all users on the
@@ -1006,7 +1006,7 @@ It should fail for most (if not all) packages. However, it's still worth
 doing it as it will be able to install many dependencies from source.
 Then try to install the binaries built with the current R release:
 
-    contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.0"
+    contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.1"
     install.packages(pkgs, contriburl=contriburl)
 
 NOTES:
@@ -1023,24 +1023,24 @@ NOTES:
   path that is specific to the version of R that was used when the object was
   compiled/linked e.g.
     ```
-    /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
+    /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libR.dylib
     ```
-  So loading them in a different version of R (e.g. R 4.1) will fail with
+  So loading them in a different version of R (e.g. R 4.2) will fail with
   an error like this:
     ```
     > library(XML)
     Error: package or namespace load failed for ‘XML’:
      .onLoad failed in loadNamespace() for 'XML', details:
       call: dyn.load(file, DLLpath = DLLpath, ...)
-      error: unable to load shared object '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so':
-      dlopen(/Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libR.dylib
-      Referenced from: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/XML/libs/XML.so
+      error: unable to load shared object '/Library/Frameworks/R.framework/Versions/4.2/Resources/library/XML/libs/XML.so':
+      dlopen(/Library/Frameworks/R.framework/Versions/4.2/Resources/library/XML/libs/XML.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libR.dylib
+      Referenced from: /Library/Frameworks/R.framework/Versions/4.2/Resources/library/XML/libs/XML.so
       Reason: image not found
     ```
   However, they can easily be tricked by creating a symlink like this:
     ```
     cd /Library/Frameworks/R.framework/Versions
-    ln -s 4.1 4.0
+    ln -s 4.2 4.1
     ```
 
 - Do NOT install the Cairo binary built for a previous version of R (hopefully
