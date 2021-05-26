@@ -1066,8 +1066,9 @@ and want to show it to the world, link the report from this page:
 
   https://master.bioconductor.org/checkResults/
 
-To do this, go on master (`ssh -A webadmin@master.bioconductor.org`) and
-edit `/extra/www/bioc/checkResults/index.html` (backup the file first).
+To do this, go on master (`ssh -A webadmin@master.bioconductor.org` from the
+biocbuild account) and edit `/extra/www/bioc/checkResults/index.html` (backup
+the file first).
 
 
 
