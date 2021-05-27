@@ -142,7 +142,7 @@ most recent versions of the `tensorflow` Python module.
 Download the Latest Python 3 Release from
 https://www.python.org/downloads/windows/
 
-Choose the "Windows x86-64 executable installer".
+Choose the "Windows installer (64-bit)".
 
 When running the installer:
 - Select "Add Python 3.8 to PATH" then click on "Customize installation".
@@ -1508,7 +1508,7 @@ Then **from a personal administrator account** configure the task as follow:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 9:05 AM -
+        Weekly - Start on <leave current date> at 9:00 AM -
         Recur every 1 week on Tuesday and Friday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'

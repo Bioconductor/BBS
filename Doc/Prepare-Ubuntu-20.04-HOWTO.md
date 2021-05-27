@@ -1048,6 +1048,8 @@ Then add the following entries to the crontab:
     # run:
     00 16 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
+    # NEXT DAY
+    
     # postrun (make sure this starts AFTER 'biocbuild' has finished its "run.sh"
     # job on ALL the nodes):
     00 12 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
