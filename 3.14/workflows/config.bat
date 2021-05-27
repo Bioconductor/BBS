@@ -19,8 +19,8 @@ cd %wd1%
 set BBS_MEAT0_TYPE=3
 
 @rem Needed only if BBS_MEAT0_TYPE is 3
-set BBS_BIOC__REPO_URL=https://git.bioconductor.org/admin/manifest
-set BBS_BIOC__BRANCH=master
+set BBS_BIOC_MANIFEST_GIT_REPO_URL=https://git.bioconductor.org/admin/manifest
+set BBS_BIOC_MANIFEST_GIT_BRANCH=master
 set BBS_BIOC_MANIFEST_CLONE_PATH=%BBS_WORK_TOPDIR%\manifest
 
 @rem Needed if BBS_MEAT0_TYPE is 1 or 3
