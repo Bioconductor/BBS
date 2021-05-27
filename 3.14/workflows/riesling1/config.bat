@@ -9,7 +9,7 @@ set BBS_NODE_HOSTNAME=riesling1
 set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=D:\biocbuild\bbs-3.14-workflows
 set BBS_R_HOME=D:\biocbuild\bbs-3.14-bioc\R
-set BBS_NB_CPU=16
+set BBS_NB_CPU=12
 
 set BBS_STAGE2_MODE=multiarch
 
