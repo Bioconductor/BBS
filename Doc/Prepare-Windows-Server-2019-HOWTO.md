@@ -734,7 +734,7 @@ Pandoc e.g.:
 
 
 
-## 3. Configure the Bioconductor software builds
+## 3. Set up the Bioconductor software builds
 
 
 ### 3.1 Check connectivity with central builder
@@ -1057,7 +1057,8 @@ Should we also remove package specific caches?
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Daily - At 4:00 PM - Recur every 1 day
+        Weekly - At 4:00 PM - Recur every 1 week on each day of the week
+                              except on Saturday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
 
