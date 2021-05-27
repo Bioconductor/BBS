@@ -9,8 +9,8 @@ set BBS_NODE_HOSTNAME=tokay2
 set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=C:\Users\biocbuild\bbs-3.13-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
-set BBS_NB_CPU=16
-set BBS_CHECK_NB_CPU=26
+set BBS_NB_CPU=14
+set BBS_CHECK_NB_CPU=24
 
 set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
