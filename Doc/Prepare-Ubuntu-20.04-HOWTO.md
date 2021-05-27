@@ -1480,13 +1480,13 @@ Then add the following entries to biocbuild's crontab:
     # run every Saturday
     
     # prerun:
-    00 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 15 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    30 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 16 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (this should start AFTER builds are finished on all nodes):
-    30 17 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 23 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
