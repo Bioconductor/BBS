@@ -90,11 +90,11 @@ if __name__ == "__main__":
         print('before running the BBS-make-BUILD_STATUS_DB.py script.')
         sys.exit('=> EXIT.')
     print('BBS> ==============================================================')
-    print('BBS> [stage6a] STARTING stage6a at %s...' % time.asctime())
+    print('BBS> [stage6a] STARTING stage6a on %s...' % time.asctime())
     sys.stdout.flush()
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     BBSreportutils.set_NODES(report_nodes)
     pkgs = bbs.parse.get_meat_packages(BBSutils.meat_index_file)
     make_BUILD_STATUS_DB(pkgs)
-    print('BBS> [stage6a] DONE at %s.' % time.asctime())
+    print('BBS> [stage6a] DONE on %s.' % time.asctime())
 

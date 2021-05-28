@@ -153,10 +153,10 @@ def stage6_make_OUTGOING():
 
 print()
 print("BBS> ==================================================================")
-print("BBS> [stage6b] STARTING stage6b at %s..." % time.asctime())
+print("BBS> [stage6b] STARTING stage6b on %s..." % time.asctime())
 sys.stdout.flush()
 
 stage6_make_OUTGOING()
 
-print("BBS> [stage6b] DONE at %s." % time.asctime())
+print("BBS> [stage6b] DONE on %s." % time.asctime())
 

@@ -60,7 +60,7 @@ if __name__ == '__main__':
         sys.exit('Usage: BBS-deploy-books.py <dest_dir>')
     print()
     print('BBS> ==============================================================')
-    print('BBS> START deploying books at %s...' % time.asctime())
+    print('BBS> START deploying books on %s...' % time.asctime())
     sys.stdout.flush()
     dest_dir = sys.argv[1]
     PACKAGES = bbs.parse.parse_DCF('PACKAGES')
@@ -68,5 +68,5 @@ if __name__ == '__main__':
         pkg = dcf_record['Package']
         version = dcf_record['Version']
         _deploy_book(pkg, version, dest_dir)
-    print('BBS> DONE deploying books at %s.' % time.asctime())
+    print('BBS> DONE deploying books on %s.' % time.asctime())
 
