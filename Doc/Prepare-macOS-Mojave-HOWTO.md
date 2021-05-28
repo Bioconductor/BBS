@@ -569,7 +569,7 @@ TESTING:
 
 - Try to build the BiocSklearn package (takes < 1 min):
     ```
-    cd ~/bbs-3.11-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     R CMD build BiocSklearn
     ```
     and the destiny package:
@@ -651,8 +651,99 @@ Install with:
     brew install pstree
 
 
+### 2.17 [OPTIONAL] Additional stuff not needed in normal times
 
-## 3. Configure the Bioconductor software builds
+Should not be needed. Kept only for the record.
+
+CRAN has a tradition of making Mac binary packages available at the last
+minute before a new R release (new R releases normally happen in Spring).
+This means that the build system will need to be able to install many CRAN
+packages from source on a Mac builder when the BioC devel builds use R devel.
+However some packages are difficult (e.g. fftwtools) because they require
+system libraries that we don't normally install on a Mac builder. The good
+news is that pre-compiled versions of these libraries are available here:
+https://mac.r-project.org/libs-4/
+
+In this section we only describe the case of installing CRAN packages jpeg,
+tiff, and fftwtools, from source, which require system libraries JPEG, TIFF,
+and FFTW, respectively. The prodecure for other CRAN packages is similar.
+
+UPDATE: We don't need to install any of this! See _What if CRAN doesn't
+provide package binaries for macOS yet?_ subsection in the _Install R_
+section below in this document for a better way to handle this situation.
+
+#### [OPTIONAL] Install JPEG system library
+
+This is needed only if CRAN package jpeg needs to be installed from source
+which is usually NOT the case (most of the time a Mac binary should be
+available on CRAN).
+
+Download and install with:
+
+    cd ~/Downloads/
+    curl -O https://mac.r-project.org/libs-4/jpeg-9-darwin.17-x86_64.tar.gz
+    sudo tar fvxz jpeg-9-darwin.17-x86_64.tar.gz -C /
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+TESTING: If R is already installed on the machine, try to install the jpeg
+package *from source*:
+
+    install.packages("jpeg", type="source", repos="https://cran.r-project.org")
+    library(jpeg)
+    example(readJPEG)
+    example(writeJPEG)
+
+#### [OPTIONAL] Install TIFF system library
+
+This is needed only if CRAN package tiff needs to be installed from source
+which is usually NOT the case (most of the time a Mac binary should be
+available on CRAN).
+
+Download and install with:
+
+    cd ~/Downloads/
+    curl -O https://mac.r-project.org/libs-4/tiff-4.1.0-darwin.17-x86_64.tar.gz
+    sudo tar fvxz tiff-4.1.0-darwin.17-x86_64.tar.gz -C /
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+TESTING: If R is already installed on the machine, try to install the tiff
+package *from source*:
+
+    install.packages("tiff", type="source", repos="https://cran.r-project.org")
+    library(tiff)
+    example(readTIFF)
+    example(writeTIFF)
+
+#### [OPTIONAL] Install FFTW system library
+
+This is needed only if CRAN package fftwtools needs to be installed from
+source which is usually NOT the case (most of the time a Mac binary should
+be available on CRAN).
+
+Download and install with:
+
+    cd ~/Downloads/
+    curl -O https://mac.r-project.org/libs-4/fftw-3.3.8-darwin.17-x86_64.tar.gz
+    sudo tar fvxz fftw-3.3.8-darwin.17-x86_64.tar.gz -C /
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+TESTING: If R is already installed on the machine, try to install the fftwtools
+package *from source*:
+
+    install.packages("fftwtools", type="source", repos="https://cran.r-project.org")
+
+
+
+## 3. Set up the Bioconductor software builds
 
 
 Everything in this section must be done **from the biocbuild account**.
@@ -693,8 +784,8 @@ Contact the IT folks at RPCI if that's the case:
 
 #### Check that you can send HTTPS requests to the central node
 
-    curl https://malbec2                           # from within RPCI's DMZ
-    curl https://malbec2.bioconductor.org          # from anywhere else
+    curl http://malbec2                           # from within RPCI's DMZ
+    curl http://malbec2.bioconductor.org          # from anywhere else
 
 If this is blocked by RPCI's firewall, after a while you'll get:
 
@@ -714,14 +805,15 @@ Must be done from the biocbuild account.
     cd
     git clone https://github.com/bioconductor/BBS
 
-#### Compile chown-rootadmin
+#### Compile chown-rootadmin.c
 
     cd ~/BBS/utils/
     gcc chown-rootadmin.c -o chown-rootadmin
     sudo chown root:admin chown-rootadmin
     sudo chmod 4750 chown-rootadmin
 
-TESTING: Check that the permissions on chown-rootadmin look like this:
+TESTING: Check that the permissions on the `chown-rootadmin` executable
+look like this:
 
     machv2:utils biocbuild$ ls -al chown-rootadmin
     -rwsr-x---  1 root  admin  8596 Jan 13 12:55 chown-rootadmin
@@ -729,8 +821,8 @@ TESTING: Check that the permissions on chown-rootadmin look like this:
 #### Create bbs-x.y-bioc directory structure
 
     cd
-    mkdir bbs-3.11-bioc
-    cd bbs-3.11-bioc/
+    mkdir bbs-3.14-bioc
+    cd bbs-3.14-bioc/
     mkdir log
 
 
@@ -820,7 +912,7 @@ From R:
     BiocManager::install("BiocCheck", type="source")  # required by SPB
 
 If some CRAN packages failed to compile, see _What if CRAN doesn't provide
-package binaries for macOS yet?_ below.
+package binaries for macOS yet?_ subsection below.
 
 #### [OPTIONAL] More testing
 
@@ -952,12 +1044,12 @@ For the record, here are a couple of things we tried that didn't work:
     ```
     brew install pcre2
 
-    cd ~/bbs-3.11-bioc/
+    cd ~/bbs-3.14-bioc/
     mkdir rdownloads
     cd rdownloads/
     download latest R source tarball, extract, rename
 
-    cd ~/bbs-3.11-bioc/
+    cd ~/bbs-3.14-bioc/
     mkdir R
     cd R/
     ## Use same settings as Simon:
@@ -974,7 +1066,7 @@ For the record, here are a couple of things we tried that didn't work:
 
 TESTING:
 
-    cd ~/bbs-3.11-bioc/
+    cd ~/bbs-3.14-bioc/
     R/bin/R CMD config CC
     # Start R
     pkgs <- c("rJava", "gsl", "V8", "magick", "rsvg", "pdftools",
@@ -1055,13 +1147,13 @@ NOTES:
     ```
 
 
-### 3.4 Add software builds to biocbuild crontab
+### 3.4 Add software builds to biocbuild's crontab
 
 Must be done from the biocbuild account.
 
 Add the following entry to biocbuild crontab:
 
-    00 16 * * * /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.11/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.11-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 16 * * 0-5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run
 before doing so.
@@ -1530,7 +1622,7 @@ Then:
 
 TESTING: Try to build the LowMACA package (takes about 5 min):
 
-    cd ~/bbs-3.11-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     R CMD build LowMACA
 
 
@@ -1669,7 +1761,7 @@ Logout and login again so that the changes to `/etc/profile` take effect.
 
 Try to build and check the ensemblVEP and MMAPPR2 packages:
 
-    cd ~/bbs-3.11-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
 
     R CMD build ensemblVEP
     R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
@@ -1703,7 +1795,7 @@ TESTING:
 
 Then try to build the GeneGA package:
 
-    cd ~/bbs-3.11-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     R CMD build GeneGA
 
 
@@ -1717,7 +1809,7 @@ In `/etc/profile` add:
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then try to build the ImmuneSpaceR package:
 
-    cd ~/bbs-3.11-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     R CMD build ImmuneSpaceR
 
 
@@ -1779,7 +1871,7 @@ TESTING:
 
 Then try to build the inferrnal package:
 
-    cd ~/bbs-3.11-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     R CMD build inferrnal
 
 
@@ -1804,76 +1896,7 @@ TESTING: Try to install the Travel package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.17 [OPTIONAL] Install JPEG system library
-
-This is needed only if CRAN package jpeg needs to be installed from source
-which is usually NOT the case (most of the time a Mac binary should be
-available on CRAN).
-
-Download and install with:
-
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/jpeg-9-darwin.17-x86_64.tar.gz
-    sudo tar fvxz jpeg-9-darwin.17-x86_64.tar.gz -C /
-
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-TESTING: Try to install the jpeg package *from source*:
-
-    install.packages("jpeg", type="source", repos="https://cran.r-project.org")
-    library(jpeg)
-    example(readJPEG)
-    example(writeJPEG)
-
-
-### 4.18 [OPTIONAL] Install TIFF system library
-
-This is needed only if CRAN package tiff needs to be installed from source
-which is usually NOT the case (most of the time a Mac binary should be
-available on CRAN).
-
-Download and install with:
-
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/tiff-4.1.0-darwin.17-x86_64.tar.gz
-    sudo tar fvxz tiff-4.1.0-darwin.17-x86_64.tar.gz -C /
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-TESTING: Try to install the tiff package *from source*:
-
-    install.packages("tiff", type="source", repos="https://cran.r-project.org")
-    library(tiff)
-    example(readTIFF)
-    example(writeTIFF)
-
-
-### 4.19 [OPTIONAL] Install FFTW system library
-
-This is needed only if CRAN package fftwtools needs to be installed from
-source which is usually NOT the case (most of the time a Mac binary should
-be available on CRAN).
-
-Download and install with:
-
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/fftw-3.3.8-darwin.17-x86_64.tar.gz
-    sudo tar fvxz fftw-3.3.8-darwin.17-x86_64.tar.gz -C /
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-TESTING: Try to install the fftwtools package *from source*:
-
-    install.packages("fftwtools", type="source", repos="https://cran.r-project.org")
-
-
-### 4.20 [OPTIONAL] Install autoconf & automake
+### 4.17 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -1893,7 +1916,7 @@ Then try to install the flowWorkspace package *from source*:
     BiocManager::install("flowWorkspace", type="source")
 
 
-### 4.21 Install ImageMagick
+### 4.18 Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
 package, which is now officially deprecated)
@@ -1956,39 +1979,8 @@ TESTING:
 Then try to build the flowQ package (the package makes system calls to
 standalone commands `convert`, `identify`, and `montage`):
 
-    cd ~/bbs-3.11-bioc/meat/
+    cd ~/bbs-3.14-bioc/meat/
     R CMD build flowQ
 
 
-
-## 5. More stuff to install when CRAN Mac binary packages are not available
-
-
-CRAN has a tradition of making Mac binary packages available at the last minute
-before a new R release (new R releases normally happen in Spring). This means
-that we need to be able to install many CRAN packages from source on our Mac
-builders when the BioC devel builds use R devel. Some of these packages need
-the following stuff (all available at https://mac.r-project.org/libs-4/):
-
-    gmp for CRAN package gmp
-    udunits for CRAN package units
-    #gdal, geos, and xml2 for CRAN package sf
-
-Download and install with:
-
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/gmp-6.2.0-darwin.17-x86_64.tar.gz
-    sudo tar fvxz gmp-6.2.0-darwin.17-x86_64.tar.gz -C /
-    curl -O https://mac.r-project.org/libs-4/udunits-2.2.24-darwin.17-x86_64.tar.gz
-    sudo tar fvxz udunits-2.2.24-darwin.17-x86_64.tar.gz -C /
-    #curl -O https://mac.r-project.org/libs-4/gdal-2.4.2-darwin.17-x86_64.tar.gz
-    #sudo tar fvxz gdal-2.4.2-darwin.17-x86_64.tar.gz -C /
-    #curl -O https://mac.r-project.org/libs-4/geos-3.7.2-darwin.17-x86_64.tar.gz
-    #sudo tar fvxz geos-3.7.2-darwin.17-x86_64.tar.gz -C /
-    #curl -O https://mac.r-project.org/libs-4/xml2-2.9.10-darwin.17-x86_64.tar.gz
-    #sudo tar fvxz xml2-2.9.10-darwin.17-x86_64.tar.gz -C /
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
 
