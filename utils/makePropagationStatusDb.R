@@ -311,11 +311,15 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     read.dcf(PACKAGES_path, fields=fields)
 }
 
-.fetch_available_source_pkgs <- function(final_repo)
+.fetch_available_pkgs <- function(final_repo, type, non_target_repos)
 {
-    all_repos <- c(final_repo, .get_non_target_repos())
-    contrib_urls <- contrib.url(all_repos, type="source")
-    available_pkgs <- available.packages(contrib_urls)
+    final_contrib_url <- contrib.url(final_repo, type=type)
+    ## We always look at availability of source packages in the non-target
+    ## repos, even when computing the propagation status of Windows or
+    ## Mac binaries. This is a feature!
+    non_target_contrib_urls <- contrib.url(non_target_repos, type="source")
+    all_contrib_urls <- c(final_contrib_url, all_contrib_urls)
+    available_pkgs <- available.packages(all_contrib_urls)
     available_pkgs[ , c("Package", "Version")]
 }
 
@@ -347,10 +351,8 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
         OUTGOING_pkgs <- .load_OUTGOING_pkgs(OUTGOING_subdir, type)
         .prettymsg("- Start computing propagation statuses for \"",
                    type, "\" packages:\n")
-        ## We always look at availability of source packages, even when
-        ## computing the propagation status of Windows or Mac binaries.
-        ## This is a feature!
-        available_pkgs <- .fetch_available_source_pkgs(final_repo)
+        available_pkgs <- .fetch_available_pkgs(final_repo, type,
+                                                .get_non_target_repos())
         statuses <- compute_propagation_statuses(OUTGOING_pkgs, available_pkgs)
         .prettymsg("- Done computing propagation statuses for \"",
                    type, "\" packages.\n")
