@@ -509,12 +509,15 @@ TBODY.compact.gcard TR.even_row_number .tokay2 {
 /* riesling1 */
 .riesling1,
 .gcard TD.riesling1 {
-    background: #F4EFDF;
+    background: #FBE2DD;
 }
 .riesling1.toned_down,
 TR.toned_down .riesling1,
 TBODY.compact.gcard TR.even_row_number .riesling1 {
-    background: #E4DFCF;
+    background: #EBD2CD;
+}
+DIV.riesling1 {
+    color: #500;
 }
 
 /* debina */
@@ -531,12 +534,12 @@ TBODY.compact.gcard TR.even_row_number .debina {
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
-    background: #DDF0EA;
+    background: #DCEFEA;
 }
 .merida1.toned_down,
 TR.toned_down .merida1,
 TBODY.compact.gcard TR.even_row_number .merida1 {
-    background: #CDE0DA;
+    background: #CCDFDA;
 }
 DIV.merida1 {
     color: #050;
