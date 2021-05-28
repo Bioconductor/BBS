@@ -1984,3 +1984,48 @@ standalone commands `convert`, `identify`, and `montage`):
 
 
 
+## 5. Set up other builds
+
+
+### 5.1 Annotation builds
+
+Not run on Mac at the moment.
+
+
+### 5.2 Experimental data builds
+
+Not run on Mac at the moment.
+
+
+### 5.3 Worflows builds
+
+From the biocbuild account:
+
+    mkdir -p ~/bbs-3.14-workflows/log
+
+Then add the following entry to biocbuild's crontab:
+
+    # BIOC 3.14 WORKFLOWS BUILDS
+    # --------------------------
+    
+    00 09 * * 2,5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/workflows/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-workflows/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+
+### 5.4 Books builds
+
+Not run on Mac at the moment.
+
+
+### 5.5 Long Tests builds
+
+From the biocbuild account:
+
+    mkdir -p ~/bbs-3.14-bioc-longtests/log
+
+Then add the following entry to biocbuild's crontab:
+
+    # BIOC 3.14 SOFTWARE LONGTESTS BUILDS
+    # -----------------------------------
+    
+    00 16 * * 6 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc-longtests/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc-longtests/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+

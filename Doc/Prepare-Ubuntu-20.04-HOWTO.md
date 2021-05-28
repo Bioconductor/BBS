@@ -1370,7 +1370,7 @@ As expected, this currently fails (with xps 1.49.0):
 
 ### 4.1 Annotation builds
 
-We're not building annotation packages at the moment.
+We're not building/checking annotation packages at the moment.
 
 
 ### 4.2 Experimental data builds
