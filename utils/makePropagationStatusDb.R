@@ -318,7 +318,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     ## repos, even when computing the propagation status of Windows or
     ## Mac binaries. This is a feature!
     non_target_contrib_urls <- contrib.url(non_target_repos, type="source")
-    all_contrib_urls <- c(final_contrib_url, all_contrib_urls)
+    all_contrib_urls <- c(final_contrib_url, non_target_contrib_urls)
     available_pkgs <- available.packages(all_contrib_urls)
     available_pkgs[ , c("Package", "Version")]
 }
