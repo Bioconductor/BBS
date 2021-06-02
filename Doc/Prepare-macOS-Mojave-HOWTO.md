@@ -1648,9 +1648,9 @@ see above in this file) and create the following symlinks (without them
 `sudo cpan install DBD::mysql` won't be able to find the `ssl` or `crypto`
 libraries and will fail):
 
-    cd /usr/local/Cellar/mysql-client/8.0.18/lib/
-    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1h/lib/libssl.dylib
-    ln -s /usr/local/Cellar/openssl\@1.1/1.1.1h/lib/libcrypto.dylib
+    cd /usr/local/opt/mysql-client/lib/
+    ln -s /usr/local/opt/openssl/lib/libssl.dylib
+    ln -s /usr/local/opt/openssl/lib/libcrypto.dylib
 
 
 --------------------------------------------------------------------------
