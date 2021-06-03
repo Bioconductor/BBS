@@ -88,19 +88,16 @@ In general, there are four *builds* that run during any given week:
 
 ## What builds where
 
-As of December 2017, the Linux and Windows builders are in the
-Roswell Park DMZ and the Mac builders are in MacStadium.
-
-There are plans to purchase new Mac hardware in the next 6 months
-and bring the Mac builders to the in-house DMZ.
+As of June 2021, the Linux builders are in the DFCI DMZ, the Windows builders
+are in the Roswell Park DMZ, and the Mac builders are in MacStadium.
 
 ### About the build machines.
 
 There are three build machines each for release and devel.
 
-* Linux (Ubuntu 16.04 LTS)
-* Windows Server 2012
-* Mac OX X 10.16.6 (El Capitan)
+* Linux (Ubuntu 20.04 LTS)
+* Windows Server (2019 Standard for devel and 2012 R2 Standard for release)
+* Mac OS X 10.14.6 (Mojave)
 
 ### How the build machines are organized.
 
