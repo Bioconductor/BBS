@@ -1875,7 +1875,27 @@ Then try to build the inferrnal package:
     R CMD build inferrnal
 
 
-### 4.16 Install macFUSE
+### 4.16 Install mono
+
+Required by Bioconductor package rawrr.
+
+Install with:
+
+    brew install mono
+
+TESTING
+
+    which mono  # /usr/local/bin/mono
+
+Then try to install/build/check the rawrr package:
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD INSTALL rawrr
+    R CMD build rawrr
+    R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
+
+
+### 4.17 Install macFUSE
 
 Required by Bioconductor package Travel.
 
@@ -1896,7 +1916,7 @@ TESTING: Try to install the Travel package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.17 [OPTIONAL] Install autoconf & automake
+### 4.18 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -1916,7 +1936,7 @@ Then try to install the flowWorkspace package *from source*:
     BiocManager::install("flowWorkspace", type="source")
 
 
-### 4.18 Install ImageMagick
+### 4.19 [OPTIONAL] Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
 package, which is now officially deprecated)
