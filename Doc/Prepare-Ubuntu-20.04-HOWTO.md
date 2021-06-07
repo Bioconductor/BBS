@@ -551,7 +551,8 @@ For BioC packages:
                          fuse \
                          libfuse-dev \
                          kallisto \
-                         mono-runtime
+                         mono-runtime \
+                         libmono-system-data4.0-cil
 
 Notes:
 - `graphviz` and `libgraphviz-dev` are for Rgraphviz.
@@ -569,7 +570,7 @@ Notes:
 - `infernal` is for inferrnal.
 - `fuse` and `libfuse-dev` are for Travel.
 - `kallisto` is for rkal.
-- `mono-runtime` is for rawrr.
+- `mono-runtime` and `libmono-system-data4.0-cil` are for rawrr.
 
 
 ### 1.9 Install Python 3 modules
