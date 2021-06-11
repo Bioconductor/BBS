@@ -534,7 +534,8 @@ Notes:
 
 For BioC packages:
 
-    sudo apt-get install graphviz \
+    sudo apt-get install firefox \
+                         graphviz \
                          libgraphviz-dev \
                          libgtkmm-2.4-dev \
                          libgsl-dev \
@@ -555,6 +556,13 @@ For BioC packages:
                          libmono-system-data4.0-cil
 
 Notes:
+- `firefox` (or any other web browser) is needed by many Bioconductor
+  packages which use `utils::browseURL()` to open URLs in a browser.
+  Note that `utils::browseURL()` will return a success code (0) even if
+  it fails to find a browser. As a consequence most packages will still
+  pass `R CMD build` and `R CMD check` if no browser is to be found on
+  the system, with the exception of BrowserViz whose unit tests will
+  timeout in that case.
 - `graphviz` and `libgraphviz-dev` are for Rgraphviz.
 - `libgtkmm-2.4-dev` is for HilbertVisGUI.
 - `libgsl-dev` is for all the packages that depend on the GSL.
