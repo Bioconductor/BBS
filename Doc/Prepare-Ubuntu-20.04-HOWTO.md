@@ -382,78 +382,39 @@ environment. For now `echo $DISPLAY` should show nothing.
 
 ### 1.8 Install Ubuntu/deb packages
 
-Install with:
+The packages for setting up the build system are in `BBS/Ubuntu-files/20.04`.
+They should be installed with
 
     sudo apt-get install <pkg1> <pkg2> <pkg3> ...
 
+They can also be installed with the following code where `BBS_UBUNTU_PATH`
+is the path to `BBS/Ubuntu-files/20.04` and `BBS_PACKAGES_FILE` is the
+name of the text file containing the list of packages:
+
+    BBS_UBUNTU_PATH=
+    BBS_PACKAGES_FILE=
+    sudo apt install $(cat $BBS_UBUNTU_PATH/$BBS_PACKAGES_FILE | awk '/^[^#]/ {print $1}')
+
+
 #### Always nice to have
 
-    sudo apt-get install tree manpages-dev mlocate
-
-Notes:
-- `manpages-dev` provides the man pages for the C standard lib
-- `mlocate` provides the 'locate' command
+[apt_nice_to_have.txt](../Ubuntu-files/20.04/apt_nice_to_have.txt)
 
 #### Packages required by the build system itself (BBS)
 
-    sudo apt-get install python3-minimal python3-pip git
+[apt_required_build.txt](../Ubuntu-files/20.04/apt_required_build.txt)
 
-#### Packages required to compile R
+#### Packages for compiling R
 
-Strictly required:
+[apt_required_compile_R.txt](../Ubuntu-files/20.04/apt_required_compile_R.txt) are
+required to compile R.
 
-    sudo apt-get install build-essential \
-                         gfortran \
-                         libreadline-dev \
-                         libx11-dev \
-                         libxt-dev \
-                         zlib1g-dev \
-                         libbz2-dev \
-                         liblzma-dev \
-                         libpcre2-dev \
-                         libcurl4-openssl-dev
-
-Optional (still possible to compile R without these packages but some
-capabilities will be missing):
-
-    sudo apt-get install gobjc \
-                         libpng-dev \
-                         libjpeg-dev \
-                         libtiff-dev \
-                         libcairo2-dev \
-                         libicu-dev \
-                         tcl-dev \
-                         tk-dev \
-                         default-jdk
+[apt_optional_compile_R.txt](../Ubuntu-files/20.04/apt_optional_compile_R.txt)
+are optional;  however, some capabilities will be missing.
 
 #### Packages needed to build vignettes and reference manuals
 
-    sudo apt-get install texlive \
-                         texlive-font-utils \
-                         texlive-pstricks \
-                         texlive-latex-extra \
-                         texlive-fonts-extra \
-                         texlive-bibtex-extra \
-                         texlive-science \
-                         texlive-luatex \
-                         texlive-lang-european \
-                         texi2html \
-                         texinfo \
-                         pandoc \
-                         pandoc-citeproc \
-                         biber
-                         #ttf-mscorefonts-installer
-
-Notes:
-- `texlive-font-utils` is for epstopdf.
-- `texlive-pstricks` provides `pstricks.sty`.
-- `texlive-latex-extra` provides `fullpage.sty`.
-- `texlive-fonts-extra` provides `incosolata.sty`.
-- `texlive-bibtex-extra` provides `unsrturl.bst`.
-- `texlive-science` provides `algorithm.sty`.
-- `texlive-luatex` provides `luatex85.sty`.
-- `texlive-lang-european` provides language definition files e.g. `swedish.ldf`.
-- `pandoc` and `pandoc-citeproc` are needed by CRAN package knitr.
+[apt_vignettes_reference_manuals.txt](../Ubuntu-files/20.04/apt_vignettes_reference_manuals.txt)
 
 #### Packages needed to support extra fonts (e.g. Helvetica)
 
@@ -462,98 +423,19 @@ Some R code can fail with errors like:
     Error in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)) :
       X11 font -adobe-helvetica-%s-%s-*-*-%d-*-*-*-*-*-*-*, face 1 at size 11 could not be loaded
 
-This can be solved by installing the following packages:
-
-    sudo apt-get install gsfonts-x11 \
-                         xfonts-base \
-                         xfonts-scalable \
-                         xfonts-100dpi \
-                         xfonts-75dpi \
-                         t1-xfree86-nonfree \
-                         ttf-xfree86-nonfree \
-                         ttf-xfree86-nonfree-syriac
+This can be solved by installing the packages in
+[apt_extra_fonts.txt](../Ubuntu-files/20.04/apt_extra_fonts.txt)
 
 Note that a reboot is required to make the fix effective.
 
 #### Packages needed by some CRAN and/or BioC packages
 
-For CRAN packages:
-
-    sudo apt-get install libglu1-mesa-dev \
-                         librsvg2-dev \
-                         libgmp-dev \
-                         libssl-dev \
-                         libsasl2-dev \
-                         libxml2-dev \
-                         libcurl4-openssl-dev \
-                         mpi-default-dev \
-                         libudunits2-dev \
-                         libv8-dev \
-                         libmpfr-dev \
-                         libfftw3-dev \
-                         libmysqlclient-dev \
-                         libpq-dev \
-                         libmagick++-dev \
-                         libgeos-dev \
-                         libproj-dev \
-                         libgdal-dev \
-                         libpoppler-cpp-dev \
-                         libgtk2.0-dev \
-                         libgit2-dev \
-                         jags \
-                         libprotobuf-dev \
-                         protobuf-compiler \
-                         libglpk-dev
+For CRAN packages, install [apt_cran.txt](../Ubuntu-files/20.04/apt_cran.txt).
 
 Notes:
 - Do NOT install `cwltool` (for Rcwl)! Install with `pip3` instead (see below).
-- `libglu1-mesa-dev` is for rgl.
-- `librsvg2-dev` is for rsvg.
-- `libgmp-dev` is for gmp.
-- `libssl-dev` is for openssl and mongolite.
-- `libsasl2-dev` is for mongolite.
-- `libxml2-dev` is for XML.
-- `libcurl4-openssl-dev` is for RCurl and curl.
-- `mpi-default-dev` is for Rmpi.
-- `libudunits2-dev` is for units.
-- `libv8-dev` is for V8.
-- `libmpfr-dev` is for Rmpfr.
-- `libfftw3-dev` is for fftw and fftwtools.
-- `libmysqlclient-dev` is for RMySQL.
-- `libpq-dev` is for RPostgreSQL and RPostgres.
-- `libmagick++-dev` is for magick.
-- `libgeos-dev` is for rgeos.
-- `libproj-dev` is for proj4.
-- `libgdal-dev` is for sf.
-- `libpoppler-cpp-dev` is for pdftools.
-- `libgtk2.0-dev` is for RGtk2.
-- `libgit2-dev` is for gert.
-- `jags` is for rjags.
-- `libprotobuf-dev` and `protobuf-compiler` are for protolite.
-- `libglpk-dev` is for glpkAPI and to compile igraph with GLPK support.
 
-For BioC packages:
-
-    sudo apt-get install firefox \
-                         graphviz \
-                         libgraphviz-dev \
-                         libgtkmm-2.4-dev \
-                         libgsl-dev \
-                         libsbml5-dev \
-                         automake \
-                         libnetcdf-dev \
-                         libopenbabel-dev \
-                         libeigen3-dev \
-                         clustalo \
-                         ocl-icd-opencl-dev \
-                         libavfilter-dev \
-                         libfribidi-dev \
-                         infernal \
-                         fuse \
-                         libfuse-dev \
-                         kallisto \
-                         mono-runtime \
-                         libmono-system-data4.0-cil
+For BioC packages, install [apt_bioc.txt](../Ubuntu-files/20.04/apt_bioc.txt).
 
 Notes:
 - `firefox` (or any other web browser) is needed by many Bioconductor
@@ -563,23 +445,8 @@ Notes:
   pass `R CMD build` and `R CMD check` if no browser is to be found on
   the system, with the exception of BrowserViz whose unit tests will
   timeout in that case.
-- `graphviz` and `libgraphviz-dev` are for Rgraphviz.
-- `libgtkmm-2.4-dev` is for HilbertVisGUI.
-- `libgsl-dev` is for all the packages that depend on the GSL.
-- `libsbml5-dev` is for rsbml.
-- `automake` is for RProtoBufLib.
-- `libnetcdf-dev` is for mzR, RNetCDF, etc...
-- `libopenbabel-dev` and `libeigen3-dev` are for ChemmineOB.
-- `clustalo` is for LowMACA.
-- `ocl-icd-opencl-dev` is for gpuMagic.
-- `libavfilter-dev` is for av/spatialHeatmap.
 - `libfribidi-dev` is for CRAN package textshaping which BioC package
   EnhancedVolcano indirectly depends on via ragg and ggrastr.
-- `infernal` is for inferrnal.
-- `fuse` and `libfuse-dev` are for Travel.
-- `kallisto` is for rkal.
-- `mono-runtime` and `libmono-system-data4.0-cil` are for rawrr.
-
 
 ### 1.9 Install Python 3 modules
 
@@ -588,7 +455,7 @@ Notes:
 `virtualenv` is used by the Single Package Builder. Despite python3 shipping
 with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
-    sudo -H pip3 install virtualenv
+    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_spb.txt
 
 #### Python 3 modules needed by some CRAN/Bioconductor packages
 
@@ -600,12 +467,7 @@ biocbuild for BBS or pkgbuild for the Single Package Builder). Since we
 only install _trusted_ modules, this should not be a security concern. See
 https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practice)
 
-    sudo -H pip3 install numpy scipy sklearn h5py pandas mofapy mofapy2
-    sudo -H pip3 install testresources tensorflow tensorflow_probability
-    sudo -H pip3 install h5pyd
-    sudo -H pip3 install cwltool
-    sudo -H pip3 install nbconvert jupyter
-    sudo -H pip3 install matplotlib phate
+    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
 
 Notes:
 

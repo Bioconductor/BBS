@@ -1,0 +1,11 @@
+# APT packages required to compile R
+build-essential
+gfortran
+libreadline-dev
+libx11-dev
+libxt-dev
+zlib1g-dev
+libbz2-dev
+liblzma-dev
+libpcre2-dev
+libcurl4-openssl-dev

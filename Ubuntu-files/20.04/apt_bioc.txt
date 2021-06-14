@@ -1,0 +1,21 @@
+# APT packages needed for BioC packages
+firefox                     # for packages using utils::browseURL()
+graphviz                    # for Rgraphviz
+libgraphviz-dev             # for Rgraphviz
+libgtkmm-2.4-dev            # for HilbertVisGUI
+libgsl-dev                  # for GSL
+libsbml5-dev                # for rsbml
+automake                    # for RProtoBufLib
+libnetcdf-dev               # for mzR, RNetCDF
+libopenbabel-dev            # for ChemmineOB
+libeigen3-dev               # for ChemmineOB
+clustalo                    # for LowMACA
+ocl-icd-opencl-dev          # for gpuMagic
+libavfilter-dev             # for av/spacialHeatmap
+libfribidi-dev              # for EnhancedVolcano
+infernal                    # for inferrnal
+fuse                        # for Travel
+libfuse-dev                 # for Travel
+kallisto                    # for rkal
+mono-runtime                # for rawr
+libmono-system-data4.0-cil  # for rawr

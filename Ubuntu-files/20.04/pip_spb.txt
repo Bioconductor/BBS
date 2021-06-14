@@ -1,0 +1,2 @@
+# PIP Packages required by the Single Package Builder
+virtualenv
