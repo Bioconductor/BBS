@@ -6,32 +6,39 @@ new release. This can be done the day of the release or several days after.
 Before branching, Check and make sure there is enough room on master for the 
 annotations.  If there isn't enough room follow the guidelines for moving
 old [Bioconductor releases into S3](https://github.com/Bioconductor/AWS_management/blob/master/docs/S3_website.md)
-As of release 3.11 Annotations are around 83G. 
+As of release 3.13 Annotations are around 113G. 
 
-These instructions use BioC 3.7 as the new devel version and malbec2
+These instructions use BioC 3.14 as the new devel version and nebbiolo2
 as the devel master builder.
 
-A. Set up malbec2
+As of 3.14, the linux builders have moved to DFCI in Boston. Personal accounts
+and the jump account should be set up for access.
 
-1. Create new annotation repo on devel master builder (malbec2) 
+A. Set up nebbiolo2
 
-    ssh biocadmin@malbec2.bioconductor.org
-    cd ~/PACKAGES/3.7/data
+1. Create new annotation repo on devel master builder (nebbiolo2) 
+
+    ssh to nebbiolo2 as biocpush user
+    cd ~/PACKAGES/3.14/data
     mkdir annotation
 
 2. rsync annotations from current release
 
+Because 3.13 used RPCI mablec2 and 3.14 used DFCI nebbiolo2, we could only rsync
+in one direction because of firewalls. It should work on either machine, in
+either direction in the future if under the same firewall.
+
 Dry run first.
 NOTE the trailing slash and dot '.'.
 
-    From malbec1 to malbec2 (logged into malbec2):
-    cd ~/PACKAGES/3.7/data/annotation
-    rsync --dry-run -ave ssh biocadmin@malbec1:PACKAGES/3.6/data/annotation/ .
+    From malbec2 to nebbiolo2 (logged into malbec2):
+    cd ~/PACKAGES/3.13/data/annotation
+    rsync --dry-run -ave ssh . biocpush@nebbiolo2:PACKAGES/3.14/data/annotation/
 
-    From malbec1 to malbec2 (logged into malbec1):
-    cd ~/PACKAGES/3.7/data/annotation
-    rsync --dry-run -ave ssh ~/PACKAGES/3.6/data/annotation
-    biocadmin@malbec2:PACKAGES/3.7/data/annotation/
+Live Run if all looks correct
+
+    rsync -ave ssh . biocpush@nebbiolo2:PACKAGES/3.14/data/annotation/
+
 
 3. Remove symlinks for old R versions for windows and mac
 
@@ -59,25 +66,28 @@ install.packages() even though we don't have binaries for annotations.
 A rerun of the rsync command should only show changes in the files we
 just edited.
 
+
 B. Set up master.bioconductor.org
 
 1. Log on master as webadmin
 
     ssh ubuntu@master.biocondcutor.org
     sudo su - webadmin
-    cd /extra/www/bioc/packages/3.7/data/annotation
+    cd /extra/www/bioc/packages/3.14/data/annotation
 
-Products are sent to master from both malbec2 and staging.bioconductor.org.
-Because of this, the rsync from malbec2 to master is not from the top level;
+Products are sent to master from both nebbiolo2 and staging.bioconductor.org.
+Because of this, the rsync from nebbiolo2 to master is not from the top level;
 we want to leave the products deposited by staging.bioconductor.org untouched.
 
 2. Remove symlink and create empty annotation folder
 
 There will likely be a simlink at 
 
-    /extra/www/bioc/packages/3.7/data/annotation -> ../../3.6/data/annotation
+    /extra/www/bioc/packages/3.14/data/annotation -> ../../3.13/data/annotation
 
-pointing to the 3.6 annotation repo. Remove the symlink:
+pointing to the current release annotation repo. In recent years, the symlinks
+have appeared underneath an already created annotation repostiory. The point is
+to start with a non-linked empty annotation folder.  Remove annotation and recreate:
 
     rm annotation
 
@@ -85,20 +95,24 @@ Create a new annotation folder
 
     mkdir annotation
 
-C. Back to malbec2 to run the scripts
 
-1. Remove any deprecated packages from the 3.6 annotation repo.
+C. Back to nebbiolo2 to run the propagation scripts
+
+1. Remove any deprecated packages from the 3.13 annotation repo that should not
+be included in the devel 3.14 repo.
 
 2. Update and run cronjob by hand (should be commented out). 
 
-  Symlink must be gone on master before running this!
+  Symlink must be gone on master before running this!!
 
-  Run the crontab entry by hand. Monitor ~/cron.log/3.7/propagate-data-annotation-* log
+  Run the crontab entry by hand. Monitor ~/cron.log/3.14/propagate-data-annotation-* log
   file.
 
-3. Test BiocManager::install() to see if it finds the new repo.
+3. Test BiocManager::install() to see if it finds the new repo. Try installing a
+package that should be found and try installing a removed package that should
+fail.
 
-D. Update bioconductor.org/config.yaml to build landing pages for 3.7.
+D. Update bioconductor.org/config.yaml to build landing pages for 3.14.
    Uncomment 'data/annotation':
 
     devel_repos:
