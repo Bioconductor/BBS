@@ -636,23 +636,23 @@ def STAGE5():
 
 ### Return the stages to run in one string.
 ### Can return special strings "all" o "all-no-bin".
-def stages_to_run():
+def stages_to_run(argv):
     usage_msg = 'Usage:\n' + \
         '    BBS-run.py\n' + \
         'or:\n' + \
         '    BBS-run.py no-bin\n' + \
         'or:\n' + \
         '    BBS-run.py STAGEx STAGEy ...\n'
-    argc = len(sys.argv)
+    argc = len(argv)
     if argc <= 1:
         return "all"
-    arg1 = sys.argv[1]
+    arg1 = argv[1]
     if arg1 == "no-bin":
         if argc > 2:
             sys.exit(usage_msg)
         return "all-no-bin"
     stages = ""
-    for stage in sys.argv[1:]:
+    for stage in argv[1:]:
         if stage not in ['STAGE2', 'STAGE3', 'STAGE4', 'STAGE5']:
             print("ERROR: Invalid stage: %s" % stage)
             print()
@@ -663,7 +663,7 @@ def stages_to_run():
     return stages
 
 if __name__ == "__main__":
-    stages = stages_to_run()
+    stages = stages_to_run(sys.argv)
     print()
     print("BBS> ==============================================================")
     if stages in ["all", "all-no-bin"]:
