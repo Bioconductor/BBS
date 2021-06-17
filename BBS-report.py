@@ -788,7 +788,7 @@ def _get_incoming_raw_result_path(pkg, node_id, stage, suffix):
                         node_id, stage, filename)
     return path
 
-def _get_outgoing_raw_result_path(pkg, node_id, stage, suffix)
+def _get_outgoing_raw_result_path(pkg, node_id, stage, suffix):
     filename = '%s-%s' % (stage, suffix)
     return os.path.join(pkg, 'raw-results', node_id, filename)
 
