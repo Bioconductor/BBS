@@ -1426,7 +1426,10 @@ def make_NodeInfo_page(Node_rdir, node):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    out.write('<H1>%s</H1>\n' % page_title)
+    write_timestamp(out)
+    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
+              (node.hostname.replace(".", "_"), page_title))
+    out.write('<BR>\n')
 
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     out.write('<TABLE>\n')
@@ -1545,6 +1548,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
+    out.write('<BR>\n')
 
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     filename = 'NodeInfo/R-instpkgs.txt'
