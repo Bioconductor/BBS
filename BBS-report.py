@@ -900,6 +900,8 @@ def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
 
     write_motd_asTABLE(out)
 
+    url = '%s/raw-results/' % pkg
+    out.write('<P><A href="%s">raw results</A></P>\n' % url)
     leafreport_ref = LeafReportReference(pkg, None, None, None)
     write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
@@ -1228,6 +1230,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
 
     write_motd_asTABLE(out)
 
+    url = '%s/raw-results/' % pkg
+    out.write('<P><A href="%s">raw results</A></P>\n' % url)
     write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
     write_notes_to_developer(out, pkg)
