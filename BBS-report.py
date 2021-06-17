@@ -1544,7 +1544,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
     out.write('<BR>\n')
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
-              (node_hostname.replace(".", "_"), page_title))
+              (node.hostname.replace(".", "_"), page_title))
 
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     filename = 'NodeInfo/R-instpkgs.txt'
@@ -1659,6 +1659,7 @@ def write_node_report(node, allpkgs, quickstats):
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
+
     write_motd_asTABLE(out)
 
     write_glyph_and_propagation_LED_table(out)
