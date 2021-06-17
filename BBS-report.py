@@ -1296,11 +1296,9 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
           "and populating them with index.html files ...", end=" ")
     sys.stdout.flush()
     for pkg in allpkgs:
-        try:
-            os.mkdir(pkg)
-        except:
-            print("mkdir failed in make_all_LeaveReports '%s'" % pkg)
-            continue
+        os.mkdir(pkg)
+        if not no_raw_results:
+            os.mkdir(os.path.join(pkg, 'raw-results'))
         if allpkgs_inner_rev_deps != None:
             pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
         else:
@@ -1309,6 +1307,8 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
     print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
+        if not no_raw_results:
+            os.mkdir(os.path.join(pkg, 'raw-results', node))
         make_node_LeafReports(allpkgs, node)
     return
 
