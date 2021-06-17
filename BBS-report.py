@@ -1789,19 +1789,19 @@ if __name__ == "__main__":
 
     print("BBS> [stage6d] cp %s %s/" % \
           (BBSutils.meat_index_file, report_path))
-        shutil.copy(BBSutils.meat_index_file, report_path)
+    shutil.copy(BBSutils.meat_index_file, report_path)
 
     print("BBS> [stage6d] cp %s %s/" % \
           (BBSutils.skipped_index_file, report_path))
-        shutil.copy(BBSutils.skipped_index_file, report_path)
+    shutil.copy(BBSutils.skipped_index_file, report_path)
 
     print("BBS> [stage6d] cp %s %s/" % \
           (BBSreportutils.BUILD_STATUS_DB_file, report_path))
-        shutil.copy(BBSreportutils.BUILD_STATUS_DB_file, report_path)
+    shutil.copy(BBSreportutils.BUILD_STATUS_DB_file, report_path)
 
     print("BBS> [stage6d] cp %s %s/" % \
           ('PROPAGATION_STATUS_DB.txt', report_path))
-        shutil.copy('PROPAGATION_STATUS_DB.txt', report_path)
+    shutil.copy('PROPAGATION_STATUS_DB.txt', report_path)
 
     print("BBS> [stage6d] cd %s/" % report_path)
     os.chdir(report_path)
