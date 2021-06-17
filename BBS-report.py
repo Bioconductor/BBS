@@ -840,7 +840,7 @@ def write_motd_asTABLE(out):
     out.write('</DIV>\n')
     return
 
-def write_notes_to_developer(out):
+def write_notes_to_developer(out, pkg):
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
     if BBSvars.subbuilds != "bioc" and not os.path.exists('Renviron.bioc'):
@@ -1228,7 +1228,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
 
     write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
-    write_notes_to_developer(out)
+    write_notes_to_developer(out, pkg)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
