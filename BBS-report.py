@@ -782,11 +782,15 @@ def write_compact_gcard_list(out, node, allpkgs,
 ### Leaf reports
 ##############################################################################
 
-def _get_raw_result_path(pkg, node_id, stage, suffix):
-    filename = "%s.%s-%s" % (pkg, stage, suffix)
-    path = os.path.join(BBSvars.central_rdir_path, "products-in",
+def _get_incoming_raw_result_path(pkg, node_id, stage, suffix):
+    filename = '%s.%s-%s' % (pkg, stage, suffix)
+    path = os.path.join(BBSvars.central_rdir_path, 'products-in',
                         node_id, stage, filename)
     return path
+
+def _get_outgoing_raw_result_path(pkg, node_id, stage, suffix)
+    filename = '%s-%s' % (stage, suffix)
+    return os.path.join(pkg, 'raw-results', node_id, filename)
 
 def _get_Rcheck_path(pkg, node_id):
     Rcheck_dir = pkg + ".Rcheck"
@@ -912,7 +916,10 @@ def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
 
 def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<HR>\n<H3>Summary</H3>\n')
-    filepath = _get_raw_result_path(pkg, node_id, stage, "summary.dcf")
+    filepath = _get_incoming_raw_result_path(pkg, node_id, stage, 'summary.dcf')
+    if not no_raw_results:
+        dest = _get_outgoing_raw_result_path(pkg, node_id, stage, 'summary.dcf')
+        shutil.copyfile(filepath, dest)
     summary = bbs.parse.parse_DCF(filepath, merge_records=True)
     out.write('<DIV class="%s hscrollable">\n' % \
               node_hostname.replace(".", "_"))
@@ -965,15 +972,16 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
-    filepath = _get_raw_result_path(pkg, node_id, stage, "out.txt")
-
+    filepath = _get_incoming_raw_result_path(pkg, node_id, stage, 'out.txt')
     #if not os.path.exists(filepath):
     #    out.write('<P class="noresult"><SPAN>')
     #    out.write('Due to an anomaly in the Build System, this output ')
     #    out.write('is not available. We apologize for the inconvenience.')
     #    out.write('</SPAN></P>\n')
     #    return
-
+    if not no_raw_results:
+        dest = _get_outgoing_raw_result_path(pkg, node_id, stage, 'out.txt')
+        shutil.copyfile(filepath, dest)
     ## Encoding is unknown so open in binary mode.
     ## write_file_asHTML() will try to decode with bbs.parse.bytes2str()
     f = open(filepath, "rb")
