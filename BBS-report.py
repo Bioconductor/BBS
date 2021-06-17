@@ -899,14 +899,16 @@ def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
 
     write_motd_asTABLE(out)
 
+    write_notes_to_developer(out, pkg)
+
+    leafreport_ref = LeafReportReference(pkg, None, None, None)
+    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
+
     if not no_raw_results:
         raw_results_rel_url = 'raw-results/'
         out.write('<P style="text-align: center;">')
         out.write('<A href="%s">raw results</A>' % raw_results_rel_url)
         out.write('<P>\n')
-
-    leafreport_ref = LeafReportReference(pkg, None, None, None)
-    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
     if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
         quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
@@ -1232,15 +1234,15 @@ def make_LeafReport(leafreport_ref, allpkgs):
 
     write_motd_asTABLE(out)
 
+    write_notes_to_developer(out, pkg)
+
+    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
+
     if not no_raw_results:
         raw_results_rel_url = 'raw-results/'
         out.write('<P style="text-align: center;">')
         out.write('<A href="%s">raw results</A>' % raw_results_rel_url)
         out.write('<P>\n')
-
-    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
-
-    write_notes_to_developer(out, pkg)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
