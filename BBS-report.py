@@ -1787,20 +1787,24 @@ if __name__ == "__main__":
     print("BBS> [stage6d] remake_dir %s" % report_path)
     bbs.fileutils.remake_dir(report_path)
 
+    print("BBS> [stage6d] cp %s %s/" % \
+          (BBSutils.meat_index_file, report_path))
+        shutil.copy(BBSutils.meat_index_file, report_path)
+
+    print("BBS> [stage6d] cp %s %s/" % \
+          (BBSutils.skipped_index_file, report_path))
+        shutil.copy(BBSutils.skipped_index_file, report_path)
+
+    print("BBS> [stage6d] cp %s %s/" % \
+          (BBSreportutils.BUILD_STATUS_DB_file, report_path))
+        shutil.copy(BBSreportutils.BUILD_STATUS_DB_file, report_path)
+
+    print("BBS> [stage6d] cp %s %s/" % \
+          ('PROPAGATION_STATUS_DB.txt', report_path))
+        shutil.copy('PROPAGATION_STATUS_DB.txt', report_path)
+
     print("BBS> [stage6d] cd %s/" % report_path)
     os.chdir(report_path)
-
-    print("BBS> [stage6d] Get %s from %s/" % \
-          (BBSutils.meat_index_file, BBSvars.Central_rdir.label))
-    BBSvars.Central_rdir.Get(BBSutils.meat_index_file)
-
-    print("BBS> [stage6d] Get %s from %s/" % \
-          (BBSutils.skipped_index_file, BBSvars.Central_rdir.label))
-    BBSvars.Central_rdir.Get(BBSutils.skipped_index_file)
-
-    print("BBS> [stage6d] Get %s from %s/" % \
-          (BBSreportutils.BUILD_STATUS_DB_file, BBSvars.Central_rdir.label))
-    BBSvars.Central_rdir.Get(BBSreportutils.BUILD_STATUS_DB_file)
 
     BBSreportutils.set_NODES(report_nodes)
 
