@@ -895,8 +895,9 @@ def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     write_timestamp(out)
-    out.write('<BR>\n')
     out.write('<H2>%s</H2>\n' % page_title)
+    out.write('<BR>\n')
+
     write_motd_asTABLE(out)
 
     leafreport_ref = LeafReportReference(pkg, None, None, None)
@@ -1221,9 +1222,9 @@ def make_LeafReport(leafreport_ref, allpkgs):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     write_timestamp(out)
-    out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node_hostname.replace(".", "_"), page_title))
+    out.write('<BR>\n')
 
     write_motd_asTABLE(out)
 
@@ -1426,7 +1427,6 @@ def make_NodeInfo_page(Node_rdir, node):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     write_timestamp(out)
-    out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
     out.write('<BR>\n')
@@ -1545,7 +1545,6 @@ def make_Rinstpkgs_page(Node_rdir, node):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     write_timestamp(out)
-    out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
     out.write('<BR>\n')
@@ -1660,9 +1659,9 @@ def write_node_report(node, allpkgs, quickstats):
     out.write('<BODY onLoad="initialize();">\n')
     write_goback_asHTML(out, "./index.html")
     write_timestamp(out)
-    out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
+    out.write('<BR>\n')
 
     write_motd_asTABLE(out)
 
