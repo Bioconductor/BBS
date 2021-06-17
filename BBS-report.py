@@ -831,6 +831,13 @@ def write_goback_asHTML(out, href, current_letter=None):
     out.write('</TR></TABLE>\n')
     return
 
+def write_timestamp(out):
+    out.write('<P class="time_stamp">\n')
+    date = bbs.jobs.currentDateString()
+    out.write('This page was generated on %s.\n' % date)
+    out.write('</P>\n')
+    return
+
 def write_motd_asTABLE(out):
     if not 'BBS_REPORT_MOTD' in os.environ:
         return
@@ -888,12 +895,8 @@ def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
-    #out.write('<H1>%s</H1>\n' % title)
+    write_timestamp(out)
     out.write('<H2>%s</H2>\n' % page_title)
-    out.write('<P class="time_stamp">\n')
-    date = bbs.jobs.currentDateString()
-    out.write('This page was generated on %s.\n' % date)
-    out.write('</P>\n')
     write_motd_asTABLE(out)
 
     leafreport_ref = LeafReportReference(pkg, None, None, None)
@@ -1218,12 +1221,9 @@ def make_LeafReport(leafreport_ref, allpkgs):
     current_letter = pkg[0:1].upper()
     write_goback_asHTML(out, "../index.html", current_letter)
     out.write('<BR>\n')
+    write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node_hostname.replace(".", "_"), page_title))
-    out.write('<P class="time_stamp">\n')
-    date = bbs.jobs.currentDateString()
-    out.write('This page was generated on %s.\n' % date)
-    out.write('</P>\n')
 
     write_motd_asTABLE(out)
 
@@ -1338,10 +1338,7 @@ def write_BioC_mainpage_top_asHTML(out):
         out.write('<P style="text-align: center;">')
         out.write('See <A href="%s">here</A> ' % long_tests_howto_url)
         out.write('for how to subscribe to these builds.</P>\n')
-    out.write('<P class="time_stamp">\n')
-    date = bbs.jobs.currentDateString()
-    out.write('This page was generated on %s.\n' % date)
-    out.write('</P>\n')
+    write_timestamp(out)
     write_motd_asTABLE(out)
     if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
         out.write('<DIV class="svn_info">\n')
@@ -1365,10 +1362,7 @@ def write_CRAN_mainpage_top_asHTML(out):
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY onLoad="initialize();">\n')
     out.write('<H1>%s</H1>\n' % title)
-    out.write('<P class="time_stamp">\n')
-    date = bbs.jobs.currentDateString()
-    out.write('This page was generated on %s.\n' % date)
-    out.write('</P>\n')
+    write_timestamp(out)
     write_motd_asTABLE(out)
     return
 
@@ -1548,11 +1542,9 @@ def make_Rinstpkgs_page(Node_rdir, node):
     out.write('<BODY>\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
-    out.write('<H1>%s</H1>\n' % page_title)
-    out.write('<P class="time_stamp">\n')
-    date = bbs.jobs.currentDateString()
-    out.write('This page was generated on %s.\n' % date)
-    out.write('</P>\n')
+    write_timestamp(out)
+    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
+              (node_hostname.replace(".", "_"), page_title))
 
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     filename = 'NodeInfo/R-instpkgs.txt'
@@ -1664,12 +1656,9 @@ def write_node_report(node, allpkgs, quickstats):
     out.write('<BODY onLoad="initialize();">\n')
     write_goback_asHTML(out, "./index.html")
     out.write('<BR>\n')
+    write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
-    out.write('<P class="time_stamp">\n')
-    date = bbs.jobs.currentDateString()
-    out.write('This page was generated on %s.\n' % date)
-    out.write('</P>\n')
     write_motd_asTABLE(out)
 
     write_glyph_and_propagation_LED_table(out)
