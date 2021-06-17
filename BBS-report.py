@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: June 16, 2021
 ###
 
 import sys
@@ -782,12 +782,17 @@ def write_compact_gcard_list(out, node, allpkgs,
 ### Leaf reports
 ##############################################################################
 
-def _wopen_leafreport_input_file(pkg, node_id, stage, filename,
-                                 return_None_on_error=False):
-    if pkg:
-        filename = "%s.%s-%s" % (pkg, stage, filename)
-    rdir = BBSvars.products_in_rdir.subdir('%s/%s' % (node_id, stage))
-    return rdir.WOpen(filename, return_None_on_error=return_None_on_error)
+def _get_raw_result_path(pkg, node_id, stage, suffix):
+    filename = "%s.%s-%s" % (pkg, stage, suffix)
+    path = os.path.join(BBSvars.central_rdir_path, "products-in",
+                        node_id, stage, filename)
+    return path
+
+def _get_Rcheck_path(pkg, node_id):
+    Rcheck_dir = pkg + ".Rcheck"
+    path = os.path.join(BBSvars.central_rdir_path, "products-in",
+                        node_id, "checksrc", Rcheck_dir)
+    return path
 
 def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
@@ -835,7 +840,38 @@ def write_motd_asTABLE(out):
     out.write('</DIV>\n')
     return
 
-def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps=None):
+def write_notes_to_developer(out):
+    # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
+    # be the current working directory.
+    if BBSvars.subbuilds != "bioc" and not os.path.exists('Renviron.bioc'):
+        return
+    out.write('<DIV class="motd">\n')
+    out.write('<TABLE><TR><TD>\n')
+    out.write('To the developers/maintainers ')
+    out.write('of the %s package:<BR>\n' % pkg)
+    if BBSvars.subbuilds == "bioc" and os.path.exists('Renviron.bioc'):
+        prefix = '- '
+    else:
+        prefix = ''
+    if BBSvars.subbuilds == "bioc":
+        url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
+        out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
+        out.write('48 hours) for your latest push to ')
+        out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
+        out.write('to<BR>reflect on this report. ')
+        out.write('See <I>How and When does the builder pull? ')
+        out.write('When will my changes propagate?</I> ')
+        out.write('<A href="%s">here</A> for more information.<BR>\n' % url)
+    if os.path.exists('Renviron.bioc'):
+        out.write('%sMake sure to use the ' % prefix)
+        out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
+        out.write('in order to reproduce any error ')
+        out.write('or warning you see on this page.<BR>\n')
+    out.write('</TD></TR></TABLE>\n')
+    out.write('</DIV>\n')
+    return
+
+def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     #title = BBSreportutils.make_report_title(report_nodes)
 
@@ -876,20 +912,17 @@ def make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps=None):
 
 def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<HR>\n<H3>Summary</H3>\n')
-    dcf = _wopen_leafreport_input_file(pkg, node_id, stage, "summary.dcf")
+    filepath = _get_raw_result_path(pkg, node_id, stage, "summary.dcf")
+    summary = bbs.parse.parse_DCF(filepath, merge_records=True)
     out.write('<DIV class="%s hscrollable">\n' % \
               node_hostname.replace(".", "_"))
     out.write('<TABLE>\n')
-    while True:
-        field_val = bbs.parse.get_next_DCF_fieldval(dcf, True)
-        if not field_val:
-            break
-        if field_val[0] == 'Status':
-            field_val = (field_val[0], _status_as_glyph(field_val[1]))
-        out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % field_val)
+    for key, value in summary.items():
+        if key == 'Status':
+            value = _status_as_glyph(value)
+        out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % (key, value))
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
-    dcf.close()
     return
 
 def write_filepath_asHTML(out, Rcheck_dir, filepath):
@@ -932,37 +965,42 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
-    try:
-        f = _wopen_leafreport_input_file(pkg, node_id, stage, "out.txt")
-    except bbs.rdir.WOpenError:
-        out.write('<P class="noresult"><SPAN>')
-        out.write('Due to an anomaly in the Build System, this output ')
-        out.write('is not available. We apologize for the inconvenience.')
-        out.write('</SPAN></P>\n')
-    else:
-        write_file_asHTML(out, f, node_hostname)
-        f.close()
+    filepath = _get_raw_result_path(pkg, node_id, stage, "out.txt")
+
+    #if not os.path.exists(filepath):
+    #    out.write('<P class="noresult"><SPAN>')
+    #    out.write('Due to an anomaly in the Build System, this output ')
+    #    out.write('is not available. We apologize for the inconvenience.')
+    #    out.write('</SPAN></P>\n')
+    #    return
+
+    ## Encoding is unknown so open in binary mode.
+    ## write_file_asHTML() will try to decode with bbs.parse.bytes2str()
+    f = open(filepath, "rb")
+    write_file_asHTML(out, f, node_hostname)
+    f.close()
     return
 
 def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
     out.write('<HR>\n<H3>Installation output</H3>\n')
-    Rcheck_dir = pkg + ".Rcheck"
-    Rcheck_path = os.path.join(BBSvars.central_rdir_path, "products-in",
-                               node_id, "checksrc", Rcheck_dir)
-    if not os.path.exists(Rcheck_path):
-        out.write('<P class="noresult"><SPAN>')
-        out.write('Due to an anomaly in the Build System, this output ')
-        out.write('is not available. We apologize for the inconvenience.')
-        out.write('</SPAN></P>\n')
-        return
+    Rcheck_path = _get_Rcheck_path(pkg, node_id)
     filename = '00install.out'
-    filepath = os.path.join(Rcheck_dir, filename)
-    f = _wopen_leafreport_input_file(None, node_id, "checksrc", filepath,
-                                     return_None_on_error=True)
-    if f != None:
-        write_filepath_asHTML(out, Rcheck_dir, filename)
-        write_file_asHTML(out, f, node_hostname)
-        f.close()
+    filepath = os.path.join(Rcheck_path, filename)
+
+    #if not os.path.exists(filepath):
+    #    out.write('<P class="noresult"><SPAN>')
+    #    out.write('Due to an anomaly in the Build System, this output ')
+    #    out.write('is not available. We apologize for the inconvenience.')
+    #    out.write('</SPAN></P>\n')
+    #    return
+
+    ## Encoding is unknown so open in binary mode.
+    ## write_file_asHTML() will try to decode with bbs.parse.bytes2str()
+    f = open(filepath, "rb")
+    Rcheck_dir = pkg + ".Rcheck"
+    write_filepath_asHTML(out, Rcheck_dir, filename)
+    write_file_asHTML(out, f, node_hostname)
+    f.close()
     return
 
 def build_test2filename_dict(dirpath, dups):
@@ -1190,33 +1228,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
 
     write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
-    # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
-    # be the current working directory.
-    if BBSvars.subbuilds == "bioc" or os.path.exists('Renviron.bioc'):
-        out.write('<DIV class="motd">\n')
-        out.write('<TABLE><TR><TD>\n')
-        out.write('To the developers/maintainers ')
-        out.write('of the %s package:<BR>\n' % pkg)
-        if BBSvars.subbuilds == "bioc" and os.path.exists('Renviron.bioc'):
-            prefix = '- '
-        else:
-            prefix = ''
-        if BBSvars.subbuilds == "bioc":
-            url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
-            out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
-            out.write('48 hours) for your latest push to ')
-            out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
-            out.write('to<BR>reflect on this report. ')
-            out.write('See <I>How and When does the builder pull? ')
-            out.write('When will my changes propagate?</I> ')
-            out.write('<A href="%s">here</A> for more information.<BR>\n' % url)
-        if os.path.exists('Renviron.bioc'):
-            out.write('%sMake sure to use the ' % prefix)
-            out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
-            out.write('in order to reproduce any error ')
-            out.write('or warning you see on this page.<BR>\n')
-        out.write('</TD></TR></TABLE>\n')
-        out.write('</DIV>\n')
+    write_notes_to_developer(out)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
@@ -1300,7 +1312,7 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
             pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
         else:
             pkg_rev_deps = None
-        make_MultiPlatformPkgIndexPage(pkg, allpkgs, pkg_rev_deps)
+        make_package_index_page(pkg, allpkgs, pkg_rev_deps)
     print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
