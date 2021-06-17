@@ -896,7 +896,6 @@ def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
     write_goback_asHTML(out, "../index.html", current_letter)
     write_timestamp(out)
     out.write('<H2>%s</H2>\n' % page_title)
-    out.write('<BR>\n')
 
     write_motd_asTABLE(out)
 
@@ -1230,7 +1229,6 @@ def make_LeafReport(leafreport_ref, allpkgs):
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node_hostname.replace(".", "_"), page_title))
-    out.write('<BR>\n')
 
     write_motd_asTABLE(out)
 
