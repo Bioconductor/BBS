@@ -1308,7 +1308,7 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
         if not no_raw_results:
-            os.mkdir(os.path.join(pkg, 'raw-results', node))
+            os.mkdir(os.path.join(pkg, 'raw-results', node.node_id))
         make_node_LeafReports(allpkgs, node)
     return
 
