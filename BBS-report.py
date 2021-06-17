@@ -986,21 +986,14 @@ def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
     Rcheck_path = _get_Rcheck_path(pkg, node_id)
     filename = '00install.out'
     filepath = os.path.join(Rcheck_path, filename)
-
-    #if not os.path.exists(filepath):
-    #    out.write('<P class="noresult"><SPAN>')
-    #    out.write('Due to an anomaly in the Build System, this output ')
-    #    out.write('is not available. We apologize for the inconvenience.')
-    #    out.write('</SPAN></P>\n')
-    #    return
-
-    ## Encoding is unknown so open in binary mode.
-    ## write_file_asHTML() will try to decode with bbs.parse.bytes2str()
-    f = open(filepath, "rb")
-    Rcheck_dir = pkg + ".Rcheck"
-    write_filepath_asHTML(out, Rcheck_dir, filename)
-    write_file_asHTML(out, f, node_hostname)
-    f.close()
+    if os.path.exists(filepath):
+        Rcheck_dir = pkg + ".Rcheck"
+        write_filepath_asHTML(out, Rcheck_dir, filename)
+        ## Encoding is unknown so open in binary mode.
+        ## write_file_asHTML() will try to decode with bbs.parse.bytes2str()
+        f = open(filepath, "rb")
+        write_file_asHTML(out, f, node_hostname)
+        f.close()
     return
 
 def build_test2filename_dict(dirpath, dups):
