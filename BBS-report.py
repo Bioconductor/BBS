@@ -1806,6 +1806,8 @@ if __name__ == "__main__":
     print("BBS> [stage6d] cd %s/" % report_path)
     os.chdir(report_path)
 
+    BBSreportutils.write_htaccess_file()
+
     BBSreportutils.set_NODES(report_nodes)
 
     ## Compute 'meat_index' (dict), 'skipped_pkgs' (list),

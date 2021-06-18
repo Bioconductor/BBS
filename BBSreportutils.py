@@ -17,6 +17,33 @@ import BBSvars
 
 
 ##############################################################################
+### write_htaccess_file()
+##############################################################################
+
+### Placing this .haccess file in the top-level folder of the build report
+### will help the various text files (i.e. non-HTML) included in the report
+### get properly displayed in a browser. For example, without this .haccess
+### file, things like R's beloved fancy quotes that are commonly found in
+### "raw result" files will look like garbbage (e.g. â€˜Rhdf5libâ€™) in most
+### browsers.
+### Note that using the UTF-8 encoding solves most displaying issues but not
+### all of them. For example it won't help with charaters from exotic encodings
+### that are sometimes found in the meat-index.dcf file (in the Maintainer
+### field of some packages).
+### Finally note that using this .htaccess file only solves a cosmetic issue
+### (i.e. it only affects how the text files included in the report get
+### displayed in a browser). Most importantly, these text files are what they
+### are and tools like wget or curl will download them as-is, regardless of
+### what their original encoding is and regardless of what encoding is
+### specified in the .htaccess file.
+def write_htaccess_file():
+    out = open('.htaccess', 'w')
+    out.write('AddCharset UTF-8 .dcf .txt .TXT .log\n')
+    out.close()
+    return
+
+
+##############################################################################
 ###
 ### The NODES db (in memory)
 ###
