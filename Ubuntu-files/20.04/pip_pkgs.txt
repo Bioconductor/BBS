@@ -1,0 +1,17 @@
+# PIP packages required by CRAN or Bioconductor packages
+numpy                       # BiocSklearn, MOFA, MOFA2, CChIPRep
+scipy                       # MOFA, MOFA2, Python sklearn package
+sklearn                     # BiocSklearn, MOFA, MOFA2
+h5py == 2.10.0              # BiocSklearn, MOFA, MOFA2
+pandas                      # BiocSklearn, MOFA, MOFA2
+mofapy                      # MOFA, MOFA2
+mofapy2                     # MOFA, MOFA2
+testresources
+tensorflow == 2.4.1         # scAlign, netReg, DeepPINCS
+tensorflow_probability      # netReg
+h5pyd                       # rhdf5client
+cwltool                     # Rcwl
+nbconvert                   # CRAN nbconvertR for BioC destiny
+jupyter                     # CRAN nbconvertR for BioC destiny 
+matplotlib                  # CRAN phateR for BioC phemd
+phate                       # CRAN phateR for BioC phemd

@@ -1,0 +1,10 @@
+# APT optional packages for compiling R
+gobjc
+libpng-dev
+libjpeg-dev
+libtiff-dev
+libcairo2-dev
+libicu-dev
+tcl-dev
+tk-dev
+default-jdk
