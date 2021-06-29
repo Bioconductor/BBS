@@ -432,9 +432,6 @@ Note that a reboot is required to make the fix effective.
 
 For CRAN packages, install [apt_cran.txt](../Ubuntu-files/20.04/apt_cran.txt).
 
-Notes:
-- Do NOT install `cwltool` (for Rcwl)! Install with `pip3` instead (see below).
-
 For BioC packages, install [apt_bioc.txt](../Ubuntu-files/20.04/apt_bioc.txt).
 
 Notes:
@@ -501,8 +498,6 @@ Notes:
 - `tensorflow_probability` is needed by Bioconductor package netReg.
 
 - `h5pyd` is needed by Bioconductor package rhdf5client.
-
-- `cwltool` is needed by Bioconductor package Rcwl.
 
 - `nbconvert` and `jupyter` are needed by CRAN package nbconvertR which is
   itself used by Bioconductor package destiny. Note that `jupyter --version`
