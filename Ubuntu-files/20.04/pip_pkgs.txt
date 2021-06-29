@@ -10,7 +10,6 @@ testresources
 tensorflow == 2.4.1         # scAlign, netReg, DeepPINCS
 tensorflow_probability      # netReg
 h5pyd                       # rhdf5client
-cwltool                     # Rcwl
 nbconvert                   # CRAN nbconvertR for BioC destiny
 jupyter                     # CRAN nbconvertR for BioC destiny 
 matplotlib                  # CRAN phateR for BioC phemd
