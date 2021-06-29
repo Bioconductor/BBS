@@ -536,16 +536,10 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
     pip3 install numpy scipy sklearn h5py pandas mofapy mofapy2
     pip3 install tensorflow tensorflow_probability
     pip3 install h5pyd
-    pip3 install cwltool
     pip3 install nbconvert jupyter
     pip3 install matplotlib phate
 
 TESTING:
-
-- `cwltool --version` should display something like this:
-    ```
-    /usr/local/bin/cwltool 3.0.20201026152241
-    ```
 
 - `jupyter --version` should display something like this:
     ```
