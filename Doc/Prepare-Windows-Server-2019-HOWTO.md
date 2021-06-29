@@ -195,7 +195,6 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
     pip install numpy scipy sklearn h5py pandas mofapy mofapy2
     pip install tensorflow tensorflow_probability
     pip install h5pyd
-    pip install cwltool
     pip install nbconvert
 
 No longer needed (as of Nov. 2020):
@@ -221,8 +220,6 @@ Notes:
 - `tensorflow_probability` is needed by Bioconductor package netReg.
 
 - `h5pyd` is needed by Bioconductor package rhdf5client.
-
-- `cwltool` is needed by Bioconductor package Rcwl.
 
 - `nbconvert` is needed by CRAN package nbconvertR which is itself used by
   Bioconductor package destiny.
