@@ -949,8 +949,8 @@ Quit R (do NOT save the workspace image).
 
 TESTING:
 
-- Make sure that the 2 edited files can be accessed from the pkgbuild account.
-  From the `pkgbuild` account in a PowerShell window:
+- Make sure that the 2 edited files can be accessed from the `pkgbuild`
+  account. From the `pkgbuild` account in a PowerShell window:
     ```
     C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.14-bioc\R\etc\i386\Makeconf
     C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.14-bioc\R\etc\x64\Makeconf
