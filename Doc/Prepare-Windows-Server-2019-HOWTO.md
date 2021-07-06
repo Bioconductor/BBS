@@ -1,6 +1,7 @@
 # How to set up a Windows Server 2019 system for the daily builds
 
 
+
 This document describes the process of setting up a Windows Server 2019
 machine to run the Bioconductor daily builds. It's been used to configure
 machines running Windows Server 2019 Standard or Windows Server 2019
@@ -947,6 +948,13 @@ Quit R (do NOT save the workspace image).
    ```
 
 TESTING:
+
+- Make sure that the 2 edited files can be accessed from the pkgbuild account.
+  From the `pkgbuild` account in a PowerShell window:
+    ```
+    C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.14-bioc\R\etc\i386\Makeconf
+    C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.14-bioc\R\etc\x64\Makeconf
+    ```
 
 - Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
   open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
