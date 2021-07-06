@@ -984,12 +984,12 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
     filepath = _get_incoming_raw_result_path(pkg, node_id, stage, 'out.txt')
-    #if not os.path.exists(filepath):
-    #    out.write('<P class="noresult"><SPAN>')
-    #    out.write('Due to an anomaly in the Build System, this output ')
-    #    out.write('is not available. We apologize for the inconvenience.')
-    #    out.write('</SPAN></P>\n')
-    #    return
+    if not os.path.exists(filepath):
+        out.write('<P class="noresult"><SPAN>')
+        out.write('Due to an anomaly in the Build System, this output ')
+        out.write('is not available. We apologize for the inconvenience.')
+        out.write('</SPAN></P>\n')
+        return
     if not no_raw_results:
         dest = _get_outgoing_raw_result_path(pkg, node_id, stage, 'out.txt')
         shutil.copyfile(filepath, dest)
