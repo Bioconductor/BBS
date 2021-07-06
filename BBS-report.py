@@ -1799,9 +1799,10 @@ if __name__ == "__main__":
           (BBSreportutils.BUILD_STATUS_DB_file, report_path))
     shutil.copy(BBSreportutils.BUILD_STATUS_DB_file, report_path)
 
-    print("BBS> [stage6d] cp %s %s/" % \
-          ('PROPAGATION_STATUS_DB.txt', report_path))
-    shutil.copy('PROPAGATION_STATUS_DB.txt', report_path)
+    if BBSreportutils.display_propagation_status(subbuilds):
+        print("BBS> [stage6d] cp %s %s/" % \
+              (BBSreportutils.PROPAGATION_STATUS_DB_file, report_path))
+        shutil.copy(BBSreportutils.PROPAGATION_STATUS_DB_file, report_path)
 
     print("BBS> [stage6d] cd %s/" % report_path)
     os.chdir(report_path)

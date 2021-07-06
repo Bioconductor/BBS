@@ -3,7 +3,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: Jul 6, 2021
 ###
 
 import sys
@@ -182,7 +182,7 @@ def ncol_to_display(subbuilds):
 ##############################################################################
 
 BUILD_STATUS_DB_file = 'BUILD_STATUS_DB.txt'
-PROPAGATION_STATUS_DB_file = '../PROPAGATION_STATUS_DB.txt'
+PROPAGATION_STATUS_DB_file = 'PROPAGATION_STATUS_DB.txt'
 
 
 ##############################################################################
