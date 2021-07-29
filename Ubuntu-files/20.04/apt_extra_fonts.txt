@@ -2,8 +2,8 @@
 gsfonts-x11
 xfonts-base
 xfonts-scalable
-xfonts-100dpi
-xfonts-75dpi
+xfonts-100dpi                                                                   # Bioconductor Docker
+xfonts-75dpi                                                                    # Bioconductor Docker
 t1-xfree86-nonfree
 ttf-xfree86-nonfree
 ttf-xfree86-nonfree-syriac

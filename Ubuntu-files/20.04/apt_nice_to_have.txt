@@ -1,4 +1,6 @@
 # APT Always nice to have packages
+gdb                                                                             # Bioconductor Docker
 tree
 manpages-dev    # man pages for C standard library
 mlocate         # Provides the locate command
+pkg-config                                                                      # Bioconductor Docker

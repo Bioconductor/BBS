@@ -1,26 +1,26 @@
 # APT packages needed for CRAN packages
-libglu1-mesa-dev        # for rgl
+libglu1-mesa-dev        # for rgl                                               # Bioconductor Docker
 librsvg2-dev            # for rsvg
-libgmp-dev              # for gmp
+libgmp-dev              # for gmp                                               # Bioconductor Docker
 libssl-dev              # for openssl, mongolite
-libsasl2-dev            # for mongolite
-libxml2-dev             # for XML
-libcurl4-openssl-dev    # for RCurl, curl
-mpi-default-dev         # for Rmpi
-libudunits2-dev         # for units
-libv8-dev               # for V8
-libmpfr-dev             # for Rmpfr
-libfftw3-dev            # for fftw, fftwtools
-libmysqlclient-dev      # for RMySQL
-libpq-dev               # for RPostgreSQL, RPostgres
-libmagick++-dev         # for magick
-libgeos-dev             # for rgeos
-libproj-dev             # for proj4
-libgdal-dev             # for sf
-libpoppler-cpp-dev      # for pdftools
-libgtk2.0-dev           # for RGtk2
-libgit2-dev             # for gert
-jags                    # for rjags
-libprotobuf-dev         # for protolite
-protobuf-compiler       # for protolite
-libglpk-dev             # for glpkAPI and to compile igraph with GLPK support
+libsasl2-dev            # for mongolite                                         # Bioconductor Docker
+libxml2-dev             # for XML                                               # Bioconductor Docker
+libcurl4-openssl-dev    # for RCurl, curl                                       # Bioconductor Docker
+mpi-default-dev         # for Rmpi                                              # Bioconductor Docker
+libudunits2-dev         # for units                                             # Bioconductor Docker
+libv8-dev               # for V8                                                # Bioconductor Docker
+libmpfr-dev             # for Rmpfr                                             # Bioconductor Docker
+libfftw3-dev            # for fftw, fftwtools                                   # Bioconductor Docker
+libmysqlclient-dev      # for RMySQL                                            # Bioconductor Docker
+libpq-dev               # for RPostgreSQL, RPostgres                            # Bioconductor Docker
+libmagick++-dev         # for magick                                            # Bioconductor Docker
+libgeos-dev             # for rgeos                                             # Bioconductor Docker
+libproj-dev             # for proj4                                             # Bioconductor Docker
+libgdal-dev             # for sf                                                # Bioconductor Docker
+libpoppler-cpp-dev      # for pdftools                                          # Bioconductor Docker
+libgtk2.0-dev           # for RGtk2                                             # Bioconductor Docker
+libgit2-dev             # for gert                                              # Bioconductor Docker
+jags                    # for rjags                                             # Bioconductor Docker
+libprotobuf-dev         # for protolite                                         # Bioconductor Docker
+protobuf-compiler       # for protolite                                         # Bioconductor Docker
+libglpk-dev             # for glpkAPI and to compile igraph with GLPK support   # Bioconductor Docker

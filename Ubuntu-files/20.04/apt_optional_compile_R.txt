@@ -1,10 +1,10 @@
 # APT optional packages for compiling R
 gobjc
-libpng-dev
-libjpeg-dev
-libtiff-dev
-libcairo2-dev
+libpng-dev                                                                      # Bioconductor Docker
+libjpeg-dev                                                                     # Bioconductor Docker
+libtiff-dev                                                                     # Bioconductor Docker
+libcairo2-dev                                                                   # Bioconductor Docker
 libicu-dev
-tcl-dev
-tk-dev
-default-jdk
+tcl-dev                                                                         # Bioconductor Docker
+tk-dev                                                                          # Bioconductor Docker
+default-jdk                                                                     # Bioconductor Docker

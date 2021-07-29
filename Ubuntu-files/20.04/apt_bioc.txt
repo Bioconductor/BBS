@@ -1,14 +1,14 @@
 # APT packages needed for BioC packages
 firefox                     # for packages using utils::browseURL()
-graphviz                    # for Rgraphviz
+graphviz                    # for Rgraphviz                         # Bioconductor Docker
 libgraphviz-dev             # for Rgraphviz
-libgtkmm-2.4-dev            # for HilbertVisGUI
-libgsl-dev                  # for GSL
-libsbml5-dev                # for rsbml
-automake                    # for RProtoBufLib
-libnetcdf-dev               # for mzR, RNetCDF
-libopenbabel-dev            # for ChemmineOB
-libeigen3-dev               # for ChemmineOB
+libgtkmm-2.4-dev            # for HilbertVisGUI                     # Bioconductor Docker
+libgsl-dev                  # for GSL                               # Bioconductor Docker
+libsbml5-dev                # for rsbml                             # Bioconductor Docker
+automake                    # for RProtoBufLib                      # Bioconductor Docker
+libnetcdf-dev               # for mzR, RNetCDF                      # Bioconductor Docker
+libopenbabel-dev            # for ChemmineOB                        # Bioconductor Docker
+libeigen3-dev               # for ChemmineOB                        # Bioconductor Docker
 clustalo                    # for LowMACA
 ocl-icd-opencl-dev          # for gpuMagic
 libavfilter-dev             # for av/spacialHeatmap

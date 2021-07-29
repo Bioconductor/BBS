@@ -1,11 +1,12 @@
 # APT packages required to compile R
 build-essential
-gfortran
-libreadline-dev
+gfortran                                                                        # Bioconductor Docker
+libreadline-dev                                                                 # Bioconductor Docker
 libx11-dev
-libxt-dev
+libxt-dev                                                                       # Bioconductor Docker
 zlib1g-dev
-libbz2-dev
-liblzma-dev
-libpcre2-dev
-libcurl4-openssl-dev
+libbz2-dev                                                                      # Bioconductor Docker
+liblzma-dev                                                                     # Bioconductor Docker
+libpcre2-dev                                                                    # Bioconductor Docker
+libcurl4-openssl-dev                                                            # Bioconductor Docker
+libncurses-dev                                                                  # Bioconductor Docker
