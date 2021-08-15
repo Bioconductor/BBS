@@ -903,7 +903,7 @@ From R:
     ## BioC release!
     BiocManager::install(version="devel")
 
-    BiocManager::install("BiocCheck", type="source")  # required by SPB
+    BiocManager::install("BiocCheck")  # required by SPB
 
 If some CRAN packages failed to compile, see _What if CRAN doesn't provide
 package binaries for macOS yet?_ subsection below.
@@ -913,12 +913,12 @@ package binaries for macOS yet?_ subsection below.
 From R:
 
     # Always good to have; try this even if CRAN binaries are not available:
-    install.packages("devtools", type="source", repos="https://cran.r-project.org")
-    BiocManager::install("BiocStyle", type="source")
+    install.packages("devtools", repos="https://cran.r-project.org")
+    BiocManager::install("BiocStyle")
 
-    BiocManager::install("rtracklayer", type="source")
-    BiocManager::install("VariantAnnotation", type="source")
-    BiocManager::install("rhdf5", type="source")
+    BiocManager::install("rtracklayer")
+    BiocManager::install("VariantAnnotation")
+    BiocManager::install("rhdf5")
 
 Quit R and check that rtracklayer got statically linked against the openssl
 libraries with:
@@ -931,10 +931,14 @@ libraries with:
 
 TESTING: See "Install Java" below in this file for how to test Java/rJava.
 
-#### [OPTIONAL] Try to install RGtk2 from source
+#### [OPTIONAL] Try to install RGtk2
 
 From R:
 
+    ## First try to install the binary:
+    install.packages("RGtk2", repos="https://cran.r-project.org")
+
+    ## If there's no binary, try to install from source:
     install.packages("RGtk2", type="source", repos="https://cran.r-project.org")
 
 See "Install GTK2" below in this file for what is needed in order to
@@ -1003,7 +1007,7 @@ So we use the following hack. Put:
     options(bitmapType="cairo")
 
 in `/Library/Frameworks/R.framework/Resources/library/grDevices/R/grDevices`
-at the beginning of the `local()` block.
+at the beginning of the `local({...})` block.
 
 Not a totally satisfying solution because code that explicitly resets the
 type to `"quartz"` will still fail.
@@ -1021,7 +1025,7 @@ TESTING:
     ggplot(data.frame(), aes(1, 1))
     dev.off()
     ```
-- Try to `R CMD build` DESeq2 and plyranges.
+- [Optional] Try to `R CMD build` DESeq2 and plyranges.
 
 For the record, here are a couple of things we tried that didn't work:
 

@@ -834,6 +834,7 @@ Then from R:
 
     capabilities()  # all should be TRUE except aqua and profmem
     X11()           # nothing visible should happen
+    dev.off()
 
     # --- install a few CRAN packages ---
 
