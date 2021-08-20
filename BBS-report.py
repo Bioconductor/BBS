@@ -943,6 +943,22 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('</DIV>\n')
     return
 
+def write_info_dcf(pkg, node_id):
+    filename = 'git-log-%s.dcf' % (pkg)
+    filepath = os.path.join(BBSvars.central_rdir_path, 'gitlog', filename)
+    dest = os.path.join(pkg, 'raw-results', node_id, 'info.dcf')
+    shutil.copyfile(filepath, dest)
+    dcf_record = meat_index[pkg]
+    info = {}
+    info['Package'] = dcf_record.get('Package', 'NA')
+    info['Version'] = dcf_record.get('Version', 'NA')
+    info['Maintainer'] = dcf_record.get('Maintainer', 'NA')
+    info['MaintainerEmail'] = dcf_record.get('MaintainerEmail', 'NA')
+    with open(dest, 'a', encoding='utf-8') as dcf:
+        for key, value in info.items():
+            dcf.write('%s: %s\n' % (key, value))
+    return
+
 def write_filepath_asHTML(out, Rcheck_dir, filepath):
     span_class = "filename"
     if fnmatch.fnmatch(filepath, "*.fail"):
@@ -1277,6 +1293,8 @@ def make_node_LeafReports(allpkgs, node):
                                                      node.node_id,
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs)
+                if BBSvars.subbuilds == "bioc":
+                    write_info_dcf(pkg, node.node_id)
 
         # BUILD leaf-report
         stage = "buildsrc"
