@@ -946,7 +946,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
 def write_info_dcf(pkg, node_id):
     filename = 'git-log-%s.dcf' % (pkg)
     filepath = os.path.join(BBSvars.central_rdir_path, 'gitlog', filename)
-    dest = os.path.join(pkg, 'raw-results', node_id, 'info.dcf')
+    dest = os.path.join(pkg, 'raw-results', 'info.dcf')
     shutil.copyfile(filepath, dest)
     dcf_record = meat_index[pkg]
     info = {}
@@ -1293,7 +1293,7 @@ def make_node_LeafReports(allpkgs, node):
                                                      node.node_id,
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs)
-                if BBSvars.subbuilds == "bioc":
+                if not no_raw_results:
                     write_info_dcf(pkg, node.node_id)
 
         # BUILD leaf-report
