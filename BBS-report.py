@@ -950,11 +950,11 @@ def write_info_dcf(pkg, node_id):
     shutil.copyfile(filepath, dest)
     dcf_record = meat_index[pkg]
     info = {}
-    info['package'] = dcf_record.get('Package', 'NA')
-    info['version'] = dcf_record.get('Version', 'NA')
-    info['maintainer'] = dcf_record.get('Maintainer', 'NA')
+    info['Package'] = dcf_record.get('Package', 'NA')
+    info['Version'] = dcf_record.get('Version', 'NA')
+    info['Maintainer'] = dcf_record.get('Maintainer', 'NA')
     maintainer_email = dcf_record.get('MaintainerEmail', 'NA')
-    info['maintainer_email'] = maintainer_email.replace('@', ' at ')
+    info['MaintainerEmail'] = maintainer_email.replace('@', ' at ')
     with open(dest, 'a', encoding='utf-8') as dcf:
         for key, value in info.items():
             dcf.write('%s: %s\n' % (key, value))
