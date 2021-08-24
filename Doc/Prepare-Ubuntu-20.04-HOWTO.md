@@ -1130,7 +1130,35 @@ From the biocbuild account:
     ../R/bin/R CMD build LowMACA
 
 
-### 3.7 Install ROOT
+### 3.7 Install .NET runtime
+
+Required by Bioconductor package rmspc.
+
+For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#2004-. 
+
+#### Install the Microsoft signing key
+
+    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    sudo dpkg -i packages-microsoft-prod.deb
+    rm packages-microsoft-prod.deb
+
+
+#### Install the runtime
+
+    sudo apt-get update; \
+      sudo apt-get install -y apt-transport-https && \
+      sudo apt-get update && \
+      sudo apt-get install -y aspnetcore-runtime-5.0
+
+
+#### Test if rmspc installs as biocbuild
+
+    cd ~/bbs-3.14-bioc/meat/
+    ../R/bin/R CMD build rmspc
+    ../R/bin/R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
+
+
+### 3.8 Install ROOT
 
 SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (xps was deprecated in BioC 3.12)
 
