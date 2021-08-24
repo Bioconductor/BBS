@@ -1142,7 +1142,6 @@ For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core
     sudo dpkg -i packages-microsoft-prod.deb
     rm packages-microsoft-prod.deb
 
-
 #### Install the runtime
 
     sudo apt-get update; \
@@ -1150,8 +1149,9 @@ For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core
       sudo apt-get update && \
       sudo apt-get install -y aspnetcore-runtime-5.0
 
+#### Testing
 
-#### Test if rmspc installs as biocbuild
+From the biocbuild account, try to build and check the rmspc package:
 
     cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD build rmspc
