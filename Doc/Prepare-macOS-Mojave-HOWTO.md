@@ -1914,7 +1914,26 @@ TESTING: Try to install the Travel package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.18 [OPTIONAL] Install autoconf & automake
+### 4.18 Install .NET Runtime for rmspc
+
+#### Install the runtime
+
+Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
+install the 5.0 .NET runtime corresponding to the build system's macos.
+
+    curl -O https://download.visualstudio.microsoft.com/download/pr/a847df19-d530-41c8-b766-cb60ee8af9a4/7edd7c2eae38d25d0d7c90350eefea64/dotnet-runtime-5.0.9-osx-x64.pkg
+    shasum -a 512 dotnet-runtime-5.0.9-osx-x64.pkg
+    sudo installer -pkg dotnet-runtime-5.0.9-osx-x64.pkg -target /
+
+
+#### Testing
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD build rmspc
+    R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
+
+
+### 4.19 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -1934,7 +1953,7 @@ Then try to install the flowWorkspace package *from source*:
     BiocManager::install("flowWorkspace", type="source")
 
 
-### 4.19 [OPTIONAL] Install ImageMagick
+### 4.20 [OPTIONAL] Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
 package, which is now officially deprecated)
