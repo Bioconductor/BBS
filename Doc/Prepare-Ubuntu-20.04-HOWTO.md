@@ -434,16 +434,6 @@ For CRAN packages, install [apt_cran.txt](../Ubuntu-files/20.04/apt_cran.txt).
 
 For BioC packages, install [apt_bioc.txt](../Ubuntu-files/20.04/apt_bioc.txt).
 
-Notes:
-- `firefox` (or any other web browser) is needed by many Bioconductor
-  packages which use `utils::browseURL()` to open URLs in a browser.
-  Note that `utils::browseURL()` will return a success code (0) even if
-  it fails to find a browser. As a consequence most packages will still
-  pass `R CMD build` and `R CMD check` if no browser is to be found on
-  the system, with the exception of BrowserViz whose unit tests will
-  timeout in that case.
-- `libfribidi-dev` is for CRAN package textshaping which BioC package
-  EnhancedVolcano indirectly depends on via ragg and ggrastr.
 
 ### 1.9 Install Python 3 modules
 
