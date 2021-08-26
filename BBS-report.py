@@ -94,16 +94,16 @@ def _write_git_log_for_pkg_as_TRs(out, pkg, full_info=False):
             _write_Date_as_TD(out, None, 'Snapshot Date', full_info)
             out.write('</TR>\n')
             out.write('<TR>')
-            _write_pkg_keyval_as_TD(out, pkg, 'URL')
+            _write_pkg_keyval_as_TD(out, pkg, 'git_url')
             out.write('</TR>\n')
             out.write('<TR>')
-            _write_pkg_keyval_as_TD(out, pkg, 'Branch')
+            _write_pkg_keyval_as_TD(out, pkg, 'git_branch')
             out.write('</TR>\n')
         out.write('<TR>')
-        _write_LastChange_as_TD(out, pkg, 'Last Commit', False)
+        _write_LastChange_as_TD(out, pkg, 'git_last_commit', False)
         out.write('</TR>\n')
         out.write('<TR>')
-        _write_Date_as_TD(out, pkg, 'Last Changed Date', full_info)
+        _write_Date_as_TD(out, pkg, 'git_last_commit_date', full_info)
         out.write('</TR>\n')
     return
 
@@ -943,6 +943,23 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('</DIV>\n')
     return
 
+def write_info_dcf(pkg, node_id):
+    filename = 'git-log-%s.dcf' % (pkg)
+    filepath = os.path.join(BBSvars.central_rdir_path, 'gitlog', filename)
+    dest = os.path.join(pkg, 'raw-results', 'info.dcf')
+    shutil.copyfile(filepath, dest)
+    dcf_record = meat_index[pkg]
+    info = {}
+    info['Package'] = dcf_record.get('Package', 'NA')
+    info['Version'] = dcf_record.get('Version', 'NA')
+    info['Maintainer'] = dcf_record.get('Maintainer', 'NA')
+    maintainer_email = dcf_record.get('MaintainerEmail', 'NA')
+    info['MaintainerEmail'] = maintainer_email.replace('@', ' at ')
+    with open(dest, 'a', encoding='utf-8') as dcf:
+        for key, value in info.items():
+            dcf.write('%s: %s\n' % (key, value))
+    return
+
 def write_filepath_asHTML(out, Rcheck_dir, filepath):
     span_class = "filename"
     if fnmatch.fnmatch(filepath, "*.fail"):
@@ -1277,6 +1294,8 @@ def make_node_LeafReports(allpkgs, node):
                                                      node.node_id,
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs)
+                if not no_raw_results:
+                    write_info_dcf(pkg, node.node_id)
 
         # BUILD leaf-report
         stage = "buildsrc"

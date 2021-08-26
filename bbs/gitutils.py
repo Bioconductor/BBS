@@ -164,20 +164,20 @@ def collect_git_clone_meta(clone_path, out_path, snapshot_date):
                          shell=True, universal_newlines=True)
     Branch = ret.stdout
 
-    ## Get Last Commit & Last Changed Date.
-    gitlog_format = 'format:"Last Commit: %h%nLast Changed Date: %ad%n"'
+    ## Get Last Commit & Last Commit Date.
+    gitlog_format = 'format:"git_last_commit: %h%ngit_last_commit_date: %ad%n"'
     date_format = 'format-local:"%%Y-%%m-%%d %%H:%%M:%%S %s (%%a, %%d %%b %%Y)"' % snapshot_date.split(' ')[2]
     cmd = '%s log --max-count=1 --date=%s --format=%s' % (_git_cmd, date_format, gitlog_format)
     ret = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                          shell=True, universal_newlines=True)
-    Last_Commit_and_Last_Change_Date = ret.stdout
+    Last_Commit_and_Last_Commit_Date = ret.stdout
     os.chdir(previous_cwd)
 
     ## Dump meta as DCF file.
     out = open(out_path, 'w')
-    out.write('URL: %s' % URL)
-    out.write('Branch: %s' % Branch)
-    out.write('%s' % Last_Commit_and_Last_Change_Date)
+    out.write('git_url: %s' % URL)
+    out.write('git_branch: %s' % Branch)
+    out.write('%s' % Last_Commit_and_Last_Commit_Date)
     out.close()
     return
 

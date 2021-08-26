@@ -374,19 +374,19 @@ def get_meat_packages_for_node(meat_index_file, node_id, node_pkgType=None):
 def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     # git-log
     dcf = open(gitlog_file, 'rb')
-    git_url = get_next_DCF_val(dcf, 'URL')
-    git_branch = get_next_DCF_val(dcf, 'Branch')
-    git_last_commit = get_next_DCF_val(dcf, 'Last Commit')
-    git_last_commit_date = get_next_DCF_val(dcf, 'Last Changed Date')
+    git_url = get_next_DCF_val(dcf, 'git_url')
+    git_branch = get_next_DCF_val(dcf, 'git_branch')
+    git_last_commit = get_next_DCF_val(dcf, 'git_last_commit')
+    git_last_commit_date = get_next_DCF_val(dcf, 'git_last_commit_date')
     dcf.close()
     if git_url == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'URL')
+        raise DcfFieldNotFoundError(gitlog_file, 'git_url')
     if git_branch == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'Branch')
+        raise DcfFieldNotFoundError(gitlog_file, 'git_branch')
     if git_last_commit == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'Last Commit')
+        raise DcfFieldNotFoundError(gitlog_file, 'git_last_commit')
     if git_last_commit_date == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'Last Changed Date')
+        raise DcfFieldNotFoundError(gitlog_file, 'git_last_commit_date')
 
     # DESCRIPTION
     # Handle the following cases:
