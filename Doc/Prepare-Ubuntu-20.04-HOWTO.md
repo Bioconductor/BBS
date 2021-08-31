@@ -395,7 +395,6 @@ name of the text file containing the list of packages:
     BBS_PACKAGES_FILE=
     sudo apt install $(cat $BBS_UBUNTU_PATH/$BBS_PACKAGES_FILE | awk '/^[^#]/ {print $1}')
 
-
 #### Always nice to have
 
 [apt_nice_to_have.txt](../Ubuntu-files/20.04/apt_nice_to_have.txt)

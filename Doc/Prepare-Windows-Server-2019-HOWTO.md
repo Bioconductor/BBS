@@ -1391,6 +1391,23 @@ and was compiled with an old version of `gcc`) and the compilers provided
 by Rtools40 (`gcc` 8.3.0).
 
 
+### 4.11 Install .NET 5.0 Runtime
+
+This is needed by the rmspc package. Note that we're only installing .NET
+for 64-bit Windows so rmspc (and any package that depends on it) needs to
+be marked as unsupported on 32-bit Windows.
+
+Download the Windows x64 Installer for .NET 5.0 Runtime from
+https://dotnet.microsoft.com/download/dotnet/5.0
+
+Run the Installer.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on), in a PowerShell window:
+
+    which dotnet    # /c/Program Files/dotnet/dotnet
+
+
 
 ## 5. Known issues
 
