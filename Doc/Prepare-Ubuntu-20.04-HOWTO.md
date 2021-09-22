@@ -1254,7 +1254,32 @@ As expected, this currently fails (with xps 1.49.0):
 
 ### 4.1 Annotation builds
 
-We're not building/checking annotation packages at the moment.
+From the biocbuild account:
+
+    mkdir -p ~/bbs-3.14-data-annotation/log
+
+Then add the following entries to biocbuild's crontab:
+
+    # BIOC 3.14 DATA ANNOTATION BUILDS
+    # --------------------------------
+    # run on Wednesday
+    
+    # prerun:
+    30 6 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-annotation/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    
+    # run:
+    00 7 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-annotation/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    
+    # postrun (must start after 'run.sh' has finished on all participating nodes):
+    00 10 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-annotation/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+
+After the builds complete, you should get the first build report at:
+
+  https://master.bioconductor.org/checkResults/3.14/data-annotation-LATEST/
+
+If you're happy with the result, link the report from this page:
+
+  https://master.bioconductor.org/checkResults/
 
 
 ### 4.2 Experimental data builds
