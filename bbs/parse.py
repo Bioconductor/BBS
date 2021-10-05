@@ -86,7 +86,7 @@ class DcfParsingError(Exception):
 ### string.
 def parse_DCF(filepath, merge_records=False):
     if isinstance(filepath, str):
-        f = open(filepath, 'r')
+        f = open(filepath, 'rb')
     else:
         ## We assume 'filepath' is a file-like object that was opened
         ## with open() or urllib.request.urlopen().
