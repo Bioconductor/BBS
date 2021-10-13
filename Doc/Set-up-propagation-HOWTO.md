@@ -441,6 +441,17 @@ Add the following lines to the crontab:
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
     45 13 * * 1-6 cd /home/biocpush/propagation/3.14 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.14/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1
     ```
+
+- For propagation of data annotation packages:
+
+    ```
+    # PROPAGATE BIOC 3.14 DATA ANNOTATION PACKAGES
+    # --------------------------------------------
+    
+    # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
+    00 8 * * 3 cd /home/biocpush/propagation/3.14 && (./updateReposPkgs-data-annotation.sh && ./prepareRepos-data-annotation.sh && ./pushRepos-data-annotation.sh) >>/home/biocpush/cron.log/3.14/propagate-data-annotation-`date +\%Y\%m\%d`.log 2>&1
+    ```
+
 - For propagation of data experiment packages:
     ```
     # PROPAGATE BIOC 3.14 DATA EXPERIMENT PACKAGES
