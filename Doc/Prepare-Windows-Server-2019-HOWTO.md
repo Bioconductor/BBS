@@ -1162,7 +1162,24 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
 Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
 on "Download Latest Version" (`JAGS-4.3.0.exe` as of Nov. 2020).
 
-Use the default settings when running the installer.
+Use the default settings when running the installer (you can check the "Do
+not create shortcuts" box). Make sure that all the components to install are
+checked.
+
+Set environment variable `JAGS_HOME` to `C:\Program Files\JAGS\JAGS-4.3.0`
+(see _Edit an environment variable_ in the _Managing environment variables_
+section at the top of this document for how to do this).
+Note that setting `JAGS_HOME` is only needed on Windows and for rjags >= 4-12.
+Unfortunately in rjags 4-12 the code used by the `.onLoad()` hook to find
+JAGS on the machine changed from
+
+    readRegistry("SOFTWARE\\JAGS", hive="HLM", maxdepth=2, view="32-bit")
+
+to
+
+    readRegistry("SOFTWARE\\JAGS", hive="HLM", maxdepth=2, view="64-bit")
+
+but for some reason the latter fails with an error on our Windows builders.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to load the rjags package e.g. open a
