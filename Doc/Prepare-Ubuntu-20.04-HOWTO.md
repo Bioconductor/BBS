@@ -649,6 +649,13 @@ Propagation is documented in a separate document: Set-up-propagation-HOWTO.md
 Until we've set it up, we need to comment out the `export BBS_OUTGOING_MAP=...`
 line in `~/BBS/3.14/bioc/nebbiolo2/config.sh`.
 
+We also need to add the build type to the list in `BBS/BBSreportutils.py`:
+
+    ### Whether to display the package propagation status led or not for the
+    ### given subbuilds.
+    def display_propagation_status(subbuilds):
+        return subbuilds not in ["bioc-longtests", "bioc-testing", "cran"] # Add to list
+
 One visible effect of doing this is that the daily build reports generated
 by the `postrun.sh` script won't have the little LEDs in the rightmost column
 indicating propagation status.
