@@ -1408,7 +1408,23 @@ and was compiled with an old version of `gcc`) and the compilers provided
 by Rtools40 (`gcc` 8.3.0).
 
 
-### 4.11 Install .NET 5.0 Runtime
+### 4.11 Install Dokan
+
+This is needed by the Travel package.
+
+Download `DokanSetup.exe` from https://dokan-dev.github.io/
+
+Run the installer.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to compile the Travel package e.g.
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+(this folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL Travel
+
+
+### 4.12 Install .NET 5.0 Runtime
 
 This is needed by the rmspc package. Note that we're only installing .NET
 for 64-bit Windows so rmspc (and any package that depends on it) needs to
