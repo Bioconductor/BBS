@@ -288,16 +288,14 @@ From the biocpush account:
     ```
     install.packages("BiocManager", repos="https://cran.r-project.org")
 
-    library(BiocManager)    # This displays the version of Bioconductor
-                            # that BiocManager is pointing at.
-    BiocManager::install()  # This installs the BiocVersion package. Make
-                            # sure its version matches Bioconductor version.
+    ## This displays the version of Bioconductor that BiocManager is pointing
+    ## at. Make sure that this is the same as the version of Bioconductor to
+    ## propagate.
+    library(BiocManager)
 
     ## IMPORTANT: Do this ONLY if BiocManager is pointing at the wrong version
-    ## of Bioconductor. This will happen if you are installing R for the devel
-    ## builds during the devel cycle that runs from Spring to Fall (these
-    ## builds use the same version of R as the release builds).
-    BiocManager::install(version="devel")  # see IMPORTANT note above!
+    ## of Bioconductor.
+    BiocManager::install(version="devel")
     ```
 
 - Install the most current version of the biocViews package:
