@@ -283,18 +283,34 @@ From the biocpush account:
     ln -s ~/R-4.1/bin/R R-4.1
     ln -s ~/R-4.1/bin/Rscript Rscript-4.1
     ```
+
+- Install the BiocManager package:
+    ```
+    install.packages("BiocManager", repos="https://cran.r-project.org")
+
+    library(BiocManager)    # This displays the version of Bioconductor
+                            # that BiocManager is pointing at.
+    BiocManager::install()  # This installs the BiocVersion package. Make
+                            # sure its version matches Bioconductor version.
+
+    ## IMPORTANT: Do this ONLY if BiocManager is pointing at the wrong version
+    ## of Bioconductor. This will happen if you are installing R for the devel
+    ## builds during the devel cycle that runs from Spring to Fall (these
+    ## builds use the same version of R as the release builds).
+    BiocManager::install(version="devel")  # see IMPORTANT note above!
+    ```
+
 - Install the most current version of the biocViews package:
     ```
     ## First install it from R with BiocManager::install(). This is the
     ## easiest way to get all the dependencies installed:
-    install.packages("BiocManager", repos="https://cran.r-project.org")
     library(BiocManager)
     BiocManager::install("biocViews")
     ```
     ```
     ## Then quit R and reinstall it directly from git.bioconductor.org. This
     ## is to make sure that we're actually getting the most current version
-    ## even if it was modified very recently (e.g. <24h ago) and didn't have
+    ## in case it was modified very recently (e.g. <24h ago) and didn't have
     ## time to propagate to the public package repos. This is particularly
     ## important after the biocViews vocab has changed.
     cd ~/pkgs_to_install
