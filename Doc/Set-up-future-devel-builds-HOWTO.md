@@ -93,8 +93,6 @@ Replace every occurence of `3.13` with `3.14` in every file.
 If the devel builds use a new R version (e.g. 4.1 instead of 4.0) then
 replace every occurence of `4.0` with `4.1`.
 
-Set new background color in `config.sh`.
-
 #### `git add` new `propagation/3.14` folder
 
 ```
@@ -169,6 +167,7 @@ mkdir bioc-LATEST data-annotation-LATEST data-experiment-LATEST workflows-LATEST
 
 This is where the build reports will be published.
 
+Add the new build background color to `/extra/www/bioc/checkResults/index.html`.
 
 
 ## 4. Activate builds on central builder
