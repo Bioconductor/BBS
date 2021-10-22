@@ -34,7 +34,7 @@ def _write_status_to_BUILD_STATUS_DB(out, pkg, node_id, stage, status):
 def _write_pkg_results_to_BUILD_STATUS_DB(pkg, out):
     for node in BBSreportutils.supported_nodes(pkg):
         # INSTALL status
-        if BBSvars.subbuilds != 'bioc-longtests':
+        if BBSvars.buildtype != 'bioc-longtests':
             stage = 'install'
             status = _read_status_from_summary_file(pkg, node.node_id, stage)
             _write_status_to_BUILD_STATUS_DB(out, pkg, node.node_id, stage,
@@ -46,7 +46,7 @@ def _write_pkg_results_to_BUILD_STATUS_DB(pkg, out):
                                          status)
         skipped_is_OK = status in ['TIMEOUT', 'ERROR']
         # CHECK status
-        if BBSvars.subbuilds not in ['workflows', 'books']:
+        if BBSvars.buildtype not in ['workflows', 'books']:
             stage = 'checksrc'
             if skipped_is_OK:
                 status = 'skipped'

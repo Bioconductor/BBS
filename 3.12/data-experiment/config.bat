@@ -1,9 +1,9 @@
-@rem =======================================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.12-data-experiment subbuilds
-@rem =======================================================================================
+@rem ====================================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.12-data-experiment builds
+@rem ====================================================================================
 
 
-set BBS_SUBBUILDS=data-experiment
+set BBS_BUILDTYPE=data-experiment
 
 
 set wd1=%cd%

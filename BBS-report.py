@@ -169,10 +169,10 @@ def _explain_TIMEOUT_in_HTML():
     t2 = int(BBSvars.BUILD_timeout    / 60.0)
     t3 = int(BBSvars.CHECK_timeout    / 60.0)
     t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         html = 'CHECK of package took more than ' + \
               '%d minutes' % t3
-    elif BBSvars.subbuilds in ["workflows", "books"]:
+    elif BBSvars.buildtype in ["workflows", "books"]:
         html = 'INSTALL or BUILD of package took more than '
         if t1 == t2:
             html += '%d minutes' % t1
@@ -189,9 +189,9 @@ def _explain_TIMEOUT_in_HTML():
 
 def _explain_ERROR_in_HTML():
     html = 'Bad DESCRIPTION file or '
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         html += 'CHECK of package produced errors'
-    elif BBSvars.subbuilds in ["workflows", "books"]:
+    elif BBSvars.buildtype in ["workflows", "books"]:
         html += 'INSTALL or BUILD of package failed'
     else:
         html += 'INSTALL, BUILD or BUILD BIN of package '
@@ -202,9 +202,9 @@ def _explain_WARNINGS_in_HTML():
     return 'CHECK of package produced warnings'
 
 def _explain_OK_in_HTML():
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         html = 'CHECK'
-    elif BBSvars.subbuilds in ["workflows", "books"]:
+    elif BBSvars.buildtype in ["workflows", "books"]:
         html = 'INSTALL or BUILD'
     else:
         html = 'INSTALL, BUILD, CHECK or BUILD BIN ' + \
@@ -221,9 +221,9 @@ def _explain_skipped_in_HTML():
     return html
 
 def _explain_NA_in_HTML():
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         html = 'CHECK'
-    elif BBSvars.subbuilds in ["workflows", "books"]:
+    elif BBSvars.buildtype in ["workflows", "books"]:
         html = 'BUILD'
     else:
         html = 'BUILD, CHECK or BUILD BIN'
@@ -233,7 +233,7 @@ def _explain_NA_in_HTML():
 
 ### FH: Create checkboxes to select display types
 def write_explain_glyph_table(out):
-    subbuilds = BBSvars.subbuilds
+    buildtype = BBSvars.buildtype
     out.write('<FORM action="">\n')
     out.write('<TABLE style="width: 590px; border: solid black 1px; border-collapse: collapse;">\n')
     out.write('<TR>\n')
@@ -246,7 +246,7 @@ def write_explain_glyph_table(out):
 
     _write_glyph_as_TR(out, "ERROR", _explain_ERROR_in_HTML(), True)
 
-    if subbuilds not in ["workflows", "books"]:
+    if buildtype not in ["workflows", "books"]:
         _write_glyph_as_TR(out, "WARNINGS", _explain_WARNINGS_in_HTML(), True)
 
     _write_glyph_as_TR(out, "OK", _explain_OK_in_HTML(), True)
@@ -254,10 +254,10 @@ def write_explain_glyph_table(out):
     ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e.
     ## when STAGE2 skips installation of target packages not needed by
     ## another target package for build or check).
-    #if subbuilds not in ["workflows", "books", "bioc-longtests"]:
+    #if buildtype not in ["workflows", "books", "bioc-longtests"]:
     #    _write_glyph_as_TR(out, "NotNeeded", _explain_NotNeeded_in_HTML())
 
-    if subbuilds != "bioc-longtests":
+    if buildtype != "bioc-longtests":
         _write_glyph_as_TR(out, "skipped", _explain_skipped_in_HTML())
 
     _write_glyph_as_TR(out, "NA", _explain_NA_in_HTML())
@@ -289,23 +289,23 @@ def _get_all_show_classes():
     return ['show_%s_gcards' % status for status in status_classes]
 
 def _write_vertical_space(out):
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 5
+    colspan = BBSreportutils.ncol_to_display(BBSvars.buildtype) + 5
     TD_html = '<TD COLSPAN="%s"></TD>' % colspan
     out.write('<TR class="vertical_space">%s</TR>\n' % TD_html)
     return
 
 def _url_to_pkg_landing_page(pkg):
-    subbuilds = BBSvars.subbuilds
-    if subbuilds == "cran":
+    buildtype = BBSvars.buildtype
+    if buildtype == "cran":
         return "https://cran.rstudio.com/package=%s" % pkg
     bioc_version = BBSvars.bioc_version
-    if subbuilds == "books":
+    if buildtype == "books":
         return "/books/%s/%s/" % (bioc_version, pkg)
-    #if subbuilds == "data-annotation":
+    #if buildtype == "data-annotation":
     #    repo = "data/annotation"
-    #elif subbuilds == "data-experiment":
+    #elif buildtype == "data-experiment":
     #    repo = "data/experiment"
-    #elif subbuilds == "workflows":
+    #elif buildtype == "workflows":
     #    repo = "workflows"
     #else:
     #    repo = "bioc"
@@ -377,10 +377,10 @@ def write_stagelabel_as_TD(out, stage, leafreport_ref):
     return
 
 def write_pkg_stagelabels_as_TDs(out, leafreport_ref=None):
-    subbuilds = BBSvars.subbuilds
-    for stage in BBSreportutils.stages_to_display(subbuilds):
+    buildtype = BBSvars.buildtype
+    for stage in BBSreportutils.stages_to_display(buildtype):
         write_stagelabel_as_TD(out, stage, leafreport_ref)
-    if BBSreportutils.display_propagation_status(subbuilds):
+    if BBSreportutils.display_propagation_status(buildtype):
         out.write('<TD style="width: 12px;"></TD>')
     return
 
@@ -410,27 +410,27 @@ def write_pkg_propagation_status_as_TD(out, pkg, node):
 def write_pkg_statuses_as_TDs(out, pkg, node,
                               leafreport_ref=None, topdir='.'):
     TDclasses = 'status %s' % node.hostname.replace(".", "_")
-    subbuilds = BBSvars.subbuilds
+    buildtype = BBSvars.buildtype
     if pkg in skipped_pkgs:
         TDattrs = 'COLSPAN="%s" class="%s"' % \
-                  (BBSreportutils.ncol_to_display(subbuilds), TDclasses)
+                  (BBSreportutils.ncol_to_display(buildtype), TDclasses)
         TDcontent = '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
         TDcontent += ' (Bad DESCRIPTION file)'
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     elif not BBSreportutils.is_supported(pkg, node):
         TDattrs = 'COLSPAN="%s" class="%s"' % \
-                  (BBSreportutils.ncol_to_display(subbuilds), TDclasses)
+                  (BBSreportutils.ncol_to_display(buildtype), TDclasses)
         TDcontent = '... NOT SUPPORTED ...'
         TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     else:
-        for stage in BBSreportutils.stages_to_display(subbuilds):
+        for stage in BBSreportutils.stages_to_display(buildtype):
             if stage != 'buildbin' or BBSreportutils.is_doing_buildbin(node):
                 _write_pkg_status_as_TD(out, pkg, node, stage,
                                         leafreport_ref, topdir)
             else:
                 out.write('<TD class="%s"></TD>' % TDclasses)
-        if BBSreportutils.display_propagation_status(subbuilds):
+        if BBSreportutils.display_propagation_status(buildtype):
             write_pkg_propagation_status_as_TD(out, pkg, node)
     return
 
@@ -462,7 +462,7 @@ def write_abc_dispatcher_within_gcard_list(out, current_letter):
               (current_letter, current_letter))
     out.write('</TD></TR></TABLE>')
     out.write('</TD>')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
+    colspan = BBSreportutils.ncol_to_display(BBSvars.buildtype) + 3
     out.write('<TD COLSPAN="%s">' % colspan)
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
@@ -543,13 +543,13 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
         out.write(TD_html)
         TD_html = '<TD>%s</TD>' % _node_OS_Arch_as_SPAN(node)
         out.write(TD_html)
-        subbuilds = BBSvars.subbuilds
-        for stage in BBSreportutils.stages_to_display(subbuilds):
+        buildtype = BBSvars.buildtype
+        for stage in BBSreportutils.stages_to_display(buildtype):
             if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
                 out.write('<TD></TD>')
             else:
                 write_quickstats_TD(out, quickstats, node, stage)
-        if BBSreportutils.display_propagation_status(subbuilds):
+        if BBSreportutils.display_propagation_status(buildtype):
             out.write('<TD style="width: 12px;"></TD>')
         if is_last:
             out.write('<TD class="rightmost bottom_right_corner"></TD>')
@@ -634,7 +634,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
         out.write('<TD %s></TD>' % TDattrs)
         out.write('</TR>\n')
     out.write('<TR class="footer">')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.subbuilds) + 3
+    colspan = BBSreportutils.ncol_to_display(BBSvars.buildtype) + 3
     out.write('<TD COLSPAN="%d"></TD>' % colspan)
     out.write('</TR>\n')
     out.write('</TBODY>\n')
@@ -854,17 +854,17 @@ def write_motd_asTABLE(out):
 def write_notes_to_developer(out, pkg):
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
-    if BBSvars.subbuilds != "bioc" and not os.path.exists('Renviron.bioc'):
+    if BBSvars.buildtype != "bioc" and not os.path.exists('Renviron.bioc'):
         return
     out.write('<DIV class="motd">\n')
     out.write('<TABLE><TR><TD>\n')
     out.write('To the developers/maintainers ')
     out.write('of the %s package:<BR>\n' % pkg)
-    if BBSvars.subbuilds == "bioc" and os.path.exists('Renviron.bioc'):
+    if BBSvars.buildtype == "bioc" and os.path.exists('Renviron.bioc'):
         prefix = '- '
     else:
         prefix = ''
-    if BBSvars.subbuilds == "bioc":
+    if BBSvars.buildtype == "bioc":
         url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
         out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
         out.write('48 hours) for your latest push to ')
@@ -910,7 +910,7 @@ def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
     leafreport_ref = LeafReportReference(pkg, None, None, None)
     write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
-    if BBSvars.subbuilds == "bioc" and len(pkg_rev_deps) != 0:
+    if BBSvars.buildtype == "bioc" and len(pkg_rev_deps) != 0:
         quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
         out.write('<H3 style="padding: 18px;">')
         out.write('Results for Bioconductor software packages ')
@@ -996,7 +996,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     return pattern_detected
 
 def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
-    if stage == "checksrc" and BBSvars.subbuilds == "bioc-longtests":
+    if stage == "checksrc" and BBSvars.buildtype == "bioc-longtests":
         out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
         out.write('<HR>\n<H3>Command output</H3>\n')
@@ -1222,11 +1222,11 @@ def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stage):
     if stage != "checksrc":
         write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
         return
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
     write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
     write_Installation_output_asHTML(out, node_hostname, pkg, node_id)
-    if BBSvars.subbuilds != "bioc-longtests":
+    if BBSvars.buildtype != "bioc-longtests":
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
         write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
     return
@@ -1285,7 +1285,7 @@ def make_node_LeafReports(allpkgs, node):
             os.mkdir(os.path.join(pkg, 'raw-results', node.node_id))
 
         # INSTALL leaf-report
-        if BBSvars.subbuilds != "bioc-longtests":
+        if BBSvars.buildtype != "bioc-longtests":
             stage = "install"
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if status != "skipped":
@@ -1308,7 +1308,7 @@ def make_node_LeafReports(allpkgs, node):
             make_LeafReport(leafreport_ref, allpkgs)
 
         # CHECK leaf-report
-        if BBSvars.subbuilds not in ["workflows", "books"]:
+        if BBSvars.buildtype not in ["workflows", "books"]:
             stage = 'checksrc'
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
@@ -1365,7 +1365,7 @@ def write_BioC_mainpage_top_asHTML(out):
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
     out.write('<H1>%s</H1>\n' % title)
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         long_tests_howto_url = '/developers/how-to/long-tests/'
         out.write('<P style="text-align: center;">')
         out.write('See <A href="%s">here</A> ' % long_tests_howto_url)
@@ -1662,7 +1662,7 @@ def write_glyph_and_propagation_LED_table(out):
     out.write('<TD style="vertical-align: top;">\n')
     write_explain_glyph_table(out)
     out.write('</TD>')
-    if BBSreportutils.display_propagation_status(BBSvars.subbuilds):
+    if BBSreportutils.display_propagation_status(BBSvars.buildtype):
         out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
@@ -1720,9 +1720,9 @@ def make_all_NodeReports(allpkgs, quickstats):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs, quickstats):
-    if BBSvars.subbuilds != "cran":
+    if BBSvars.buildtype != "cran":
         write_BioC_mainpage_top_asHTML(out)
-    else: # "cran" subbuilds
+    else: # "cran" buildtype
         write_CRAN_mainpage_top_asHTML(out)
     out.write('<BR>\n')
     write_node_specs_table(out)
@@ -1818,7 +1818,7 @@ if __name__ == "__main__":
           (BBSreportutils.BUILD_STATUS_DB_file, report_path))
     shutil.copy(BBSreportutils.BUILD_STATUS_DB_file, report_path)
 
-    if BBSreportutils.display_propagation_status(BBSvars.subbuilds):
+    if BBSreportutils.display_propagation_status(BBSvars.buildtype):
         print("BBS> [stage6d] cp %s %s/" % \
               (BBSreportutils.PROPAGATION_STATUS_DB_file, report_path))
         shutil.copy(BBSreportutils.PROPAGATION_STATUS_DB_file, report_path)
@@ -1846,7 +1846,7 @@ if __name__ == "__main__":
     sys.stdout.flush()
 
     ## Set 'allpkgs_inner_rev_deps'.
-    if BBSvars.subbuilds == "bioc":
+    if BBSvars.buildtype == "bioc":
         ## Load package dep graph.
         node0 = BBSreportutils.NODES[0]
         Node0_rdir = BBSvars.products_in_rdir.subdir(node0.node_id)
@@ -1891,9 +1891,9 @@ if __name__ == "__main__":
           report_nodes)
     make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps)
     make_all_NodeReports(allpkgs, allpkgs_quickstats)
-    if BBSvars.subbuilds != "cran":
+    if BBSvars.buildtype != "cran":
         make_BioC_MainReport(allpkgs, allpkgs_quickstats)
-    else: # "cran" subbuilds
+    else: # "cran" buildtype
         make_CRAN_MainReport(allpkgs, allpkgs_quickstats)
 
     print("BBS> [stage6d] DONE at %s." % time.asctime())

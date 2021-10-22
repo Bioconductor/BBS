@@ -1,10 +1,10 @@
 #!/bin/bash
-# ===================================================================================
-# Settings shared by all the Unix nodes involved in the 3.12-bioc-longtests subbuilds
-# ===================================================================================
+# ================================================================================
+# Settings shared by all the Unix nodes involved in the 3.12-bioc-longtests builds
+# ================================================================================
 
 
-export BBS_SUBBUILDS="bioc-longtests"
+export BBS_BUILDTYPE="bioc-longtests"
 
 
 wd1=$(pwd)

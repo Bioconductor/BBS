@@ -1,10 +1,10 @@
 #!/bin/bash
-# ==========================================================================
-# Settings shared by all the Unix nodes involved in the 3.14-books subbuilds
-# ==========================================================================
+# =======================================================================
+# Settings shared by all the Unix nodes involved in the 3.14-books builds
+# =======================================================================
 
 
-export BBS_SUBBUILDS="books"
+export BBS_BUILDTYPE="books"
 
 
 wd1=$(pwd)

@@ -243,7 +243,7 @@ def _get_Rbuild_cmd(pkgsrctree):
         ## make 'tar' work again on it.
         cmd = 'chmod a+r ' + pkgsrctree + ' -R && ' + cmd
     common_opts = ["--keep-empty-dirs", "--no-resave-data"]
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         common_opts += ["--no-build-vignettes", "--no-manual"]
     cmd = "%s %s" % (cmd, ' '.join(common_opts))
     return cmd
@@ -410,7 +410,7 @@ def getSTAGE4cmd(srcpkg_path):
         r_library = os.path.join(BBSvars.r_home, 'library')
         common_opts += ["--install=check:%s" % install_out,
                         "--library=%s" % r_library]
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         common_opts += ["--test-dir=longtests",
                         "--no-stop-on-test-error",
                         "--no-codoc",

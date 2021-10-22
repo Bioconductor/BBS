@@ -50,7 +50,7 @@ export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
 #export BBS_REPORT_MOTD="Happy new year to all Bioconductor developers!"
 
 # Where to publish the report
-export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/$BBS_SUBBUILDS-LATEST/"
+export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/$BBS_BUILDTYPE-LATEST/"
 export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
 

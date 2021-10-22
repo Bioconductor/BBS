@@ -1,3 +1,0 @@
-https://bioconductor.org/packages/BBS_BIOC_VERSION/bioc
-https://bioconductor.org/packages/BBS_BIOC_VERSION/data/experiment
-https://cran.rstudio.com

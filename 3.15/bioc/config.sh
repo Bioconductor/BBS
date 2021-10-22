@@ -1,10 +1,10 @@
 #!/bin/bash
-# =========================================================================
-# Settings shared by all the Unix nodes involved in the 3.15-bioc subbuilds
-# =========================================================================
+# ======================================================================
+# Settings shared by all the Unix nodes involved in the 3.15-bioc builds
+# ======================================================================
 
 
-export BBS_SUBBUILDS="bioc"
+export BBS_BUILDTYPE="bioc"
 
 
 wd1=$(pwd)

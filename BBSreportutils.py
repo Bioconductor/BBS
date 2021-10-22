@@ -114,12 +114,12 @@ def supported_nodes(pkg):
 ##############################################################################
 
 def make_report_title(report_nodes):
-    subbuilds = BBSvars.subbuilds
-    if subbuilds == "bioc-longtests":
+    buildtype = BBSvars.buildtype
+    if buildtype == "bioc-longtests":
         title = "Long Tests"
-    elif subbuilds == "workflows":
+    elif buildtype == "workflows":
         title = "Workflows build"
-    elif subbuilds == "books":
+    elif buildtype == "books":
         title = "Books build"
     else:
         nnodes = 0
@@ -127,20 +127,20 @@ def make_report_title(report_nodes):
             if node == "":
                 continue
             nnodes += 1
-        if subbuilds == "bioc-testing":
+        if buildtype == "bioc-testing":
             title = '"Blame Jeroen" build/check'
         elif nnodes != 1:
             title = "Multiple platform build/check"
         else:
             title = "Build/check"
     title += " report for "
-    if subbuilds == "cran":
+    if buildtype == "cran":
         title += "CRAN"
     else:
         title += "BioC %s" % BBSvars.bioc_version
-        if subbuilds == "data-annotation":
+        if buildtype == "data-annotation":
             title += " annotations"
-        elif subbuilds == "data-experiment":
+        elif buildtype == "data-experiment":
             title += " experimental data"
     return title
 
@@ -154,29 +154,29 @@ def stage_label(stage):
     return stage2label[stage]
 
 ## Stages to display on the report (as columns in HTML table) for the given
-## subbuilds. Should be a subset of the stages that were run because we
+## buildtype. Should be a subset of the stages that were run because we
 ## obviously can't display the results for stages that we didn't run.
 ## However we don't necessarily want to display the results for all the
-## stages that we ran. For example, for the "bioc-longtests" subbuilds
+## stages that we ran. For example, for the "bioc-longtests" buildtype
 ## we run 'buildsrc' (STAGE3) and 'checksrc' (STAGE4) but we only display
 ## the results of 'checksrc' (CHECK column on the report).
-def stages_to_display(subbuilds):
-    if subbuilds in ["data-annotation", "data-experiment"]:
+def stages_to_display(buildtype):
+    if buildtype in ["data-annotation", "data-experiment"]:
         return ['install', 'buildsrc', 'checksrc']
-    if subbuilds in ["workflows", "books"]:
+    if buildtype in ["workflows", "books"]:
         return ['install', 'buildsrc']
-    if subbuilds == "bioc-longtests":
+    if buildtype == "bioc-longtests":
         return ['checksrc']  # we run 'buildsrc' but don't display it
     return ['install', 'buildsrc', 'checksrc', 'buildbin']
 
 ### Whether to display the package propagation status led or not for the
-### given subbuilds.
-def display_propagation_status(subbuilds):
-    return subbuilds not in ["bioc-longtests", "bioc-testing", "cran"]
+### given buildtype.
+def display_propagation_status(buildtype):
+    return buildtype not in ["bioc-longtests", "bioc-testing", "cran"]
 
-def ncol_to_display(subbuilds):
-    return len(stages_to_display(subbuilds)) + \
-           display_propagation_status(subbuilds)
+def ncol_to_display(buildtype):
+    return len(stages_to_display(buildtype)) + \
+           display_propagation_status(buildtype)
 
 
 ##############################################################################
@@ -306,7 +306,7 @@ def import_BUILD_STATUS_DB(allpkgs):
     for pkg in allpkgs:
         for node in supported_nodes(pkg):
             # INSTALL status
-            if BBSvars.subbuilds != "bioc-longtests":
+            if BBSvars.buildtype != "bioc-longtests":
                 stage = 'install'
                 status = _get_pkg_status_from_BUILD_STATUS_DB(
                                   BUILD_STATUS_DB,
@@ -323,7 +323,7 @@ def import_BUILD_STATUS_DB(allpkgs):
             _update_quickstats(allpkgs_quickstats, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            if BBSvars.subbuilds not in ["workflows", "books"]:
+            if BBSvars.buildtype not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
@@ -362,7 +362,7 @@ def get_distinct_pkg_statuses(pkg, nodes=None):
     for node in nodes:
         if not is_supported(pkg, node):
             continue
-        stages = stages_to_display(BBSvars.subbuilds)
+        stages = stages_to_display(BBSvars.buildtype)
         if 'buildbin' in stages and not is_doing_buildbin(node):
             stages.remove('buildbin')
         for stage in stages:
@@ -399,7 +399,7 @@ def compute_quickstats(pkgs):
     for pkg in pkgs:
         for node in supported_nodes(pkg):
             # INSTALL status
-            if BBSvars.subbuilds != "bioc-longtests":
+            if BBSvars.buildtype != "bioc-longtests":
                 stage = 'install'
                 status = get_pkg_status(pkg, node.node_id, stage)
                 _update_quickstats(quickstats, node.node_id, stage, status)
@@ -409,7 +409,7 @@ def compute_quickstats(pkgs):
             _update_quickstats(quickstats, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            if BBSvars.subbuilds not in ["workflows", "books"]:
+            if BBSvars.buildtype not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"

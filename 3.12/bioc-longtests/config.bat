@@ -1,9 +1,9 @@
-@rem ======================================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.12-bioc-longtests subbuilds
-@rem ======================================================================================
+@rem ===================================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.12-bioc-longtests builds
+@rem ===================================================================================
 
 
-set BBS_SUBBUILDS=bioc-longtests
+set BBS_BUILDTYPE=bioc-longtests
 
 
 set wd1=%cd%

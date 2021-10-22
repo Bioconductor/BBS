@@ -1,9 +1,9 @@
-@rem =================================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.14-workflows subbuilds
-@rem =================================================================================
+@rem ==============================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.14-workflows builds
+@rem ==============================================================================
 
 
-set BBS_SUBBUILDS=workflows
+set BBS_BUILDTYPE=workflows
 
 
 set wd1=%cd%

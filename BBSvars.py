@@ -33,22 +33,22 @@ if user != running_user:
 
 BBS_home = BBSutils.getenv('BBS_HOME')
 ### BBS_BIOC_VERSION is not necessarily defined (e.g. for the "cran"
-### subbuilds) in which case 'bioc_version' will be set to None.
+### buildtype) in which case 'bioc_version' will be set to None.
 bioc_version = BBSutils.getenv('BBS_BIOC_VERSION', False)
 
-subbuilds = BBSutils.getenv('BBS_SUBBUILDS', False, "bioc")
+buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, "bioc")
 
 ### Timeout limits
 
 default_INSTALL_timeout   =  "2400.0"  # 40 min
 
-if subbuilds == "data-experiment":
+if buildtype == "data-experiment":
     default_BUILD_timeout =  "4800.0"  # 80 min
-elif subbuilds == "workflows":
+elif buildtype == "workflows":
     default_BUILD_timeout =  "7200.0"  #  2 h
-elif subbuilds == "books":
+elif buildtype == "books":
     default_BUILD_timeout = "18000.0"  #  5 h
-elif subbuilds == "bioc-longtests":
+elif buildtype == "bioc-longtests":
     default_BUILD_timeout = "21600.0"  #  6 h
 else:
     default_BUILD_timeout =  "2400.0"  # 40 min

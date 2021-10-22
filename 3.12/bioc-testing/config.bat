@@ -1,9 +1,9 @@
 @rem ============================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.12-bioc-testing subbuilds
+@rem Settings shared by all the Windows nodes involved in the 3.12-bioc-testing builds
 @rem ============================================================================
 
 
-set BBS_SUBBUILDS=bioc-testing
+set BBS_BUILDTYPE=bioc-testing
 
 
 set wd1=%cd%

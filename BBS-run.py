@@ -382,10 +382,10 @@ def STAGE2():
     # build machines.
     #if ('BBS_STAGE2_MODE' in os.environ and
     #  os.environ['BBS_STAGE2_MODE'] == 'multiarch' and
-    #  BBSvars.subbuilds == "bioc"):
+    #  BBSvars.buildtype == "bioc"):
     #    CreateREnvironFiles()
 
-    if BBSvars.subbuilds in ["bioc", "bioc-testing"]:
+    if BBSvars.buildtype in ["bioc", "bioc-testing"]:
         # Update non-target packages.
         print("BBS> [STAGE2] Update non-target packages (1st run) ...", end=" ")
         sys.stdout.flush()
@@ -429,7 +429,7 @@ def STAGE2():
     print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp")
     os.chdir(STAGE2_tmp)
 
-    if BBSvars.subbuilds in ["bioc", "bioc-testing"]:
+    if BBSvars.buildtype in ["bioc", "bioc-testing"]:
         # Try again to update non-target packages (some updates could have
         # failed in the previous attempt because of dependency issues).
         print("BBS> [STAGE2] Update non-target packages (2nd run) ...", end=" ")
@@ -504,7 +504,7 @@ def STAGE3():
     print("BBS> [STAGE3] cd BBS_MEAT_PATH")
     target_pkgs = extractTargetPkgListFromMeatIndex()
     meat_path = BBSvars.meat_path
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         bbs.fileutils.remake_dir(meat_path)
         os.chdir(meat_path)
         for pkg in target_pkgs:

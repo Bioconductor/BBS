@@ -48,6 +48,6 @@ export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
 export BBS_REPORT_MOTD="These are experimental builds on Apple's new arm64 arch. See <A href="https://github.com/Bioconductor/BBS/blob/master/Doc/BigSur-arm64-builds.md">here</A> for more information."
 
 # Control where to publish the report:
-export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/taxco/$BBS_SUBBUILDS-LATEST/"
+export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/taxco/$BBS_BUILDTYPE-LATEST/"
 export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 

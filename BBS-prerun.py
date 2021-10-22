@@ -40,7 +40,7 @@ def remakeCentralRdir(Central_rdir):
 ### case it wil go to the "skipped index"), and 2 if it's ignored.
 def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     options = bbs.parse.parse_BBSoptions_from_pkgsrctree(pkgsrctree)
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         ## Ignore the package if it has no .BBSoptions file, or if the file
         ## has no RunLongTests entry, or if the entry is not TRUE.
         if options == None:
@@ -86,7 +86,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
               (version, DESCRIPTION_path))
         return 1  # package will be skipped
     try:
-        if BBSvars.subbuilds != "cran":
+        if BBSvars.buildtype != "cran":
             maintainer = bbs.parse.get_Maintainer_name_from_pkgsrctree(pkgsrctree)
             maintainer_email = bbs.parse.get_Maintainer_email_from_pkgsrctree(pkgsrctree)
         else:
@@ -98,7 +98,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     meat_index.write('Package: %s\n' % pkgname)
     meat_index.write('Version: %s\n' % version)
     meat_index.write('Maintainer: %s\n' % maintainer)
-    if BBSvars.subbuilds != "cran":
+    if BBSvars.buildtype != "cran":
         meat_index.write('MaintainerEmail: %s\n' % maintainer_email)
     package_status = DESCRIPTION.get('PackageStatus')
     if package_status != None:
@@ -111,7 +111,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
 
 def build_meat_index(pkgs, meat_path):
     doing_what = 'building the meat index for the %s package' % len(pkgs)
-    if BBSvars.subbuilds == "bioc-incremental":
+    if BBSvars.buildtype == "bioc-incremental":
         doing_what += '(s) that have changed'
     else:
         doing_what += 's in the manifest'
@@ -144,7 +144,7 @@ def build_meat_index(pkgs, meat_path):
     skipped_index.close()
     meat_index.close()
     print("BBS> [build_meat_index] DONE %s" % doing_what)
-    if BBSvars.subbuilds == "bioc-longtests":
+    if BBSvars.buildtype == "bioc-longtests":
         nignored = len(pkgs) - nadded - nskipped
         print("BBS>   --> %d pkgs were ignored" % nignored, end=" ")
         print("(because not subscribed to Long Tests builds)")
@@ -267,7 +267,7 @@ def update_git_MEAT0(MEAT0_path, snapshot_date,
         print()
         pkg_git_clone = os.path.join(MEAT0_path, pkg)
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
-        if BBSvars.subbuilds == "bioc-incremental":
+        if BBSvars.buildtype == "bioc-incremental":
             snapshot_date = None
         pkg_has_changed = bbs.gitutils.update_git_clone(pkg_git_clone,
                                 pkg_git_repo_url,
@@ -277,7 +277,7 @@ def update_git_MEAT0(MEAT0_path, snapshot_date,
                                 reclone_if_update_fails=True)
         if pkg_has_changed:
             changed_pkgs.append(pkg)
-        if BBSvars.subbuilds == "bioc-incremental":
+        if BBSvars.buildtype == "bioc-incremental":
             if pkg_has_changed:
                 print("==> package has changed")
             else:
@@ -313,7 +313,7 @@ def update_MEAT0(MEAT0_path, snapshot_date):
 def writeAndUploadMeatInfo(work_topdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     snapshot_date = bbs.jobs.currentDateString()
-    if BBSvars.subbuilds == "bioc-incremental":
+    if BBSvars.buildtype == "bioc-incremental":
         pkgs = update_git_MEAT0(MEAT0_path, snapshot_date)
     else:
         update_MEAT0(MEAT0_path, snapshot_date)

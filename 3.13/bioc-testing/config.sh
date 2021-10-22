@@ -1,10 +1,10 @@
 #!/bin/bash
 # =========================================================================
-# Settings shared by all the Unix nodes involved in the 3.13-bioc-testing subbuilds
+# Settings shared by all the Unix nodes involved in the 3.13-bioc-testing builds
 # =========================================================================
 
 
-export BBS_SUBBUILDS="bioc-testing"
+export BBS_BUILDTYPE="bioc-testing"
 
 
 wd1=$(pwd)

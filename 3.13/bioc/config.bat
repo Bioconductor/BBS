@@ -1,9 +1,9 @@
-@rem ============================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.13-bioc subbuilds
-@rem ============================================================================
+@rem =========================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.13-bioc builds
+@rem =========================================================================
 
 
-set BBS_SUBBUILDS=bioc
+set BBS_BUILDTYPE=bioc
 
 
 set wd1=%cd%

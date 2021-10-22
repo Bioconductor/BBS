@@ -13,14 +13,14 @@ export BBS_NODE_HOSTNAME="malbec2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.13-bioc-testing"
 # We use the same R instance that is used for the nightly software
-# subbuilds (because it's convenient) but we don't want the bioc-testing
-# subbuilds to interfer in any way with the nightly software subbuilds.
+# builds (because it's convenient) but we don't want the bioc-testing
+# builds to interfer in any way with the nightly software builds.
 # In particular STAGE2 should NOT install anything in
 # /home/biocbuild/bbs-3.13-bioc/R/library!
 # So we set R_LIBS to point to our own library folder.
 # IMPORTANT: Make sure to create the Rlibs folder on malbec2 before
-# starting the bioc-testing subbuilds. Otherwise the bioc-testing
-# subbuilds will ignore the folder and install packages in
+# starting the bioc-testing builds. Otherwise the bioc-testing
+# builds will ignore the folder and will install packages in
 # /home/biocbuild/bbs-3.13-bioc/R/library!
 export BBS_R_HOME="/home/biocbuild/bbs-3.13-bioc/R"
 export R_LIBS="/home/biocbuild/bbs-3.13-bioc-testing/Rlibs"
@@ -54,7 +54,7 @@ export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
 #export BBS_REPORT_MOTD="Happy new year to all Bioconductor developers!"
 
 # Control where to publish the report:
-export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/$BBS_SUBBUILDS-LATEST/"
+export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/$BBS_BUILDTYPE-LATEST/"
 export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
 

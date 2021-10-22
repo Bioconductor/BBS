@@ -1,9 +1,9 @@
-@rem =======================================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.13-data-annotation subbuilds
-@rem =======================================================================================
+@rem ====================================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.13-data-annotation builds
+@rem ====================================================================================
 
 
-set BBS_SUBBUILDS=data-annotation
+set BBS_BUILDTYPE=data-annotation
 
 
 set wd1=%cd%

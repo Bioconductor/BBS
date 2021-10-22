@@ -1,9 +1,9 @@
-@rem =============================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.15-books subbuilds
-@rem =============================================================================
+@rem ==========================================================================
+@rem Settings shared by all the Windows nodes involved in the 3.15-books builds
+@rem ==========================================================================
 
 
-set BBS_SUBBUILDS=books
+set BBS_BUILDTYPE=books
 
 
 set wd1=%cd%

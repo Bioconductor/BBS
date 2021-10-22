@@ -1,10 +1,10 @@
 #!/bin/bash
-# ====================================================================================
-# Settings shared by all the Unix nodes involved in the 3.15-data-experiment subbuilds
-# ====================================================================================
+# =================================================================================
+# Settings shared by all the Unix nodes involved in the 3.15-data-experiment builds
+# =================================================================================
 
 
-export BBS_SUBBUILDS="data-experiment"
+export BBS_BUILDTYPE="data-experiment"
 
 
 wd1=$(pwd)

@@ -41,8 +41,8 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     if status != 'OK':
         return True
 
-    ## workflows and books subbuilds exit here
-    if BBSvars.subbuilds in ["workflows", "books"]:
+    ## workflows and books buildtype exit here
+    if BBSvars.buildtype in ["workflows", "books"]:
         return status != 'OK'
 
     ## Extract Status from CHECK summary.
@@ -82,7 +82,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     ## Workflow and book packages do not have manuals/ because we do not run
     ## `R CMD check`.
     manuals_dir = "../manuals"
-    if BBSvars.subbuilds in ["workflows", "books"]:
+    if BBSvars.buildtype in ["workflows", "books"]:
         pass
     elif source_node:
         print("BBS> [stage6b] mkdir %s" % manuals_dir)
@@ -109,7 +109,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         else:
             print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pkg_file)
         ## Get reference manual from pkg.Rcheck directory.
-        if BBSvars.subbuilds in ["workflows", "books"]:
+        if BBSvars.buildtype in ["workflows", "books"]:
             pass
         elif source_node:
             pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \

@@ -1,10 +1,10 @@
 #!/bin/bash
-# ====================================================================================
-# Settings shared by all the Unix nodes involved in the 3.15-data-annotation subbuilds
-# ====================================================================================
+# =================================================================================
+# Settings shared by all the Unix nodes involved in the 3.15-data-annotation builds
+# =================================================================================
 
 
-export BBS_SUBBUILDS="data-annotation"
+export BBS_BUILDTYPE="data-annotation"
 
 
 wd1=$(pwd)
