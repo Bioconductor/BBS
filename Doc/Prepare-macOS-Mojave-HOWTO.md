@@ -1955,7 +1955,7 @@ TESTING: Try to install the Travel package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.18 Install .NET Runtime
+### 4.18 Install .NET 5.0 Runtime
 
 Required by Bioconductor package rmspc.
 
@@ -1969,6 +1969,8 @@ install the 5.0 .NET runtime corresponding to the build system's macOS.
     sudo installer -pkg dotnet-runtime-5.0.9-osx-x64.pkg -target /
 
 #### Testing
+
+You might need to logout and login again before trying this:
 
     cd ~/bbs-3.14-bioc/meat/
     R CMD build rmspc
