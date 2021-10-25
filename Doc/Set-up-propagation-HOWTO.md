@@ -328,6 +328,16 @@ Save but don't commit.
     R-4.2 CMD INSTALL biocViews
     ```
 
+If you previously got the message that BiocManager doesn't support your version
+of R, you can use the following hack to to install biocViews:
+
+    ```
+    repos <- BiocManager:::.repositories(character(), version="3.14")
+    install.packages("biocViews", repos=repos)
+    ```
+
+Then you can install biocViews in the `~/pkgs_to_install` directory.
+
 - Install Bioconductor package DynDoc:
     ```
     BiocManager::install("DynDoc")
