@@ -298,6 +298,18 @@ From the biocpush account:
     BiocManager::install(version="devel")
     ```
 
+If you get a message that Bioconductor doesn't build and check for packages for
+your R version then use the following hack in the local `biocViews` in
+`~/pkgs_to_install/biocViews/R/repository.R:
+
+    ```
+    # Replace
+    # all_repos <- repositories()
+    all_repos <- BiocManager:::.repositories(character(), version="3.15")
+    ```
+
+Save but don't commit.
+
 - Install the most current version of the biocViews package:
     ```
     ## First install it from R with BiocManager::install(). This is the
