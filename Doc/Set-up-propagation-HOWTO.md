@@ -298,6 +298,18 @@ From the biocpush account:
     BiocManager::install(version="devel")
     ```
 
+If you get a message that Bioconductor doesn't build and check for packages for
+your R version then use the following hack in the local `biocViews` in
+`~/pkgs_to_install/biocViews/R/repository.R:
+
+    ```
+    # Replace
+    # all_repos <- repositories()
+    all_repos <- BiocManager:::.repositories(character(), version="3.15")
+    ```
+
+Save but don't commit.
+
 - Install the most current version of the biocViews package:
     ```
     ## First install it from R with BiocManager::install(). This is the
@@ -315,6 +327,16 @@ From the biocpush account:
     git clone https://git.bioconductor.org/packages/biocViews
     R-4.2 CMD INSTALL biocViews
     ```
+
+If you previously got the message that BiocManager doesn't support your version
+of R, you can use the following hack to to install biocViews:
+
+    ```
+    repos <- BiocManager:::.repositories(character(), version="3.14")
+    install.packages("biocViews", repos=repos)
+    ```
+
+Then you can install biocViews in the `~/pkgs_to_install` directory.
 
 - Install Bioconductor package DynDoc:
     ```
