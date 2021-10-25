@@ -125,11 +125,11 @@ From now on everything must be done **from the biocbuild account**.
 These are the requirements for running the BioC software builds:
 
                           strict minimum  recommended
-    Nb of logical cores:               8           16
-    Memory:                         16GB         32GB
+    Nb of logical cores:              16           24
+    Memory:                         32GB         64GB
 
-Hard drive: 256GB if the plan is to run BBS only on the machine. More (e.g.
-512GB) if the plan is to also run the Single Package Builder.
+Hard drive: 512GB if the plan is to run BBS only on the machine. More (e.g.
+768GB) if the plan is to also run the Single Package Builder.
 
 Check nb of logical cores with:
 
