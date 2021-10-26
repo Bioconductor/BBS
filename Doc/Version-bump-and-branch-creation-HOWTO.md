@@ -23,8 +23,8 @@ This package only needs the new branch and a simple y -> y + 1 version bump.
 
 We'll use Python script `bump_version_and_create_branch.py` to apply and
 push these changes. This will need to be done on the day prior to the release
-before the BioC 3.14 builds start for software, workflow, and data-experiment
-packages, as well as for the books.
+before the BioC 3.14 builds start for software, data-experiment, workflow, and
+book packages.
 
 Look for the prerun jobs in the crontab for the `biocbuild` user on the main
 BioC 3.14 builder to get the times the software and data-experiment builds get
@@ -45,9 +45,9 @@ in sections **C.** and **D.**.
   copying/pasting/executing commands from this document.
 
 * Choose a Linux machine with enough disk space to clone all the software,
-  data-experiment, workflow, and book packages (as of October 2019, the total
-  size of all the package clones is about 113G). The machine needs to have the
-  `git` client and Python. The procedure described here doesn't require
+  data-experiment, workflow, and book packages (as of October 2021, the total
+  size of all the package clones is about 122G). The machine needs to have
+  the `git` client and Python. The procedure described here doesn't require
   `sudo` privileges.
   Make sure to pick up a machine that has fast and reliable internet access.
   The Linux build machines are a good choice. If you want to use one of
@@ -363,8 +363,8 @@ with
 in `~/BBS/3.14/config.bat`
 
 Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.14-bioc/`,
-`~/bbs-3.14-data-experiment/`, and `~/bbs-3.14-workflows/`. They'll get
-automatically re-created and re-populated when the builds start.
+`~/bbs-3.14-data-experiment/`, `~/bbs-3.14-workflows/`, and `~/bbs-3.14-books/`.
+They'll get automatically re-created and re-populated when the builds start.
 
 ### E4. Update all core bioconductor packages hosted on github/Bioconductor organization
 
