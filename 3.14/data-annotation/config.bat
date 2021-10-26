@@ -11,6 +11,8 @@ cd ..
 call config.bat
 cd %wd1%
 
+@rem Override BBS_BIOC_GIT_BRANCH
+set BBS_BIOC_GIT_BRANCH=master
 
 @rem What type of meat? Only 3 types are supported:
 @rem   1: svn repo (contains pkg dirs)
