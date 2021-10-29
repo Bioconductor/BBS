@@ -93,18 +93,8 @@ pkgType2FileExt = {
 }
 
 def getNodeSpec(node_hostname, key):
-    spec = nodes.nodespecs.allnodes[node_hostname.lower()]
-    if key == 'OS':
-        return spec[0]
-    if key == 'Arch':
-        return spec[1]
-    if key == 'Platform':
-        return spec[2]
-    if key == 'pkgType':
-        return spec[3]
-    if key == 'encoding':
-        return spec[4]
+    specs = nodes.nodespecs.allnodes[node_hostname.lower()]
     if key == 'pkgFileExt':
-        return pkgType2FileExt[spec[3]]
-    sys.exit("ERROR: Invalid key '%s'" % key)
+        return pkgType2FileExt[specs['pkgType']]
+    return specs[key]
 
