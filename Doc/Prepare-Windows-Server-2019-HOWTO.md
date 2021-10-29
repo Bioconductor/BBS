@@ -1360,7 +1360,45 @@ open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
     ..\R\bin\R CMD build ImmuneSpaceR
 
 
-### 4.10 Install gtkmm
+### 4.10 Install Dokan
+
+This is needed by the Travel package.
+
+Download `DokanSetup.exe` from https://dokan-dev.github.io/
+
+Run the installer.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to compile the Travel package e.g.
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+(this folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL Travel
+
+
+### 4.11 Install .NET 5.0 Runtime
+
+This is needed by the rmspc package. Note that we're only installing .NET
+for 64-bit Windows so rmspc (and any package that depends on it) needs to
+be marked as unsupported on 32-bit Windows.
+
+Download the Windows x64 Installer for .NET 5.0 Runtime from
+https://dotnet.microsoft.com/download/dotnet/5.0
+
+Run the Installer.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on), in a PowerShell window:
+
+    which dotnet    # /c/Program Files/dotnet/dotnet
+
+
+### 4.12 Install gtkmm
+
+OCT 2021: THIS IS NO LONGER NEEDED! (starting with BioC 3.14, HilbertVisGUI is
+no longer supported on Windows)
+
+This is needed by the HilbertVisGUI package.
 
 Download `gtkmm-win64-devel-2.22.0-2.exe` from
 
@@ -1406,39 +1444,6 @@ I suspect that this is because of a binary incompatibility between the
 binaries provided by `gtkmm-win64-devel-2.22.0-2.exe` (which is 10 year old
 and was compiled with an old version of `gcc`) and the compilers provided
 by Rtools40 (`gcc` 8.3.0).
-
-
-### 4.11 Install Dokan
-
-This is needed by the Travel package.
-
-Download `DokanSetup.exe` from https://dokan-dev.github.io/
-
-Run the installer.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to compile the Travel package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL Travel
-
-
-### 4.12 Install .NET 5.0 Runtime
-
-This is needed by the rmspc package. Note that we're only installing .NET
-for 64-bit Windows so rmspc (and any package that depends on it) needs to
-be marked as unsupported on 32-bit Windows.
-
-Download the Windows x64 Installer for .NET 5.0 Runtime from
-https://dotnet.microsoft.com/download/dotnet/5.0
-
-Run the Installer.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on), in a PowerShell window:
-
-    which dotnet    # /c/Program Files/dotnet/dotnet
 
 
 
