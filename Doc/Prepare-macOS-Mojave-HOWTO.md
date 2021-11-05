@@ -131,13 +131,16 @@ These are the requirements for running the BioC software builds:
 Hard drive: 512GB if the plan is to run BBS only on the machine. More (e.g.
 768GB) if the plan is to also run the Single Package Builder.
 
-Check nb of logical cores with:
+Check nb of cores with:
 
-    sysctl -n hw.ncpu
+    sysctl -n hw.logicalcpu   # logical cores
+    sysctl -n hw.ncpu         # should be the same as 'sysctl -n hw.logicalcpu'
+    sysctl -n hw.activecpu    # should be the same as 'sysctl -n hw.logicalcpu'
+    sysctl -n hw.physicalcpu  # physical cores
 
 Check amount of RAM with:
 
-    system_profiler SPHardwareDataType
+    system_profiler SPHardwareDataType  # will also report nb of physical cores
 
 Check hard drive with:
 
