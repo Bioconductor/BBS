@@ -18,7 +18,7 @@ export BBS_NB_CPU=8  # 24 cores are available
 # Central build node is nebbiolo1 at DFCI.
 export BBS_CENTRAL_RHOST="nebbiolo1"
 export BBS_RSH_CMD="ssh -F /Users/biocbuild/.ssh/config"
-export BBS_CENTRAL_ROOT_URL="http://155.52.207.166"
+export BBS_CENTRAL_ROOT_URL="http://155.52.207.165"
 
 # Source tarballs produced during STAGE3 won't be propagated
 # so we don't need to push them to the central builder.
