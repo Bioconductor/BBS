@@ -1125,23 +1125,23 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Nov 2020):
 
-    pkgs <- c("XML", "rJava", "gdtools", "units", "gsl", "V8", "magick",
-              "rsvg", "gmp", "xml2", "jpeg", "tiff", "ncdf4",
+    difficult_pkgs <- c("XML", "rJava", "gdtools", "units", "gsl", "V8",
+              "magick", "rsvg", "gmp", "xml2", "jpeg", "tiff", "ncdf4",
               "fftw", "fftwtools", "proj4", "textshaping", "ragg",
               "Rmpfr", "pdftools", "av", "rgeos", "sf", "RcppAlgos",
               "glpkAPI", "RGtk2", "gert", "RPostgres", "RMySQL", "RMariaDB",
-              "protolite", "arrangements")
+              "protolite", "arrangements", "terra", "PoissonBinomial")
 
 First try to install with:
 
-    install.packages(pkgs, repos="https://cran.r-project.org")
+    install.packages(difficult_pkgs, repos="https://cran.r-project.org")
 
 It should fail for most (if not all) packages. However, it's still worth
 doing it as it will be able to install many dependencies from source.
 Then try to install the binaries built with the current R release:
 
     contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.1"
-    install.packages(pkgs, contriburl=contriburl)
+    install.packages(difficult_pkgs, contriburl=contriburl)
 
 NOTES:
 
@@ -1149,13 +1149,13 @@ NOTES:
   with R-devel but if they can be loaded then it's **very** likely that they
   will. So make sure they can be loaded:
     ```
-    for (pkg in pkgs) library(pkg, character.only=TRUE)
+    for (pkg in difficult_pkgs) library(pkg, character.only=TRUE)
     ```
 
-- Most binary packages in `pkgs` (e.g. XML, rJava, etc) contain a shared
-  object (e.g. `libs/XML.so`) that is linked to `libR.dylib` via an absolute
-  path that is specific to the version of R that was used when the object was
-  compiled/linked e.g.
+- Most binary packages in `difficult_pkgs` (e.g. XML, rJava, etc) contain a
+  shared object (e.g. `libs/XML.so`) that is linked to `libR.dylib` via an
+  absolute path that is specific to the version of R that was used when the
+  object was compiled/linked e.g.
     ```
     /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libR.dylib
     ```
