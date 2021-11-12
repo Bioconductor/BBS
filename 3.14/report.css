@@ -499,12 +499,15 @@ TBODY.compact.gcard TR.even_row_number .tokay1 {
 /* tokay2 */
 .tokay2,
 .gcard TD.tokay2 {
-    background: #EEE4CC;
+    background: #FAE0DE;
 }
 .tokay2.toned_down,
 TR.toned_down .tokay2,
 TBODY.compact.gcard TR.even_row_number .tokay2 {
-    background: #DDD3BB;
+    background: #EAD0CE;
+}
+DIV.tokay2 {
+    color: #500;
 }
 
 /* riesling1 */
