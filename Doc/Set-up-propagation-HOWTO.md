@@ -194,6 +194,33 @@ replaced with real content.
 The symlinks will trick `install.packages()` into believing that the 3.15
 repos exist even though they don't.
 
+#### When devel and release use different versions of R
+
+The above solution works when devel and release use the same version of R;
+however, when devel and release are different, the following warning appears
+for macos because it expected `4.2` where `4.1` only existed.
+
+    The downloaded source packages are in
+       '/private/var/folders/1w/xf7rrsr1483d4rg7vwbkdy780000gp/T/RtmpSo8mys/downloaded_packages'
+    Warning messages:
+    1: In .inet_warning(msg) :
+      unable to access index for repository https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/contrib/4.2:
+      cannot open URL 'https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/contrib/4.2/PACKAGES'
+    2: In .inet_warning(msg) :
+      unable to access index for repository https://cloud.r-project.org/bin/macosx/contrib/4.2:
+      cannot open URL 'https://cloud.r-project.org/bin/macosx/contrib/4.2/PACKAGES' 
+
+The solution is to create a symlink from `4.1` to `4.2` in `/home/biocpush/PACKAGES/3.14/data/annotation/bin/macosx/contrib`
+and in `/home/biocpush/PACKAGES/3.14/data/annotation/bin/windows/contrib` then run `./pushRepos-data-annotation.sh` to put
+it on `master.bioconductor.org`.
+
+    oses="macosx windows"
+    data_annotation=/home/biocpush/PACKAGES/3.14/data/annotation/bin
+    for os in $oses; do
+        ln -s $data_annotation/$os/contrib/4.1 4.2
+    done
+    ./pushRepos-data-annotation.sh
+
 
 ### Testing
 
