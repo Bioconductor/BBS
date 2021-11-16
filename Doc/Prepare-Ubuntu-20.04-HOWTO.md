@@ -171,9 +171,9 @@ Then logout and login again for the change to take effect, and try:
     # Tue 20 Apr 16:26:10 EDT 2021
 
 
-### 1.6 Set up the biocbuild account
+### 1.6 Set up the biocbuild and pkgbuild accounts
 
-#### Create the account
+#### Create the account biocbuild
 
     sudo adduser biocbuild
 
@@ -193,6 +193,13 @@ Then `chmod 400 ~/.ssh/id_rsa` so permissions look like this:
 
     biocbuild@nebbiolo2:~$ ls -l .ssh/id_rsa
     -r-------- 1 biocbuild biocbuild 1679 Apr 30 15:20 .ssh/id_rsa
+
+#### (Optional) Set up the pkgbuild account
+
+If the machine will also run the single package builder then you
+should create the `pkgbuild` account. The process is the same as
+the biocbuild account, including the password. The group of public
+keys may differ, so ask if you are not sure who should have access.
 
 #### Testing
 
