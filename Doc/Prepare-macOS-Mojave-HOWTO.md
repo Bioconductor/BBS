@@ -2111,5 +2111,5 @@ Then add the following entry to biocbuild's crontab:
     # BIOC 3.14 SOFTWARE LONGTESTS BUILDS
     # -----------------------------------
     
-    00 16 * * 6 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc-longtests/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc-longtests/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 09 * * 6 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc-longtests/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc-longtests/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 

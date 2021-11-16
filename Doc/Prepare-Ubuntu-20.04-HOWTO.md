@@ -173,7 +173,7 @@ Then logout and login again for the change to take effect, and try:
 
 ### 1.6 Set up the biocbuild and pkgbuild accounts
 
-#### Create the account biocbuild
+#### Create the biocbuild account
 
     sudo adduser biocbuild
 
@@ -1306,16 +1306,16 @@ Then add the following entries to biocbuild's crontab:
 
     # BIOC 3.14 DATA EXPERIMENT BUILDS
     # --------------------------------
-    # run on Tuesdays, Thursdays, and Saturdays
+    # run on Tuesdays and Thursdays
     
     # prerun:
-    30 09 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    30 09 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    00 11 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 11 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    45 15 * * 2,4,6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 15 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
@@ -1401,13 +1401,13 @@ Then add the following entries to biocbuild's crontab:
     # run every Saturday
     
     # prerun:
-    00 15 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 08 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    00 16 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 09 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    45 23 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 22 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.14/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.14-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 

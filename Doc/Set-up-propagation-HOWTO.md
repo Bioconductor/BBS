@@ -521,7 +521,7 @@ Add the following lines to the crontab:
     # --------------------------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    45 16 * * 2,4,6 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocpush/cron.log/3.15/propagate-data-experiment-`date +\%Y\%m\%d`.log 2>&1
+    45 16 * * 2,4 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocpush/cron.log/3.15/propagate-data-experiment-`date +\%Y\%m\%d`.log 2>&1
     ```
 - For propagation of workflow packages:
     ```
