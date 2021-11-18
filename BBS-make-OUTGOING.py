@@ -105,18 +105,23 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         pkg_file = os.path.join(fresh_pkgs_subdir, pkg_file)
         print("BBS> [stage6b]   - copying %s to OUTGOING folder ..." % pkg_file)
         if os.path.exists(pkg_file):
-            shutil.copy(pkg_file, ".")
+            #shutil.copy(pkg_file, ".")
+            os.link(pkg_file, ".")  # create hard link to avoid making a copy
         else:
             print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pkg_file)
         ## Get reference manual from pkg.Rcheck directory.
         if BBSvars.buildtype in ["workflows", "books"]:
             pass
         elif source_node:
-            pdf_file = "%s/meat/%s.Rcheck/%s-manual.pdf" % \
-                       (BBSutils.getenv('BBS_WORK_TOPDIR'), pkg, pkg)
+            pdf_file = os.path.join(BBSutils.getenv('BBS_WORK_TOPDIR'),
+                                    "meat",
+                                    "%s.Rcheck" % pkg,
+                                    "%s-manual.pdf" % pkg)
             print("BBS> [stage6b]   - copying %s manual to OUTGOING/manuals folder..." % pkg)
             if os.path.exists(pdf_file):
-                shutil.copy(pdf_file, "%s/%s.pdf" % (manuals_dir, pkg))
+                dst = os.path.join(manuals_dir, "%s.pdf" % pkg)
+                #shutil.copy(pdf_file, dst)
+                os.link(pkg_file, dst) # create hard link to avoid making a copy
             else:
                 print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pdf_file)
     print("BBS> [stage6b] END copying outgoing packages from %s." % fresh_pkgs_subdir)
