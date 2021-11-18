@@ -16,6 +16,7 @@ set BBS_STAGE2_MODE=multiarch
 set BBS_STAGE4_MODE=multiarch
 set BBS_STAGE5_MODE=multiarch
 set BBS_BUILD_TIMEOUT=4800
+set BBS_CHECK_TIMEOUT=4800
 
 @rem Central build node is nebbiolo2 at DFCI.
 set BBS_CENTRAL_RHOST=nebbiolo2
