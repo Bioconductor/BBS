@@ -55,7 +55,7 @@ def _replace_version(pkgsrctree, new_version, new_date=None):
             line = key1 + ' ' + new_version + '\n'
             line = line.encode()
         if new_date != None and s[:len(key2)] == key2:
-            line = key1 + ' ' + new_date + '\n'
+            line = key2 + ' ' + new_date + '\n'
             line = line.encode()
         out_dcf.write(line)
     out_dcf.close()
