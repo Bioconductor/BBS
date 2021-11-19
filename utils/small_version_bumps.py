@@ -21,7 +21,7 @@ commit_msg = os.environ[varname]
 varname = 'new_date'
 if varname not in os.environ or os.environ[varname] == "":
     sys.exit('please set environment variable %s with new Date' % varname)
-commit_msg = os.environ[varname]
+new_date = os.environ[varname]
 
 ### Return the first 3 components only (additional components are ignored).
 def _split_version(version):
