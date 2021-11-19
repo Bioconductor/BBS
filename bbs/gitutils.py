@@ -68,14 +68,14 @@ def _run_gitcmd(gitcmd, cwd=None, out_path=None, prompt=''):
     _run(cmd, cwd=cwd, out_path=out_path, prompt=prompt)
     return
 
-def _create_clone(clone_path, repo_url, branch=None, depth=None):
+def _clone_repo(clone_path, repo_url, branch=None, depth=None):
     gitcmd = 'clone'
     if branch != None:
         gitcmd += ' --branch %s' % branch
     if depth != None:
         gitcmd += ' --depth %s' % depth
     gitcmd = '%s %s %s' % (gitcmd, repo_url, clone_path)
-    _run_gitcmd(gitcmd, prompt='bbs.gitutils._create_clone> ')
+    _run_gitcmd(gitcmd, prompt='bbs.gitutils._clone_repo> ')
     return
 
 def _new_commits_were_pulled(pull_output_path):
@@ -84,27 +84,27 @@ def _new_commits_were_pulled(pull_output_path):
     first_line = out.readline()
     return p.match(first_line.strip()) == None
 
-def _update_clone(clone_path, undo_changes=False, branch=None,
-                  snapshot_date=None):
+def _update_repo(clone_path, undo_changes=False, branch=None,
+                 snapshot_date=None):
     if undo_changes:
         gitcmd = 'checkout -f'
-        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_clone> ')
+        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_repo> ')
     if branch != None:
         ## checkout branch
         gitcmd = 'checkout %s' % branch
-        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_clone> ')
+        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_repo> ')
     if snapshot_date == None:
         gitcmd = 'pull'
         out_file = '.git_pull_output.txt'
         _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
-                    prompt='bbs.gitutils._update_clone> ')
+                    prompt='bbs.gitutils._update_repo> ')
         return _new_commits_were_pulled(os.path.join(clone_path, out_file))
     ## If 'snapshot_date' was supplied we fetch instead of pull so we can
     ## then merge up to snapshot date.
     gitcmd = 'fetch'
     out_file = '.git_fetch_output.txt'
     _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
-                prompt='bbs.gitutils._update_clone> ')
+                prompt='bbs.gitutils._update_repo> ')
     ## Andrzej: merge only up to snapshot date
     ##          (see https://stackoverflow.com/a/8223166/2792099)
     ## Hervé: That doesn't seem to work reliably. Switching to a
@@ -113,30 +113,29 @@ def _update_clone(clone_path, undo_changes=False, branch=None,
     gitcmd = 'merge'
     out_file = '.git_merge_output.txt'
     _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
-                prompt='bbs.gitutils._update_clone> ')
+                prompt='bbs.gitutils._update_repo> ')
     return _new_commits_were_pulled(os.path.join(clone_path, out_file))
 
-def update_git_clone(clone_path, repo_url, branch=None, depth=None,
-                     undo_changes=False, snapshot_date=None,
-                     reclone_if_update_fails=False):
+def clone_or_update_repo(clone_path, repo_url, branch=None, depth=None,
+                         undo_changes=False, snapshot_date=None,
+                         reclone_if_update_fails=False):
     if os.path.exists(clone_path):
         try:
-            branch_has_changed = _update_clone(clone_path, undo_changes, branch,
-                                               snapshot_date)
+            branch_has_changed = _update_repo(clone_path, undo_changes, branch,
+                                              snapshot_date)
         except subprocess.CalledProcessError as e:
             if not reclone_if_update_fails:
                 raise e
             print()
-            print("bbs.gitutils.update_git_clone> _update_clone() failed " +
+            print("bbs.gitutils.clone_or_update_repo> _update_repo() failed " +
                   "with error code %d!" % e.returncode)
-            print("bbs.gitutils.update_git_clone> ==> will try to re-create " +
-                  "git clone from scratch ...")
-            print("bbs.gitutils.update_git_clone> rm -r %s" % clone_path)
+            print("bbs.gitutils.clone_or_update_repo> ==> will try to re-clone ...")
+            print("bbs.gitutils.clone_or_update_repo> rm -r %s" % clone_path)
             fileutils.nuke_tree(clone_path)
             print()
         else:
             return branch_has_changed
-    _create_clone(clone_path, repo_url, branch, depth)
+    _clone_repo(clone_path, repo_url, branch, depth)
     return False
 
 def collect_git_clone_meta(clone_path, out_path, snapshot_date):

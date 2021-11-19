@@ -136,7 +136,8 @@ def _push(pkgsrctree):
 
 def _bump_version_and_create_branch(pkg, branch, push):
     repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-    bbs.gitutils.update_git_clone(pkg, repo_url, "master", undo_changes=True)
+    bbs.gitutils.clone_or_update_repo(pkg, repo_url, "master",
+                                      undo_changes=True)
     print()
     if _branch_exists(pkg, branch):
         print("Branch %s already exists ==> skip package" % branch)

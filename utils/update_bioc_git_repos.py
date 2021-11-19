@@ -28,8 +28,8 @@ def update_packages(pkgsrctree, pkgs, pkg_git_branch=None, skip=None):
         print()
         pkg_git_clone = os.path.join(pkgsrctree, pkg)
         pkg_git_repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-        bbs.gitutils.update_git_clone(pkg_git_clone, pkg_git_repo_url,
-                                      pkg_git_branch)
+        bbs.gitutils.clone_or_update_repo(pkg_git_clone, pkg_git_repo_url,
+                                          pkg_git_branch)
     return
 
 def update_packages_in_current_working_dir(pkg_git_branch=None, skip=None):
@@ -58,9 +58,9 @@ def update_manifest(manifest_git_branch=None):
     print('BBS> ----------------------------------------------------------')
     print('BBS> [update_manifest] branch: %s' % manifest_git_branch)
     print()
-    bbs.gitutils.update_git_clone(manifest_git_clone,
-                                  manifest_git_repo_url,
-                                  manifest_git_branch)
+    bbs.gitutils.clone_or_update_repo(manifest_git_clone,
+                                      manifest_git_repo_url,
+                                      manifest_git_branch)
     return
 
 def update_packages_from_manifest(pkgsrctree, manifest_file,

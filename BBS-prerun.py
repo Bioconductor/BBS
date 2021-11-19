@@ -250,11 +250,11 @@ def update_git_MEAT0(MEAT0_path, snapshot_date,
     print("BBS>   manifest_git_branch: %s" % manifest_git_branch)
     print("BBS> -------------------------------------------------------------")
     print()
-    bbs.gitutils.update_git_clone(BBSvars.manifest_clone_path,
-                             BBSvars.manifest_git_repo_url,
-                             manifest_git_branch,
-                             depth=1,
-                             reclone_if_update_fails=True)
+    bbs.gitutils.clone_or_update_repo(BBSvars.manifest_clone_path,
+                                BBSvars.manifest_git_repo_url,
+                                manifest_git_branch,
+                                depth=1,
+                                reclone_if_update_fails=True)
     ## iterate over manifest to update pkg dirs
     pkgs = bbs.manifest.read(BBSvars.manifest_path)
     changed_pkgs = []
@@ -269,7 +269,7 @@ def update_git_MEAT0(MEAT0_path, snapshot_date,
         pkg_git_repo_url = 'https://git.bioconductor.org/packages/%s' % pkg
         if BBSvars.buildtype == "bioc-incremental":
             snapshot_date = None
-        pkg_has_changed = bbs.gitutils.update_git_clone(pkg_git_clone,
+        pkg_has_changed = bbs.gitutils.clone_or_update_repo(pkg_git_clone,
                                 pkg_git_repo_url,
                                 git_branch,
                                 depth=1,

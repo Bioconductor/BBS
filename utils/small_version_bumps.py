@@ -97,7 +97,8 @@ def _push(pkgsrctree):
 
 def _bump_pkg_version(pkg, branch, push):
     repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-    bbs.gitutils.update_git_clone(pkg, repo_url, "master", undo_changes=True)
+    bbs.gitutils.clone_or_update_repo(pkg, repo_url, "master",
+                                      undo_changes=True)
     print()
     _small_version_bump(pkg, branch)
     if push:
