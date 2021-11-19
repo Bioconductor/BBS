@@ -102,13 +102,13 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         version = dcf_record['Version']
         ## Copy pkg from 'fresh_pkgs_subdir2'.
         pkg_file = "%s_%s.%s" % (pkg, version, fileext)
-        pkg_file = os.path.join(fresh_pkgs_subdir, pkg_file)
-        print("BBS> [stage6b]   - copying %s to OUTGOING folder ..." % pkg_file)
-        if os.path.exists(pkg_file):
-            #shutil.copy(pkg_file, ".")
-            os.link(pkg_file, ".")  # create hard link to avoid making a copy
+        pkg_path = os.path.join(fresh_pkgs_subdir, pkg_file)
+        print("BBS> [stage6b]   - copying %s to OUTGOING folder ..." % pkg_path)
+        if os.path.exists(pkg_path):
+            #shutil.copy(pkg_path, ".")
+            os.link(pkg_path, pkg_file)  # create hard link to avoid making a copy
         else:
-            print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pkg_file)
+            print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pkg_path)
         ## Get reference manual from pkg.Rcheck directory.
         if BBSvars.buildtype in ["workflows", "books"]:
             pass
@@ -121,7 +121,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
             if os.path.exists(pdf_file):
                 dst = os.path.join(manuals_dir, "%s.pdf" % pkg)
                 #shutil.copy(pdf_file, dst)
-                os.link(pkg_file, dst) # create hard link to avoid making a copy
+                os.link(pdf_file, dst) # create hard link to avoid making a copy
             else:
                 print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pdf_file)
     print("BBS> [stage6b] END copying outgoing packages from %s." % fresh_pkgs_subdir)
