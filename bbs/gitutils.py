@@ -7,7 +7,7 @@
 ###   Andrzej Oleś <andrzej.oles@embl.de>
 ###   Hervé Pagès <hpages.on.github@gmail.com>
 ###
-### Last modification: Jan 24, 2021
+### Last modification: Nov 19, 2021
 ###
 ### bbs.gitutils module
 ###
@@ -25,13 +25,20 @@ try:
 except KeyError:
     _git_cmd = 'git'
 
+verbose = True
+
+def _print_msg(msg):
+    if verbose:
+        print(msg)
+    return
+
 ### 'out_path' must be the path to file where to capture stdout. If 'cwd' is
 ### specified and 'out_path' is specified as a relative path, then 'out_path'
 ### will be treated as relative to 'cwd'.
 def _run(cmd, cwd=None, out_path=None, prompt=''):
     if cwd != None:
         previous_cwd = os.getcwd()
-        print('%scd %s' % (prompt, cwd))
+        _print_msg('%scd %s' % (prompt, cwd))
         os.chdir(cwd)
     cmd2 = cmd
     if out_path != None:
@@ -39,7 +46,7 @@ def _run(cmd, cwd=None, out_path=None, prompt=''):
         out = open(out_path, 'w')
     else:
         out = None
-    print('%s%s' % (prompt, cmd2))
+    _print_msg('%s%s' % (prompt, cmd2))
     sys.stdout.flush()
     try:
         ## Nasty things (that I don't really understand) can happen with
@@ -55,10 +62,10 @@ def _run(cmd, cwd=None, out_path=None, prompt=''):
     if out_path != None:
         out.close()
     if cwd != None:
-        print('%scd %s' % (prompt, previous_cwd))
+        _print_msg('%scd %s' % (prompt, previous_cwd))
         sys.stdout.flush()
         os.chdir(previous_cwd)
-    print()
+    _print_msg('')
     if run_error != None:
         raise run_error
     return
@@ -68,79 +75,116 @@ def _run_gitcmd(gitcmd, cwd=None, out_path=None, prompt=''):
     _run(cmd, cwd=cwd, out_path=out_path, prompt=prompt)
     return
 
-def _clone_repo(clone_path, repo_url, branch=None, depth=None):
+def _clone_repo(repo_path, repo_url, branch=None, depth=None):
     gitcmd = 'clone'
     if branch != None:
         gitcmd += ' --branch %s' % branch
     if depth != None:
         gitcmd += ' --depth %s' % depth
-    gitcmd = '%s %s %s' % (gitcmd, repo_url, clone_path)
+    gitcmd = '%s %s %s' % (gitcmd, repo_url, repo_path)
     _run_gitcmd(gitcmd, prompt='bbs.gitutils._clone_repo> ')
     return
 
-def _new_commits_were_pulled(pull_output_path):
+def _repo_has_local_changes(repo_path):
+    prompt = 'bbs.gitutils._repo_has_local_changes> '
+    gitcmd = 'status --porcelain'
+    out_file = '.git_status_output.txt'
+    _run_gitcmd(gitcmd, cwd=repo_path, out_path=out_file, prompt=prompt)
+    status_output_path = os.path.join(repo_path, out_file)
+    out = open(status_output_path, 'r')
+    first_line = out.readline()
+    out.close()
+    _print_msg('%srm %s' % (prompt, status_output_path))
+    os.remove(status_output_path)
+    return len(first_line) != 0 and first_line[0] != '?'
+
+def _new_commits_pulled(pull_output_path):
     p = re.compile('Already up.to.date')
     out = open(pull_output_path, 'r')
     first_line = out.readline()
+    out.close()
     return p.match(first_line.strip()) == None
 
-def _update_repo(clone_path, undo_changes=False, branch=None,
-                 snapshot_date=None):
-    if undo_changes:
-        gitcmd = 'checkout -f'
-        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_repo> ')
+def _pull_repo(repo_path, branch=None, cleanup=False):
+    prompt = 'bbs.gitutils._pull_repo> '
     if branch != None:
         ## checkout branch
         gitcmd = 'checkout %s' % branch
-        _run_gitcmd(gitcmd, cwd=clone_path, prompt='bbs.gitutils._update_repo> ')
-    if snapshot_date == None:
-        gitcmd = 'pull'
-        out_file = '.git_pull_output.txt'
-        _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
-                    prompt='bbs.gitutils._update_repo> ')
-        return _new_commits_were_pulled(os.path.join(clone_path, out_file))
-    ## If 'snapshot_date' was supplied we fetch instead of pull so we can
-    ## then merge up to snapshot date.
-    gitcmd = 'fetch'
-    out_file = '.git_fetch_output.txt'
-    _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
-                prompt='bbs.gitutils._update_repo> ')
-    ## Andrzej: merge only up to snapshot date
-    ##          (see https://stackoverflow.com/a/8223166/2792099)
-    ## Hervé: That doesn't seem to work reliably. Switching to a
-    ## simple 'git merge' for now...
-    #gitcmd = 'merge `%s rev-list -n 1 --before="%s" %s`' % (_git_cmd, snapshot_date, branch)
-    gitcmd = 'merge'
-    out_file = '.git_merge_output.txt'
-    _run_gitcmd(gitcmd, cwd=clone_path, out_path=out_file,
-                prompt='bbs.gitutils._update_repo> ')
-    return _new_commits_were_pulled(os.path.join(clone_path, out_file))
+        _run_gitcmd(gitcmd, cwd=repo_path, prompt=prompt)
+    gitcmd = 'pull'
+    out_file = '.git_pull_output.txt'
+    _run_gitcmd(gitcmd, cwd=repo_path, out_path=out_file, prompt=prompt)
+    pull_output_path = os.path.join(repo_path, out_file)
+    new_commits_pulled = _new_commits_pulled(pull_output_path)
+    if cleanup:
+        _print_msg('%srm %s' % (prompt, pull_output_path))
+        os.remove(pull_output_path)
+    return new_commits_pulled
 
-def clone_or_update_repo(clone_path, repo_url, branch=None, depth=None,
-                         undo_changes=False, snapshot_date=None,
-                         reclone_if_update_fails=False):
-    if os.path.exists(clone_path):
+def _fetch_and_merge_repo(repo_path, branch=None, snapshot_date=None,
+                          cleanup=False):
+    prompt = 'bbs.gitutils._fetch_and_merge_repo> '
+    if branch != None:
+        ## checkout branch
+        gitcmd = 'checkout %s' % branch
+        _run_gitcmd(gitcmd, cwd=repo_path, prompt=prompt)
+    gitcmd = 'fetch'
+    #out_file = '.git_fetch_output.txt'
+    #_run_gitcmd(gitcmd, cwd=repo_path, out_path=out_file, prompt=prompt)
+    _run_gitcmd(gitcmd, cwd=repo_path, prompt=prompt)
+    if snapshot_date == None:
+        gitcmd = 'merge'
+    else:
+        ## Andrzej: merge only up to snapshot date
+        ##          (see https://stackoverflow.com/a/8223166/2792099)
+        ## Hervé: That doesn't seem to work reliably. Switching to a
+        ## simple 'git merge' for now...
+        #gitcmd = 'merge `%s rev-list -n 1 --before="%s" %s`' % (_git_cmd, snapshot_date, branch)
+        gitcmd = 'merge'
+    out_file = '.git_merge_output.txt'
+    _run_gitcmd(gitcmd, cwd=repo_path, out_path=out_file, prompt=prompt)
+    merge_output_path = os.path.join(repo_path, out_file)
+    new_commits_pulled = _new_commits_pulled(merge_output_path)
+    if cleanup:
+        _print_msg('%srm %s' % (prompt, merge_output_path))
+        os.remove(merge_output_path)
+    return new_commits_pulled
+
+def clone_or_pull_repo(repo_path, repo_url, branch=None, depth=None,
+                       discard_changes=False, snapshot_date=None,
+                       reclone_if_pull_fails=False,
+                       cleanup=False):
+    prompt = 'bbs.gitutils.clone_or_pull_repo>'
+    if discard_changes:
+        gitcmd = 'checkout -f'
+        _run_gitcmd(gitcmd, cwd=repo_path, prompt=prompt)
+    if os.path.exists(repo_path):
         try:
-            branch_has_changed = _update_repo(clone_path, undo_changes, branch,
-                                              snapshot_date)
+            if snapshot_date == None:
+                what = '_pull_repo'
+                branch_has_changed = _pull_repo(repo_path, branch, cleanup)
+            else:
+                what = '_fetch_and_merge_repo'
+                branch_has_changed = _fetch_and_merge_repo(repo_path, branch,
+                                                snapshot_date, cleanup)
         except subprocess.CalledProcessError as e:
-            if not reclone_if_update_fails:
+            if not reclone_if_pull_fails:
                 raise e
-            print()
-            print("bbs.gitutils.clone_or_update_repo> _update_repo() failed " +
-                  "with error code %d!" % e.returncode)
-            print("bbs.gitutils.clone_or_update_repo> ==> will try to re-clone ...")
-            print("bbs.gitutils.clone_or_update_repo> rm -r %s" % clone_path)
-            fileutils.nuke_tree(clone_path)
-            print()
+            _print_msg('')
+            _print_msg('%s %s() failed with error code %d!' % \
+                       (prompt, what, e.returncode))
+            _print_msg('%s ==> will try to re-clone ...' % prompt)
+            _print_msg('%s rm -r %s' % (prompt, repo_path))
+            fileutils.nuke_tree(repo_path)
+            _print_msg('')
         else:
             return branch_has_changed
-    _clone_repo(clone_path, repo_url, branch, depth)
+    _clone_repo(repo_path, repo_url, branch, depth)
     return False
 
-def collect_git_clone_meta(clone_path, out_path, snapshot_date):
+def collect_git_clone_meta(repo_path, out_path, snapshot_date):
     previous_cwd = os.getcwd()
-    os.chdir(clone_path)
+    os.chdir(repo_path)
 
     ## Note that using 'capture_output=True' is equivalent to using
     ## 'stdout=subprocess.PIPE' and 'stderr=subprocess.PIPE'. However

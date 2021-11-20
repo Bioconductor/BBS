@@ -3,10 +3,8 @@
 
 import sys
 import os
-import subprocess
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-import bbs.manifest
 import bbs.parse
 import bbs.jobs
 import bbs.gitutils
@@ -42,10 +40,10 @@ def _bump_to_next_z(version):
     z += 1
     return _unsplit_version(x, y, z)
 
-def _replace_version(pkgsrctree, new_version, new_date=None):
-    in_file = os.path.join(pkgsrctree, 'DESCRIPTION')
+def _replace_version(repo_path, new_version, new_date=None):
+    in_file = os.path.join(repo_path, 'DESCRIPTION')
     in_dcf = open(in_file, 'rb')
-    out_file = os.path.join(pkgsrctree, 'DESCRIPTION.modified')
+    out_file = os.path.join(repo_path, 'DESCRIPTION.modified')
     out_dcf = open(out_file, 'wb')
     key1 = 'Version:'
     key2 = 'Date:'
@@ -63,76 +61,73 @@ def _replace_version(pkgsrctree, new_version, new_date=None):
     os.rename(out_file, in_file)
     return
 
-def _run_git_cmd(pkgsrctree, args, check=True):
-    cmd = "%s -C %s %s" % (bbs.gitutils._git_cmd, pkgsrctree, args)
+def _run_git_cmd(repo_path, args, check=True):
+    cmd = "%s -C %s %s" % (bbs.gitutils._git_cmd, repo_path, args)
     print("%s$ %s" % (os.getcwd(), cmd))
     retcode = bbs.jobs.call(cmd, check=check)
     print()
     return retcode
 
-def _git_add_DESCRIPTION_and_commit(pkgsrctree):
-    _run_git_cmd(pkgsrctree, "--no-pager diff DESCRIPTION")
-    #_run_git_cmd(pkgsrctree, "add DESCRIPTION")
-    #_run_git_cmd(pkgsrctree, "commit -m '%s'" % commit_msg)
-    _run_git_cmd(pkgsrctree, "commit -a -m '%s'" % commit_msg)
+def _git_add_DESCRIPTION_and_commit(repo_path):
+    _run_git_cmd(repo_path, "--no-pager diff DESCRIPTION")
+    #_run_git_cmd(repo_path, "add DESCRIPTION")
+    #_run_git_cmd(repo_path, "commit -m '%s'" % commit_msg)
+    _run_git_cmd(repo_path, "commit -a -m '%s'" % commit_msg)
     return
 
-def _small_version_bump(pkgsrctree, branch):
+def _small_version_bump(repo_path, branch):
     print('---------------------------------------------------------------')
     print("### Small version bump")
     print()
-    pkg = bbs.parse.get_Package_from_pkgsrctree(pkgsrctree)
-    version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
+    pkg = bbs.parse.get_Package_from_pkgsrctree(repo_path)
+    version = bbs.parse.get_Version_from_pkgsrctree(repo_path)
     new_version = _bump_to_next_z(version)
-    _replace_version(pkgsrctree, new_version, new_date)
-    _git_add_DESCRIPTION_and_commit(pkgsrctree)
+    _replace_version(repo_path, new_version, new_date)
+    _git_add_DESCRIPTION_and_commit(repo_path)
     return
 
-def _push(pkgsrctree):
+def _push(repo_path):
     print('---------------------------------------------------------------')
     print("### Push changes")
     print()
-    _run_git_cmd(pkgsrctree, "push --all")
+    _run_git_cmd(repo_path, "push --all")
     return
 
-def _bump_pkg_version(pkg, branch, push):
-    repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-    bbs.gitutils.clone_or_update_repo(pkg, repo_url, "master",
-                                      undo_changes=True)
+def _bump_pkg_version(repo_path, branch, push):
     print()
-    _small_version_bump(pkg, branch)
+    _small_version_bump(repo_path, branch)
     if push:
-        _push(pkg)
+        _push(repo_path)
     print()
     return
 
-def _bump_all_pkg_versions(pkgs, branch, push):
+def _bump_all_pkg_versions(repo_paths, branch, push):
     i = 0
-    for pkg in pkgs:
+    for repo_path in repo_paths:
         i += 1
         print('===============================================================')
         print('Bump version for package %s (%d/%d)' % \
-              (pkg, i, len(pkgs)))
+              (repo_path, i, len(repo_paths)))
         print('---------------------------------------------------------------')
         print()
-        _bump_pkg_version(pkg, branch, push)
+        _bump_pkg_version(repo_path, branch, push)
     return
 
 if __name__ == '__main__':
     usage_msg = 'Usage:\n' + \
-        '    small_version_bumps.py branch_name pkg1 pkg2 ...\n' + \
-        'or:\n' + \
-        '    small_version_bumps.py --push branch_name pkg1 pkg2 ...'
+        '    small_version_bumps.py [--push] branch repo_path1 repo_path2 ...'
     argc = len(sys.argv)
-    if argc <= 1:
+    if argc < 2:
         sys.exit(usage_msg)
     arg1 = sys.argv[1]
     push = arg1 == "--push"
     if push:
-        pkgs = sys.argv[3:]
+        if argc < 3:
+            sys.exit(usage_msg)
         branch = sys.argv[2]
+        repo_paths = sys.argv[3:]
     else:
-        pkgs = sys.argv[2:]
         branch = sys.argv[1]
-    _bump_all_pkg_versions(pkgs, branch, push)
+        repo_paths = sys.argv[2:]
+    _bump_all_pkg_versions(repo_paths, branch, push)
 

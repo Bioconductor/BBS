@@ -3,7 +3,6 @@
 
 import sys
 import os
-import subprocess
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import bbs.manifest
@@ -49,10 +48,10 @@ def _bump_to_next_y(version, pkg=None):
     z = 0
     return _unsplit_version(x, y, z)
 
-def _replace_version(pkgsrctree, new_version):
-    in_file = os.path.join(pkgsrctree, 'DESCRIPTION')
+def _replace_version(repo_path, new_version):
+    in_file = os.path.join(repo_path, 'DESCRIPTION')
     in_dcf = open(in_file, 'rb')
-    out_file = os.path.join(pkgsrctree, 'DESCRIPTION.modified')
+    out_file = os.path.join(repo_path, 'DESCRIPTION.modified')
     out_dcf = open(out_file, 'wb')
     key = 'Version:'
     for line in in_dcf:
@@ -66,78 +65,78 @@ def _replace_version(pkgsrctree, new_version):
     os.rename(out_file, in_file)
     return
 
-def _run_git_cmd(pkgsrctree, args, check=True):
-    cmd = "%s -C %s %s" % (bbs.gitutils._git_cmd, pkgsrctree, args)
+def _run_git_cmd(repo_path, args, check=True):
+    cmd = "%s -C %s %s" % (bbs.gitutils._git_cmd, repo_path, args)
     print("%s$ %s" % (os.getcwd(), cmd))
     retcode = bbs.jobs.call(cmd, check=check)
     print()
     return retcode
 
-def _git_add_DESCRIPTION_and_commit(pkgsrctree, commit_msg):
-    _run_git_cmd(pkgsrctree, "--no-pager diff DESCRIPTION")
-    _run_git_cmd(pkgsrctree, "add DESCRIPTION")
-    _run_git_cmd(pkgsrctree, "commit -m '%s'" % commit_msg)
+def _git_add_DESCRIPTION_and_commit(repo_path, commit_msg):
+    _run_git_cmd(repo_path, "--no-pager diff DESCRIPTION")
+    _run_git_cmd(repo_path, "add DESCRIPTION")
+    _run_git_cmd(repo_path, "commit -m '%s'" % commit_msg)
     return
 
-def _branch_exists(pkgsrctree, branch):
+def _branch_exists(repo_path, branch):
     print('---------------------------------------------------------------')
     print("### Check if branch %s exists" % branch)
     print()
-    retcode = _run_git_cmd(pkgsrctree, "checkout %s" % branch, check=False)
-    _run_git_cmd(pkgsrctree, "checkout master")
+    retcode = _run_git_cmd(repo_path, "checkout %s" % branch, check=False)
+    _run_git_cmd(repo_path, "checkout master")
     return retcode == 0
 
-def _first_version_bump(pkgsrctree, branch):
+def _first_version_bump(repo_path, branch):
     print('---------------------------------------------------------------')
     print("### First version bump")
     print()
-    pkg = bbs.parse.get_Package_from_pkgsrctree(pkgsrctree)
+    pkg = bbs.parse.get_Package_from_pkgsrctree(repo_path)
     if pkg == "BiocVersion":
         print("This is BiocVersion ==> skip first version bump")
         print()
         return
-    version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
+    version = bbs.parse.get_Version_from_pkgsrctree(repo_path)
     new_version = _bump_to_next_even_y(version)
-    _replace_version(pkgsrctree, new_version)
+    _replace_version(repo_path, new_version)
     commit_msg = commit_msg1 % branch
-    _git_add_DESCRIPTION_and_commit(pkgsrctree, commit_msg)
+    _git_add_DESCRIPTION_and_commit(repo_path, commit_msg)
     return
 
-def _create_branch(pkgsrctree, branch):
+def _create_branch(repo_path, branch):
     print('---------------------------------------------------------------')
     print("### Create branch")
     print()
-    _run_git_cmd(pkgsrctree, "checkout -b %s" % branch)
-    _run_git_cmd(pkgsrctree, "checkout master")
+    _run_git_cmd(repo_path, "checkout -b %s" % branch)
+    _run_git_cmd(repo_path, "checkout master")
     return
 
-def _second_version_bump(pkgsrctree, branch):
+def _second_version_bump(repo_path, branch):
     print('---------------------------------------------------------------')
     print("### Second version bump")
     print()
-    pkg = bbs.parse.get_Package_from_pkgsrctree(pkgsrctree)
-    version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
+    pkg = bbs.parse.get_Package_from_pkgsrctree(repo_path)
+    version = bbs.parse.get_Version_from_pkgsrctree(repo_path)
     new_version = _bump_to_next_y(version, pkg)
-    _replace_version(pkgsrctree, new_version)
+    _replace_version(repo_path, new_version)
     if pkg != "BiocVersion":
         commit_msg = commit_msg2
     else:
         commit_msg = commit_msg3
     commit_msg %= branch
-    _git_add_DESCRIPTION_and_commit(pkgsrctree, commit_msg)
+    _git_add_DESCRIPTION_and_commit(repo_path, commit_msg)
     return
 
-def _push(pkgsrctree):
+def _push(repo_path):
     print('---------------------------------------------------------------')
     print("### Push changes")
     print()
-    _run_git_cmd(pkgsrctree, "push --all")
+    _run_git_cmd(repo_path, "push --all")
     return
 
 def _bump_version_and_create_branch(pkg, branch, push):
     repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-    bbs.gitutils.clone_or_update_repo(pkg, repo_url, "master",
-                                      undo_changes=True)
+    bbs.gitutils.clone_or_pull_repo(pkg, repo_url, "master",
+                                    discard_changes=True, cleanup=True)
     print()
     if _branch_exists(pkg, branch):
         print("Branch %s already exists ==> skip package" % branch)
@@ -165,9 +164,7 @@ def _bump_versions_and_create_branches(pkgs, branch, push):
 
 if __name__ == '__main__':
     usage_msg = 'Usage:\n' + \
-        '    bump_version_and_create_branch.py branch_name pkg1 pkg2 ...\n' + \
-        'or:\n' + \
-        '    bump_version_and_create_branch.py --push branch_name pkg1 pkg2 ...'
+        '    bump_version_and_create_branch.py [--push] branch pkg1 pkg2 ...'
     argc = len(sys.argv)
     if argc <= 1:
         sys.exit(usage_msg)
