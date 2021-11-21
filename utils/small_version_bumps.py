@@ -102,7 +102,6 @@ def _bump_pkg_version(repo_path, branch, push):
     _small_version_bump(repo_path, branch)
     if push:
         _push(repo_path)
-    print()
     return
 
 def _bump_all_pkg_versions(repo_paths, branch, push):
