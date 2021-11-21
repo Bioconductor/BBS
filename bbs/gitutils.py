@@ -85,6 +85,20 @@ def _clone_repo(repo_path, repo_url, branch=None, depth=None):
     _run_gitcmd(gitcmd, prompt='bbs.gitutils._clone_repo> ')
     return
 
+def is_git_repo(repo_path):
+    global verbose
+    old_verbose = verbose
+    verbose = False
+    gitcmd = 'status --porcelain'
+    try:
+        _run_gitcmd(gitcmd, cwd=repo_path)
+    except subprocess.CalledProcessError:
+        ok = False
+    else:
+        ok = True
+    verbose = old_verbose
+    return ok
+
 def _repo_has_local_changes(repo_path):
     prompt = 'bbs.gitutils._repo_has_local_changes> '
     gitcmd = 'status --porcelain'

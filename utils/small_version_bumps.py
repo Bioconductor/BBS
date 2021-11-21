@@ -69,6 +69,10 @@ def _run_git_cmd(repo_path, args, check=True):
     return retcode
 
 def _git_add_DESCRIPTION_and_commit(repo_path):
+    # If 'repo_path' is not a git repo, 'git --no-pager diff DESCRIPTION'
+    # will spit out many screens of ugly output!
+    if not bbs.gitutils.is_git_repo(repo_path):
+        sys.exit('ERROR: \'%s\' is not a git repo' % repo_path)
     _run_git_cmd(repo_path, "--no-pager diff DESCRIPTION")
     #_run_git_cmd(repo_path, "add DESCRIPTION")
     #_run_git_cmd(repo_path, "commit -m '%s'" % commit_msg)
@@ -113,21 +117,35 @@ def _bump_all_pkg_versions(repo_paths, branch, push):
         _bump_pkg_version(repo_path, branch, push)
     return
 
-if __name__ == '__main__':
+def _get_repo_paths_and_branch_and_push(argv):
     usage_msg = 'Usage:\n' + \
-        '    small_version_bumps.py [--push] branch repo_path1 repo_path2 ...'
-    argc = len(sys.argv)
-    if argc < 2:
+        '    small_version_bumps.py [--branch <branch-name>] repo_path1 repo_path2 ... [--push]'
+    if len(argv) == 0:
+        sys.exit(usage_msg)  # should never happen
+    repo_paths = argv[1:]
+    branch = None
+    push = False
+    # Extract 'push'.
+    if len(repo_paths) >= 1:
+        push = repo_paths[-1] == '--push'
+        if push:
+            repo_paths = repo_paths[:-1]
+    if '--push' in repo_paths:
         sys.exit(usage_msg)
-    arg1 = sys.argv[1]
-    push = arg1 == "--push"
-    if push:
-        if argc < 3:
+    # Extract 'branch'.
+    if len(repo_paths) >= 1 and repo_paths[0] == '--branch':
+        if len(repo_paths) == 1:
             sys.exit(usage_msg)
-        branch = sys.argv[2]
-        repo_paths = sys.argv[3:]
+        branch = repo_paths[1]
+        repo_paths = repo_paths[2:]
+    if '--branch' in repo_paths:
+        sys.exit(usage_msg)
+    return (repo_paths, branch, push)
+
+if __name__ == '__main__':
+    (repo_paths, branch, push) = _get_repo_paths_and_branch_and_push(sys.argv)
+    if len(repo_paths) == 0:
+        _bump_pkg_version('.', branch, push)
     else:
-        branch = sys.argv[1]
-        repo_paths = sys.argv[2:]
-    _bump_all_pkg_versions(repo_paths, branch, push)
+        _bump_all_pkg_versions(repo_paths, branch, push)
 
