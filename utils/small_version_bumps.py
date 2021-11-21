@@ -144,8 +144,12 @@ def _get_repo_paths_and_branch_and_push(argv):
 
 if __name__ == '__main__':
     (repo_paths, branch, push) = _get_repo_paths_and_branch_and_push(sys.argv)
-    if len(repo_paths) == 0:
-        _bump_pkg_version('.', branch, push)
+    if len(repo_paths) <= 1:
+        if len(repo_paths) == 0:
+            repo_path = '.'
+        else:
+            repo_path = repo_paths[0]
+        _bump_pkg_version(repo_path, branch, push)
     else:
         _bump_all_pkg_versions(repo_paths, branch, push)
 
