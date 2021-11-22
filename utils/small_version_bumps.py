@@ -80,7 +80,7 @@ def _git_add_DESCRIPTION_and_commit(repo_path):
     _run_git_cmd(repo_path, "commit -a -m '%s'" % commit_msg)
     return
 
-def _small_version_bump(repo_path, branch):
+def _small_version_bump(repo_path):
     print('---------------------------------------------------------------')
     print("### Small version bump")
     print()
@@ -98,14 +98,14 @@ def _push(repo_path):
     _run_git_cmd(repo_path, "push --all")
     return
 
-def _bump_pkg_version(repo_path, branch, push):
+def _bump_pkg_version(repo_path, push):
     print()
-    _small_version_bump(repo_path, branch)
+    _small_version_bump(repo_path)
     if push:
         _push(repo_path)
     return
 
-def _bump_all_pkg_versions(repo_paths, branch, push):
+def _bump_all_pkg_versions(repo_paths, push):
     i = 0
     for repo_path in repo_paths:
         i += 1
@@ -114,16 +114,17 @@ def _bump_all_pkg_versions(repo_paths, branch, push):
               (repo_path, i, len(repo_paths)))
         print('---------------------------------------------------------------')
         print()
-        _bump_pkg_version(repo_path, branch, push)
+        _bump_pkg_version(repo_path, push)
     return
 
-def _get_repo_paths_and_branch_and_push(argv):
+def _get_repo_paths_and_push(argv):
     usage_msg = 'Usage:\n' + \
-        '    small_version_bumps.py [--branch <branch-name>] repo_path1 repo_path2 ... [--push]'
+        '    small_version_bumps.py repo_path1 repo_path2 ... [--push]'
     if len(argv) == 0:
         sys.exit(usage_msg)  # should never happen
     repo_paths = argv[1:]
-    branch = None
+    if '--branch' in repo_paths:
+        sys.exit(usage_msg)
     push = False
     # Extract 'push'.
     if len(repo_paths) >= 1:
@@ -132,24 +133,16 @@ def _get_repo_paths_and_branch_and_push(argv):
             repo_paths = repo_paths[:-1]
     if '--push' in repo_paths:
         sys.exit(usage_msg)
-    # Extract 'branch'.
-    if len(repo_paths) >= 1 and repo_paths[0] == '--branch':
-        if len(repo_paths) == 1:
-            sys.exit(usage_msg)
-        branch = repo_paths[1]
-        repo_paths = repo_paths[2:]
-    if '--branch' in repo_paths:
-        sys.exit(usage_msg)
-    return (repo_paths, branch, push)
+    return (repo_paths, push)
 
 if __name__ == '__main__':
-    (repo_paths, branch, push) = _get_repo_paths_and_branch_and_push(sys.argv)
+    (repo_paths, push) = _get_repo_paths_and_push(sys.argv)
     if len(repo_paths) <= 1:
         if len(repo_paths) == 0:
             repo_path = '.'
         else:
             repo_path = repo_paths[0]
-        _bump_pkg_version(repo_path, branch, push)
+        _bump_pkg_version(repo_path, push)
     else:
-        _bump_all_pkg_versions(repo_paths, branch, push)
+        _bump_all_pkg_versions(repo_paths, push)
 
