@@ -535,7 +535,8 @@ and the prerun script would fail to delete this folder.
     - New Trigger
     - Begin the task On a schedule
     - In Settings:
-        Daily - At 3:00 PM - Recur every 1 day
+        Weekly - At 3:00 PM - Recur every 1 week on each day of the week
+                              except on Saturday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
 
@@ -726,7 +727,7 @@ if you were already logged on) in a PowerShell window:
 Then, if you already have R installed, try to build a package that uses
 Pandoc e.g.:
 
-    cd D:\biocbuild\bbs-3.14-bioc\meat
+    cd D:\biocbuild\bbs-3.15-bioc\meat
     ..\R\bin\R CMD build dagLogo
     ..\R\bin\R CMD build Harman
 
@@ -841,8 +842,8 @@ If R is already installed, you can also check this from R with:
 **From the `biocbuild` account** in a PowerShell window:
 
     cd D:\biocbuild
-    mkdir bbs-3.14-bioc
-    cd bbs-3.14-bioc
+    mkdir bbs-3.15-bioc
+    cd bbs-3.15-bioc
     mkdir log
     mkdir tmp
     mkdir tmpdir
@@ -863,19 +864,19 @@ If updating R, uninstall the current R before running the installer:
 - Open the Control Panel
 - Click on Uninstall a program
 - Make sure you pick up the correct R in case there is more than one instance!
-Then go in the File Explorer and remove `D:\biocbuild\bbs-3.14-bioc\R`.
+Then go in the File Explorer and remove `D:\biocbuild\bbs-3.15-bioc\R`.
 
 When running the installer:
 - Ignore warning about the current user not being an admin
-- Select destination location `D:\biocbuild\bbs-3.14-bioc\R`
+- Select destination location `D:\biocbuild\bbs-3.15-bioc\R`
 - Don't create a Start Menu Folder
 - Don't create a desktop or Quick Launch shortcut
 
 #### Install BiocManager
 
-In a PowerShell window, go to `D:\biocbuild\bbs-3.14-bioc` and start R:
+In a PowerShell window, go to `D:\biocbuild\bbs-3.15-bioc` and start R:
 
-    cd D:\biocbuild\bbs-3.14-bioc
+    cd D:\biocbuild\bbs-3.15-bioc
     R\bin\R  # check version of R displayed by startup message
 
 Then from R:
@@ -911,7 +912,7 @@ Quit R (do NOT save the workspace image).
 
 - Edit `R\etc\i386\Makeconf`:
 
-   From `D:\biocbuild\bbs-3.14-bioc`:
+   From `D:\biocbuild\bbs-3.15-bioc`:
    ```
    cd R\etc\i386
    C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
@@ -930,7 +931,7 @@ Quit R (do NOT save the workspace image).
 
 - Edit `R\etc\x64\Makeconf`:
 
-   From `D:\biocbuild\bbs-3.14-bioc`:
+   From `D:\biocbuild\bbs-3.15-bioc`:
    ```
    cd R\etc\x64
    C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
@@ -952,12 +953,12 @@ TESTING:
 - Make sure that the 2 edited files can be accessed from the `pkgbuild`
   account. From the `pkgbuild` account in a PowerShell window:
     ```
-    C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.14-bioc\R\etc\i386\Makeconf
-    C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.14-bioc\R\etc\x64\Makeconf
+    C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.15-bioc\R\etc\i386\Makeconf
+    C:\rtools40\usr\bin\cat D:\biocbuild\bbs-3.15-bioc\R\etc\x64\Makeconf
     ```
 
 - Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
-  open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+  open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
   (this folder should be automatically created after the 1st build run), then:
     ```
     ..\R\bin\R CMD INSTALL Rhtslib
@@ -1052,7 +1053,7 @@ Should we also remove package specific caches?
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.14-bioc`
+    - Name: `bbs-3.15-bioc`
     - In Security options:
       - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1071,9 +1072,9 @@ Should we also remove package specific caches?
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.14\bioc\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.14-bioc\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.14\bioc\riesling1`
+      - Program/script: `D:\biocbuild\BBS\3.15\bioc\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.15-bioc\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.15\bioc\riesling1`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1120,7 +1121,7 @@ TESTING: From the `biocbuild` account (log out and on again from this
 account if you were already logged on) try to load the rJava package for
 the 64-bit arch (this package will be automatically installed after the
 1st build run but cannot be loaded if Java is not found on the system).
-To do this: open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc`,
+To do this: open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc`,
 start 64-bit R (with `R\bin\R --arch x64`, or just `R\bin\R` since x64
 is the default), then:
 
@@ -1150,7 +1151,7 @@ delimiter.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the flowWorkspace package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL RProtoBufLib
@@ -1183,7 +1184,7 @@ but for some reason the latter fails with an error on our Windows builders.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to load the rjags package e.g. open a
-PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc`, start R (with
+PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc`, start R (with
 `R\bin\R`), then:
 
     library(rjags)
@@ -1211,7 +1212,7 @@ if you were already logged on):
     which gswin64  # /c/Program Files/gs/gs9.53.3/bin/gswin64
 
 Then try to build a package that uses Ghostscript for its vignette e.g. open
-a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat` (this folder
+a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat` (this folder
 will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
@@ -1242,7 +1243,7 @@ environment variables_ section at the top of this document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the rsbml package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL rsbml
@@ -1280,15 +1281,13 @@ on Windows.
 IMPORTANT: Unlike all the other things here that need to be installed from
 a personal administrator account, this one needs to be installed from the
 `biocbuild` account. That's because the compilation process described in
-`ChemmineOB/INSTALL` needs to access stuff under
-
-    c:/Users/biocbuild/bbs-3.14-bioc/R/library/zlibbioc/
+`ChemmineOB/INSTALL` needs to access stuff located in `R_HOME\library\zlibbioc`.
 
 #### Testing
 
 From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the ChemmineOB package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL ChemmineOB
@@ -1312,7 +1311,7 @@ _Install Rtools_ section above for more information.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Perl e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build LowMACA
@@ -1337,7 +1336,7 @@ document for how to do this).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Clustal Omega
-e.g. open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+e.g. open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build LowMACA
@@ -1354,7 +1353,7 @@ document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build the ImmuneSpaceR package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build ImmuneSpaceR
@@ -1370,7 +1369,7 @@ Run the installer.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the Travel package e.g.
-open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.14-bioc\meat`
+open a PowerShell window, `cd` to `D:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL Travel
@@ -1500,8 +1499,8 @@ Not run on Windows at the moment.
 In a PowerShell window from the `biocbuild` account:
 
     cd D:\biocbuild
-    mkdir bbs-3.14-data-experiment
-    mkdir bbs-3.14-data-experiment\log
+    mkdir bbs-3.15-data-experiment
+    mkdir bbs-3.15-data-experiment\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1510,7 +1509,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.14-data-experiment`
+    - Name: `bbs-3.15-data-experiment`
     - In Security options:
       - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1529,9 +1528,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.14\data-experiment\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.14-data-experiment\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.14\data-experiment\riesling1`
+      - Program/script: `D:\biocbuild\BBS\3.15\data-experiment\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.15-data-experiment\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.15\data-experiment\riesling1`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1548,8 +1547,8 @@ Then **from a personal administrator account** configure the task as follow:
 In a PowerShell window from the `biocbuild` account:
 
     cd D:\biocbuild
-    mkdir bbs-3.14-workflows
-    mkdir bbs-3.14-workflows\log
+    mkdir bbs-3.15-workflows
+    mkdir bbs-3.15-workflows\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1558,7 +1557,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.14-workflows`
+    - Name: `bbs-3.15-workflows`
     - In Security options:
       - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1577,9 +1576,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.14\workflows\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.14-workflows\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.14\workflows\riesling1`
+      - Program/script: `D:\biocbuild\BBS\3.15\workflows\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.15-workflows\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.15\workflows\riesling1`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1596,8 +1595,8 @@ Then **from a personal administrator account** configure the task as follow:
 In a PowerShell window from the `biocbuild` account:
 
     cd D:\biocbuild
-    mkdir bbs-3.14-books
-    mkdir bbs-3.14-books\log
+    mkdir bbs-3.15-books
+    mkdir bbs-3.15-books\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1606,7 +1605,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.14-books`
+    - Name: `bbs-3.15-books`
     - In Security options:
       - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1625,9 +1624,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.14\books\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.14-books\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.14\books\riesling1`
+      - Program/script: `D:\biocbuild\BBS\3.15\books\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.15-books\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.15\books\riesling1`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1644,8 +1643,8 @@ Then **from a personal administrator account** configure the task as follow:
 In a PowerShell window from the `biocbuild` account:
 
     cd D:\biocbuild
-    mkdir bbs-3.14-bioc-longtests
-    mkdir bbs-3.14-bioc-longtests\log
+    mkdir bbs-3.15-bioc-longtests
+    mkdir bbs-3.15-bioc-longtests\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1654,7 +1653,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.14-bioc-longtests`
+    - Name: `bbs-3.15-bioc-longtests`
     - In Security options:
       - Use `RIESLING1\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1673,9 +1672,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `D:\biocbuild\BBS\3.14\bioc-longtests\riesling1\run.bat`
-      - Add arguments: `>>D:\biocbuild\bbs-3.14-bioc-longtests\log\riesling1.log 2>&1`
-      - Start in: `D:\biocbuild\BBS\3.14\bioc-longtests\riesling1`
+      - Program/script: `D:\biocbuild\BBS\3.15\bioc-longtests\riesling1\run.bat`
+      - Add arguments: `>>D:\biocbuild\bbs-3.15-bioc-longtests\log\riesling1.log 2>&1`
+      - Start in: `D:\biocbuild\BBS\3.15\bioc-longtests\riesling1`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)

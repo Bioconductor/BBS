@@ -19,7 +19,7 @@ set BBS_STAGE5_MODE=multiarch
 @rem Central build node is nebbiolo1 at DFCI.
 set BBS_CENTRAL_RHOST=nebbiolo1
 set BBS_RSH_CMD=ssh -F /cygdrive/d/biocbuild/.ssh/config
-set BBS_CENTRAL_ROOT_URL=http://155.52.207.166
+set BBS_CENTRAL_ROOT_URL=http://155.52.207.165
 
 
 
