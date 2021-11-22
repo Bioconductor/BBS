@@ -73,9 +73,10 @@ def _git_add_DESCRIPTION_and_commit(repo_path):
     # will spit out many screens of ugly output!
     if not bbs.gitutils.is_git_repo(repo_path):
         sys.exit('ERROR: \'%s\' is not a git repo' % repo_path)
-    _run_git_cmd(repo_path, "--no-pager diff DESCRIPTION")
+    #_run_git_cmd(repo_path, "--no-pager diff DESCRIPTION")
     #_run_git_cmd(repo_path, "add DESCRIPTION")
     #_run_git_cmd(repo_path, "commit -m '%s'" % commit_msg)
+    _run_git_cmd(repo_path, "--no-pager diff")
     _run_git_cmd(repo_path, "commit -a -m '%s'" % commit_msg)
     return
 
