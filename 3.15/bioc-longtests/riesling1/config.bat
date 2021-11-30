@@ -11,12 +11,12 @@ set BBS_WORK_TOPDIR=D:\biocbuild\bbs-3.15-bioc-longtests
 set BBS_R_HOME=D:\biocbuild\bbs-3.15-bioc\R
 set BBS_NB_CPU=10
 
-set BBS_STAGE4_MODE=multiarch
+@rem set BBS_STAGE4_MODE=multiarch
 
 @rem Central build node is nebbiolo1 at DFCI.
 set BBS_CENTRAL_RHOST=nebbiolo1
 set BBS_RSH_CMD=ssh -F /cygdrive/d/biocbuild/.ssh/config
-set BBS_CENTRAL_ROOT_URL=http://155.52.207.166
+set BBS_CENTRAL_ROOT_URL=http://155.52.207.165
 
 
 

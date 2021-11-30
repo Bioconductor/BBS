@@ -12,9 +12,9 @@ set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=36
 set BBS_CHECK_NB_CPU=48
 
-set BBS_STAGE2_MODE=multiarch
-set BBS_STAGE4_MODE=multiarch
-set BBS_STAGE5_MODE=multiarch
+@rem set BBS_STAGE2_MODE=multiarch
+@rem set BBS_STAGE4_MODE=multiarch
+@rem set BBS_STAGE5_MODE=multiarch
 
 @rem Central build node is nebbiolo1 at DFCI.
 set BBS_CENTRAL_RHOST=nebbiolo1
