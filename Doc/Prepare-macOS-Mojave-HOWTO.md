@@ -1195,7 +1195,7 @@ Must be done from the biocbuild account.
 
 Add the following entry to biocbuild crontab:
 
-    00 16 * * 0-5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 15 * * 0-5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run
 before doing so.
@@ -2092,7 +2092,7 @@ Then add the following entry to biocbuild's crontab:
     # BIOC 3.14 WORKFLOWS BUILDS
     # --------------------------
     
-    00 09 * * 2,5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/workflows/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-workflows/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 08 * * 2,5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/workflows/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-workflows/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 
 ### 5.4 Books builds
@@ -2111,5 +2111,5 @@ Then add the following entry to biocbuild's crontab:
     # BIOC 3.14 SOFTWARE LONGTESTS BUILDS
     # -----------------------------------
     
-    00 09 * * 6 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc-longtests/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc-longtests/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 08 * * 6 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.14/bioc-longtests/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.14-bioc-longtests/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 

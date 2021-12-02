@@ -535,7 +535,7 @@ and the prerun script would fail to delete this folder.
     - New Trigger
     - Begin the task On a schedule
     - In Settings:
-        Weekly - At 3:00 PM - Recur every 1 week on each day of the week
+        Weekly - At 2:00 PM - Recur every 1 week on each day of the week
                               except on Saturday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
@@ -1063,7 +1063,7 @@ Should we also remove package specific caches?
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - At 4:00 PM - Recur every 1 week on each day of the week
+        Weekly - At 3:00 PM - Recur every 1 week on each day of the week
                               except on Saturday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
@@ -1519,8 +1519,8 @@ Then **from a personal administrator account** configure the task as follow:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 9:25 AM -
-        Recur every 1 week on Monday and Thursday
+        Weekly - Start on <leave current date> at 10:00 AM -
+        Recur every 1 week on Tuesday and Thursday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
 
@@ -1567,7 +1567,7 @@ Then **from a personal administrator account** configure the task as follow:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 9:00 AM -
+        Weekly - Start on <leave current date> at 8:00 AM -
         Recur every 1 week on Tuesday and Friday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
@@ -1615,8 +1615,8 @@ Then **from a personal administrator account** configure the task as follow:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 10:30 AM -
-        Recur every 1 week on Tuesday and Friday
+        Weekly - Start on <leave current date> at 7:00 AM -
+        Recur every 1 week on Monday, Wednesday, and Friday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
 
@@ -1663,7 +1663,7 @@ Then **from a personal administrator account** configure the task as follow:
     - New Trigger
     - Begin the task On a schedule
       - In Settings:
-        Weekly - Start on <leave current date> at 4:00 PM -
+        Weekly - Start on <leave current date> at 8:00 AM -
         Recur every 1 week on Saturday
     - In Advanced Settings:
         nothing should be checked except 'Enabled'
