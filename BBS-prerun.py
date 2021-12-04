@@ -398,7 +398,8 @@ def prepare_STAGE1_job_queue(pkgsrctrees, dest_rdir):
 def STAGE1_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE1 loop.")
     t1 = time.time()
-    nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu, 900.0, True)
+    nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu, 900.0,
+                                           verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE1 loop.")
     nb_jobs = len(job_queue._jobs)

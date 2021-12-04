@@ -17,6 +17,15 @@ sys.path.insert(0, os.path.dirname(__file__))
 import fileutils
 import jobs
 
+def set_readable_flag(path):
+    if sys.platform == "win32" and \
+       os.path.exists(path) and \
+       os.path.isfile(path):
+        #os.chmod(path, 0644)  # this doesn't work
+        # This works better but requires Cygwin:
+        cmd = "chmod +r " + path
+        jobs.runJob(cmd, None, 60.0, verbose)
+    return
 
 ### Expected bandwidth (in kilobits/s) for transferring data back and forth
 ### between the central and the secondary build nodes.
@@ -198,11 +207,7 @@ class RemoteDir:
     # 'src_path' is a local path that can be absolute or relative to the
     # current dir
     def Put(self, src_path, failure_is_fatal=True, verbose=False):
-        if sys.platform == "win32" and os.path.exists(src_path) and os.path.isfile(src_path):
-            #os.chmod(src_path, 0644) # This doesn't work
-            ## This works better but requires Cygwin.
-            cmd = "chmod +r " + src_path
-            jobs.runJob(cmd, None, 60.0, verbose)
+        set_readable_flag(src_path)
         if self.host == None or self.host == 'localhost':
             # self is a local dir
             cmd = "%s %s %s" % (self.rsync_cmd, src_path, self.path)

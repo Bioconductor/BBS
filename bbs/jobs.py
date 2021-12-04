@@ -36,6 +36,9 @@ if sys.platform == "win32":
 sys.path.insert(0, os.path.dirname(__file__))
 import parse
 
+def currentDateString():
+    return dateString(time.localtime())
+
 ##############################################################################
 ## On Windows XP time.sleep() is fragile: if the Python script is started by
 ## the Task Scheduler, then it dies when the user it is run as logs in during
@@ -429,7 +432,7 @@ def _writeRunHeader(out, cmd, nb_runs):
     out.write("\n\n")
     out.flush()
 
-def _runQueuedJob(job, verbose, nb_jobs, nb_slots, job_deps):
+def _start_QueuedJob(job, verbose, nb_jobs, nb_slots, job_deps):
     if verbose:
         _logActionOnQueuedJob("START", job, nb_jobs, nb_slots, job_deps)
     job._t1 = time.time()
@@ -448,7 +451,7 @@ def _runQueuedJob(job, verbose, nb_jobs, nb_slots, job_deps):
     sys.stdout.flush()
     return job
 
-def _rerunQueuedJob(job, verbose, nb_jobs, nb_slots):
+def _restart_QueuedJob(job, verbose, nb_jobs, nb_slots):
     if verbose:
         _logActionOnQueuedJob("RESTART", job, nb_jobs, nb_slots)
     job._output = open(job._output_file, 'a')
@@ -467,7 +470,7 @@ def _rerunQueuedJob(job, verbose, nb_jobs, nb_slots):
 
 ### Returns 0 if job is still running, 1 if it returned in time, and -1 if
 ### it timed out.
-def _checkQueuedJobStatus(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
+def _check_QueuedJob_status(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
     job._t2 = time.time()
     dt = job._t2 - job._t1
     if job._proc.poll() == None:
@@ -545,9 +548,11 @@ def _logSummaryOfJobsWithUnprocessedDeps(job_queue):
     return
 
 ### Process 'job_queue' (a JobQueue object) in parallel.
-### Will run at most 'nb_slots' jobs simultaneously.
-def processJobQueue(job_queue, nb_slots=1,
-                    maxtime_per_job=3600.0, verbose=False):
+### Will run at most 'nb_slots' jobs simultaneously plus the background
+### command if any.
+def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
+                    background_cmd=None, background_output=None,
+                    verbose=False):
     jobs = job_queue._jobs
     job_deps = job_queue._job_deps
     nb_jobs = len(jobs)
@@ -557,6 +562,12 @@ def processJobQueue(job_queue, nb_slots=1,
         print("%d jobs in the queue. Start processing them using %d slots" % \
               (nb_jobs, nb_slots))
     slotevents_logfile = open('JobQueue-' + job_queue._name + '-slot-events.log', 'w')
+    if background_cmd != None:
+        if background_output == None:
+            background_out = None
+        else:
+            background_out = open(background_output, 'w')
+        background_proc = None
     processed_jobs = []
     nb_busy_slots = 0
     slots = nb_slots * [None]
@@ -566,13 +577,26 @@ def processJobQueue(job_queue, nb_slots=1,
     while len(processed_jobs) < nb_jobs:
         slot += 1
         if slot == nb_slots:
+            if background_cmd != None:
+                if background_proc == None:
+                    if background_out != None:
+                        background_out.write('%s: %s\n' % \
+                            (currentDateString(), background_cmd))
+                    background_proc = subprocess.Popen(background_cmd,
+                                                       stdout=background_out,
+                                                       stderr=background_out,
+                                                       shell=True)
+                elif background_proc.poll() != None:  # done
+                    # we don't do anything with this retcode for now
+                    retcode = background_proc.wait()
+                    background_proc = None
             sleep(0.1)
             slot = 0
         job = slots[slot]
         loop += 1
         if job != None:
-            status = _checkQueuedJobStatus(job, maxtime_per_job, verbose,
-                                           nb_jobs, nb_slots)
+            status = _check_QueuedJob_status(job, maxtime_per_job, verbose,
+                                             nb_jobs, nb_slots)
             if status == 0: # still running
                 if verbose and nb_slots == 1 and loop % 10 == 0:
                     sys.stdout.write(".")
@@ -582,8 +606,8 @@ def processJobQueue(job_queue, nb_slots=1,
             if status == 1: # returned in time
                 if job.RerunMe():
                     sleep(5.0)
-                    slots[slot] = _rerunQueuedJob(job, verbose,
-                                                  nb_jobs, nb_slots)
+                    slots[slot] = _restart_QueuedJob(job, verbose,
+                                                     nb_jobs, nb_slots)
                     continue
                 job._ended_at = dateString(time.localtime(job._t2))
                 cumul += job.AfterRun()
@@ -609,8 +633,8 @@ def processJobQueue(job_queue, nb_slots=1,
             job._rank = job_rank
             if job._cmd != None:
                 job._slot = slot
-                slots[slot] = _runQueuedJob(job, verbose, nb_jobs, nb_slots,
-                                            job_deps)
+                slots[slot] = _start_QueuedJob(job, verbose, nb_jobs, nb_slots,
+                                               job_deps)
                 nb_busy_slots += 1
                 _logSlotEvent(slotevents_logfile, 'ASSIGN', job, slot, slots)
                 break
@@ -619,6 +643,12 @@ def processJobQueue(job_queue, nb_slots=1,
                 _logActionOnQueuedJob("SKIP", job, nb_jobs, 1, job_deps)
             processed_jobs.append(job._name)
     slotevents_logfile.close()
+    if background_cmd != None:
+        if background_proc != None:
+            # we don't do anything with this retcode for now
+            retcode = background_proc.wait()
+        if background_out != None:
+            background_out.close()
     if verbose:
         print()
         print("bbs.jobs.processJobQueue> Finished.")
@@ -664,9 +694,6 @@ def dateString(tm):
     utc_offset //= 3600
     format = "%%Y-%%m-%%d %%H:%%M:%%S -0%d00 (%%a, %%d %%b %%Y)" % utc_offset
     return time.strftime(format, tm)
-
-def currentDateString():
-    return dateString(time.localtime())
 
 
 if __name__ == "__main__":

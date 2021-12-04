@@ -22,6 +22,11 @@ import BBSbase
 asynchronous_mode = BBSvars.transmission_mode == "asynchronous"
 if asynchronous_mode:
     products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
+    rdir = BBSvars.products_in_rdir
+    dest = rdir.get_full_remote_path()
+    background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, products_out_buf, dest)
+else:
+    background_cmd = background_output = None
 
 def make_stage_product_buffer(stage):
     out_dir = os.path.join(products_out_buf, stage)
@@ -30,7 +35,7 @@ def make_stage_product_buffer(stage):
     else:
         os.mkdir(products_out_buf)
         os.mkdir(out_dir)
-    print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+    print("BBS>   Product buffer for asynchronous transmission: %s" % out_dir)
     return out_dir
 
 
@@ -348,8 +353,11 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
 def STAGE2_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE2 loop.")
     t1 = time.time()
+    background_output = os.path.join(BBSvars.meat_path, 'STAGE2-rsync.log')
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                            BBSvars.INSTALL_timeout, True)
+                                            BBSvars.INSTALL_timeout,
+                                            background_cmd, background_output,
+                                            verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE2 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -494,8 +502,11 @@ def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
 def STAGE3_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE3 loop.")
     t1 = time.time()
+    background_output = os.path.join(BBSvars.meat_path, 'STAGE3-rsync.log')
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                           BBSvars.BUILD_timeout, True)
+                                           BBSvars.BUILD_timeout,
+                                           background_cmd, background_output,
+                                           verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE3 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -568,8 +579,11 @@ def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
 def STAGE4_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE4 loop.")
     t1 = time.time()
+    background_output = os.path.join(BBSvars.meat_path, 'STAGE4-rsync.log')
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                             BBSvars.CHECK_timeout, True)
+                             BBSvars.CHECK_timeout,
+                             background_cmd, background_output,
+                             verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE4 loop.")
     nb_jobs = len(job_queue._jobs)
@@ -628,8 +642,11 @@ def prepare_STAGE5_job_queue(srcpkg_paths, out_dir):
 def STAGE5_loop(job_queue, nb_cpu):
     print("BBS> BEGIN STAGE5 loop.")
     t1 = time.time()
+    background_output = os.path.join(BBSvars.meat_path, 'STAGE5-rsync.log')
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
-                                           BBSvars.BUILDBIN_timeout, True)
+                                           BBSvars.BUILDBIN_timeout,
+                                           background_cmd, background_output,
+                                           verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE5 loop.")
     nb_jobs = len(job_queue._jobs)
