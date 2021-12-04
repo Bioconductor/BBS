@@ -22,7 +22,7 @@ import BBSbase
 asynchronous_mode = BBSvars.transmission_mode == "asynchronous"
 if asynchronous_mode:
     products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
-    rdir = BBSvars.products_in_rdir
+    rdir = BBSvars.Node_rdir
     dest = rdir.get_full_remote_path()
     background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, products_out_buf, dest)
 else:
