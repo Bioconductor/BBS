@@ -23,6 +23,16 @@ asynchronous_mode = BBSvars.transmission_mode == "asynchronous"
 if asynchronous_mode:
     products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
 
+def make_stage_product_buffer(stage):
+    out_dir = os.path.join(products_out_buf, stage)
+    if os.path.exists(products_out_buf):
+        bbs.fileutils.remake_dir(out_dir)
+    else:
+        os.mkdir(products_out_buf)
+        os.mkdir(out_dir)
+    print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+    return out_dir
+
 
 ##############################################################################
 ## Update NodeInfo
@@ -364,9 +374,7 @@ def STAGE2():
     waitForTargetRepoToBeReady()
     BBSvars.install_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = os.path.join(products_out_buf, 'install')
-        bbs.fileutils.remake_dir(out_dir)
-        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+        out_dir = make_stage_product_buffer('install')
     else:
         out_dir = BBSvars.install_rdir
 
@@ -507,9 +515,7 @@ def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
     BBSvars.buildsrc_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = os.path.join(products_out_buf, 'buildsrc')
-        bbs.fileutils.remake_dir(out_dir)
-        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+        out_dir = make_stage_product_buffer('buildsrc')
     else:
         out_dir = BBSvars.buildsrc_rdir
 
@@ -581,9 +587,7 @@ def STAGE4():
     print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
     BBSvars.checksrc_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = os.path.join(products_out_buf, 'checksrc')
-        bbs.fileutils.remake_dir(out_dir)
-        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+        out_dir = make_stage_product_buffer('checksrc')
     else:
         out_dir = BBSvars.checksrc_rdir
 
@@ -644,9 +648,7 @@ def STAGE5():
     print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
     BBSvars.buildbin_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = os.path.join(products_out_buf, 'buildbin')
-        bbs.fileutils.remake_dir(out_dir)
-        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+        out_dir = make_stage_product_buffer('buildbin')
     else:
         out_dir = BBSvars.buildbin_rdir
 
