@@ -18,8 +18,8 @@ import html
 
 import bbs.fileutils
 import bbs.parse
-import bbs.rdir
 import bbs.jobs
+import bbs.rdir
 import BBSutils
 import BBSvars
 import BBSreportutils

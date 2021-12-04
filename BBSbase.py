@@ -14,6 +14,7 @@ import tarfile
 import bbs.fileutils
 import bbs.parse
 import bbs.jobs
+import bbs.rdir
 import BBSutils
 import BBSvars
 
@@ -474,7 +475,7 @@ class PkgDumps:
                 bbs.fileutils.touch(self.MISSING_file)
                 products_to_push = [self.MISSING_file]
         products_to_push += [self.out_file, self.summary_file]
-        if isinstance(destdir, RemoteDir):
+        if isinstance(destdir, bbs.rdir.RemoteDir):
             destdir.Mput(products_to_push, False, True)
         else:
             for path in products_to_push:
