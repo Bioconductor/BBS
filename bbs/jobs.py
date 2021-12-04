@@ -664,6 +664,8 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
         # we don't do anything with this retcode for now
         retcode = background_proc.wait()
         if background_out != None:
+            background_out.write('\n')
+            background_out.write('DONE.\n')
             background_out.close()
     if verbose:
         print()
