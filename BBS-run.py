@@ -19,6 +19,10 @@ import BBSutils
 import BBSvars
 import BBSbase
 
+asynchronous_mode = BBSvars.transmission_mode == "asynchronous"
+if asynchronous_mode:
+    products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
+
 
 ##############################################################################
 ## Update NodeInfo
@@ -277,7 +281,8 @@ def get_installed_pkgs():
 #        f.write("GRAPHVIZ_INSTALL_SUBMINOR=%s\n" % graphviz_install_subminor)
 #        f.close()
 
-def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph, installed_pkgs):
+def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
+                             installed_pkgs, out_dir):
     print("BBS> Preparing STAGE2 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'install'
@@ -297,8 +302,7 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph, installed_pkgs):
                 nb_skipped_pkgs += 1
             else:
                 cmd = BBSbase.get_install_cmd_for_non_target_pkg(pkg)
-        job = BBSbase.InstallPkg_Job(pkg, version, cmd,
-                                     pkgdumps, BBSvars.install_rdir)
+        job = BBSbase.InstallPkg_Job(pkg, version, cmd, pkgdumps, out_dir)
         jobs.append(job)
     nb_jobs = len(jobs)
     print("OK")
@@ -359,6 +363,12 @@ def STAGE2():
     # sync the local meat dir with the central MEAT0 dir).
     waitForTargetRepoToBeReady()
     BBSvars.install_rdir.RemakeMe(True)
+    if asynchronous_mode:
+        out_dir = os.path.join(products_out_buf, 'install')
+        bbs.fileutils.remake_dir(out_dir)
+        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+    else:
+        out_dir = BBSvars.install_rdir
 
     meat_path = BBSvars.meat_path
     BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
@@ -423,7 +433,7 @@ def STAGE2():
     print("BBS> [STAGE2] Re-install supporting packages")
     os.chdir(meat_path)
     job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
-                                         installed_pkgs)
+                                         installed_pkgs, out_dir)
     STAGE2_loop(job_queue, BBSvars.install_nb_cpu)
 
     print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp")
@@ -449,7 +459,7 @@ def STAGE2():
 ## STAGE3: Build the srcpkg files.
 ##############################################################################
 
-def prepare_STAGE3_job_queue(pkgsrctrees):
+def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
     print("BBS> Preparing STAGE3 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'buildsrc'
@@ -465,8 +475,7 @@ def prepare_STAGE3_job_queue(pkgsrctrees):
             cmd = BBSbase.getSTAGE3cmd(pkgsrctree)
             pkgdumps_prefix = pkg + '.' + stage
             pkgdumps = BBSbase.PkgDumps(srcpkg_file, pkgdumps_prefix)
-            job = BBSbase.BuildPkg_Job(pkg, version, cmd,
-                                       pkgdumps, BBSvars.buildsrc_rdir)
+            job = BBSbase.BuildPkg_Job(pkg, version, cmd, pkgdumps, out_dir)
             jobs.append(job)
     print("OK")
     sys.stdout.flush()
@@ -497,6 +506,13 @@ def STAGE3_loop(job_queue, nb_cpu):
 def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
     BBSvars.buildsrc_rdir.RemakeMe(True)
+    if asynchronous_mode:
+        out_dir = os.path.join(products_out_buf, 'buildsrc')
+        bbs.fileutils.remake_dir(out_dir)
+        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+    else:
+        out_dir = BBSvars.buildsrc_rdir
+
     # Even though we already generated the NodeInfo folder at end of STAGE2,
     # we generate it again now just in case we are running builds that
     # skipped STAGE2 (e.g. bioc-longtests builds).
@@ -513,7 +529,7 @@ def STAGE3():
             rdir.syncLocalDir(local_dir, True)
     else:
         os.chdir(meat_path)
-    job_queue = prepare_STAGE3_job_queue(target_pkgs)
+    job_queue = prepare_STAGE3_job_queue(target_pkgs, out_dir)
     STAGE3_loop(job_queue, BBSvars.nb_cpu)
     print("BBS> [STAGE3] DONE at %s." % time.asctime())
     return
@@ -523,7 +539,7 @@ def STAGE3():
 ## STAGE4: Check the srcpkg files.
 ##############################################################################
 
-def prepare_STAGE4_job_queue(srcpkg_paths):
+def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
     print("BBS> Preparing STAGE4 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'checksrc'
@@ -535,8 +551,7 @@ def prepare_STAGE4_job_queue(srcpkg_paths):
         Rcheck_dir = pkg + '.Rcheck'
         pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(Rcheck_dir, pkgdumps_prefix)
-        job = BBSbase.CheckSrc_Job(pkg, version, cmd,
-                                   pkgdumps, BBSvars.checksrc_rdir)
+        job = BBSbase.CheckSrc_Job(pkg, version, cmd, pkgdumps, out_dir)
         jobs.append(job)
     print("OK")
     sys.stdout.flush()
@@ -565,10 +580,17 @@ def STAGE4_loop(job_queue, nb_cpu):
 def STAGE4():
     print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
     BBSvars.checksrc_rdir.RemakeMe(True)
+    if asynchronous_mode:
+        out_dir = os.path.join(products_out_buf, 'checksrc')
+        bbs.fileutils.remake_dir(out_dir)
+        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+    else:
+        out_dir = BBSvars.checksrc_rdir
+
     print("BBS> [STAGE4] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("CHECK")
-    job_queue = prepare_STAGE4_job_queue(srcpkg_paths)
+    job_queue = prepare_STAGE4_job_queue(srcpkg_paths, out_dir)
     STAGE4_loop(job_queue, BBSvars.check_nb_cpu)
     print("BBS> [STAGE4] DONE at %s." % time.asctime())
     return
@@ -578,7 +600,7 @@ def STAGE4():
 ## STAGE5: Build the binpkg files.
 ##############################################################################
 
-def prepare_STAGE5_job_queue(srcpkg_paths):
+def prepare_STAGE5_job_queue(srcpkg_paths, out_dir):
     print("BBS> Preparing STAGE5 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'buildbin'
@@ -591,8 +613,7 @@ def prepare_STAGE5_job_queue(srcpkg_paths):
         binpkg_file = "%s_%s.%s" % (pkg, version, fileext)
         pkgdumps_prefix = pkg + '.' + stage
         pkgdumps = BBSbase.PkgDumps(binpkg_file, pkgdumps_prefix)
-        job = BBSbase.BuildPkg_Job(pkg, version, cmd,
-                                   pkgdumps, BBSvars.buildbin_rdir)
+        job = BBSbase.BuildPkg_Job(pkg, version, cmd, pkgdumps, out_dir)
         jobs.append(job)
     print("OK")
     sys.stdout.flush()
@@ -622,13 +643,21 @@ def STAGE5_loop(job_queue, nb_cpu):
 def STAGE5():
     print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
     BBSvars.buildbin_rdir.RemakeMe(True)
+    if asynchronous_mode:
+        out_dir = os.path.join(products_out_buf, 'buildbin')
+        bbs.fileutils.remake_dir(out_dir)
+        print("BBS> Asynchronous product transmission buffer: %s" % out_dir)
+    else:
+        out_dir = BBSvars.buildbin_rdir
+
     print("BBS> [STAGE5] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("BUILD BIN")
-    job_queue = prepare_STAGE5_job_queue(srcpkg_paths)
+    job_queue = prepare_STAGE5_job_queue(srcpkg_paths, out_dir)
     STAGE5_loop(job_queue, BBSvars.nb_cpu)
     print("BBS> [STAGE5] DONE at %s." % time.asctime())
     return
+
 
 ##############################################################################
 ## MAIN SECTION
@@ -668,6 +697,8 @@ if __name__ == "__main__":
     print("BBS> ==============================================================")
     if stages in ["all", "all-no-bin"]:
         BBSvars.Node_rdir.RemakeMe(True)
+        if asynchronous_mode:
+            bbs.fileutils.remake_dir(products_out_buf)
     ticket = []
     ## STAGE2: preinstall dependencies
     if stages in ["all", "all-no-bin"] or "STAGE2" in stages:

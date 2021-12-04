@@ -108,6 +108,7 @@ MEAT0_rdir = bbs.rdir.RemoteDir('BBS_MEAT0_RDIR',
 meat_path = BBSutils.getenv('BBS_MEAT_PATH')
 
 work_topdir = BBSutils.getenv('BBS_WORK_TOPDIR')
+transmission_mode = BBSutils.getenv('BBS_PRODUCT_TRANSMISSION_MODE', False)
 
 r_home = BBSutils.getenv('BBS_R_HOME')
 r_cmd = BBSutils.getenv('BBS_R_CMD')

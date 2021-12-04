@@ -8,6 +8,7 @@
 
 import sys
 import os
+import shutil
 import tarfile
 
 import bbs.fileutils
@@ -461,19 +462,26 @@ class PkgDumps:
         self.out_file = prefix + '-out.txt'
         self.MISSING_file = prefix + '-MISSING'
         self.summary_file = prefix + '-summary.dcf'
-    def Push(self, rdir, exclude_product=False):
+    def Push(self, destdir, exclude_product=False):
         if exclude_product or self.product_path == None:
-            to_push = []
+            products_to_push = []
         else:
             if os.path.exists(self.product_path):
                 if os.path.exists(self.MISSING_file):
                     os.remove(self.MISSING_file)
-                to_push = [self.product_path]
+                products_to_push = [self.product_path]
             else:
                 bbs.fileutils.touch(self.MISSING_file)
-                to_push = [self.MISSING_file]
-        to_push += [self.out_file, self.summary_file]
-        rdir.Mput(to_push, False, True)
+                products_to_push = [self.MISSING_file]
+        products_to_push += [self.out_file, self.summary_file]
+        if isinstance(destdir, RemoteDir):
+            destdir.Mput(products_to_push, False, True)
+        else:
+            for path in products_to_push:
+                print("BBS>   Copying %s in %s/ ..." % (path, destdir), end=" ")
+                sys.stdout.flush()
+                shutil.copy(path, destdir)
+                print("OK")
         return
 
 
@@ -518,7 +526,7 @@ class Summary:
 ##############################################################################
 
 class InstallPkg_Job(bbs.jobs.QueuedJob):
-    def __init__(self, pkg, version, cmd, pkgdumps, rdir):
+    def __init__(self, pkg, version, cmd, pkgdumps, out_dir):
         ## Required fields
         self._name = pkg
         self._cmd = cmd
@@ -530,7 +538,7 @@ class InstallPkg_Job(bbs.jobs.QueuedJob):
         self.pkg = pkg
         self.version = version
         self.pkgdumps = pkgdumps
-        self.rdir = rdir
+        self.out_dir = out_dir
         self.summary = Summary(pkg, version, cmd)
     def RerunMe(self):
         locking_pkg = bbs.parse.extractLockingPackage(self._output_file)
@@ -543,7 +551,7 @@ class InstallPkg_Job(bbs.jobs.QueuedJob):
         self.summary.ended_at = self._ended_at
         self.summary.dt = self._t2 - self._t1
         self.summary.Write(self.pkgdumps.summary_file)
-        self.pkgdumps.Push(self.rdir)
+        self.pkgdumps.Push(self.out_dir)
     def AfterRun(self):
         self.summary.retcode = self._retcode
         if self._retcode == 0 and \
@@ -561,7 +569,7 @@ class InstallPkg_Job(bbs.jobs.QueuedJob):
         self._MakeSummary()
 
 class BuildPkg_Job(bbs.jobs.QueuedJob):
-    def __init__(self, pkg, version, cmd, pkgdumps, rdir):
+    def __init__(self, pkg, version, cmd, pkgdumps, out_dir):
         ## Required fields
         self._name = pkg
         self._cmd = cmd
@@ -570,7 +578,7 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.pkg = pkg
         self.version = version
         self.pkgdumps = pkgdumps
-        self.rdir = rdir
+        self.out_dir = out_dir
         self.summary = Summary(pkg, version, cmd)
     def _MakeSummary(self):
         self.summary.started_at = self._started_at
@@ -585,7 +593,7 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.summary.Append('PackageFile', pkg_file)
         self.summary.Append('PackageFileSize', pkg_file_size)
         self.summary.Write(self.pkgdumps.summary_file)
-        self.pkgdumps.Push(self.rdir, BBSvars.dont_push_srcpkgs)
+        self.pkgdumps.Push(self.out_dir, BBSvars.dont_push_srcpkgs)
     def AfterRun(self):
         # Avoid leaving rogue processes messing around on the build machine.
         # self._proc.pid should be already dead but some of its children might
@@ -594,8 +602,8 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         # that were started directly or indirectly by pid.
         # This needs to happen before calling self._MakeSummary() because
         # these rogue processes can break the rsync command used by
-        # self.pkgdumps.Push(self.rdir) above by holding on some of the files
-        # that need to be pushed to the central build node.
+        # self.pkgdumps.Push(self.out_dir) above by holding on some of the
+        # files that need to be pushed to the central build node.
         bbs.jobs.killProc(self._proc.pid)
         self.summary.retcode = self._retcode
         pkg_file = self.pkgdumps.product_path
@@ -613,7 +621,7 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self._MakeSummary()
 
 class CheckSrc_Job(bbs.jobs.QueuedJob):
-    def __init__(self, pkg, version, cmd, pkgdumps, rdir):
+    def __init__(self, pkg, version, cmd, pkgdumps, out_dir):
         ## Required fields
         self._name = pkg
         self._cmd = cmd
@@ -622,11 +630,11 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.pkg = pkg
         self.version = version
         self.pkgdumps = pkgdumps
-        self.rdir = rdir
+        self.out_dir = out_dir
         self.summary = Summary(pkg, version, cmd)
         self.warnings = 'NA'
         #NOT NEEDED. '00install.out' is under the '<pkg>.Rcheck' dir
-        #and we already push this dir to self.rdir as part of self.pkgdumps
+        #and we already push this dir to self.out_dir as part of self.pkgdumps
         #self.install_out = os.path.join('%s.Rcheck' % pkg, '00install.out')
     def _MakeSummary(self):
         self.summary.started_at = self._started_at
@@ -640,12 +648,12 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.summary.Append('CheckDir', Rcheck_dir)
         self.summary.Append('Warnings', self.warnings)
         self.summary.Write(self.pkgdumps.summary_file)
-        self.pkgdumps.Push(self.rdir)
+        self.pkgdumps.Push(self.out_dir)
         ## Sometimes, '00install.out' is not generated (e.g. when some required
         ## packages are not available)
         #NOT NEEDED (see above).
         #if os.path.exists(self.install_out):
-        #    self.rdir.Put(self.install_out, True, True)
+        #    self.out_dir.Put(self.install_out, True, True)
     def AfterRun(self):
         # Avoid leaving rogue processes messing around on the build machine.
         # self._proc.pid should be already dead but some of its children might
@@ -654,8 +662,8 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         # that were started directly or indirectly by pid.
         # This needs to happen before calling self._MakeSummary() because
         # these rogue processes can break the rsync command used by
-        # self.pkgdumps.Push(self.rdir) above by holding on some of the files
-        # that need to be pushed to the central build node.
+        # self.pkgdumps.Push(self.out_dir) above by holding on some of the
+        # files that need to be pushed to the central build node.
         bbs.jobs.killProc(self._proc.pid)
         self.summary.retcode = self._retcode
         if self._retcode == 0:
