@@ -649,7 +649,7 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
             retcode = background_proc.wait()
         # Closing run.
         if background_out != None:
-            background_out.write('CLOSING RUN: %s: %s\n' % \
+            background_out.write('%s: CLOSING RUN: %s\n' % \
                 (currentDateString(), background_cmd))
         background_proc = subprocess.Popen(background_cmd,
                                            stdout=background_out,

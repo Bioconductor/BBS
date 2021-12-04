@@ -19,23 +19,20 @@ import BBSutils
 import BBSvars
 import BBSbase
 
-asynchronous_mode = BBSvars.transmission_mode == "asynchronous"
+asynchronous_mode = BBSvars.transmission_mode == 'asynchronous'
 if asynchronous_mode:
     products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
-    rdir = BBSvars.Node_rdir
-    dest = rdir.get_full_remote_path()
-    background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, products_out_buf, dest)
 else:
     background_cmd = background_output = None
 
-def make_stage_product_buffer(stage):
+def make_stage_out_dir(stage):
     out_dir = os.path.join(products_out_buf, stage)
     if os.path.exists(products_out_buf):
         bbs.fileutils.remake_dir(out_dir)
     else:
         os.mkdir(products_out_buf)
         os.mkdir(out_dir)
-    print("BBS>   Product buffer for asynchronous transmission: %s" % out_dir)
+    print('BBS>   Product buffer for asynchronous transmission: %s' % out_dir)
     return out_dir
 
 
@@ -108,8 +105,8 @@ def write_sys_command_version(var):
 
 def makeNodeInfo():
     # Generate the NodeInfo files (the files containing some node related info)
-    NodeInfo_subdir = "NodeInfo"
-    print("BBS>   Updating BBS_WORK_TOPDIR/%s" % NodeInfo_subdir)
+    NodeInfo_subdir = 'NodeInfo'
+    print('BBS>   Updating BBS_WORK_TOPDIR/%s' % NodeInfo_subdir)
     NodeInfo_path = os.path.join(BBSvars.work_topdir, NodeInfo_subdir)
     bbs.fileutils.remake_dir(NodeInfo_path)
     os.chdir(NodeInfo_path)
@@ -123,13 +120,13 @@ def makeNodeInfo():
     write_sys_command_version('CXX17')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
-    Rexpr = "sessionInfo()"
+    Rexpr = 'sessionInfo()'
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
     Rexpr = "options(width=500);print(installed.packages()[,c('LibPath','Version','Built')],quote=FALSE)"
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
                     'R-instpkgs.txt', 120.0, True) # ignore retcode
-    print("BBS>   cd BBS_WORK_TOPDIR")
+    print('BBS>   cd BBS_WORK_TOPDIR')
     os.chdir(BBSvars.work_topdir)
     BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
     return
@@ -140,16 +137,16 @@ def makeNodeInfo():
 ##############################################################################
 
 def write_BBS_EndOfRun_ticket(ticket):
-    print("BBS> START writing BBS_EndOfRun.txt ticket.")
-    print("BBS>   cd BBS_MEAT_PATH")
+    print('BBS> START writing BBS_EndOfRun.txt ticket.')
+    print('BBS>   cd BBS_MEAT_PATH')
     os.chdir(BBSvars.meat_path)
-    file_path = "BBS_EndOfRun.txt"
+    file_path = 'BBS_EndOfRun.txt'
     f = open(file_path, 'w')
     for t in ticket:
-        f.write("%s | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n" % t)
+        f.write('%s | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
     f.close()
     BBSvars.Node_rdir.Put(file_path, True, True)
-    print("BBS> END writing BBS_EndOfRun.txt ticket.")
+    print('BBS> END writing BBS_EndOfRun.txt ticket.')
     return
 
 def extractTargetPkgListFromMeatIndex():
@@ -163,14 +160,14 @@ def extractTargetPkgListFromMeatIndex():
     return target_pkgs
 
 def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
-    print("BBS> Get list of source tarballs to %s ..." % stage_label, end=" ")
+    print('BBS> Get list of source tarballs to %s ...' % stage_label, end=' ')
     sys.stdout.flush()
     target_pkgs = extractTargetPkgListFromMeatIndex()
-    stage = "buildsrc"
-    ok_statuses = ["OK", "WARNINGS"]
+    stage = 'buildsrc'
+    ok_statuses = ['OK', 'WARNINGS']
     srcpkg_files = []
     for target_pkg in target_pkgs:
-        summary_file = "%s.%s-summary.dcf" % (target_pkg, stage)
+        summary_file = '%s.%s-summary.dcf' % (target_pkg, stage)
         try:
             dcf = open(summary_file, 'rb')
         except IOError:
@@ -180,7 +177,7 @@ def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
         dcf.close()
         if status in ok_statuses:
             srcpkg_files.append(srcpkg_file)
-    print("OK")
+    print('OK')
     sys.stdout.flush()
     return srcpkg_files
 
@@ -193,18 +190,18 @@ def waitForTargetRepoToBeReady():
         try:
             f = urllib.request.urlopen(PACKAGES_url)
         except urllib.error.HTTPError:
-            print("BBS> [waitForTargetRepoToBeReady]", end=" ")
-            print("Unable to access %s. " % PACKAGES_url + \
-                  "Looks like the target repo is not ready yet!")
+            print('BBS> [waitForTargetRepoToBeReady]', end=' ')
+            print('Unable to access %s. ' % PACKAGES_url + \
+                  'Looks like the target repo is not ready yet!')
         else:
             break
         if nb_attempts == 30:
-            print("BBS> [waitForTargetRepoToBeReady]", end=" ")
-            print("FATAL ERROR: was unable to access %s after %d attempts. " % \
-                  (PACKAGES_url, nb_attempts) + "Giving up.")
-            sys.exit("=> EXIT.")
-        print("BBS> [waitForTargetRepoToBeReady]", end=" ")
-        print("-> will wait 3 minutes before trying again ...")
+            print('BBS> [waitForTargetRepoToBeReady]', end=' ')
+            print('FATAL ERROR: was unable to access %s after %d attempts. ' % \
+                  (PACKAGES_url, nb_attempts) + 'Giving up.')
+            sys.exit('=> EXIT.')
+        print('BBS> [waitForTargetRepoToBeReady]', end=' ')
+        print('-> will wait 3 minutes before trying again ...')
         sys.stdout.flush()
         bbs.jobs.sleep(180.0)
     f.close()
@@ -217,22 +214,22 @@ def waitForTargetRepoToBeReady():
 
 def build_pkg_dep_graph(target_pkgs):
     # Generate file 'target_pkgs.txt'.
-    target_pkgs_file = "target_pkgs.txt"
+    target_pkgs_file = 'target_pkgs.txt'
     out = open(target_pkgs_file, 'w')
     for pkg in target_pkgs:
-        out.write("%s\n" % pkg)
+        out.write('%s\n' % pkg)
     out.close()
-    print("BBS> [build_pkg_dep_graph]", end=" ")
-    print("%s pkgs written to %s" % (len(target_pkgs), target_pkgs_file))
+    print('BBS> [build_pkg_dep_graph]', end=' ')
+    print('%s pkgs written to %s' % (len(target_pkgs), target_pkgs_file))
 
     # Generate file 'pkg_dep_graph.txt'.
-    Rfunction = "build_pkg_dep_graph"
+    Rfunction = 'build_pkg_dep_graph'
     script_path = os.path.join(BBSvars.BBS_home,
-                               "utils",
-                               "build_pkg_dep_graph.R")
-    print("BBS> [build_pkg_dep_graph]", end=" ")
-    print("Calling %s() defined in %s to generate file %s ..." % \
-          (Rfunction, script_path, BBSutils.pkg_dep_graph_file), end=" ")
+                               'utils',
+                               'build_pkg_dep_graph.R')
+    print('BBS> [build_pkg_dep_graph]', end=' ')
+    print('Calling %s() defined in %s to generate file %s ...' % \
+          (Rfunction, script_path, BBSutils.pkg_dep_graph_file), end=' ')
     # Backslashes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
@@ -246,59 +243,59 @@ def build_pkg_dep_graph(target_pkgs):
     Rexpr = "source('%s');%s('%s',outfile='%s')" % \
               (script_path2, Rfunction, target_pkgs_file2,
                STAGE2_pkg_dep_graph_path2)
-    out_file = Rfunction + ".Rout"
+    out_file = Rfunction + '.Rout'
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
-    print("OK")
+    print('OK')
 
     # Send files 'target_pkgs.txt' and 'pkg_dep_graph.txt' to central
     # build node.
     BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, True, True)
 
     # Load file 'pkg_dep_graph.txt'.
-    print("BBS> [build_pkg_dep_graph] Loading %s file ..." % \
-          BBSutils.pkg_dep_graph_file, end=" ")
+    print('BBS> [build_pkg_dep_graph] Loading %s file ...' % \
+          BBSutils.pkg_dep_graph_file, end=' ')
     pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
-    print("OK (%s pkgs and their deps loaded)" % len(pkg_dep_graph))
+    print('OK (%s pkgs and their deps loaded)' % len(pkg_dep_graph))
 
-    print("BBS> [build_pkg_dep_graph] DONE.")
+    print('BBS> [build_pkg_dep_graph] DONE.')
     return pkg_dep_graph
 
 def get_installed_pkgs():
-    installed_pkgs_path = "installed_pkgs.txt"
+    installed_pkgs_path = 'installed_pkgs.txt'
     Rexpr = "writeLines(rownames(installed.packages()),'%s')" % \
             installed_pkgs_path
-    out_file = "get_installed_pkgs.Rout"
+    out_file = 'get_installed_pkgs.Rout'
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
     installed_pkgs = []
     f = open(installed_pkgs_path, 'r')
     for line in f:
         installed_pkgs.append(line.strip())
     f.close()
-    print("BBS> [get_installed_pkgs] %s installed pkgs" % len(installed_pkgs))
+    print('BBS> [get_installed_pkgs] %s installed pkgs' % len(installed_pkgs))
     return installed_pkgs
 
 #def CreateREnvironFiles():
-#    archs = ("i386", "x64")
+#    archs = ('i386', 'x64')
 #    for arch in archs:
 #        archup = arch.upper()
-#        filename = "%s/etc/%s/Renviron.site" % (BBSvars.r_home, arch)
+#        filename = '%s/etc/%s/Renviron.site' % (BBSvars.r_home, arch)
 #        f = open(filename, 'w')
-#        graphviz_install_dir = os.environ["GRAPHVIZ_INSTALL_DIR_%s" % archup]
-#        f.write("GRAPHVIZ_INSTALL_DIR=%s\n" % graphviz_install_dir)
-#        graphviz_install_major = os.environ["GRAPHVIZ_INSTALL_MAJOR_%s" %
+#        graphviz_install_dir = os.environ['GRAPHVIZ_INSTALL_DIR_%s' % archup]
+#        f.write('GRAPHVIZ_INSTALL_DIR=%s\n' % graphviz_install_dir)
+#        graphviz_install_major = os.environ['GRAPHVIZ_INSTALL_MAJOR_%s' %
 #          archup]
-#        f.write("GRAPHVIZ_INSTALL_MAJOR=%s\n" % graphviz_install_major)
-#        graphviz_install_minor = os.environ["GRAPHVIZ_INSTALL_MINOR_%s" %
+#        f.write('GRAPHVIZ_INSTALL_MAJOR=%s\n' % graphviz_install_major)
+#        graphviz_install_minor = os.environ['GRAPHVIZ_INSTALL_MINOR_%s' %
 #          archup]
-#        f.write("GRAPHVIZ_INSTALL_MINOR=%s\n" % graphviz_install_minor)
-#        graphviz_install_subminor = os.environ["GRAPHVIZ_INSTALL_SUBMINOR_%s" %
+#        f.write('GRAPHVIZ_INSTALL_MINOR=%s\n' % graphviz_install_minor)
+#        graphviz_install_subminor = os.environ['GRAPHVIZ_INSTALL_SUBMINOR_%s' %
 #          archup]
-#        f.write("GRAPHVIZ_INSTALL_SUBMINOR=%s\n" % graphviz_install_subminor)
+#        f.write('GRAPHVIZ_INSTALL_SUBMINOR=%s\n' % graphviz_install_subminor)
 #        f.close()
 
 def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
                              installed_pkgs, out_dir):
-    print("BBS> Preparing STAGE2 job queue ...", end=" ")
+    print('BBS> Preparing STAGE2 job queue ...', end=' ')
     sys.stdout.flush()
     stage = 'install'
     jobs = []
@@ -320,61 +317,65 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
         job = BBSbase.InstallPkg_Job(pkg, version, cmd, pkgdumps, out_dir)
         jobs.append(job)
     nb_jobs = len(jobs)
-    print("OK")
+    print('OK')
     sys.stdout.flush()
     nb_not_needed = len(target_pkgs) - nb_target_pkgs_in_queue
     nb_non_target_pkgs_in_queue = nb_jobs - nb_target_pkgs_in_queue
     nb_non_target_pkgs_to_install = nb_non_target_pkgs_in_queue - \
                                     nb_skipped_pkgs
     nb_pkgs_to_install = nb_jobs - nb_skipped_pkgs
-    print("BBS> Job summary:")
-    print("BBS> | %d (out of %d) target pkgs are not supporting pkgs" % \
+    print('BBS> Job summary:')
+    print('BBS> | %d (out of %d) target pkgs are not supporting pkgs' % \
           (nb_not_needed, len(target_pkgs)))
-    print("BBS> |   => no need to install them")
-    print("BBS> |   => they're not going in the installation queue")
-    print("BBS> | %d pkgs in the installation queue (all supporting pkgs):" % \
+    print('BBS> |   => no need to install them')
+    print('BBS> |   => they\'re not going in the installation queue')
+    print('BBS> | %d pkgs in the installation queue (all supporting pkgs):' % \
           nb_jobs)
-    print("BBS> |   o %d are target pkgs" % nb_target_pkgs_in_queue)
-    print("BBS> |       => will (re-)install them with 'R CMD INSTALL'")
-    print("BBS> |   o %d are non-target pkgs:" % nb_non_target_pkgs_in_queue)
-    print("BBS> |     - %d are already installed" % nb_skipped_pkgs)
-    print("BBS> |         => won't re-install them (job will be skipped)")
-    print("BBS> |     - %d are not already installed" % \
+    print('BBS> |   o %d are target pkgs' % nb_target_pkgs_in_queue)
+    print('BBS> |       => will (re-)install them with \'R CMD INSTALL\'')
+    print('BBS> |   o %d are non-target pkgs:' % nb_non_target_pkgs_in_queue)
+    print('BBS> |     - %d are already installed' % nb_skipped_pkgs)
+    print('BBS> |         => won\'t re-install them (job will be skipped)')
+    print('BBS> |     - %d are not already installed' % \
           nb_non_target_pkgs_to_install)
-    print("BBS> |         => will install them with")
-    print("BBS> |              install.packages(pkg, repos=non_target_repos,")
-    print("BBS> |                               dep=FALSE, ...)")
-    print("BBS> | Total nb of packages to install: %d" % nb_pkgs_to_install)
-    print("BBS>")
+    print('BBS> |         => will install them with')
+    print('BBS> |              install.packages(pkg, repos=non_target_repos,')
+    print('BBS> |                               dep=FALSE, ...)')
+    print('BBS> | Total nb of packages to install: %d' % nb_pkgs_to_install)
+    print('BBS>')
     job_queue = bbs.jobs.JobQueue(stage, jobs, pkg_dep_graph)
     job_queue._nb_pkgs_to_install = nb_pkgs_to_install
     return job_queue
 
-def STAGE2_loop(job_queue, nb_cpu):
-    print("BBS> BEGIN STAGE2 loop.")
+def STAGE2_loop(job_queue, nb_cpu, out_dir):
+    print('BBS> BEGIN STAGE2 loop.')
     t1 = time.time()
-    background_output = os.path.join(BBSvars.meat_path, 'STAGE2-rsync.log')
+    if asynchronous_mode:
+        rdir = BBSvars.install_rdir
+        dest = rdir.get_full_remote_path()
+        background_cmd = '%s %s/ %s' % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_output = os.path.join(products_out_buf, 'install-rsync.log')
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                             BBSvars.INSTALL_timeout,
                                             background_cmd, background_output,
                                             verbose=True)
     dt = time.time() - t1
-    print("BBS> END STAGE2 loop.")
+    print('BBS> END STAGE2 loop.')
     nb_jobs = len(job_queue._jobs)
     nb_pkgs_to_install = job_queue._nb_pkgs_to_install
     nb_failures = nb_pkgs_to_install - nb_installed
-    print("BBS> -------------------------------------------------------------")
-    print("BBS> STAGE2 SUMMARY:")
-    print("BBS>   o Working dir: %s" % os.getcwd())
-    print("BBS>   o %d pkg dir(s) queued and processed" % nb_jobs)
-    print("BBS>   o %d pkg(s) to (re-)install: %d successes / %d failures" % \
+    print('BBS> -------------------------------------------------------------')
+    print('BBS> STAGE2 SUMMARY:')
+    print('BBS>   o Working dir: %s' % os.getcwd())
+    print('BBS>   o %d pkg dir(s) queued and processed' % nb_jobs)
+    print('BBS>   o %d pkg(s) to (re-)install: %d successes / %d failures' % \
           (nb_pkgs_to_install, nb_installed, nb_failures))
-    print("BBS>   o Total time: %.2f seconds" % dt)
-    print("BBS> -------------------------------------------------------------")
+    print('BBS>   o Total time: %.2f seconds' % dt)
+    print('BBS> -------------------------------------------------------------')
     return
 
 def STAGE2():
-    print("BBS> [STAGE2] STARTING STAGE2 at %s" % time.asctime())
+    print('BBS> [STAGE2] STARTING STAGE2 at %s' % time.asctime())
     # We want to make sure the target repo is ready before we actually start
     # (if it's not ready yet it probably means that the prerun.sh script did
     # not finish on the main node, in which case we want to wait before we
@@ -382,7 +383,7 @@ def STAGE2():
     waitForTargetRepoToBeReady()
     BBSvars.install_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = make_stage_product_buffer('install')
+        out_dir = make_stage_out_dir('install')
     else:
         out_dir = BBSvars.install_rdir
 
@@ -395,12 +396,12 @@ def STAGE2():
             BBSbase.Untar(srcpkg_filepath, meat_path)
             os.remove(srcpkg_filepath)
 
-    print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog")
+    print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog')
     gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
     BBSvars.GITLOG_rdir.syncLocalDir(gitlog_path, True)
 
-    print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp")
-    STAGE2_tmp = os.path.join(BBSvars.work_topdir, "STAGE2_tmp")
+    print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp')
+    STAGE2_tmp = os.path.join(BBSvars.work_topdir, 'STAGE2_tmp')
     bbs.fileutils.remake_dir(STAGE2_tmp)
     os.chdir(STAGE2_tmp)
 
@@ -408,16 +409,16 @@ def STAGE2():
     # build machines.
     #if ('BBS_STAGE2_MODE' in os.environ and
     #  os.environ['BBS_STAGE2_MODE'] == 'multiarch' and
-    #  BBSvars.buildtype == "bioc"):
+    #  BBSvars.buildtype == 'bioc'):
     #    CreateREnvironFiles()
 
-    if BBSvars.buildtype in ["bioc", "bioc-testing"]:
+    if BBSvars.buildtype in ['bioc', 'bioc-testing']:
         # Update non-target packages.
-        print("BBS> [STAGE2] Update non-target packages (1st run) ...", end=" ")
+        print('BBS> [STAGE2] Update non-target packages (1st run) ...', end=' ')
         sys.stdout.flush()
         cmd = BBSbase.get_update_cmd_for_non_target_pkgs()
         bbs.jobs.runJob(cmd, 'updateNonTargetPkgs1.Rout', 3600.0)
-        print("OK")
+        print('OK')
         sys.stdout.flush()
 
     # Extract list of target packages.
@@ -428,46 +429,46 @@ def STAGE2():
     installed_pkgs = get_installed_pkgs()
 
     # Inject additional fields into DESCRIPTION.
-    print("BBS> [STAGE2] cd BBS_MEAT_PATH")
-    print("BBS> [STAGE2] Injecting fields into DESCRIPTION")
+    print('BBS> [STAGE2] cd BBS_MEAT_PATH')
+    print('BBS> [STAGE2] Injecting fields into DESCRIPTION')
     os.chdir(meat_path)
     for pkg in target_pkgs:
 
-        gitlog_file = os.path.join(gitlog_path, "git-log-%s.dcf" % pkg)
+        gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
         if not os.path.exists(gitlog_file):
-            print("BBS> %s file does not exist --> skipping." % gitlog_file)
+            print('BBS> %s file does not exist --> skipping.' % gitlog_file)
             continue 
 
         desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
         if not os.path.exists(desc_file):
-            print("BBS> %s file does not exist --> skipping." % desc_file)
+            print('BBS> %s file does not exist --> skipping.' % desc_file)
             continue 
 
         bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
 
     # Then re-install the supporting packages.
-    print("BBS> [STAGE2] Re-install supporting packages")
+    print('BBS> [STAGE2] Re-install supporting packages')
     os.chdir(meat_path)
     job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
                                          installed_pkgs, out_dir)
-    STAGE2_loop(job_queue, BBSvars.install_nb_cpu)
+    STAGE2_loop(job_queue, BBSvars.install_nb_cpu, out_dir)
 
-    print("BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp")
+    print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp')
     os.chdir(STAGE2_tmp)
 
-    if BBSvars.buildtype in ["bioc", "bioc-testing"]:
+    if BBSvars.buildtype in ['bioc', 'bioc-testing']:
         # Try again to update non-target packages (some updates could have
         # failed in the previous attempt because of dependency issues).
-        print("BBS> [STAGE2] Update non-target packages (2nd run) ...", end=" ")
+        print('BBS> [STAGE2] Update non-target packages (2nd run) ...', end=' ')
         sys.stdout.flush()
         cmd = BBSbase.get_update_cmd_for_non_target_pkgs()
         bbs.jobs.runJob(cmd, 'updateNonTargetPkgs2.Rout', 3600.0)
-        print("OK")
+        print('OK')
         sys.stdout.flush()
 
     makeNodeInfo()
 
-    print("BBS> [STAGE2] DONE at %s." % time.asctime())
+    print('BBS> [STAGE2] DONE at %s.' % time.asctime())
     return
 
 
@@ -499,10 +500,14 @@ def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
     job_queue._total = len(pkgsrctrees)
     return job_queue
 
-def STAGE3_loop(job_queue, nb_cpu):
+def STAGE3_loop(job_queue, nb_cpu, out_dir):
     print("BBS> BEGIN STAGE3 loop.")
     t1 = time.time()
-    background_output = os.path.join(BBSvars.meat_path, 'STAGE3-rsync.log')
+    if asynchronous_mode:
+        rdir = BBSvars.buildsrc_rdir
+        dest = rdir.get_full_remote_path()
+        background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_output = os.path.join(products_out_buf, 'buildsrc-rsync.log')
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBSvars.BUILD_timeout,
                                            background_cmd, background_output,
@@ -526,7 +531,7 @@ def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
     BBSvars.buildsrc_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = make_stage_product_buffer('buildsrc')
+        out_dir = make_stage_out_dir('buildsrc')
     else:
         out_dir = BBSvars.buildsrc_rdir
 
@@ -547,7 +552,7 @@ def STAGE3():
     else:
         os.chdir(meat_path)
     job_queue = prepare_STAGE3_job_queue(target_pkgs, out_dir)
-    STAGE3_loop(job_queue, BBSvars.nb_cpu)
+    STAGE3_loop(job_queue, BBSvars.nb_cpu, out_dir)
     print("BBS> [STAGE3] DONE at %s." % time.asctime())
     return
 
@@ -576,10 +581,14 @@ def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
     job_queue._total = len(srcpkg_paths)
     return job_queue
 
-def STAGE4_loop(job_queue, nb_cpu):
+def STAGE4_loop(job_queue, nb_cpu, out_dir):
     print("BBS> BEGIN STAGE4 loop.")
     t1 = time.time()
-    background_output = os.path.join(BBSvars.meat_path, 'STAGE4-rsync.log')
+    if asynchronous_mode:
+        rdir = BBSvars.checksrc_rdir
+        dest = rdir.get_full_remote_path()
+        background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_output = os.path.join(products_out_buf, 'checksrc-rsync.log')
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
                              BBSvars.CHECK_timeout,
                              background_cmd, background_output,
@@ -601,7 +610,7 @@ def STAGE4():
     print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
     BBSvars.checksrc_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = make_stage_product_buffer('checksrc')
+        out_dir = make_stage_out_dir('checksrc')
     else:
         out_dir = BBSvars.checksrc_rdir
 
@@ -609,7 +618,7 @@ def STAGE4():
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("CHECK")
     job_queue = prepare_STAGE4_job_queue(srcpkg_paths, out_dir)
-    STAGE4_loop(job_queue, BBSvars.check_nb_cpu)
+    STAGE4_loop(job_queue, BBSvars.check_nb_cpu, out_dir)
     print("BBS> [STAGE4] DONE at %s." % time.asctime())
     return
 
@@ -639,10 +648,14 @@ def prepare_STAGE5_job_queue(srcpkg_paths, out_dir):
     job_queue._total = len(srcpkg_paths)
     return job_queue
 
-def STAGE5_loop(job_queue, nb_cpu):
+def STAGE5_loop(job_queue, nb_cpu, out_dir):
     print("BBS> BEGIN STAGE5 loop.")
     t1 = time.time()
-    background_output = os.path.join(BBSvars.meat_path, 'STAGE5-rsync.log')
+    if asynchronous_mode:
+        rdir = BBSvars.buildbin_rdir
+        dest = rdir.get_full_remote_path()
+        background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_output = os.path.join(products_out_buf, 'buildbin-rsync.log')
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBSvars.BUILDBIN_timeout,
                                            background_cmd, background_output,
@@ -665,7 +678,7 @@ def STAGE5():
     print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
     BBSvars.buildbin_rdir.RemakeMe(True)
     if asynchronous_mode:
-        out_dir = make_stage_product_buffer('buildbin')
+        out_dir = make_stage_out_dir('buildbin')
     else:
         out_dir = BBSvars.buildbin_rdir
 
@@ -673,7 +686,7 @@ def STAGE5():
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("BUILD BIN")
     job_queue = prepare_STAGE5_job_queue(srcpkg_paths, out_dir)
-    STAGE5_loop(job_queue, BBSvars.nb_cpu)
+    STAGE5_loop(job_queue, BBSvars.nb_cpu, out_dir)
     print("BBS> [STAGE5] DONE at %s." % time.asctime())
     return
 
