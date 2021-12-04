@@ -582,6 +582,7 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
                     if background_out != None:
                         background_out.write('%s: %s\n' % \
                             (currentDateString(), background_cmd))
+                        background_out.flush()
                     background_proc = subprocess.Popen(background_cmd,
                                                        stdout=background_out,
                                                        stderr=background_out,
@@ -589,6 +590,9 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
                 elif background_proc.poll() != None:  # done
                     # we don't do anything with this retcode for now
                     retcode = background_proc.wait()
+                    if background_out != None:
+                        background_out.write('DONE.\n')
+                        background_out.flush()
                     background_proc = None
             sleep(0.1)
             slot = 0
@@ -651,6 +655,7 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
         if background_out != None:
             background_out.write('%s: CLOSING RUN: %s\n' % \
                 (currentDateString(), background_cmd))
+            background_out.flush()
         background_proc = subprocess.Popen(background_cmd,
                                            stdout=background_out,
                                            stderr=background_out,
@@ -658,7 +663,7 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
         # we don't do anything with this retcode for now
         retcode = background_proc.wait()
         if background_out != None:
-            background_out.write('DONE.')
+            background_out.write('DONE.\n')
             background_out.close()
     if verbose:
         print()
