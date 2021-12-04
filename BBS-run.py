@@ -353,7 +353,7 @@ def STAGE2_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.install_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = '%s %s/ %s' % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_cmd = '%s -v %s/ %s' % (rdir.rsync_rsh_cmd, out_dir, dest)
         background_output = os.path.join(products_out_buf, 'install-rsync.log')
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                             BBSvars.INSTALL_timeout,
@@ -506,7 +506,7 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.buildsrc_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
         background_output = os.path.join(products_out_buf, 'buildsrc-rsync.log')
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBSvars.BUILD_timeout,
@@ -587,7 +587,7 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.checksrc_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
         background_output = os.path.join(products_out_buf, 'checksrc-rsync.log')
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
                              BBSvars.CHECK_timeout,
@@ -654,7 +654,7 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.buildbin_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = "%s %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        background_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
         background_output = os.path.join(products_out_buf, 'buildbin-rsync.log')
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBSvars.BUILDBIN_timeout,
