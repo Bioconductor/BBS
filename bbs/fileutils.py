@@ -73,12 +73,6 @@ def remake_dir(path):
     os.mkdir(path)
     return
 
-# create a fresh working copy of a directory
-def copy_dir(src, dst):
-   nuke_tree(dst)
-   shutil.copytree(src, dst)
-   return
-
 # Return list of regular files in dir matching regex.
 # Follows symlinks (if they are supported).
 def getMatchingFiles(dir=".", regex="", full_names=False):

@@ -482,7 +482,11 @@ class PkgDumps:
                 bbs.rdir.set_readable_flag(path)
                 print("BBS>   Copying %s to %s/ ..." % (path, destdir), end=" ")
                 sys.stdout.flush()
-                shutil.copy(path, destdir)
+                if os.path.isdir(path):
+                    dst = os.path.join(destdir, os.path.basename(path))
+                    shutil.copytree(path, dst)
+                else:
+                    shutil.copy2(path, destdir)
                 print("OK")
         return
 
