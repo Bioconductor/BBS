@@ -9,8 +9,8 @@
 
 . "../nodes/$BBS_NODE_HOSTNAME/local-settings.sh"
 
-export BBS_RSYNC_CMD="$BBS_RSYNC_CMD -rl --delete --exclude='.svn' --exclude='.git' --exclude='.github' --exclude='.git_*'"
 export BBS_RSYNC_RSH_CMD="$BBS_RSYNC_CMD --rsh '$BBS_RSH_CMD'"
+export BBS_RSYNC_OPTIONS="-rl --delete --exclude='.svn' --exclude='.git' --exclude='.github' --exclude='.git_*'"
 
 export BBS_R_CMD="$BBS_R_HOME/bin/R"
 export BBS_RSCRIPT_CMD="$BBS_R_HOME/bin/Rscript"

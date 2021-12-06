@@ -73,24 +73,19 @@ BUILDBIN_timeout = float(BBSutils.getenv('BBS_BUILDBIN_TIMEOUT', False,
 rsh_cmd = BBSutils.getenv('BBS_RSH_CMD', False)
 rsync_cmd = BBSutils.getenv('BBS_RSYNC_CMD')
 rsync_rsh_cmd = BBSutils.getenv('BBS_RSYNC_RSH_CMD')
+rsync_options = BBSutils.getenv('BBS_RSYNC_OPTIONS')
 
 central_rdir_path = BBSutils.getenv('BBS_CENTRAL_RDIR', False)
 if central_rdir_path == None:
     Central_rdir = bbs.rdir.RemoteDir('BBS_CENTRAL_BASEURL',
-                    BBSutils.getenv('BBS_CENTRAL_BASEURL'),
-                    None,
-                    None,
-                    None,
-                    None, None, None)
+                                      BBSutils.getenv('BBS_CENTRAL_BASEURL'))
 else:
     central_rhost = BBSutils.getenv('BBS_CENTRAL_RHOST', False)
     central_ruser = BBSutils.getenv('BBS_CENTRAL_RUSER', False)
     Central_rdir = bbs.rdir.RemoteDir('BBS_CENTRAL_BASEURL',
                     BBSutils.getenv('BBS_CENTRAL_BASEURL'),
-                    central_rdir_path,
-                    central_rhost,
-                    central_ruser,
-                    rsh_cmd, rsync_cmd, rsync_rsh_cmd)
+                    central_rdir_path, central_rhost, central_ruser, rsh_cmd,
+                    rsync_cmd, rsync_rsh_cmd, rsync_options)
 
 products_in_rdir = Central_rdir.subdir('products-in')
 
@@ -102,8 +97,7 @@ MEAT0_rdir = bbs.rdir.RemoteDir('BBS_MEAT0_RDIR',
                 BBSutils.getenv('BBS_MEAT0_RHOST', False),
                 BBSutils.getenv('BBS_MEAT0_RUSER', False),
                 rsh_cmd,
-                rsync_cmd,
-                rsync_rsh_cmd)
+                rsync_cmd, rsync_rsh_cmd, rsync_options)
 
 meat_path = BBSutils.getenv('BBS_MEAT_PATH')
 
@@ -169,6 +163,5 @@ GITLOG_rdir = bbs.rdir.RemoteDir('BBS_GITLOG_RDIR',
                 BBSutils.getenv('BBS_GITLOG_RHOST', False),
                 BBSutils.getenv('BBS_GITLOG_RUSER', False),
                 rsh_cmd,
-                rsync_cmd,
-                rsync_rsh_cmd)
+                rsync_cmd, rsync_rsh_cmd, rsync_options)
 

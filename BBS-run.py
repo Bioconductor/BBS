@@ -351,7 +351,8 @@ def STAGE2_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.install_rdir
         dest = rdir.get_full_remote_path()
-        products_push_cmd = '%s -v %s/ %s' % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = '%s -av %s/ %s' % \
+                            (rdir.rsync_rsh_cmd, out_dir, dest)
         products_push_log = os.path.join(products_out_buf, 'install-push.log')
     else:
         products_push_cmd = products_push_log = None
@@ -507,7 +508,8 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.buildsrc_rdir
         dest = rdir.get_full_remote_path()
-        products_push_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = "%s -av %s/ %s" % \
+                            (rdir.rsync_rsh_cmd, out_dir, dest)
         products_push_log = os.path.join(products_out_buf, 'buildsrc-push.log')
     else:
         products_push_cmd = products_push_log = None
@@ -591,7 +593,8 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.checksrc_rdir
         dest = rdir.get_full_remote_path()
-        products_push_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = "%s -av %s/ %s" % \
+                            (rdir.rsync_rsh_cmd, out_dir, dest)
         products_push_log = os.path.join(products_out_buf, 'checksrc-push.log')
     else:
         products_push_cmd = products_push_log = None
@@ -661,7 +664,8 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.buildbin_rdir
         dest = rdir.get_full_remote_path()
-        products_push_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = "%s -av %s/ %s" % \
+                            (rdir.rsync_rsh_cmd, out_dir, dest)
         products_push_log = os.path.join(products_out_buf, 'buildbin-push.log')
     else:
         products_push_cmd = products_push_log = None

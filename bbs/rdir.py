@@ -50,7 +50,9 @@ class RemoteDir:
     # remote dir (located at the URL specified by 'url'). In that case all
     # the remaining args are ignored and the remote dir can only be accessed
     # in read-only mode (via the WOpen method).
-    def __init__(self, label, url, path, host, user, rsh_cmd, rsync_cmd, rsync_rsh_cmd):
+    def __init__(self, label, url,
+                 path=None, host=None, user=None, rsh_cmd=None,
+                 rsync_cmd=None, rsync_rsh_cmd=None, rsync_options=None):
         self.label = label
         self.url = url
         self.path = path
@@ -59,6 +61,8 @@ class RemoteDir:
         self.rsh_cmd = rsh_cmd
         self.rsync_cmd = rsync_cmd
         self.rsync_rsh_cmd = rsync_rsh_cmd
+        self.rsync_options = rsync_options
+        return
 
     def subdir(self, subdir):
         url = self.url
@@ -67,10 +71,9 @@ class RemoteDir:
         path = self.path
         if path != None:
             path += '/' + subdir
-        return RemoteDir(self.label + '/' + subdir,
-                         url, path,
-                         self.host, self.user,
-                         self.rsh_cmd, self.rsync_cmd, self.rsync_rsh_cmd)
+        return RemoteDir(self.label + '/' + subdir, url,
+                         path, self.host, self.user, self.rsh_cmd,
+                         self.rsync_cmd, self.rsync_rsh_cmd, self.rsync_options)
 
     # Open local or remote file in binary mode.
     def WOpen(self, file, return_None_on_error=False):
@@ -125,11 +128,13 @@ class RemoteDir:
         if self.host == None or self.host == 'localhost':
             # self is a local dir
             src_path = os.path.join(self.path, src_path)
-            cmd = "%s %s %s" % (self.rsync_cmd, src_path, dest_path)
+            cmd = "%s %s %s %s" % \
+                (self.rsync_cmd, self.rsync_options, src_path, dest_path)
         else:
             # self is a remote dir
             src_path = "%s/%s" % (self.get_full_remote_path(), src_path)
-            cmd = "%s %s %s" % (self.rsync_rsh_cmd, src_path, dest_path)
+            cmd = "%s %s %s %s" % \
+                (self.rsync_rsh_cmd, self.rsync_options, src_path, dest_path)
         jobs.tryHardToRunJob(cmd, 5, None, 60.0, 20.0, True, verbose)
         return
 
@@ -210,10 +215,13 @@ class RemoteDir:
         set_readable_flag(src_path)
         if self.host == None or self.host == 'localhost':
             # self is a local dir
-            cmd = "%s %s %s" % (self.rsync_cmd, src_path, self.path)
+            cmd = "%s %s %s %s" % \
+                (self.rsync_cmd, self.rsync_options, src_path, self.path)
         else:
             # self is a remote dir
-            cmd = "%s %s %s" % (self.rsync_rsh_cmd, src_path, self.get_full_remote_path())
+            cmd = "%s %s %s %s" % \
+                (self.rsync_rsh_cmd, self.rsync_options, src_path,
+                 self.get_full_remote_path())
         maxtime = 120.0 + fileutils.total_size(src_path) / bandwidth_in_bytes_per_sec
         if verbose:
             if self.host == None or self.host == 'localhost':
@@ -245,12 +253,13 @@ class RemoteDir:
             # self is a remote dir
             rsync_cmd = self.rsync_rsh_cmd
             src = self.get_full_remote_path()
+        rsync_options = self.rsync_options
         if sys.platform == "win32":
             # Transform symlink into referent file/dir (-L)
-            rsync_options = '-rLptz'
+            rsync_options += '-rLptz'
         else:
             # Copy symlinks as symlinks (-l)
-            rsync_options = '-rlptz'
+            rsync_options += '-rlptz'
         cmd = "%s %s %s/ %s" % (rsync_cmd, rsync_options, src, '.')
         if verbose:
             print("BBS>   Syncing local '%s' with %s" % (local_dir, self.label))
