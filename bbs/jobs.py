@@ -357,6 +357,7 @@ class JobProductsPusher:
             self.log.write('nb_jobs_completed_since_last_push: %d\n' % \
                            self.nb_jobs_completed_since_last_push)
             self.log.write('push command: %s\n' % self.cmd)
+            self.log.write('\n')
             self.log.flush()
         self.proc = subprocess.Popen(self.cmd,
                                      stdout=self.log,
@@ -370,7 +371,6 @@ class JobProductsPusher:
         # we don't do anything with this retcode at the moment
         retcode = self.proc.wait()
         if self.log != None:
-            self.log.write('\n')
             self.log.flush()
         self.proc = None
         return
