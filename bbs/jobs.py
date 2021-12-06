@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 ##############################################################################
-###
-### This file is part of the BBS software (Bioconductor Build System).
-###
-### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 7, 2020
-###
-### bbs.jobs module
-###
+##
+## This file is part of the BBS software (Bioconductor Build System).
+##
+## Author: Hervé Pagès <hpages.on.github@gmail.com>
+## Last modification: Dec 6, 2021
+##
+## bbs.jobs module
+##
 
 import sys
 import os
@@ -36,14 +36,35 @@ if sys.platform == "win32":
 sys.path.insert(0, os.path.dirname(__file__))
 import parse
 
+
+##############################################################################
+## Format date+time
+##
+
+## 'tm' must be a <type 'time.struct_time'> object as returned by
+## time.localtime(). See http://docs.python.org/lib/module-time.html
+## for more info.
+## Example:
+##   >>> dateString(time.localtime())
+##   '2007-12-07 10:03:15 -0800 (Fri, 07 Dec 2007)'
+## Note that this is how 'svn log' and 'svn info' format the dates.
+def dateString(tm):
+    if tm.tm_isdst:
+        utc_offset = time.altzone # 7 hours in Seattle
+    else:
+        utc_offset = time.timezone # 8 hours in Seattle
+    utc_offset //= 3600
+    format = "%%Y-%%m-%%d %%H:%%M:%%S -0%d00 (%%a, %%d %%b %%Y)" % utc_offset
+    return time.strftime(format, tm)
+
 def currentDateString():
     return dateString(time.localtime())
+
 
 ##############################################################################
 ## On Windows XP time.sleep() is fragile: if the Python script is started by
 ## the Task Scheduler, then it dies when the user it is run as logs in during
 ## a call to time.sleep().
-##############################################################################
 
 def sleep(secs):
     #if sys.platform == "win32":
@@ -69,8 +90,8 @@ def call(cmd, check=False):
         raise subprocess.CalledProcessError(retcode, cmd)
     return retcode
 
-### Implementation taken from subprocess.check_output() (available in Python
-### >= 2.7 only).
+## Implementation taken from subprocess.check_output() (available in Python
+## >= 2.7 only).
 def getCmdOutput(cmd):
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     output, unused_err = process.communicate()
@@ -233,7 +254,7 @@ def killProc(pid):
         except psutil.AccessDenied:
             print("BBS>       Access denied (pid=%s)."  % child.pid)
 
-### What if cmd is not found, can't be started or crashes?
+## What if cmd is not found, can't be started or crashes?
 def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
     if verbose:
         print("BBS>   runJob(): " + cmd)
@@ -310,21 +331,78 @@ def tryHardToRunJob(cmd, nb_attempts=1, stdout=None, maxtime=60.0, sleeptime=20.
 
 
 ##############################################################################
-### processJobQueue()
-###
+## For asynchronous transmission of build products
+##
 
-### Objects passed to the processJobQueue() function must be QueuedJob objects.
-### The QueuedJob class contains the strictly minimal stuff needed by the
-### processJobQueue() in order to work.
-### If a queued job returns in time, processJobQueue() will call RerunMe() and,
-### if True, will rerun the job. If it returns in time again, then
-### processJobQueue() will call RerunMe() again and so on... until RerunMe()
-### returns False or the job does not return in time (time out). Then either
-### AfterRun() or AfterTimeout() is called.
-### If you want the RerunMe(), AfterRun() and/or AfterTimeout() methods to do
-### something more useful than what the default methods below do, then you need
-### to derive the "QueuedJob" class and provide your own implementation for
-### these methods.
+class JobProductsPusher:
+    def __init__(self, cmd, logfile=None):
+        self.cmd = cmd
+        self.logfile = logfile
+        if self.logfile == None:
+            self.log = None
+        else:
+            self.log = open(self.logfile, 'w')
+        self.nb_jobs_completed_since_last_push = 0
+        self.proc = None
+        return
+    def ready_to_push(self):
+        return self.proc == None and \
+               self.nb_jobs_completed_since_last_push >= 10
+    def start_push(self, last=False):
+        if self.log != None:
+            self.log.write('-----------------------------------------------\n')
+            if last:
+                self.log.write('LAST PUSH!\n')
+            self.log.write('%s\n' % currentDateString())
+            self.log.write('nb_jobs_completed_since_last_push: %d\n' % \
+                           self.nb_jobs_completed_since_last_push)
+            self.log.write('push command: %s\n' % self.cmd)
+            self.log.flush()
+        self.proc = subprocess.Popen(self.cmd,
+                                     stdout=self.log,
+                                     stderr=self.log,
+                                     shell=True)
+        self.nb_jobs_completed_since_last_push = 0
+        return
+    def push_is_over(self):
+        return self.proc != None and self.proc.poll() != None
+    def terminate_current_push(self):
+        # we don't do anything with this retcode at the moment
+        retcode = self.proc.wait()
+        if self.log != None:
+            self.log.write('\n')
+            self.log.flush()
+        self.proc = None
+        return
+    def last_push(self):
+        if self.proc != None:
+            self.terminate_current_push()
+        self.start_push(last=True)
+        self.terminate_current_push()
+        if self.log != None:
+            self.log.write('-----------------------------------------------\n')
+            self.log.write('\n')
+            self.log.write('DONE.\n')
+            self.log.close()
+        return
+
+
+##############################################################################
+## processJobQueue()
+##
+
+## Objects passed to the processJobQueue() function must be QueuedJob objects.
+## The QueuedJob class contains the strictly minimal stuff needed by the
+## processJobQueue() in order to work.
+## If a queued job returns in time, processJobQueue() will call RerunMe() and,
+## if True, will rerun the job. If it returns in time again, then
+## processJobQueue() will call RerunMe() again and so on... until RerunMe()
+## returns False or the job does not return in time (time out). Then either
+## AfterRun() or AfterTimeout() is called.
+## If you want the RerunMe(), AfterRun() and/or AfterTimeout() methods to do
+## something more useful than what the default methods below do, then you need
+## to derive the "QueuedJob" class and provide your own implementation for
+## these methods.
 class QueuedJob:
     def __init__(self, name, cmd, output_file):
         self._name = name                # Job name.
@@ -468,8 +546,8 @@ def _restart_QueuedJob(job, verbose, nb_jobs, nb_slots):
     sys.stdout.flush()
     return job
 
-### Returns 0 if job is still running, 1 if it returned in time, and -1 if
-### it timed out.
+## Returns 0 if job is still running, 1 if it returned in time, and -1 if
+## it timed out.
 def _check_QueuedJob_status(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
     job._t2 = time.time()
     dt = job._t2 - job._t1
@@ -547,11 +625,11 @@ def _logSummaryOfJobsWithUnprocessedDeps(job_queue):
         print("bbs.jobs.processJobQueue>   %s" % None)
     return
 
-### Process 'job_queue' (a JobQueue object) in parallel.
-### Will run at most 'nb_slots' jobs simultaneously plus the background
-### command if any.
+## Process 'job_queue' (a JobQueue object) in parallel.
+## Will run at most 'nb_slots' jobs simultaneously plus the products push
+## command if any.
 def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
-                    background_cmd=None, background_output=None,
+                    products_push_cmd=None, products_push_logfile=None,
                     verbose=False):
     jobs = job_queue._jobs
     job_deps = job_queue._job_deps
@@ -561,41 +639,26 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
         print("bbs.jobs.processJobQueue>", end=" ")
         print("%d jobs in the queue. Start processing them using %d slots" % \
               (nb_jobs, nb_slots))
-    slotevents_logfile = open('JobQueue-' + job_queue._name + '-slot-events.log', 'w')
-    if background_cmd != None:
-        if background_output == None:
-            background_out = None
-        else:
-            background_out = open(background_output, 'w')
-        background_proc = None
+    slotevents_logfile = open('JobQueue-%s-slot-events.log' % job_queue._name, 'w')
     processed_jobs = []
     nb_busy_slots = 0
     slots = nb_slots * [None]
     loop = -1
     slot = -1
     cumul = 0
+    if products_push_cmd != None:
+        products_pusher = JobProductsPusher(products_push_cmd,
+                                            products_push_logfile)
     while len(processed_jobs) < nb_jobs:
         slot += 1
         if slot == nb_slots:
-            if background_cmd != None:
-                if background_proc == None:
-                    if background_out != None:
-                        background_out.write('\n')
-                        background_out.write('%s:\n' % currentDateString())
-                        background_out.write('%s\n' % background_cmd)
-                        background_out.flush()
-                    background_proc = subprocess.Popen(background_cmd,
-                                                       stdout=background_out,
-                                                       stderr=background_out,
-                                                       shell=True)
-                elif background_proc.poll() != None:  # done
-                    # we don't do anything with this retcode for now
-                    retcode = background_proc.wait()
-                    if background_out != None:
-                        background_out.flush()
-                    background_proc = None
             sleep(0.1)
             slot = 0
+            if products_push_cmd != None:
+                if products_pusher.ready_to_push():
+                    products_pusher.start_push()
+                elif products_pusher.push_is_over():
+                    products_pusher.terminate_current_push()
         job = slots[slot]
         loop += 1
         if job != None:
@@ -622,6 +685,8 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
             slots[slot] = None
             nb_busy_slots -= 1
             _logSlotEvent(slotevents_logfile, 'REMOVE', job, slot, slots)
+            if products_push_cmd != None:
+                products_pusher.nb_jobs_completed_since_last_push += 1
         # Slot 'slot' is available
         while True:
             job_rank = len(processed_jobs) + nb_busy_slots
@@ -647,26 +712,8 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
                 _logActionOnQueuedJob("SKIP", job, nb_jobs, 1, job_deps)
             processed_jobs.append(job._name)
     slotevents_logfile.close()
-    if background_cmd != None:
-        if background_proc != None:
-            # we don't do anything with this retcode for now
-            retcode = background_proc.wait()
-        # Closing run.
-        if background_out != None:
-            background_out.write('\n')
-            background_out.write('%s: CLOSING RUN!\n' % currentDateString())
-            background_out.write('%s\n' % background_cmd)
-            background_out.flush()
-        background_proc = subprocess.Popen(background_cmd,
-                                           stdout=background_out,
-                                           stderr=background_out,
-                                           shell=True)
-        # we don't do anything with this retcode for now
-        retcode = background_proc.wait()
-        if background_out != None:
-            background_out.write('\n')
-            background_out.write('DONE.\n')
-            background_out.close()
+    if products_push_cmd != None:
+        products_pusher.last_push()
     if verbose:
         print()
         print("bbs.jobs.processJobQueue> Finished.")
@@ -677,8 +724,8 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
 
 
 ##############################################################################
-### Other stuff
-###
+## Other stuff
+##
 
 def getHostname():
     if sys.platform == "win32":
@@ -695,23 +742,6 @@ def getHostname():
     hostname = hostname.replace(".fredhutch.org", "")
     hostname = hostname.replace(".bioconductor.org", "")
     return hostname
-
-## Formatted date+time.
-## 'tm' must be a <type 'time.struct_time'> object as returned by
-## time.localtime(). See http://docs.python.org/lib/module-time.html
-## for more info.
-## Example:
-##   >>> dateString(time.localtime())
-##   '2007-12-07 10:03:15 -0800 (Fri, 07 Dec 2007)'
-## Note that this is how 'svn log' and 'svn info' format the dates.
-def dateString(tm):
-    if tm.tm_isdst:
-        utc_offset = time.altzone # 7 hours in Seattle
-    else:
-        utc_offset = time.timezone # 8 hours in Seattle
-    utc_offset //= 3600
-    format = "%%Y-%%m-%%d %%H:%%M:%%S -0%d00 (%%a, %%d %%b %%Y)" % utc_offset
-    return time.strftime(format, tm)
 
 
 if __name__ == "__main__":

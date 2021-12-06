@@ -22,8 +22,6 @@ import BBSbase
 asynchronous_mode = BBSvars.transmission_mode == 'asynchronous'
 if asynchronous_mode:
     products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
-else:
-    background_cmd = background_output = None
 
 def make_stage_out_dir(stage):
     out_dir = os.path.join(products_out_buf, stage)
@@ -353,11 +351,14 @@ def STAGE2_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.install_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = '%s -v %s/ %s' % (rdir.rsync_rsh_cmd, out_dir, dest)
-        background_output = os.path.join(products_out_buf, 'install-rsync.log')
+        products_push_cmd = '%s -v %s/ %s' % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_log = os.path.join(products_out_buf, 'install-push.log')
+    else:
+        products_push_cmd = products_push_log = None
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                             BBSvars.INSTALL_timeout,
-                                            background_cmd, background_output,
+                                            products_push_cmd,
+                                            products_push_log,
                                             verbose=True)
     dt = time.time() - t1
     print('BBS> END STAGE2 loop.')
@@ -506,11 +507,14 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.buildsrc_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
-        background_output = os.path.join(products_out_buf, 'buildsrc-rsync.log')
+        products_push_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_log = os.path.join(products_out_buf, 'buildsrc-push.log')
+    else:
+        products_push_cmd = products_push_log = None
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBSvars.BUILD_timeout,
-                                           background_cmd, background_output,
+                                           products_push_cmd,
+                                           products_push_log,
                                            verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE3 loop.")
@@ -587,11 +591,14 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.checksrc_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
-        background_output = os.path.join(products_out_buf, 'checksrc-rsync.log')
+        products_push_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_log = os.path.join(products_out_buf, 'checksrc-push.log')
+    else:
+        products_push_cmd = products_push_log = None
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
                              BBSvars.CHECK_timeout,
-                             background_cmd, background_output,
+                             products_push_cmd,
+                             products_push_log,
                              verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE4 loop.")
@@ -654,11 +661,14 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
     if asynchronous_mode:
         rdir = BBSvars.buildbin_rdir
         dest = rdir.get_full_remote_path()
-        background_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
-        background_output = os.path.join(products_out_buf, 'buildbin-rsync.log')
+        products_push_cmd = "%s -v %s/ %s" % (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_log = os.path.join(products_out_buf, 'buildbin-push.log')
+    else:
+        products_push_cmd = products_push_log = None
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
                                            BBSvars.BUILDBIN_timeout,
-                                           background_cmd, background_output,
+                                           products_push_cmd,
+                                           products_push_log,
                                            verbose=True)
     dt = time.time() - t1
     print("BBS> END STAGE5 loop.")
