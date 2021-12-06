@@ -20,6 +20,7 @@ export BBS_CHECK_NB_CPU=20  # 24 cores are available
 export BBS_CENTRAL_RHOST="nebbiolo1"
 export BBS_RSH_CMD="ssh -F /Users/biocbuild/.ssh/config"
 export BBS_CENTRAL_ROOT_URL="http://155.52.207.165"
+export BBS_PRODUCT_TRANSMISSION_MODE="asynchronous"
 
 
 
