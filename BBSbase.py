@@ -480,7 +480,7 @@ class PkgDumps:
         else:
             for path in products_to_push:
                 bbs.rdir.set_readable_flag(path)
-                print("BBS>   Copying %s in %s/ ..." % (path, destdir), end=" ")
+                print("BBS>   Copying %s to %s/ ..." % (path, destdir), end=" ")
                 sys.stdout.flush()
                 shutil.copy(path, destdir)
                 print("OK")

@@ -219,8 +219,8 @@ class RemoteDir:
             if self.host == None or self.host == 'localhost':
                 action = "Copying"
             else:
-                action = "Putting"
-            print("BBS>   %s %s in %s/:" % (action, src_path, self.label))
+                action = "Sending"
+            print("BBS>   %s %s to %s/:" % (action, src_path, self.label))
         jobs.tryHardToRunJob(cmd, 5, None, maxtime, 30.0, failure_is_fatal, verbose)
         return
 
