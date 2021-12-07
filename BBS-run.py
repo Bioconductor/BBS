@@ -39,9 +39,8 @@ def make_stage_out_dir(stage):
 ## first we must convert it to a cygwin-style path e.g.
 ## /cygdrive/e/biocbuild/bbs-3.15-bioc/products-out/install
 def cygwin_style_path(path):
-    letter = path[0].upper()
     if path[1] != ':' or \
-       letter != path[0] or letter in ['A', 'B'] or \
+       not path[0].isupper() or path[0] in ['A', 'B'] or \
        path[2] not in ['\\', '/']:
         return path
     return '/cygdrive/%s%s' % (path[0].lower(), path[2:].replace('\\', '/'))
