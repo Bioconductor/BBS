@@ -33,6 +33,25 @@ def make_stage_out_dir(stage):
     print('BBS>   Product buffer for asynchronous transmission: %s' % out_dir)
     return out_dir
 
+## rsync will interprets a path that starts with a drive letter followed by a
+## colon (e.g. E:\biocbuild\bbs-3.15-bioc\products-out\install) as a remote
+## location. So in order for Cygwin rsync to interpret the path correctly,
+## first we must convert it to a cygwin-style path e.g.
+## /cygdrive/e/biocbuild/bbs-3.15-bioc/products-out/install
+def cygwin_style_path(path):
+    letter = path[0].upper()
+    if path[1] != ':' or \
+       letter != path[0] or letter in ['A', 'B'] or \
+       path[2] not in ['\\', '/']:
+        return path
+    return '/cygdrive/%s%s' % (path[0].lower(), path[2:].replace('\\', '/'))
+
+def make_products_push_cmd(out_dir, rdir):
+    if sys.platform == "win32":
+        out_dir = cygwin_style_path(out_dir)
+    dest = rdir.get_full_remote_path()
+    return '%s -av %s/ %s' % (BBSvars.rsync_rsh_cmd, out_dir, dest)
+
 
 ##############################################################################
 ## Update NodeInfo
@@ -350,9 +369,7 @@ def STAGE2_loop(job_queue, nb_cpu, out_dir):
     t1 = time.time()
     if asynchronous_mode:
         rdir = BBSvars.install_rdir
-        dest = rdir.get_full_remote_path()
-        products_push_cmd = '%s -av %s/ %s' % \
-                            (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'install-push.log')
     else:
         products_push_cmd = products_push_log = None
@@ -507,9 +524,7 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
     t1 = time.time()
     if asynchronous_mode:
         rdir = BBSvars.buildsrc_rdir
-        dest = rdir.get_full_remote_path()
-        products_push_cmd = "%s -av %s/ %s" % \
-                            (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'buildsrc-push.log')
     else:
         products_push_cmd = products_push_log = None
@@ -592,9 +607,7 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
     t1 = time.time()
     if asynchronous_mode:
         rdir = BBSvars.checksrc_rdir
-        dest = rdir.get_full_remote_path()
-        products_push_cmd = "%s -av %s/ %s" % \
-                            (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'checksrc-push.log')
     else:
         products_push_cmd = products_push_log = None
@@ -663,9 +676,7 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
     t1 = time.time()
     if asynchronous_mode:
         rdir = BBSvars.buildbin_rdir
-        dest = rdir.get_full_remote_path()
-        products_push_cmd = "%s -av %s/ %s" % \
-                            (rdir.rsync_rsh_cmd, out_dir, dest)
+        products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'buildbin-push.log')
     else:
         products_push_cmd = products_push_log = None

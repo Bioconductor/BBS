@@ -1,6 +1,6 @@
-@rem ============================
-@rem Local settings for riesling1
-@rem ============================
+@rem ===========================
+@rem Local settings for palomino
+@rem ===========================
 
 
 set BBS_HOME=E:\biocbuild\BBS
