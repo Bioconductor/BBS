@@ -17,6 +17,7 @@ set BBS_NB_CPU=10
 set BBS_CENTRAL_RHOST=nebbiolo1
 set BBS_RSH_CMD=ssh -F /cygdrive/d/biocbuild/.ssh/config
 set BBS_CENTRAL_ROOT_URL=http://155.52.207.165
+set BBS_PRODUCT_TRANSMISSION_MODE=asynchronous
 
 
 
