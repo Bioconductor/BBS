@@ -535,6 +535,20 @@ TBODY.compact.gcard TR.even_row_number .debina {
     background: #E4DFCF;
 }
 
+/* palomino */
+.palomino,
+.gcard TD.palomino {
+    background: #F7E3DE;
+}
+.palomino.toned_down,
+TR.toned_down .palomino,
+TBODY.compact.gcard TR.even_row_number .palomino {
+    background: #E7D3CE;
+}
+DIV.palomino {
+    color: #500;
+}
+
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
