@@ -44,12 +44,12 @@ def Untar(tarball, dir=None, verbose=False):
 # break on Windows!
 def Rexpr2syscmd(Rexpr):
     if BBSvars.rscript_cmd == None:
-        if sys.platform == "win32":
+        if sys.platform == 'win32':
             syscmd = 'echo %s | %s --no-echo' % (Rexpr, BBSvars.r_cmd)
         else:
             syscmd = 'echo "%s" | %s --no-echo' % (Rexpr, BBSvars.r_cmd)
     else:
-        if sys.platform == "win32":
+        if sys.platform == 'win32':
             syscmd = '%s -e %s' % (BBSvars.rscript_cmd, Rexpr)
         else:
             syscmd = '%s -e "%s"' % (BBSvars.rscript_cmd, Rexpr)
@@ -133,12 +133,12 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
 def _get_prepend_from_BBSoptions(pkgsrctree, key_prefix):
     key = key_prefix + 'prepend'
     prepend = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, key)
-    if sys.platform == "win32":
+    if sys.platform == 'win32':
         key2 = key + '.win'
         prepend_win = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, key2)
         if prepend_win != None:
             prepend = prepend_win
-    elif sys.platform == "darwin":
+    elif sys.platform == 'darwin':
         key2 = key + '.mac'
         prepend_mac = bbs.parse.get_BBSoption_from_pkgsrctree(pkgsrctree, key2)
         if prepend_mac != None:
@@ -167,17 +167,17 @@ def _noExampleArchs(pkgsrctree):
     for item in no_examples:
         clean.append(item.strip())
     no_examples = clean
-    if "mac" in no_examples:
-        archs.append("darwin")
-    if "win" in no_examples:
-        archs.append("win32")
-        archs.append("win32")
-    if "win32" in no_examples:
-        archs.append("win32")
-    if "win64" in no_examples:
-        archs.append("win32")
-    if "linux2" in no_examples:
-        archs.append("linux2")
+    if 'mac' in no_examples:
+        archs.append('darwin')
+    if 'win' in no_examples:
+        archs.append('win32')
+        archs.append('win32')
+    if 'win32' in no_examples:
+        archs.append('win32')
+    if 'win64' in no_examples:
+        archs.append('win32')
+    if 'linux2' in no_examples:
+        archs.append('linux2')
 # see
 #http://stackoverflow.com/questions/2144748/is-it-safe-to-use-sys-platform-win32-check-on-64-bit-python
 # to explain the above.
@@ -194,7 +194,7 @@ def _supportedWinArchs(pkgsrctree):
         unsupported = unsupported.replace(" ", "").split(",")
     if "win" in unsupported:
         return archs
-    if "win32" not in unsupported:
+    if 'win32' not in unsupported:
         archs.append("i386")
     if "win64" not in unsupported:
         archs.append("x64")
@@ -216,7 +216,7 @@ def _get_RINSTALL_cmd0(win_archs=None):
 def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     pkg_instdir = "%s.buildbin-libdir" % pkg
-    if sys.platform != "darwin":
+    if sys.platform != 'darwin':
         ## Generate the command for Windows or Linux. Note that this command
         ## is never needed nor used on Linux.
         cmd0 = _get_RINSTALL_cmd0(win_archs)
@@ -229,12 +229,12 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
 
 def _get_Rbuild_cmd(pkgsrctree):
     arch = ""
-    if sys.platform == "win32":
+    if sys.platform == 'win32':
         win_archs = _supportedWinArchs(pkgsrctree)
         if len(win_archs) == 1:
             arch = " --arch %s" % win_archs[0]
     cmd = '%s%s CMD build' % (BBSvars.r_cmd, arch)
-    if sys.platform == "win32":
+    if sys.platform == 'win32':
         ## Fix the permissions on Windows only.
         ## The real purpose of this is to try to work around a strange Cygwin
         ## tar problem ("file changed as we read it") observed so far on
@@ -281,10 +281,6 @@ def getSTAGE1cmd(pkgsrctree):
     cmd = '%s zcf %s %s' % (tar_cmd, srcpkg_file, pkgsrctree)
     return cmd
 
-def _install_is_multiarch():
-    return "BBS_STAGE2_MODE" in os.environ and \
-           os.environ['BBS_STAGE2_MODE'] == 'multiarch'
-
 def get_install_cmd_for_non_target_pkg(pkg):
     script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
@@ -295,7 +291,7 @@ def get_install_cmd_for_non_target_pkg(pkg):
     # contain backslahes.
     script_path = script_path.replace('\\', '/')
     Rexpr = "source('%s');" % script_path
-    if sys.platform == "win32" and _install_is_multiarch():
+    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
         Rexpr += "installNonTargetPkg('%s',multiArch=TRUE)" % pkg
     else:
         Rexpr += "installNonTargetPkg('%s')" % pkg
@@ -311,18 +307,16 @@ def get_update_cmd_for_non_target_pkgs():
     # contain backslahes.
     script_path = script_path.replace('\\', '/')
     Rexpr = "source('%s');" % script_path
-    if sys.platform == "win32" and _install_is_multiarch():
+    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
         Rexpr += "updateNonTargetPkgs(multiArch=TRUE)"
     else:
         Rexpr += "updateNonTargetPkgs()"
     return Rexpr2syscmd(Rexpr)
 
 def getSTAGE2cmd(pkg, version):
-    if sys.platform != "win32":
-        cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
-    else:
+    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
         win_archs = _supportedWinArchs(pkg)
-        if _install_is_multiarch() and len(win_archs) >= 2:
+        if len(win_archs) >= 2:
             ## Here is what Dan's commit message says about why BBS uses this
             ## very long and complicated compound command to install packages
             ## in multiarch mode on Windows during STAGE2 (see
@@ -350,6 +344,8 @@ def getSTAGE2cmd(pkg, version):
                   'rm %s %s' % (srcpkg_file, zip_file)
         else:
             cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
+    else:
+        cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
     prepend = _get_prepend_from_BBSoptions(pkg, 'INSTALL')
     if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
@@ -380,10 +376,10 @@ def getSTAGE3cmd(pkgsrctree):
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
-    if sys.platform != "win32":
+    if sys.platform != 'win32':
         win_archs = None
     else:
-        if BBSvars.STAGE4_mode == "multiarch":
+        if BBSvars.STAGE4_mode == 'multiarch':
             win_archs = _supportedWinArchs(pkg)
         else:
             win_archs = []
@@ -443,10 +439,10 @@ def getSTAGE4cmd(srcpkg_path):
 ### 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
-    win_archs = None
-    if sys.platform == "win32":
-        if BBSvars.STAGE5_mode == "multiarch":
-            win_archs = _supportedWinArchs(pkg)
+    if sys.platform == 'win32' and BBSvars.STAGE5_mode == 'multiarch':
+        win_archs = _supportedWinArchs(pkg)
+    else:
+        win_archs = None
     cmd = _get_BuildBinPkg_cmd(srcpkg_path, win_archs)
     prepend = _get_prepend_from_BBSoptions(pkg, 'BUILDBIN')
     if prepend != None and prepend != '':
