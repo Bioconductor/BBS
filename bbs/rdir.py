@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import fileutils
 import jobs
 
-def set_readable_flag(path):
+def set_readable_flag(path, verbose=False):
     if sys.platform == "win32" and \
        os.path.exists(path) and \
        os.path.isfile(path):
@@ -212,7 +212,7 @@ class RemoteDir:
     # 'src_path' is a local path that can be absolute or relative to the
     # current dir
     def Put(self, src_path, failure_is_fatal=True, verbose=False):
-        set_readable_flag(src_path)
+        set_readable_flag(src_path, verbose)
         if self.host == None or self.host == 'localhost':
             # self is a local dir
             cmd = "%s %s %s %s" % \
