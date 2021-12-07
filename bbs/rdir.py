@@ -256,10 +256,10 @@ class RemoteDir:
         rsync_options = self.rsync_options
         if sys.platform == "win32":
             # Transform symlink into referent file/dir (-L)
-            rsync_options += '-rLptz'
+            rsync_options += ' -rLptz'
         else:
             # Copy symlinks as symlinks (-l)
-            rsync_options += '-rlptz'
+            rsync_options += ' -rlptz'
         cmd = "%s %s %s/ %s" % (rsync_cmd, rsync_options, src, '.')
         if verbose:
             print("BBS>   Syncing local '%s' with %s" % (local_dir, self.label))
