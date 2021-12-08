@@ -227,6 +227,33 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
     cmd = 'rm -rf %s && mkdir %s && %s' % (pkg_instdir, pkg_instdir, cmd)
     return cmd
 
+## Crazy long command used on the Windows builders to install target packages.
+## Here is what Dan's commit message says about why BBS uses this long and
+## complicated compound command to install packages on Windows during STAGE2
+## (commit 87822fb346e04b4301d0c2efd7ec1a2a8762e93a'):
+##   Install STAGE2 target pkgs to zip+libdir first, then install
+##   zip. This mitigates the problem where the INSTALL times out
+##   after installing only one architecture. Now, if the install
+##   times out, it has only failed to install a package to a
+##   temporary libdir, and the previous installation is still
+##   intact (or pkg is not installed at all), so dependent packages
+##   will not complain about the timed-out package being only
+##   available for one architecture.
+##   We still need to figure out why mzR in particular times out
+##   during INSTALL. When run manually (admittedly not during
+##   peak load times) the install takes ~ 5-6 minutes, even when
+##   done via the build system.
+def _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs=None):
+    curl_cmd = BBSutils.getenv('BBS_CURL_CMD')
+    srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
+    srcpkg_url = BBSvars.Central_rdir.url + '/src/contrib/' + srcpkg_file
+    zip_file = srcpkg_file.replace(".tar.gz", ".zip")
+    cmd = '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
+          _get_BuildBinPkg_cmd(srcpkg_file, win_archs) + ' && ' + \
+          '%s %s' % (_get_RINSTALL_cmd0(), zip_file) + ' && ' + \
+          'rm %s %s' % (srcpkg_file, zip_file)
+    return cmd
+
 def _get_Rbuild_cmd(pkgsrctree):
     arch = ""
     if sys.platform == 'win32':
@@ -314,41 +341,17 @@ def get_update_cmd_for_non_target_pkgs():
     return Rexpr2syscmd(Rexpr)
 
 def getSTAGE2cmd(pkg, version):
-    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
-        win_archs = _supportedWinArchs(pkg)
-        if len(win_archs) >= 2:
-            ## Here is what Dan's commit message says about why BBS uses this
-            ## very long and complicated compound command to install packages
-            ## in multiarch mode on Windows during STAGE2 (see
-            ## 'git show 87822fb346e04b4301d0c2efd7ec1a2a8762e93a'):
-            ##   Install STAGE2 target pkgs to zip+libdir first, then install
-            ##   zip. This mitigates the problem where the INSTALL times out
-            ##   after installing only one architecture. Now, if the install
-            ##   times out, it has only failed to install a package to a
-            ##   temporary libdir, and the previous installation is still
-            ##   intact (or pkg is not installed at all), so dependent packages
-            ##   will not complain about the timed-out package being only
-            ##   available for one architecture.
-            ##   We still need to figure out why mzR in particular times out
-            ##   during INSTALL. When run manually (admittedly not during
-            ##   peak load times) the install takes ~ 5-6 minutes, even when
-            ##   done via the build system.
-            curl_cmd = BBSutils.getenv('BBS_CURL_CMD')
-            srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
-            srcpkg_url = BBSvars.Central_rdir.url + '/src/contrib/' + \
-                         srcpkg_file
-            zip_file = srcpkg_file.replace(".tar.gz", ".zip")
-            cmd = '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
-                  _get_BuildBinPkg_cmd(srcpkg_file, win_archs) + ' && ' + \
-                  '%s %s' % (_get_RINSTALL_cmd0(), zip_file) + ' && ' + \
-                  'rm %s %s' % (srcpkg_file, zip_file)
+    if sys.platform == 'win32':
+        if BBSvars.STAGE2_mode == 'multiarch':
+            win_archs = _supportedWinArchs(pkg)
         else:
-            cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
+            win_archs = None
+        # We use a crazy long command to install target packages on a Windows
+        # builder. See _get_InstallPkgFromTargetRepo_cmd() above for more info.
+        cmd = _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
     else:
+        # Install from local source tree.
         cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
-    prepend = _get_prepend_from_BBSoptions(pkg, 'INSTALL')
-    if prepend != None and prepend != '':
-        cmd = '%s %s' % (prepend, cmd)
     return cmd
 
 def getSTAGE3cmd(pkgsrctree):
