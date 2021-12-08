@@ -26,7 +26,7 @@ if asynchronous_mode:
 def make_stage_out_dir(stage):
     out_dir = os.path.join(products_out_buf, stage)
     if os.path.exists(products_out_buf):
-        bbs.fileutils.remake_dir(out_dir)
+        bbs.fileutils.remake_dir(out_dir, ignore_errors=True)
     else:
         os.mkdir(products_out_buf)
         os.mkdir(out_dir)
@@ -551,7 +551,7 @@ def STAGE3():
     target_pkgs = extractTargetPkgListFromMeatIndex()
     meat_path = BBSvars.meat_path
     if BBSvars.buildtype == "bioc-longtests":
-        bbs.fileutils.remake_dir(meat_path)
+        bbs.fileutils.remake_dir(meat_path, ignore_errors=True)
         os.chdir(meat_path)
         for pkg in target_pkgs:
             rdir = BBSvars.MEAT0_rdir.subdir(pkg)
@@ -742,7 +742,7 @@ if __name__ == "__main__":
     if stages in ["all", "all-no-bin"]:
         BBSvars.Node_rdir.RemakeMe(True)
         if asynchronous_mode:
-            bbs.fileutils.remake_dir(products_out_buf)
+            bbs.fileutils.remake_dir(products_out_buf, ignore_errors=True)
     ticket = []
     ## STAGE2: preinstall dependencies
     if stages in ["all", "all-no-bin"] or "STAGE2" in stages:

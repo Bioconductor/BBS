@@ -116,7 +116,7 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
     # Remove collected stuff.
     for path in dangling_paths:
         if os.path.isdir(path):
-            bbs.fileutils.nuke_tree(path)
+            bbs.fileutils.nuke_tree(path, ignore_errors=True)
         else:
             try:
                 os.remove(path)
