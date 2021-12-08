@@ -450,8 +450,57 @@ def getSTAGE5cmd(srcpkg_path):
     return cmd
 
 ##############################################################################
-### Output files produced by 'R CMD build/check'.
+## Output files produced by 'R CMD build/check'.
 ##############################################################################
+
+## shutil.copy2() will fail on Windows if a process is sill holding on the
+## file to copy. Similarly shutil.copytree() will fail if a process is still
+## holding on a file located inside the directory to copy. This has been
+## observed for example when calling shutil.copytree() on 'NetSAM.Rcheck'
+## on a Windows build machine right after 'R CMD check' failed. Note that
+## 'R CMD check' failed with:
+##   ..
+##   * checking files in 'vignettes' ... OK
+##   * checking examples ... ERROR
+##   Running examples in 'NetSAM-Ex.R' failed
+##   Warning in file(con, "r") :
+##     cannot open file 'NetSAM-Ex.Rout': Permission denied
+##   Error in file(con, "r") : cannot open the connection
+##   Execution halted
+##
+## So it failed exactly for the very reason that a process was holding on
+## 'NetSAM.Rcheck\NetSAM-Ex.Rout' hence preventing 'R CMD check' from opening
+## the file to parse its content for errors.
+##
+## Then, when almost immediately after that, BBS tried to copy 'NetSAM.Rcheck'
+## with shutil.copytree(), it failed with:
+##
+##   [Errno 13] Permission denied: 'NetSAM.Rcheck\NetSAM-Ex.Rout'
+##
+## because the process holding on 'NetSAM.Rcheck\NetSAM-Ex.Rout' was still
+## there!
+## The magic wand is to use rsync to copy stuff. Seems to work no matter what.
+def copy_the_damned_thing_no_matter_what(src, destdir):
+    bbs.rdir.set_readable_flag(src)
+    if sys.platform == 'win32':
+        ## rsync should do it no matter what.
+        src = bbs.fileutils.to_cygwin_style(src)
+        if os.path.isdir(src):
+            src += '/'
+        destdir = bbs.fileutils.to_cygwin_style(destdir)
+        cmd = '%s -rL %s %s' % (BBSvars.rsync_cmd, src, destdir)
+        jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
+    else:
+        print("BBS>   Copying %s to %s/ ..." % (src, destdir), end=" ")
+        sys.stdout.flush()
+        if os.path.isdir(src):
+            dst = os.path.join(destdir, os.path.basename(src))
+            shutil.copytree(src, dst)
+        else:
+            shutil.copy2(src, destdir)
+        print("OK")
+        sys.stdout.flush()
+    return
 
 class PkgDumps:
     def __init__(self, product_path, prefix):
@@ -475,15 +524,7 @@ class PkgDumps:
             destdir.Mput(products_to_push, False, True)
         else:
             for path in products_to_push:
-                bbs.rdir.set_readable_flag(path)
-                print("BBS>   Copying %s to %s/ ..." % (path, destdir), end=" ")
-                sys.stdout.flush()
-                if os.path.isdir(path):
-                    dst = os.path.join(destdir, os.path.basename(path))
-                    shutil.copytree(path, dst)
-                else:
-                    shutil.copy2(path, destdir)
-                print("OK")
+                copy_the_damned_thing_no_matter_what(path, destdir)
         return
 
 

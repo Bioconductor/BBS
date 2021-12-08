@@ -73,6 +73,18 @@ def remake_dir(path):
     os.mkdir(path)
     return
 
+## rsync will interprets a path that starts with a drive letter followed by a
+## colon (e.g. E:\biocbuild\bbs-3.15-bioc\products-out\install) as a remote
+## location. So in order for Cygwin rsync to interpret the path correctly,
+## we must first convert it to a cygwin-style path e.g.
+## /cygdrive/e/biocbuild/bbs-3.15-bioc/products-out/install
+def to_cygwin_style(path):
+    if path[1] != ':' or \
+       not path[0].isupper() or path[0] in ['A', 'B'] or \
+       path[2] not in ['\\', '/']:
+        return path
+    return '/cygdrive/%s%s' % (path[0].lower(), path[2:].replace('\\', '/'))
+
 # Return list of regular files in dir matching regex.
 # Follows symlinks (if they are supported).
 def getMatchingFiles(dir=".", regex="", full_names=False):
