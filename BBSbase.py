@@ -485,8 +485,6 @@ def copy_the_damned_thing_no_matter_what(src, destdir):
     if sys.platform == 'win32':
         ## rsync should do it no matter what.
         src = bbs.fileutils.to_cygwin_style(src)
-        if os.path.isdir(src):
-            src += '/'
         destdir = bbs.fileutils.to_cygwin_style(destdir)
         cmd = '%s -rL %s %s' % (BBSvars.rsync_cmd, src, destdir)
         bbs.jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
