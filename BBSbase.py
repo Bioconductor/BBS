@@ -489,7 +489,7 @@ def copy_the_damned_thing_no_matter_what(src, destdir):
             src += '/'
         destdir = bbs.fileutils.to_cygwin_style(destdir)
         cmd = '%s -rL %s %s' % (BBSvars.rsync_cmd, src, destdir)
-        jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
+        bbs.jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
     else:
         print("BBS>   Copying %s to %s/ ..." % (src, destdir), end=" ")
         sys.stdout.flush()
