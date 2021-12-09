@@ -263,7 +263,8 @@ class RemoteDir:
         cmd = "%s %s %s/ %s" % (rsync_cmd, rsync_options, src, '.')
         if verbose:
             print("BBS>   Syncing local '%s' with %s" % (local_dir, self.label))
-        jobs.tryHardToRunJob(cmd, 3, None, 1800.0, 60.0, True, verbose)
+        ## This can take a veeeeeeeeery long time on Windows!
+        jobs.tryHardToRunJob(cmd, 3, None, 2400.0, 30.0, True, verbose)
         ## Workaround a strange problem observed so far on Windows Server
         ## 2008 R2 Enterprise (64-bit) only. After running rsync (from Cygwin)
         ## on this machine to sync a local folder, the local filesystem seems
@@ -276,10 +277,10 @@ class RemoteDir:
         ## to make 'tar' work again on it.
         if sys.platform == "win32":
             cmd = "chmod a+r . -R"  # from Cygwin (or Rtools)
-            ## This can time out on Azure VM debina when syncing the local
-            ## meat folder with central MEAT0 if 'maxtime' is set to 5 min
-            ## so now we allow 6 min.
-            jobs.runJob(cmd, None, 360.0, verbose)
+            ## This can time out on Azure VMs debina or palomino when syncing
+            ## the local meat folder with central MEAT0 if 'maxtime' is set
+            ## to 5 min so now we allow 10 min.
+            jobs.runJob(cmd, None, 600.0, verbose)
         os.chdir(oldcwd)
         return
 
