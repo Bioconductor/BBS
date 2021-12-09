@@ -110,12 +110,13 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     return 0  # package will be added to the "meat index"
 
 def build_meat_index(pkgs, meat_path):
-    doing_what = 'building the meat index for the %s package' % len(pkgs)
+    doing_what = 'creating the meat index for the %s target package' % len(pkgs)
     if BBSvars.buildtype == "bioc-incremental":
         doing_what += '(s) that have changed'
     else:
         doing_what += 's in the manifest'
-    print("BBS> [build_meat_index] START %s" % doing_what)
+    print('BBS> [build_meat_index] START %s at %s...' % \
+          (doing_what, time.asctime))
     sys.stdout.flush()
     meat_index_path = os.path.join(BBSvars.work_topdir,
                                    BBSutils.meat_index_file)
@@ -143,7 +144,8 @@ def build_meat_index(pkgs, meat_path):
         nadded = nadded + 1
     skipped_index.close()
     meat_index.close()
-    print("BBS> [build_meat_index] DONE %s" % doing_what)
+    print('BBS> [build_meat_index] DONE %s at %s.' % \
+          (doing_what, time.asctime()))
     if BBSvars.buildtype == "bioc-longtests":
         nignored = len(pkgs) - nadded - nskipped
         print("BBS>   --> %d pkgs were ignored" % nignored, end=" ")
@@ -358,8 +360,8 @@ def GetCranPkgs(work_topdir):
     return
 
 def write_PACKAGES(rdir):
-    print("BBS> STARTING creation of PACKAGES index file",
-          "in target repo at %s..." % time.asctime())
+    doing_what = 'creating PACKAGES index file for target repo'
+    print('BBS> START %s at %s...' % (doing_what, time.asctime()))
     sys.stdout.flush()
     Rexpr = r'library(tools);write_PACKAGES(\".\")'
     bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd(Rexpr))
@@ -369,8 +371,7 @@ def write_PACKAGES(rdir):
         f = open('PACKAGES', 'w')
         f.close()
     rdir.Put('PACKAGES', True, True)
-    print("BBS> DONE creation of PACKAGES index file",
-          "in target repo at %s..." % time.asctime())
+    print('BBS> DONE %s at %s.' % (doing_what, time.asctime()))
     sys.stdout.flush()
     return
 
