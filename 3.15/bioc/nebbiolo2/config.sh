@@ -1,6 +1,6 @@
 #!/bin/bash
 # ======================
-# Settings for nebbiolo1
+# Settings for nebbiolo2
 # ======================
 
 
@@ -9,10 +9,10 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="nebbiolo1"
+export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.15-bioc"
-export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
+export BBS_R_HOME="home/biocbuild/bbs-3.15-data-experiment/R"
 export BBS_NB_CPU=25        # 72 cores are available
 export BBS_CHECK_NB_CPU=32  # 72 cores are available
 
@@ -35,11 +35,11 @@ cd "$wd0"
 # central node
 
 # Control propagation:
-export BBS_OUTGOING_MAP="source:nebbiolo1/buildsrc mac.binary:merida1/buildbin"
+export BBS_OUTGOING_MAP="win.binary:palomino/buildbin"
 export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/bioc"
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo1 riesling1:bin merida1:bin"
+export BBS_REPORT_NODES="palomino:bin"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
@@ -47,7 +47,7 @@ export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
 #export BBS_REPORT_MOTD="Happy new year to all Bioconductor developers!"
 
 # Control where to publish the report:
-export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/$BBS_BUILDTYPE-LATEST/"
+export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/palomino-LATEST/"
 export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
 
@@ -56,6 +56,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-export BBS_NOTIFY_NODES="nebbiolo1"
+export BBS_NOTIFY_NODES="nebbiolo2"
 export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
