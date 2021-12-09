@@ -360,6 +360,7 @@ def GetCranPkgs(work_topdir):
 def write_PACKAGES(rdir):
     print("BBS> STARTING creation of PACKAGES index file",
           "in target repo at %s..." % time.asctime())
+    sys.stdout.flush()
     Rexpr = r'library(tools);write_PACKAGES(\".\")'
     bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd(Rexpr))
     ## write_PACKAGES() won't create an empty PACKAGES file if no packages
@@ -370,6 +371,7 @@ def write_PACKAGES(rdir):
     rdir.Put('PACKAGES', True, True)
     print("BBS> DONE creation of PACKAGES index file",
           "in target repo at %s..." % time.asctime())
+    sys.stdout.flush()
     return
 
 
