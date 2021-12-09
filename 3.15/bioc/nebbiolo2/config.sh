@@ -12,7 +12,7 @@ export BBS_DEBUG="0"
 export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.15-bioc"
-export BBS_R_HOME="home/biocbuild/bbs-3.15-data-experiment/R"
+export BBS_R_HOME="/home/biocbuild/bbs-3.15-data-experiment/R"
 export BBS_NB_CPU=25        # 72 cores are available
 export BBS_CHECK_NB_CPU=32  # 72 cores are available
 
