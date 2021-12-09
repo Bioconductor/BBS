@@ -1,4 +1,19 @@
-As of Dec 2021, VM size B20ms is $665.76/month
+Nb of logical cpus and prices of various VM sizes (in USD/month) as of Dec 2021:
+
+    VM size      nb logical cpus      price
+    ---------    ---------------    -------
+    B20ms                     20     665.76
+    D32s_v5                   32    2195.84
+    D48ads_v5                 48         NA
+    D48as_v5                  48         NA
+    D48ds_v5                  48    3591.60
+    D48s_v5                   48    3293.76
+    D48s_v4                   48    3293.76
+    F32s_v2                   32    1900.92
+    F48s_v2                   48    3095.20
+    D48_v5                    48    3293.76
+    D48d_v5                   48    3591.60
+
 
 palomino
   Basics
