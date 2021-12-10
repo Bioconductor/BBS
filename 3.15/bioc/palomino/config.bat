@@ -9,14 +9,15 @@ set BBS_NODE_HOSTNAME=palomino
 set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=E:\biocbuild\bbs-3.15-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
-set BBS_INSTALL_NB_CPU=16
-set BBS_NB_CPU=12
+set BBS_NB_CPU=18
+set BBS_BUILD_NB_CPU=10
 set BBS_CHECK_NB_CPU=16
 
 @rem set BBS_STAGE2_MODE=multiarch
 @rem set BBS_STAGE4_MODE=multiarch
 @rem set BBS_STAGE5_MODE=multiarch
-set BBS_BUILD_TIMEOUT=4800
+set BBS_INSTALL_TIMEOUT=1500
+set BBS_BUILD_TIMEOUT=5400
 set BBS_CHECK_TIMEOUT=4800
 
 @rem Central build node is nebbiolo2 at DFCI.

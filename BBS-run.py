@@ -560,7 +560,7 @@ def STAGE3():
     else:
         os.chdir(meat_path)
     job_queue = prepare_STAGE3_job_queue(target_pkgs, out_dir)
-    STAGE3_loop(job_queue, BBSvars.nb_cpu, out_dir)
+    STAGE3_loop(job_queue, BBSvars.buildsrc_nb_cpu, out_dir)
     print("BBS> [STAGE3] DONE at %s." % time.asctime())
     return
 
@@ -628,7 +628,7 @@ def STAGE4():
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("CHECK")
     job_queue = prepare_STAGE4_job_queue(srcpkg_paths, out_dir)
-    STAGE4_loop(job_queue, BBSvars.check_nb_cpu, out_dir)
+    STAGE4_loop(job_queue, BBSvars.checksrc_nb_cpu, out_dir)
     print("BBS> [STAGE4] DONE at %s." % time.asctime())
     return
 

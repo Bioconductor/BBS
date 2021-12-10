@@ -150,10 +150,12 @@ STAGE5_mode = BBSutils.getenv('BBS_STAGE5_MODE', False)
 
 nb_cpu = BBSutils.getenv('BBS_NB_CPU', False, "1")
 install_nb_cpu = BBSutils.getenv('BBS_INSTALL_NB_CPU', False, nb_cpu)
-check_nb_cpu = BBSutils.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
+buildsrc_nb_cpu = BBSutils.getenv('BBS_BUILD_NB_CPU', False, nb_cpu)
+checksrc_nb_cpu = BBSutils.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
 nb_cpu = int(nb_cpu)
-check_nb_cpu = int(check_nb_cpu)
 install_nb_cpu = int(install_nb_cpu)
+buildsrc_nb_cpu = int(buildsrc_nb_cpu)
+checksrc_nb_cpu = int(checksrc_nb_cpu)
 
 dont_push_srcpkgs = int(BBSutils.getenv('DONT_PUSH_SRCPKGS', False, "0")) != 0
 
