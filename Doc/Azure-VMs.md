@@ -15,8 +15,10 @@ Nb of logical cpus and prices of various VM sizes (in USD/month) as of Dec 2021:
     D48d_v5                   48    3591.60
 
 
-palomino
-  Basics
+## palomino
+
+### Basics
+
   - Subscription: MS Genomics RnD-PoC
   - Resource group: bioconductor
   - Virtual machine name: palomino
@@ -30,7 +32,9 @@ palomino
   - Public inbound ports: Allow selected ports
   - Select inbound ports: RDP (3389)
   - Would you like to use an existing Windows Server license?: no
-  Disks
+
+### Disks
+
   - OS disk type: Premium SSD (locally-redundant storage)
   - Delete with VM: yes
   - Encryption type: default
@@ -41,7 +45,9 @@ palomino
     - Encryption type: default
     - Enable shared disk: no
     - Delete disk with VM: yes
-  Networking
+
+### Networking
+
   - Virtual network: vNet
   - Subnet: keep default (subnet (10.0.0.0/24))
   - Public IP: (new) palomino-ip
@@ -51,9 +57,9 @@ palomino
   - Delete public IP and NIC when VM is deleted: yes
   - Accelerated netwrorking: yes
   - Place this virtual machine behind an existing load balancing solution: no
-  Management & Advanced & Tags
+
+IP: 20.120.103.38 (Static)
+
+### Management & Advanced & Tags
   - keep all defaults
-
-  IP: 20.120.103.38 (Static)
-
 
