@@ -1,3 +1,7 @@
+About VM sizes:
+
+  https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-compute
+
 Nb of logical cpus and prices of various VM sizes (in USD/month) as of Dec 2021:
 
     VM size      nb logical cpus      price
@@ -20,19 +24,38 @@ Nb of logical cpus and prices of various VM sizes (in USD/month) as of Dec 2021:
     F48s_v2                   48    3095.20
 
 Notes:
-- Both DS1\_v2 and B20ms sizes are based on the
-  Intel(R) Xeon(R) CPU E5-2673 v4 @ 2.30GHz which
-  has 20 cores and support 40 threads (i.e. 40 logical cpus).
-  Nice but:
+
+- Both DS1\_v2 and B20ms sizes run on the
+  Intel(R) Xeon(R) CPU E5-2673 v4 processor cadenced at 2.30 GHz.
+  This processor has 20 cores and support 40 threads (i.e. 40 logical
+  cpus). Nice but:
   - the DS1\_v2 VM only makes 1 logical core available
     and the B20ms only 20
   - these logical cpus are weak when taken individually
-- The F-Series uses high-performance processors where the individual
-  logical cpus seem to be a lot more powerful than with the D- or
-  B-series. That would seem more appropriate for the daily builds
-  than the D- or B-series. Maybe with this series we would be able to
-  achieve the same level of computing power than with the D- or B-series
-  but with half the nb of cpus.
+
+- According to the official document on VM sizes above:
+
+  > The Fsv2-series runs on 2nd Generation Intel® Xeon® Platinum 8272CL
+  > (Cascade Lake) processors and Intel® Xeon® Platinum 8168 (Skylake)
+  > processors. It features a sustained all core Turbo clock speed of
+  > 3.4 GHz and a maximum single-core turbo frequency of 3.7 GHz. 
+
+  However, setting up a VM of size F16s\_v2 reveals an Intel(R) Xeon(R)
+  Platinum 8272CL CPU processor cadenced at 2.6 GHz only (according to
+  the Task Manager), which is kind of disappointing.
+
+- For reference, our Windows builder riesling1 (DeLL machine running
+  Windows Server 2019) has 2 Intel(R) Xeon(R) Gold 6242R CPU processors
+  cadenced at 3.10 GHz.
+  Some quick benchmarking:
+
+                     palomino     palomino2    riesling1
+                      (B20ms)    (F16s\_v2)
+                    ----------   ----------   ----------
+  INSTALL
+  BiocGenerics:         79.5 s         ??         43.6 s
+  IRanges:             220.5 s      172.1 s      101.8 s
+  mzR:                 937.1 s      854.1 s      520.9 s
 
 
 ## palomino
