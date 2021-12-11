@@ -11,7 +11,7 @@ set BBS_WORK_TOPDIR=F:\biocbuild\bbs-3.15-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=15
 set BBS_BUILD_NB_CPU=12
-set BBS_CHECK_NB_CPU=15
+set BBS_CHECK_NB_CPU=14
 
 @rem set BBS_STAGE2_MODE=multiarch
 @rem set BBS_STAGE4_MODE=multiarch

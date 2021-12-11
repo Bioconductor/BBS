@@ -696,7 +696,7 @@ in a PowerShell window:
     which chmod     # /usr/bin/chmod (provided by rtools40)
 
 NO LONGER NEEDED (because starting with R 4.2 we no longer build for 32-bit
-Windows): Oh WAIT!! You also need to perform the step below (_Allow cc1plus.exe
+Windows): You also need to perform the step below (_Allow cc1plus.exe
 access to a 3GB address space_) or the mzR package won't compile in
 32-bit mode!
 
@@ -753,6 +753,10 @@ Do NOT download the latest installer for Windows x86\_64
 IMPORTANT NOTE below. Instead pick the installer for version
 2.7.3 (`pandoc-2.7.3-windows-x86_64.msi`, available at
 https://github.com/jgm/pandoc/releases/tag/2.7.3) and run it.
+
+Direct link to the Pandoc 2.7.3 installer:
+
+  https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-windows-x86_64.msi
 
 IMPORTANT NOTE: Some recent versions of Pandoc are hopelessly broken/useless:
 
