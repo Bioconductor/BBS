@@ -68,6 +68,10 @@ Everything in this section must be done **from the Administrator account**.
 For an Azure VM, an account with the same username as the name of the VM
 should already exist and have admin privileges.
 
+On a freshly installed Windows OS, the first time you'll log on to the
+Administrator account, you'll be asked if you want this PC to be discoverable
+by other PCs and devices on this network. Answer "No".
+
 
 ### 1.1 Install all pending Windows Updates
 
@@ -76,8 +80,8 @@ In Settings, go to Update & Security.
 If updates are available, click on Install now. When installation is over,
 restart the machine if necessary.
 
-Then check for updates again as new updates could be available, and repeat
-the above if necessary.
+Then check for updates again as new updates could become available after a reboot,
+and repeat the above if necessary.
 
 Also install "Optional quality update" if they are available.
 
@@ -85,12 +89,15 @@ Also install "Optional quality update" if they are available.
 ### 1.2 Check the disks
 
 A lot of disk space is required to run the builds. Make sure that the machine
-has at least 768GB of available space on one if its disks (`C:`, `D:`, or `E:`).
-On an Azure VM, we use a dedicated data disk for the builds. Note that this
-disk needs to be created as an additional resource (e.g. `palomino_DataDisk_0`)
-and it typically shows up as "Local Disk E:". If the disk is attached but not
-visible, it's probably because it was not initialized yet. See
+has at least 768GB of available space on one if its disks (`C:`, `D:`, `E:`,
+or `F:`). On an Azure VM, we use a dedicated data disk for the builds. Note
+that this disk needs to be created as an additional resource (e.g.
+`palomino_DataDisk_0`) and it typically shows up as "Local Disk E:". If the
+disk is attached but not visible, it's probably because it was not initialized
+yet. See:
+
   https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-managed-disk-portal
+
 for how to initialize the disk.
 
 
@@ -154,7 +161,7 @@ most recent versions of the `tensorflow` Python module.
     Click Install. When asked "Do you want to continue without workloads?",
     click on "Continue".
 
-  - At the end of the installation, skip the Sign in step.
+  - At the end of the installation, skip the "Sign in" step.
 
   - Then click on Start Visual Studio, click on Continue without code,
     and Exit.
@@ -222,7 +229,11 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
     pip install numpy scipy sklearn h5py pandas mofapy mofapy2
     pip install tensorflow tensorflow_probability
-    pip install h5pyd
+
+No longer needed (looks like Bioconductor package rhdf5client no longer needs
+this):
+
+    #pip install h5pyd
 
 No longer needed (as of Oct. 2021):
 
@@ -250,7 +261,8 @@ Notes:
 
 - `tensorflow_probability` is needed by Bioconductor package netReg.
 
-- `h5pyd` is needed by Bioconductor package rhdf5client.
+- `h5pyd` is needed by Bioconductor package rhdf5client. UPDATE (2021/12/10):
+  Looks like it's no longer the case.
 
 - `nbconvert` is needed by CRAN package nbconvertR which is itself used by
   Bioconductor package destiny. UPDATE (2021/12/06): destiny got deprecated
@@ -365,7 +377,7 @@ Add `biocbuild` user.
 
 ### 1.12 Install 32-bit Cygwin (for all users)
 
-Cygwin is needed for `ssh`, `rsync`, `curl`, and `vi`.
+Cygwin is needed for `ssh`, `rsync`, `curl`, and `vim`.
 
 Go to https://www.cygwin.com/, click on Install Cygwin, then download
 and run `setup-x86.exe` to install or update Cygwin. IMPORTANT: Do NOT
@@ -389,7 +401,7 @@ in it. Do this by just typing the name of the command followed by <Enter>.
 If `Path` was set correctly, the command should be found (the Cygwin
 executables are in `C:\cygwin\bin`).
 
-IMPORTANT NOTE: We will never need the Cygwin terminal. Generally speaking,
+IMPORTANT NOTE: We usually don't need the Cygwin terminal. Generally speaking,
 the PowerShell window is the preferred command line environment when working
 interactively on a Windows build machine.
 
@@ -410,7 +422,7 @@ If this is a reinstallation of MiKTeX, make sure to uninstall it (from
 the Administrator account) before reinstalling.
 
 Go to https://miktex.org/download and download the latest Basic MiKTeX
-64-bit Installer (`basic-miktex-20.11-x64.exe` as of Nov. 2020).
+64-bit Installer (`basic-miktex-21.12-x64.exe` as of Dec. 2021).
 
 When running the installer:
 
@@ -572,7 +584,8 @@ and the prerun script would fail to delete this folder.
     - In Security options:
       - When running the task, use the following account: `SYSTEM`
       - Run whether user is logged on or not (note that this is not
-        configurable on Windows Server 2022)
+        configurable on Windows Server 2022 -- was probably a bug in
+        previous versions anyways because there is no SYSTEM user)
       - Run with highest privileges
     - Configure for Windows Server 2022
 
@@ -596,7 +609,9 @@ and the prerun script would fail to delete this folder.
       nothing should be checked
 
   - Tab Settings:
-      nothing should be checked
+      nothing should be checked (except maybe "Allow task to be run on demand"
+      if you want to be able to reboot the machine by running this task
+      manually)
 
   - Then click OK on bottom right
 
