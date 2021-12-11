@@ -48,7 +48,7 @@ Notes:
   Windows Server 2019) has 2 Intel(R) Xeon(R) Gold 6242R CPU processors
   cadenced at 3.10 GHz.
   Some quick benchmarking:
-
+  ```
                      palomino     palomino2    riesling1
                       (B20ms)    (F16s\_v2)
                     ----------   ----------   ----------
@@ -56,6 +56,7 @@ Notes:
   BiocGenerics:         79.5 s         ??         43.6 s
   IRanges:             220.5 s      172.1 s      101.8 s
   mzR:                 937.1 s      854.1 s      520.9 s
+  ```
 
 
 ## palomino
