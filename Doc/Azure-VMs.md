@@ -38,7 +38,7 @@ Notes:
   > The Fsv2-series runs on 2nd Generation Intel® Xeon® Platinum 8272CL
   > (Cascade Lake) processors and Intel® Xeon® Platinum 8168 (Skylake)
   > processors. It features a sustained all core Turbo clock speed of
-  > 3.4 GHz and a maximum single-core turbo frequency of 3.7 GHz. 
+  > 3.4 GHz and a maximum single-core turbo frequency of 3.7 GHz.
 
   However, setting up a VM of size F16s\_v2 reveals an Intel(R) Xeon(R)
   Platinum 8272CL CPU processor cadenced at 2.6 GHz only (according to
@@ -49,46 +49,63 @@ Notes:
   cadenced at 3.10 GHz. Each processor has 40 logical cores.
   Some timings (in seconds), using R 4.2 + Rtools40:
   ```
-                           INSTALL     BUILD      CHECK    BUILD BIN
-  BiocGenerics 0.41.2     ---------  ---------  ---------  ---------
-    riesling1                  43.6        1.3       54.2       43.4
-    palomino (B20ms)           79.5        4.5      634.3
-    palomino2 (F16s_v2)        50.6       15.7
-  Biostrings 2.63.0       ---------  ---------  ---------  ---------
-    riesling1                  79.3      123.6      459.3       88.8
-    palomino (B20ms)          224.8      307.5    TIMEOUT
-    palomino2 (F16s_v2)       160.2      416.9
-  csaw 1.29.1             ---------  ---------  ---------  ---------
-    riesling1                 123.2       87.9      387.1       74.6
-    palomino (B20ms)          153.3      156.5
-    palomino2 (F16s_v2)       140.7      128.8
-  IRanges  2.29.1         ---------  ---------  ---------  ---------
-    riesling1                  99.7       93.1      169.7       97.4
-    palomino (B20ms)          220.5     1260.8
-    palomino2 (F16s_v2)       176.9
-  minfi 1.41.1            ---------  ---------  ---------  ---------
-    riesling1                  75.4      102.4      414.6       53.8
-    palomino (B20ms)           98.2      794.3
-    palomino2 (F16s_v2)        88.9
-  mzR 2.29.1              ---------  ---------  ---------  ---------
-    riesling1                 477.8      659.2      ERROR      541.9
-    palomino (B20ms)          937.1     4788.4
-    palomino2 (F16s_v2)       795.5
-  RBGL 1.71.0             ---------  ---------  ---------  ---------
-    riesling1                  93.0       83.0       48.4       87.0
-    palomino (B20ms)          151.5      600.2
-    palomino2 (F16s_v2)       119.7
-  zlibbioc 1.41.0         ---------  ---------  ---------  ---------
-    riesling1                  49.6       12.1       25.9       24.3
-    palomino (B20ms)           25.9       23.2
-    palomino2 (F16s_v2)        19.3
+                             INSTALL     BUILD      CHECK    BUILD BIN
+  BiocGenerics 0.41.2       ---------  ---------  ---------  ---------
+    riesling1                    43.6        1.3       54.2       43.4
+    palomino (B20ms)             79.5        4.5      634.3
+    palomino2 (F16s_v2)          50.6       15.7
+  Biostrings 2.63.0         ---------  ---------  ---------  ---------
+    riesling1                    79.3      123.6      459.3       88.8
+    palomino (B20ms)            224.8      307.5    TIMEOUT
+    palomino2 (F16s_v2)         160.2      416.9
+  csaw 1.29.1               ---------  ---------  ---------  ---------
+    riesling1                   123.2       87.9      387.1       74.6
+    palomino (B20ms)            153.3      156.5
+    palomino2 (F16s_v2)         140.7      128.8
+  DelayedMatrixStats 1.17.0 ---------  ---------  ---------  ---------
+    riesling1                    83.0      210.0      221.6       50.2
+    palomino (B20ms)
+    palomino2 (F16s_v2)          57.1      267.8
+  DESeq2 1.35.0             ---------  ---------  ---------  ---------
+    riesling1                    92.2      157.3      386.9       77.3
+    palomino (B20ms)
+    palomino2 (F16s_v2)          91.4      179.0
+  IRanges  2.29.1           ---------  ---------  ---------  ---------
+    riesling1                    99.7       93.1      169.7       97.4
+    palomino (B20ms)            220.5     1260.8
+    palomino2 (F16s_v2)         176.9
+  minfi 1.41.1              ---------  ---------  ---------  ---------
+    riesling1                    75.4      102.4      414.6       53.8
+    palomino (B20ms)             98.2      794.3
+    palomino2 (F16s_v2)          88.9
+  mzR 2.29.1                ---------  ---------  ---------  ---------
+    riesling1                   477.8      659.2      ERROR      541.9
+    palomino (B20ms)            937.1     4788.4
+    palomino2 (F16s_v2)         795.5
+  RBGL 1.71.0               ---------  ---------  ---------  ---------
+    riesling1                    93.0       83.0       48.4       87.0
+    palomino (B20ms)            151.5      600.2
+    palomino2 (F16s_v2)         119.7
+  VariantAnnotation 1.41.3  ---------  ---------  ---------  ---------
+    riesling1                    92.2      157.3      386.9       77.3
+    palomino (B20ms)
+    palomino2 (F16s_v2)         146.3
+  zlibbioc 1.41.0           ---------  ---------  ---------  ---------
+    riesling1                    49.6       12.1       25.9       24.3
+    palomino (B20ms)             25.9       23.2
+    palomino2 (F16s_v2)          19.3
   ```
-  TIMEOUT limit was set to 2h on palomino. When the builds entered the CHECK
-  stage on this machine, half of the packages were having TIMEOUTs so at this
-  point the VM was only able to process about 14 packages per hour. We
-  stopped the VM after it had been in the CHECK stage for about 21 hours
-  and only able to `R CMD check` 300 packages.
-  
+  TIMEOUT limit is 2h.
+  BBS\_CHECK\_NB\_CPU is 12 on palomino (20 logical processors) and 14 on
+  palomino2 (16 logical processors).
+
+  Why not use more cpus on palomino? On an earlier attempt with palomino,
+  we had BBS\_CHECK\_NB\_CPU set to 16. However when the builds entered the
+  CHECK stage on this machine, the Task Manager started to show a steady CPU
+  utilization of 100% and `R CMD check` was timing out on half of the packages.
+  At this point the VM was only able to process about 14 packages per hour!
+  We stopped the VM after it had been in the CHECK stage for about 21 hours
+  and only able to run `R CMD check` on 300 packages so far.
 
 
 ## palomino
@@ -142,7 +159,7 @@ IP: 20.120.103.38 (Static)
 
 ## palomino2
 
-Same as palomino except for the size: 
+Same as palomino except for the size:
   - Size: F16s\_v2
 
 IP: 20.121.0.218 (Static)

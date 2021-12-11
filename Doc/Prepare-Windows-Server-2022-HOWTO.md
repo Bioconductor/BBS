@@ -459,8 +459,8 @@ like LowMACA.
 We use Strawberry Perl available at http://strawberryperl.com (this site
 does not support HTTPS).
 
-Download installer for Windows 64-bit (`strawberry-perl-5.32.0.1-64bit.msi`
-as of Nov. 2020).
+Download installer for Windows 64-bit (`strawberry-perl-5.32.1.1-64bit.msi`
+as of Dec. 2021).
 
 When running the installer, keep all the default settings.
 
