@@ -47,16 +47,43 @@ Notes:
 - For reference, our Windows builder riesling1 (DeLL machine running
   Windows Server 2019) has 2 Intel(R) Xeon(R) Gold 6242R CPU processors
   cadenced at 3.10 GHz.
-  Some quick benchmarking:
+  Some timings (in seconds), using R 4.2 + Rtools40:
   ```
-                     palomino     palomino2    riesling1
-                      (B20ms)    (F16s\_v2)
-                    ----------   ----------   ----------
-  INSTALL
-  BiocGenerics:         79.5 s         ??         43.6 s
-  IRanges:             220.5 s      172.1 s      101.8 s
-  mzR:                 937.1 s      854.1 s      520.9 s
+                           INSTALL     BUILD      CHECK    BUILD BIN
+  BiocGenerics 0.41.2     ---------  ---------  ---------  ---------
+    riesling1                  43.6        1.3       54.2       43.4
+    palomino (B20ms)           79.5        4.5      634.3
+    palomino2 (F16s_v2)        50.6       15.7
+  Biostrings 2.63.0       ---------  ---------  ---------  ---------
+    riesling1                  79.3      123.6      459.3       88.8
+    palomino (B20ms)          224.8      307.5    TIMEOUT
+    palomino2 (F16s_v2)       160.2      416.9
+  csaw 1.29.1             ---------  ---------  ---------  ---------
+    riesling1                 123.2       87.9      387.1       74.6
+    palomino (B20ms)          153.3      156.5
+    palomino2 (F16s_v2)       140.7
+  IRanges  2.29.1         ---------  ---------  ---------  ---------
+    riesling1                  99.7       93.1      169.7       97.4
+    palomino (B20ms)          220.5     1260.8
+    palomino2 (F16s_v2)       176.9
+  minfi 1.41.1            ---------  ---------  ---------  ---------
+    riesling1                  75.4      102.4      414.6       53.8
+    palomino (B20ms)           98.2      794.3
+    palomino2 (F16s_v2)        88.9
+  mzR 2.29.1              ---------  ---------  ---------  ---------
+    riesling1                 477.8      659.2      ERROR      541.9
+    palomino (B20ms)          937.1     4788.4
+    palomino2 (F16s_v2)       795.5
+  RBGL 1.71.0             ---------  ---------  ---------  ---------
+    riesling1                  93.0       83.0       48.4       87.0
+    palomino (B20ms)          151.5      600.2
+    palomino2 (F16s_v2)       119.7
+  zlibbioc 1.41.0         ---------  ---------  ---------  ---------
+    riesling1                  49.6       12.1       25.9       24.3
+    palomino (B20ms)           25.9       23.2
+    palomino2 (F16s_v2)        19.3
   ```
+  TIMEOUT after 2h on palomino
 
 
 ## palomino

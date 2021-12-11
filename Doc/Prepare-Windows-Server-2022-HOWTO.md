@@ -451,7 +451,21 @@ and `E:\pkgbuild\AppData\Roaming\MiKTeX\` (better done from
 the `biocbuild` and `pkgbuild` accounts, respectively).
 
 
-### 1.15 Sign out from the Administrator account
+### 1.15 Install Perl
+
+Required by MiKTeX command `pdfcrop.exe` and some Bioconductor packages
+like LowMACA.
+
+We use Strawberry Perl available at http://strawberryperl.com (this site
+does not support HTTPS).
+
+Download installer for Windows 64-bit (`strawberry-perl-5.32.0.1-64bit.msi`
+as of Nov. 2020).
+
+When running the installer, keep all the default settings.
+
+
+### 1.16 Sign out from the Administrator account
 
 **From now on, all administrative tasks must be performed from one of the
 _personal administrator accounts_ instead of the Administrator account.**
@@ -694,6 +708,7 @@ in a PowerShell window:
     which gcc       # /mingw64/bin/gcc (provided by rtools40)
     gcc --version   # gcc.exe (Built by Jeroen for the R-project) 8.3.0
     which chmod     # /usr/bin/chmod (provided by rtools40)
+    which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
 NO LONGER NEEDED (because starting with R 4.2 we no longer build for 32-bit
 Windows): You also need to perform the step below (_Allow cc1plus.exe
@@ -1306,33 +1321,7 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
     ..\R\bin\R CMD INSTALL ChemmineOB
 
 
-### 4.7 Install Strawberry Perl
-
-Available at: http://strawberryperl.com (this site does not support HTTPS)
-
-Download installer for Windows 64-bit (`strawberry-perl-5.32.0.1-64bit.msi`
-as of Nov. 2020).
-
-When running the installer, keep all the default settings.
-Check that the perl executable is in `Path`:
-
-    which perl  # /c/Strawberry/perl/bin/perl
-
-If `which perl` returns `/usr/bin/perl` then you MUST rename the `perl.exe`
-file located in `C:\rtools40\usr\bin` to avoid any conflict. See
-_Install Rtools_ section above for more information.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to build a package that uses Perl e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD build LowMACA
-
-(Note that this package also needs Clustal Omega.)
-
-
-### 4.8 Install Clustal Omega
+### 4.7 Install Clustal Omega
 
 Available at: http://www.clustal.org/omega/ (this site does not support HTTPS)
 
@@ -1357,7 +1346,7 @@ e.g. open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
 (Note that this package also needs Perl.)
 
 
-### 4.9 Install ImmuneSpace credentials
+### 4.8 Install ImmuneSpace credentials
 
 Set environment variable `ISR_login` and `ISR_pwd` to `bioc@immunespace.org`
 and `1notCRAN`, respectively. See _Edit an environment variable_
@@ -1372,7 +1361,7 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
     ..\R\bin\R CMD build ImmuneSpaceR
 
 
-### 4.10 Install Dokan
+### 4.9 Install Dokan
 
 This is needed by the Travel package.
 
@@ -1388,7 +1377,7 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
     ..\R\bin\R CMD INSTALL Travel
 
 
-### 4.11 Install .NET 5.0 Runtime
+### 4.10 Install .NET 5.0 Runtime
 
 This is needed by the rmspc package. Note that we're only installing .NET
 for 64-bit Windows so rmspc (and any package that depends on it) needs to
@@ -1405,7 +1394,7 @@ if you were already logged on), in a PowerShell window:
     which dotnet    # /c/Program Files/dotnet/dotnet
 
 
-### 4.12 Install gtkmm
+### 4.11 Install gtkmm
 
 OCT 2021: THIS IS NO LONGER NEEDED! (starting with BioC 3.14, HilbertVisGUI is
 no longer supported on Windows)
