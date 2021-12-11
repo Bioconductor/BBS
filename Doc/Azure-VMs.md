@@ -45,8 +45,8 @@ Notes:
   the Task Manager), which is kind of disappointing.
 
 - For reference, our Windows builder riesling1 (DeLL machine running
-  Windows Server 2019) has 2 Intel(R) Xeon(R) Gold 6242R CPU processors
-  cadenced at 3.10 GHz.
+  Windows Server 2019) has two Intel(R) Xeon(R) Gold 6242R CPU processors
+  cadenced at 3.10 GHz. Each processor has 40 logical cores.
   Some timings (in seconds), using R 4.2 + Rtools40:
   ```
                            INSTALL     BUILD      CHECK    BUILD BIN
@@ -61,7 +61,7 @@ Notes:
   csaw 1.29.1             ---------  ---------  ---------  ---------
     riesling1                 123.2       87.9      387.1       74.6
     palomino (B20ms)          153.3      156.5
-    palomino2 (F16s_v2)       140.7
+    palomino2 (F16s_v2)       140.7      128.8
   IRanges  2.29.1         ---------  ---------  ---------  ---------
     riesling1                  99.7       93.1      169.7       97.4
     palomino (B20ms)          220.5     1260.8
@@ -83,7 +83,12 @@ Notes:
     palomino (B20ms)           25.9       23.2
     palomino2 (F16s_v2)        19.3
   ```
-  TIMEOUT after 2h on palomino
+  TIMEOUT limit was set to 2h on palomino. When the builds entered the CHECK
+  stage on this machine, half of the packages were having TIMEOUTs so at this
+  point the VM was only able to process about 14 packages per hour. We
+  stopped the VM after it had been in the CHECK stage for about 21 hours
+  and only able to `R CMD check` 300 packages.
+  
 
 
 ## palomino
