@@ -99,7 +99,7 @@ Notes:
     o palomino (B20ms) ......       28.1      (23.2)
     o palomino2 (F16s_v2) ...       19.3
   ```
-  TIMEOUT limit is 2h.
+  TIMEOUT limit is 80 min.
   BBS\_CHECK\_NB\_CPU is 12 on palomino (20 logical processors) and 14 on
   palomino2 (16 logical processors).
 
