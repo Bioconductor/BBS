@@ -642,7 +642,7 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
     slotevents_logfile = open('JobQueue-%s-slot-events.log' % job_queue._name, 'w')
     processed_jobs = []
     nb_busy_slots = 0
-    slots = nb_slots * [None]
+    slots = [None] * nb_slots
     loop = -1
     slot = -1
     cumul = 0
@@ -652,19 +652,20 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
     while len(processed_jobs) < nb_jobs:
         slot += 1
         if slot == nb_slots:
-            sleep(0.1)
             slot = 0
-            if products_push_cmd != None:
-                if products_pusher.ready_to_push():
-                    products_pusher.start_push()
-                elif products_pusher.push_is_over():
-                    products_pusher.terminate_current_push()
+        if products_push_cmd != None:
+            if products_pusher.ready_to_push():
+                products_pusher.start_push()
+            elif products_pusher.push_is_over():
+                products_pusher.terminate_current_push()
         job = slots[slot]
         loop += 1
         if job != None:
             status = _check_QueuedJob_status(job, maxtime_per_job, verbose,
                                              nb_jobs, nb_slots)
             if status == 0: # still running
+                if slot == 0:
+                    sleep(1)
                 if verbose and nb_slots == 1 and loop % 10 == 0:
                     sys.stdout.write(".")
                     sys.stdout.flush()
