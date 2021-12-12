@@ -110,7 +110,45 @@ our build machines use the "(UTC-05:00) Eastern Time (US & Canada)" time zone
 at the moment.
 
 
-### 1.4 Install a decent web browser (for all users)
+### 1.4 Check the size of the paging file (virtual memory)
+
+Azure VMs tend to use a very small paging file by default. For example, on
+a VM of size F16s\_v2 (32 Gb of RAM), the paging file is only 16 Gb, which
+will likely cause the builds to fail with the following error:
+
+    The paging file is too small for this operation to complete
+
+To check the paging size:
+
+- Go to Settings -> System -> About.
+
+- Click on "Advanced system settings" at the bottom of the right pane. This
+  opens the "System Properties" window.
+
+- In the "System Properties" window, click on the Settings button located
+  in the Performance box. This opens the "Performance Options" window.
+
+- In the "Performance Options" window, go to the Advanced tab and check
+  the Total paging file size for all drives. This should be set to _at least_
+  1.5 times the amount of RAM. For example on a F16s\_v2 VM, this should be
+  set to 48 Gb.
+
+To increase the paging size:
+
+- Click on Change (in the Advanced tab of the "Performance Options" window,
+  see above for how to get there).
+
+- Click on the drive that says System managed.
+
+- Select Custom size, then enter the Initial and Maximum sizes in MB e.g.
+  50000 and 100000 for a F16s\_v2 VM.
+
+- Click on Set, then on OK.
+
+- Restart the computer.
+
+
+### 1.5 Install a decent web browser (for all users)
 
 E.g. Google Chrome or Firefox.
 
@@ -142,7 +180,7 @@ BiocDockerManager and tRNAdbImport packages that they put the problematic
 calls in an `if (interactive()) ...` statement.
 
 
-### 1.5 Install Visual Studio Community 2022
+### 1.6 Install Visual Studio Community 2022
 
 Provides the `editbin` command, plus some DLLs apparently needed by the
 most recent versions of the `tensorflow` Python module.
@@ -169,7 +207,7 @@ most recent versions of the `tensorflow` Python module.
   - Close the Visual Studio Installer.
 
 
-### 1.6 Install Python 3 (for all users)
+### 1.7 Install Python 3 (for all users)
 
 **From the Administrator account**:
 
@@ -199,14 +237,14 @@ is fine. If not:
   double-click on it.
 
 
-### 1.7 Upgrade to the latest pip
+### 1.8 Upgrade to the latest pip
 
 **From the Administrator account** in a PowerShell window:
 
     python -m pip install --upgrade pip
 
 
-### 1.8 Install Python 3 modules
+### 1.9 Install Python 3 modules
 
 #### Python 3 modules needed by BBS
 
@@ -299,7 +337,7 @@ then please refer to the _Install Visual Studio Community 2022_ section above
 in this document for how to fix this.
 
 
-### 1.9 Create personal administrator accounts
+### 1.10 Create personal administrator accounts
 
 Go in Computer Management
       -> System Tools
@@ -341,7 +379,7 @@ TESTING: Try to access your new account via a remote desktop client (e.g.
 rdesktop or Remmina on Linux).
 
 
-### 1.10 Create the `biocbuild` account
+### 1.11 Create the `biocbuild` account
 
 Username: `biocbuild`
 
@@ -363,7 +401,7 @@ personal administrator accounts created earlier don't need this because members
 of the `Administrators` group are automatically allow RDP access.
 
 
-### 1.11 Grant the `biocbuild` user "Log on as batch job" rights
+### 1.12 Grant the `biocbuild` user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `biocbuild`
 user.)
@@ -375,7 +413,7 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 Add `biocbuild` user.
 
 
-### 1.12 Install 32-bit Cygwin (for all users)
+### 1.13 Install 32-bit Cygwin (for all users)
 
 Cygwin is needed for `ssh`, `rsync`, `curl`, and `vim`.
 
@@ -406,7 +444,7 @@ the PowerShell window is the preferred command line environment when working
 interactively on a Windows build machine.
 
 
-### 1.13 Install git client for Windows
+### 1.14 Install git client for Windows
 
 Available at https://git-scm.com/download/win
 
@@ -416,7 +454,7 @@ running the installer.
 TESTING: Open a PowerShell window and try to run `git --version`
 
 
-### 1.14 Install MiKTeX
+### 1.15 Install MiKTeX
 
 If this is a reinstallation of MiKTeX, make sure to uninstall it (from
 the Administrator account) before reinstalling.
@@ -451,7 +489,7 @@ and `E:\pkgbuild\AppData\Roaming\MiKTeX\` (better done from
 the `biocbuild` and `pkgbuild` accounts, respectively).
 
 
-### 1.15 Install Perl
+### 1.16 Install Perl
 
 Required by MiKTeX command `pdfcrop.exe` and some Bioconductor packages
 like LowMACA.
@@ -465,7 +503,7 @@ as of Dec. 2021).
 When running the installer, keep all the default settings.
 
 
-### 1.16 Sign out from the Administrator account
+### 1.17 Sign out from the Administrator account
 
 **From now on, all administrative tasks must be performed from one of the
 _personal administrator accounts_ instead of the Administrator account.**
