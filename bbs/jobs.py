@@ -643,8 +643,9 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
     processed_jobs = []
     nb_busy_slots = 0
     slots = [None] * nb_slots
-    loop = -1
     slot = -1
+    loop = -1
+    nb_consecutive_loops_with_busy_slot = 0
     cumul = 0
     if products_push_cmd != None:
         products_pusher = JobProductsPusher(products_push_cmd,
@@ -663,13 +664,18 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
         if job != None:
             status = _check_QueuedJob_status(job, maxtime_per_job, verbose,
                                              nb_jobs, nb_slots)
-            if status == 0: # still running
-                if slot == 0:
+            if status == 0: # slot is still busy
+                nb_consecutive_loops_with_busy_slot += 1
+                if nb_consecutive_loops_with_busy_slot == nb_slots:
+                    # We just visited all the slots and they are all busy.
+                    # Time to take a break.
                     sleep(1)
+                    nb_consecutive_loops_with_busy_slot = 0
                 if verbose and nb_slots == 1 and loop % 10 == 0:
                     sys.stdout.write(".")
                     sys.stdout.flush()
                 continue
+            nb_consecutive_loops_with_busy_slot = 0
             job._output.close()
             if status == 1: # returned in time
                 if job.RerunMe():
@@ -712,6 +718,7 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
             if verbose:
                 _logActionOnQueuedJob("SKIP", job, nb_jobs, 1, job_deps)
             processed_jobs.append(job._name)
+        nb_consecutive_loops_with_busy_slot = 0
     slotevents_logfile.close()
     if products_push_cmd != None:
         products_pusher.last_push()
