@@ -9,14 +9,13 @@ set BBS_NODE_HOSTNAME=palomino2
 set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=F:\biocbuild\bbs-3.15-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
-set BBS_NB_CPU=15
+set BBS_NB_CPU=14
 set BBS_BUILD_NB_CPU=12
 set BBS_CHECK_NB_CPU=13
 
 @rem set BBS_STAGE2_MODE=multiarch
 @rem set BBS_STAGE4_MODE=multiarch
 @rem set BBS_STAGE5_MODE=multiarch
-set BBS_INSTALL_TIMEOUT=1500
 set BBS_BUILD_TIMEOUT=4800
 set BBS_CHECK_TIMEOUT=4800
 
