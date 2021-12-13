@@ -1818,7 +1818,7 @@ if __name__ == "__main__":
           (BBSreportutils.BUILD_STATUS_DB_file, report_path))
     shutil.copy(BBSreportutils.BUILD_STATUS_DB_file, report_path)
 
-    if BBSreportutils.display_propagation_status(BBSvars.buildtype):
+    if os.path.exists(BBSreportutils.PROPAGATION_STATUS_DB_file):
         print("BBS> [stage6d] cp %s %s/" % \
               (BBSreportutils.PROPAGATION_STATUS_DB_file, report_path))
         shutil.copy(BBSreportutils.PROPAGATION_STATUS_DB_file, report_path)
