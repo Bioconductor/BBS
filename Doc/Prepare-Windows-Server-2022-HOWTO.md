@@ -94,11 +94,9 @@ or `F:`). On an Azure VM, we use a dedicated data disk for the builds. Note
 that this disk needs to be created as an additional resource (e.g.
 `palomino_DataDisk_0`) and it typically shows up as "Local Disk E:". If the
 disk is attached but not visible, it's probably because it was not initialized
-yet. See:
+yet.
 
-  https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-managed-disk-portal
-
-for how to initialize the disk.
+See https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-managed-disk-portal for how to initialize the disk.
 
 
 ### 1.3 Check time and time zone
