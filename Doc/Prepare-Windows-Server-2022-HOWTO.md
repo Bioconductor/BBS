@@ -1003,19 +1003,25 @@ Quit R (do NOT save the workspace image).
 
 From `E:\biocbuild\bbs-3.15-bioc`:
 
-   cd R\etc\x64
-   C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
-   vi Makeconf
-   # Replace line
-   #     LOCAL_SOFT ?=
-   # with
-   #     LOCAL_SOFT = C:/extsoft
-   # Make sure to not introduce a trailing space!
-   # Then save and quit vi.
+    cd R\etc\x64
+    C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
+    vi Makeconf
+
+In `Makeconf`, replace line
+
+    LOCAL_SOFT ?=
+
+with
+
+    LOCAL_SOFT = C:/extsoft
+
+Make sure to use a forward slash (`/`) and to not introduce a trailing space!
+
+Save and quit `vi`.
 
 Check your change with:
 
-   C:\rtools40\usr\bin\diff.exe Makeconf Makeconf.original
+    C:\rtools40\usr\bin\diff.exe Makeconf Makeconf.original
 
 TESTING:
 
