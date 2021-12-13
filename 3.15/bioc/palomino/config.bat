@@ -9,9 +9,9 @@ set BBS_NODE_HOSTNAME=palomino
 set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=E:\biocbuild\bbs-3.15-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
-set BBS_NB_CPU=14
+set BBS_NB_CPU=13
 set BBS_BUILD_NB_CPU=9
-set BBS_CHECK_NB_CPU=12
+set BBS_CHECK_NB_CPU=10
 
 @rem set BBS_STAGE2_MODE=multiarch
 @rem set BBS_STAGE4_MODE=multiarch
