@@ -29,6 +29,12 @@ import BBSreportutils
 ### write_vcs_meta_for_pkg_as_TABLE()
 ##############################################################################
 
+def _make_link_with_mouseover(url, content):
+    onmouseover = 'add_class_mouseover(this);'
+    onmouseout = 'remove_class_mouseover(this);'
+    return '<A href="%s" onmouseover="%s" onmouseout="%s">%s</A>' % \
+           (url, onmouseover, onmouseout, content)
+
 def _keyval_as_HTML(key, val):
     key = key.replace(' ', '&nbsp;')
     val = val.replace(' ', '&nbsp;')
@@ -358,10 +364,7 @@ def _write_pkg_status_as_TD(out, pkg, node, stage,
         else:
             pkgdir = '%s/%s' % (topdir, pkg)
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        onmouseover = 'add_class_mouseover(this);'
-        onmouseout = 'remove_class_mouseover(this);'
-        TDcontent = '<A href="%s" onmouseover="%s" onmouseout="%s">%s</A>' % \
-                    (url, onmouseover, onmouseout, _status_as_glyph(status))
+        TDcontent = _make_link_with_mouseover(url, _status_as_glyph(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
 
@@ -727,7 +730,6 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     out.write('<TR class="%s">' % TRclass)
     out.write('<TD class="leftmost row_number"><B>%d</B>/%d</TD>' % \
               (pkg_pos, nb_pkgs))
-    out.write('<TD>')
     if len(pkg_statuses) != 0:
         dcf_record = meat_index[pkg]
         version = dcf_record['Version']
@@ -736,9 +738,8 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     else:
         version = status = maintainer = ''
     deprecated = status == "Deprecated"
-    html = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
-    out.write(html)
-    out.write('</TD>')
+    TDcontent = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
+    out.write('<TD>%s</TD>' % TDcontent)
     out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
     write_pkg_statuses_as_TDs(out, pkg, node)
     out.write('<TD class="rightmost"></TD>')
@@ -774,6 +775,107 @@ def write_compact_gcard_list(out, node, allpkgs,
                 write_abc_dispatcher_within_gcard_list(out, current_letter)
                 write_compact_gcard_header(out)
         write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs)
+    out.write('</TABLE>\n')
+    return
+
+
+##############################################################################
+### Tiny gcards (only 1 build status glyph per package)
+##############################################################################
+
+### Produces one full TR with 5 TDs in it.
+def write_tiny_gcard_header(out):
+    ## Using the collapsable_rows class here too to blend out the alphabetical
+    ## selection + this header when "ok" packages are unselected.
+    out.write('<TBODY class="collapsable_rows">\n')
+    out.write('<TR class="header">')
+    out.write('<TD></TD>')
+    out.write('<TD>Package</TD>')
+    out.write('<TD>Maintainer</TD>')
+    out.write('<TD>Build status</TD>')
+    out.write('<TD></TD>')
+    out.write('</TR>\n')
+    out.write('</TBODY>\n')
+    return
+
+### Return decorated glyph describing overall package build status.
+def make_pkg_build_status_HTML(pkg, statuses, topdir='.'):
+    if pkg in skipped_pkgs:
+        return '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
+    if 'ERROR' in statuses:
+        build_status = 'ERROR'
+    elif 'TIMEOUT' in statuses:
+        build_status = 'TIMEOUT'
+    elif 'NA' in statuses:
+        build_status = 'NA'
+    elif 'WARNINGS' in statuses:
+        build_status = 'WARNINGS'
+    elif 'OK' in statuses:
+        build_status = 'OK'
+    else:
+        build_status = 'unknown'
+    html = _status_as_glyph(build_status)
+    if build_status != 'NA':
+        pkgdir = '%s/%s' % (topdir, pkg)
+        html = _make_link_with_mouseover(pkgdir, html)
+    return html
+
+### Produces one full TR with 5 TDs in it.
+def write_tiny_gcard(out, pkg, pkg_pos, nb_pkgs):
+    pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
+    if pkg in skipped_pkgs:
+        pkg_status_classes = 'error'
+    else:
+        pkg_status_classes = statuses2classes(pkg_statuses)
+    TBODYclasses = 'compact gcard %s' % pkg_status_classes
+    out.write('<TBODY class="%s">\n' % TBODYclasses)
+    if pkg_pos % 2 == 0:
+        TRclass = 'even_row_number'
+    else:
+        TRclass = 'odd_row_number'
+    out.write('<TR class="%s">' % TRclass)
+    out.write('<TD class="leftmost row_number"><B>%d</B>/%d</TD>' % \
+              (pkg_pos, nb_pkgs))
+    if len(pkg_statuses) != 0:
+        dcf_record = meat_index[pkg]
+        version = dcf_record['Version']
+        maintainer = dcf_record['Maintainer']
+        status = dcf_record.get('PackageStatus')
+    else:
+        version = status = maintainer = ''
+    deprecated = status == "Deprecated"
+    TDcontent = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
+    out.write('<TD>%s</TD>' % TDcontent)
+    out.write('<TD>%s</TD>' % maintainer)
+    TDcontent = make_pkg_build_status_HTML(pkg, pkg_statuses)
+    out.write('<TD class="status">%s</TD>' % TDcontent)
+    out.write('<TD class="rightmost"></TD>')
+    out.write('</TR>\n')
+    out.write('</TBODY>\n')
+    return
+
+### Even more compact layout than write_compact_gcard_list(). Should be much
+### faster to load and render.
+def write_tiny_gcard_list(out, allpkgs, alphabet_dispatch=False):
+    nb_pkgs = len(allpkgs)
+    TABLEclasses = 'compact gcard_list %s' % ' '.join(_get_all_show_classes())
+    out.write('<TABLE class="%s" id="THE_BIG_GCARD_LIST">\n' % TABLEclasses)
+    out.write('<TBODY>\n')
+    _write_vertical_space(out)
+    out.write('</TBODY>\n')
+    if not alphabet_dispatch:
+        write_tiny_gcard_header(out)
+    pkg_pos = 0
+    current_letter = None
+    for pkg in allpkgs:
+        pkg_pos += 1
+        if alphabet_dispatch:
+            first_letter = pkg[0:1].upper()
+            if first_letter != current_letter:
+                current_letter = first_letter
+                write_abc_dispatcher_within_gcard_list(out, current_letter)
+                write_tiny_gcard_header(out)
+        write_tiny_gcard(out, pkg, pkg_pos, nb_pkgs)
     out.write('</TABLE>\n')
     return
 
@@ -1719,41 +1821,49 @@ def make_all_NodeReports(allpkgs, quickstats):
 ### Main page (multiple platform report)
 ##############################################################################
 
-def write_mainpage_asHTML(out, allpkgs, quickstats):
+def write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=False):
     if BBSvars.buildtype != "cran":
         write_BioC_mainpage_top_asHTML(out)
     else: # "cran" buildtype
         write_CRAN_mainpage_top_asHTML(out)
+    if not tiny_layout:
+        out.write('<BR>\n')
+        write_node_specs_table(out)
     out.write('<BR>\n')
-    write_node_specs_table(out)
-    out.write('<BR>\n')
-    write_glyph_and_propagation_LED_table(out)
+    if not tiny_layout:
+        write_glyph_and_propagation_LED_table(out)
+    else:
+        write_explain_glyph_table(out)
     out.write('<HR>\n')
-    if len(BBSreportutils.NODES) != 1: # change 2 back to 1!!!! fixme dan dante
-        write_gcard_list(out, allpkgs, quickstats=quickstats,
+    if tiny_layout:
+        write_tiny_gcard_list(out, allpkgs,
+                         alphabet_dispatch=not no_alphabet_dispatch)
+    elif len(BBSreportutils.NODES) == 1:
+        write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs,
+                         quickstats=quickstats,
                          alphabet_dispatch=not no_alphabet_dispatch)
     else:
-        write_compact_gcard_list(out, BBSreportutils.NODES[0],
-                         allpkgs, quickstats=quickstats,
+        write_gcard_list(out, allpkgs,
+                         quickstats=quickstats,
                          alphabet_dispatch=not no_alphabet_dispatch)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     return
 
-def make_BioC_MainReport(allpkgs, quickstats):
+def make_BioC_MainReport(allpkgs, quickstats, tiny_layout=False):
     print("BBS> [make_BioC_MainReport] BEGIN ...")
     sys.stdout.flush()
     out = open('index.html', 'w')
-    write_mainpage_asHTML(out, allpkgs, quickstats)
+    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=tiny_layout)
     out.close()
     print("BBS> [make_BioC_MainReport] END.")
     sys.stdout.flush()
     return
 
-def make_CRAN_MainReport(allpkgs, quickstats):
+def make_CRAN_MainReport(allpkgs, quickstats, tiny_layout=False):
     print("BBS> [make_CRAN_MainReport] BEGIN ...")
     out = open('index.html', 'w')
-    write_mainpage_asHTML(out, allpkgs, quickstats)
+    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=tiny_layout)
     out.close()
     print("BBS> [make_CRAN_MainReport] END.")
     sys.stdout.flush()
@@ -1770,8 +1880,8 @@ def make_CRAN_MainReport(allpkgs, quickstats):
 ###   'no-raw-results'      -> True or False
 def parse_options(argv):
     usage_msg = 'Usage:\n' + \
-        '    BBS-report.py [no-alphabet-dispatch] [no-raw-results]\n'
-    valid_options = ['no-alphabet-dispatch', 'no-raw-results']
+        '    BBS-report.py [tiny-layout] [no-alphabet-dispatch] [no-raw-results]\n'
+    valid_options = ['tiny-layout', 'no-alphabet-dispatch', 'no-raw-results']
     argv = set(argv[1:])
     if not argv.issubset(valid_options):
         sys.exit(usage_msg)
@@ -1794,6 +1904,7 @@ if __name__ == "__main__":
     print("BBS> [stage6d] STARTING stage6d at %s..." % time.asctime())
     sys.stdout.flush()
 
+    tiny_layout = options['tiny-layout']
     no_alphabet_dispatch = options['no-alphabet-dispatch']
     no_raw_results = options['no-raw-results']
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
@@ -1892,9 +2003,9 @@ if __name__ == "__main__":
     make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps)
     make_all_NodeReports(allpkgs, allpkgs_quickstats)
     if BBSvars.buildtype != "cran":
-        make_BioC_MainReport(allpkgs, allpkgs_quickstats)
+        make_BioC_MainReport(allpkgs, allpkgs_quickstats, tiny_layout)
     else: # "cran" buildtype
-        make_CRAN_MainReport(allpkgs, allpkgs_quickstats)
+        make_CRAN_MainReport(allpkgs, allpkgs_quickstats, tiny_layout)
 
     print("BBS> [stage6d] DONE at %s." % time.asctime())
 
