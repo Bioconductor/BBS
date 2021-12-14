@@ -792,7 +792,7 @@ def write_tiny_gcard_header(out):
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD>Maintainer</TD>')
-    out.write('<TD class="STAGE">INSTALL/BUILD/CHECK Status</TD>')
+    out.write('<TD class="STAGE">INSTALL/BUILD/CHECK</TD>')
     out.write('<TD></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
@@ -1758,13 +1758,13 @@ def write_propagation_LED_table(out):
     out.write('</TABLE>\n')
     return
 
-def write_glyph_and_propagation_LED_table(out):
+def write_glyph_and_propagation_LED_table(out, hide_LEDS=False):
     out.write('<DIV style="font-size: smaller;">\n')
     out.write('<TABLE style="margin-left: auto; margin-right: auto;"><TR>')
     out.write('<TD style="vertical-align: top;">\n')
     write_explain_glyph_table(out)
     out.write('</TD>')
-    if BBSreportutils.display_propagation_status(BBSvars.buildtype):
+    if not hide_LEDS:
         out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
@@ -1798,7 +1798,8 @@ def write_node_report(node, allpkgs, quickstats):
 
     write_motd_asTABLE(out)
 
-    write_glyph_and_propagation_LED_table(out)
+    hide_LEDs = not BBSreportutils.display_propagation_status(BBSvars.buildtype)
+    write_glyph_and_propagation_LED_table(out, hide_LEDs)
     out.write('<HR>\n')
     write_compact_gcard_list(out, node,
                              allpkgs, quickstats=quickstats,
@@ -1830,10 +1831,7 @@ def write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=False):
         out.write('<BR>\n')
         write_node_specs_table(out)
     out.write('<BR>\n')
-    if not tiny_layout:
-        write_glyph_and_propagation_LED_table(out)
-    else:
-        write_explain_glyph_table(out)
+    write_glyph_and_propagation_LED_table(out, hide_LEDs=tiny_layout)
     out.write('<HR>\n')
     if tiny_layout:
         write_tiny_gcard_list(out, allpkgs,
