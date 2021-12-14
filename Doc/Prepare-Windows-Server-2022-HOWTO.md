@@ -52,9 +52,15 @@ echo $Env:Path
 
 #### Edit an environment variable
 
-Always from a _personal administrator account_ (see below about this):
+Always from the Admin account or from a _personal administrator account_
+(see below about this):
 
-Open File Explorer -> This PC -> right-click on This PC -> Properties -> Advanced system settings -> Environment Variables...
+- Go to Settings -> System -> About.
+
+- Click on "Advanced system settings" at the bottom of the right pane. This
+  opens the "System Properties" window.
+
+- In the "System Properties" window, click on Environment Variables...
 
 Always go to *System variables* (at the bottom) to add new variables or edit
 existing variables. Do not add or edit user variables (at the top).
@@ -1205,14 +1211,24 @@ started with `R\bin\R --arch i386`).
 
 ### 4.2 Install libxml2 and google protocol buffer
 
+OCT 2021: THIS IS NO LONGER NEEDED! It seems that recent versions of
+Bioconductor packages RProtoBufLib and flowWorkspace can be compiled
+without this.
+
 This is needed in order to compile the RProtoBufLib and flowWorkspace
 packages.
 
-Download libxml2 and google protocol buffer Windows binaries from
+Download libxml2 (`libxml2.zip`) and Google protocol buffer
+(`protobuf-3.13.0.zip`) binaries for Windows from:
 
   https://rglab.github.io/binaries/
 
 Extract all the files to `C:\libxml2` and to `C:\protobuf` respectively.
+Note that if, after extraction, the libxml2 files end up being extracted
+in `C:\libxml2\libxml2` rather than in `C:\libxml2`, then you need to get
+rid of that extra level of nesting. Same with the Google protocol buffer
+files.
+
 Set environment variables `LIB_XML2` and `LIB_PROTOBUF` to `C:/libxml2`
 and `C:/protobuf`, respectively (see _Edit an environment variable_
 in the _Managing environment variables_ section at the top of this document
@@ -1230,12 +1246,14 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
 
 ### 4.3 Install JAGS
 
-Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
-on "Download Latest Version" (`JAGS-4.3.0.exe` as of Nov. 2020).
+This is needed by CRAN package rjags that various Bioconductor packages
+depend on (CNVrd2, MADSEQ, infercnv).
 
-Use the default settings when running the installer (you can check the "Do
-not create shortcuts" box). Make sure that all the components to install are
-checked.
+Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
+on "Download Latest Version" (`JAGS-4.3.0.exe` as of Dec. 2021).
+
+Use the default settings when running the installer. Make sure that all
+the components to install are checked.
 
 Set environment variable `JAGS_HOME` to `C:\Program Files\JAGS\JAGS-4.3.0`
 (see _Edit an environment variable_ in the _Managing environment variables_
@@ -1265,14 +1283,14 @@ PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc`, start R (with
 
 ### 4.4 Install Ghostscript
 
-Available at: https://www.ghostscript.com/download/gsdnld.html
+Available at https://www.ghostscript.com/releases/
 
-Choose Ghostscript AGPL Release for 64-bit Windows (`gs9533w64.exe` as
-of Nov. 2020).
+Choose Ghostscript AGPL Release for 64-bit Windows (`gs9550w64.exe` as
+of Dec. 2021).
 
 Use the default settings when running the installer.
 
-Append `C:\Program Files\gs\gs9.53.3\bin` to `Path` (see _Edit an environment
+Append `C:\Program Files\gs\gs9.55.0\bin` to `Path` (see _Edit an environment
 variable_ in the _Managing environment variables_ section at the top of this
 document for how to do this).
 
@@ -1294,18 +1312,15 @@ will be automatically created after the 1st build run), then:
 
 ### 4.5 Install libSBML
 
-Download `64-bit/libSBML-5.18.0-win-x64.exe` and
-`32-bit/libSBML-5.18.0-win-x86.exe` from
+Download `64-bit/libSBML-5.18.0-win-x64.exe` from
+https://sourceforge.net/projects/sbml/files/libsbml/5.18.0/stable/Windows/
 
-  https://sourceforge.net/projects/sbml/files/libsbml/5.18.0/stable/Windows/
-
-Run the 2 installers and keep all the default settings.
+Use the default settings when running the installer.
 
 Create `C:\libsbml` folder and copy
-`C:\Program Files\SBML\libSBML-5.18.0-libxml2-x64\win64` and
-`C:\Program Files (x86)\SBML\libSBML-5.18.0-libxml2-x86\win32` to it.
-Rename `C:\libsbml\win64` and `C:\libsbml\win32` -> `C:\libsbml\x64`
-and `C:\libsbml\i386`, respectively.
+`C:\Program Files\SBML\libSBML-5.18.0-libxml2-x64\win64` to it.
+
+Rename `C:\libsbml\win64` -> `C:\libsbml\x64`.
 
 Set environment variable `LIBSBML_PATH` to `C:/libsbml` (use slash,
 not backslash). See _Edit an environment variable_ in the _Managing
@@ -1328,9 +1343,10 @@ for Open Babel 3 or not, you'll need to follow one of the two methods below.
 
 #### Method 1: Install Open Babel 3 pre-compiled Windows binaries
 
-Download the pre-compiled Windows binaries from
+This is the easiest method.
 
-  https://github.com/girke-lab/ChemmineOB/releases/tag/3.0.0
+Download the pre-compiled Windows binaries (`openbabel3-build.zip`)
+from https://github.com/girke-lab/ChemmineOB/releases/tag/3.0.0
 
 Extract all the files to `C:\openbabel3`.
 
@@ -1365,14 +1381,14 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
 
 ### 4.7 Install Clustal Omega
 
-Available at: http://www.clustal.org/omega/ (this site does not support HTTPS)
+Available at http://www.clustal.org/omega/ (this site does not support HTTPS)
 
 Download Windows 64-bit zip file (`clustal-omega-1.2.2-win64.zip` as
-of Nov. 2020).
+of Dec. 2021).
 
-Extract all the files in `C:\ClustalO`. Make sure that the files
-get extracted in `C:\ClustalO\` and not in a subdirectory (e.g. in
-`C:\ClustalO\clustal-omega-1.2.2-win64\`).
+Extract all the files in `C:\ClustalO` (last letter is the letter O, not
+the number zero!). Make sure that the files get extracted in `C:\ClustalO\`
+and not in a subdirectory (e.g. in `C:\ClustalO\clustal-omega-1.2.2-win64\`).
 
 Append `C:\ClustalO` to `Path` (see _Edit an environment variable_
 in the _Managing environment variables_ section at the top of this
@@ -1421,11 +1437,10 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
 
 ### 4.10 Install .NET 5.0 Runtime
 
-This is needed by the rmspc package. Note that we're only installing .NET
-for 64-bit Windows so rmspc (and any package that depends on it) needs to
-be marked as unsupported on 32-bit Windows.
+This is needed by the rmspc package.
 
-Download the Windows x64 Installer for .NET 5.0 Runtime from
+Download the Windows x64 Installer for .NET 5.0 Runtime (file
+`dotnet-runtime-5.0.12-win-x64.exe` as of Dec. 2021) from
 https://dotnet.microsoft.com/download/dotnet/5.0
 
 Run the Installer.
@@ -1434,59 +1449,6 @@ TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on), in a PowerShell window:
 
     which dotnet    # /c/Program Files/dotnet/dotnet
-
-
-### 4.11 Install gtkmm
-
-OCT 2021: THIS IS NO LONGER NEEDED! (starting with BioC 3.14, HilbertVisGUI is
-no longer supported on Windows)
-
-This is needed by the HilbertVisGUI package.
-
-Download `gtkmm-win64-devel-2.22.0-2.exe` from
-
-  https://download.gnome.org/binaries/win64/gtkmm/2.22/
-
-Run it (use default settings). This installs gtkmm in `C:\gtkmm64`
-
-Set `GTK_PATH` to `C:\gtkmm64`
-
-Also make sure that `C:\rtools40\usr\bin`, `C:\rtools40\mingw32\bin`
-and `C:\rtools40\mingw64\bin` are still first in the `Path`. In case
-the installer prepended something to `Path` (e.g. something like
-`C:\gtkmm64\bin`), move it towards the end of `Path` (e.g. anywhere
-after `C:\ClustalO`). See _Edit an environment variable_ in
-the _Managing environment variables_ section at the top of this
-document for how to do this.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to compile the HilbertVisGUI package
-for the x64 arch only e.g. open a PowerShell window, `cd` to
-`E:\biocbuild\bbs-3.14-bioc\meat` (this folder will be automatically
-created after the 1st build run), then:
-
-    ..\R\bin\R --arch x64 CMD INSTALL --no-multiarch HilbertVisGUI
-
-NOV. 2020: The above fails at the linking step with a bunch of "undefined
-reference" errors:
-
-    C:/rtools40/mingw64/bin/g++ -std=gnu++11 -shared -s -static-libgcc -o HilbertVisGUI.dll tmp.def R_env_prot.o R_interface.o colorizers.o display.o ruler.o window.o -LC:/gtkmm64/lib -Lc:/devel/dist/win64/libpng-1.4.3-1/lib -lgtkmm-2.4 -latkmm-1.6 -lgdkmm-2.4 -lgiomm-2.4 -lpangomm-1.4 -lgtk-win32-2.0 -lglibmm-2.4 -lcairomm-1.0 -lsigc-2.0 -lgdk-win32-2.0 -latk-1.0 -lgio-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lpng14 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lglib-2.0 -lintl -LC:/extsoft/lib/x64 -LC:/extsoft/lib -LE:/biocbuild/bbs-3.14-bioc/R/bin/x64 -lR
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x119c): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x12d1): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x21de): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: ruler.o:ruler.cc:(.text+0x2457): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x4c9): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5ac6): undefined reference to `Glib::file_test(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Glib::FileTest)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5b31): undefined reference to `Glib::filename_display_basename(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5b70): undefined reference to `Glib::ustring::ustring(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
-    C:/rtools40/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe: window.o:window.cc:(.text+0x5d45): undefined reference to `Gdk::Pixbuf::save(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, Glib::ustring const&)'
-    collect2.exe: error: ld returned 1 exit status
-    no DLL was created
-
-I suspect that this is because of a binary incompatibility between the
-binaries provided by `gtkmm-win64-devel-2.22.0-2.exe` (which is 10 year old
-and was compiled with an old version of `gcc`) and the compilers provided
-by Rtools40 (`gcc` 8.3.0).
 
 
 
