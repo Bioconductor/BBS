@@ -792,7 +792,7 @@ def write_tiny_gcard_header(out):
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD>Maintainer</TD>')
-    out.write('<TD>Build status</TD>')
+    out.write('<TD class="STAGE">INSTALL/BUILD/CHECK Status</TD>')
     out.write('<TD></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
@@ -858,7 +858,7 @@ def write_tiny_gcard(out, pkg, pkg_pos, nb_pkgs):
 ### faster to load and render.
 def write_tiny_gcard_list(out, allpkgs, alphabet_dispatch=False):
     nb_pkgs = len(allpkgs)
-    TABLEclasses = 'compact gcard_list %s' % ' '.join(_get_all_show_classes())
+    TABLEclasses = 'gcard_list %s' % ' '.join(_get_all_show_classes())
     out.write('<TABLE class="%s" id="THE_BIG_GCARD_LIST">\n' % TABLEclasses)
     out.write('<TBODY>\n')
     _write_vertical_space(out)
