@@ -1833,7 +1833,6 @@ def write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=False):
     out.write('<BR>\n')
     write_glyph_and_propagation_LED_table(out, hide_LEDs=tiny_layout)
     if tiny_layout:
-        out.write('<BR>\n')
         out.write('<P><A href="long-report.html">Long report</A></P>\n')
     out.write('<HR>\n')
     if tiny_layout:
