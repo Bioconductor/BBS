@@ -1832,6 +1832,9 @@ def write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=False):
         write_node_specs_table(out)
     out.write('<BR>\n')
     write_glyph_and_propagation_LED_table(out, hide_LEDs=tiny_layout)
+    if tiny_layout:
+        out.write('<BR>\n')
+        out.write('<P><A href="long-report.html">Long report</A></P>\n')
     out.write('<HR>\n')
     if tiny_layout:
         write_tiny_gcard_list(out, allpkgs,
@@ -1854,6 +1857,10 @@ def make_BioC_MainReport(allpkgs, quickstats, tiny_layout=False):
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=tiny_layout)
     out.close()
+    if tiny_layout:
+        out = open('long-report.html', 'w')
+        write_mainpage_asHTML(out, allpkgs, quickstats)
+        out.close()
     print("BBS> [make_BioC_MainReport] END.")
     sys.stdout.flush()
     return
@@ -1863,6 +1870,10 @@ def make_CRAN_MainReport(allpkgs, quickstats, tiny_layout=False):
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=tiny_layout)
     out.close()
+    if tiny_layout:
+        out = open('long-report.html', 'w')
+        write_mainpage_asHTML(out, allpkgs, quickstats)
+        out.close()
     print("BBS> [make_CRAN_MainReport] END.")
     sys.stdout.flush()
     return
