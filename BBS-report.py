@@ -780,11 +780,11 @@ def write_compact_gcard_list(out, node, allpkgs,
 
 
 ##############################################################################
-### Tiny gcards (only 1 build status glyph per package)
+### Simple gcards (only 1 build status glyph per package)
 ##############################################################################
 
 ### Produces one full TR with 5 TDs in it.
-def write_tiny_gcard_header(out):
+def write_simple_gcard_header(out):
     ## Using the collapsable_rows class here too to blend out the alphabetical
     ## selection + this header when "ok" packages are unselected.
     out.write('<TBODY class="collapsable_rows">\n')
@@ -821,7 +821,7 @@ def make_pkg_build_status_HTML(pkg, statuses, topdir='.'):
     return html
 
 ### Produces one full TR with 5 TDs in it.
-def write_tiny_gcard(out, pkg, pkg_pos, nb_pkgs):
+def write_simple_gcard(out, pkg, pkg_pos, nb_pkgs):
     pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
     if pkg in skipped_pkgs:
         pkg_status_classes = 'error'
@@ -856,7 +856,7 @@ def write_tiny_gcard(out, pkg, pkg_pos, nb_pkgs):
 
 ### Even more compact layout than write_compact_gcard_list(). Should be much
 ### faster to load and render.
-def write_tiny_gcard_list(out, allpkgs, alphabet_dispatch=False):
+def write_simple_gcard_list(out, allpkgs, alphabet_dispatch=False):
     nb_pkgs = len(allpkgs)
     TABLEclasses = 'gcard_list %s' % ' '.join(_get_all_show_classes())
     out.write('<TABLE class="%s" id="THE_BIG_GCARD_LIST">\n' % TABLEclasses)
@@ -864,7 +864,7 @@ def write_tiny_gcard_list(out, allpkgs, alphabet_dispatch=False):
     _write_vertical_space(out)
     out.write('</TBODY>\n')
     if not alphabet_dispatch:
-        write_tiny_gcard_header(out)
+        write_simple_gcard_header(out)
     pkg_pos = 0
     current_letter = None
     for pkg in allpkgs:
@@ -874,8 +874,8 @@ def write_tiny_gcard_list(out, allpkgs, alphabet_dispatch=False):
             if first_letter != current_letter:
                 current_letter = first_letter
                 write_abc_dispatcher_within_gcard_list(out, current_letter)
-                write_tiny_gcard_header(out)
-        write_tiny_gcard(out, pkg, pkg_pos, nb_pkgs)
+                write_simple_gcard_header(out)
+        write_simple_gcard(out, pkg, pkg_pos, nb_pkgs)
     out.write('</TABLE>\n')
     return
 
@@ -1827,19 +1827,19 @@ def make_all_NodeReports(allpkgs, quickstats):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs, quickstats,
-                          tiny_layout=False, top_right_html=None):
+                          simple_layout=False, top_right_html=None):
     if BBSvars.buildtype != "cran":
         write_BioC_mainpage_top_asHTML(out, top_right_html)
     else: # "cran" buildtype
         write_CRAN_mainpage_top_asHTML(out, top_right_html)
-    if not tiny_layout:
+    if not simple_layout:
         out.write('<BR>\n')
         write_node_specs_table(out)
     out.write('<BR>\n')
-    write_glyph_and_propagation_LED_table(out, hide_LEDs=tiny_layout)
+    write_glyph_and_propagation_LED_table(out, hide_LEDs=simple_layout)
     out.write('<HR>\n')
-    if tiny_layout:
-        write_tiny_gcard_list(out, allpkgs,
+    if simple_layout:
+        write_simple_gcard_list(out, allpkgs,
                          alphabet_dispatch=not no_alphabet_dispatch)
     elif len(BBSreportutils.NODES) == 1:
         write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs,
@@ -1853,16 +1853,17 @@ def write_mainpage_asHTML(out, allpkgs, quickstats,
     out.write('</HTML>\n')
     return
 
-def make_BioC_MainReport(allpkgs, quickstats, tiny_layout=False):
+def make_BioC_MainReport(allpkgs, quickstats, simple_layout=False):
     print("BBS> [make_BioC_MainReport] BEGIN ...")
     sys.stdout.flush()
     top_right_html = None
     out = open('index.html', 'w')
-    if tiny_layout:
+    if simple_layout:
         top_right_html = '<A href="long-report.html">Long report</A>'
-    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout, top_right_html)
+    write_mainpage_asHTML(out, allpkgs, quickstats,
+                          simple_layout, top_right_html)
     out.close()
-    if tiny_layout:
+    if simple_layout:
         out = open('long-report.html', 'w')
         top_right_html = '<A href="./">Simplified report</A>'
         write_mainpage_asHTML(out, allpkgs, quickstats, False, top_right_html)
@@ -1871,15 +1872,16 @@ def make_BioC_MainReport(allpkgs, quickstats, tiny_layout=False):
     sys.stdout.flush()
     return
 
-def make_CRAN_MainReport(allpkgs, quickstats, tiny_layout=False):
+def make_CRAN_MainReport(allpkgs, quickstats, simple_layout=False):
     print("BBS> [make_CRAN_MainReport] BEGIN ...")
     top_right_html = None
     out = open('index.html', 'w')
-    if tiny_layout:
+    if simple_layout:
         top_right_html = '<A href="long-report.html">Long report</A>'
-    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout, top_right_html)
+    write_mainpage_asHTML(out, allpkgs, quickstats,
+                          simple_layout, top_right_html)
     out.close()
-    if tiny_layout:
+    if simple_layout:
         out = open('long-report.html', 'w')
         top_right_html = '<A href="./">Simplified report</A>'
         write_mainpage_asHTML(out, allpkgs, quickstats, False, top_right_html)
@@ -1899,8 +1901,8 @@ def make_CRAN_MainReport(allpkgs, quickstats, tiny_layout=False):
 ###   'no-raw-results'      -> True or False
 def parse_options(argv):
     usage_msg = 'Usage:\n' + \
-        '    BBS-report.py [tiny-layout] [no-alphabet-dispatch] [no-raw-results]\n'
-    valid_options = ['tiny-layout', 'no-alphabet-dispatch', 'no-raw-results']
+        '    BBS-report.py [simple-layout] [no-alphabet-dispatch] [no-raw-results]\n'
+    valid_options = ['simple-layout', 'no-alphabet-dispatch', 'no-raw-results']
     argv = set(argv[1:])
     if not argv.issubset(valid_options):
         sys.exit(usage_msg)
@@ -1923,7 +1925,7 @@ if __name__ == "__main__":
     print("BBS> [stage6d] STARTING stage6d at %s..." % time.asctime())
     sys.stdout.flush()
 
-    tiny_layout = options['tiny-layout']
+    simple_layout = options['simple-layout']
     no_alphabet_dispatch = options['no-alphabet-dispatch']
     no_raw_results = options['no-raw-results']
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
@@ -2022,9 +2024,9 @@ if __name__ == "__main__":
     make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps)
     make_all_NodeReports(allpkgs, allpkgs_quickstats)
     if BBSvars.buildtype != "cran":
-        make_BioC_MainReport(allpkgs, allpkgs_quickstats, tiny_layout)
+        make_BioC_MainReport(allpkgs, allpkgs_quickstats, simple_layout)
     else: # "cran" buildtype
-        make_CRAN_MainReport(allpkgs, allpkgs_quickstats, tiny_layout)
+        make_CRAN_MainReport(allpkgs, allpkgs_quickstats, simple_layout)
 
     print("BBS> [stage6d] DONE at %s." % time.asctime())
 

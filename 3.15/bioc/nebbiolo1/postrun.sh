@@ -33,7 +33,7 @@ if [ -n "$BBS_OUTGOING_MAP" ]; then
 fi
 
 # Generate the HTML report
-$BBS_PYTHON_CMD $BBS_HOME/BBS-report.py tiny-layout
+$BBS_PYTHON_CMD $BBS_HOME/BBS-report.py simple-layout
 REPORT_DIRNAME=$(dirname "$BBS_REPORT_PATH")
 REPORT_BASENAME=$(basename "$BBS_REPORT_PATH")
 cd "$REPORT_DIRNAME"
