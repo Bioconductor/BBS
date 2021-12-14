@@ -1460,12 +1460,14 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
 ### Main page: HTML stuff above main table
 ##############################################################################
 
-def write_BioC_mainpage_top_asHTML(out):
+def write_BioC_mainpage_top_asHTML(out, top_right_html=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
+    if top_right_html != None:
+        out.write('<P style="text-align: right">%s</P>\n' % top_right_html)
     out.write('<H1>%s</H1>\n' % title)
     if BBSvars.buildtype == "bioc-longtests":
         long_tests_howto_url = '/developers/how-to/long-tests/'
@@ -1490,11 +1492,13 @@ def write_BioC_mainpage_top_asHTML(out):
         out.write('</DIV>\n')
     return
 
-def write_CRAN_mainpage_top_asHTML(out):
+def write_CRAN_mainpage_top_asHTML(out, top_right_html=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY onLoad="initialize();">\n')
+    if top_right_html != None:
+        out.write('<P style="text-align: right">%s</P>\n' % top_right_html)
     out.write('<H1>%s</H1>\n' % title)
     write_timestamp(out)
     write_motd_asTABLE(out)
@@ -1822,18 +1826,17 @@ def make_all_NodeReports(allpkgs, quickstats):
 ### Main page (multiple platform report)
 ##############################################################################
 
-def write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=False):
+def write_mainpage_asHTML(out, allpkgs, quickstats,
+                          tiny_layout=False, top_right_html=None):
     if BBSvars.buildtype != "cran":
-        write_BioC_mainpage_top_asHTML(out)
+        write_BioC_mainpage_top_asHTML(out, top_right_html)
     else: # "cran" buildtype
-        write_CRAN_mainpage_top_asHTML(out)
+        write_CRAN_mainpage_top_asHTML(out, top_right_html)
     if not tiny_layout:
         out.write('<BR>\n')
         write_node_specs_table(out)
     out.write('<BR>\n')
     write_glyph_and_propagation_LED_table(out, hide_LEDs=tiny_layout)
-    if tiny_layout:
-        out.write('<P><A href="long-report.html">Long report</A></P>\n')
     out.write('<HR>\n')
     if tiny_layout:
         write_tiny_gcard_list(out, allpkgs,
@@ -1853,12 +1856,16 @@ def write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=False):
 def make_BioC_MainReport(allpkgs, quickstats, tiny_layout=False):
     print("BBS> [make_BioC_MainReport] BEGIN ...")
     sys.stdout.flush()
+    top_right_html = None
     out = open('index.html', 'w')
-    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=tiny_layout)
+    if tiny_layout:
+        top_right_html = '<A href="long-report.html">Long report</A>'
+    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout, top_right_html)
     out.close()
     if tiny_layout:
         out = open('long-report.html', 'w')
-        write_mainpage_asHTML(out, allpkgs, quickstats)
+        top_right_html = '<A href="./">Simplified report</A>'
+        write_mainpage_asHTML(out, allpkgs, quickstats, False, top_right_html)
         out.close()
     print("BBS> [make_BioC_MainReport] END.")
     sys.stdout.flush()
@@ -1866,12 +1873,16 @@ def make_BioC_MainReport(allpkgs, quickstats, tiny_layout=False):
 
 def make_CRAN_MainReport(allpkgs, quickstats, tiny_layout=False):
     print("BBS> [make_CRAN_MainReport] BEGIN ...")
+    top_right_html = None
     out = open('index.html', 'w')
-    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout=tiny_layout)
+    if tiny_layout:
+        top_right_html = '<A href="long-report.html">Long report</A>'
+    write_mainpage_asHTML(out, allpkgs, quickstats, tiny_layout, top_right_html)
     out.close()
     if tiny_layout:
         out = open('long-report.html', 'w')
-        write_mainpage_asHTML(out, allpkgs, quickstats)
+        top_right_html = '<A href="./">Simplified report</A>'
+        write_mainpage_asHTML(out, allpkgs, quickstats, False, top_right_html)
         out.close()
     print("BBS> [make_CRAN_MainReport] END.")
     sys.stdout.flush()
