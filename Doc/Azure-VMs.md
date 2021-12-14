@@ -52,56 +52,58 @@ Notes:
                                  INSTALL     BUILD      CHECK    BUILD BIN
   BiocGenerics 0.41.2 --------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       43.6        1.3       54.2       43.4
-    o palomino (B20ms) . . . .       72.7        8.1     (634.3)
-    o palomino2 (F16s_v2)  . .       46.4        4.3       69.6       80.6
+    o palomino (B20ms) . . . .       37.9        5.1     (634.3)
+    o palomino2 (F16s_v2)  . .       34.7        4.3       69.6       80.6
   Biostrings 2.63.0 ----------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       79.3      123.6      459.3       88.8
-    o palomino (B20ms) . . . .      206.0      789.7   (TIMEOUT)
-    o palomino2 (F16s_v2)  . .      137.1      298.0      598.8      116.2
+    o palomino (B20ms) . . . .      165.2      789.7   (TIMEOUT)
+    o palomino2 (F16s_v2)  . .      135.6      232.3      598.8      116.2
   csaw 1.29.1 ----------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .      123.2       87.9      387.1       74.6
-    o palomino (B20ms) . . . .      148.9      523.8
-    o palomino2 (F16s_v2)  . .      148.9      128.1      545.5      139.8
+    o palomino (B20ms) . . . .      143.3      523.8
+    o palomino2 (F16s_v2)  . .      143.0      128.1      545.5      139.8
   DelayedMatrixStats 1.17.0 --  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       83.0      210.0      221.6       50.2
-    o palomino (B20ms) . . . .       46.0     1362.0
-    o palomino2 (F16s_v2)  . .       49.6      281.7      299.2       37.6
+    o palomino (B20ms) . . . .       62.5     1362.0
+    o palomino2 (F16s_v2)  . .       47.9      281.7      299.2       37.6
   DESeq2 1.35.0 --------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       92.2      157.3      386.9       77.3
-    o palomino (B20ms) . . . .      102.8      790.4
-    o palomino2 (F16s_v2)  . .       97.7      181.6      508.6       88.6
+    o palomino (B20ms) . . . .       95.7      790.4
+    o palomino2 (F16s_v2)  . .       91.2      181.6      508.6       88.6
   flowCore 2.7.0 -------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .      119.9      151.5      144.3      123.0
-    o palomino (B20ms) . . . .      226.0     1430.9
+    o palomino (B20ms) . . . .      202.9     1430.9
     o palomino2 (F16s_v2)  . .      187.0      234.8      199.1      153.0
   IRanges 2.29.1 -------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       99.7       93.1      169.7       97.4
-    o palomino (B20ms) . . . .      199.7      965.4
-    o palomino2 (F16s_v2)  . .      180.4      143.9      235.7      131.2
+    o palomino (B20ms) . . . .      184.9      965.4
+    o palomino2 (F16s_v2)  . .      166.0      143.9      235.7      131.2
   minfi 1.41.1 ---------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       75.4      102.4      414.6       53.8
-    o palomino (B20ms) . . . .     1387.5      599.1
-    o palomino2 (F16s_v2)  . .       90.5      247.4      532.1
+    o palomino (B20ms) . . . .       90.5      599.1
+    o palomino2 (F16s_v2)  . .       68.1      247.4      532.1
   mzR 2.29.1 -----------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .      477.8      659.2      ERROR      541.9
-    o palomino (B20ms) . . . .      903.4     3586.6
-    o palomino2 (F16s_v2)  . .      800.5      822.7      179.2
+    o palomino (B20ms) . . . .      888.5     3586.6
+    o palomino2 (F16s_v2)  . .      750.9      822.7      179.2
   RBGL 1.71.0 ----------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       93.0       83.0       48.4       87.0
-    o palomino (B20ms) . . . .      147.5      678.4
-    o palomino2 (F16s_v2)  . .      127.3      136.1       69.7
+    o palomino (B20ms) . . . .      141.8      678.4
+    o palomino2 (F16s_v2)  . .      116.0      136.1       69.7
   VariantAnnotation 1.41.3 ---  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       92.2      157.3      386.9       77.3
-    o palomino (B20ms) . . . .     1508.0
+    o palomino (B20ms) . . . .      154.8
     o palomino2 (F16s_v2)  . .      145.1      281.2      709.6
   zlibbioc 1.41.0 ------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       49.6       12.1       25.9       24.3
     o palomino (B20ms) . . . .       25.0      (23.2)
-    o palomino2 (F16s_v2)  . .       21.4       19.1       31.3
+    o palomino2 (F16s_v2)  . .       20.7       19.1       31.3
   ```
   TIMEOUT limit is 80 min.
-  BBS\_CHECK\_NB\_CPU is 12 on palomino (20 logical processors) and 14 on
-  palomino2 (16 logical processors).
+  BBS\_BUILD\_NB\_CPU=9 and BBS\_CHECK\_NB\_CPU=10 on palomino (20 logical
+  processors).
+  BBS\_BUILD\_NB\_CPU=12 and BBS\_CHECK\_NB\_CPU=13 on palomino2 (16 logical
+  processors).
 
   Why not use more cpus on palomino? On an earlier attempt with palomino,
   we had BBS\_CHECK\_NB\_CPU set to 16. However when the builds entered the

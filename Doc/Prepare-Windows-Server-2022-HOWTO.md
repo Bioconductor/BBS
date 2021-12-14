@@ -708,6 +708,11 @@ for Windows Server 2022.
 
 ### 2.5 Install Rtools
 
+TODO: In Dec. 2021, CRAN has switched to a new toolchain to build R and R
+packages. This section still documents installation of the old toolchain,
+Rtools40. Update it to use the new toolchain instead, RTools42, available
+here https://www.r-project.org/nosvn/winutf8/ucrt3/
+
 **From a personal administrator account**:
 
 - Go to https://CRAN.R-project.org/bin/windows/Rtools/
