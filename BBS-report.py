@@ -1467,7 +1467,8 @@ def write_BioC_mainpage_top_asHTML(out, top_right_html=None):
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
     if top_right_html != None:
-        out.write('<P style="text-align: right">%s</P>\n' % top_right_html)
+        out.write('<P style="margin: 0px; text-align: right">%s</P>\n' % \
+                  top_right_html)
     out.write('<H1>%s</H1>\n' % title)
     if BBSvars.buildtype == "bioc-longtests":
         long_tests_howto_url = '/developers/how-to/long-tests/'
