@@ -1758,13 +1758,13 @@ def write_propagation_LED_table(out):
     out.write('</TABLE>\n')
     return
 
-def write_glyph_and_propagation_LED_table(out, hide_LEDS=False):
+def write_glyph_and_propagation_LED_table(out, hide_LEDs=False):
     out.write('<DIV style="font-size: smaller;">\n')
     out.write('<TABLE style="margin-left: auto; margin-right: auto;"><TR>')
     out.write('<TD style="vertical-align: top;">\n')
     write_explain_glyph_table(out)
     out.write('</TD>')
-    if not hide_LEDS:
+    if not hide_LEDs:
         out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
