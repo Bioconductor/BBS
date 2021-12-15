@@ -1880,18 +1880,19 @@ def write_mainpage_asHTML(out, allpkgs, quickstats,
         write_node_specs_table(out)
     out.write('<BR>\n')
     write_glyph_and_propagation_LED_table(out, simple_layout)
-    out.write('<HR>\n')
     if simple_layout:
         write_simple_gcard_list(out, allpkgs,
                          alphabet_dispatch=not no_alphabet_dispatch)
-    elif len(BBSreportutils.NODES) == 1:
-        write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs,
-                         quickstats=quickstats,
-                         alphabet_dispatch=not no_alphabet_dispatch)
     else:
-        write_gcard_list(out, allpkgs,
-                         quickstats=quickstats,
-                         alphabet_dispatch=not no_alphabet_dispatch)
+        out.write('<HR>\n')
+        if len(BBSreportutils.NODES) == 1:
+            write_compact_gcard_list(out, BBSreportutils.NODES[0], allpkgs,
+                             quickstats=quickstats,
+                             alphabet_dispatch=not no_alphabet_dispatch)
+        else:
+            write_gcard_list(out, allpkgs,
+                             quickstats=quickstats,
+                             alphabet_dispatch=not no_alphabet_dispatch)
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     return
