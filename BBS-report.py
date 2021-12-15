@@ -228,14 +228,15 @@ def _explain_NotNeeded_in_HTML():
            '(click on glyph to see why)'
 
 def _explain_skipped_in_HTML(stage_labels):
-    if 'INSTALL' in stage_labels:
-        stage_labels.remove('INSTALL')
-    if 'BUILD' in stage_labels:
-        stage_labels.remove('BUILD')
-    if len(stage_labels) == 1:
-        html = stage_labels[0]
+    labels = stage_labels.copy()
+    if 'INSTALL' in labels:
+        labels.remove('INSTALL')
+    if 'BUILD' in labels:
+        labels.remove('BUILD')
+    if len(labels) == 1:
+        html = labels[0]
     else:
-        html = '%s or %s' % (', '.join(stage_labels[:-1]), stage_labels[-1])
+        html = '%s or %s' % (', '.join(labels[:-1]), labels[-1])
     html += ' of package was skipped because the BUILD step failed'
     return html
 
