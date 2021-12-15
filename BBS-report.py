@@ -269,7 +269,7 @@ def write_explain_glyph_table(out, simple_layout=False):
     wide_table = simple_layout or \
                  not BBSreportutils.display_propagation_status(buildtype)
     out.write('<FORM action="">\n')
-    styles = ['width: %s' % ('800px' if wide_table else '590px'),
+    styles = ['width: %s' % ('800px' if wide_table else '600px'),
               'border: solid black 1px',
               'border-collapse: collapse']
     out.write('<TABLE style="%s">\n' % ';'.join(styles))
