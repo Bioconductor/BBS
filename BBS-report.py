@@ -200,16 +200,22 @@ def _explain_TIMEOUT_in_HTML():
             html += '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
     return html
 
-def _explain_ERROR_in_HTML():
-    html = 'Bad DESCRIPTION file, or '
-    if BBSvars.buildtype == "bioc-longtests":
-        html += 'CHECK of package produced errors'
-    elif BBSvars.buildtype in ["workflows", "books"]:
-        html += 'INSTALL or BUILD of package failed'
+def _explain_ERROR_in_HTML(stage_labels):
+    labels = stage_labels.copy()
+    if len(labels) == 1 and labels[0] == 'CHECK':
+        html = 'CHECK of package produced errors'
     else:
-        html += 'INSTALL, BUILD or BUILD BIN of package '
-        html += 'failed, or CHECK produced errors'
-    return html
+        CHECK_in_labels = 'CHECK' in labels
+        if CHECK_in_labels:
+            labels.remove('CHECK')
+        if len(labels) == 1:
+            html = labels[0]
+        else:
+            html = '%s or %s' % (', '.join(labels[:-1]), labels[-1])
+        html += ' of package failed'
+        if CHECK_in_labels:
+            html += ', or CHECK produced errors'
+    return 'Bad DESCRIPTION file, or ' + html
 
 def _explain_WARNINGS_in_HTML():
     return 'CHECK of package produced warnings'
@@ -268,10 +274,12 @@ def write_explain_glyph_table(out, simple_layout=False):
     stage_labels = _get_stage_labels()
     _write_glyph_as_TR(out, "TIMEOUT", _explain_TIMEOUT_in_HTML(), True)
 
-    _write_glyph_as_TR(out, "ERROR", _explain_ERROR_in_HTML(), True)
+    explain_html = _explain_ERROR_in_HTML(stage_labels)
+    _write_glyph_as_TR(out, "ERROR", explain_html, True)
 
-    if buildtype not in ["workflows", "books"]:
-        _write_glyph_as_TR(out, "WARNINGS", _explain_WARNINGS_in_HTML(), True)
+    if 'CHECK' in stage_labels:
+        explain_html = _explain_WARNINGS_in_HTML()
+        _write_glyph_as_TR(out, "WARNINGS", explain_html, True)
 
     explain_html = _explain_OK_in_HTML(stage_labels, simple_layout)
     _write_glyph_as_TR(out, "OK", explain_html, True)
