@@ -127,6 +127,13 @@ def write_vcs_meta_for_pkg_as_TABLE(out, pkg, full_info=False):
 ### write_explain_glyph_table()
 ##############################################################################
 
+def _get_stage_labels():
+    stage_labels = []
+    buildtype = BBSvars.buildtype
+    for stage in BBSreportutils.stages_to_display(buildtype):
+        stage_labels.append(stage_label(stage))
+    return stage_labels
+
 ## Produce a SPAN element.
 def _status_as_glyph(status):
     html = status
@@ -194,7 +201,7 @@ def _explain_TIMEOUT_in_HTML():
     return html
 
 def _explain_ERROR_in_HTML():
-    html = 'Bad DESCRIPTION file or '
+    html = 'Bad DESCRIPTION file, or '
     if BBSvars.buildtype == "bioc-longtests":
         html += 'CHECK of package produced errors'
     elif BBSvars.buildtype in ["workflows", "books"]:
@@ -207,15 +214,14 @@ def _explain_ERROR_in_HTML():
 def _explain_WARNINGS_in_HTML():
     return 'CHECK of package produced warnings'
 
-def _explain_OK_in_HTML():
-    if BBSvars.buildtype == "bioc-longtests":
-        html = 'CHECK'
-    elif BBSvars.buildtype in ["workflows", "books"]:
-        html = 'INSTALL or BUILD'
+def _explain_OK_in_HTML(stage_labels, simple_layout=False):
+    if len(stage_labels) == 1:
+        html = stage_labels[0]
     else:
-        html = 'INSTALL, BUILD, CHECK or BUILD BIN ' + \
-               'of package was OK'
-    return html
+        conjunction = 'and' if simple_layout else 'or'
+        html = '%s %s %s' % \
+            (', '.join(stage_labels[:-1]), conjunction, stage_labels[-1])
+    return html + ' of package went OK'
 
 def _explain_NotNeeded_in_HTML():
     return 'INSTALL of package was not needed ' + \
@@ -238,10 +244,13 @@ def _explain_NA_in_HTML():
     return html
 
 ### FH: Create checkboxes to select display types
-def write_explain_glyph_table(out):
+def write_explain_glyph_table(out, simple_layout=False):
     buildtype = BBSvars.buildtype
     out.write('<FORM action="">\n')
-    out.write('<TABLE style="width: 590px; border: solid black 1px; border-collapse: collapse;">\n')
+    styles = ['width: 590px',
+              'border: solid black 1px',
+              'border-collapse: collapse']
+    out.write('<TABLE style="%s">\n' % ';'.join(styles))
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="font-style: italic; border-bottom: solid black 1px;">')
     out.write('<B>Package status is indicated by one of the following glyphs</B>')
@@ -255,7 +264,8 @@ def write_explain_glyph_table(out):
     if buildtype not in ["workflows", "books"]:
         _write_glyph_as_TR(out, "WARNINGS", _explain_WARNINGS_in_HTML(), True)
 
-    _write_glyph_as_TR(out, "OK", _explain_OK_in_HTML(), True)
+    explain_html = _explain_OK_in_HTML(_get_stage_labels(), simple_layout)
+    _write_glyph_as_TR(out, "OK", explain_html, True)
 
     ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e.
     ## when STAGE2 skips installation of target packages not needed by
@@ -263,7 +273,7 @@ def write_explain_glyph_table(out):
     #if buildtype not in ["workflows", "books", "bioc-longtests"]:
     #    _write_glyph_as_TR(out, "NotNeeded", _explain_NotNeeded_in_HTML())
 
-    if buildtype != "bioc-longtests":
+    if buildtype not in ["workflows", "books", "bioc-longtests"]:
         _write_glyph_as_TR(out, "skipped", _explain_skipped_in_HTML())
 
     _write_glyph_as_TR(out, "NA", _explain_NA_in_HTML())
@@ -780,7 +790,7 @@ def write_compact_gcard_list(out, node, allpkgs,
 
 
 ##############################################################################
-### Simple gcards (only 1 build status glyph per package)
+### Simple gcards (a single glyph per package showing its overall build status)
 ##############################################################################
 
 ### Produces one full TR with 5 TDs in it.
@@ -792,30 +802,31 @@ def write_simple_gcard_header(out):
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD>Maintainer</TD>')
-    out.write('<TD class="STAGE">INSTALL/BUILD/CHECK</TD>')
+    stage_labels = _get_stage_labels()
+    out.write('<TD class="STAGE">%s</TD>' % '/'.join(stage_labels))
     out.write('<TD></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
 
 ### Return decorated glyph describing overall package build status.
-def make_pkg_build_status_HTML(pkg, statuses, topdir='.'):
+def make_pkg_overall_status_HTML(pkg, statuses, topdir='.'):
     if pkg in skipped_pkgs:
         return '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
     if 'ERROR' in statuses:
-        build_status = 'ERROR'
+        overall_status = 'ERROR'
     elif 'TIMEOUT' in statuses:
-        build_status = 'TIMEOUT'
-    elif 'NA' in statuses:
-        build_status = 'NA'
+        overall_status = 'TIMEOUT'
     elif 'WARNINGS' in statuses:
-        build_status = 'WARNINGS'
+        overall_status = 'WARNINGS'
+    elif 'NA' in statuses:
+        overall_status = 'NA'
     elif 'OK' in statuses:
-        build_status = 'OK'
+        overall_status = 'OK'
     else:
-        build_status = 'unknown'
-    html = _status_as_glyph(build_status)
-    if build_status != 'NA':
+        overall_status = 'unknown'
+    html = _status_as_glyph(overall_status)
+    if overall_status != 'NA':
         pkgdir = '%s/%s' % (topdir, pkg)
         html = _make_link_with_mouseover(pkgdir, html)
     return html
@@ -847,7 +858,7 @@ def write_simple_gcard(out, pkg, pkg_pos, nb_pkgs):
     TDcontent = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
     out.write('<TD>%s</TD>' % TDcontent)
     out.write('<TD>%s</TD>' % maintainer)
-    TDcontent = make_pkg_build_status_HTML(pkg, pkg_statuses)
+    TDcontent = make_pkg_overall_status_HTML(pkg, pkg_statuses)
     out.write('<TD class="status">%s</TD>' % TDcontent)
     out.write('<TD class="rightmost"></TD>')
     out.write('</TR>\n')
@@ -1763,13 +1774,14 @@ def write_propagation_LED_table(out):
     out.write('</TABLE>\n')
     return
 
-def write_glyph_and_propagation_LED_table(out, hide_LEDs=False):
+def write_glyph_and_propagation_LED_table(out, simple_layout=False):
     out.write('<DIV style="font-size: smaller;">\n')
     out.write('<TABLE style="margin-left: auto; margin-right: auto;"><TR>')
     out.write('<TD style="vertical-align: top;">\n')
-    write_explain_glyph_table(out)
+    write_explain_glyph_table(out, simple_layout)
     out.write('</TD>')
-    if not hide_LEDs:
+    if BBSreportutils.display_propagation_status(BBSvars.buildtype) and \
+       not simple_layout:
         out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
@@ -1803,8 +1815,7 @@ def write_node_report(node, allpkgs, quickstats):
 
     write_motd_asTABLE(out)
 
-    hide_LEDs = not BBSreportutils.display_propagation_status(BBSvars.buildtype)
-    write_glyph_and_propagation_LED_table(out, hide_LEDs)
+    write_glyph_and_propagation_LED_table(out)
     out.write('<HR>\n')
     write_compact_gcard_list(out, node,
                              allpkgs, quickstats=quickstats,
@@ -1837,7 +1848,7 @@ def write_mainpage_asHTML(out, allpkgs, quickstats,
         out.write('<BR>\n')
         write_node_specs_table(out)
     out.write('<BR>\n')
-    write_glyph_and_propagation_LED_table(out, hide_LEDs=simple_layout)
+    write_glyph_and_propagation_LED_table(out, simple_layout)
     out.write('<HR>\n')
     if simple_layout:
         write_simple_gcard_list(out, allpkgs,
