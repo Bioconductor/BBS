@@ -247,7 +247,8 @@ def _explain_NA_in_HTML():
 def write_explain_glyph_table(out, simple_layout=False):
     buildtype = BBSvars.buildtype
     out.write('<FORM action="">\n')
-    styles = ['width: 590px',
+    width = '800px' if simple_layout else '590px'
+    styles = ['width: %s' % width,
               'border: solid black 1px',
               'border-collapse: collapse']
     out.write('<TABLE style="%s">\n' % ';'.join(styles))
