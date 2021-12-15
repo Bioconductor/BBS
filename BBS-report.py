@@ -229,18 +229,20 @@ def _explain_NotNeeded_in_HTML():
 
 def _explain_skipped_in_HTML():
     html = 'CHECK or BUILD BIN ' + \
-           'of package was skipped because the BUILD step failed\n'
+           'of package was skipped because the BUILD step failed'
     return html
 
-def _explain_NA_in_HTML():
-    if BBSvars.buildtype == "bioc-longtests":
-        html = 'CHECK'
-    elif BBSvars.buildtype in ["workflows", "books"]:
-        html = 'BUILD'
+def _explain_NA_in_HTML(stage_labels):
+    if 'INSTALL' in stage_labels:
+        stage_labels.remove('INSTALL')
+    if 'BUILD' in stage_labels:
+        stage_labels.remove('BUILD')
+    if len(stage_labels) == 1:
+        html = stage_labels[0]
     else:
-        html = 'BUILD, CHECK or BUILD BIN'
-    html += ' result is not available because of an anomaly ' + \
-            'in the Build System\n'
+        html = '%s or %s' % (', '.join(stage_labels[:-1]), stage_labels[-1])
+    html += ' result is not available because' + \
+            ' of an anomaly in the Build System'
     return html
 
 ### FH: Create checkboxes to select display types
@@ -259,6 +261,7 @@ def write_explain_glyph_table(out, simple_layout=False):
     out.write('</TD>\n')
     out.write('</TR>\n')
 
+    stage_labels = _get_stage_labels()
     _write_glyph_as_TR(out, "TIMEOUT", _explain_TIMEOUT_in_HTML(), True)
 
     _write_glyph_as_TR(out, "ERROR", _explain_ERROR_in_HTML(), True)
@@ -266,7 +269,7 @@ def write_explain_glyph_table(out, simple_layout=False):
     if buildtype not in ["workflows", "books"]:
         _write_glyph_as_TR(out, "WARNINGS", _explain_WARNINGS_in_HTML(), True)
 
-    explain_html = _explain_OK_in_HTML(_get_stage_labels(), simple_layout)
+    explain_html = _explain_OK_in_HTML(stage_labels, simple_layout)
     _write_glyph_as_TR(out, "OK", explain_html, True)
 
     ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e.
@@ -278,7 +281,8 @@ def write_explain_glyph_table(out, simple_layout=False):
     if buildtype not in ["workflows", "books", "bioc-longtests"]:
         _write_glyph_as_TR(out, "skipped", _explain_skipped_in_HTML())
 
-    _write_glyph_as_TR(out, "NA", _explain_NA_in_HTML())
+    explain_html = _explain_NA_in_HTML(stage_labels)
+    _write_glyph_as_TR(out, "NA", explain_html)
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="font-style: italic; border-top: solid black 1px;">')
