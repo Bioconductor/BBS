@@ -227,16 +227,19 @@ def _explain_NotNeeded_in_HTML():
     return 'INSTALL of package was not needed ' + \
            '(click on glyph to see why)'
 
-def _explain_skipped_in_HTML():
-    html = 'CHECK or BUILD BIN ' + \
-           'of package was skipped because the BUILD step failed'
-    return html
-
-def _explain_NA_in_HTML(stage_labels):
+def _explain_skipped_in_HTML(stage_labels):
     if 'INSTALL' in stage_labels:
         stage_labels.remove('INSTALL')
     if 'BUILD' in stage_labels:
         stage_labels.remove('BUILD')
+    if len(stage_labels) == 1:
+        html = stage_labels[0]
+    else:
+        html = '%s or %s' % (', '.join(stage_labels[:-1]), stage_labels[-1])
+    html += ' of package was skipped because the BUILD step failed'
+    return html
+
+def _explain_NA_in_HTML(stage_labels):
     if len(stage_labels) == 1:
         html = stage_labels[0]
     else:
@@ -279,7 +282,8 @@ def write_explain_glyph_table(out, simple_layout=False):
     #    _write_glyph_as_TR(out, "NotNeeded", _explain_NotNeeded_in_HTML())
 
     if buildtype not in ["workflows", "books", "bioc-longtests"]:
-        _write_glyph_as_TR(out, "skipped", _explain_skipped_in_HTML())
+        explain_html = _explain_skipped_in_HTML(stage_labels)
+        _write_glyph_as_TR(out, "skipped", explain_html)
 
     explain_html = _explain_NA_in_HTML(stage_labels)
     _write_glyph_as_TR(out, "NA", explain_html)
