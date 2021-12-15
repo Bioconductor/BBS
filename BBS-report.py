@@ -241,6 +241,15 @@ def _explain_NotNeeded_in_HTML():
     return 'INSTALL of package was not needed ' + \
            '(click on glyph to see why)'
 
+def _explain_NA_in_HTML(stage_labels):
+    if len(stage_labels) == 1:
+        html = stage_labels[0]
+    else:
+        html = '%s or %s' % (', '.join(stage_labels[:-1]), stage_labels[-1])
+    html += ' result is not available because' + \
+            ' of an anomaly in the Build System'
+    return html
+
 def _explain_skipped_in_HTML(stage_labels):
     labels = []
     if 'CHECK' in stage_labels:
@@ -252,15 +261,6 @@ def _explain_skipped_in_HTML(stage_labels):
     else:
         html = '%s or %s' % (', '.join(labels[:-1]), labels[-1])
     html += ' of package was skipped because the BUILD step failed'
-    return html
-
-def _explain_NA_in_HTML(stage_labels):
-    if len(stage_labels) == 1:
-        html = stage_labels[0]
-    else:
-        html = '%s or %s' % (', '.join(stage_labels[:-1]), stage_labels[-1])
-    html += ' result is not available because' + \
-            ' of an anomaly in the Build System'
     return html
 
 ### FH: Create checkboxes to select display types
@@ -300,13 +300,13 @@ def write_explain_glyph_table(out, simple_layout=False):
     #if buildtype not in ["workflows", "books", "bioc-longtests"]:
     #    _write_glyph_as_TR(out, "NotNeeded", _explain_NotNeeded_in_HTML())
 
+    explain_html = _explain_NA_in_HTML(stage_labels)
+    _write_glyph_as_TR(out, "NA", explain_html)
+
     if not simple_layout and \
        ('CHECK' in stage_labels or 'BUILD BIN' in stage_labels):
         explain_html = _explain_skipped_in_HTML(stage_labels)
         _write_glyph_as_TR(out, "skipped", explain_html)
-
-    explain_html = _explain_NA_in_HTML(stage_labels)
-    _write_glyph_as_TR(out, "NA", explain_html)
 
     out.write('<TR>\n')
     out.write('<TD COLSPAN="2" style="font-style: italic; border-top: solid black 1px;">')
