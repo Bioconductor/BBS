@@ -832,6 +832,8 @@ def write_simple_gcard_header(out):
     out.write('<TD>Package</TD>')
     out.write('<TD>Maintainer</TD>')
     stage_labels = _get_stage_labels()
+    if 'BUILD BIN' in stage_labels:
+        stage_labels.remove('BUILD BIN')
     out.write('<TD class="STAGE">%s</TD>' % '/'.join(stage_labels))
     out.write('<TD></TD>')
     out.write('</TR>\n')
