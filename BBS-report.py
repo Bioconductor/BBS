@@ -177,27 +177,35 @@ def _write_glyph_as_TR(out, status, explain_html, toggleable=False):
     out.write('</TR>\n')
     return
 
-def _explain_TIMEOUT_in_HTML():
-    t1 = int(BBSvars.INSTALL_timeout  / 60.0)
-    t2 = int(BBSvars.BUILD_timeout    / 60.0)
-    t3 = int(BBSvars.CHECK_timeout    / 60.0)
-    t4 = int(BBSvars.BUILDBIN_timeout / 60.0)
-    if BBSvars.buildtype == "bioc-longtests":
-        html = 'CHECK of package took more than ' + \
-              '%d minutes' % t3
-    elif BBSvars.buildtype in ["workflows", "books"]:
-        html = 'INSTALL or BUILD of package took more than '
-        if t1 == t2:
-            html += '%d minutes' % t1
-        else:
-            html += '%d or %d minutes, respectively' % (t1, t2)
+def _explain_TIMEOUT_in_HTML(stage_labels):
+    labels = []
+    times = []
+    if 'INSTALL' in stage_labels:
+        labels.append('INSTALL')
+        times.append(int(BBSvars.INSTALL_timeout / 60.0))
+    if 'BUILD' in stage_labels:
+        labels.append('BUILD')
+        times.append(int(BBSvars.BUILD_timeout / 60.0))
+    if 'CHECK' in stage_labels:
+        labels.append('CHECK')
+        times.append(int(BBSvars.CHECK_timeout / 60.0))
+    if 'BUILD BIN' in stage_labels:
+        labels.append('BUILD BIN')
+        times.append(int(BBSvars.BUILDBIN_timeout / 60.0))
+    if len(labels) == 1:
+        html = labels[0]
     else:
-        html = 'INSTALL, BUILD, CHECK or BUILD BIN ' + \
-               'of package took more than '
-        if t1 == t2 and t2 == t3 and t3 == t4:
-            html += '%d minutes' % t1
-        else:
-            html += '%d, %d, %d or %d minutes, respectively' % (t1, t2, t3, t4)
+        html = '%s or %s' % (', '.join(labels[:-1]), labels[-1])
+    html += ' of package took more than '
+    same_times = times[:-1] == times[1:]
+    if same_times:
+        html += str(times[0])
+    else:
+        times = [str(t) for t in times]
+        html += '%s or %s' % (', '.join(times[:-1]), times[-1])
+    html += ' minutes'
+    if not same_times:
+        html += ', respectively'
     return html
 
 def _explain_ERROR_in_HTML(stage_labels):
@@ -272,7 +280,9 @@ def write_explain_glyph_table(out, simple_layout=False):
     out.write('</TR>\n')
 
     stage_labels = _get_stage_labels()
-    _write_glyph_as_TR(out, "TIMEOUT", _explain_TIMEOUT_in_HTML(), True)
+
+    explain_html = _explain_TIMEOUT_in_HTML(stage_labels)
+    _write_glyph_as_TR(out, "TIMEOUT", explain_html, True)
 
     explain_html = _explain_ERROR_in_HTML(stage_labels)
     _write_glyph_as_TR(out, "ERROR", explain_html, True)
