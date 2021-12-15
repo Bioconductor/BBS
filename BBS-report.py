@@ -242,11 +242,11 @@ def _explain_NotNeeded_in_HTML():
            '(click on glyph to see why)'
 
 def _explain_skipped_in_HTML(stage_labels):
-    labels = stage_labels.copy()
-    if 'INSTALL' in labels:
-        labels.remove('INSTALL')
-    if 'BUILD' in labels:
-        labels.remove('BUILD')
+    labels = []
+    if 'CHECK' in stage_labels:
+        labels.append('CHECK')
+    if 'BUILD BIN' in stage_labels:
+        labels.append('BUILD BIN')
     if len(labels) == 1:
         html = labels[0]
     else:
@@ -300,7 +300,8 @@ def write_explain_glyph_table(out, simple_layout=False):
     #if buildtype not in ["workflows", "books", "bioc-longtests"]:
     #    _write_glyph_as_TR(out, "NotNeeded", _explain_NotNeeded_in_HTML())
 
-    if buildtype not in ["workflows", "books", "bioc-longtests"]:
+    if not simple_layout and \
+       ('CHECK' in stage_labels or 'BUILD BIN' in stage_labels):
         explain_html = _explain_skipped_in_HTML(stage_labels)
         _write_glyph_as_TR(out, "skipped", explain_html)
 
