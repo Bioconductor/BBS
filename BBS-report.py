@@ -246,9 +246,10 @@ def _explain_NA_in_HTML():
 ### FH: Create checkboxes to select display types
 def write_explain_glyph_table(out, simple_layout=False):
     buildtype = BBSvars.buildtype
+    wide_table = simple_layout or \
+                 not BBSreportutils.display_propagation_status(buildtype)
     out.write('<FORM action="">\n')
-    width = '800px' if simple_layout else '590px'
-    styles = ['width: %s' % width,
+    styles = ['width: %s' % ('800px' if wide_table else '590px'),
               'border: solid black 1px',
               'border-collapse: collapse']
     out.write('<TABLE style="%s">\n' % ';'.join(styles))
@@ -1779,8 +1780,9 @@ def write_glyph_and_propagation_LED_table(out, simple_layout=False):
     out.write('<TD style="vertical-align: top;">\n')
     write_explain_glyph_table(out, simple_layout)
     out.write('</TD>')
-    if BBSreportutils.display_propagation_status(BBSvars.buildtype) and \
-       not simple_layout:
+    show_LEDs = not simple_layout and \
+                BBSreportutils.display_propagation_status(BBSvars.buildtype)
+    if show_LEDs:
         out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
