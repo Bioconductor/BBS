@@ -131,7 +131,7 @@ def _get_stage_labels():
     stage_labels = []
     buildtype = BBSvars.buildtype
     for stage in BBSreportutils.stages_to_display(buildtype):
-        stage_labels.append(stage_label(stage))
+        stage_labels.append(BBSreportutils.stage_label(stage))
     return stage_labels
 
 ## Produce a SPAN element.
