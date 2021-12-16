@@ -456,12 +456,17 @@ def getSTAGE5cmd(srcpkg_path):
 ## Output files produced by 'R CMD build/check'.
 ##############################################################################
 
-## shutil.copy2() will fail on Windows if a process is sill holding on the
-## file to copy. Similarly shutil.copytree() will fail if a process is still
-## holding on a file located inside the directory to copy. This has been
-## observed for example when calling shutil.copytree() on 'NetSAM.Rcheck'
-## on a Windows build machine right after 'R CMD check' failed. Note that
-## 'R CMD check' failed with:
+## Copying stuff locally can be a real challenge on Windows!
+## It can fail for various reasons e.g. a process holding on the file to
+## copy, or the file path is too long.
+##
+## Example: shutil.copy2() will fail on Windows if a process is sill holding
+## on the file to copy. Similarly shutil.copytree() will fail if a process
+## is still holding on a file located inside the directory to copy, or if the
+## directory contains files with paths that are too long. The first situation
+## has been observed when calling shutil.copytree() on 'NetSAM.Rcheck' on a
+## Windows build machine right after 'R CMD check' failed. Note that the
+## latter failed with:
 ##   ..
 ##   * checking files in 'vignettes' ... OK
 ##   * checking examples ... ERROR
@@ -482,7 +487,8 @@ def getSTAGE5cmd(srcpkg_path):
 ##
 ## because the process holding on 'NetSAM.Rcheck\NetSAM-Ex.Rout' was still
 ## there!
-## The magic wand is to use rsync to copy stuff. Seems to work no matter what.
+## The magic bullet is to use rsync to copy stuff locally. Sounds overkill
+## but it seems to work no matter what.
 def copy_the_damned_thing_no_matter_what(src, destdir):
     bbs.rdir.set_readable_flag(src)
     if sys.platform == 'win32':
