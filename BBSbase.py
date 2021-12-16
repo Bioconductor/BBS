@@ -227,7 +227,15 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
     cmd = 'rm -rf %s && mkdir %s && %s' % (pkg_instdir, pkg_instdir, cmd)
     return cmd
 
-## Crazy long command used on the Windows builders to install target packages.
+## Crazy long command used on the Windows builders to install "light" source
+## tarballs from the target repo located on the central builder. It proceeds
+## in 3 steps:
+##   1. Download the "light" source tarball from the target repo.
+##   2. Build the Windows binary (.zip) from the "light" source tarball.
+##   3. Install the Windows binary with 'R CMD INSTALL'.
+## With this approach, the multiarch installation is guaranteed to be
+## atomic i.e. either the 2 archs get successfully installed or nothing
+## gets installed.
 ## Here is what Dan's commit message says about why BBS uses this long and
 ## complicated compound command to install packages on Windows during STAGE2
 ## (commit 87822fb346e04b4301d0c2efd7ec1a2a8762e93a'):
@@ -341,21 +349,13 @@ def get_update_cmd_for_non_target_pkgs():
     return Rexpr2syscmd(Rexpr)
 
 def getSTAGE2cmd(pkg, version):
-    if sys.platform == 'win32':
-        if BBSvars.STAGE2_mode == 'multiarch':
-            win_archs = _supportedWinArchs(pkg)
-        else:
-            win_archs = None
-        # We use a crazy long command to install target packages from the
-        # target repo on a Windows builder.
-        # See _get_InstallPkgFromTargetRepo_cmd() above for more info.
-        #cmd = _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
-        # No more installation from the target repo.
-        cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
-    else:
-        # Install from local source tree.
-        cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
-    return cmd
+    # We use a crazy long command for multiarch INSTALLs on Windows.
+    # See _get_InstallPkgFromTargetRepo_cmd() above for more info.
+    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
+        win_archs = _supportedWinArchs(pkg)
+        if len(win_archs) == 2:
+            return _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
+    return '%s %s' % (_get_RINSTALL_cmd0(), pkg)
 
 def getSTAGE3cmd(pkgsrctree):
     cmd =  _get_Rbuild_cmd(pkgsrctree) + ' ' + pkgsrctree
