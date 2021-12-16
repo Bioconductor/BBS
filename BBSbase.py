@@ -346,9 +346,12 @@ def getSTAGE2cmd(pkg, version):
             win_archs = _supportedWinArchs(pkg)
         else:
             win_archs = None
-        # We use a crazy long command to install target packages on a Windows
-        # builder. See _get_InstallPkgFromTargetRepo_cmd() above for more info.
-        cmd = _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
+        # We use a crazy long command to install target packages from the
+        # target repo on a Windows builder.
+        # See _get_InstallPkgFromTargetRepo_cmd() above for more info.
+        #cmd = _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
+        # No more installation from the target repo.
+        cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
     else:
         # Install from local source tree.
         cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
