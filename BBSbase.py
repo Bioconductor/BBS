@@ -490,7 +490,13 @@ def copy_the_damned_thing_no_matter_what(src, destdir):
         src = bbs.fileutils.to_cygwin_style(src)
         destdir = bbs.fileutils.to_cygwin_style(destdir)
         cmd = '%s -rL %s %s' % (BBSvars.rsync_cmd, src, destdir)
-        bbs.jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
+        ## Looks like rsync can sometimes have hiccups on Windows where it
+        ## gets stuck forever (timeout) even when trying to perform a local
+        ## copy. So we need to try harder (up to 3 attemps before we give up).
+        #bbs.jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
+        bbs.jobs.tryHardToRunJob(cmd, nb_attempts=3, stdout=None,
+                                 maxtime=60.0, sleeptime=10.0,
+                                 failure_is_fatal=False, verbose=True)
     else:
         print("BBS>   Copying %s to %s/ ..." % (src, destdir), end=" ")
         sys.stdout.flush()
