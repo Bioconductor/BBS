@@ -116,7 +116,7 @@ def build_meat_index(pkgs, meat_path):
     else:
         doing_what += 's in the manifest'
     print('BBS> [build_meat_index] START %s at %s...' % \
-          (doing_what, time.asctime))
+          (doing_what, time.asctime()))
     sys.stdout.flush()
     meat_index_path = os.path.join(BBSvars.work_topdir,
                                    BBSutils.meat_index_file)
