@@ -502,7 +502,7 @@ Add the following lines to the crontab:
     # -------------------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    00 13 * * 1-6 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.15/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1
+    00 12 * * 1-6 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.15/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1
     ```
 
 - For propagation of data annotation packages:
