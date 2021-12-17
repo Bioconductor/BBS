@@ -184,10 +184,10 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var):
     out.write('</PRE>\n')
     return
 
-def make_NodeInfo_page(Node_rdir, node):
+def make_about_node_page(Node_rdir, node):
     page_title = 'More about %s' % node.node_id
-    NodeInfo_page_path = '%s-NodeInfo.html' % node.node_id
-    out = open(NodeInfo_page_path, 'w')
+    about_node_filename = '%s-NodeInfo.html' % node.node_id
+    out = open(about_node_filename, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
@@ -297,7 +297,7 @@ def make_NodeInfo_page(Node_rdir, node):
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
-    return NodeInfo_page_path
+    return about_node_filename
 
 ### Make local copy (and rename) R-instpkgs.txt file.
 ### Returns the 2-string tuple containing the filename of the generated page
@@ -330,7 +330,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
     out.close()
     return (Rinstpkgs_page, str(nline-1))
 
-def write_node_specs_table(out):
+def write_node_specs_table(out, about_node_dir='.'):
     out.write('<TABLE class="node_specs">\n')
     out.write('<TR>')
     out.write('<TH>Hostname</TH>')
@@ -342,11 +342,12 @@ def write_node_specs_table(out):
     products_in_rdir = BBSvars.products_in_rdir
     for node in BBSreportutils.NODES:
         Node_rdir = products_in_rdir.subdir(node.node_id)
-        NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
+        about_node_filename = make_about_node_page(Node_rdir, node)
+        about_node_url = '%s/%s' % (about_node_dir, about_node_filename)
         Rversion_html = read_Rversion(Node_rdir)
         Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
         out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
-        out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (NodeInfo_page_path, node.node_id))
+        out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (about_node_url, node.node_id))
         out.write('<TD>%s</TD>' % node.os_html)
         out.write('<TD>%s</TD>' % node.arch)
         out.write('<TD>%s</TD>' % Rversion_html)
@@ -1694,7 +1695,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
     out.write('<H2>%s</H2>\n' % page_title)
 
     out.write('<BR>\n')
-    write_node_specs_table(out)
+    write_node_specs_table(out, about_node_dir='..')
     out.write('<BR>\n')
 
     write_motd_asTABLE(out)
