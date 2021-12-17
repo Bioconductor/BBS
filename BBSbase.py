@@ -349,13 +349,22 @@ def get_update_cmd_for_non_target_pkgs():
     return Rexpr2syscmd(Rexpr)
 
 def getSTAGE2cmd(pkg, version):
-    # We use a crazy long command for multiarch INSTALLs on Windows.
-    # See _get_InstallPkgFromTargetRepo_cmd() above for more info.
     if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
         win_archs = _supportedWinArchs(pkg)
         if len(win_archs) == 2:
-            return _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
-    return '%s %s' % (_get_RINSTALL_cmd0(), pkg)
+            # Use crazy long command for multiarch INSTALLs.
+            # See _get_InstallPkgFromTargetRepo_cmd() above for more info.
+            cmd = _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
+        else:
+            # Use arch-specific INSTALL command:
+            #   R --arch x64 CMD INSTALL --no-multiarch <pkg>
+            # or:
+            #   R --arch i386 CMD INSTALL --no-multiarch <pkg>
+            cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
+    else:
+        # Use standard INSTALL command: R CMD INSTALL <pkg>
+        cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
+    return cmd
 
 def getSTAGE3cmd(pkgsrctree):
     cmd =  _get_Rbuild_cmd(pkgsrctree) + ' ' + pkgsrctree
