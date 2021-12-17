@@ -26,6 +26,348 @@ import BBSreportutils
 
 
 ##############################################################################
+### General stuff displayed on all pages
+##############################################################################
+
+def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
+    out.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"')
+    out.write(' "http://www.w3.org/TR/html4/loose.dtd">\n')
+    out.write('<HTML>\n')
+    out.write('<HEAD>\n')
+    out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
+    if page_title:
+        title += " - " + page_title
+    out.write('<TITLE>%s</TITLE>\n' % title)
+    if css_file:
+        out.write('<LINK rel="stylesheet" href="%s" type="text/css">\n' % css_file)
+    if js_file:
+        out.write('<SCRIPT type="text/javascript" src="%s"></SCRIPT>\n' % js_file)
+    out.write('</HEAD>\n')
+    return
+
+def write_abc_dispatcher(out, href="", current_letter=None,
+                                       activate_current_letter=False):
+    out.write('<TABLE class="abc_dispatcher"><TR>')
+    for i in range(65,91):
+        letter = chr(i)
+        if letter == current_letter and not activate_current_letter:
+            out.write('<TD style="background: inherit;">%s</TD>' % letter)
+            continue
+        html_letter = '<A href="%s#%s">%s</A>' % (href, letter, letter)
+        if letter == current_letter:
+            html_letter = '<B>[%s]</B>' % html_letter
+        out.write('<TD>%s</TD>' % html_letter)
+    out.write('</TR></TABLE>')
+    return
+
+def write_goback_asHTML(out, href, current_letter=None):
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
+    out.write('<TABLE class="grid_layout"')
+    out.write(' style="width: 100%; background: #EEE;"><TR>')
+    out.write('<TD style="text-align: left; padding: 5px; vertical-align: middle;">')
+    out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % (href, title))
+    out.write('</TD>')
+    if not no_alphabet_dispatch and current_letter != None:
+        out.write('<TD>')
+        write_abc_dispatcher(out, href, current_letter, True)
+        out.write('</TD>')
+    out.write('</TR></TABLE>\n')
+    return
+
+def write_timestamp(out):
+    out.write('<P class="time_stamp">\n')
+    date = bbs.jobs.currentDateString()
+    out.write('This page was generated on %s.\n' % date)
+    out.write('</P>\n')
+    return
+
+def write_motd_asTABLE(out):
+    if not 'BBS_REPORT_MOTD' in os.environ:
+        return
+    motd = os.environ['BBS_REPORT_MOTD']
+    if motd == "":
+        return
+    out.write('<DIV class="motd">\n')
+    out.write('<TABLE>')
+    out.write('<TR><TD>%s</TD></TR>' % motd)
+    out.write('</TABLE>\n')
+    out.write('</DIV>\n')
+    return
+
+def write_notes_to_developer(out, pkg):
+    # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
+    # be the current working directory.
+    if BBSvars.buildtype != "bioc" and not os.path.exists('Renviron.bioc'):
+        return
+    out.write('<DIV class="motd">\n')
+    out.write('<TABLE><TR><TD>\n')
+    out.write('To the developers/maintainers ')
+    out.write('of the %s package:<BR>\n' % pkg)
+    if BBSvars.buildtype == "bioc" and os.path.exists('Renviron.bioc'):
+        prefix = '- '
+    else:
+        prefix = ''
+    if BBSvars.buildtype == "bioc":
+        url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
+        out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
+        out.write('48 hours) for your latest push to ')
+        out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
+        out.write('to<BR>reflect on this report. ')
+        out.write('See <I>How and When does the builder pull? ')
+        out.write('When will my changes propagate?</I> ')
+        out.write('<A href="%s">here</A> for more information.<BR>\n' % url)
+    if os.path.exists('Renviron.bioc'):
+        out.write('%sMake sure to use the ' % prefix)
+        out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
+        out.write('in order to reproduce any error ')
+        out.write('or warning you see on this page.<BR>\n')
+    out.write('</TD></TR></TABLE>\n')
+    out.write('</DIV>\n')
+    return
+
+
+##############################################################################
+### write_node_specs_table()
+##############################################################################
+
+def read_Rversion(Node_rdir):
+    filename = 'NodeInfo/R-version.txt'
+    f = Node_rdir.WOpen(filename)
+    Rversion = bbs.parse.bytes2str(f.readline())
+    f.close()
+    Rversion = Rversion.replace('R version ', '')
+    Rversion_html = Rversion.replace(' ', '&nbsp;')
+    return Rversion_html
+
+def get_Rconfig_value_from_file(Node_rdir, var):
+    filename = 'NodeInfo/R-config.txt'
+    dcf = Node_rdir.WOpen(filename)
+    val = bbs.parse.get_next_DCF_val(dcf, var, True)
+    dcf.close()
+    if val == None:
+        filename = '%s/%s' % (Node_rdir.label, filename)
+        raise bbs.parse.DcfFieldNotFoundError(filename, var)
+    return val
+
+def write_Rconfig_table_from_file(out, Node_rdir, vars):
+    out.write('<TABLE class="Rconfig">\n')
+    out.write('<TR>')
+    out.write('<TD style="background: #CCC; width: 150px;"><I><B>R variable</B> (VAR)</I></TD>')
+    out.write('<TD style="background: #CCC;"><I><B>Value</B> (\'R&nbsp;CMD&nbsp;config&nbsp;&lt;VAR&gt;\' output)</I></TD>')
+    out.write('</TR>\n')
+    for var in vars:
+        val = get_Rconfig_value_from_file(Node_rdir, var)
+        out.write('<TR><TD><B>%s</B></TD><TD>%s</TD></TR>\n' % (var, val))
+    out.write('<TR>')
+    out.write('<TD COLSPAN="2" style="font-size: smaller;">')
+    out.write('<I>Please refer to \'R CMD config -h\' for the meaning of these variables</I>')
+    out.write('</TD>')
+    out.write('</TR>\n')
+    out.write('</TABLE>\n')
+    return
+
+def write_SysCommandVersion_from_file(out, Node_rdir, var):
+    filename = 'NodeInfo/%s-version.txt' % var
+    f = Node_rdir.WOpen(filename, return_None_on_error=True)
+    if f == None:
+        return
+    cmd = get_Rconfig_value_from_file(Node_rdir, var)
+    syscmd = '%s --version' % cmd
+    out.write('<P><B>Compiler version</B> (\'%s\' output):</P>\n' % syscmd)
+    out.write('<PRE style="margin-left: 12px;">\n')
+    for line in f:
+        out.write(bbs.parse.bytes2str(line))
+    f.close()
+    out.write('</PRE>\n')
+    return
+
+def make_NodeInfo_page(Node_rdir, node):
+    page_title = 'More about %s' % node.node_id
+    NodeInfo_page_path = '%s-NodeInfo.html' % node.node_id
+    out = open(NodeInfo_page_path, 'w')
+
+    write_HTML_header(out, page_title, 'report.css')
+    out.write('<BODY>\n')
+    write_goback_asHTML(out, "./index.html")
+    write_timestamp(out)
+    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
+              (node.hostname.replace(".", "_"), page_title))
+    out.write('<BR>\n')
+
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    out.write('<TABLE>\n')
+    out.write('<TR><TD><B>Hostname:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.hostname)
+    out.write('<TR><TD><B>OS:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.os_html)
+    out.write('<TR><TD><B>Arch:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.arch)
+    out.write('<TR><TD><B>Platform:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.platform)
+    out.write('<TR><TD><B>R&nbsp;version:&nbsp;</B></TD><TD>%s</TD></TR>\n' % read_Rversion(Node_rdir))
+    out.write('<TR>')
+    out.write('<TD><B>R&nbsp;environment&nbsp;variables:&nbsp;</B></TD>')
+    out.write('<TD>')
+    # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
+    # be the current working directory.
+    if os.path.exists('Renviron.bioc'):
+        out.write('<A href="%s">%s</A>' % ('Renviron.bioc', 'Renviron.bioc'))
+    else:
+        out.write('none')
+    out.write('</TD>')
+    out.write('</TR>\n')
+    out.write('</TABLE>\n')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>C compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    C_vars = ['CC', 'CFLAGS', 'CPICFLAGS']
+    write_Rconfig_table_from_file(out, Node_rdir, C_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CC')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>C++ compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus_vars = ['CXX', 'CXXFLAGS', 'CXXPICFLAGS']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    #out.write('<H2>C++98 compiler</H2>\n')
+    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    #Cplusplus98_vars = ['CXX98', 'CXX98FLAGS', 'CXX98PICFLAGS', 'CXX98STD']
+    #write_Rconfig_table_from_file(out, Node_rdir, Cplusplus98_vars)
+    #write_SysCommandVersion_from_file(out, Node_rdir, 'CXX98')
+    #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
+
+    out.write('<H2>C++11 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus11_vars = ['CXX11', 'CXX11FLAGS', 'CXX11PICFLAGS', 'CXX11STD']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus11_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX11')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>C++14 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus14_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX14')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>C++17 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus17_vars = ['CXX17', 'CXX17FLAGS', 'CXX17PICFLAGS', 'CXX17STD']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus17_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX17')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    #out.write('<H2>Fortran 77 compiler</H2>\n')
+    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    #Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
+    #write_Rconfig_table_from_file(out, Node_rdir, Fortran77_vars)
+    #write_SysCommandVersion_from_file(out, Node_rdir, 'F77')
+    #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
+
+    #out.write('<H2>Fortran 9x compiler</H2>\n')
+    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    #Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
+    #write_Rconfig_table_from_file(out, Node_rdir, Fortran9x_vars)
+    #write_SysCommandVersion_from_file(out, Node_rdir, 'FC')
+    #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
+
+    out.write('<P>More information might be added in the future...</P>\n')
+
+    out.write('</BODY>\n')
+    out.write('</HTML>\n')
+    out.close()
+    return NodeInfo_page_path
+
+### Make local copy (and rename) R-instpkgs.txt file.
+### Returns the 2-string tuple containing the filename of the generated page
+### and the number of installed pkgs.
+def make_Rinstpkgs_page(Node_rdir, node):
+    page_title = 'R packages installed on %s' % node.node_id
+    Rinstpkgs_page = '%s-R-instpkgs.html' % node.node_id
+    out = open(Rinstpkgs_page, 'w')
+
+    write_HTML_header(out, page_title, 'report.css')
+    out.write('<BODY>\n')
+    write_goback_asHTML(out, "./index.html")
+    write_timestamp(out)
+    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
+              (node.hostname.replace(".", "_"), page_title))
+    out.write('<BR>\n')
+
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    filename = 'NodeInfo/R-instpkgs.txt'
+    out.write('<PRE>\n')
+    f = Node_rdir.WOpen(filename)
+    nline = 0
+    for line in f:
+        out.write(bbs.parse.bytes2str(line))
+        nline += 1
+    f.close()
+    out.write('</PRE>\n')
+    out.write('</DIV></BODY>\n')
+    out.write('</HTML>\n')
+    out.close()
+    return (Rinstpkgs_page, str(nline-1))
+
+def write_node_specs_table(out):
+    out.write('<TABLE class="node_specs">\n')
+    out.write('<TR>')
+    out.write('<TH>Hostname</TH>')
+    out.write('<TH>OS</TH>')
+    out.write('<TH>Arch&nbsp;(*)</TH>')
+    out.write('<TH>R&nbsp;version</TH>')
+    out.write('<TH style="text-align: right;">Installed&nbsp;pkgs</TH>')
+    out.write('</TR>\n')
+    products_in_rdir = BBSvars.products_in_rdir
+    for node in BBSreportutils.NODES:
+        Node_rdir = products_in_rdir.subdir(node.node_id)
+        NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
+        Rversion_html = read_Rversion(Node_rdir)
+        Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
+        out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
+        out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (NodeInfo_page_path, node.node_id))
+        out.write('<TD>%s</TD>' % node.os_html)
+        out.write('<TD>%s</TD>' % node.arch)
+        out.write('<TD>%s</TD>' % Rversion_html)
+        out.write('<TD style="text-align: right;">')
+        out.write('<A href="%s">%s</A>' % Rinstpkgs_strings)
+        out.write('</TD>')
+        out.write('</TR>\n')
+    out.write('<TR>')
+    out.write('<TD COLSPAN="5" style="font-size: smaller;">')
+    out.write('<I>Click on any hostname to see more info ')
+    out.write('about the system (e.g. compilers)')
+    out.write(' &nbsp;&nbsp;&nbsp;&nbsp; ')
+    out.write('(*) as reported by \'uname -p\', ')
+    out.write('except on Windows and Mac OS X</I>')
+    out.write('</TD>')
+    out.write('</TR>\n')
+    out.write('</TABLE>\n')
+    return
+
+
+##############################################################################
 ### write_vcs_meta_for_pkg_as_TABLE()
 ##############################################################################
 
@@ -475,21 +817,6 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
                 out.write('<TD class="%s"></TD>' % TDclasses)
         if BBSreportutils.display_propagation_status(buildtype):
             write_pkg_propagation_status_as_TD(out, pkg, node)
-    return
-
-def write_abc_dispatcher(out, href="", current_letter=None,
-                                       activate_current_letter=False):
-    out.write('<TABLE class="abc_dispatcher"><TR>')
-    for i in range(65,91):
-        letter = chr(i)
-        if letter == current_letter and not activate_current_letter:
-            out.write('<TD style="background: inherit;">%s</TD>' % letter)
-            continue
-        html_letter = '<A href="%s#%s">%s</A>' % (href, letter, letter)
-        if letter == current_letter:
-            html_letter = '<B>[%s]</B>' % html_letter
-        out.write('<TD>%s</TD>' % html_letter)
-    out.write('</TR></TABLE>')
     return
 
 ### Produce 2 full TRs.
@@ -943,133 +1270,6 @@ def _get_Rcheck_path(pkg, node_id):
                         node_id, "checksrc", Rcheck_dir)
     return path
 
-def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
-    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
-    title = BBSreportutils.make_report_title(report_nodes)
-    out.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"')
-    out.write(' "http://www.w3.org/TR/html4/loose.dtd">\n')
-    out.write('<HTML>\n')
-    out.write('<HEAD>\n')
-    out.write('<META http-equiv="Content-Type" content="text/html; charset=UTF-8">\n')
-    if page_title:
-        title += " - " + page_title
-    out.write('<TITLE>%s</TITLE>\n' % title)
-    if css_file:
-        out.write('<LINK rel="stylesheet" href="%s" type="text/css">\n' % css_file)
-    if js_file:
-        out.write('<SCRIPT type="text/javascript" src="%s"></SCRIPT>\n' % js_file)
-    out.write('</HEAD>\n')
-    return
-
-def write_goback_asHTML(out, href, current_letter=None):
-    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
-    title = BBSreportutils.make_report_title(report_nodes)
-    out.write('<TABLE class="grid_layout"')
-    out.write(' style="width: 100%; background: #EEE;"><TR>')
-    out.write('<TD style="text-align: left; padding: 5px; vertical-align: middle;">')
-    out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % (href, title))
-    out.write('</TD>')
-    if not no_alphabet_dispatch and current_letter != None:
-        out.write('<TD>')
-        write_abc_dispatcher(out, href, current_letter, True)
-        out.write('</TD>')
-    out.write('</TR></TABLE>\n')
-    return
-
-def write_timestamp(out):
-    out.write('<P class="time_stamp">\n')
-    date = bbs.jobs.currentDateString()
-    out.write('This page was generated on %s.\n' % date)
-    out.write('</P>\n')
-    return
-
-def write_motd_asTABLE(out):
-    if not 'BBS_REPORT_MOTD' in os.environ:
-        return
-    motd = os.environ['BBS_REPORT_MOTD']
-    if motd == "":
-        return
-    out.write('<DIV class="motd">\n')
-    out.write('<TABLE>')
-    out.write('<TR><TD>%s</TD></TR>' % motd)
-    out.write('</TABLE>\n')
-    out.write('</DIV>\n')
-    return
-
-def write_notes_to_developer(out, pkg):
-    # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
-    # be the current working directory.
-    if BBSvars.buildtype != "bioc" and not os.path.exists('Renviron.bioc'):
-        return
-    out.write('<DIV class="motd">\n')
-    out.write('<TABLE><TR><TD>\n')
-    out.write('To the developers/maintainers ')
-    out.write('of the %s package:<BR>\n' % pkg)
-    if BBSvars.buildtype == "bioc" and os.path.exists('Renviron.bioc'):
-        prefix = '- '
-    else:
-        prefix = ''
-    if BBSvars.buildtype == "bioc":
-        url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
-        out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
-        out.write('48 hours) for your latest push to ')
-        out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
-        out.write('to<BR>reflect on this report. ')
-        out.write('See <I>How and When does the builder pull? ')
-        out.write('When will my changes propagate?</I> ')
-        out.write('<A href="%s">here</A> for more information.<BR>\n' % url)
-    if os.path.exists('Renviron.bioc'):
-        out.write('%sMake sure to use the ' % prefix)
-        out.write('<A href="../%s">following settings</A> ' % 'Renviron.bioc')
-        out.write('in order to reproduce any error ')
-        out.write('or warning you see on this page.<BR>\n')
-    out.write('</TD></TR></TABLE>\n')
-    out.write('</DIV>\n')
-    return
-
-def make_package_index_page(pkg, allpkgs, pkg_rev_deps=None):
-    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
-    #title = BBSreportutils.make_report_title(report_nodes)
-
-    page_title = 'All results for package %s' % pkg
-    out_rURL = os.path.join(pkg, 'index.html')
-    out = open(out_rURL, 'w')
-
-    write_HTML_header(out, page_title, '../report.css', '../report.js')
-    out.write('<BODY onLoad="initialize();">\n')
-    current_letter = pkg[0:1].upper()
-    write_goback_asHTML(out, "../index.html", current_letter)
-    write_timestamp(out)
-    out.write('<H2>%s</H2>\n' % page_title)
-
-    write_motd_asTABLE(out)
-
-    write_notes_to_developer(out, pkg)
-
-    if not no_raw_results:
-        raw_results_rel_url = 'raw-results/'
-        out.write('<P style="text-align: center;">')
-        out.write('<A href="%s">raw results</A>' % raw_results_rel_url)
-        out.write('<P>\n')
-
-    leafreport_ref = LeafReportReference(pkg, None, None, None)
-    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
-
-    if BBSvars.buildtype == "bioc" and len(pkg_rev_deps) != 0:
-        quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
-        out.write('<H3 style="padding: 18px;">')
-        out.write('Results for Bioconductor software packages ')
-        out.write('that depend directly on package %s' % pkg)
-        out.write('</H3>\n')
-        write_gcard_list(out, pkg_rev_deps,
-                         quickstats=quickstats, no_quickstats_links=True,
-                         topdir='..')
-
-    out.write('</BODY>\n')
-    out.write('</HTML>\n')
-    out.close()
-    return
-
 def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<HR>\n<H3>Summary</H3>\n')
     filepath = _get_incoming_raw_result_path(pkg, node_id, stage, 'summary.dcf')
@@ -1478,6 +1678,53 @@ def make_node_LeafReports(allpkgs, node):
     sys.stdout.flush()
     return
 
+def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    #title = BBSreportutils.make_report_title(report_nodes)
+
+    page_title = 'All results for package %s' % pkg
+    out_rURL = os.path.join(pkg, 'index.html')
+    out = open(out_rURL, 'w')
+
+    write_HTML_header(out, page_title, '../report.css', '../report.js')
+    out.write('<BODY onLoad="initialize();">\n')
+    current_letter = pkg[0:1].upper()
+    write_goback_asHTML(out, "../index.html", current_letter)
+    write_timestamp(out)
+    out.write('<H2>%s</H2>\n' % page_title)
+
+    out.write('<BR>\n')
+    write_node_specs_table(out)
+    out.write('<BR>\n')
+
+    write_motd_asTABLE(out)
+
+    write_notes_to_developer(out, pkg)
+
+    if not no_raw_results:
+        raw_results_rel_url = 'raw-results/'
+        out.write('<P style="text-align: center;">')
+        out.write('<A href="%s">raw results</A>' % raw_results_rel_url)
+        out.write('<P>\n')
+
+    leafreport_ref = LeafReportReference(pkg, None, None, None)
+    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
+
+    if BBSvars.buildtype == "bioc" and len(pkg_rev_deps) != 0:
+        quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
+        out.write('<H3 style="padding: 18px;">')
+        out.write('Results for Bioconductor software packages ')
+        out.write('that depend directly on package %s' % pkg)
+        out.write('</H3>\n')
+        write_gcard_list(out, pkg_rev_deps,
+                         quickstats=quickstats, no_quickstats_links=True,
+                         topdir='..')
+
+    out.write('</BODY>\n')
+    out.write('</HTML>\n')
+    out.close()
+    return
+
 def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
     print("BBS> [make_all_LeafReports] Current working dir '%s'" % os.getcwd())
     print("BBS> [make_all_LeafReports] Creating report package subfolders " + \
@@ -1491,7 +1738,7 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
             pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
         else:
             pkg_rev_deps = None
-        make_package_index_page(pkg, allpkgs, pkg_rev_deps)
+        make_package_all_results_page(pkg, allpkgs, pkg_rev_deps)
     print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
@@ -1546,239 +1793,6 @@ def write_CRAN_mainpage_top_asHTML(out, top_right_html=None):
     out.write('<H1>%s</H1>\n' % title)
     write_timestamp(out)
     write_motd_asTABLE(out)
-    return
-
-def read_Rversion(Node_rdir):
-    filename = 'NodeInfo/R-version.txt'
-    f = Node_rdir.WOpen(filename)
-    Rversion = bbs.parse.bytes2str(f.readline())
-    f.close()
-    Rversion = Rversion.replace('R version ', '')
-    Rversion_html = Rversion.replace(' ', '&nbsp;')
-    return Rversion_html
-
-def get_Rconfig_value_from_file(Node_rdir, var):
-    filename = 'NodeInfo/R-config.txt'
-    dcf = Node_rdir.WOpen(filename)
-    val = bbs.parse.get_next_DCF_val(dcf, var, True)
-    dcf.close()
-    if val == None:
-        filename = '%s/%s' % (Node_rdir.label, filename)
-        raise bbs.parse.DcfFieldNotFoundError(filename, var)
-    return val
-
-def write_Rconfig_table_from_file(out, Node_rdir, vars):
-    out.write('<TABLE class="Rconfig">\n')
-    out.write('<TR>')
-    out.write('<TD style="background: #CCC; width: 150px;"><I><B>R variable</B> (VAR)</I></TD>')
-    out.write('<TD style="background: #CCC;"><I><B>Value</B> (\'R&nbsp;CMD&nbsp;config&nbsp;&lt;VAR&gt;\' output)</I></TD>')
-    out.write('</TR>\n')
-    for var in vars:
-        val = get_Rconfig_value_from_file(Node_rdir, var)
-        out.write('<TR><TD><B>%s</B></TD><TD>%s</TD></TR>\n' % (var, val))
-    out.write('<TR>')
-    out.write('<TD COLSPAN="2" style="font-size: smaller;">')
-    out.write('<I>Please refer to \'R CMD config -h\' for the meaning of these variables</I>')
-    out.write('</TD>')
-    out.write('</TR>\n')
-    out.write('</TABLE>\n')
-    return
-
-def write_SysCommandVersion_from_file(out, Node_rdir, var):
-    filename = 'NodeInfo/%s-version.txt' % var
-    f = Node_rdir.WOpen(filename, return_None_on_error=True)
-    if f == None:
-        return
-    cmd = get_Rconfig_value_from_file(Node_rdir, var)
-    syscmd = '%s --version' % cmd
-    out.write('<P><B>Compiler version</B> (\'%s\' output):</P>\n' % syscmd)
-    out.write('<PRE style="margin-left: 12px;">\n')
-    for line in f:
-        out.write(bbs.parse.bytes2str(line))
-    f.close()
-    out.write('</PRE>\n')
-    return
-
-def make_NodeInfo_page(Node_rdir, node):
-    page_title = 'More about %s' % node.node_id
-    NodeInfo_page_path = '%s-NodeInfo.html' % node.node_id
-    out = open(NodeInfo_page_path, 'w')
-
-    write_HTML_header(out, page_title, 'report.css')
-    out.write('<BODY>\n')
-    write_goback_asHTML(out, "./index.html")
-    write_timestamp(out)
-    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
-              (node.hostname.replace(".", "_"), page_title))
-    out.write('<BR>\n')
-
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    out.write('<TABLE>\n')
-    out.write('<TR><TD><B>Hostname:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.hostname)
-    out.write('<TR><TD><B>OS:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.os_html)
-    out.write('<TR><TD><B>Arch:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.arch)
-    out.write('<TR><TD><B>Platform:&nbsp;</B></TD><TD>%s</TD></TR>\n' % node.platform)
-    out.write('<TR><TD><B>R&nbsp;version:&nbsp;</B></TD><TD>%s</TD></TR>\n' % read_Rversion(Node_rdir))
-    out.write('<TR>')
-    out.write('<TD><B>R&nbsp;environment&nbsp;variables:&nbsp;</B></TD>')
-    out.write('<TD>')
-    # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
-    # be the current working directory.
-    if os.path.exists('Renviron.bioc'):
-        out.write('<A href="%s">%s</A>' % ('Renviron.bioc', 'Renviron.bioc'))
-    else:
-        out.write('none')
-    out.write('</TD>')
-    out.write('</TR>\n')
-    out.write('</TABLE>\n')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
-
-    out.write('<H2>C compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    C_vars = ['CC', 'CFLAGS', 'CPICFLAGS']
-    write_Rconfig_table_from_file(out, Node_rdir, C_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CC')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
-
-    out.write('<H2>C++ compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus_vars = ['CXX', 'CXXFLAGS', 'CXXPICFLAGS']
-    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
-
-    #out.write('<H2>C++98 compiler</H2>\n')
-    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    #Cplusplus98_vars = ['CXX98', 'CXX98FLAGS', 'CXX98PICFLAGS', 'CXX98STD']
-    #write_Rconfig_table_from_file(out, Node_rdir, Cplusplus98_vars)
-    #write_SysCommandVersion_from_file(out, Node_rdir, 'CXX98')
-    #out.write('</DIV>\n')
-    #
-    #out.write('<HR>\n')
-
-    out.write('<H2>C++11 compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus11_vars = ['CXX11', 'CXX11FLAGS', 'CXX11PICFLAGS', 'CXX11STD']
-    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus11_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX11')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
-
-    out.write('<H2>C++14 compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
-    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus14_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX14')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
-
-    out.write('<H2>C++17 compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus17_vars = ['CXX17', 'CXX17FLAGS', 'CXX17PICFLAGS', 'CXX17STD']
-    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus17_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX17')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
-
-    #out.write('<H2>Fortran 77 compiler</H2>\n')
-    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    #Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
-    #write_Rconfig_table_from_file(out, Node_rdir, Fortran77_vars)
-    #write_SysCommandVersion_from_file(out, Node_rdir, 'F77')
-    #out.write('</DIV>\n')
-    #
-    #out.write('<HR>\n')
-
-    #out.write('<H2>Fortran 9x compiler</H2>\n')
-    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    #Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
-    #write_Rconfig_table_from_file(out, Node_rdir, Fortran9x_vars)
-    #write_SysCommandVersion_from_file(out, Node_rdir, 'FC')
-    #out.write('</DIV>\n')
-    #
-    #out.write('<HR>\n')
-
-    out.write('<P>More information might be added in the future...</P>\n')
-
-    out.write('</BODY>\n')
-    out.write('</HTML>\n')
-    out.close()
-    return NodeInfo_page_path
-
-### Make local copy (and rename) R-instpkgs.txt file.
-### Returns the 2-string tuple containing the filename of the generated page
-### and the number of installed pkgs.
-def make_Rinstpkgs_page(Node_rdir, node):
-    page_title = 'R packages installed on %s' % node.node_id
-    Rinstpkgs_page = '%s-R-instpkgs.html' % node.node_id
-    out = open(Rinstpkgs_page, 'w')
-
-    write_HTML_header(out, page_title, 'report.css')
-    out.write('<BODY>\n')
-    write_goback_asHTML(out, "./index.html")
-    write_timestamp(out)
-    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
-              (node.hostname.replace(".", "_"), page_title))
-    out.write('<BR>\n')
-
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    filename = 'NodeInfo/R-instpkgs.txt'
-    out.write('<PRE>\n')
-    f = Node_rdir.WOpen(filename)
-    nline = 0
-    for line in f:
-        out.write(bbs.parse.bytes2str(line))
-        nline += 1
-    f.close()
-    out.write('</PRE>\n')
-    out.write('</DIV></BODY>\n')
-    out.write('</HTML>\n')
-    out.close()
-    return (Rinstpkgs_page, str(nline-1))
-
-def write_node_specs_table(out):
-    out.write('<TABLE class="node_specs">\n')
-    out.write('<TR>')
-    out.write('<TH>Hostname</TH>')
-    out.write('<TH>OS</TH>')
-    out.write('<TH>Arch&nbsp;(*)</TH>')
-    out.write('<TH>R&nbsp;version</TH>')
-    out.write('<TH style="text-align: right;">Installed&nbsp;pkgs</TH>')
-    out.write('</TR>\n')
-    products_in_rdir = BBSvars.products_in_rdir
-    for node in BBSreportutils.NODES:
-        Node_rdir = products_in_rdir.subdir(node.node_id)
-        NodeInfo_page_path = make_NodeInfo_page(Node_rdir, node)
-        Rversion_html = read_Rversion(Node_rdir)
-        Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
-        out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
-        out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (NodeInfo_page_path, node.node_id))
-        out.write('<TD>%s</TD>' % node.os_html)
-        out.write('<TD>%s</TD>' % node.arch)
-        out.write('<TD>%s</TD>' % Rversion_html)
-        out.write('<TD style="text-align: right;">')
-        out.write('<A href="%s">%s</A>' % Rinstpkgs_strings)
-        out.write('</TD>')
-        out.write('</TR>\n')
-    out.write('<TR>')
-    out.write('<TD COLSPAN="5" style="font-size: smaller;">')
-    out.write('<I>Click on any hostname to see more info ')
-    out.write('about the system (e.g. compilers)')
-    out.write(' &nbsp;&nbsp;&nbsp;&nbsp; ')
-    out.write('(*) as reported by \'uname -p\', ')
-    out.write('except on Windows and Mac OS X</I>')
-    out.write('</TD>')
-    out.write('</TR>\n')
-    out.write('</TABLE>\n')
     return
 
 def write_propagation_LED_table(out):

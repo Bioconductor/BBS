@@ -52,11 +52,11 @@ Notes:
                                  INSTALL     BUILD      CHECK    BUILD BIN
   BiocGenerics 0.41.2 --------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       43.6        1.3       54.2       43.4
-    o palomino (B20ms) . . . .       37.9        5.1     (634.3)
+    o palomino (B20ms) . . . .       37.9        5.1      ERROR
     o palomino2 (F16s_v2)  . .       34.7        4.3       70.3       41.6
   Biostrings 2.63.0 ----------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       79.3      123.6      459.3       88.8
-    o palomino (B20ms) . . . .      165.2      200.1   (TIMEOUT)
+    o palomino (B20ms) . . . .      165.2      200.1      640.0
     o palomino2 (F16s_v2)  . .      135.6      232.3      597.9      105.4
   csaw 1.29.1 ----------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .      123.2       87.9      387.1       74.6
@@ -92,15 +92,15 @@ Notes:
     o palomino2 (F16s_v2)  . .      116.0      136.1       69.7      131.1
   VariantAnnotation 1.41.3 ---  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       92.2      157.3      386.9       77.3
-    o palomino (B20ms) . . . .      154.8
+    o palomino (B20ms) . . . .      154.8      290.1
     o palomino2 (F16s_v2)  . .      145.1      281.2      694.2      131.1
   zlibbioc 1.41.0 ------------  ---------  ---------  ---------  ---------
     o riesling1  . . . . . . .       49.6       12.1       25.9       24.3
-    o palomino (B20ms) . . . .       25.0      (23.2)
+    o palomino (B20ms) . . . .       25.0       20.2
     o palomino2 (F16s_v2)  . .       20.7       19.1       30.1       13.2
   ```
   TIMEOUT limit is 80 min.
-  BBS\_BUILD\_NB\_CPU=9 and BBS\_CHECK\_NB\_CPU=10 on palomino (20 logical
+  BBS\_BUILD\_NB\_CPU=8 and BBS\_CHECK\_NB\_CPU=9 on palomino (20 logical
   processors).
   BBS\_BUILD\_NB\_CPU=12 and BBS\_CHECK\_NB\_CPU=13 on palomino2 (16 logical
   processors).
