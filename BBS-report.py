@@ -304,8 +304,8 @@ def make_about_node_page(Node_rdir, node):
 ### and the number of installed pkgs.
 def make_Rinstpkgs_page(Node_rdir, node):
     page_title = 'R packages installed on %s' % node.node_id
-    Rinstpkgs_page = '%s-R-instpkgs.html' % node.node_id
-    out = open(Rinstpkgs_page, 'w')
+    Rinstpkgs_filename = '%s-R-instpkgs.html' % node.node_id
+    out = open(Rinstpkgs_filename, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
@@ -328,7 +328,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
     out.write('</DIV></BODY>\n')
     out.write('</HTML>\n')
     out.close()
-    return (Rinstpkgs_page, str(nline-1))
+    return (Rinstpkgs_filename, str(nline-1))
 
 def write_node_specs_table(out, about_node_dir='.'):
     out.write('<TABLE class="node_specs">\n')
@@ -345,14 +345,15 @@ def write_node_specs_table(out, about_node_dir='.'):
         about_node_filename = make_about_node_page(Node_rdir, node)
         about_node_url = '%s/%s' % (about_node_dir, about_node_filename)
         Rversion_html = read_Rversion(Node_rdir)
-        Rinstpkgs_strings = make_Rinstpkgs_page(Node_rdir, node)
+        (Rinstpkgs_filename, nb_inst_pkgs) = make_Rinstpkgs_page(Node_rdir, node)
+        Rinstpkgs_url = '%s/%s' % (about_node_dir, Rinstpkgs_filename)
         out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
         out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (about_node_url, node.node_id))
         out.write('<TD>%s</TD>' % node.os_html)
         out.write('<TD>%s</TD>' % node.arch)
         out.write('<TD>%s</TD>' % Rversion_html)
         out.write('<TD style="text-align: right;">')
-        out.write('<A href="%s">%s</A>' % Rinstpkgs_strings)
+        out.write('<A href="%s">%s</A>' % (Rinstpkgs_url, nb_inst_pkgs))
         out.write('</TD>')
         out.write('</TR>\n')
     out.write('<TR>')
