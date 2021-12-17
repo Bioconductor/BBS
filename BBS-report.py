@@ -1596,6 +1596,10 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node_hostname.replace(".", "_"), page_title))
 
+    out.write('<BR>\n')
+    write_node_specs_table(out, about_node_dir='..')
+    out.write('<BR>\n')
+
     write_motd_asTABLE(out)
 
     write_notes_to_developer(out, pkg)
