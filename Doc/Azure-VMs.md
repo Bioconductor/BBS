@@ -166,7 +166,7 @@ Notes:
 Same as palomino except for the size:
   - Size: F16s\_v2
 
-## palomino2
+## palomino3
 
 Same as palomino and palomino2 except for the size:
   - Size: F32s\_v2
