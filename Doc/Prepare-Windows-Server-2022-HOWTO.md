@@ -95,7 +95,7 @@ Also install "Optional quality update" if they are available.
 ### 1.2 Check the disks
 
 A lot of disk space is required to run the builds. Make sure that the machine
-has at least 768GB of available space on one if its disks (`C:`, `D:`, `E:`,
+has at least 768GB of available space on one of its disks (`C:`, `D:`, `E:`,
 or `F:`). On an Azure VM, we use a dedicated data disk for the builds. Note
 that this disk needs to be created as an additional resource (e.g.
 `palomino_DataDisk_0`) and it typically shows up as "Local Disk E:". If the
@@ -498,8 +498,7 @@ the `biocbuild` and `pkgbuild` accounts, respectively).
 Required by MiKTeX command `pdfcrop.exe` and some Bioconductor packages
 like LowMACA.
 
-We use Strawberry Perl available at http://strawberryperl.com (this site
-does not support HTTPS).
+We use Strawberry Perl available at https://strawberryperl.com.
 
 Download installer for Windows 64-bit (`strawberry-perl-5.32.1.1-64bit.msi`
 as of Dec. 2021).
@@ -708,89 +707,54 @@ for Windows Server 2022.
 
 ### 2.5 Install Rtools
 
-TODO: In Dec. 2021, CRAN has switched to a new toolchain to build R and R
-packages. This section still documents installation of the old toolchain,
-Rtools40. Update it to use the new toolchain instead, RTools42, available
-here https://www.r-project.org/nosvn/winutf8/ucrt3/
+In Dec. 2021, CRAN has switched to a new toolchain to build R and R
+packages.
 
 **From a personal administrator account**:
 
-- Go to https://CRAN.R-project.org/bin/windows/Rtools/
+- Go to https://www.r-project.org/nosvn/winutf8/ucrt3/
 
-- Download Rtools40 for Windows 64-bit: `rtools40v2-x86_64.exe`
+- Download Rtools42 for Windows 64-bit: `rtools42-4960-4926.exe`
 
-- Run the installer and keep all the defaults. This will install Rtools40
-  in `C:\rtools40`.
+- Run the installer and keep all the defaults. This will install Rtools42
+  in `C:\rtools42`.
 
 - Do **NOT** follow the "Putting Rtools on the PATH" instructions given
   on Rtools webpage as they put Rtools on the PATH only in the context of
   running R. We want Rtools to **always** be on the PATH, not just in the
   context of an R session.
 
-- **Prepend** `C:\rtools40\usr\bin` and `C:\rtools40\mingw64\bin` to `Path`
-  (see _Edit an environment variable_ in the _Managing environment variables_
+- **Prepend** `C:\rtools42\usr\bin` and `C:\rtools42\x86_64-w64-mingw32.static.posix\bin`
+  to `Path` (see _Edit an environment variable_ in the _Managing environment variables_
   section at the top of this document for how to do this).
 
-  IMPORTANT: On a Windows build machine, `C:\rtools40\usr\bin` and
-  `C:\rtools40\mingw64\bin` should **always be first** in the `Path`.
+  IMPORTANT: On a Windows build machine, `C:\rtools42\usr\bin` and
+  `C:\rtools42\mingw64\bin` should **always be first** in the `Path`.
 
-- Finally, rename the `perl.exe` file located in `C:\rtools40\usr\bin` to
+- Finally, rename the `perl.exe` file located in `C:\rtools42\usr\bin` to
   avoid any conflict with Strawberry Perl (we will install this later).
   E.g. rename to `perl_DO_NOT_USE.exe`.
 
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
 
-    which which     # /usr/bin/which (provided by rtools40)
+    which which     # /usr/bin/which (provided by rtools42)
     which ssh       # /c/cygwin/bin/ssh
-    which rsync     # /usr/bin/rsync, because rsync from rtools40 should be
+    which rsync     # /usr/bin/rsync, because rsync from rtools42 should be
                     # before rsync from Cygwin in Path
-    which curl      # /usr/bin/curl, because curl from rtools40 should be
+    which curl      # /usr/bin/curl, because curl from rtools42 should be
                     # before curl from Cygwin in Path
     which vi        # /c/cygwin/bin/vi
     rsync           # Will crash if 64-bit Cygwin was installed instead
                     # of 32-bit Cygwin!
-    which make      # /usr/bin/make (provided by rtools40)
-    make --version  # GNU Make 4.2.1
-    which gcc       # /mingw64/bin/gcc (provided by rtools40)
-    gcc --version   # gcc.exe (Built by Jeroen for the R-project) 8.3.0
-    which chmod     # /usr/bin/chmod (provided by rtools40)
+    which make      # /usr/bin/make (provided by rtools42)
+    make --version  # GNU Make 4.3
+    which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by rtools42)
+    gcc --version   # gcc.exe (Built by Jeroen for the R-project) 10.3.0
+    which chmod     # /usr/bin/chmod (provided by rtools42)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
-NO LONGER NEEDED (because starting with R 4.2 we no longer build for 32-bit
-Windows): You also need to perform the step below (_Allow cc1plus.exe
-access to a 3GB address space_) or the mzR package won't compile in
-32-bit mode!
-
-
-### 2.6 Allow cc1plus.exe access to a 3GB address space
-
-NO LONGER NEEDED (because starting with R 4.2 we no longer build for 32-bit
-Windows).
-
-`cc1plus.exe` is a 32-bit executable shipped with Rtools. It's located
-in `C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\`.
-
-By default `cc1plus.exe` can only access a 2GB address space. However, in
-order to be able to compile large software projects (e.g. mzR) on 32-bit
-Windows, it needs to be able to access to a 3GB address space. See:
-https://www.intel.com/content/www/us/en/programmable/support/support-resources/knowledge-base/embedded/2016/cc1plus-exe--out-of-memory-allocating-65536-bytes.html
-
-But first we need to get the `editbin` command. We get this command by
-installing Visual Studio Community 2022 **from the Administrator account**.
-Refer to the _Install Visual Studio Community 2022_ section above
-in this document for how to do this.
-
-Then **from the Administrator account** again, in the Developer Command
-Prompt for VS 2022:
-
-    bcdedit /set IncreaseUserVa 3072
-    editbin /LARGEADDRESSAWARE "C:\rtools40\mingw32\lib\gcc\i686-w64-mingw32\8.3.0\cc1plus.exe"
-    # Microsoft (R) COFF/PE Editor Version 14.27.29112.0
-    # Copyright (C) Microsoft Corporation.  All rights reserved.
-
-
-### 2.7 Create and populate C:\extsoft
+### 2.8 Create and populate C:\extsoft
 
 **From a personal administrator account**:
 
@@ -798,13 +762,8 @@ Download `local323.zip`, `spatial324.zip`, and `curl-7.40.0.zip` from
 https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/ and unzip them
 **in that order** in `C:\extsoft`.
 
-When extacting all files from `curl-7.40.0.zip`, you'll be asked if you want
-to replace or skip the files with the same names (these are the `libz.a`
-files located in `lib\i386\` and `lib\x64\`, respectively). Choose "Skip
-these files".
 
-
-### 2.8 Install Pandoc
+### 2.9 Install Pandoc
 
 **From a personal administrator account**:
 
@@ -1013,7 +972,7 @@ Quit R (do NOT save the workspace image).
 From `E:\biocbuild\bbs-3.15-bioc`:
 
     cd R\etc\x64
-    C:\rtools40\usr\bin\cp.exe -i Makeconf Makeconf.original
+    C:\rtools42\usr\bin\cp.exe -i Makeconf Makeconf.original
     vi Makeconf
 
 In `Makeconf`, replace line
@@ -1030,15 +989,14 @@ Save and quit `vi`.
 
 Check your change with:
 
-    C:\rtools40\usr\bin\diff.exe Makeconf Makeconf.original
+    C:\rtools42\usr\bin\diff.exe Makeconf Makeconf.original
 
 TESTING:
 
-- Make sure that the 2 edited files can be accessed from the `pkgbuild`
+- Make sure that the edited file can be accessed from the `pkgbuild`
   account. From the `pkgbuild` account in a PowerShell window:
     ```
-    C:\rtools40\usr\bin\cat E:\biocbuild\bbs-3.15-bioc\R\etc\i386\Makeconf
-    C:\rtools40\usr\bin\cat E:\biocbuild\bbs-3.15-bioc\R\etc\x64\Makeconf
+    C:\rtools42\usr\bin\cat E:\biocbuild\bbs-3.15-bioc\R\etc\x64\Makeconf
     ```
 
 - Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
@@ -1102,7 +1060,6 @@ This can sometimes be remedied by (re)installing Cairo manually from source:
 TESTING: Try to load the package (with `library(Cairo)`) on both archs:
 
     R --arch x64
-    R --arch i386
 
 #### Flush the data caches
 
