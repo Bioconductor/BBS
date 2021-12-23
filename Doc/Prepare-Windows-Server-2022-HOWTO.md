@@ -1212,7 +1212,9 @@ This is needed by CRAN package rjags that various Bioconductor packages
 depend on (CNVrd2, MADSEQ, infercnv).
 
 Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
-on "Download Latest Version" (`JAGS-4.3.0.exe` as of Dec. 2021).
+on "Download Latest Version" (`JAGS-4.3.0.exe` as of Dec. 2021). If
+you are using RTools42 + R UCRT, then download `JAGS-4.3.0.exe` from
+https://www.r-project.org/nosvn/winutf8/ucrt3/extra/jags/ instead.
 
 Use the default settings when running the installer. Make sure that all
 the components to install are checked.
