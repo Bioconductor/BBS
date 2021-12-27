@@ -831,7 +831,7 @@ window and from the `biocbuild` account.
 #### Check that you can ssh to the central builder
 
 Create the `E:\biocbuild\.ssh` folder and populate it with:
-- biocbuild's provate RSA key (copy the `id_rsa` file from another builder).
+- biocbuild's private RSA key (copy the `id_rsa` file from another builder).
 - an SSH config the you copy and adapt from another Windows builder.
 
 Then:
@@ -1148,7 +1148,7 @@ Choose "JDK Download" then download the "Windows x64 Installer"
 
 Use the default settings when running the installer.
 
-Make sure that `C:\rtools40\usr\bin` and `C:\rtools40\mingw64\bin`
+Make sure that `C:\rtools42\usr\bin` and `C:\rtools42\mingw64\bin`
 are still first in the `Path`. In case the JDK installer prepended
 something like `C:\Program Files\Common Files\Oracle\Java\javapath`
 to `Path`, then move it towards the end of `Path` (e.g. anywhere after
@@ -1305,6 +1305,10 @@ This is needed in order to compile the ChemmineOB package.
 Depending on whether the Girke lab provides pre-compiled Windows binaries
 for Open Babel 3 or not, you'll need to follow one of the two methods below.
 
+Note: As of December 2021, the 3.0.0 pre-compiled Windows binary does not
+appear to work with the Rtools42, so you must compile Open Babel 3 from
+source at http://openbabel.org/wiki/Category:Installation.
+
 #### Method 1: Install Open Babel 3 pre-compiled Windows binaries
 
 This is the easiest method.
@@ -1404,7 +1408,7 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
 This is needed by the rmspc package.
 
 Download the Windows x64 Installer for .NET 5.0 Runtime (file
-`dotnet-runtime-5.0.12-win-x64.exe` as of Dec. 2021) from
+`dotnet-runtime-5.0.13-win-x64.exe` as of Dec. 2021) from
 https://dotnet.microsoft.com/download/dotnet/5.0
 
 Run the Installer.
