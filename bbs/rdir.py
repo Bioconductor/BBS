@@ -277,9 +277,9 @@ class RemoteDir:
         ## to make 'tar' work again on it.
         if sys.platform == "win32":
             cmd = "chmod a+r . -R"  # from Cygwin (or Rtools)
-            ## This can time out on Azure VMs debina or palomino when syncing
-            ## the local meat folder with central MEAT0 if 'maxtime' is set
-            ## to 5 min so now we allow 10 min.
+            ## This can time out on Azure VMs palomino or palomino2 when
+            ## syncing the local meat folder with central MEAT0 if 'maxtime'
+            ## is set to 5 min so now we allow 10 min.
             jobs.runJob(cmd, None, 600.0, verbose)
         os.chdir(oldcwd)
         return

@@ -524,17 +524,6 @@ DIV.riesling1 {
     color: #500;
 }
 
-/* debina */
-.debina,
-.gcard TD.debina {
-    background: #F4EFDF;
-}
-.debina.toned_down,
-TR.toned_down .debina,
-TBODY.compact.gcard TR.even_row_number .debina {
-    background: #E4DFCF;
-}
-
 /* palomino */
 .palomino,
 .gcard TD.palomino {
@@ -560,6 +549,20 @@ TBODY.compact.gcard TR.even_row_number .palomino2 {
     background: #E7D3CE;
 }
 DIV.palomino2 {
+    color: #500;
+}
+
+/* palomino3 */
+.palomino3,
+.gcard TD.palomino3 {
+    background: #F7E3DE;
+}
+.palomino3.toned_down,
+TR.toned_down .palomino3,
+TBODY.compact.gcard TR.even_row_number .palomino3 {
+    background: #E7D3CE;
+}
+DIV.palomino3 {
     color: #500;
 }
 
