@@ -147,7 +147,7 @@ def write_BBS_EndOfRun_ticket(ticket):
     file_path = 'BBS_EndOfRun.txt'
     f = open(file_path, 'w')
     for t in ticket:
-        f.write('%s | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
+        f.write('%s | nb_cpu=%d seconds | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
     f.close()
     BBSvars.Node_rdir.Put(file_path, True, True)
     print('BBS> END writing BBS_EndOfRun.txt ticket.')
@@ -751,7 +751,7 @@ if __name__ == "__main__":
         STAGE2()
         dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
-        ticket.append(('STAGE2', started_at, ended_at, dt))
+        ticket.append(('STAGE2', BBSvars.install_nb_cpu, started_at, ended_at, dt))
     ## STAGE3: build source packages
     if stages in ["all", "all-no-bin"] or "STAGE3" in stages:
         started_at = bbs.jobs.currentDateString()
@@ -759,7 +759,7 @@ if __name__ == "__main__":
         STAGE3()
         dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
-        ticket.append(('STAGE3', started_at, ended_at, dt))
+        ticket.append(('STAGE3', BBSvars.buildsrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE4: check source packages
     if stages in ["all", "all-no-bin"] or "STAGE4" in stages:
         started_at = bbs.jobs.currentDateString()
@@ -767,7 +767,7 @@ if __name__ == "__main__":
         STAGE4()
         dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
-        ticket.append(('STAGE4', started_at, ended_at, dt))
+        ticket.append(('STAGE4', BBSvars.checksrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE5: build bin packages
     if stages == "all" or "STAGE5" in stages:
         started_at = bbs.jobs.currentDateString()
@@ -775,5 +775,5 @@ if __name__ == "__main__":
         STAGE5()
         dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
-        ticket.append(('STAGE5', started_at, ended_at, dt))
+        ticket.append(('STAGE5', BBSvars.nb_cpu, started_at, ended_at, dt))
     write_BBS_EndOfRun_ticket(ticket)
