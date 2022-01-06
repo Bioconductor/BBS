@@ -147,7 +147,7 @@ def write_BBS_EndOfRun_ticket(ticket):
     file_path = 'BBS_EndOfRun.txt'
     f = open(file_path, 'w')
     for t in ticket:
-        f.write('%s | nb_cpu=%d seconds | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
+        f.write('%s | nb_cpu=%d | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
     f.close()
     BBSvars.Node_rdir.Put(file_path, True, True)
     print('BBS> END writing BBS_EndOfRun.txt ticket.')
