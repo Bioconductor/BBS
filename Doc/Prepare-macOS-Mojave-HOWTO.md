@@ -975,19 +975,6 @@ libraries with:
 
 TESTING: See "Install Java" below in this file for how to test Java/rJava.
 
-#### [OPTIONAL] Try to install RGtk2
-
-From R:
-
-    ## First try to install the binary:
-    install.packages("RGtk2", repos="https://cran.r-project.org")
-
-    ## If there's no binary, try to install from source:
-    install.packages("RGtk2", type="source", repos="https://cran.r-project.org")
-
-See "Install GTK2" below in this file for what is needed in order to
-be able to compile RGtk2.
-
 #### Flush the data caches
 
 When R is updated, it's a good time to flush the cache for AnnotationHub,
@@ -1129,7 +1116,7 @@ as of Nov 2020):
               "magick", "rsvg", "gmp", "xml2", "jpeg", "tiff", "ncdf4",
               "fftw", "fftwtools", "proj4", "textshaping", "ragg",
               "Rmpfr", "pdftools", "av", "rgeos", "sf", "RcppAlgos",
-              "glpkAPI", "RGtk2", "gert", "RPostgres", "RMySQL", "RMariaDB",
+              "glpkAPI", "gert", "RPostgres", "RMySQL", "RMariaDB",
               "protolite", "arrangements", "terra", "PoissonBinomial")
 
 First try to install with:
@@ -1855,48 +1842,7 @@ effect. Then try to build the ImmuneSpaceR package:
     R CMD build ImmuneSpaceR
 
 
-### 4.14 Install GTK2
-
-Download and install with:
-
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs/GTK_2.24.17-X11.pkg
-    sudo installer -allowUntrusted -pkg GTK_2.24.17-X11.pkg -target /
-
-TESTING: Try to install and load the RGtk2 **binary** package:
-
-    install.packages("RGtk2", repos="https://cran.r-project.org")
-    library(RGtk2)
-
-The following is needed only if CRAN package RGtk2 needs to be installed
-from source which is usually NOT the case (most of the time a Mac binary
-should be available on CRAN).
-
-Create `pkg-config` symlink in `/usr/local/bin/` with:
-
-    cd /usr/local/bin/
-    sudo ln -s /Library/Frameworks/GTK+.framework/Resources/bin/pkg-config
-
-Note that starting with El Capitan, the `/usr/bin` folder is locked,
-even for root, so it's not possible to create symlinks in it. See
-https://en.wikipedia.org/wiki/System_Integrity_Protection for more
-info about that security feature.
-
-Try:
-
-    which pkg-config
-
-Then in `/etc/profile` add the following line:
-
-    export PKG_CONFIG_PATH=/Library/Frameworks/GTK+.framework/Resources/lib/pkgconfig:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig:/usr/X11/lib/pkgconfig
-
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then try to install the RGtk2 package *from source*:
-
-    install.packages("RGtk2", type="source", repos="https://cran.r-project.org")
-
-
-### 4.15 Install Infernal
+### 4.14 Install Infernal
 
 Required by Bioconductor package inferrnal.
 
@@ -1917,7 +1863,7 @@ Then try to build the inferrnal package:
     R CMD build inferrnal
 
 
-### 4.16 Install mono
+### 4.15 Install mono
 
 Required by Bioconductor package rawrr.
 
@@ -1937,7 +1883,7 @@ Then try to install/build/check the rawrr package:
     R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
 
 
-### 4.17 Install macFUSE
+### 4.16 Install macFUSE
 
 Required by Bioconductor package Travel.
 
@@ -1958,7 +1904,7 @@ TESTING: Try to install the Travel package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.18 Install .NET 5.0 Runtime
+### 4.17 Install .NET 5.0 Runtime
 
 Required by Bioconductor package rmspc.
 
@@ -1980,7 +1926,7 @@ You might need to logout and login again before trying this:
     R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
 
 
-### 4.19 [OPTIONAL] Install autoconf & automake
+### 4.18 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -2000,7 +1946,7 @@ Then try to install the flowWorkspace package *from source*:
     BiocManager::install("flowWorkspace", type="source")
 
 
-### 4.20 [OPTIONAL] Install ImageMagick
+### 4.19 [OPTIONAL] Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
 package, which is now officially deprecated)
