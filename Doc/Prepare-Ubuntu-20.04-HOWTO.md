@@ -847,8 +847,6 @@ Then from R:
     install.packages("minqa", repos="https://cran.r-project.org")
     # a possibly difficult package:
     install.packages("rJava", repos="https://cran.r-project.org")
-    # another possibly difficult package:
-    install.packages("RGtk2", repos="https://cran.r-project.org")
 
 #### Install BiocManager + BiocCheck
 
