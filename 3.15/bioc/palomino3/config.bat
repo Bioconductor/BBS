@@ -19,10 +19,10 @@ set BBS_CHECK_NB_CPU=20
 set BBS_BUILD_TIMEOUT=4800
 set BBS_CHECK_TIMEOUT=4800
 
-@rem Central build node is nebbiolo2 at DFCI.
-set BBS_CENTRAL_RHOST=nebbiolo2
+@rem Central build node is nebbiolo1 at DFCI.
+set BBS_CENTRAL_RHOST=nebbiolo1
 set BBS_RSH_CMD=ssh -F /cygdrive/f/biocbuild/.ssh/config
-set BBS_CENTRAL_ROOT_URL=http://155.52.207.166
+set BBS_CENTRAL_ROOT_URL=http://155.52.207.165
 set BBS_PRODUCT_TRANSMISSION_MODE=asynchronous
 
 

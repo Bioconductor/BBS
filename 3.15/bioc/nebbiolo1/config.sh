@@ -35,7 +35,7 @@ cd "$wd0"
 # central node
 
 # Control propagation:
-export BBS_OUTGOING_MAP="source:nebbiolo1/buildsrc mac.binary:merida1/buildbin"
+export BBS_OUTGOING_MAP="source:nebbiolo1/buildsrc win.binary:palomino3 mac.binary:merida1/buildbin"
 export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/bioc"
 
 # Control generation of the report:
