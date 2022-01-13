@@ -1187,9 +1187,8 @@ def make_pkg_overall_status_HTML(pkg, statuses, topdir='.'):
     else:
         overall_status = 'unknown'
     html = _status_as_glyph(overall_status)
-    if overall_status != 'NA':
-        pkgdir = '%s/%s' % (topdir, pkg)
-        html = _make_link_with_mouseover(pkgdir, html)
+    pkgdir = '%s/%s' % (topdir, pkg)
+    html = _make_link_with_mouseover(pkgdir, html)
     return html
 
 ### Produces one full TR with 5 TDs in it.
