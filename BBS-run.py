@@ -11,6 +11,7 @@ import sys
 import os
 import time
 import urllib.request
+from functools import lru_cache
 
 import bbs.fileutils
 import bbs.parse
@@ -153,7 +154,10 @@ def write_BBS_EndOfRun_ticket(ticket):
     print('BBS> END writing BBS_EndOfRun.txt ticket.')
     return
 
-def extractTargetPkgListFromMeatIndex():
+## Get list of target packages from meat index file located on central
+## builder. Memoized.
+@lru_cache  # clear cache with get_list_of_target_pkgs.cache_clear()
+def get_list_of_target_pkgs():
     pkgType = BBSutils.getNodeSpec(BBSvars.node_hostname, 'pkgType')
     Central_rdir = BBSvars.Central_rdir
     dcf = Central_rdir.WOpen(BBSutils.meat_index_file)
@@ -166,7 +170,7 @@ def extractTargetPkgListFromMeatIndex():
 def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
     print('BBS> Get list of source tarballs to %s ...' % stage_label, end=' ')
     sys.stdout.flush()
-    target_pkgs = extractTargetPkgListFromMeatIndex()
+    target_pkgs = get_list_of_target_pkgs()
     stage = 'buildsrc'
     ok_statuses = ['OK', 'WARNINGS']
     srcpkg_files = []
@@ -428,7 +432,7 @@ def STAGE2():
         sys.stdout.flush()
 
     # Extract list of target packages.
-    target_pkgs = extractTargetPkgListFromMeatIndex()
+    target_pkgs = get_list_of_target_pkgs()
 
     # Get 'pkg_dep_graph' and 'installed_pkgs'.
     pkg_dep_graph = build_pkg_dep_graph(target_pkgs)
@@ -548,7 +552,7 @@ def STAGE3():
     # skipped STAGE2 (e.g. bioc-longtests builds).
     makeNodeInfo()
     print("BBS> [STAGE3] cd BBS_MEAT_PATH")
-    target_pkgs = extractTargetPkgListFromMeatIndex()
+    target_pkgs = get_list_of_target_pkgs()
     meat_path = BBSvars.meat_path
     if BBSvars.buildtype == "bioc-longtests":
         bbs.fileutils.remake_dir(meat_path, ignore_errors=True)
