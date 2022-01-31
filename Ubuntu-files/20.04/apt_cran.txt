@@ -1,4 +1,5 @@
 # APT packages needed for CRAN packages
+cmake                   # for nloptr
 libglu1-mesa-dev        # for rgl
 librsvg2-dev            # for rsvg
 libgmp-dev              # for gmp
