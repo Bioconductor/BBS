@@ -1171,17 +1171,11 @@ Note that `library(rJava)` should fail in 32-bit R (e.g. in an R session
 started with `R\bin\R --arch i386`).
 
 
-### 4.2 Install libxml2 and google protocol buffer
+### 4.2 Install libxml2
 
-OCT 2021: THIS IS NO LONGER NEEDED! It seems that recent versions of
-Bioconductor packages RProtoBufLib and flowWorkspace can be compiled
-without this.
+This is needed in order to compile the NetPathMiner package.
 
-This is needed in order to compile the RProtoBufLib and flowWorkspace
-packages.
-
-Download libxml2 (`libxml2.zip`) and Google protocol buffer
-(`protobuf-3.13.0.zip`) binaries for Windows from:
+Download libxml2 (`libxml2.zip`) the binary for Windows from
 
   https://rglab.github.io/binaries/
 
@@ -1198,12 +1192,11 @@ for how to do this). Make sure to use `/` instead of `\` as the directory
 delimiter.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to compile the flowWorkspace package e.g.
+if you were already logged on) try to compile the NetPathMiner package e.g.
 open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
-    ..\R\bin\R CMD INSTALL RProtoBufLib
-    ..\R\bin\R CMD INSTALL flowWorkspace
+    ..\R\bin\R CMD INSTALL NetPathMiner
 
 
 ### 4.3 Install JAGS
@@ -1417,6 +1410,34 @@ TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on), in a PowerShell window:
 
     which dotnet    # /c/Program Files/dotnet/dotnet
+
+
+### 4.11 Install protocol buffer
+
+OCT 2021: THIS IS NO LONGER NEEDED! It seems that recent versions of
+Bioconductor packages RProtoBufLib and flowWorkspace can be compiled
+without this.
+
+This is needed in order to compile the RProtoBufLib and flowWorkspace
+packages.
+
+Extract all the files to to `C:\protobuf`. Note that if, after extraction,
+the protobuf files end up being extracted in `C:\protobuf\protobuf` rather
+than in `C:\protobuf`, then you need to get rid of that extra level of nesting.
+
+Set environment variables `LIB_PROTOBUF` to `C:/protobuf`
+(see _Edit an environment variable_ in the _Managing environment variables_
+section at the top of this document for how to do this). Make sure to use `/`
+instead of `\` as the directory
+delimiter.
+
+TESTING: From the `biocbuild` account (log out and on again from this account
+if you were already logged on) try to compile the flowWorkspace package e.g.
+open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
+s folder will be automatically created after the 1st build run), then:
+
+    ..\R\bin\R CMD INSTALL RProtoBufLib
+    ..\R\bin\R CMD INSTALL flowWorkspace
 
 
 
