@@ -364,6 +364,9 @@ def getSTAGE2cmd(pkg, version):
     else:
         # Use standard INSTALL command: R CMD INSTALL <pkg>
         cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
+    prepend = _get_prepend_from_BBSoptions(pkg, 'INSTALL')
+    if prepend != None and prepend != '':
+        cmd = '%s %s' % (prepend, cmd)
     return cmd
 
 def getSTAGE3cmd(pkgsrctree):
