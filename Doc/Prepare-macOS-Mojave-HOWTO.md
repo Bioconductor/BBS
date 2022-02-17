@@ -1128,7 +1128,7 @@ doing it as it will be able to install many dependencies from source.
 Then try to install the binaries built with the current R release:
 
     contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.1"
-    install.packages(difficult_pkgs, contriburl=contriburl)
+    install.packages(setdiff(difficult_pkgs, rownames(installed.packages())), contriburl=contriburl)
 
 NOTES:
 
