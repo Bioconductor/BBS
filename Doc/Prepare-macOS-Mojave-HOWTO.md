@@ -1481,8 +1481,8 @@ effect. Then try to install the rsbml package *from source*:
 
 ### 4.7 Install CMake
 
-OCT 2020: This is no longer needed. We used to need this only for compiling
-Open Babel from source (Open Babel is needed by the ChemmineOB package).
+Needed for CRAN package `nlopter`, which is used by a few Bioconductor
+packages.
 
 Home page: https://cmake.org/
 
