@@ -750,7 +750,7 @@ in a PowerShell window:
     which make      # /usr/bin/make (provided by rtools42)
     make --version  # GNU Make 4.3
     which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by rtools42)
-    gcc --version   # gcc.exe (Built by Jeroen for the R-project) 10.3.0
+    gcc --version   # gcc.exe (GCC) 10.3.0
     which chmod     # /usr/bin/chmod (provided by rtools42)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
