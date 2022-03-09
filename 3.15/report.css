@@ -524,34 +524,6 @@ DIV.riesling1 {
     color: #500;
 }
 
-/* palomino */
-.palomino,
-.gcard TD.palomino {
-    background: #F7E3DE;
-}
-.palomino.toned_down,
-TR.toned_down .palomino,
-TBODY.compact.gcard TR.even_row_number .palomino {
-    background: #E7D3CE;
-}
-DIV.palomino {
-    color: #500;
-}
-
-/* palomino2 */
-.palomino2,
-.gcard TD.palomino2 {
-    background: #F7E3DE;
-}
-.palomino2.toned_down,
-TR.toned_down .palomino2,
-TBODY.compact.gcard TR.even_row_number .palomino2 {
-    background: #E7D3CE;
-}
-DIV.palomino2 {
-    color: #500;
-}
-
 /* palomino3 */
 .palomino3,
 .gcard TD.palomino3 {
