@@ -1121,7 +1121,7 @@ as of Nov 2020):
 
 First try to install with:
 
-    install.packages(difficult_pkgs, repos="https://cran.r-project.org")
+    install.packages(setdiff(difficult_pkgs, rownames(installed.packages())), repos="https://cran.r-project.org")
 
 It should fail for most (if not all) packages. However, it's still worth
 doing it as it will be able to install many dependencies from source.
