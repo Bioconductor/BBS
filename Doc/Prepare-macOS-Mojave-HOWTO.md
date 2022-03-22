@@ -700,7 +700,8 @@ packages from source on a Mac builder when the BioC devel builds use R devel.
 However some packages are difficult (e.g. fftwtools) because they require
 system libraries that we don't normally install on a Mac builder. The good
 news is that pre-compiled versions of these libraries are available here:
-https://mac.r-project.org/libs-4/
+https://mac.r-project.org/bin/darwin17/x86_64/ (old location was
+https://mac.r-project.org/libs-4/)
 
 In this section we only describe the case of installing CRAN packages jpeg,
 tiff, and fftwtools, from source, which require system libraries JPEG, TIFF,
@@ -709,6 +710,22 @@ and FFTW, respectively. The prodecure for other CRAN packages is similar.
 UPDATE: We don't need to install any of this! See _What if CRAN doesn't
 provide package binaries for macOS yet?_ subsection in the _Install R_
 section below in this document for a better way to handle this situation.
+
+#### [OPTIONAL] Install libwebp system library
+
+This is only needed if CRAN package jpeg or tiff need to be installed
+from source which is usually NOT the case (most of the time Mac binaries
+for jpeg or tiff should be available on CRAN).
+
+Download and install with:
+
+    cd ~/Downloads/
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/libwebp-1.2.1-darwin.17-x86_64.tar.xz
+    sudo tar fvxJ libwebp-1.2.1-darwin.17-x86_64.tar.xz -C /
+
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
 
 #### [OPTIONAL] Install JPEG system library
 
@@ -719,8 +736,8 @@ available on CRAN).
 Download and install with:
 
     cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/jpeg-9-darwin.17-x86_64.tar.gz
-    sudo tar fvxz jpeg-9-darwin.17-x86_64.tar.gz -C /
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/jpeg-9d-darwin.17-x86_64.tar.xz
+    sudo tar fvxJ jpeg-9d-darwin.17-x86_64.tar.xz -C /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -743,8 +760,8 @@ available on CRAN).
 Download and install with:
 
     cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/tiff-4.1.0-darwin.17-x86_64.tar.gz
-    sudo tar fvxz tiff-4.1.0-darwin.17-x86_64.tar.gz -C /
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/tiff-4.3.0-darwin.17-x86_64.tar.xz
+    sudo tar fvxJ tiff-4.3.0-darwin.17-x86_64.tar.xz -C /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -767,8 +784,8 @@ be available on CRAN).
 Download and install with:
 
     cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/fftw-3.3.8-darwin.17-x86_64.tar.gz
-    sudo tar fvxz fftw-3.3.8-darwin.17-x86_64.tar.gz -C /
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/fftw-3.3.10-darwin.17-x86_64.tar.xz
+    sudo tar fvxJ fftw-3.3.10-darwin.17-x86_64.tar.xz -C /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -1175,6 +1192,25 @@ NOTES:
     #   Graphics API version mismatch
     ```
 
+- Try:
+    ```
+    library(ragg)
+    agg_capture()
+
+    library(ggplot2)
+    ggsave("test.png")
+    ```
+  If these fail with a "Graphics API version mismatch" error, then it
+  means that the ragg package binary (which was built with a previous version
+  of R) is incompatible with this new version of R (current R devel in our
+  case). In this case ragg needs to be installed from source:
+    ```
+    install.packages("ragg", type="source", repos="https://cran.r-project.org")
+    ```
+  Note that installing ragg from source requires the libwebp, JPEG, and TIFF
+  system libraries. See "Additional stuff not needed in normal times" above in
+  this file for how to do this.
+
 
 ### 3.4 Add software builds to biocbuild's crontab
 
@@ -1255,10 +1291,10 @@ be available on CRAN).
 Download and install with:
 
     cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/netcdf-4.7.3-darwin.17-x86_64.tar.gz
-    curl -O https://mac.r-project.org/libs-4/hdf5-1.12.0-darwin.17-x86_64.tar.gz
-    sudo tar fvxz netcdf-4.7.3-darwin.17-x86_64.tar.gz -C /
-    sudo tar fvxz hdf5-1.12.0-darwin.17-x86_64.tar.gz -C /
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/netcdf-4.8.1-darwin.17-x86_64.tar.xz
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/hdf5-1.12.1-darwin.17-x86_64.tar.xz
+    sudo tar fvxJ netcdf-4.8.1-darwin.17-x86_64.tar.xz -C /
+    sudo tar fvxJ hdf5-1.12.1-darwin.17-x86_64.tar.xz -C /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -1280,8 +1316,8 @@ that this takes much longer:
 Download and install with:
 
     cd ~/Downloads/
-    curl -O https://mac.r-project.org/libs-4/gsl-2.6-darwin.17-x86_64.tar.gz
-    sudo tar fvxz gsl-2.6-darwin.17-x86_64.tar.gz -C /
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/gsl-2.7-darwin.17-x86_64.tar.xz
+    sudo tar fvxJ gsl-2.7-darwin.17-x86_64.tar.xz -C /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
