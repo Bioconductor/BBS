@@ -1134,7 +1134,8 @@ as of Nov 2020):
               "fftw", "fftwtools", "proj4", "textshaping", "ragg",
               "Rmpfr", "pdftools", "av", "rgeos", "sf", "RcppAlgos",
               "glpkAPI", "gert", "RPostgres", "RMySQL", "RMariaDB",
-              "protolite", "arrangements", "terra", "PoissonBinomial")
+              "protolite", "arrangements", "terra", "PoissonBinomial",
+              "igraph")
 
 First try to install with:
 
@@ -1210,6 +1211,18 @@ NOTES:
   Note that installing ragg from source requires the libwebp, JPEG, and TIFF
   system libraries. See "Additional stuff not needed in normal times" above in
   this file for how to do this.
+
+- Test GLPK available:
+
+    ```
+    library(igraph)
+    cluster_optimal(make_graph("Zachary"))
+    ```
+  Produces
+    ```
+    Error in cluster_optimal(make_graph("Zachary")) :
+      At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
+    ```
 
 
 ### 3.4 Add software builds to biocbuild's crontab
