@@ -754,16 +754,8 @@ in a PowerShell window:
     which chmod     # /usr/bin/chmod (provided by rtools42)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
-### 2.8 Create and populate C:\extsoft
 
-**From a personal administrator account**:
-
-Download `local323.zip`, `spatial324.zip`, and `curl-7.40.0.zip` from
-https://www.stats.ox.ac.uk/pub/Rtools/goodies/multilib/ and unzip them
-**in that order** in `C:\extsoft`.
-
-
-### 2.9 Install Pandoc
+### 2.8 Install Pandoc
 
 **From a personal administrator account**:
 
@@ -817,7 +809,6 @@ Pandoc e.g.:
     cd E:\biocbuild\bbs-3.15-bioc\meat
     ..\R\bin\R CMD build dagLogo
     ..\R\bin\R CMD build Harman
-
 
 
 ## 3. Set up the Bioconductor software builds
@@ -965,58 +956,6 @@ TESTING: Start R and try to install/compile IRanges, Biobase, and zlibbioc
 
 Quit R (do NOT save the workspace image).
 
-#### Point R to C:/extsoft
-
-`LOCAL_SOFT` needs to be set to `C:/extsoft` in `R\etc\x64\Makeconf`:
-
-From `E:\biocbuild\bbs-3.15-bioc`:
-
-    cd R\etc\x64
-    C:\rtools42\usr\bin\cp.exe -i Makeconf Makeconf.original
-    vi Makeconf
-
-In `Makeconf`, replace line
-
-    LOCAL_SOFT ?=
-
-with
-
-    LOCAL_SOFT = C:/extsoft
-
-Make sure to use a forward slash (`/`) and to not introduce a trailing space!
-
-Save and quit `vi`.
-
-Check your change with:
-
-    C:\rtools42\usr\bin\diff.exe Makeconf Makeconf.original
-
-TESTING:
-
-- Make sure that the edited file can be accessed from the `pkgbuild`
-  account. From the `pkgbuild` account in a PowerShell window:
-    ```
-    C:\rtools42\usr\bin\cat E:\biocbuild\bbs-3.15-bioc\R\etc\x64\Makeconf
-    ```
-
-- Try to compile a package that uses libcurl (provided by `C:\extsoft`) e.g.
-  open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
-  (this folder should be automatically created after the 1st build run), then:
-    ```
-    ..\R\bin\R CMD INSTALL Rhtslib
-    ```
-
-- Try to compile a package that uses the GSL (also provided by `C:\extsoft`):
-    ```
-    ..\R\bin\R CMD INSTALL flowPeaks
-    ..\R\bin\R CMD INSTALL GLAD
-    ..\R\bin\R CMD INSTALL PICS
-    ```
-
-- Try to compile a package that uses netCDF (also provided by `C:\extsoft`):
-    ```
-    ..\R\bin\R CMD INSTALL mzR  # will take about 10-15 min!
-    ```
 
 #### Install BiocCheck
 
