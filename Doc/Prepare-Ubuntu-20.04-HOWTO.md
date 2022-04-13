@@ -464,18 +464,17 @@ https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practi
 
 Notes:
 
-- `scipy` is needed by Bioconductor packages MOFA and MOFA2, but also by
+- `scipy` is needed by Bioconductor package MOFA2 but also by
   the `sklearn` module (when `sklearn` is imported and `scipy` is not present,
   the former breaks). However, for some reason, `sudo -H pip3 install sklearn`
   does not install `scipy` and completes successfully even if `scipy` is
   not installed.
 
 - `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
-  BiocSklearn, MOFA and MOFA2, and `numpy` is also needed by Bioconductor
+  BiocSklearn, MOFA2, and `numpy` is also needed by Bioconductor
   package DChIPRep.
 
-- `mofapy` and `mofapy2` are needed by Bioconductor packages MOFA and MOFA2,
-  respectively.
+- `mofapy2` is needed by Bioconductor package MOFA2.
 
 - `tensorflow` is needed by Bioconductor packages scAlign, netReg, and
   DeepPINCS. Note that trying to load the module in a Python 3 session might
