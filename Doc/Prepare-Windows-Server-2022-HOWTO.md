@@ -286,18 +286,16 @@ No longer needed (as of Nov. 2020):
     #pip install matplotlib phate
 
 Notes:
-- `scipy` is needed by Bioconductor packages MOFA and MOFA2, but also by
+- `scipy` is needed by Bioconductor packages MOFA2 and also by
   the `sklearn` module (when `sklearn` is imported and `scipy` is not present,
   the former breaks). However, for some reason, `pip install sklearn`
   does not install `scipy` and completes successfully even if `scipy` is
   not installed.
 
 - `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
-  BiocSklearn, MOFA and MOFA2, and `numpy` is also needed by Bioconductor
-  package DChIPRep.
+  BiocSklearn, MOFA2, and `numpy` is also needed by Bioconductor package DChIPRep.
 
-- `mofapy` and `mofapy2` are needed by Bioconductor packages MOFA and MOFA2,
-  respectively.
+- `mofapy2` is needed by Bioconductor package MOFA2.
 
 - `tensorflow` is needed by Bioconductor packages scAlign and netReg.
 

@@ -606,8 +606,8 @@ to the `PATH` take effect. Then:
 
 Install Pandoc 2.7.3 instead of the latest Pandoc (2.9.2.1 as of April 2020).
 The latter breaks `R CMD build` for 8 Bioconductor software packages
-(ChIPSeqSpike, FELLA, flowPloidy, MACPET, profileScoreDist, projectR,
-swfdr, and TVTB) with the following error:
+(FELLA, flowPloidy, MACPET, profileScoreDist, projectR, swfdr, and TVTB)
+with the following error:
 
     ! LaTeX Error: Environment cslreferences undefined.
 
