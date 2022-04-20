@@ -1,5 +1,5 @@
 BODY {
-    background: #e4d6ea;
+    background: #fdcbd7; /* e4d6ea */
     padding: 8px;
     font-family: sans-serif;
     font-size: 11pt;
@@ -496,17 +496,17 @@ TBODY.compact.gcard TR.even_row_number .tokay1 {
     background: #DDD3BB;
 }
 
-/* palomino4 */
-.palomino4,
-.gcard TD.palomino4 {
+/* tokay2 */
+.tokay2,
+.gcard TD.tokay2 {
     background: #FAE0DE;
 }
-.palomino4.toned_down,
-TR.toned_down .palomino4,
-TBODY.compact.gcard TR.even_row_number .palomino4 {
+.tokay2.toned_down,
+TR.toned_down .tokay2,
+TBODY.compact.gcard TR.even_row_number .tokay2 {
     background: #EAD0CE;
 }
-DIV.palomino4 {
+DIV.tokay2 {
     color: #500;
 }
 
@@ -524,6 +524,20 @@ DIV.riesling1 {
     color: #500;
 }
 
+/* palomino3 */
+.palomino3,
+.gcard TD.palomino3 {
+    background: #F7E3DE;
+}
+.palomino3.toned_down,
+TR.toned_down .palomino3,
+TBODY.compact.gcard TR.even_row_number .palomino3 {
+    background: #E7D3CE;
+}
+DIV.palomino3 {
+    color: #500;
+}
+
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
@@ -538,14 +552,14 @@ DIV.merida1 {
     color: #050;
 }
 
-/* lconway */
-.lconway,
-.gcard TD.lconway {
+/* machv2 */
+.machv2,
+.gcard TD.machv2 {
     background: #DCEDEA;
 }
-.lconway.toned_down,
-TR.toned_down .lconway,
-TBODY.compact.gcard TR.even_row_number .lconway {
+.machv2.toned_down,
+TR.toned_down .machv2,
+TBODY.compact.gcard TR.even_row_number .machv2 {
     background: #CCDDDA;
 }
 DIV.merida1 {
@@ -563,3 +577,30 @@ TBODY.compact.gcard TR.even_row_number .taxco {
     background: #D8CAE4;
 }
 
+/* lconway */
+.lconway,
+.gcard TD.lconway {
+    background: #f6f4d2;
+}
+.lconway.toned_down,
+TR.toned_down .lconway,
+TBODY.compact.gcard TR.even_row_number .lconway {
+    background: #faf8ce;
+}
+DIV.lconway {
+    color: #fefbca;
+}
+
+/* palomino4 */
+.palomino4,
+.gcard TD.palomino4 {
+    background: #a5d1fc;
+}
+.palomino4.toned_down,
+TR.toned_down .palomino4,
+TBODY.compact.gcard TR.even_row_number .palomino4 {
+    background: #d1e8fe;
+}
+DIV.palomino4 {
+    color: #d5eafe;
+}
