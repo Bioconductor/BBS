@@ -13,7 +13,7 @@ order**:
 - **Second version bump**: bump x.y.z version to odd y **in the `master`
   branch**
 
-For example, for the BioC 3.14 release, we will need to do this for all
+For example, for the BioC 3.15 release, we will need to do this for all
 the packages listed in the `software.txt`, `data-experiment.txt`,
 `workflows.txt`, and `books.txt` files of the `RELEASE_3_14` branch
 of the `manifest` repo.
@@ -23,11 +23,11 @@ This package only needs the new branch and a simple y -> y + 1 version bump.
 
 We'll use Python script `bump_version_and_create_branch.py` to apply and
 push these changes. This will need to be done on the day prior to the release
-before the BioC 3.14 builds start for software, data-experiment, workflow, and
+before the BioC 3.15 builds start for software, data-experiment, workflow, and
 book packages.
 
 Look for the prerun jobs in the crontab for the `biocbuild` user on the main
-BioC 3.14 builder to get the times the software and data-experiment builds get
+BioC 3.15 builder to get the times the software and data-experiment builds get
 kicked off. Make sure to check the crontab again a couple of days before the
 release as we sometimes make small adjustments to the crontabs on the build
 machines.  Also be sure to translate to your local time if you are not on the
@@ -40,7 +40,7 @@ These steps should be performed typically a couple of days before the steps
 in sections **C.** and **D.**.
 
 * Update this document to reflect the BioC version to be released i.e.
-  replace all occurrences of `3.14` and `RELEASE_3_14` with appropriate
+  replace all occurrences of `3.15` and `RELEASE_3_15` with appropriate
   version. This will avoid potentially disastrous mistakes when
   copying/pasting/executing commands from this document.
 
@@ -81,19 +81,19 @@ in sections **C.** and **D.**.
       export BBS_HOME="$HOME/BBS"
 
       # clone `manifest` repo
-      $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_14
+      $BBS_HOME/utils/update_bioc_git_repos.py manifest RELEASE_3_15
 
       # clone software package repos (takes approx. 1h20)
-      time $BBS_HOME/utils/update_bioc_git_repos.py software master RELEASE_3_14
+      time $BBS_HOME/utils/update_bioc_git_repos.py software master RELEASE_3_15
 
       # clone data-experiment package repos (takes approx. 1h50)
-      time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master RELEASE_3_14
+      time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master RELEASE_3_15
 
       # clone workflow package repos (takes approx. 4 min)
-      time $BBS_HOME/utils/update_bioc_git_repos.py workflows master RELEASE_3_14
+      time $BBS_HOME/utils/update_bioc_git_repos.py workflows master RELEASE_3_15
 
       # clone book repos (takes < 1 min)
-      time $BBS_HOME/utils/update_bioc_git_repos.py books master RELEASE_3_14
+      time $BBS_HOME/utils/update_bioc_git_repos.py books master RELEASE_3_15
 
 * Make sure you can push changes to the BioC git server (at
   git.bioconductor.org):
@@ -177,9 +177,9 @@ lines are still active.
 Deactivate all push access by commenting out the `master` lines in
 `gitolite-admin/conf/packages.conf`.
 
-NOTE: Do not change the branch from RELEASE_3_12 to RELEASE_3_14, it is
+NOTE: Do not change the branch from RELEASE_3_12 to RELEASE_3_15, it is
 not a good solution. Maintainers now will be able to push their own
-RELEASE_3_14 branch before we are able to create it at release
+RELEASE_3_15 branch before we are able to create it at release
 time. This issue reflects the issue
 https://stat.ethz.ch/pipermail/bioc-devel/2019-May/015048.html.
 
@@ -212,11 +212,11 @@ agent connection e.g.:
 
 See **B. Preliminary steps** above for the details.
 
-### C5. Checkout/update the `RELEASE_3_14` branch of the `manifest` repo
+### C5. Checkout/update the `RELEASE_3_15` branch of the `manifest` repo
 
     cd ~/git.bioconductor.org/manifest
     git pull --all
-    git checkout RELEASE_3_14
+    git checkout RELEASE_3_15
     git branch
     git status
 
@@ -230,7 +230,7 @@ All the remaining steps in section **C.** must be performed from within
 this folder.
 
 Point `MANIFEST_FILE` to the manifest file for software packages. This must
-be the file from the `RELEASE_3_14` branch of the `manifest` repo:
+be the file from the `RELEASE_3_15` branch of the `manifest` repo:
 
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/software.txt"
 
@@ -242,15 +242,15 @@ of applying and pushing the changes described in **A. Introduction**.
     cd $WORKING_DIR
     pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
     
-    $BBS_HOME/utils/bump_version_and_create_branch.py --push RELEASE_3_14 $pkgs_in_manifest >bump_version_and_create_branch.log 2>&1 &
+    $BBS_HOME/utils/bump_version_and_create_branch.py --push RELEASE_3_15 $pkgs_in_manifest >bump_version_and_create_branch.log 2>&1 &
 
 The `bump_version_and_create_branch.py` run above can be replaced with
 a 2-pass run:
 
     # First pass (apply all the changes but do NOT push them):
-    $BBS_HOME/utils/bump_version_and_create_branch.py RELEASE_3_14 $pkgs_in_manifest >bump_version_and_create_branch.log1 2>&1 &
+    $BBS_HOME/utils/bump_version_and_create_branch.py RELEASE_3_15 $pkgs_in_manifest >bump_version_and_create_branch.log1 2>&1 &
     # Second pass (push all the changes):
-    $BBS_HOME/utils/bump_version_and_create_branch.py --push RELEASE_3_14 $pkgs_in_manifest >bump_version_and_create_branch.log2 2>&1 &
+    $BBS_HOME/utils/bump_version_and_create_branch.py --push RELEASE_3_15 $pkgs_in_manifest >bump_version_and_create_branch.log2 2>&1 &
 
 The 2-pass run can be useful if one wants to inspect the changes before pushing them.
 
@@ -262,7 +262,7 @@ Notes:
 
 * In the 2-pass run, the second pass checks the packages and applies the
   changes only if needed (i.e. if a package does not already have the
-  `RELEASE_3_14` branch) before pushing the changes.
+  `RELEASE_3_15` branch) before pushing the changes.
 
 * If for some reason the `bump_version_and_create_branch.py` script stops
   prematurly, it can be safely re-run with the same arguments. This is
@@ -309,15 +309,15 @@ as follows**:
 
 ## E. Finishing up
 
-### E1. Enable push access to new `RELEASE_3_14` branch
+### E1. Enable push access to new `RELEASE_3_15` branch
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`).
 
 - If not done already, replace all instances of `RELEASE_3_12` with
-  `RELEASE_3_14`.
+  `RELEASE_3_15`.
 
-- Uncomment all `RELEASE_3_14` and `master` lines.
+- Uncomment all `RELEASE_3_15` and `master` lines.
 
 - Run `gitolite setup` from /home/git/repositories to re-enable the hooks.
 
@@ -328,7 +328,7 @@ repo (`git clone git@git.bioconductor.org:gitolite-admin`).
 Check:
 
     git push
-    git checkout RELEASE_3_14
+    git checkout RELEASE_3_15
     git pull
 
 ### E2. Tell people that committing/pushing to the BioC git server can resume
@@ -337,20 +337,20 @@ Announce or ask a core team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
-### E3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_14` on main BioC 3.14 builder
+### E3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_15` on main BioC 3.15 builder
 
-DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.14 builds grab the
-`RELEASE_3_14` branch of all packages instead of their `master` branch.
+DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.15 builds grab the
+`RELEASE_3_15` branch of all packages instead of their `master` branch.
 
-Login to the main BioC 3.14 builder as `biocbuild` and replace
+Login to the main BioC 3.15 builder as `biocbuild` and replace
 
     export BBS_BIOC_GIT_BRANCH="master"
 
 with
 
-    export BBS_BIOC_GIT_BRANCH="RELEASE_3_14"
+    export BBS_BIOC_GIT_BRANCH="RELEASE_3_15"
 
-in `~/BBS/3.14/config.sh`
+in `~/BBS/3.15/config.sh`
 
 Also replace
 
@@ -358,12 +358,12 @@ Also replace
 
 with
 
-    set BBS_BIOC_GIT_BRANCH=RELEASE_3_14
+    set BBS_BIOC_GIT_BRANCH=RELEASE_3_15
 
-in `~/BBS/3.14/config.bat`
+in `~/BBS/3.15/config.bat`
 
-Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.14-bioc/`,
-`~/bbs-3.14-data-experiment/`, `~/bbs-3.14-workflows/`, and `~/bbs-3.14-books/`.
+Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.15-bioc/`,
+`~/bbs-3.15-data-experiment/`, `~/bbs-3.15-workflows/`, and `~/bbs-3.15-books/`.
 They'll get automatically re-created and re-populated when the builds start.
 
 ### E4. Update all core bioconductor packages hosted on github/Bioconductor organization
@@ -395,8 +395,8 @@ The specific function which needs to be run is
 which runs, the function (this essentially does all the work).Be sure
 to edit the release version in the function.
 	
-	clone_and_push_git_repo(package, release="RELEASE_3_14")
+	clone_and_push_git_repo(package, release="RELEASE_3_15")
 
 	
-This function will push the `RELEASE_3_14` branch to github and sync
+This function will push the `RELEASE_3_15` branch to github and sync
 the packages on github.
