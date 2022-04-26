@@ -7,7 +7,7 @@ set BBS_DEBUG=0
 
 set BBS_NODE_HOSTNAME=palomino4
 set BBS_USER=biocbuild
-set BBS_WORK_TOPDIR=C:\Users\biocbuild\bbs-3.16-bioc
+set BBS_WORK_TOPDIR=F:\biocbuild\bbs-3.16-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=18
 set BBS_BUILD_NB_CPU=14
