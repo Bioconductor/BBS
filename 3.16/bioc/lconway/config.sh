@@ -14,7 +14,7 @@ export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.16-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 export BBS_NB_CPU=40        # 48 cores are available
-export BBS_BUILD_CPU=30     # 48 cores are available
+export BBS_BUILD_NB_CPU=30  # 48 cores are available
 export BBS_CHECK_NB_CPU=36  # 48 cores are available
 
 # Central build node is nebbiolo2 at DFCI.
