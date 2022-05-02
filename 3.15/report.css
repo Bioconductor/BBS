@@ -438,28 +438,6 @@ TABLE.abc_dispatcher TD {
  * Node specific background colors
  */
 
-/* malbec1 (Ubuntu 18.04) */
-.malbec1,
-.gcard TD.malbec1 {
-    background: #CADCFA;
-}
-.malbec1.toned_down,
-TR.toned_down .malbec1,
-TBODY.compact.gcard TR.even_row_number .malbec1 {
-    background: #BACCEA;
-}
-
-/* malbec2 (Ubuntu 20.04) */
-.malbec2,
-.gcard TD.malbec2 {
-    background: #DAECFA;
-}
-.malbec2.toned_down,
-TR.toned_down .malbec2,
-TBODY.compact.gcard TR.even_row_number .malbec2 {
-    background: #CADCEA;
-}
-
 /* nebbiolo1 (Ubuntu 20.04) */
 .nebbiolo1,
 .gcard TD.nebbiolo1 {
@@ -483,31 +461,6 @@ TBODY.compact.gcard TR.even_row_number .nebbiolo2 {
 }
 DIV.nebbiolo2 {
     color: #005;
-}
-
-/* tokay1 */
-.tokay1,
-.gcard TD.tokay1 {
-    background: #EEE4CC;
-}
-.tokay1.toned_down,
-TR.toned_down .tokay1,
-TBODY.compact.gcard TR.even_row_number .tokay1 {
-    background: #DDD3BB;
-}
-
-/* tokay2 */
-.tokay2,
-.gcard TD.tokay2 {
-    background: #FAE0DE;
-}
-.tokay2.toned_down,
-TR.toned_down .tokay2,
-TBODY.compact.gcard TR.even_row_number .tokay2 {
-    background: #EAD0CE;
-}
-DIV.tokay2 {
-    color: #500;
 }
 
 /* riesling1 */
