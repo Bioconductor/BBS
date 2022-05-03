@@ -270,7 +270,7 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 **From the Administrator account** in a PowerShell window:
 
     pip install numpy scipy sklearn h5py pandas mofapy mofapy2
-    pip install tensorflow tensorflow_probability
+    pip install tensorflow tensorflow_probability torch
 
 No longer needed (looks like Bioconductor package rhdf5client no longer needs
 this):
