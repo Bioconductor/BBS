@@ -16,6 +16,11 @@ SRC_CONTRIB="$REPOS_ROOT/src/contrib"
 WIN_CONTRIB="$REPOS_ROOT/bin/windows/contrib/$R_VERSION"
 MAC_CONTRIB="$REPOS_ROOT/bin/macosx/contrib/$R_VERSION"
 
+if [ ! -f "$PROPAGATION_DB_FILE" ]; then
+        echo "ERROR: $PROPAGATION_DB_FILE not found. Did postrun.sh run?"
+        exit 1
+fi
+
 update_repo()
 {
 	working_dir="$1"
