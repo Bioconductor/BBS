@@ -24,3 +24,4 @@ jags                    # for rjags
 libprotobuf-dev         # for protolite
 protobuf-compiler       # for protolite
 libglpk-dev             # for glpkAPI and to compile igraph with GLPK support
+libhiredis-dev          # for redux
