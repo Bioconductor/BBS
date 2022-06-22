@@ -17,6 +17,8 @@ import signal
 import datetime
 import time
 import socket
+import notify
+
 if sys.platform == "win32":
     import psutil
     #import win32api
@@ -87,6 +89,11 @@ def call(cmd, check=False):
     # Apparently using "stderr=subprocess.STDOUT" fixes this pb.
     retcode = subprocess.call(cmd, stderr=subprocess.STDOUT, shell=True)
     if check and retcode != 0:
+        subject = f'[BBS] {retcode}'
+        notify.sendtextmail('no-reply@bioconductor.org',
+                            'jennifer.wokaty@gmail.com',
+                            subject,
+                            f'{cmd}')
         raise subprocess.CalledProcessError(retcode, cmd)
     return retcode
 
