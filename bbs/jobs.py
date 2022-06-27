@@ -17,7 +17,7 @@ import signal
 import datetime
 import time
 import socket
-import notify
+import bbs.notify
 
 if sys.platform == "win32":
     import psutil
@@ -89,11 +89,14 @@ def call(cmd, check=False):
     # Apparently using "stderr=subprocess.STDOUT" fixes this pb.
     retcode = subprocess.call(cmd, stderr=subprocess.STDOUT, shell=True)
     if check and retcode != 0:
-        subject = f'[BBS] {retcode}'
-        notify.sendtextmail('no-reply@bioconductor.org',
-                            'jennifer.wokaty@gmail.com',
-                            subject,
-                            f'{cmd}')
+        subject = '[BBS] {}'.format(retcode)
+        bbs.notify.mode = 'do-it'
+        # TODO: Get notification email from config
+        bbs.notify.sendtextmail('no-reply@bioconductor.org',
+                                ['jennifer.wokaty@gmail.com'],
+                                subject,
+                                '{}'.format(cmd))
+        print("Attempted to send notification")
         raise subprocess.CalledProcessError(retcode, cmd)
     return retcode
 
