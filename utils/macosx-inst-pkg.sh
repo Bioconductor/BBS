@@ -31,9 +31,12 @@ elif uname -a | grep -q "Version 13."; then
 elif uname -a | grep -q "Version 15."; then
     # El Capitan builds
     DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
-else
-    # Builds on any macOS >= High Sierra with High Sierra as **target**
+elif uname -a | grep -q "Version 18."; then
+    # Mojave builds (e.g. merida1)
     DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
+else
+    # Builds on any macOS >= Monterey with High Sierra as **target**
+    DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
 fi
 
 
@@ -71,7 +74,7 @@ else
     R_LIBS="`$R_CMD CMD sh -c 'echo "$R_HOME"'`/library"
 fi
 
-R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".")' | $R_CMD --no-echo`
+R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64")' | $R_CMD --no-echo`
 
 R_lib_dir="/Library/Frameworks/R.framework/Versions/$R_xyversion/Resources/lib"
 
