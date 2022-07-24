@@ -31,12 +31,15 @@ elif uname -a | grep -q "Version 13."; then
 elif uname -a | grep -q "Version 15."; then
     # El Capitan builds
     DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
-elif uname -a | grep -q "Version 18."; then
-    # Mojave builds (e.g. merida1)
-    DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
 else
-    # Builds on any macOS >= Monterey with High Sierra as **target**
-    DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
+    # Builds on any macOS >= High Sierra with High Sierra as **target**.
+    # On arm64 systems, libgcc_s.1.dylib is replaced with libgcc_s.1.1.dylib.
+    arch=`uname -m`
+    if [ "$arch" == "x86_64" ]; then
+        DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
+    else
+        DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
+    fi
 fi
 
 
