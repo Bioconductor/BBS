@@ -80,6 +80,12 @@ def update_software(pkg_git_branch=None, manifest_git_branch=None, skip=None):
                                   pkg_git_branch, manifest_git_branch, skip)
     return
 
+def update_data_annotation(pkg_git_branch=None, manifest_git_branch=None, skip=None):
+    pkgsrctree = os.path.join(home, 'git.bioconductor.org', 'data-annotation')
+    update_packages_from_manifest(pkgsrctree, 'data-annotation.txt',
+                                  pkg_git_branch, manifest_git_branch, skip)
+    return
+
 def update_data_experiment(pkg_git_branch=None, manifest_git_branch=None, skip=None):
     pkgsrctree = os.path.join(home, 'git.bioconductor.org', 'data-experiment')
     update_packages_from_manifest(pkgsrctree, 'data-experiment.txt',
@@ -101,7 +107,7 @@ def update_books(pkg_git_branch=None, manifest_git_branch=None, skip=None):
 def usage_msg():
     script_name =  'update_bioc_git_repos.py'
     indent = '                           '
-    pkg_groups = 'software|data-experiment|workflows|books'
+    pkg_groups = 'software|data-annotation|data-experiment|workflows|books'
     usage2 = '[manifest|%s]' % pkg_groups
     usage3 = '[manifest|%s] \\\n%s[master|RELEASE_3_6]' % (pkg_groups, indent)
     usage4 = '[%s] \\\n%s[master|RELEASE_3_6 [master|RELEASE_3_6]]' % \
@@ -154,6 +160,8 @@ if __name__ == '__main__':
         update_manifest(git_branch1)
     elif what == 'software':
         update_software(git_branch1, git_branch2, skip)
+    elif what == 'data-annotation':
+        update_data_annotation(git_branch1, git_branch2, skip)
     elif what == 'data-experiment':
         update_data_experiment(git_branch1, git_branch2, skip)
     elif what == 'workflows':
