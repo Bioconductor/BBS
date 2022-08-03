@@ -79,7 +79,7 @@ def _git_add_DESCRIPTION_and_commit(repo_path, commit_msg):
 
 def _branch_exists(repo_path, branch):
     print('---------------------------------------------------------------')
-    print("### Check if branch %s exists" % branch)
+    print("### Check that %s branch does not already exist" % branch)
     print()
     retcode = _run_git_cmd(repo_path, "checkout %s" % branch, check=False)
     _run_git_cmd(repo_path, "checkout master")
@@ -132,7 +132,7 @@ def _push(repo_path):
     _run_git_cmd(repo_path, "push --all")
     return
 
-def _bump_version_and_create_branch(pkg, branch, push):
+def _bump_version_and_create_branch(pkg, branch, no_bump, push):
     repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
     bbs.gitutils.clone_or_pull_repo(pkg, repo_url, "master",
                                     discard_changes=True, cleanup=True)
@@ -141,39 +141,77 @@ def _bump_version_and_create_branch(pkg, branch, push):
         print("Branch %s already exists ==> skip package" % branch)
         print()
     else:
-        _first_version_bump(pkg, branch)
+        if not no_bump:
+            _first_version_bump(pkg, branch)
         _create_branch(pkg, branch)
-        _second_version_bump(pkg, branch)
+        if not no_bump:
+            _second_version_bump(pkg, branch)
     if push:
         _push(pkg)
     print()
     return
 
-def _bump_versions_and_create_branches(pkgs, branch, push):
+def _bump_versions_and_create_branches(pkgs, branch, no_bump, push):
+    do_what = 'Create' if no_bump else 'Bump version and create'
+    do_what += ' %s branch' % branch
     i = 0
     for pkg in pkgs:
         i += 1
+        for_what = 'for package %s (%d/%d)' % (pkg, i, len(pkgs))
         print('===============================================================')
-        print('Bump version and create branch for package %s (%d/%d)' % \
-              (pkg, i, len(pkgs)))
+        print('%s %s' % (do_what, for_what))
         print('---------------------------------------------------------------')
         print()
-        _bump_version_and_create_branch(pkg, branch, push)
+        _bump_version_and_create_branch(pkg, branch, no_bump, push)
     return
 
-if __name__ == '__main__':
+### Return a dict with 4 key->value pairs:
+###   Key            Value
+###   'no_bump'   -> True or False
+###   'push'      -> True or False
+###   'branch'    -> string
+###   'pkgs'      -> list of strings
+def parse_args(argv):
     usage_msg = 'Usage:\n' + \
-        '    bump_version_and_create_branch.py [--push] branch pkg1 pkg2 ...'
-    argc = len(sys.argv)
-    if argc <= 1:
+        '    bump_version_and_create_branch.py [--no-bump] [--push] branch pkg1 pkg2 ...'
+    if len(argv) < 2:
         sys.exit(usage_msg)
-    arg1 = sys.argv[1]
-    push = arg1 == "--push"
-    if push:
-        pkgs = sys.argv[3:]
-        branch = sys.argv[2]
+    argv = argv[1:]
+    no_bump_idx = -1
+    push_idx = -1
+    for i in range(0, len(argv)):
+        arg = argv[i]
+        if arg == '--no-bump':
+            if no_bump_idx != -1:
+                sys.exit(usage_msg)
+            no_bump_idx = i
+            continue
+        if arg == '--push':
+            if push_idx != -1:
+                sys.exit(usage_msg)
+            push_idx = i
+            continue
+    if no_bump_idx == -1:
+        no_bump = False
     else:
-        pkgs = sys.argv[2:]
-        branch = sys.argv[1]
-    _bump_versions_and_create_branches(pkgs, branch, push)
+        no_bump = True
+        argv.pop(no_bump_idx)
+        if push_idx > no_bump_idx:
+            push_idx -= 1
+    if push_idx == -1:
+        push = False
+    else:
+        push = True
+        argv.pop(push_idx)
+    if len(argv) == 0:
+        sys.exit(usage_msg)
+    branch = argv.pop(0)
+    return {'no_bump': no_bump, 'push': push, 'branch': branch, 'pkgs': argv}
+
+if __name__ == '__main__':
+    parsed_args = parse_args(sys.argv)
+    _bump_versions_and_create_branches(parsed_args['pkgs'],
+                                       parsed_args['branch'],
+                                       parsed_args['no_bump'],
+                                       parsed_args['push'])
 

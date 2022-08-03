@@ -1961,7 +1961,7 @@ def make_CRAN_MainReport(allpkgs, quickstats, simple_layout=False):
 ### Return a dict with 2 key->value pairs:
 ###   Key                       Value
 ###   'no-alphabet-dispatch' -> True or False
-###   'no-raw-results'      -> True or False
+###   'no-raw-results'       -> True or False
 def parse_options(argv):
     usage_msg = 'Usage:\n' + \
         '    BBS-report.py [simple-layout] [no-alphabet-dispatch] [no-raw-results]\n'
