@@ -18,8 +18,13 @@ the packages listed in the `software.txt`, `data-experiment.txt`,
 `workflows.txt`, and `books.txt` files of the `RELEASE_3_14` branch
 of the `manifest` repo.
 
-Note that there is one exception: the BiocVersion package (software package).
-This package only needs the new branch and a simple y -> y + 1 version bump.
+Note that there are some exceptions:
+
+- The BiocVersion package (software package): This package will only need
+  the new branch and a simple y -> y + 1 version bump.
+
+- The data-annotation packages: For these packages we will create the new
+  branch but we won't bump versions.
 
 We'll use Python script `bump_version_and_create_branch.py` to apply and
 push these changes. This will need to be done on the day prior to the release
@@ -73,10 +78,11 @@ in sections **C.** and **D.**.
       mkdir git.bioconductor.org
 
 * Populate `git.bioconductor.org` with git clones of the `manifest` repo
-  and all the package repos (software, data-experiment, workflows, and books).
+  and all the package repos (software, data-annotation, data-experiment,
+  workflows, and books).
   This takes more than 3h so is worth doing in advance e.g. a couple of days
   before the release. It will save time when performing the steps described
-  in sections **C.** and **D.** below on the day prior to the release.
+  in sections **C.**, **D.**, and **E.** below on the day prior to the release.
 
       export BBS_HOME="$HOME/BBS"
 
@@ -85,6 +91,9 @@ in sections **C.** and **D.**.
 
       # clone software package repos (takes approx. 1h20)
       time $BBS_HOME/utils/update_bioc_git_repos.py software master RELEASE_3_15
+
+      # clone data-annotation package repos (takes a couple of minutes)
+      time $BBS_HOME/utils/update_bioc_git_repos.py data-annotation master RELEASE_3_15
 
       # clone data-experiment package repos (takes approx. 1h50)
       time $BBS_HOME/utils/update_bioc_git_repos.py data-experiment master RELEASE_3_15
@@ -271,7 +280,7 @@ Notes:
 
 * A typical error is `Error: duplicate commits` (happened for affyPLM and
   Rdisop first time I tested this). Report these errors to `gitolite`
-  experts Nitesh or Martin. Once the problem is fixed, re-run the script.
+  experts Nitesh and/or Martin. Once the problem is fixed, re-run the script.
 
 ### C8. Check `bump_version_and_create_branch.log`
 
@@ -307,9 +316,29 @@ as follows**:
     export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/books.txt"
 
 
-## E. Finishing up
+## E. Branch creation for data-annotation packages
 
-### E1. Enable push access to new `RELEASE_3_15` branch
+Note that for data-annotation packages we **create the new branch WITHOUT
+BUMPING VERSIONS**.
+
+Repeat steps C5 to C8 above **but for C6 define the environment variables
+as follows**:
+
+    export WORKING_DIR="$HOME/git.bioconductor.org/data-annotation"
+    export MANIFEST_FILE="$HOME/git.bioconductor.org/manifest/data-annotation.txt"
+
+Then for C7, **make sure to call the `bump_version_and_create_branch.py`
+script with the `--no-bump` option**:
+
+    cd $WORKING_DIR
+    pkgs_in_manifest=`grep 'Package: ' $MANIFEST_FILE | sed 's/Package: //g'`
+    
+    $BBS_HOME/utils/bump_version_and_create_branch.py --no-bump --push RELEASE_3_15 $pkgs_in_manifest >bump_version_and_create_branch.log 2>&1 &
+
+
+## F. Finishing up
+
+### F1. Enable push access to new `RELEASE_3_15` branch
 
 This is done by editing the `conf/packages.conf` file in the `gitolite-admin`
 repo (`git clone git@git.bioconductor.org:gitolite-admin`).
@@ -331,13 +360,13 @@ Check:
     git checkout RELEASE_3_15
     git pull
 
-### E2. Tell people that committing/pushing to the BioC git server can resume
+### F2. Tell people that committing/pushing to the BioC git server can resume
 
 Announce or ask a core team member to announce on the bioc-devel mailing list
 that committing/pushing changes to the BioC git server (git.bioconductor.org)
 can resume.
 
-### E3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_15` on main BioC 3.15 builder
+### F3. Switch `BBS_BIOC_GIT_BRANCH` from `master` to `RELEASE_3_15` on main BioC 3.15 builder
 
 DON'T FORGET THIS STEP! Its purpose is to make the BioC 3.15 builds grab the
 `RELEASE_3_15` branch of all packages instead of their `master` branch.
@@ -363,10 +392,11 @@ with
 in `~/BBS/3.15/config.bat`
 
 Then remove the `manifest` and `MEAT0` folders from `~/bbs-3.15-bioc/`,
-`~/bbs-3.15-data-experiment/`, `~/bbs-3.15-workflows/`, and `~/bbs-3.15-books/`.
-They'll get automatically re-created and re-populated when the builds start.
+`~/bbs-3.15-data-annotation/`, `~/bbs-3.15-data-experiment/`,
+`~/bbs-3.15-workflows/`, and `~/bbs-3.15-books/`. They'll get automatically
+re-created and re-populated when the builds start.
 
-### E4. Update all core bioconductor packages hosted on github/Bioconductor organization
+### F4. Update all core bioconductor packages hosted on github/Bioconductor organization
 
 The code to update all packages is in,
 https://github.com/Bioconductor/GitContribution.git, in the branch
