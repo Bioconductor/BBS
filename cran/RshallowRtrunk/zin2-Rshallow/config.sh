@@ -28,8 +28,6 @@ export RCYTOSCAPE_PORT_OVERRIDE="8023"
 export RCYTOSCAPE_HOST_OVERRIDE="wilson1"
 export GENE_E_URL="http://zin2:9991"
 
-export R_TEXI2DVICMD=/home/biocbuild/BBS/utils/ourtexi2dvi
-
 # Shared settings (by all Unix nodes).
 
 wd0=`pwd`
