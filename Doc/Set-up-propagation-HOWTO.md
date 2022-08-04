@@ -370,12 +370,13 @@ Then you can install biocViews in the `~/pkgs_to_install` directory.
     BiocManager::install("DynDoc")
     ```
 
-- Install CRAN packages knitr, knitcitations, and commonmark:
+- Install CRAN packages knitr, knitcitations, commonmark, and bibtex:
     ```
     ## From R:
     install.packages("knitr", repos="https://cran.r-project.org")
     install.packages("knitcitations", repos="https://cran.r-project.org")
     install.packages("commonmark", repos="https://cran.r-project.org")
+    install.packages("bibtex", repos="https://cran.r-project.org")
     ```
 
 
