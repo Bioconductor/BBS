@@ -27,11 +27,6 @@ export BBS_BIOC_MANIFEST_CLONE_PATH="$BBS_WORK_TOPDIR/manifest"
 # Needed if BBS_MEAT0_TYPE is 1 or 3
 export BBS_BIOC_MANIFEST_FILE="data-annotation.txt"
 
-# Right now we don't branch data-annotation packages i.e. we always build their master branch
-# even for the release builds. So we need to override the BBS_BIOC_GIT_BRANCH value
-# defined in the top-level config.sh
-export BBS_BIOC_GIT_BRANCH="master"
-
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="$BBS_CENTRAL_RHOST"
 export BBS_MEAT0_RUSER="$BBS_CENTRAL_RUSER"
