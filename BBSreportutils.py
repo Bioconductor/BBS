@@ -122,7 +122,7 @@ def make_report_title(report_nodes):
     elif buildtype == "books":
         title = "Books build"
     elif buildtype == "bioc-mac-arm64":
-        title = "M1 build"
+        title = "Mac ARM64 build"
     else:
         nnodes = 0
         for node in report_nodes.split(' '):
