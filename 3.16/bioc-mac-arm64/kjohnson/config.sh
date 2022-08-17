@@ -11,7 +11,7 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="kjohnson"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.16-bioc"
+export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.16-bioc-mac-arm64"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 export BBS_NB_CPU=6         # 8 cores are available
 export BBS_BUILD_NB_CPU=2   # 8 cores are available
