@@ -14,7 +14,6 @@ import shutil
 
 import bbs.fileutils
 import bbs.parse
-import bbs.jobs
 import BBSutils
 import BBSvars
 
