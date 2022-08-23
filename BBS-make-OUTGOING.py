@@ -46,16 +46,18 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         return status != 'OK'
 
     ## Extract Status from CHECK summary.
-    checksrc_path = os.path.join(node_path, 'checksrc')
-    summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
-    try:
-        dcf = open(summary_file, 'rb')
-    except IOError:
-        return True
-    status = bbs.parse.get_next_DCF_val(dcf, 'Status')
-    dcf.close()
-    if status not in ["OK", "WARNINGS"]:
-        return True
+    if BBSvars.buildtype in ["workflows", "books", "bioc-mac-arm64"]:
+        checksrc_path = os.path.join(node_path, 'checksrc')
+        summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
+        try:
+            dcf = open(summary_file, 'rb')
+        except IOError:
+            return True
+        status = bbs.parse.get_next_DCF_val(dcf, 'Status')
+        dcf.close()
+        if status not in ["OK", "WARNINGS"]:
+            return True
+
     if not is_doing_buildbin(node_hostname):
         return False
 
@@ -82,7 +84,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     ## Workflow and book packages do not have manuals/ because we do not run
     ## `R CMD check`.
     manuals_dir = "../manuals"
-    if BBSvars.buildtype in ["workflows", "books"]:
+    if BBSvars.buildtype in ["workflows", "books", "bioc-mac-arm64"]:
         pass
     elif source_node:
         print("BBS> [stage6b] mkdir %s" % manuals_dir)
@@ -110,7 +112,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         else:
             print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pkg_path)
         ## Get reference manual from pkg.Rcheck directory.
-        if BBSvars.buildtype in ["workflows", "books"]:
+        if BBSvars.buildtype in ["workflows", "books", "bioc-mac-arm64"]:
             pass
         elif source_node:
             pdf_file = os.path.join(BBSutils.getenv('BBS_WORK_TOPDIR'),
