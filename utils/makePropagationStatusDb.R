@@ -345,7 +345,7 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
     out <- file(db_filepath, "w")
     on.exit(close(out))
     final_repo <- gsub("-mac-arm64", "", final_repo)
-    OUTGOING_types <- c("source", "win.binary", "mac.binary", "mac.binary.arm64")
+    OUTGOING_types <- c("source", "win.binary", "mac.binary", "mac.arm64.binary")
     for (type in OUTGOING_types) {
         OUTGOING_subdir <- file.path(OUTGOING_dir, type)
         if (!file.exists(OUTGOING_subdir))
