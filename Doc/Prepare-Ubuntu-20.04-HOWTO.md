@@ -389,8 +389,8 @@ environment. For now `echo $DISPLAY` should show nothing.
 
 ### 1.8 Install Ubuntu/deb packages
 
-The packages for setting up the build system are in `BBS/Ubuntu-files/20.04`.
-They should be installed with
+The packages needed on a Linux build machine running Ubuntu are in the files
+under `BBS/Ubuntu-files/20.04/`. They can be installed with:
 
     sudo apt-get install <pkg1> <pkg2> <pkg3> ...
 
@@ -439,6 +439,40 @@ Note that a reboot is required to make the fix effective.
 For CRAN packages, install [apt_cran.txt](../Ubuntu-files/20.04/apt_cran.txt).
 
 For BioC packages, install [apt_bioc.txt](../Ubuntu-files/20.04/apt_bioc.txt).
+
+#### IMPORTANT NOTES
+
+The list of things that need to be installed on a Linux builder is in
+constant evolution as new or existing Biocondutor packages introduce
+new system requirements. System requirements should preferably be installed
+with `sudo apt-get install` whenever possible, which is the standard
+installation method on Ubuntu. This has the following advantages:
+
+1. It guarantees a clean _system-wide_ installation. More precisely, it
+   guarantees that things get installed in standard locations that are
+   available _for all the users_ on the machine.
+
+2. It's safe. Even though we're using `sudo`, we can trust that
+   `sudo apt-get install` won't mess up the system. There's no such
+   guarantee with the specific installation methods used by individual
+   software.
+
+3. It makes things a lot easier to uninstall and thus tends to make it
+   easier to keep the machine in a clean state in the long run. Things
+   that have been installed via other installation mechanisms are sometimes
+   hard to uninstall and it can be tricky to bring the machine back to
+   its previous state.
+
+4. It keeps the setup of the machine simple, easy to document, and easy
+   to replicate. For example, to keep track of new system requirements,
+   we just need to add the names of the required Ubuntu/Debian packages
+   to `BBS/Ubuntu-files/20.04/apt_bioc.txt` or other appropriate file
+   under `BBS/Ubuntu-files/20.04/`. This makes it easy to automate
+   installation across machines including Docker images.
+
+However, there's actually one important exception to the "install with
+apt-get install first" rule: Python modules. These should preferably be
+installed via `pip3`. See next section below.
 
 
 ### 1.9 Install Python 3 modules
