@@ -45,7 +45,7 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         return status != 'OK'
 
     ## Extract Status from CHECK summary.
-    if BBSvars.buildtype in ["workflows", "books", "bioc-mac-arm64"]:
+    if BBSvars.buildtype not in ["bioc-mac-arm64"]:
         checksrc_path = os.path.join(node_path, 'checksrc')
         summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
         try:
