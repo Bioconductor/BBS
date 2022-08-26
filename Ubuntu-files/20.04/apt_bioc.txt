@@ -29,3 +29,5 @@ libfuse-dev                 # for Travel
 kallisto                    # for rkal
 mono-runtime                # for rawr
 libmono-system-data4.0-cil  # for rawr
+cargo                       # for rd4
+rustc                       # for rd4
