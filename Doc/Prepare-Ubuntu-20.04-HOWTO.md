@@ -140,6 +140,11 @@ This "not so quick way" might require up to 5 calls to `sudo apt-get upgrade`!
     sudo reboot
     ```
 
+IMPORTANT: The OS versions present on the build machines are listed
+in the `BBS/nodes/nodespecs.py` file and the OS versions displayed on
+the build reports are extracted from this file. So it's important to
+keep this file in sync with the actual versions present on the builders.
+
 
 ### 1.5 Check locales
 

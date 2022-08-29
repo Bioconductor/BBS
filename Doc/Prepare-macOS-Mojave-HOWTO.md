@@ -59,6 +59,11 @@ of macOS Mojave i.e. 10.14.6. Check this with:
     system_profiler SPSoftwareDataType
     uname -a  # should show xnu-4903.278.44~1 (or higher)
 
+IMPORTANT: The OS versions present on the build machines are listed
+in the `BBS/nodes/nodespecs.py` file and the OS versions displayed on
+the build reports are extracted from this file. So it's important to
+keep this file in sync with the actual versions present on the builders.
+
 
 ### 1.4 Create the biocbuild account
 
