@@ -42,7 +42,7 @@ allnodes = {
                    'Platform': "mingw32 / x86_64-w64-mingw32",
                    'pkgType' : "win.binary",
                    'encoding': "iso8859"},
-    'kjohnson':   {'OS'      : "macOS 12.4 Monterey",
+    'kjohnson':   {'OS'      : "macOS 12.5 Monterey",
                    'Arch'    : "arm64",
                    'Platform': "arm64-apple-darwin21.5.0",
                    'pkgType' : "mac.binary",
