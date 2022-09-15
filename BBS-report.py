@@ -1715,7 +1715,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
     leafreport_ref = LeafReportReference(pkg, None, None, None)
     write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
-    if BBSvars.buildtype == "bioc" and len(pkg_rev_deps) != 0:
+    if BBSvars.buildtype in ["bioc", "bioc-mac-arm64"] and len(pkg_rev_deps) != 0:
         quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
         out.write('<H3 style="padding: 18px;">')
         out.write('Results for Bioconductor software packages ')
@@ -2041,7 +2041,7 @@ if __name__ == "__main__":
     sys.stdout.flush()
 
     ## Set 'allpkgs_inner_rev_deps'.
-    if BBSvars.buildtype == "bioc":
+    if BBSvars.buildtype in ["bioc", "bioc-mac-arm64"]:
         ## Load package dep graph.
         node0 = BBSreportutils.NODES[0]
         Node0_rdir = BBSvars.products_in_rdir.subdir(node0.node_id)
