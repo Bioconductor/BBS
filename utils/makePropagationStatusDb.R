@@ -300,7 +300,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
         return(invisible(NULL))
     }
     .prettymsg("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ")
-    type <- gsub(".arm64", "", type)
+    type <- gsub(".arm64", "", type, fixed = TRUE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
 }
@@ -314,7 +314,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 
 .fetch_available_pkgs <- function(final_repo, type, non_target_repos)
 {
-    type <- gsub(".arm64", "", type)
+    type <- gsub(".arm64", "", type, fixed = TRUE)
     final_contrib_url <- contrib.url(final_repo, type=type)
     ## We always look at availability of source packages in the non-target
     ## repos, even when computing the propagation status of Windows or
@@ -344,7 +344,7 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
     .prettymsg("START creating ", db_filepath, " ...\n")
     out <- file(db_filepath, "w")
     on.exit(close(out))
-    final_repo <- gsub("-mac-arm64", "", final_repo)
+    final_repo <- gsub("-mac-arm64", "", final_repo, fixed = TRUE)
     OUTGOING_types <- c("source", "win.binary", "mac.binary", "mac.arm64.binary")
     for (type in OUTGOING_types) {
         OUTGOING_subdir <- file.path(OUTGOING_dir, type)
