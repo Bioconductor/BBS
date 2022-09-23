@@ -35,7 +35,7 @@ cd "$wd0"
 # central node
 
 # Control propagation:
-export BBS_OUTGOING_MAP="mac.arm64.binary:kjohnson/buildbin"
+export BBS_OUTGOING_MAP="mac.binary.big-sur-arm64:kjohnson/buildbin"
 export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/bioc"
 
 # Control generation of the report:

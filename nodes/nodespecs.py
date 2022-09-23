@@ -45,7 +45,7 @@ allnodes = {
     'kjohnson':   {'OS'      : "macOS 12.5 Monterey",
                    'Arch'    : "arm64",
                    'Platform': "arm64-apple-darwin21.5.0",
-                   'pkgType' : "mac.binary",
+                   'pkgType' : "big-sur-arm64",
                    'encoding': "utf-8"},
     'lconway':    {'OS'      : "macOS 12.5.1 Monterey",
                    'Arch'    : "x86_64",
