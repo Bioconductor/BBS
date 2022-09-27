@@ -300,7 +300,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
         return(invisible(NULL))
     }
     .prettymsg("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ")
-    type <- gsub("big-sur-arm64", "", type, fixed = TRUE)
+    type <- gsub(".big-sur-arm64", "", type, fixed = TRUE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
 }
