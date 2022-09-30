@@ -437,6 +437,17 @@ https://support.bioconductor.org/p/95587/#95631).
 
 ### 2.8 Install Homebrew
 
+IMPORTANT NOTE: We use Homebrew to install some of the libraries and other
+tools required by the Bioconductor daily builds. However, if those libraries
+or tools are available as precompiled binaries in the `darwin17/x86_64`
+or `darwin20/arm64` folders at https://mac.r-project.org/bin/, then they
+should be preferred over an installation via Homebrew. We refer to those
+binaries as Simon's binaries. They are used on the CRAN build machines.
+They've been well-tested and are very stable. They're safer than installing
+via Homebrew, which is known to sometimes cause problems. For all these
+reasons, **Simon's binaries are preferred over Homebrew installs or any other
+installs**.
+
 First make sure `/usr/local` is writable by the `biocbuild` user and other
 members of the `admin` group:
 
@@ -473,10 +484,24 @@ Then in `/etc/profile`:
   This will trigger statically linking of the rtracklayer package against
   the openssl libraries.
 
+UPDATE (Sept 2022): Looks like `openssl` is available at
+https://mac.r-project.org/bin/ (Simon's binaries). Installing this binary
+should be preferred over installing via Homebrew. See IMPORTANT NOTE in
+the _Install Homebrew_ section above. Also make sure to fix `/usr/local/`
+permissions as described in the _Install Homebrew_ section if Simon's binary
+gets extracted there (normally the case for the `darwin17/x86_64` binaries).
+
 
 ### 2.10 Install XZ Utils (includes lzma lib)
 
     brew install xz
+
+UPDATE (Sept 2022): Looks like `xz` is available at
+https://mac.r-project.org/bin/ (Simon's binaries). Installing this binary
+should be preferred over installing via Homebrew. See IMPORTANT NOTE in
+the _Install Homebrew_ section above. Also make sure to fix `/usr/local/`
+permissions as described in the _Install Homebrew_ section if Simon's binary
+gets extracted there (normally the case for the `darwin17/x86_64` binaries).
 
 
 ### 2.11 Install Python 3
@@ -641,6 +666,13 @@ TESTING:
     which pkg-config       # /usr/local/bin/pkg-config
     pkg-config --list-all
 
+UPDATE (Sept 2022): Looks like `pkgconfig` is available at
+https://mac.r-project.org/bin/ (Simon's binaries). Installing this binary
+should be preferred over installing via Homebrew. See IMPORTANT NOTE in
+the _Install Homebrew_ section above. Also make sure to fix `/usr/local/`
+permissions as described in the _Install Homebrew_ section if Simon's binary
+gets extracted there (normally the case for the `darwin17/x86_64` binaries).
+
 
 ### 2.16 Install wget and pstree
 
@@ -704,9 +736,12 @@ This means that the build system will need to be able to install many CRAN
 packages from source on a Mac builder when the BioC devel builds use R devel.
 However some packages are difficult (e.g. fftwtools) because they require
 system libraries that we don't normally install on a Mac builder. The good
-news is that pre-compiled versions of these libraries are available here:
-https://mac.r-project.org/bin/darwin17/x86_64/ (old location was
-https://mac.r-project.org/libs-4/)
+news is that pre-compiled versions of these libraries are available as
+Simon's binaries. See IMPORTANT NOTE in the _Install Homebrew_ section above.
+
+Make sure to fix `/usr/local/` permissions as described in the _Install
+Homebrew_ section if the Simon's binary you install gets extracted there
+(normally the case for the `darwin17/x86_64` binaries).
 
 In this section we only describe the case of installing CRAN packages jpeg,
 tiff, and fftwtools, from source, which require system libraries JPEG, TIFF,
@@ -722,7 +757,7 @@ This is only needed if CRAN package jpeg or tiff need to be installed
 from source which is usually NOT the case (most of the time Mac binaries
 for jpeg or tiff should be available on CRAN).
 
-Download and install with:
+Download and extract Simon's binary with:
 
     cd ~/Downloads/
     curl -O https://mac.r-project.org/bin/darwin17/x86_64/libwebp-1.2.1-darwin.17-x86_64.tar.xz
@@ -738,7 +773,7 @@ This is needed only if CRAN package jpeg needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
 available on CRAN).
 
-Download and install with:
+Download and extract Simon's binary with:
 
     cd ~/Downloads/
     curl -O https://mac.r-project.org/bin/darwin17/x86_64/jpeg-9d-darwin.17-x86_64.tar.xz
@@ -762,7 +797,7 @@ This is needed only if CRAN package tiff needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
 available on CRAN).
 
-Download and install with:
+Download and extract Simon's binary with:
 
     cd ~/Downloads/
     curl -O https://mac.r-project.org/bin/darwin17/x86_64/tiff-4.3.0-darwin.17-x86_64.tar.xz
@@ -786,7 +821,7 @@ This is needed only if CRAN package fftwtools needs to be installed from
 source which is usually NOT the case (most of the time a Mac binary should
 be available on CRAN).
 
-Download and install with:
+Download and extract Simon's binary with:
 
     cd ~/Downloads/
     curl -O https://mac.r-project.org/bin/darwin17/x86_64/fftw-3.3.10-darwin.17-x86_64.tar.xz
@@ -1306,7 +1341,7 @@ NetCDF is needed only if CRAN package ncdf4 needs to be installed from
 source which is usually NOT the case (most of the time a Mac binary should
 be available on CRAN).
 
-Download and install with:
+Download and extract Simon's binaries with:
 
     cd ~/Downloads/
     curl -O https://mac.r-project.org/bin/darwin17/x86_64/netcdf-4.8.1-darwin.17-x86_64.tar.xz
@@ -1331,7 +1366,7 @@ that this takes much longer:
 
 ### 4.3 Install GSL system library
 
-Download and install with:
+Download and extract Simon's binary with:
 
     cd ~/Downloads/
     curl -O https://mac.r-project.org/bin/darwin17/x86_64/gsl-2.7-darwin.17-x86_64.tar.xz
@@ -1403,10 +1438,577 @@ TESTING: Try to install the rjags package *from source*:
     install.packages("rjags", type="source", repos="https://cran.r-project.org")
 
 
-### 4.6 Install libSBML
+### 4.6 Install CMake
 
-SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (starting with BioC 3.12, rsbml is
-no longer supported on macOS)
+Needed for CRAN package `nlopter`, which is used by a few Bioconductor
+packages.
+
+Home page: https://cmake.org/
+
+Let's make sure it's not already installed:
+
+    which cmake
+
+Note that installing CMake via Homebrew (`brew install cmake`) should be
+avoided. In our experience, even though it leads to a `cmake` command that
+works at the beginning, it might break in the future (and it has in our case)
+as we install more and more components to the machine. So, if for any reason
+you already have a brewed CMake on the machine, make sure to remove it:
+
+    brew uninstall cmake
+
+Then:
+
+    cd ~/Downloads/
+    curl -LO https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Darwin-x86_64.dmg
+    sudo hdiutil attach cmake-3.16.5-Darwin-x86_64.dmg
+    cp -ri /Volumes/cmake-3.16.5-Darwin-x86_64/CMake.app /Applications/
+    sudo hdiutil detach /Volumes/cmake-3.16.5-Darwin-x86_64
+
+Then in `/etc/profile` *prepend* `/Applications/CMake.app/Contents/bin`
+to `PATH`, or, if the file as not line setting `PATH` already, add the
+following line:
+
+    export PATH="/Applications/CMake.app/Contents/bin:$PATH"
+
+TESTING: Logout and login again so that the changes to `/etc/profile` take
+effect. Then:
+
+    which cmake
+    cmake --version
+
+
+### 4.7 Install Open Babel
+
+The ChemmineOB package requires Open Babel 3. Note that the Open Babel
+website seems very outdated:
+
+    http://openbabel.org/
+
+The latest news reported in the News feed is from 2016-09-21 (as of
+Oct 23rd, 2020) and it announces the release of Open Babel 2.4.0!
+However, there seems to be a version 3.0. It's on GitHub:
+https://github.com/openbabel/openbabel
+
+Before anything else, do:
+
+    python3 --version
+
+and record the current version of Python 3. This is the version that
+we installed earlier with all the modules required for the builds.
+This is our primary Python 3 installation.
+
+The brew formulae (`3.1.1_1` as of Oct 23rd, 2020) will install a bunch
+of dependencies e.g. `python@3.9`, `glib`, `cairo`, `eigen`, and possibly
+many more (e.g. `libpng`, `freetype`, `fontconfig`, `gettext`, `libffi`,
+`pcre`, `lzo`, `sqlite`, `pixman`) depending on what's already installed:
+
+    brew install eigen
+    brew install open-babel
+
+If another Python 3 was already installed via `brew` (e.g. `python@3.8`),
+then `python@3.9` will get installed as keg-only because it's an alternate
+version of another formulae. This means it doesn't get put on the `PATH`.
+Check this with:
+
+    python3 --version
+
+Hopefully this will still display the version of our primary Python 3
+installation.
+
+IMPORTANT NOTE: The automatic installation of `libpng` triggered by
+`brew install open-babel` can break `pkg-config` and some other things
+like Python 3 module `h5pyd`:
+
+    pkg-config
+    # dyld: Symbol not found: __cg_png_create_info_struct
+    #   Referenced from: /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+    #   Expected in: /usr/local/lib/libPng.dylib
+    #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+    # Abort trap: 6
+
+    python3
+    # Python 3.8.6 (default, Oct 27 2020, 08:56:44) 
+    # [Clang 11.0.0 (clang-1100.0.33.17)] on darwin
+    # Type "help", "copyright", "credits" or "license" for more information.
+    >>> import h5pyd
+    # Traceback (most recent call last):
+    # ...
+    # from _scproxy import _get_proxy_settings, _get_proxies
+    # ImportError: dlopen(/usr/local/Cellar/python@3.8/3.8.6_1/Frameworks/Python.framework/Versions/3.8/lib/python3.8/lib-dynload/_scproxy.cpython-38-darwin.so, 2): Symbol not found: __cg_png_create_info_struct
+    #   Referenced from: /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+    #   Expected in: /usr/local/lib/libPng.dylib
+    #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
+
+This will happen if `DYLD_LIBRARY_PATH` is set to `/usr/local/lib` so make
+sure that this is not the case. Note that we used to need this setting for
+Bioconductor package rsbml but luckily not anymore (rsbml is no longer
+supported on macOS).
+
+Initial testing:
+
+    which obabel  # /usr/local/bin/obabel
+    obabel -V
+    # dyld: Library not loaded: /usr/local/opt/boost/lib/libboost_iostreams-mt.dylib
+    #   Referenced from: /usr/local/bin/obabel
+    #   Reason: image not found
+    # Abort trap: 6
+
+This suggests that the current `3.1.1_1` formulae is buggy (it doesn't
+properly specify its dependencies).
+
+Install `boost` (this will install `icu4c` if not already installed):
+
+    brew install boost
+
+Finally create the following symlink:
+
+    cd /usr/local/lib
+    ln -s ../Cellar/open-babel/3.1.1_1/lib openbabel3
+
+TESTING:
+
+    obabel -V
+    # Open Babel 3.1.0 -- Oct 21 2020 -- 21:57:42  # version looks wrong!
+    
+    pkg-config --cflags openbabel-3
+    # -I/usr/local/Cellar/open-babel/3.1.1_1/include/openbabel3
+    
+    pkg-config --libs openbabel-3
+    # -L/usr/local/Cellar/open-babel/3.1.1_1/lib -lopenbabel
+
+Then try to install ChemmineOB from source. From R:
+
+    library(BiocManager)
+    BiocManager::install("ChemmineOB", type="source")
+
+
+### 4.8 Install Clustal Omega
+
+There is a standalone Mac binary at http://www.clustal.org/omega/
+Downnload it with:
+
+    cd ~/Downloads/
+    curl -O http://www.clustal.org/omega/clustal-omega-1.2.3-macosx
+
+Make it executable with:
+
+    chmod +x clustal-omega-1.2.3-macosx
+
+Move it to `/usr/local/bin` with:
+
+    mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
+
+Create clustalo symlink in `/usr/local/bin/` with:
+
+    cd /usr/local/bin/
+    ln -s clustal-omega-1.2.3-macosx clustalo
+
+Then:
+
+    which clustalo
+
+TESTING: Try to build the LowMACA package (takes about 5 min):
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD build LowMACA
+
+
+### 4.9 Install the MySQL client
+
+Note that we only need this for the ensemblVEP package. RMySQL doesn't need
+it as long as we can install the binary package.
+
+Even though we only need the MySQL client, we used to install the MySQL
+Community Server because it was an easy way to get the MySQL client.
+Not anymore! Our attempt to use the recent binaries available at
+https://dev.mysql.com/downloads/ for macOS Mojave gave us too much
+headache when trying to install Perl module DBD::mysql or install RMySQL
+from source. So we switched to installing the MySQL client only via brew:
+
+    brew install mysql-client
+
+Then in `/etc/profile` append `/usr/local/opt/mysql-client/bin` to `PATH`
+and `/usr/local/opt/mysql-client/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+Finally, make sure that you have a brewed `openssl` (`brew install openssl`,
+see above in this file) and create the following symlinks (without them
+`sudo cpan install DBD::mysql` won't be able to find the `ssl` or `crypto`
+libraries and will fail):
+
+    cd /usr/local/opt/mysql-client/lib/
+    ln -s /usr/local/opt/openssl/lib/libssl.dylib
+    ln -s /usr/local/opt/openssl/lib/libcrypto.dylib
+
+
+--------------------------------------------------------------------------
+NO LONGER NEEDED (kept for the record only)
+
+Installing the MySQL Community Server
+
+Download `mysql-8.0.0-dmr-osx10.11-x86_64.dmg` from:
+
+    https://downloads.mysql.com/archives/community/
+
+e.g. with:
+
+    cd ~/Downloads/
+    curl -O https://downloads.mysql.com/archives/get/file/mysql-8.0.0-dmr-osx10.11-x86_64.dmg
+
+Install with:
+
+    sudo hdiutil attach mysql-8.0.18-macos10.14-x86_64.dmg
+    sudo installer -pkg /Volumes/mysql-8.0.18-macos10.14-x86_64/mysql-8.0.18-macos10.14-x86_64.pkg -target /
+    sudo hdiutil detach /Volumes/mysql-8.0.18-macos10.14-x86_64
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+Then in `/etc/profile` append `/usr/local/mysql/bin` to `PATH`,
+`/usr/local/mysql/lib` to `DYLD_LIBRARY_PATH`, and
+`/usr/local/mysql/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+And finally (needed only for some MySQL builds that seem broken):
+
+    cd /usr/local/mysql/lib/
+    otool -L libmysqlclient.21.dylib
+    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
+    install_name_tool -add_rpath /usr/local/mysql/lib libmysqlclient.21.dylib
+
+    #install_name_tool -change @rpath/libmysqlclient.21.dylib /usr/local/mysql/lib/libmysqlclient.21.dylib libmysqlclient.21.dylib
+    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
+
+--------------------------------------------------------------------------
+
+TESTING: Logout and login again so that the changes to `/etc/profile` take
+effect. Then:
+
+    which mysql_config  # /usr/local/opt/mysql-client/bin/mysql_config
+
+Then try to install the RMySQL package *from source*:
+
+    library(BiocManager)
+    install("RMySQL", type="source")
+
+
+### 4.10 Install Ensembl VEP script
+
+Required by Bioconductor packages ensemblVEP and MMAPPR2.
+
+Complete installation instructions are at
+https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
+
+#### Install Perl modules
+
+- Make sure the MySQL client is installed on the system (see "Install
+  the MySQL client" above in this file).
+
+- According to ensembl-vep README, the following Perl modules are required:
+    ```
+    ## Needed by both ensemblVEP and MMAPPR2:
+    sudo cpan install Archive::Zip
+    sudo cpan install File::Copy::Recursive
+    sudo cpan install DBI
+    sudo cpan install DBD::mysql  # MySQL client needed!
+    
+    ## Needed by MMAPPR2 only:
+    sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
+    sudo cpan install IO::String
+    sudo cpan install Bio::SeqFeature::Lite
+    brew install htslib
+    sudo cpan install Bio::DB::HTS::Tabix
+    ```
+
+#### Install ensembl-vep
+
+    cd /usr/local/
+    sudo git clone https://github.com/Ensembl/ensembl-vep.git
+    cd ensembl-vep/
+    sudo chown -R biocbuild:admin .
+    #git checkout release/100  # select desired branch
+
+    # Avoid the hassle of getting HTSlib to compile because ensemblVEP and
+    # MMAPPR2 pass 'R CMD build' and 'R CMD check' without that and that's
+    # all we care about. No sudo!
+    perl INSTALL.pl --NO_HTSLIB
+    # When asked if you want to install any cache files - say no
+    # When asked if you want to install any FASTA files - say no
+    # When asked if you want to install any plugins - say no
+
+#### Edit /etc/profile
+
+In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
+Note that the `/etc/profile` file has read-only permissions (factory
+settings). To save changes you will need to force save, e.g., in the
+`vi` editor this is `w!`.
+
+Logout and login again so that the changes to `/etc/profile` take effect.
+
+#### Testing
+
+Try to build and check the ensemblVEP and MMAPPR2 packages:
+
+    cd ~/bbs-3.14-bioc/meat/
+
+    R CMD build ensemblVEP
+    R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
+
+    R CMD build MMAPPR2
+    R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
+
+
+### 4.11 Install ViennaRNA
+
+Required by Bioconductor package GeneGA.
+
+Download with:
+
+    cd ~/Downloads/
+    curl -O https://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.4.11-MacOSX.dmg
+
+Install with:
+
+    sudo hdiutil attach ViennaRNA-2.4.11-MacOSX.dmg
+    sudo installer -pkg "/Volumes/ViennaRNA 2.4.11/ViennaRNA Package 2.4.11 Installer.pkg" -target /
+    sudo hdiutil detach "/Volumes/ViennaRNA 2.4.11"
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+TESTING:
+
+    which RNAfold  # /usr/local/bin/RNAfold
+
+Then try to build the GeneGA package:
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD build GeneGA
+
+
+### 4.12 Set up ImmuneSpaceR package for connecting to ImmuneSpace
+
+In `/etc/profile` add:
+
+    export ISR_login=bioc@immunespace.org
+    export ISR_pwd=1notCRAN
+
+TESTING: Logout and login again so that the changes to `/etc/profile` take
+effect. Then try to build the ImmuneSpaceR package:
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD build ImmuneSpaceR
+
+
+### 4.13 Install Infernal
+
+Required by Bioconductor package inferrnal.
+
+Install with:
+
+    brew tap brewsci/bio
+    brew install infernal
+
+TESTING:
+
+    which cmsearch  # /usr/local/bin/cmsearch
+    which cmalign   # /usr/local/bin/cmalign
+    which cmbuild   # /usr/local/bin/cmbuild
+
+Then try to build the inferrnal package:
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD build inferrnal
+
+
+### 4.14 Install mono
+
+Required by Bioconductor package rawrr.
+
+Install with:
+
+    brew install mono
+
+TESTING
+
+    which mono  # /usr/local/bin/mono
+
+Then try to install/build/check the rawrr package:
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD INSTALL rawrr
+    R CMD build rawrr
+    R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
+
+
+### 4.15 Install macFUSE
+
+Required by Bioconductor package Travel.
+
+Download latest stable release from https://osxfuse.github.io/ e.g.:
+
+    cd ~/Downloads/
+    curl -LO https://github.com/osxfuse/osxfuse/releases/download/macfuse-4.0.5/macfuse-4.0.5.dmg
+
+Install with:
+
+    sudo hdiutil attach macfuse-4.0.5.dmg
+    sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
+    sudo hdiutil detach /Volumes/macFUSE
+
+TESTING: Try to install the Travel package *from source*:
+
+    library(BiocManager)
+    BiocManager::install("Travel", type="source")
+
+
+### 4.16 Install .NET 5.0 Runtime
+
+Required by Bioconductor package rmspc.
+
+#### Install the runtime
+
+Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
+install the 5.0 .NET runtime corresponding to the build system's macOS.
+
+    curl -O https://download.visualstudio.microsoft.com/download/pr/a847df19-d530-41c8-b766-cb60ee8af9a4/7edd7c2eae38d25d0d7c90350eefea64/dotnet-runtime-5.0.9-osx-x64.pkg
+    shasum -a 512 dotnet-runtime-5.0.9-osx-x64.pkg
+    sudo installer -pkg dotnet-runtime-5.0.9-osx-x64.pkg -target /
+
+#### Testing
+
+You might need to logout and login again before trying this:
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD build rmspc
+    R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
+
+
+### 4.17 Install GLPK
+
+Required by Bioconductor package MMUPHin.
+
+Download and extract Simon's binary with:
+
+    cd ~/Downloads/
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/glpk-5.0-darwin.17-x86_64.tar.xz
+    sudo tar fvxJ glpk-5.0-darwin.17-x86_64.tar.xz -C /
+
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+TESTING: The MMUPHin package uses `igraph::cluster_optimal()` internally
+which requires GLPK:
+
+    library(igraph)
+    cluster_optimal(make_graph("Zachary"))
+
+If GLPK is not avilable, one gets:
+
+    Error in cluster_optimal(make_graph("Zachary")) :
+      At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
+
+
+### 4.18 [OPTIONAL] Install autoconf & automake
+
+MAY 2020: Who needs this? Is this still needed?
+
+Install with:
+
+    brew install autoconf
+    brew install automake
+
+TESTING:
+
+    which autoconf
+    which automake
+
+Then try to install the flowWorkspace package *from source*:
+
+    library(BiocManager)
+    BiocManager::install("flowWorkspace", type="source")
+
+UPDATE (Sept 2022): Looks like `autoconf` & `automake` are available at
+https://mac.r-project.org/bin/ (Simon's binaries). Installing these binaries
+should be preferred over installing via Homebrew. See IMPORTANT NOTE in
+the _Install Homebrew_ section above. Also make sure to fix `/usr/local/`
+permissions as described in the _Install Homebrew_ section if Simon's binary
+gets extracted there (normally the case for the `darwin17/x86_64` binaries).
+
+
+### 4.19 [OPTIONAL] Install ImageMagick
+
+APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
+package, which is now officially deprecated)
+
+WARNING: Don't do 'brew install imagemagick'. This will install the jpeg-8d
+lib on top of the previously installed jpeg-9 lib!!!
+So we install a pre-built ImageMagick binary for El Capitan. Note that
+these pre-built binaries seem very broken and need a bunch of symlinks
+in order to work!
+
+Download and install with:
+
+    cd ~/Downloads/
+    curl -O https://www.imagemagick.org/download/binaries/ImageMagick-x86_64-apple-darwin16.4.0.tar.gz
+    sudo tar zxvf ImageMagick-x86_64-apple-darwin16.4.0.tar.gz -C /
+    
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+Then in `/etc/profile` add the following line (before the `PATH` and
+`DYLD_LIBRARY_PATH` lines):
+
+    export MAGICK_HOME="/ImageMagick-7.0.5"
+
+and append `$MAGICK_HOME/bin`, `$MAGICK_HOME/lib`, and
+`$MAGICK_HOME/lib/pkgconfig` to `PATH`, `DYLD_LIBRARY_PATH`,
+and `PKG_CONFIG_PATH`, respectively.
+
+Logout and login again so that the changes to `/etc/profile` take effect.
+
+Then create a bunch of symlinks:
+
+    cd /usr/local/include/
+    ln -s $MAGICK_HOME/include/ImageMagick-7
+    cd /usr/local/etc/
+    ln -s $MAGICK_HOME/etc/ImageMagick-7
+    cd /usr/local/share/
+    ln -s $MAGICK_HOME/share/ImageMagick-7
+    cd /usr/local/share/doc/
+    ln -s $MAGICK_HOME/share/doc/ImageMagick-7
+
+    ## this creates 10 symlinks in /usr/local/lib
+    cd /usr/local/lib/
+    ln -s $MAGICK_HOME/lib/ImageMagick-7.0.5
+    for lib in libMagick++-7 libMagickCore-7 libMagickWand-7; do
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.0.dylib
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.dylib
+      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.la
+    done
+
+TESTING:
+
+    which magick
+    magick logo: logo.gif
+    identify logo.gif
+    identify <some-PDF-file>  # important test! (flowQ uses this)
+    #display logo.gif         # fails but flowQ does not use this
+
+Then try to build the flowQ package (the package makes system calls to
+standalone commands `convert`, `identify`, and `montage`):
+
+    cd ~/bbs-3.14-bioc/meat/
+    R CMD build flowQ
+
+
+### 4.20 Install libSBML
+
+SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! Starting with BioC 3.12, rsbml is
+no longer supported on macOS. KEPT FOR THE RECORD ONLY.
 
 Required by Bioconductor package rsbml.
 
@@ -1531,540 +2133,6 @@ effect. Then try to install the rsbml package *from source*:
 
     library(BiocManager)
     BiocManager::install("rsbml", type="source")
-
-
-### 4.7 Install CMake
-
-Needed for CRAN package `nlopter`, which is used by a few Bioconductor
-packages.
-
-Home page: https://cmake.org/
-
-Let's make sure it's not already installed:
-
-    which cmake
-
-Note that installing CMake via Homebrew (`brew install cmake`) should be
-avoided. In our experience, even though it leads to a `cmake` command that
-works at the beginning, it might break in the future (and it has in our case)
-as we install more and more components to the machine. So, if for any reason
-you already have a brewed CMake on the machine, make sure to remove it:
-
-    brew uninstall cmake
-
-Then:
-
-    cd ~/Downloads/
-    curl -LO https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Darwin-x86_64.dmg
-    sudo hdiutil attach cmake-3.16.5-Darwin-x86_64.dmg
-    cp -ri /Volumes/cmake-3.16.5-Darwin-x86_64/CMake.app /Applications/
-    sudo hdiutil detach /Volumes/cmake-3.16.5-Darwin-x86_64
-
-Then in `/etc/profile` *prepend* `/Applications/CMake.app/Contents/bin`
-to `PATH`, or, if the file as not line setting `PATH` already, add the
-following line:
-
-    export PATH="/Applications/CMake.app/Contents/bin:$PATH"
-
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then:
-
-    which cmake
-    cmake --version
-
-
-### 4.8 Install Open Babel
-
-The ChemmineOB package requires Open Babel 3. Note that the Open Babel
-website seems very outdated:
-
-    http://openbabel.org/
-
-The latest news reported in the News feed is from 2016-09-21 (as of
-Oct 23rd, 2020) and it announces the release of Open Babel 2.4.0!
-However, there seems to be a version 3.0. It's on GitHub:
-https://github.com/openbabel/openbabel
-
-Before anything else, do:
-
-    python3 --version
-
-and record the current version of Python 3. This is the version that
-we installed earlier with all the modules required for the builds.
-This is our primary Python 3 installation.
-
-The brew formulae (`3.1.1_1` as of Oct 23rd, 2020) will install a bunch
-of dependencies e.g. `python@3.9`, `glib`, `cairo`, `eigen`, and possibly
-many more (e.g. `libpng`, `freetype`, `fontconfig`, `gettext`, `libffi`,
-`pcre`, `lzo`, `sqlite`, `pixman`) depending on what's already installed:
-
-    brew install eigen
-    brew install open-babel
-
-If another Python 3 was already installed via `brew` (e.g. `python@3.8`),
-then `python@3.9` will get installed as keg-only because it's an alternate
-version of another formulae. This means it doesn't get put on the `PATH`.
-Check this with:
-
-    python3 --version
-
-Hopefully this will still display the version of our primary Python 3
-installation.
-
-IMPORTANT NOTE: The automatic installation of `libpng` triggered by
-`brew install open-babel` can break `pkg-config` and some other things
-like Python 3 module `h5pyd`:
-
-    pkg-config
-    # dyld: Symbol not found: __cg_png_create_info_struct
-    #   Referenced from: /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
-    #   Expected in: /usr/local/lib/libPng.dylib
-    #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
-    # Abort trap: 6
-
-    python3
-    # Python 3.8.6 (default, Oct 27 2020, 08:56:44) 
-    # [Clang 11.0.0 (clang-1100.0.33.17)] on darwin
-    # Type "help", "copyright", "credits" or "license" for more information.
-    >>> import h5pyd
-    # Traceback (most recent call last):
-    # ...
-    # from _scproxy import _get_proxy_settings, _get_proxies
-    # ImportError: dlopen(/usr/local/Cellar/python@3.8/3.8.6_1/Frameworks/Python.framework/Versions/3.8/lib/python3.8/lib-dynload/_scproxy.cpython-38-darwin.so, 2): Symbol not found: __cg_png_create_info_struct
-    #   Referenced from: /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
-    #   Expected in: /usr/local/lib/libPng.dylib
-    #  in /System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO
-
-This will happen if `DYLD_LIBRARY_PATH` is set to `/usr/local/lib` so make
-sure that this is not the case. Note that we used to need this setting for
-Bioconductor package rsbml but luckily not anymore (rsbml is no longer
-supported on macOS).
-
-Initial testing:
-
-    which obabel  # /usr/local/bin/obabel
-    obabel -V
-    # dyld: Library not loaded: /usr/local/opt/boost/lib/libboost_iostreams-mt.dylib
-    #   Referenced from: /usr/local/bin/obabel
-    #   Reason: image not found
-    # Abort trap: 6
-
-This suggests that the current `3.1.1_1` formulae is buggy (it doesn't
-properly specify its dependencies).
-
-Install `boost` (this will install `icu4c` if not already installed):
-
-    brew install boost
-
-Finally create the following symlink:
-
-    cd /usr/local/lib
-    ln -s ../Cellar/open-babel/3.1.1_1/lib openbabel3
-
-TESTING:
-
-    obabel -V
-    # Open Babel 3.1.0 -- Oct 21 2020 -- 21:57:42  # version looks wrong!
-    
-    pkg-config --cflags openbabel-3
-    # -I/usr/local/Cellar/open-babel/3.1.1_1/include/openbabel3
-    
-    pkg-config --libs openbabel-3
-    # -L/usr/local/Cellar/open-babel/3.1.1_1/lib -lopenbabel
-
-Then try to install ChemmineOB from source. From R:
-
-    library(BiocManager)
-    BiocManager::install("ChemmineOB", type="source")
-
-
-### 4.9 Install Clustal Omega
-
-There is a standalone Mac binary at http://www.clustal.org/omega/
-Downnload it with:
-
-    cd ~/Downloads/
-    curl -O http://www.clustal.org/omega/clustal-omega-1.2.3-macosx
-
-Make it executable with:
-
-    chmod +x clustal-omega-1.2.3-macosx
-
-Move it to `/usr/local/bin` with:
-
-    mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
-
-Create clustalo symlink in `/usr/local/bin/` with:
-
-    cd /usr/local/bin/
-    ln -s clustal-omega-1.2.3-macosx clustalo
-
-Then:
-
-    which clustalo
-
-TESTING: Try to build the LowMACA package (takes about 5 min):
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build LowMACA
-
-
-### 4.10 Install the MySQL client
-
-Note that we only need this for the ensemblVEP package. RMySQL doesn't need
-it as long as we can install the binary package.
-
-Even though we only need the MySQL client, we used to install the MySQL
-Community Server because it was an easy way to get the MySQL client.
-Not anymore! Our attempt to use the recent binaries available at
-https://dev.mysql.com/downloads/ for macOS Mojave gave us too much
-headache when trying to install Perl module DBD::mysql or install RMySQL
-from source. So we switched to installing the MySQL client only via brew:
-
-    brew install mysql-client
-
-Then in `/etc/profile` append `/usr/local/opt/mysql-client/bin` to `PATH`
-and `/usr/local/opt/mysql-client/lib/pkgconfig` to `PKG_CONFIG_PATH`.
-
-Finally, make sure that you have a brewed `openssl` (`brew install openssl`,
-see above in this file) and create the following symlinks (without them
-`sudo cpan install DBD::mysql` won't be able to find the `ssl` or `crypto`
-libraries and will fail):
-
-    cd /usr/local/opt/mysql-client/lib/
-    ln -s /usr/local/opt/openssl/lib/libssl.dylib
-    ln -s /usr/local/opt/openssl/lib/libcrypto.dylib
-
-
---------------------------------------------------------------------------
-NO LONGER NEEDED (kept for the record only)
-
-Installing the MySQL Community Server
-
-Download `mysql-8.0.0-dmr-osx10.11-x86_64.dmg` from:
-
-    https://downloads.mysql.com/archives/community/
-
-e.g. with:
-
-    cd ~/Downloads/
-    curl -O https://downloads.mysql.com/archives/get/file/mysql-8.0.0-dmr-osx10.11-x86_64.dmg
-
-Install with:
-
-    sudo hdiutil attach mysql-8.0.18-macos10.14-x86_64.dmg
-    sudo installer -pkg /Volumes/mysql-8.0.18-macos10.14-x86_64/mysql-8.0.18-macos10.14-x86_64.pkg -target /
-    sudo hdiutil detach /Volumes/mysql-8.0.18-macos10.14-x86_64
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-Then in `/etc/profile` append `/usr/local/mysql/bin` to `PATH`,
-`/usr/local/mysql/lib` to `DYLD_LIBRARY_PATH`, and
-`/usr/local/mysql/lib/pkgconfig` to `PKG_CONFIG_PATH`.
-
-And finally (needed only for some MySQL builds that seem broken):
-
-    cd /usr/local/mysql/lib/
-    otool -L libmysqlclient.21.dylib
-    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
-    install_name_tool -add_rpath /usr/local/mysql/lib libmysqlclient.21.dylib
-
-    #install_name_tool -change @rpath/libmysqlclient.21.dylib /usr/local/mysql/lib/libmysqlclient.21.dylib libmysqlclient.21.dylib
-    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
-
---------------------------------------------------------------------------
-
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then:
-
-    which mysql_config  # /usr/local/opt/mysql-client/bin/mysql_config
-
-Then try to install the RMySQL package *from source*:
-
-    library(BiocManager)
-    install("RMySQL", type="source")
-
-
-### 4.11 Install Ensembl VEP script
-
-Required by Bioconductor packages ensemblVEP and MMAPPR2.
-
-Complete installation instructions are at
-https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
-
-#### Install Perl modules
-
-- Make sure the MySQL client is installed on the system (see "Install
-  the MySQL client" above in this file).
-
-- According to ensembl-vep README, the following Perl modules are required:
-    ```
-    ## Needed by both ensemblVEP and MMAPPR2:
-    sudo cpan install Archive::Zip
-    sudo cpan install File::Copy::Recursive
-    sudo cpan install DBI
-    sudo cpan install DBD::mysql  # MySQL client needed!
-    
-    ## Needed by MMAPPR2 only:
-    sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
-    sudo cpan install IO::String
-    sudo cpan install Bio::SeqFeature::Lite
-    brew install htslib
-    sudo cpan install Bio::DB::HTS::Tabix
-    ```
-
-#### Install ensembl-vep
-
-    cd /usr/local/
-    sudo git clone https://github.com/Ensembl/ensembl-vep.git
-    cd ensembl-vep/
-    sudo chown -R biocbuild:admin .
-    #git checkout release/100  # select desired branch
-
-    # Avoid the hassle of getting HTSlib to compile because ensemblVEP and
-    # MMAPPR2 pass 'R CMD build' and 'R CMD check' without that and that's
-    # all we care about. No sudo!
-    perl INSTALL.pl --NO_HTSLIB
-    # When asked if you want to install any cache files - say no
-    # When asked if you want to install any FASTA files - say no
-    # When asked if you want to install any plugins - say no
-
-#### Edit /etc/profile
-
-In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
-Note that the `/etc/profile` file has read-only permissions (factory
-settings). To save changes you will need to force save, e.g., in the
-`vi` editor this is `w!`.
-
-Logout and login again so that the changes to `/etc/profile` take effect.
-
-#### Testing
-
-Try to build and check the ensemblVEP and MMAPPR2 packages:
-
-    cd ~/bbs-3.14-bioc/meat/
-
-    R CMD build ensemblVEP
-    R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
-
-    R CMD build MMAPPR2
-    R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
-
-
-### 4.12 Install ViennaRNA
-
-Required by Bioconductor package GeneGA.
-
-Download with:
-
-    cd ~/Downloads/
-    curl -O https://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.4.11-MacOSX.dmg
-
-Install with:
-
-    sudo hdiutil attach ViennaRNA-2.4.11-MacOSX.dmg
-    sudo installer -pkg "/Volumes/ViennaRNA 2.4.11/ViennaRNA Package 2.4.11 Installer.pkg" -target /
-    sudo hdiutil detach "/Volumes/ViennaRNA 2.4.11"
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-TESTING:
-
-    which RNAfold  # /usr/local/bin/RNAfold
-
-Then try to build the GeneGA package:
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build GeneGA
-
-
-### 4.13 Set up ImmuneSpaceR package for connecting to ImmuneSpace
-
-In `/etc/profile` add:
-
-    export ISR_login=bioc@immunespace.org
-    export ISR_pwd=1notCRAN
-
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then try to build the ImmuneSpaceR package:
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build ImmuneSpaceR
-
-
-### 4.14 Install Infernal
-
-Required by Bioconductor package inferrnal.
-
-Install with:
-
-    brew tap brewsci/bio
-    brew install infernal
-
-TESTING:
-
-    which cmsearch  # /usr/local/bin/cmsearch
-    which cmalign   # /usr/local/bin/cmalign
-    which cmbuild   # /usr/local/bin/cmbuild
-
-Then try to build the inferrnal package:
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build inferrnal
-
-
-### 4.15 Install mono
-
-Required by Bioconductor package rawrr.
-
-Install with:
-
-    brew install mono
-
-TESTING
-
-    which mono  # /usr/local/bin/mono
-
-Then try to install/build/check the rawrr package:
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD INSTALL rawrr
-    R CMD build rawrr
-    R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
-
-
-### 4.16 Install macFUSE
-
-Required by Bioconductor package Travel.
-
-Download latest stable release from https://osxfuse.github.io/ e.g.:
-
-    cd ~/Downloads/
-    curl -LO https://github.com/osxfuse/osxfuse/releases/download/macfuse-4.0.5/macfuse-4.0.5.dmg
-
-Install with:
-
-    sudo hdiutil attach macfuse-4.0.5.dmg
-    sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
-    sudo hdiutil detach /Volumes/macFUSE
-
-TESTING: Try to install the Travel package *from source*:
-
-    library(BiocManager)
-    BiocManager::install("Travel", type="source")
-
-
-### 4.17 Install .NET 5.0 Runtime
-
-Required by Bioconductor package rmspc.
-
-#### Install the runtime
-
-Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
-install the 5.0 .NET runtime corresponding to the build system's macOS.
-
-    curl -O https://download.visualstudio.microsoft.com/download/pr/a847df19-d530-41c8-b766-cb60ee8af9a4/7edd7c2eae38d25d0d7c90350eefea64/dotnet-runtime-5.0.9-osx-x64.pkg
-    shasum -a 512 dotnet-runtime-5.0.9-osx-x64.pkg
-    sudo installer -pkg dotnet-runtime-5.0.9-osx-x64.pkg -target /
-
-#### Testing
-
-You might need to logout and login again before trying this:
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build rmspc
-    R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
-
-
-### 4.18 [OPTIONAL] Install autoconf & automake
-
-MAY 2020: Who needs this? Is this still needed?
-
-Install with:
-
-    brew install autoconf
-    brew install automake
-
-TESTING:
-
-    which autoconf
-    which automake
-
-Then try to install the flowWorkspace package *from source*:
-
-    library(BiocManager)
-    BiocManager::install("flowWorkspace", type="source")
-
-
-### 4.19 [OPTIONAL] Install ImageMagick
-
-APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
-package, which is now officially deprecated)
-
-WARNING: Don't do 'brew install imagemagick'. This will install the jpeg-8d
-lib on top of the previously installed jpeg-9 lib!!!
-So we install a pre-built ImageMagick binary for El Capitan. Note that
-these pre-built binaries seem very broken and need a bunch of symlinks
-in order to work!
-
-Download and install with:
-
-    cd ~/Downloads/
-    curl -O https://www.imagemagick.org/download/binaries/ImageMagick-x86_64-apple-darwin16.4.0.tar.gz
-    sudo tar zxvf ImageMagick-x86_64-apple-darwin16.4.0.tar.gz -C /
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-Then in `/etc/profile` add the following line (before the `PATH` and
-`DYLD_LIBRARY_PATH` lines):
-
-    export MAGICK_HOME="/ImageMagick-7.0.5"
-
-and append `$MAGICK_HOME/bin`, `$MAGICK_HOME/lib`, and
-`$MAGICK_HOME/lib/pkgconfig` to `PATH`, `DYLD_LIBRARY_PATH`,
-and `PKG_CONFIG_PATH`, respectively.
-
-Logout and login again so that the changes to `/etc/profile` take effect.
-
-Then create a bunch of symlinks:
-
-    cd /usr/local/include/
-    ln -s $MAGICK_HOME/include/ImageMagick-7
-    cd /usr/local/etc/
-    ln -s $MAGICK_HOME/etc/ImageMagick-7
-    cd /usr/local/share/
-    ln -s $MAGICK_HOME/share/ImageMagick-7
-    cd /usr/local/share/doc/
-    ln -s $MAGICK_HOME/share/doc/ImageMagick-7
-
-    ## this creates 10 symlinks in /usr/local/lib
-    cd /usr/local/lib/
-    ln -s $MAGICK_HOME/lib/ImageMagick-7.0.5
-    for lib in libMagick++-7 libMagickCore-7 libMagickWand-7; do
-      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.0.dylib
-      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.dylib
-      ln -s $MAGICK_HOME/lib/$lib.Q16HDRI.la
-    done
-
-TESTING:
-
-    which magick
-    magick logo: logo.gif
-    identify logo.gif
-    identify <some-PDF-file>  # important test! (flowQ uses this)
-    #display logo.gif         # fails but flowQ does not use this
-
-Then try to build the flowQ package (the package makes system calls to
-standalone commands `convert`, `identify`, and `montage`):
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build flowQ
 
 
 
