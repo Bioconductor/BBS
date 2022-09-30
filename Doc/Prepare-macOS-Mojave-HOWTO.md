@@ -1905,7 +1905,7 @@ which requires GLPK:
     library(igraph)
     cluster_optimal(make_graph("Zachary"))
 
-If GLPK is not avilable, one gets:
+If GLPK is not available, one gets:
 
     Error in cluster_optimal(make_graph("Zachary")) :
       At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
