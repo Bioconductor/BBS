@@ -158,12 +158,14 @@ def write_BBS_EndOfRun_ticket(ticket):
 ## builder. Memoized.
 @lru_cache  # clear cache with get_list_of_target_pkgs.cache_clear()
 def get_list_of_target_pkgs():
-    pkgType = BBSutils.getNodeSpec(BBSvars.node_hostname, 'pkgType')
+    node_Arch = BBSutils.getNodeSpec(BBSvars.node_hostname, 'Arch')
+    node_pkgType = BBSutils.getNodeSpec(BBSvars.node_hostname, 'pkgType')
     Central_rdir = BBSvars.Central_rdir
     dcf = Central_rdir.WOpen(BBSutils.meat_index_file)
     target_pkgs = bbs.parse.get_meat_packages_for_node(dcf,
                                                        BBSvars.node_hostname,
-                                                       pkgType)
+                                                       node_Arch,
+                                                       node_pkgType)
     dcf.close()
     return target_pkgs
 

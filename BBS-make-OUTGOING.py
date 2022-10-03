@@ -90,11 +90,12 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
         os.mkdir(manuals_dir)
     print("BBS> [stage6b] BEGIN copying outgoing packages from %s." % \
           fresh_pkgs_subdir)
-    pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
+    node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
+    node_pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
     meat_index_path = os.path.join(BBSvars.Central_rdir.path,
                                    BBSutils.meat_index_file)
-    pkgs = bbs.parse.get_meat_packages_for_node(meat_index_path,
-                                                node_id, pkgType)
+    pkgs = bbs.parse.get_meat_packages_for_node(meat_index_path, node_hostname,
+                                                node_Arch, node_pkgType)
     meat_index = bbs.parse.get_meat_packages(meat_index_path, as_dict=True)
     for pkg in pkgs:
         if pkgMustBeRejected(node_hostname, node_id, pkg):

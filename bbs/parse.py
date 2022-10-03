@@ -332,17 +332,20 @@ def get_meat_packages(meat_index_file, as_dict=False):
     return pkgs
 
 ### 'unsupported_platforms' is the value of BBSoption UnsupportedPlatforms.
-### 'node_id' is the name of the node and 'node_pkgType' the native package
-### type for this node ('source', 'win.binary', 'win64.binary', 'mac.binary',
-### 'mac.binary.mavericks', or 'mac.binary.el-capitan').
-def _is_supported(unsupported_platforms, node_id, node_pkgType=None):
+### 'node_hostname' is the name of a build node.
+### 'node_Arch' and 'node_pkgType' are the Arch and pkgType of node of name
+### 'node_hostname', as specified in BBS/nodes/nodespecs.py.
+def _is_supported(unsupported_platforms, node_hostname,
+                  node_Arch=None, node_pkgType=None):
     if unsupported_platforms == None:
         return True
     for unsupported_platform in unsupported_platforms.split(','):
         unsupported_platform = unsupported_platform.strip()
         if unsupported_platform in ['', 'None', 'NA']:
             continue
-        if unsupported_platform == node_id:
+        if unsupported_platform == node_hostname:
+            return False
+        if node_Arch != None and unsupported_platform == node_Arch:
             return False
         if node_pkgType == None or node_pkgType == 'source':
             continue
@@ -356,16 +359,18 @@ def _is_supported(unsupported_platforms, node_id, node_pkgType=None):
             return False
     return True
 
-### 'node_id' is the name of the node and 'node_pkgType' the native package
-### type for this node ('source', 'win.binary', 'win64.binary', 'mac.binary',
-### 'mac.binary.mavericks', or 'mac.binary.el-capitan').
-def get_meat_packages_for_node(meat_index_file, node_id, node_pkgType=None):
+### 'node_hostname' is the name of a build node.
+### 'node_Arch' and 'node_pkgType' are the Arch and pkgType of node of name
+### 'node_hostname', as specified in BBS/nodes/nodespecs.py.
+def get_meat_packages_for_node(meat_index_file, node_hostname,
+                               node_Arch=None, node_pkgType=None):
     dcf_records = parse_DCF(meat_index_file)
     pkgs = []
     for dcf_record in dcf_records:
         pkg = dcf_record['Package']
         unsupported_platforms = dcf_record.get('UnsupportedPlatforms')
-        if (_is_supported(unsupported_platforms, node_id, node_pkgType)):
+        if (_is_supported(unsupported_platforms, node_hostname,
+                          node_Arch, node_pkgType)):
             pkgs.append(pkg)
     pkgs.sort(key=str.lower)
     return pkgs
