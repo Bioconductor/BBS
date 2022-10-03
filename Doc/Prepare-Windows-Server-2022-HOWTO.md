@@ -727,7 +727,8 @@ packages.
   section at the top of this document for how to do this).
 
   IMPORTANT: On a Windows build machine, `C:\rtools42\usr\bin` and
-  `C:\rtools42\mingw64\bin` should **always be first** in the `Path`.
+  `C:\rtools42\x86_64-w64-mingw32.static.posix\bin` should **always be first**
+  in the `Path`.
 
 - Finally, rename the `perl.exe` file located in `C:\rtools42\usr\bin` to
   avoid any conflict with Strawberry Perl (we will install this later).
@@ -1085,7 +1086,8 @@ Choose "JDK Download" then download the "Windows x64 Installer"
 
 Use the default settings when running the installer.
 
-Make sure that `C:\rtools42\usr\bin` and `C:\rtools42\mingw64\bin`
+Make sure that `C:\rtools42\usr\bin` and
+`C:\rtools42\x86_64-w64-mingw32.static.posix\bin`
 are still first in the `Path`. In case the JDK installer prepended
 something like `C:\Program Files\Common Files\Oracle\Java\javapath`
 to `Path`, then move it towards the end of `Path` (e.g. anywhere after
