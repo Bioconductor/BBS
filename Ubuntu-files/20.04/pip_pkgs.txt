@@ -12,3 +12,4 @@ jupyter                     # CRAN nbconvertR for BioC destiny
 matplotlib                  # CRAN phateR for BioC phemd
 phate                       # CRAN phateR for BioC phemd
 torch                       # Bioc APL
+leidenalg                   # Bioc scBubbletree
