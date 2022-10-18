@@ -553,14 +553,23 @@ TESTING:
 
 ### 2.12 Install Python 3 modules
 
-Install pip modules required by CRAN packages where `BBS_UBUNTU_PATH` is the
-path to `BBS/Ubuntu-files/20.04`
+Install Python packages needed by the BBS build system where `BBS_UBUNTU_PATH`
+is the path to `BBS/Ubuntu-files/20.04`
+
+    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_bbs.txt
+
+Install pip modules required by CRAN packages
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
 
 Install pip modules required by the Single Package Builder
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_spb.txt
+
+Optionally, install all of the above with 
+
+    python3 -m pip install $(cat $BBS_UBUNTU_PATH/pip_*.txt | awk '/^[^#]/ {print $1}')
+
 
 TESTING:
 
