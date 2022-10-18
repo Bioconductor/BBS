@@ -553,24 +553,23 @@ TESTING:
 
 ### 2.12 Install Python 3 modules
 
-#### Python 3 modules needed by BBS
+Install Python packages needed by the BBS build system where `BBS_UBUNTU_PATH`
+is the path to `BBS/Ubuntu-files/20.04`
 
-    pip3 install psutil
+    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_bbs.txt
 
-#### Python 3 modules needed by the Single Package Builder only
+Install pip modules required by CRAN packages
 
-`virtualenv` is used by the Single Package Builder. Despite python3 shipping
-with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
+    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
 
-    pip3 install virtualenv
+Install pip modules required by the Single Package Builder
 
-#### Install Python 3 modules needed by some CRAN/Bioconductor packages
+    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_spb.txt
 
-    pip3 install numpy scipy sklearn h5py pandas mofapy mofapy2
-    pip3 install tensorflow tensorflow_probability
-    pip3 install h5pyd
-    pip3 install nbconvert jupyter
-    pip3 install matplotlib phate
+Optionally, install all of the above with 
+
+    python3 -m pip install $(cat $BBS_UBUNTU_PATH/pip_*.txt | awk '/^[^#]/ {print $1}')
+
 
 TESTING:
 
@@ -602,7 +601,6 @@ TESTING:
     and the destiny package:
     ```
     R CMD build destiny
-    ```
 
 
 ### 2.13 Install MacTeX
