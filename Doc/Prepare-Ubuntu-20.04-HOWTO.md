@@ -66,9 +66,9 @@ TESTING: You should be able to ping yourself with e.g.:
 
     ping nebbiolo2
 
-Note that not having this set properly will cause Bioconductor package RGMQL
-to fail. So if the software builds are already set up, you can start R from
-the biocbuild account and also try:
+Note that not having this set properly will cause Bioconductor
+package **RGMQL** to fail. So if the software builds are already
+set up, you can start R from the biocbuild account and also try:
 
     library(RGMQL)
     init_gmql()  # will fail if the short name of the machine
@@ -235,15 +235,15 @@ Otherwise, you may have issues when attempting subsequent configurations.
 
 ### 1.7 Run Xvfb as a service
 
-Some Bioconductor packages like adSplit, GeneAnswers, or lmdme, contain
-examples that need access to an X11 display. However, when running
+Some Bioconductor packages like **adSplit**, **GeneAnswers**, or **lmdme**,
+contain examples that need access to an X11 display. However, when running
 `R CMD check` in the context of the daily builds, no X11 display is
 available. This will cause the above packages to fail on the build report.
-Here is the full list of packages affected by this (as of May 2021): adSplit,
-clippda, DaMiRseq, fCI, GARS, GeneAnswers, lmdme, NormqPCR, OMICsPCA,
-Rcade, tscR, and TTMap. Note that for some packages we will only see a
-warning but for some others it will be an ERROR (either during the BUILD
-or CHECK stage).
+Here is the full list of packages affected by this (as of May 2021):
+**adSplit**, **clippda**, **DaMiRseq**, **fCI**, **GARS**, **GeneAnswers**,
+**lmdme**, **NormqPCR**, **OMICsPCA**, **Rcade**, **tscR**, and **TTMap**.
+Note that for some packages we will only see a warning but for some others
+it will be an ERROR (either during the BUILD or CHECK stage).
 
 If R is already installed on the machine, an easy way to reproduce the
 problem is with:
@@ -491,51 +491,66 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
 #### Python 3 modules needed by some CRAN/Bioconductor packages
 
-Some CRAN/Bioconductor packages interact with Python 3 and use Python
-modules. Note that we deliberately install the modules _system wide_
-(with `sudo -H pip3 install <module>`). This will make them available to
-_all the builds_, independently of which account they will run from (e.g.
-biocbuild for BBS or pkgbuild for the Single Package Builder). Since we
-only install _trusted_ modules, this should not be a security concern. See
+Some CRAN/Bioconductor packages interact with Python 3 and Python modules.
+
+CRAN packages do this via the **reticulate** package, and they are expected
+to list their Python requirements in `SystemRequirements`. For those packages,
+we need to install the required Python modules on the builders.
+
+Bioconductor packages are supposed to do this via the **basilisk** package,
+which will automatically handle their Python requirements. So for those
+packages, we don't need to install any Python modules on the builders, and the
+packages don't need to list their Python requirements in `SystemRequirements`.
+Note however that not all Bioconductor packages use **basilisk** to handle
+their Python requirements. Those that do not should be treated as CRAN packages
+w.r.t. those requirements.
+
+IMPORTANT NOTE: We deliberately install Python modules _system wide_
+(with `sudo -H pip3 install <module>`) on the builders. This will make them
+available to _all the builds_, independently of which account they will run
+from (e.g. biocbuild for BBS or pkgbuild for the Single Package Builder).
+Since we only install _trusted_ modules, this should not be a security
+concern. See
 https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practice)
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
 
 Notes:
 
-- `scipy` is needed by Bioconductor package MOFA2 but also by
+- `scipy` is needed by Bioconductor package **MOFA2** but also by
   the `sklearn` module (when `sklearn` is imported and `scipy` is not present,
   the former breaks). However, for some reason, `sudo -H pip3 install sklearn`
   does not install `scipy` and completes successfully even if `scipy` is
   not installed.
 
 - `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
-  BiocSklearn, MOFA2, and `numpy` is also needed by Bioconductor
-  package DChIPRep.
+  **BiocSklearn**, **MOFA2**, and `numpy` is also needed by Bioconductor
+  package **DChIPRep**.
 
-- `mofapy2` is needed by Bioconductor package MOFA2.
+- `mofapy2` is needed by Bioconductor package **MOFA2**.
 
-- `tensorflow` is needed by Bioconductor packages scAlign, netReg, and
-  DeepPINCS. Note that trying to load the module in a Python 3 session might
-  raise the following error:
+- `tensorflow` is needed by Bioconductor packages **scAlign**, **netReg**,
+  and **DeepPINCS**. Note that trying to load the module in a Python 3
+  session might raise the following error:
     ```
     >>> import tensorflow
     2020-08-08 16:52:56.617223: W tensorflow/stream_executor/platform/default/dso_loader.cc:59] Could not load dynamic library 'libcudart.so.10.1'; dlerror: libcudart.so.10.1: cannot open shared object file: No such file or directory
     2020-08-08 16:52:56.617255: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
     ```
   Even though the message says that the error can be ignored, you can get rid
-  of it by installing the libcudart10.1 package:
+  of it by installing the `libcudart10.1` package:
     ```
     sudo apt-get install libcudart10.1
     ```
 
-- `tensorflow_probability` is needed by Bioconductor package netReg.
+- `tensorflow_probability` is needed by Bioconductor package **netReg**.
 
-- `h5pyd` is needed by Bioconductor package rhdf5client.
+- `h5pyd` is needed by Bioconductor package **rhdf5client**.
 
-- `nbconvert` and `jupyter` are needed by CRAN package nbconvertR which is
-  itself used by Bioconductor package destiny. Note that `jupyter --version`
-  should display something like this (as of Jan. 2021):
+- `nbconvert` and `jupyter` are needed by CRAN package **nbconvertR**
+  which is itself used by Bioconductor package **destiny**.
+  Note that `jupyter --version` should display something like this
+  (as of Jan. 2021):
     ```
     hpages@nebbiolo2:~$ jupyter --version
     jupyter core     : 4.7.1
@@ -552,8 +567,8 @@ Notes:
     ```
   It's ok if jupyter lab is not installed but everything else should be.
 
-- `matplotlib` and `phate` are needed by CRAN package phateR which is itself
-  used by Bioconductor package phemd.
+- `matplotlib` and `phate` are needed by CRAN package **phateR** which is
+  itself used by Bioconductor package **phemd**.
 
 TESTING: From Python (start it with `python3`), check `tensorflow` version
 with:
@@ -987,7 +1002,7 @@ Everything in this section must be done **from a sudoer account**.
 
 ### 3.1 Install BibTeX style humannat.bst
 
-Required by Bioconductor package destiny.
+Required by Bioconductor package **destiny**.
 
 Used to be part of earlier Ubuntu versions (in texlive-bibtex-extra) but
 doesn't seem to be here anymore in Ubuntu 20.04.
@@ -1003,7 +1018,7 @@ Install with:
 
 ### 3.2 Install ensembl-vep
 
-Required by Bioconductor packages ensemblVEP and MMAPPR2.
+Required by Bioconductor packages **ensemblVEP** and **MMAPPR2**.
 
 Complete installation instructions are at
 https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
@@ -1060,8 +1075,8 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 #### Testing
 
-From the biocbuild account, try to build and check the ensemblVEP and
-MMAPPR2 packages:
+From the biocbuild account, try to build and check the **ensemblVEP**
+and **MMAPPR2** packages:
 
     cd ~/bbs-3.14-bioc/meat/
 
@@ -1076,7 +1091,7 @@ MMAPPR2 packages:
 
 ### 3.3 Install ViennaRNA
 
-Required by Bioconductor package GeneGA.
+Required by Bioconductor package **GeneGA**.
 
 #### Download and install
 
@@ -1095,7 +1110,7 @@ From the biocbuild account:
 
     which RNAfold  # /usr/bin/RNAfold
 
-Finally try to build the GeneGA package:
+Finally try to build the **GeneGA** package:
 
     cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD build GeneGA
@@ -1103,7 +1118,7 @@ Finally try to build the GeneGA package:
 
 ### 3.4 Set LIBSBML_CFLAGS and LIBSBML_LIBS
 
-Required by Bioconductor package rsbml.
+Required by Bioconductor package **rsbml**.
 
 Unfortunately `libsbml5-dev` doesn't include a pkg-config file (`libsbml.pc`)
 so we need to define environment variables LIBSBML_CFLAGS and LIBSBML_LIBS
@@ -1134,7 +1149,7 @@ From the biocbuild account:
 
 ### 3.5 Install ImmuneSpace credentials
 
-Required by Bioconductor package ImmuneSpaceR.
+Required by Bioconductor package **ImmuneSpaceR**.
 
 #### Edit /etc/profile
 
@@ -1155,7 +1170,7 @@ From the biocbuild account:
 
 ### 3.6 Install Perl module XML::Simple
 
-Required by Bioconductor package LowMACA.
+Required by Bioconductor package **LowMACA**.
 
 #### Install
 
@@ -1171,9 +1186,9 @@ From the biocbuild account:
 
 ### 3.7 Install .NET runtime
 
-Required by Bioconductor package rmspc.
+Required by Bioconductor package **rmspc**.
 
-For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#2004-. 
+For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#2004-.
 
 #### Install the Microsoft signing key
 
@@ -1190,7 +1205,7 @@ For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core
 
 #### Testing
 
-From the biocbuild account, try to build and check the rmspc package:
+From the biocbuild account, try to build and check the **rmspc** package:
 
     cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD build rmspc
@@ -1199,11 +1214,12 @@ From the biocbuild account, try to build and check the rmspc package:
 
 ### 3.8 Install ROOT
 
-SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (xps was deprecated in BioC 3.12)
+SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (**xps** was deprecated
+in BioC 3.12)
 
-Required by Bioconductor package xps.
+Required by Bioconductor package **xps**.
 
-xps wants ROOT 5, not 6.
+**xps** wants ROOT 5, not 6.
 
 ROOT supports 2 installation methods: "location independent" and "fix
 location". We will do "location independent" installation.
@@ -1255,12 +1271,12 @@ From the biocbuild account:
     which root-config      # /usr/local/root/bin/root-config
     root-config --version  # 6.22/01
 
-Finally try to install the xps package:
+Finally try to install the **xps** package:
 
     cd ~/bbs-3.14-bioc/meat/
     ../R/bin/R CMD INSTALL xps
 
-As expected, this currently fails (with xps 1.49.0):
+As expected, this currently fails (with **xps** 1.49.0):
 
     * installing to library ‘/home/biocbuild/bbs-3.12-bioc/R/library’
     * installing *source* package ‘xps’ ...
