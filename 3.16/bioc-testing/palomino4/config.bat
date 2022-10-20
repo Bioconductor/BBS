@@ -12,10 +12,6 @@ set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=2
 set BBS_CHECK_NB_CPU=3
 
-set BBS_STAGE2_MODE=multiarch
-set BBS_STAGE4_MODE=multiarch
-set BBS_STAGE5_MODE=multiarch
-
 @rem Central build node is nebbiolo2 at DFCI.
 set BBS_CENTRAL_RHOST=nebbiolo2
 set BBS_RSH_CMD=ssh -F /cygdrive/f/bioctesting/.ssh/config
