@@ -712,7 +712,7 @@ packages.
 
 - Go to https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html
 
-- Download Rtools42 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools42/files/rtools42-5168-5107.exe`
+- Download Rtools42 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools42/files/rtools42-5355-5357.exe`
 
 - Run the installer and keep all the defaults. This will install Rtools42
   in `C:\rtools42`.
@@ -749,7 +749,7 @@ in a PowerShell window:
     which make      # /usr/bin/make (provided by rtools42)
     make --version  # GNU Make 4.3
     which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by rtools42)
-    gcc --version   # gcc.exe (GCC) 10.3.0
+    gcc --version   # gcc.exe (GCC) 10.4.0
     which chmod     # /usr/bin/chmod (provided by rtools42)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
