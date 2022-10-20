@@ -553,16 +553,16 @@ TESTING:
 
 ### 2.12 Install Python 3 modules
 
-Install Python packages needed by the BBS build system where `BBS_UBUNTU_PATH`
+Install Python modules needed by the BBS build system where `BBS_UBUNTU_PATH`
 is the path to `BBS/Ubuntu-files/20.04`
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_bbs.txt
 
-Install pip modules required by CRAN packages
+Install Python modules required by CRAN packages
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
 
-Install pip modules required by the Single Package Builder
+Install Python modules required by the Single Package Builder
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_spb.txt
 
@@ -601,6 +601,7 @@ TESTING:
     and the destiny package:
     ```
     R CMD build destiny
+    ```
 
 
 ### 2.13 Install MacTeX
