@@ -21,7 +21,7 @@ set TMPDIR=%BBS_WORK_TOPDIR%\tmpdir
 @rem ---------------------------------------------------------------
 
 set BBS_BIOC_VERSION=3.16
-set BBS_BIOC_GIT_BRANCH=RELEASE_3_16
+set BBS_BIOC_GIT_BRANCH=master
 set BBS_BIOC_VERSIONED_REPO_PATH=%BBS_BIOC_VERSION%/%BBS_BUILDTYPE%
 set BBS_NON_TARGET_REPOS_FILE=%BBS_HOME%/%BBS_BIOC_VERSIONED_REPO_PATH%/non_target_repos.txt
 
