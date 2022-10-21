@@ -21,7 +21,7 @@ export BBS_MEAT0_TYPE=3
 
 # Needed only if BBS_MEAT0_TYPE is 3
 export BBS_BIOC_MANIFEST_GIT_REPO_URL="https://git.bioconductor.org/admin/manifest"
-export BBS_BIOC_MANIFEST_GIT_BRANCH="master"
+export BBS_BIOC_MANIFEST_GIT_BRANCH="RELEASE_3_16"
 export BBS_BIOC_MANIFEST_CLONE_PATH="/home/biocbuild/bbs-3.16-bioc/manifest"
 
 # Needed if BBS_MEAT0_TYPE is 1 or 3
