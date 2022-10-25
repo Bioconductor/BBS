@@ -264,7 +264,7 @@ the `xvfb.conf` file is in place, simulate a rotation:
 
     sudo newsyslog -nvv
 
-#### Export global variable DISPLAY
+#### Export global variable `DISPLAY`
 
     sudo vim /etc/profile
 
@@ -481,7 +481,7 @@ Then in `/etc/profile`:
     ```
     export OPENSSL_LIBS="/usr/local/opt/openssl@1.1/lib/libssl.a /usr/local/opt/openssl@1.1/lib/libcrypto.a"
     ```
-  This will trigger statically linking of the rtracklayer package against
+  This will trigger statically linking of the **rtracklayer** package against
   the openssl libraries.
 
 UPDATE (Sept 2022): Looks like `openssl` is available at
@@ -529,6 +529,7 @@ Then, install Python 3.9. It is needed by Open Babel 3:
 
 Python 3.9 is now the main Python 3 installation (it's in the `PATH`):
 
+    which python3
     python3 --version  # Python 3.9.0
 
 HOWEVER, WE DON'T WANT THIS! We want to make Python 3.8 the main Python 3
@@ -548,28 +549,50 @@ installation. To do this, we need to manually fix a bunch of symlinks:
 
 TESTING:
 
+    which python3
     python3 --version  # Python 3.8.10
 
 
-### 2.12 Install Python 3 modules
+### 2.12 Set `RETICULATE_PYTHON` and install Python 3 modules
 
-Install Python modules needed by the BBS build system where `BBS_UBUNTU_PATH`
-is the path to `BBS/Ubuntu-files/20.04`
+#### Set `RETICULATE_PYTHON` in `/etc/profile`
+
+We need to make sure that, by default, the **reticulate** package will
+use the system-wide Python interpreter that is in the `PATH`.
+
+In `/etc/profile` add:
+
+    export RETICULATE_PYTHON="/usr/local/bin/python3"  # same as 'which python3'
+
+Logout and login again for the changes to `/etc/profile` to take effect.
+
+TESTING: If R is already installed on the machine, start it, and do:
+
+    if (!require(reticulate))
+        install.packages("reticulate", repos="https://cran.r-project.org")
+    ## py_config() should display the path to the system-wide Python
+    ## interpreter returned by the 'which python3' command above.
+    ## It should also display this note:
+    ##   NOTE: Python version was forced by RETICULATE_PYTHON
+    py_config()
+
+#### Install Python 3 modules needed by BBS
+
+`BBS_UBUNTU_PATH` must be the path to `BBS/Ubuntu-files/20.04`.
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_bbs.txt
 
-Install Python modules required by CRAN packages
-
-    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
-
-Install Python modules required by the Single Package Builder
+#### Install Python modules required by Single Package Builder
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_spb.txt
+
+#### Install Python modules required by CRAN/Bioconductor packages
+
+    sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
 
 Optionally, install all of the above with 
 
     python3 -m pip install $(cat $BBS_UBUNTU_PATH/pip_*.txt | awk '/^[^#]/ {print $1}')
-
 
 TESTING:
 
@@ -593,7 +616,7 @@ TESTING:
 
 - Start python3 and try to import the above modules. Quit.
 
-- Try to build the BiocSklearn package (takes < 1 min):
+- Try to build the **BiocSklearn** package (takes < 1 min):
     ```
     cd ~/bbs-3.14-bioc/meat/
     R CMD build BiocSklearn
@@ -635,8 +658,8 @@ to the `PATH` take effect. Then:
 
 Install Pandoc 2.7.3 instead of the latest Pandoc (2.9.2.1 as of April 2020).
 The latter breaks `R CMD build` for 8 Bioconductor software packages
-(FELLA, flowPloidy, MACPET, profileScoreDist, projectR, swfdr, and TVTB)
-with the following error:
+(**FELLA**, **flowPloidy**, **MACPET**, **profileScoreDist**, **projectR**,
+**swfdr**, and **TVTB**) with the following error:
 
     ! LaTeX Error: Environment cslreferences undefined.
 
@@ -684,7 +707,7 @@ Install with:
     brew install pstree
 
 
-### 2.17 Replace /etc/ssl/cert.pm with CA bundle if necessary
+### 2.17 Replace `/etc/ssl/cert.pm` with CA bundle if necessary
 
 #### curl: (60) SSL certificate problem: certificate has expired
 
@@ -742,9 +765,10 @@ Make sure to fix `/usr/local/` permissions as described in the _Install
 Homebrew_ section if the Simon's binary you install gets extracted there
 (normally the case for the `darwin17/x86_64` binaries).
 
-In this section we only describe the case of installing CRAN packages jpeg,
-tiff, and fftwtools, from source, which require system libraries JPEG, TIFF,
-and FFTW, respectively. The prodecure for other CRAN packages is similar.
+In this section we only describe the case of installing CRAN packages **jpeg**,
+**tiff**, and **fftwtools**, from source, which require system libraries
+JPEG, TIFF, and FFTW, respectively. The prodecure for other CRAN packages
+is similar.
 
 UPDATE: We don't need to install any of this! See _What if CRAN doesn't
 provide package binaries for macOS yet?_ subsection in the _Install R_
@@ -752,7 +776,7 @@ section below in this document for a better way to handle this situation.
 
 #### [OPTIONAL] Install libwebp system library
 
-This is only needed if CRAN package jpeg or tiff need to be installed
+This is only needed if CRAN package **jpeg** or **tiff** need to be installed
 from source which is usually NOT the case (most of the time Mac binaries
 for jpeg or tiff should be available on CRAN).
 
@@ -768,7 +792,7 @@ Download and extract Simon's binary with:
 
 #### [OPTIONAL] Install JPEG system library
 
-This is needed only if CRAN package jpeg needs to be installed from source
+This is needed only if CRAN package **jpeg** needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
 available on CRAN).
 
@@ -782,7 +806,7 @@ Download and extract Simon's binary with:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
 
-TESTING: If R is already installed on the machine, try to install the jpeg
+TESTING: If R is already installed on the machine, try to install the **jpeg**
 package *from source*:
 
     install.packages("jpeg", type="source", repos="https://cran.r-project.org")
@@ -792,7 +816,7 @@ package *from source*:
 
 #### [OPTIONAL] Install TIFF system library
 
-This is needed only if CRAN package tiff needs to be installed from source
+This is needed only if CRAN package **tiff** needs to be installed from source
 which is usually NOT the case (most of the time a Mac binary should be
 available on CRAN).
 
@@ -806,7 +830,7 @@ Download and extract Simon's binary with:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
 
-TESTING: If R is already installed on the machine, try to install the tiff
+TESTING: If R is already installed on the machine, try to install the **tiff**
 package *from source*:
 
     install.packages("tiff", type="source", repos="https://cran.r-project.org")
@@ -816,7 +840,7 @@ package *from source*:
 
 #### [OPTIONAL] Install FFTW system library
 
-This is needed only if CRAN package fftwtools needs to be installed from
+This is needed only if CRAN package **fftwtools** needs to be installed from
 source which is usually NOT the case (most of the time a Mac binary should
 be available on CRAN).
 
@@ -830,8 +854,8 @@ Download and extract Simon's binary with:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
 
-TESTING: If R is already installed on the machine, try to install the fftwtools
-package *from source*:
+TESTING: If R is already installed on the machine, try to install
+the **fftwtools** package *from source*:
 
     install.packages("fftwtools", type="source", repos="https://cran.r-project.org")
 
@@ -899,7 +923,7 @@ Must be done from the biocbuild account.
     cd
     git clone https://github.com/bioconductor/BBS
 
-#### Compile chown-rootadmin.c
+#### Compile `chown-rootadmin.c`
 
     cd ~/BBS/utils/
     gcc chown-rootadmin.c -o chown-rootadmin
@@ -929,7 +953,7 @@ Must be done from the `biocbuild` account.
 If installing R devel: download R from https://mac.r-project.org/ (e.g.
 pick up `R-4.0-branch.pkg`). Unlike the installer image (`.pkg` file),
 the tarball (`.tar.gz` file) does NOT include Tcl/Tk (which is needed
-by R base package tcltk) so make sure to grab the former.
+by R base package **tcltk**) so make sure to grab the former.
 
 If installing R release: download R from CRAN (e.g. from
 https://cloud.r-project.org/bin/macosx/). Pick up the 1st file
@@ -1083,8 +1107,9 @@ another one:
     #   semi-transparency is not supported on this device: reported only once per page
     dev.off()
 
-Note that this semi-transparency problem breaks `R CMD build` on the chimeraviz
-package. So we'll use `"cairo"` (which is the default on Linux).
+Note that this semi-transparency problem breaks `R CMD build` on
+the **chimeraviz** package. So we'll use `"cairo"` (which is the
+default on Linux).
 
 One caveat is that this default cannot be changed via an `Rprofile` file (this
 file is ignored by `R CMD build` and `R CMD check`).
@@ -1196,10 +1221,10 @@ NOTES:
     for (pkg in difficult_pkgs) library(pkg, character.only=TRUE)
     ```
 
-- Most binary packages in `difficult_pkgs` (e.g. XML, rJava, etc) contain a
-  shared object (e.g. `libs/XML.so`) that is linked to `libR.dylib` via an
-  absolute path that is specific to the version of R that was used when the
-  object was compiled/linked e.g.
+- Most binary packages in `difficult_pkgs` (e.g. **XML**, **rJava**, etc)
+  contain a shared object (e.g. `libs/XML.so`) that is linked to `libR.dylib`
+  via an absolute path that is specific to the version of R that was used
+  when the object was compiled/linked e.g.
     ```
     /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libR.dylib
     ```
@@ -1241,9 +1266,9 @@ NOTES:
     ggsave("test.png")
     ```
   If these fail with a "Graphics API version mismatch" error, then it
-  means that the ragg package binary (which was built with a previous version
-  of R) is incompatible with this new version of R (current R devel in our
-  case). In this case ragg needs to be installed from source:
+  means that the **ragg** binary package (which was built with a previous
+  version of R) is incompatible with this new version of R (current R
+  devel in our case). In this case ragg needs to be installed from source:
     ```
     install.packages("ragg", type="source", repos="https://cran.r-project.org")
     ```
@@ -1324,7 +1349,7 @@ Finally reconfigure R to use this new Java installation:
 
     sudo R CMD javareconf
 
-TESTING: Try to install the rJava package:
+TESTING: Try to install the **rJava** package:
 
     # install the CRAN binary
     install.packages("rJava", repos="https://cran.r-project.org")
@@ -1336,7 +1361,7 @@ TESTING: Try to install the rJava package:
 
 ### 4.2 Install NetCDF and HDF5 system library
 
-NetCDF is needed only if CRAN package ncdf4 needs to be installed from
+NetCDF is needed only if CRAN package **ncdf4** needs to be installed from
 source which is usually NOT the case (most of the time a Mac binary should
 be available on CRAN).
 
@@ -1352,11 +1377,11 @@ Download and extract Simon's binaries with:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
 
-TESTING: Try to install the ncdf4 package *from source*:
+TESTING: Try to install the **ncdf4** package *from source*:
 
     install.packages("ncdf4", type="source", repos="https://cran.r-project.org")
 
-If you have time, you can also try to install the mzR package but be aware
+If you have time, you can also try to install the **mzR** package but be aware
 that this takes much longer:
 
     library(BiocManager)
@@ -1375,7 +1400,7 @@ Download and extract Simon's binary with:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
 
-TESTING: Try to install the GLAD package *from source*:
+TESTING: Try to install the **GLAD** package *from source*:
 
     library(BiocManager)
     BiocManager::install("GLAD", type="source")
@@ -1383,7 +1408,7 @@ TESTING: Try to install the GLAD package *from source*:
 
 ### 4.4 Install Open MPI
 
-This is needed to install CRAN package Rmpi from source (unfortunately no
+This is needed to install CRAN package **Rmpi** from source (unfortunately no
 Mac binary is available on CRAN).
 
 Install with:
@@ -1405,7 +1430,7 @@ Notes:
   Please ignore it. In particular do NOT try to perform any of the suggested
   actions (e.g. `rm /usr/local/bin/gfortran` or `brew link --overwrite gcc`).
 
-TESTING: Try to install the Rmpi package *from source*:
+TESTING: Try to install the **Rmpi** package *from source*:
 
     install.packages("Rmpi", type="source", repos="https://cran.r-project.org")
     library(Rmpi)
@@ -1432,14 +1457,14 @@ Install with:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
 
-TESTING: Try to install the rjags package *from source*:
+TESTING: Try to install the **rjags** package *from source*:
 
     install.packages("rjags", type="source", repos="https://cran.r-project.org")
 
 
 ### 4.6 Install CMake
 
-Needed for CRAN package `nlopter`, which is used by a few Bioconductor
+Needed for CRAN package **nlopter**, which is used by a few Bioconductor
 packages.
 
 Home page: https://cmake.org/
@@ -1479,7 +1504,7 @@ effect. Then:
 
 ### 4.7 Install Open Babel
 
-The ChemmineOB package requires Open Babel 3. Note that the Open Babel
+The **ChemmineOB** package requires Open Babel 3. Note that the Open Babel
 website seems very outdated:
 
     http://openbabel.org/
@@ -1541,7 +1566,7 @@ like Python 3 module `h5pyd`:
 
 This will happen if `DYLD_LIBRARY_PATH` is set to `/usr/local/lib` so make
 sure that this is not the case. Note that we used to need this setting for
-Bioconductor package rsbml but luckily not anymore (rsbml is no longer
+Bioconductor package **rsbml** but luckily not anymore (**rsbml** is no longer
 supported on macOS).
 
 Initial testing:
@@ -1607,7 +1632,7 @@ Then:
 
     which clustalo
 
-TESTING: Try to build the LowMACA package (takes about 5 min):
+TESTING: Try to build the **LowMACA** package (takes about 5 min):
 
     cd ~/bbs-3.14-bioc/meat/
     R CMD build LowMACA
@@ -1615,8 +1640,8 @@ TESTING: Try to build the LowMACA package (takes about 5 min):
 
 ### 4.9 Install the MySQL client
 
-Note that we only need this for the ensemblVEP package. RMySQL doesn't need
-it as long as we can install the binary package.
+Note that we only need this for the **ensemblVEP** package. **RMySQL**
+doesn't need it as long as we can install the binary package.
 
 Even though we only need the MySQL client, we used to install the MySQL
 Community Server because it was an easy way to get the MySQL client.
@@ -1685,7 +1710,7 @@ effect. Then:
 
     which mysql_config  # /usr/local/opt/mysql-client/bin/mysql_config
 
-Then try to install the RMySQL package *from source*:
+Then try to install the **RMySQL** package *from source*:
 
     library(BiocManager)
     install("RMySQL", type="source")
@@ -1693,7 +1718,7 @@ Then try to install the RMySQL package *from source*:
 
 ### 4.10 Install Ensembl VEP script
 
-Required by Bioconductor packages ensemblVEP and MMAPPR2.
+Required by Bioconductor packages **ensemblVEP** and **MMAPPR2**.
 
 Complete installation instructions are at
 https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
@@ -1735,7 +1760,7 @@ https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
     # When asked if you want to install any FASTA files - say no
     # When asked if you want to install any plugins - say no
 
-#### Edit /etc/profile
+#### Edit `/etc/profile`
 
 In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
 Note that the `/etc/profile` file has read-only permissions (factory
@@ -1746,7 +1771,7 @@ Logout and login again so that the changes to `/etc/profile` take effect.
 
 #### Testing
 
-Try to build and check the ensemblVEP and MMAPPR2 packages:
+Try to build and check the **ensemblVEP** and **MMAPPR2** packages:
 
     cd ~/bbs-3.14-bioc/meat/
 
@@ -1759,7 +1784,7 @@ Try to build and check the ensemblVEP and MMAPPR2 packages:
 
 ### 4.11 Install ViennaRNA
 
-Required by Bioconductor package GeneGA.
+Required by Bioconductor package **GeneGA**.
 
 Download with:
 
@@ -1780,7 +1805,7 @@ TESTING:
 
     which RNAfold  # /usr/local/bin/RNAfold
 
-Then try to build the GeneGA package:
+Then try to build the **GeneGA** package:
 
     cd ~/bbs-3.14-bioc/meat/
     R CMD build GeneGA
@@ -1794,7 +1819,7 @@ In `/etc/profile` add:
     export ISR_pwd=1notCRAN
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then try to build the ImmuneSpaceR package:
+effect. Then try to build the **ImmuneSpaceR** package:
 
     cd ~/bbs-3.14-bioc/meat/
     R CMD build ImmuneSpaceR
@@ -1802,7 +1827,7 @@ effect. Then try to build the ImmuneSpaceR package:
 
 ### 4.13 Install Infernal
 
-Required by Bioconductor package inferrnal.
+Required by Bioconductor package **inferrnal**.
 
 Install with:
 
@@ -1815,7 +1840,7 @@ TESTING:
     which cmalign   # /usr/local/bin/cmalign
     which cmbuild   # /usr/local/bin/cmbuild
 
-Then try to build the inferrnal package:
+Then try to build the **inferrnal** package:
 
     cd ~/bbs-3.14-bioc/meat/
     R CMD build inferrnal
@@ -1823,7 +1848,7 @@ Then try to build the inferrnal package:
 
 ### 4.14 Install mono
 
-Required by Bioconductor package rawrr.
+Required by Bioconductor package **rawrr**.
 
 Install with:
 
@@ -1833,7 +1858,7 @@ TESTING
 
     which mono  # /usr/local/bin/mono
 
-Then try to install/build/check the rawrr package:
+Then try to install/build/check the **rawrr** package:
 
     cd ~/bbs-3.14-bioc/meat/
     R CMD INSTALL rawrr
@@ -1843,7 +1868,7 @@ Then try to install/build/check the rawrr package:
 
 ### 4.15 Install macFUSE
 
-Required by Bioconductor package Travel.
+Required by Bioconductor package **Travel**.
 
 Download latest stable release from https://osxfuse.github.io/ e.g.:
 
@@ -1856,7 +1881,7 @@ Install with:
     sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
     sudo hdiutil detach /Volumes/macFUSE
 
-TESTING: Try to install the Travel package *from source*:
+TESTING: Try to install the **Travel** package *from source*:
 
     library(BiocManager)
     BiocManager::install("Travel", type="source")
@@ -1864,7 +1889,7 @@ TESTING: Try to install the Travel package *from source*:
 
 ### 4.16 Install .NET 5.0 Runtime
 
-Required by Bioconductor package rmspc.
+Required by Bioconductor package **rmspc**.
 
 #### Install the runtime
 
@@ -1886,7 +1911,7 @@ You might need to logout and login again before trying this:
 
 ### 4.17 Install GLPK
 
-Required by Bioconductor package MMUPHin.
+Required by Bioconductor package **MMUPHin**.
 
 Download and extract Simon's binary with:
 
@@ -1898,7 +1923,7 @@ Download and extract Simon's binary with:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
 
-TESTING: The MMUPHin package uses `igraph::cluster_optimal()` internally
+TESTING: The **MMUPHin** package uses `igraph::cluster_optimal()` internally
 which requires GLPK:
 
     library(igraph)
@@ -1924,7 +1949,7 @@ TESTING:
     which autoconf
     which automake
 
-Then try to install the flowWorkspace package *from source*:
+Then try to install the **flowWorkspace** package *from source*:
 
     library(BiocManager)
     BiocManager::install("flowWorkspace", type="source")
@@ -1939,7 +1964,7 @@ gets extracted there (normally the case for the `darwin17/x86_64` binaries).
 
 ### 4.19 [OPTIONAL] Install ImageMagick
 
-APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the flowQ
+APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the **flowQ**
 package, which is now officially deprecated)
 
 WARNING: Don't do 'brew install imagemagick'. This will install the jpeg-8d
@@ -1997,7 +2022,7 @@ TESTING:
     identify <some-PDF-file>  # important test! (flowQ uses this)
     #display logo.gif         # fails but flowQ does not use this
 
-Then try to build the flowQ package (the package makes system calls to
+Then try to build the **flowQ** package (the package makes system calls to
 standalone commands `convert`, `identify`, and `montage`):
 
     cd ~/bbs-3.14-bioc/meat/
@@ -2006,10 +2031,10 @@ standalone commands `convert`, `identify`, and `montage`):
 
 ### 4.20 Install libSBML
 
-SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! Starting with BioC 3.12, rsbml is
-no longer supported on macOS. KEPT FOR THE RECORD ONLY.
+SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! Starting with BioC 3.12, **rsbml**
+is no longer supported on macOS. KEPT FOR THE RECORD ONLY.
 
-Required by Bioconductor package rsbml.
+Required by Bioconductor package **rsbml**.
 
 #### Install a more recent libxml-2.0
 
@@ -2128,7 +2153,7 @@ See IMPORTANT NOTE in _4.8 Install Open Babel_ section below in this
 document for more information.
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then try to install the rsbml package *from source*:
+effect. Then try to install the **rsbml** package *from source*:
 
     library(BiocManager)
     BiocManager::install("rsbml", type="source")

@@ -50,7 +50,7 @@ Bioconductor grows). The above numbers reflect the current state of affairs
 as of Aug 2020.
 
 
-### 1.3 Check /etc/hostname and /etc/hosts
+### 1.3 Check `/etc/hostname` and `/etc/hosts`
 
 - `/etc/hostname` should contain the short name of the build
   machine as it will appear on the build report (e.g. `nebbiolo2`).
@@ -269,7 +269,7 @@ Running Xvfb (X virtual framebuffer) as a service addresses this problem.
 
     sudo apt-get install xvfb
 
-#### Create /etc/init.d/xvfb
+#### Create `/etc/init.d/xvfb`
 
 Create `/etc/init.d/xvfb` with the following content:
 
@@ -362,7 +362,7 @@ Start/restart/stop the service:
 
 Service will automatically restart after each reboot.
 
-#### Set DISPLAY environment variable in /etc/profile.d/xvfb.sh
+#### Set `DISPLAY` in `/etc/profile.d/xvfb.sh`
 
 Create `/etc/profile.d/xvfb.sh` with the following content:
 
@@ -480,16 +480,53 @@ apt-get install first" rule: Python modules. These should preferably be
 installed via `pip3`. See next section below.
 
 
-### 1.9 Install Python 3 modules
+### 1.9 Check Python 3 and install Python 3 modules
 
-#### Python 3 modules needed by the Single Package Builder only
+#### Check Python 3
+
+Check that Python 3 is available and in the `PATH` with:
+
+    which python3
+
+The above command should return the path to a system-wide Python interpreter
+e.g. `/usr/bin/python3`.
+
+Also check Python 3 version with:
+
+    python3 --version
+
+The version should be relatively recent e.g. >= 3.8.
+
+#### Set `RETICULATE_PYTHON` in `/etc/profile`
+
+We need to make sure that, by default, the **reticulate** package will
+use the system-wide Python interpreter that is in the `PATH`.
+
+In `/etc/profile` add:
+
+    export RETICULATE_PYTHON="/usr/bin/python3"  # same as 'which python3'
+
+Logout and login again for the changes to `/etc/profile` to take effect.
+
+TESTING: **From the biocbuild account**. If R is already installed on the
+machine, start it, and do:
+
+    if (!require(reticulate))
+        install.packages("reticulate", repos="https://cran.r-project.org")
+    ## py_config() should display the path to the system-wide Python
+    ## interpreter returned by the 'which python3' command above.
+    ## It should also display this note:
+    ##   NOTE: Python version was forced by RETICULATE_PYTHON
+    py_config()
+
+#### Install Python 3 modules needed by Single Package Builder
 
 `virtualenv` is used by the Single Package Builder. Despite python3 shipping
 with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_spb.txt
 
-#### Python 3 modules needed by some CRAN/Bioconductor packages
+#### Install Python 3 modules needed by CRAN/Bioconductor packages
 
 Some CRAN/Bioconductor packages interact with Python 3 and Python modules.
 
@@ -1064,7 +1101,7 @@ Then:
     # When asked if you want to install any FASTA files - say no
     # When asked if you want to install any plugins - say no
 
-#### Edit /etc/profile
+#### Edit `/etc/profile`
 
 In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
 Note that the `/etc/profile` file has read-only permissions (factory
@@ -1124,7 +1161,7 @@ Unfortunately `libsbml5-dev` doesn't include a pkg-config file (`libsbml.pc`)
 so we need to define environment variables LIBSBML_CFLAGS and LIBSBML_LIBS
 in order for rsbml to compile.
 
-#### Edit /etc/profile
+#### Edit `/etc/profile`
 
 In `/etc/profile` add:
 
@@ -1151,7 +1188,7 @@ From the biocbuild account:
 
 Required by Bioconductor package **ImmuneSpaceR**.
 
-#### Edit /etc/profile
+#### Edit `/etc/profile`
 
 In `/etc/profile` add:
 
@@ -1253,7 +1290,7 @@ Try to start a ROOT interactive session:
     source bin/thisroot.sh
     root  # then quit the session with .q
 
-#### Edit /etc/profile
+#### Edit `/etc/profile`
 
 In `/etc/profile` add the following line (before the `PATH` and
 `DYLD_LIBRARY_PATH` lines):
