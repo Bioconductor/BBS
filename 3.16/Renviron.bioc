@@ -39,6 +39,9 @@ _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 #_R_CLASS_MATRIX_ARRAY_=true
 R_DEFAULT_INTERNET_TIMEOUT=600
 
+# Set the number of workers that BiocParallel back-ends should use by default.
+BIOCPARALLEL_WORKER_NUMBER=4
+
 # Setting OMP_THREAD_LIMIT to 2 apparently helps prevent a BayesSpace
 # TIMEOUT on Linux.
 OMP_THREAD_LIMIT=2
