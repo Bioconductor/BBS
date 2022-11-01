@@ -168,7 +168,7 @@ def clone_or_pull_repo(repo_path, repo_url, branch=None, depth=None,
                        discard_changes=False, snapshot_date=None,
                        reclone_if_pull_fails=False,
                        cleanup=False):
-    prompt = 'bbs.gitutils.clone_or_pull_repo>'
+    prompt = 'bbs.gitutils.clone_or_pull_repo> '
     if discard_changes:
         gitcmd = 'checkout -f'
         _run_gitcmd(gitcmd, cwd=repo_path, prompt=prompt)
@@ -185,10 +185,10 @@ def clone_or_pull_repo(repo_path, repo_url, branch=None, depth=None,
             if not reclone_if_pull_fails:
                 raise e
             _print_msg('')
-            _print_msg('%s %s() failed with error code %d!' % \
+            _print_msg('%s%s() failed with error code %d!' % \
                        (prompt, what, e.returncode))
-            _print_msg('%s ==> will try to re-clone ...' % prompt)
-            _print_msg('%s rm -r %s' % (prompt, repo_path))
+            _print_msg('%s==> will try to re-clone ...' % prompt)
+            _print_msg('%srm -r %s' % (prompt, repo_path))
             fileutils.nuke_tree(repo_path)
             _print_msg('')
         else:
