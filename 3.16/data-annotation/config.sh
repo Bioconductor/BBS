@@ -12,9 +12,6 @@ cd ..
 . ./config.sh
 cd "$wd1"
 
-# Override BBS_BIOC_GIT_BRANCH
-export BBS_BIOC_GIT_BRANCH="master"
-
 # What type of meat? Only 3 types are supported:
 #   1: svn repo (contains pkg dirs)
 #   2: CRAN-style local repo containing .tar.gz pkgs
