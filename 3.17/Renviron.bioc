@@ -39,6 +39,10 @@ _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 #_R_CLASS_MATRIX_ARRAY_=true
 R_DEFAULT_INTERNET_TIMEOUT=600
 
+# Package code can use this to detect that it's running on a Bioconductor
+# build machine.
+IS_BIOC_BUILD_MACHINE=true
+
 # Set the number of workers that BiocParallel back-ends should use by default.
 BIOCPARALLEL_WORKER_NUMBER=4
 
