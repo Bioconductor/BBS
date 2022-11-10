@@ -19,8 +19,14 @@ TARGET_ARCHS="/x86_64"
 SINGLE_ARCH=true
 
 # Change dynamic shared library path for
-LOCAL_DYLIB_DIR="/usr/local/lib"
-LOCAL_FORTRAN_DYLIB_DIR="/usr/local/gfortran/lib"
+ARCH=`uname -m`  # x86_64 or arm64
+if [ "$ARCH" == "x86_64" ]; then
+    LOCAL_DYLIB_DIR="/usr/local/lib"
+    LOCAL_FORTRAN_DYLIB_DIR="/usr/local/gfortran/lib"
+else
+    LOCAL_DYLIB_DIR="/opt/R/arm64/lib"
+    LOCAL_FORTRAN_DYLIB_DIR="/opt/R/arm64/gfortran/lib"
+fi
 
 if uname -a | grep -q "Version 10."; then
     # Snow Leopard builds
@@ -34,8 +40,7 @@ elif uname -a | grep -q "Version 15."; then
 else
     # Builds on any macOS >= High Sierra with High Sierra as **target**.
     # On arm64 systems, libgcc_s.1.dylib is replaced with libgcc_s.1.1.dylib.
-    arch=`uname -m`
-    if [ "$arch" == "x86_64" ]; then
+    if [ "$ARCH" == "x86_64" ]; then
         DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
     else
         DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
