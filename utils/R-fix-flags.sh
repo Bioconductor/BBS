@@ -9,6 +9,7 @@ cxx11flags_line="^CXX11FLAGS *=.*"
 cxx14flags_line="^CXX14FLAGS *=.*"
 cxx17flags_line="^CXX17FLAGS *=.*"
 cxx20flags_line="^CXX20FLAGS *=.*"
+cxx23flags_line="^CXX23FLAGS *=.*"
 fcflags_line="^FCFLAGS *=.*"
 fflags_line="^FFLAGS *=.*"
 
@@ -27,12 +28,14 @@ cat Makeconf.original \
 	| sed -r "s/^$cxx17flags_line/\\0 $new_flag/" \
 	| sed -r "s/^($cxx20flags_line) $new_flag +(.*)$/\\1 \\2/" \
 	| sed -r "s/^$cxx20flags_line/\\0 $new_flag/" \
+	| sed -r "s/^($cxx23flags_line) $new_flag +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cxx23flags_line/\\0 $new_flag/" \
 	| sed -r "s/^($fcflags_line) $new_flag +(.*)$/\\1 \\2/" \
 	| sed -r "s/^$fcflags_line/\\0 $new_flag/" \
 	| sed -r "s/^($fflags_line) $new_flag +(.*)$/\\1 \\2/" \
 	| sed -r "s/^$fflags_line/\\0 $new_flag/" > Makeconf
 
-set +e # because diff (below) will exit with status code 1
+set +e  # because diff (below) will exit with status code 1
 
 # Show the diff
 echo "diff Makeconf.original Makeconf"
