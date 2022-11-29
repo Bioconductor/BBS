@@ -12,7 +12,7 @@
 # OS version, etc.. can be obtained programmatically
 
 allnodes = {
-    'nebbiolo1':  {'OS'      : "Linux (Ubuntu 20.04.5 LTS)",
+    'nebbiolo1':  {'OS'      : "Linux (Ubuntu 22.04.1 LTS)",
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-linux-gnu",
                    'pkgType' : "source",
@@ -42,9 +42,9 @@ allnodes = {
                    'Platform': "mingw32 / x86_64-w64-mingw32",
                    'pkgType' : "win.binary",
                    'encoding': "iso8859"},
-    'kjohnson':   {'OS'      : "macOS 12.6 Monterey",
+    'kjohnson':   {'OS'      : "macOS 13.0 Ventura",
                    'Arch'    : "arm64",
-                   'Platform': "arm64-apple-darwin21.6.0",
+                   'Platform': "arm64-apple-darwin22.1.0",
                    'pkgType' : "mac.binary.big-sur-arm64",
                    'encoding': "utf-8"},
     'lconway':    {'OS'      : "macOS 12.5.1 Monterey",
