@@ -1,7 +1,7 @@
 #!/bin/bash
-# =====================
-# Settings for kjohnson
-# =====================
+# ======================
+# Settings for kjohnson2
+# ======================
 
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="kjohnson"
+export BBS_NODE_HOSTNAME="kjohnson2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.17-bioc-mac-arm64"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"

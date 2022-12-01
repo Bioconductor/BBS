@@ -561,6 +561,20 @@ DIV.kjohnson {
     color: #050;
 }
 
+/* kjohnson2 */
+.kjohnson2,
+.gcard TD.kjohnson2 {
+    background: #DCEDEA;
+}
+.kjohnson2.toned_down,
+TR.toned_down .kjohnson2,
+TBODY.compact.gcard TR.even_row_number .kjohnson2 {
+    background: #CCDDDA;
+}
+DIV.kjohnson2 {
+    color: #050;
+}
+
 /* taxco */
 .taxco,
 .gcard TD.taxco {
