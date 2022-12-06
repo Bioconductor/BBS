@@ -40,6 +40,7 @@ cd "$wd0"
 # folder and will install packages in $BBS_R_HOME/library!
 export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
 export R_ENVIRON_USER="$BBS_HOME/$BBS_BIOC_VERSION/bioc-testing/nebbiolo2/Renviron.bioc"
+export BBS_BIOC_MANIFEST_FILE="software.txt"
 
 
 # -----------------------------------------------------------------------------
