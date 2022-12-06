@@ -107,6 +107,7 @@ transmission_mode = BBSutils.getenv('BBS_PRODUCT_TRANSMISSION_MODE', False)
 r_home = BBSutils.getenv('BBS_R_HOME')
 r_cmd = BBSutils.getenv('BBS_R_CMD')
 rscript_cmd = BBSutils.getenv('BBS_RSCRIPT_CMD', False)
+r_libs = BBSutils.getenv('R_LIBS', False)
 
 ### Only needed by BBS-prerun.py
 

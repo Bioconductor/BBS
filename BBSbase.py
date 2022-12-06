@@ -423,7 +423,10 @@ def getSTAGE4cmd(srcpkg_path):
     ##      different version of the package). Unlikely but possible.
     install_out = pkg + '.install-out.txt'
     if os.path.exists(install_out):
-        r_library = os.path.join(BBSvars.r_home, 'library')
+        if BBSvars.r_libs != None:
+            r_library = BBSvars.r_libs
+        else:
+            r_library = os.path.join(BBSvars.r_home, 'library')
         common_opts += ["--install=check:%s" % install_out,
                         "--library=%s" % r_library]
     if BBSvars.buildtype == "bioc-longtests":
