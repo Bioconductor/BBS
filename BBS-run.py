@@ -240,6 +240,7 @@ def build_pkg_dep_graph(target_pkgs):
     print('BBS> [build_pkg_dep_graph]', end=' ')
     print('Calling %s() defined in %s to generate file %s ...' % \
           (Rfunction, script_path, BBSutils.pkg_dep_graph_file), end=' ')
+    sys.stdout.flush()
     # Backslashes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
     # on a Unix-like platform, only on Windows where the paths can actually
@@ -254,7 +255,14 @@ def build_pkg_dep_graph(target_pkgs):
               (script_path2, Rfunction, target_pkgs_file2,
                STAGE2_pkg_dep_graph_path2)
     out_file = Rfunction + '.Rout'
-    bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), out_file) # ignore retcode
+    cmd = BBSbase.Rexpr2syscmd(Rexpr)
+    retcode = bbs.jobs.runJob(cmd, out_file)
+    if retcode != 0:
+        print('ERROR!')
+        print('BBS> [build_pkg_dep_graph] Command %s' % cmd, end=' ')
+        print('returned an error (%d)' % retcode, end=' ')
+        sys.stdout.flush()
+        sys.exit('=> EXIT.')
     print('OK')
 
     # Send files 'target_pkgs.txt' and 'pkg_dep_graph.txt' to central

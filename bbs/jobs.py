@@ -254,7 +254,7 @@ def killProc(pid):
         except psutil.AccessDenied:
             print("BBS>       Access denied (pid=%s)."  % child.pid)
 
-## What if cmd is not found, can't be started or crashes?
+## What if cmd is not found, can't be started, or crashes?
 def runJob(cmd, stdout=None, maxtime=2400.0, verbose=False):
     if verbose:
         print("BBS>   runJob(): " + cmd)
