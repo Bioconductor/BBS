@@ -31,3 +31,17 @@ wd0=$(pwd)
 cd ..
 . ./config.sh
 cd "$wd0"
+
+
+# -----------------------------------------------------------------------------
+# Do not use $BBS_R_HOME/library to instal packages
+# This setup is required by _R_CHECK_SUGGESTS_ONLY_=true
+
+# STAGE2 should NOT install anything in $BBS_R_HOME/library so we set R_LIBS
+# to point to a separate library folder.
+# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo2 before starting
+# the builds on this machine. Otherwise STAGE2 will ignore the folder and will
+# install packages in $BBS_R_HOME/library!
+export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
+export R_ENVIRON_USER="$BBS_HOME/$BBS_BIOC_VERSION/bioc/nebbiolo2/Renviron.bioc"
+
