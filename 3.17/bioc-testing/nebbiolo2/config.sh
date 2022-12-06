@@ -13,13 +13,6 @@ export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.17-bioc-testing"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
-# STAGE2 should NOT install anything in $BBS_R_HOME/library!
-# We set R_LIBS to point to our own library folder.
-# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo2 before
-# starting the bioc-testing builds. Otherwise the bioc-testing
-# builds will ignore the folder and will install packages in
-# $BBS_R_HOME/library!
-export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
 export BBS_NB_CPU=32        # 72 cores are available
 export BBS_CHECK_NB_CPU=40  # 72 cores are available
 
@@ -35,6 +28,18 @@ cd ..
 . ./config.sh
 cd "$wd0"
 
+
+# -----------------------------------------------------------------------------
+# Do not use $BBS_R_HOME/library to instal packages
+# This setup is required by _R_CHECK_SUGGESTS_ONLY_=true
+
+# STAGE2 should NOT install anything in $BBS_R_HOME/library so we set R_LIBS
+# to point to a separate library folder.
+# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo2 before starting
+# the bioc-testing builds. Otherwise the bioc-testing builds will ignore the
+# folder and will install packages in $BBS_R_HOME/library!
+export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
+export R_ENVIRON_USER="$BBS_HOME/$BBS_BIOC_VERSION/bioc-testing/nebbiolo2/Renviron.bioc"
 
 
 # -----------------------------------------------------------------------------
