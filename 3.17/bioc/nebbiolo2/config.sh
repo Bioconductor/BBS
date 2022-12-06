@@ -13,8 +13,9 @@ export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.17-bioc"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
-export BBS_NB_CPU=28        # 72 cores are available
-export BBS_CHECK_NB_CPU=35  # 72 cores are available
+export BBS_NB_CPU=42        # 72 cores are available
+export BBS_BUILD_NB_CPU=28  # 72 cores are available
+export BBS_CHECK_NB_CPU=34  # 72 cores are available
 
 # Central build node is nebbiolo1 at DFCI.
 export BBS_CENTRAL_RHOST="nebbiolo1"
@@ -30,34 +31,3 @@ wd0=$(pwd)
 cd ..
 . ./config.sh
 cd "$wd0"
-
-
-# -----------------------------------------------------------------------------
-# Do not use $BBS_R_HOME/library to instal packages
-# This setup is required by _R_CHECK_SUGGESTS_ONLY_=true
-
-# STAGE2 should NOT install anything in $BBS_R_HOME/library so we set R_LIBS
-# to point to a separate library folder.
-# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo2 before starting
-# the builds on this machine. Otherwise STAGE2 will ignore the folder and will
-# install packages in $BBS_R_HOME/library!
-export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
-export R_ENVIRON_USER="$BBS_HOME/$BBS_BIOC_VERSION/bioc/nebbiolo2/Renviron.bioc"
-
-
-# -----------------------------------------------------------------------------
-# The variables below control postrun.sh so only need to be defined on the
-# central node
-
-# Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo2"
-export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report-testing"
-export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
-export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
-export BBS_REPORT_JS="$BBS_HOME/$BBS_BIOC_VERSION/report.js"
-#export BBS_REPORT_MOTD="Happy new year to all Bioconductor developers!"
-
-# Control where to publish the report:
-export BBS_PUBLISHED_REPORT_RELATIVEURL="checkResults/$BBS_BIOC_VERSION/testing-LATEST/"
-export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/www/bioc/$BBS_PUBLISHED_REPORT_RELATIVEURL"
-
