@@ -441,23 +441,26 @@ TABLE.abc_dispatcher TD {
 /* nebbiolo1 (Ubuntu 20.04) */
 .nebbiolo1,
 .gcard TD.nebbiolo1 {
-    background: #DAECFA;
+    background: #DBEAFB;
 }
 .nebbiolo1.toned_down,
 TR.toned_down .nebbiolo1,
 TBODY.compact.gcard TR.even_row_number .nebbiolo1 {
-    background: #CADCEA;
+    background: #CBDAEB;
+}
+DIV.nebbiolo1 {
+    color: #005;
 }
 
 /* nebbiolo2 (Ubuntu 20.04) */
 .nebbiolo2,
 .gcard TD.nebbiolo2 {
-    background: #DCE7FC;
+    background: #DDE8FD;
 }
 .nebbiolo2.toned_down,
 TR.toned_down .nebbiolo2,
 TBODY.compact.gcard TR.even_row_number .nebbiolo2 {
-    background: #CCD7EC;
+    background: #CDD8ED;
 }
 DIV.nebbiolo2 {
     color: #005;
@@ -519,20 +522,6 @@ DIV.merida1 {
     color: #050;
 }
 
-/* machv2 */
-.machv2,
-.gcard TD.machv2 {
-    background: #DCEDEA;
-}
-.machv2.toned_down,
-TR.toned_down .machv2,
-TBODY.compact.gcard TR.even_row_number .machv2 {
-    background: #CCDDDA;
-}
-DIV.merida1 {
-    color: #050;
-}
-
 /* lconway */
 .lconway,
 .gcard TD.lconway {
@@ -573,16 +562,5 @@ TBODY.compact.gcard TR.even_row_number .kjohnson2 {
 }
 DIV.kjohnson2 {
     color: #050;
-}
-
-/* taxco */
-.taxco,
-.gcard TD.taxco {
-    background: #E8DAF4;
-}
-.taxco.toned_down,
-TR.toned_down .taxco,
-TBODY.compact.gcard TR.even_row_number .taxco {
-    background: #D8CAE4;
 }
 
