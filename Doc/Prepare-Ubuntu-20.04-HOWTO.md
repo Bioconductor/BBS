@@ -880,9 +880,14 @@ Check version and revision with:
 
 #### Configure and compile R
 
+Create the `<R_HOME>` folder, and `cd` to it:
+
     cd ~/bbs-3.14-bioc/
     mkdir R         # preceded by 'rm -rf R.old && mv R R.old' if updating R
     cd R/
+
+Run `configure` and `make`:
+
     ../rdownloads/R-4.1.r80240/configure --enable-R-shlib
     make -j10       # or 'make -j' to use all cores
 
@@ -897,22 +902,33 @@ system:
 
 #### After compilation
 
-Do NOT run `make install`!
+- Do NOT run `make install`!
 
-Run the `R-fix-flags.sh` script to modify the compiler flags that will be used
-during package compilation. The script will modify `R/etc/Makeconf`. It's
-important to run this from the `~/bbs-3.14-bioc/R/etc/` directory and not one
-level up. Both locations contain `Makeconf` files but we only want to modify
-the `Makeconf` file located in `~/bbs-3.14-bioc/R/etc/`:
+- Create `site-library` folder inside `<R_HOME>` folder:
+    ```
+    mkdir site-library
+    ```
+  This will automatically point `.Library.site` to this location (i.e.
+  `<R_HOME>/site-library`) when we start R (see Basic testing below). The
+  reason we do this is to avoid installing any additional package in
+  `.Library` (which is pointing to `<R_HOME>/library`). This will allow
+  `_R_CHECK_SUGGESTS_ONLY_=true` to work properly when we run `R CMD check`
+  on Bioconductor packages.
 
+- Run the `R-fix-flags.sh` script to modify the compiler flags that will be
+  used during package compilation. The script will modify `R/etc/Makeconf`.
+  It's important to run this from the `~/bbs-3.14-bioc/R/etc/` directory and
+  not one level up. Both locations contain `Makeconf` files but we only want
+  to modify the `Makeconf` file located in `~/bbs-3.14-bioc/R/etc/`:
+    ```
     cd etc/
     ~/BBS/utils/R-fix-flags.sh
-
-The script adds the `-Wall` flag to the compilation commands that will be used
-to compile package native code (i.e. C/C++/Fortran code). The flag tells the
-compiler to display additional warnings that can help package maintainers find
-potential problems in their code. These warnings will be included in the HTML
-report that gets generated at the end of the builds.
+    ```
+  The script adds the `-Wall` flag to the compilation commands that will be
+  used to compile package native code (i.e. C/C++/Fortran code). The flag
+  tells the compiler to display additional warnings that can help package
+  maintainers find potential problems in their code. These warnings will be
+  included in the HTML report that gets generated at the end of the builds.
 
 #### Basic testing
 
@@ -924,13 +940,18 @@ Start R:
 Then from R:
 
     # --- check capabilities ---
-
+    
     capabilities()  # all should be TRUE except aqua and profmem
     X11()           # nothing visible should happen
     dev.off()
-
+    
+    # --- check .Library and .Library.site ---
+    
+    .Library        # <R_HOME>/library
+    .Library.site   # <R_HOME>/site-library
+    
     # --- install a few CRAN packages ---
-
+    
     # with C++ code:
     install.packages("Rcpp", repos="https://cran.r-project.org")
     # with Fortran code:
