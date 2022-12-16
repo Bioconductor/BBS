@@ -908,9 +908,9 @@ system:
     ```
     mkdir site-library
     ```
-  This will automatically point `.Library.site` to this location (i.e.
-  `<R_HOME>/site-library`) when we start R (see Basic testing below). The
-  reason we do this is to avoid installing any additional package in
+  This will automatically point `.Library.site` to this location
+  (`<R_HOME>/site-library`) when we start R (see Basic testing below).
+  The reason we do this is to avoid installing any additional package in
   `.Library` (which is pointing to `<R_HOME>/library`). This will allow
   `_R_CHECK_SUGGESTS_ONLY_=true` to work properly when we run `R CMD check`
   on Bioconductor packages.
