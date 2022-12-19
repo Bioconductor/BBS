@@ -59,7 +59,7 @@ machv2 -> merida1. This means renaming the directories inside `bioc/`,
 `data-experiment/`, `workflows/`, and `bioc-longtests/`, and replacing
 every occurence in every file except in `report.css`.
 
-Replace every occurence of `RELEASE_3_13` with `master` in every file.
+Replace every occurence of `RELEASE_3_13` with `devel` in every file.
 
 Replace every occurence of `3.13` with `3.14` in every file.
 
@@ -402,7 +402,7 @@ git pull --all
 
 Follow the steps described in the "Create and populate the
 bbs-3.yy-bioc folder" and "Install R in bbs-3.yy-bioc" sections of
-the [`Prepare-Windows-Server-2012-HOWTO.TXT`](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-Windows-Server-2012-HOWTO.TXT) document.
+the [`Prepare-Windows-Server-2012-HOWTO.TXT`](https://github.com/Bioconductor/BBS/blob/devel/Doc/Prepare-Windows-Server-2012-HOWTO.TXT) document.
 Make sure to replace all occurences of 3.12 with 3.14.
 
 Remove `C:\Users\biocbuild\bbs-3.12-bioc`.
@@ -461,7 +461,7 @@ git pull --all
 Create `~/bbs-3.14-bioc` folder and `log` subfolder.
 
 Install R by following instructions in section "E. Install R" of
-the [`Prepare-MacOSX-El-Capitan-HOWTO.TXT`](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT) document (in our scenario,
+the [`Prepare-MacOSX-El-Capitan-HOWTO.TXT`](https://github.com/Bioconductor/BBS/blob/devel/Doc/Prepare-MacOSX-El-Capitan-HOWTO.TXT) document (in our scenario,
 `R-devel-el-capitan-signed.pkg` needs to be installed).
 
 Edit crontab: replace all occurrences of 3.12 with 3.14 then uncomment

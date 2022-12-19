@@ -4,8 +4,8 @@ As of January 2019, we have build machines in both the RPCI DMZ and MacStadium:
 
 RPCI DMZ:
 
-malbec1 (Linux master)  
-malbec2 (Linux master)  
+malbec1 (Linux primary)  
+malbec2 (Linux primary)  
 tokay1  (Windows worker)  
 tokay2  (Windows worker)  
 celaya2 (Mac worker)  
@@ -25,29 +25,29 @@ All machine IPs are listed in the Google Credentials Doc.
 
 ## Network communication
 
-Communication direction within the build system is from worker to master. The
-master does not initiate communication with the workers. When machines within
+Communication direction within the build system is from worker to primary. The
+primary does not initiate communication with the workers. When machines within
 the DMZ communicate they do so on the private IPs. When the MacStadium machines
-initiate contact with a master Linux builder they do so on a public IP because
+initiate contact with a primary Linux builder they do so on a public IP because
 they do not have RPCI private IPs (they probably have private IPs for the
 MacStadium network but that is not important here).
 
-The only machines that need public IPs are the master builders because they are
+The only machines that need public IPs are the primary builders because they are
 accessed by the MacStadium workers that are outside the DMZ.  The workers
-inside the DMZ communicate with the master builders on the private IP.  Because
+inside the DMZ communicate with the primary builders on the private IP.  Because
 DNS resolves to the public IP, the workers inside the DMZ must override this by
 including an entry in their hosts file that points to the private IP.  This
 override could potentially be done in the BBS code but the disadvantage is that
 we would have to hard code IPs instead of using the hostname.  Once the
-MacStadium machines are gone, we no longer need the public IPs for the master
+MacStadium machines are gone, we no longer need the public IPs for the primary
 builders and the hosts files on the workers can be cleaned up.
 
 ## AWS Route53 DNS
 
 Currently the DNS entries in Route53 resolve to the private IPs for the
-workers inside the DMZ and public IPs for masters.
+workers inside the DMZ and public IPs for primaries.
 
-Once we no longer have MacStadium machines, the master builders can also
+Once we no longer have MacStadium machines, the primary builders can also
 resolve to their private IPs if nothing from outside the DMZ is accessing
 them. If off-site persons have requested direct access to the malbecs, then
 they may be using the public IP. This would need to be confirmed with
@@ -67,7 +67,7 @@ Value: 172.29.0.4
 
 ## hosts files
 
-If Route53 is modified to resolve the master builders to their private IPs,
+If Route53 is modified to resolve the primary builders to their private IPs,
 the hosts files on the workers can also be cleaned up.
 
 On the '1' series workers, remove this line from the hosts file:

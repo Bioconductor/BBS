@@ -80,11 +80,11 @@ In general, there are four *builds* that run during any given week:
    all release build machines.
 2. Release *experiment package* builds (*data-experiment* is the
    name for our experiment package repository). These builds run
-   nightly on the release Linux master builder only.
+   nightly on the release Linux primary builder only.
 3. Devel *software* builds. These builds run nightly on
    all devel build machines.
 4. Devel *experiment package* builds. These builds run
-   nightly on the devel Linux master builder only.
+   nightly on the devel Linux primary builder only.
 
 ## What builds where
 
@@ -101,9 +101,9 @@ There are three build machines each for release and devel.
 
 ### How the build machines are organized.
 
-Each build has a *master builder* which is the Linux build machine.
+Each build has a *primary builder* which is the Linux build machine.
 
-The *master builder* is where all build machines send their build products (via
+The *primary builder* is where all build machines send their build products (via
 rsync and ssh). Build products are not just package archives (.tar.gz, .tgz,
 and .zip files for source packages, Mac packages, and Windows packages
 respectively) but also the output of each build phase and other information
@@ -111,7 +111,7 @@ about the build, enough to construct the build report.
 
 ### DNS resolution and https specifics
 
-In Stage 2, the Windows and Mac builders get packages to build from the *master
+In Stage 2, the Windows and Mac builders get packages to build from the *primary
 builder*. Historically this was done via http and has recently been
 transitioned to https.
 
@@ -172,7 +172,7 @@ means the outgoing and return IP addresses are the same.
 #### Mac builders and the RPCI DMZ
 
 The Mac builders are located outside the RPCI DMZ. When they https
-to the *master builder*, e.g., malbec1.bioconductor.org, they are
+to the *primary builder*, e.g., malbec1.bioconductor.org, they are
 directed to the public IP which redirects to the private IP. The
 outgoing and return routes are the same. This works fine, no problems here.
 
@@ -199,19 +199,19 @@ The BBS code is checked out on all build machines. Each builder has a cron job
 machines, the build system runs as *biocbuild*.
 
 The crontab for the *biocbuild* user on one of the Linux build machines
-(a/k/a master build nodes) lists all tasks involved in the builds. A
+(a/k/a primary build nodes) lists all tasks involved in the builds. A
 visual summary of these same tasks (with Windows and Mac added) is in the
 [Build Machines Daily Schedule](https://docs.google.com/document/d/1Ubp7Tcxr1I1HQ8Xrp9f73P40YQ0qhWQ_hSmHs05Ln_M/edit#heading=h.r7sorafgdpnf).
 
 #### prerun
 
-The first line in the crontab on the master Linux builder is the start of
+The first line in the crontab on the primary Linux builder is the start of
 the prerun script:
 
     # prerun
     00 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.6/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.6-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
-The *prerun* step happens only on the master build node. `prerun.sh`
+The *prerun* step happens only on the primary build node. `prerun.sh`
 sources `config.sh` and then calls python script `BBS-prerun.py`.
 
 ##### config.sh
@@ -338,14 +338,14 @@ experiment data builds though they run at different times.
 
 The steps discussed so far complete the `Run` portion of the builds. All
 nodes have finished building and build products have been deposited on the
-Linux master builder. The build report was created and posted on the website.
+Linux primary builder. The build report was created and posted on the website.
 
 The second part of this process is called the "propagation pipe" and involves
-moving build products from the master builder to the website. The products are
+moving build products from the primary builder to the website. The products are
 the package tarballs and binaries that will become available via
 `BiocManager::install()`
 as well as information used to build the landing pages. These steps are
-performed by the *biocpush* user and involve the master builder only.
+performed by the *biocpush* user and involve the primary builder only.
 
 Looking at *biocpush*'s crontab, we see:
 

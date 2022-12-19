@@ -109,11 +109,11 @@ def usage_msg():
     indent = '                           '
     pkg_groups = 'software|data-annotation|data-experiment|workflows|books'
     usage2 = '[manifest|%s]' % pkg_groups
-    usage3 = '[manifest|%s] \\\n%s[master|RELEASE_3_6]' % (pkg_groups, indent)
-    usage4 = '[%s] \\\n%s[master|RELEASE_3_6 [master|RELEASE_3_6]]' % \
+    usage3 = '[manifest|%s] \\\n%s[devel|RELEASE_3_6]' % (pkg_groups, indent)
+    usage4 = '[%s] \\\n%s[devel|RELEASE_3_6 [devel|RELEASE_3_6]]' % \
              (pkg_groups, indent)
     usage5 = '[%s] <skip>' % pkg_groups
-    usage6 = '[%s] \\\n%s[master|RELEASE_3_6 [master|RELEASE_3_6]] <skip>' % \
+    usage6 = '[%s] \\\n%s[devel|RELEASE_3_6 [devel|RELEASE_3_6]] <skip>' % \
              (pkg_groups, indent)
     msg = 'Usage:\n' + \
           '  %s\n' % script_name + \
