@@ -30,7 +30,7 @@ export BBS_BIOC_MANIFEST_FILE="software.txt"
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="$BBS_CENTRAL_RHOST"
 export BBS_MEAT0_RUSER="$BBS_CENTRAL_RUSER"
-export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.17-bioc/MEAT0"
+export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.17-bioc-mac-arm64/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
 export BBS_UPDATE_MEAT0=1
