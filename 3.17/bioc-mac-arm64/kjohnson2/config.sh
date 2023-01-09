@@ -14,7 +14,7 @@ export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.17-bioc-mac-arm64"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 export BBS_NB_CPU=6         # 8 cores are available
-export BBS_BUILD_NB_CPU=2   # 8 cores are available
+export BBS_BUILD_NB_CPU=4   # 8 cores are available
 export BBS_CHECK_NB_CPU=4   # 8 cores are available
 
 # Central build node is nebbiolo1 at DFCI.
