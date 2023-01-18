@@ -911,8 +911,9 @@ system:
 
 - Do NOT run `make install`!
 
-- Create `site-library` folder inside `<R_HOME>` folder:
+- Create the `site-library/` subfolder inside the `<R_HOME>` folder:
     ```
+    cd ~/bbs-3.14-bioc/
     mkdir site-library
     ```
   This will automatically point `.Library.site` to this location
