@@ -1824,29 +1824,7 @@ effect. Then try to build the **ImmuneSpaceR** package:
     cd ~/bbs-3.14-bioc/meat/
     R CMD build ImmuneSpaceR
 
-
-### 4.13 Install Infernal
-
-Required by Bioconductor package **inferrnal**.
-
-Install with:
-
-    brew tap brewsci/bio
-    brew install infernal
-
-TESTING:
-
-    which cmsearch  # /usr/local/bin/cmsearch
-    which cmalign   # /usr/local/bin/cmalign
-    which cmbuild   # /usr/local/bin/cmbuild
-
-Then try to build the **inferrnal** package:
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build inferrnal
-
-
-### 4.14 Install mono
+### 4.13 Install mono
 
 Required by Bioconductor package **rawrr**.
 
@@ -1866,7 +1844,7 @@ Then try to install/build/check the **rawrr** package:
     R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
 
 
-### 4.15 Install macFUSE
+### 4.14 Install macFUSE
 
 Required by Bioconductor package **Travel**.
 
@@ -1887,7 +1865,7 @@ TESTING: Try to install the **Travel** package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.16 Install .NET 5.0 Runtime
+### 4.15 Install .NET 5.0 Runtime
 
 Required by Bioconductor package **rmspc**.
 
@@ -1909,7 +1887,7 @@ You might need to logout and login again before trying this:
     R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
 
 
-### 4.17 Install GLPK
+### 4.16 Install GLPK
 
 Required by Bioconductor package **MMUPHin**.
 
@@ -1935,7 +1913,7 @@ If GLPK is not available, one gets:
       At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
 
 
-### 4.18 [OPTIONAL] Install autoconf & automake
+### 4.17 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -1962,7 +1940,7 @@ permissions as described in the _Install Homebrew_ section if Simon's binary
 gets extracted there (normally the case for the `darwin17/x86_64` binaries).
 
 
-### 4.19 [OPTIONAL] Install ImageMagick
+### 4.18 [OPTIONAL] Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the **flowQ**
 package, which is now officially deprecated)
@@ -2029,7 +2007,7 @@ standalone commands `convert`, `identify`, and `montage`):
     R CMD build flowQ
 
 
-### 4.20 Install libSBML
+### 4.19 Install libSBML
 
 SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! Starting with BioC 3.12, **rsbml**
 is no longer supported on macOS. KEPT FOR THE RECORD ONLY.
@@ -2157,7 +2135,6 @@ effect. Then try to install the **rsbml** package *from source*:
 
     library(BiocManager)
     BiocManager::install("rsbml", type="source")
-
 
 
 ## 5. Set up other builds
