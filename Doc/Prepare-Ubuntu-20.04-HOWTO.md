@@ -840,7 +840,7 @@ Spring and one in Fall). This is key to understand the following:
   page at: https://cran.r-project.org/
   So if you are installing/updating R for the release builds, use that.
 
-- For BioC devel it depends:
+- For BioC devel, it depends:
   * The BioC devel cycle that runs from Spring to Fall uses the same R
     as the current BioC release.
   * The BioC devel cycle that runs from Fall to Spring uses R devel.
@@ -883,7 +883,14 @@ Check version and revision with:
 Create the `<R_HOME>` folder, and `cd` to it:
 
     cd ~/bbs-3.14-bioc/
-    mkdir R         # preceded by 'rm -rf R.old && mv R R.old' if updating R
+    
+    ## If we are updating R, let's keep the previous R/ and site-library/
+    ## subfolders around, just in case:
+    rm -rf R.old && mv R R.old
+    rm -rf site-library.old && mv site-library site-library.old
+    
+    ## Start with a new empty R/ subfolder:
+    mkdir R
     cd R/
 
 Run `configure` and `make`:
