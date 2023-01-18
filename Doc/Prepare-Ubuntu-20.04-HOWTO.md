@@ -884,10 +884,10 @@ Create the `<R_HOME>` folder, and `cd` to it:
 
     cd ~/bbs-3.14-bioc/
     
-    ## If we are updating R, let's keep the previous R/ and site-library/
-    ## subfolders around, just in case:
-    rm -rf R.old && mv R R.old
-    rm -rf site-library.old && mv site-library site-library.old
+    ## If we are updating R, let's keep the previous R/ subfolder around,
+    ## just in case:
+    rm -rf R.old
+    mv R R.old
     
     ## Start with a new empty R/ subfolder:
     mkdir R
@@ -913,7 +913,6 @@ system:
 
 - Create the `site-library/` subfolder inside the `<R_HOME>` folder:
     ```
-    cd ~/bbs-3.14-bioc/
     mkdir site-library
     ```
   This will automatically point `.Library.site` to this location
