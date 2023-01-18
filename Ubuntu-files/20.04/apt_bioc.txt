@@ -23,7 +23,6 @@ libavfilter-dev             # for av/spacialHeatmap
 # libfribidi-dev is for CRAN package textshaping which BioC
 # package EnhancedVolcano indirectly depends on via ragg and ggrastr.
 libfribidi-dev              # for EnhancedVolcano
-infernal                    # for inferrnal
 fuse                        # for Travel
 libfuse-dev                 # for Travel
 kallisto                    # for rkal
