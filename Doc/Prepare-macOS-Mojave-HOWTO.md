@@ -27,7 +27,7 @@ Everything in this section must be done **from the administrator account**
 
     sudo scutil --set ComputerName machv2
     sudo scutil --set LocalHostName machv2
-    sudo scutil --set HostName machv2.bioconductor.org
+    sudo scutil --set HostName machv2
 
 TESTING:
 
