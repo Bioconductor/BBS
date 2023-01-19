@@ -1057,7 +1057,7 @@ To do this, go on master (`ssh -A webadmin@master.bioconductor.org` from the
 biocbuild account) and edit `/extra/www/bioc/checkResults/index.html` (backup
 the file first).
 
-Also note that the builds will automatically create an populate the
+Also note that the builds will automatically create and populate the
 `~/bbs-3.14-bioc/meat/` folder, which we will refer to and use in the
 next section.
 
