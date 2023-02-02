@@ -1605,7 +1605,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
     write_top_links(out, simp_link=True, long_link=True,
-                         topdir="../", current_letter)
+                         topdir="../", current_letter=current_letter)
     write_timestamp(out)
     write_node_specs_table(out, about_node_dir='..')
 
@@ -1710,7 +1710,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
     out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
     write_top_links(out, simp_link=True, long_link=True,
-                         topdir="../", current_letter)
+                         topdir="../", current_letter=current_letter)
     write_timestamp(out)
     write_node_specs_table(out, about_node_dir='..')
 
