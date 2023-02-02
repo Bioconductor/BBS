@@ -206,6 +206,10 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var):
 def make_aboutnode_page(Node_rdir, node, long_link=False):
     page_title = 'More about %s' % node.node_id
     aboutnode_page = '%s-NodeInfo.html' % node.node_id
+    print("BBS> [make_aboutnode_page] Write %s in %s ..." % \
+          (aboutnode_page, os.getcwd()), end=" ")
+    sys.stdout.flush()
+
     out = open(aboutnode_page, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
@@ -315,7 +319,10 @@ def make_aboutnode_page(Node_rdir, node, long_link=False):
 
     out.write('</BODY>\n')
     out.write('</HTML>\n')
+
     out.close()
+
+    print("OK")
     return aboutnode_page
 
 def make_all_aboutnode_pages(long_link=False):
@@ -332,6 +339,10 @@ def make_all_aboutnode_pages(long_link=False):
 def make_Rinstpkgs_page(Node_rdir, node, long_link=False):
     page_title = 'R packages installed on %s' % node.node_id
     Rinstpkgspage = '%s-R-instpkgs.html' % node.node_id
+    print("BBS> [make_Rinstpkgs_page] Write %s in %s ..." % \
+          (Rinstpkgspage, os.getcwd()), end=" ")
+    sys.stdout.flush()
+
     out = open(Rinstpkgspage, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
@@ -354,7 +365,10 @@ def make_Rinstpkgs_page(Node_rdir, node, long_link=False):
     out.write('</PRE>\n')
     out.write('</DIV></BODY>\n')
     out.write('</HTML>\n')
+
     out.close()
+
+    print("OK")
     return (Rinstpkgspage, str(nline-1))
 
 def make_all_Rinstpkgs_pages(long_link=False):
