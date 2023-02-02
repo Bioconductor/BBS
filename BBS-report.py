@@ -85,10 +85,10 @@ def write_top_links(out, simp_link=False, long_link=False,
         write_goback_asHTML(out, topdir, current_letter)
         return
     if simp_link:
-        link = '<A href="./">Simplified report</A>'
+        link = '<A href="./">Switch to simplified report</A>'
     else:
-        link = '<A href="./long-report.html">Long report</A>'
-    out.write('<P style="margin: 0px; text-align: left">Switch to %s</P>\n' % link)
+        link = '<A href="./long-report.html">Switch to long report</A>'
+    out.write('<P style="margin: 0px; text-align: left">%s</P>\n' % link)
     return
 
 def write_timestamp(out):
