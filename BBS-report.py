@@ -82,7 +82,7 @@ def write_top_links(out, simp_link=False, long_link=False,
     if not simp_link and not long_link:
         return
     if simp_link and long_link:
-        write_goback_asHTML(out, topdir, current_letter):
+        write_goback_asHTML(out, topdir, current_letter)
         return
     if simp_link:
         html = '<A href="./">Simplified report</A>'
