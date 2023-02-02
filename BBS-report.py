@@ -62,27 +62,29 @@ def write_abc_dispatcher(out, href="", current_letter=None,
     out.write('</TR></TABLE>')
     return
 
-def write_goback_asHTML(out, href, current_letter=None):
+def write_goback_links(out, topdir=".", long_link=False, current_letter=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
-    out.write('<TABLE class="grid_layout"')
-    out.write(' style="width: 100%; background: #EEE;"><TR>')
-    out.write('<TD style="text-align: left; padding: 5px; vertical-align: middle;">')
-    out.write('<I><A href="%s">Back to <B>%s</B></A></I>' % (href, title))
-    out.write('</TD>')
+    TABLE_style = 'width: 100%; background: #EEE;'
+    out.write('<TABLE class="grid_layout" style="%s"><TR>' % TABLE_style)
+    TD_style = 'text-align: left; padding: 5px; vertical-align: middle;'
+    out.write('<TD style="%s"><I>' % TD_style)
+    if long_link:
+        out.write('Back to <B>%s</B>: ' % title)
+        out.write('<A href="%s/">simplified report</A>' % topdir)
+        out.write('<A href="%s/long-report.html">long report</A>' % topdir)
+    else:
+        out.write('<A href="%s/">Back to <B>%s</B></A>' % (topdir, title))
+    out.write('</I></TD>')
     if not no_alphabet_dispatch and current_letter != None:
         out.write('<TD>')
-        write_abc_dispatcher(out, href, current_letter, True)
+        write_abc_dispatcher(out, topdir, current_letter, True)
         out.write('</TD>')
     out.write('</TR></TABLE>\n')
     return
 
-def write_top_links(out, simp_link=False, long_link=False,
-                         topdir=".", current_letter=None):
+def write_switch_link(out, simp_link=False, long_link=False):
     if not simp_link and not long_link:
-        return
-    if simp_link and long_link:
-        write_goback_asHTML(out, topdir, current_letter)
         return
     if simp_link:
         link = '<A href="./">Switch to simplified report</A>'
@@ -198,14 +200,14 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var):
     out.write('</PRE>\n')
     return
 
-def make_about_node_page(Node_rdir, node):
+def make_about_node_page(Node_rdir, node, long_link=False):
     page_title = 'More about %s' % node.node_id
     about_node_filename = '%s-NodeInfo.html' % node.node_id
     out = open(about_node_filename, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
-    write_top_links(out, simp_link=True, long_link=True)
+    write_goback_links(out, long_link=long_link)
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
@@ -316,14 +318,14 @@ def make_about_node_page(Node_rdir, node):
 ### Make local copy (and rename) R-instpkgs.txt file.
 ### Returns the 2-string tuple containing the filename of the generated page
 ### and the number of installed pkgs.
-def make_Rinstpkgs_page(Node_rdir, node):
+def make_Rinstpkgs_page(Node_rdir, node, long_link=False):
     page_title = 'R packages installed on %s' % node.node_id
     Rinstpkgs_filename = '%s-R-instpkgs.html' % node.node_id
     out = open(Rinstpkgs_filename, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
-    write_top_links(out, simp_link=True, long_link=True)
+    write_goback_links(out, long_link=long_link)
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
@@ -344,7 +346,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
     out.close()
     return (Rinstpkgs_filename, str(nline-1))
 
-def write_node_specs_table(out, about_node_dir='.'):
+def write_node_specs_table(out, about_node_dir='.', long_link=False):
     out.write('<TABLE class="node_specs">\n')
     out.write('<TR>')
     out.write('<TH>Hostname</TH>')
@@ -356,10 +358,11 @@ def write_node_specs_table(out, about_node_dir='.'):
     products_in_rdir = BBSvars.products_in_rdir
     for node in BBSreportutils.NODES:
         Node_rdir = products_in_rdir.subdir(node.node_id)
-        about_node_filename = make_about_node_page(Node_rdir, node)
+        about_node_filename = make_about_node_page(Node_rdir, node, long_link)
         about_node_url = '%s/%s' % (about_node_dir, about_node_filename)
         Rversion_html = read_Rversion(Node_rdir)
-        (Rinstpkgs_filename, nb_inst_pkgs) = make_Rinstpkgs_page(Node_rdir, node)
+        (Rinstpkgs_filename, nb_inst_pkgs) = make_Rinstpkgs_page(Node_rdir,
+                                                            node, long_link)
         Rinstpkgs_url = '%s/%s' % (about_node_dir, Rinstpkgs_filename)
         out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
         out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (about_node_url, node.node_id))
@@ -1591,7 +1594,7 @@ def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stage):
         write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
     return
 
-def make_LeafReport(leafreport_ref, allpkgs):
+def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
     pkg = leafreport_ref.pkg
     node_hostname = leafreport_ref.node_hostname
     node_id = leafreport_ref.node_id
@@ -1604,10 +1607,10 @@ def make_LeafReport(leafreport_ref, allpkgs):
     write_HTML_header(out, page_title, '../report.css', '../report.js')
     out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
-    write_top_links(out, simp_link=True, long_link=True,
-                         topdir="../", current_letter=current_letter)
+    write_goback_links(out, topdir="..",
+                       long_link=long_link, current_letter=current_letter)
     write_timestamp(out)
-    write_node_specs_table(out, about_node_dir='..')
+    write_node_specs_table(out, about_node_dir='..', long_link=long_link)
 
     out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
@@ -1641,7 +1644,7 @@ def make_LeafReport(leafreport_ref, allpkgs):
     out.close()
     return
 
-def make_node_LeafReports(allpkgs, node):
+def make_node_LeafReports(allpkgs, node, long_link=False):
     print("BBS> [make_node_LeafReports] Node %s: BEGIN ..." % node.node_id)
     sys.stdout.flush()
     for pkg in BBSreportutils.supported_pkgs(node):
@@ -1658,7 +1661,7 @@ def make_node_LeafReports(allpkgs, node):
                                                      node.hostname,
                                                      node.node_id,
                                                      stage)
-                make_LeafReport(leafreport_ref, allpkgs)
+                make_LeafReport(leafreport_ref, allpkgs, long_link)
                 if not no_raw_results:
                     write_info_dcf(pkg, node.node_id)
 
@@ -1670,7 +1673,7 @@ def make_node_LeafReports(allpkgs, node):
                                                  node.hostname,
                                                  node.node_id,
                                                  stage)
-            make_LeafReport(leafreport_ref, allpkgs)
+            make_LeafReport(leafreport_ref, allpkgs, long_link)
 
         # CHECK leaf-report
         if BBSvars.buildtype not in ["workflows", "books", "bioc-mac-arm64"]:
@@ -1681,7 +1684,7 @@ def make_node_LeafReports(allpkgs, node):
                                                      node.hostname,
                                                      node.node_id,
                                                      stage)
-                make_LeafReport(leafreport_ref, allpkgs)
+                make_LeafReport(leafreport_ref, allpkgs, long_link)
 
         # BUILD BIN leaf-report
         if BBSreportutils.is_doing_buildbin(node):
@@ -1692,13 +1695,14 @@ def make_node_LeafReports(allpkgs, node):
                                                      node.hostname,
                                                      node.node_id,
                                                      stage)
-                make_LeafReport(leafreport_ref, allpkgs)
+                make_LeafReport(leafreport_ref, allpkgs, long_link)
 
     print("BBS> [make_node_LeafReports] Node %s: END." % node.node_id)
     sys.stdout.flush()
     return
 
-def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
+def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
+                                  long_link=False):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     #title = BBSreportutils.make_report_title(report_nodes)
 
@@ -1709,8 +1713,8 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
     write_HTML_header(out, page_title, '../report.css', '../report.js')
     out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
-    write_top_links(out, simp_link=True, long_link=True,
-                         topdir="../", current_letter=current_letter)
+    write_goback_links(out, topdir="..",
+                       long_link=long_link, current_letter=current_letter)
     write_timestamp(out)
     write_node_specs_table(out, about_node_dir='..')
 
@@ -1746,7 +1750,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
     out.close()
     return
 
-def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
+def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None, long_link=False):
     print("BBS> [make_all_LeafReports] Current working dir '%s'" % os.getcwd())
     print("BBS> [make_all_LeafReports] Creating report package subfolders " + \
           "and populating them with index.html files ...", end=" ")
@@ -1759,11 +1763,11 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
             pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
         else:
             pkg_rev_deps = None
-        make_package_all_results_page(pkg, allpkgs, pkg_rev_deps)
+        make_package_all_results_page(pkg, allpkgs, pkg_rev_deps, long_link)
     print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
-        make_node_LeafReports(allpkgs, node)
+        make_node_LeafReports(allpkgs, node, long_link)
     return
 
 
@@ -1777,7 +1781,7 @@ def write_BioC_mainpage_top_asHTML(out, simp_link=False, long_link=False):
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
-    write_top_links(out, simp_link, long_link)
+    write_switch_link(out, simp_link, long_link)
     out.write('<H1>%s</H1>\n' % title)
     if BBSvars.buildtype == "bioc-longtests":
         long_tests_howto_url = '/developers/how-to/long-tests/'
@@ -1807,7 +1811,7 @@ def write_CRAN_mainpage_top_asHTML(out, simp_link=False, long_link=False):
     title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY onLoad="initialize();">\n')
-    write_top_links(out, simp_link, long_link)
+    write_switch_link(out, simp_link, long_link)
     out.write('<H1>%s</H1>\n' % title)
     write_timestamp(out)
     write_motd_asTABLE(out)
@@ -1861,7 +1865,7 @@ def write_glyph_and_propagation_LED_table(out, simple_layout=False):
 ### Node-specific reports
 ##############################################################################
 
-def write_node_report(node, allpkgs, quickstats):
+def write_node_report(node, allpkgs, quickstats, long_link=False):
     print("BBS> [write_node_report] Node %s: BEGIN ..." % node.node_id)
     sys.stdout.flush()
     node_index_file = '%s-index.html' % node.node_id
@@ -1870,7 +1874,7 @@ def write_node_report(node, allpkgs, quickstats):
 
     write_HTML_header(out, page_title, 'report.css', 'report.js')
     out.write('<BODY onLoad="initialize();">\n')
-    write_top_links(out, simp_link=True, long_link=True)
+    write_goback_links(out, long_link=long_link)
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
@@ -1890,10 +1894,10 @@ def write_node_report(node, allpkgs, quickstats):
     sys.stdout.flush()
     return node_index_file
 
-def make_all_NodeReports(allpkgs, quickstats):
+def make_all_NodeReports(allpkgs, quickstats, long_link=False):
     if len(BBSreportutils.NODES) != 1:
         for node in BBSreportutils.NODES:
-            write_node_report(node, allpkgs, quickstats)
+            write_node_report(node, allpkgs, quickstats, long_link)
     return
 
 
@@ -2092,8 +2096,10 @@ if __name__ == "__main__":
 
     print("BBS> [stage6d] Will generate HTML report for nodes: %s" % \
           report_nodes)
-    make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps)
-    make_all_NodeReports(allpkgs, allpkgs_quickstats)
+    make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps,
+                         long_link=simple_layout)
+    make_all_NodeReports(allpkgs, allpkgs_quickstats,
+                         long_link=simple_layout)
     if BBSvars.buildtype != "cran":
         make_BioC_MainReport(allpkgs, allpkgs_quickstats, simple_layout)
     else: # "cran" buildtype
