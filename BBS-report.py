@@ -24,6 +24,9 @@ import BBSutils
 import BBSvars
 import BBSreportutils
 
+node2aboutpage = {}
+node2Rinstpkgspage = {}
+node2Rinstpkgcount = {}
 
 ##############################################################################
 ### General stuff displayed on all pages
@@ -200,10 +203,10 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var):
     out.write('</PRE>\n')
     return
 
-def make_about_node_page(Node_rdir, node, long_link=False):
+def make_aboutnode_page(Node_rdir, node, long_link=False):
     page_title = 'More about %s' % node.node_id
-    about_node_filename = '%s-NodeInfo.html' % node.node_id
-    out = open(about_node_filename, 'w')
+    aboutnode_page = '%s-NodeInfo.html' % node.node_id
+    out = open(aboutnode_page, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
@@ -313,15 +316,23 @@ def make_about_node_page(Node_rdir, node, long_link=False):
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
-    return about_node_filename
+    return aboutnode_page
+
+def make_all_aboutnode_pages(long_link=False):
+    products_in_rdir = BBSvars.products_in_rdir
+    for node in BBSreportutils.NODES:
+        Node_rdir = products_in_rdir.subdir(node.node_id)
+        aboutnode_page = make_aboutnode_page(Node_rdir, node, long_link)
+        node2aboutpage[node.node_id] = aboutnode_page
+    return
 
 ### Make local copy (and rename) R-instpkgs.txt file.
 ### Returns the 2-string tuple containing the filename of the generated page
 ### and the number of installed pkgs.
 def make_Rinstpkgs_page(Node_rdir, node, long_link=False):
     page_title = 'R packages installed on %s' % node.node_id
-    Rinstpkgs_filename = '%s-R-instpkgs.html' % node.node_id
-    out = open(Rinstpkgs_filename, 'w')
+    Rinstpkgspage = '%s-R-instpkgs.html' % node.node_id
+    out = open(Rinstpkgspage, 'w')
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
@@ -344,9 +355,19 @@ def make_Rinstpkgs_page(Node_rdir, node, long_link=False):
     out.write('</DIV></BODY>\n')
     out.write('</HTML>\n')
     out.close()
-    return (Rinstpkgs_filename, str(nline-1))
+    return (Rinstpkgspage, str(nline-1))
 
-def write_node_specs_table(out, about_node_dir='.', long_link=False):
+def make_all_Rinstpkgs_pages(long_link=False):
+    products_in_rdir = BBSvars.products_in_rdir
+    for node in BBSreportutils.NODES:
+        Node_rdir = products_in_rdir.subdir(node.node_id)
+        (Rinstpkgspage, Rinstpkgcount) = make_Rinstpkgs_page(Node_rdir, node,
+                                                             long_link)
+        node2Rinstpkgspage[node.node_id] = Rinstpkgspage
+        node2Rinstpkgcount[node.node_id] = Rinstpkgcount
+    return
+
+def write_node_specs_table(out, aboutnode_dir='.', long_link=False):
     out.write('<TABLE class="node_specs">\n')
     out.write('<TR>')
     out.write('<TH>Hostname</TH>')
@@ -358,19 +379,19 @@ def write_node_specs_table(out, about_node_dir='.', long_link=False):
     products_in_rdir = BBSvars.products_in_rdir
     for node in BBSreportutils.NODES:
         Node_rdir = products_in_rdir.subdir(node.node_id)
-        about_node_filename = make_about_node_page(Node_rdir, node, long_link)
-        about_node_url = '%s/%s' % (about_node_dir, about_node_filename)
+        aboutnode_page = node2aboutpage[node.node_id]
+        aboutnode_url = '%s/%s' % (aboutnode_dir, aboutnode_page)
         Rversion_html = read_Rversion(Node_rdir)
-        (Rinstpkgs_filename, nb_inst_pkgs) = make_Rinstpkgs_page(Node_rdir,
-                                                            node, long_link)
-        Rinstpkgs_url = '%s/%s' % (about_node_dir, Rinstpkgs_filename)
+        Rinstpkgspage = node2Rinstpkgspage[node.node_id]
+        Rinstpkgcount = node2Rinstpkgcount[node.node_id]
+        Rinstpkgs_url = '%s/%s' % (aboutnode_dir, Rinstpkgspage)
         out.write('<TR class="%s">' % node.hostname.replace(".", "_"))
-        out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (about_node_url, node.node_id))
+        out.write('<TD><B><A href="%s"><B>%s</B></A></B></TD>' % (aboutnode_url, node.node_id))
         out.write('<TD>%s</TD>' % node.os_html)
         out.write('<TD>%s</TD>' % node.arch)
         out.write('<TD>%s</TD>' % Rversion_html)
         out.write('<TD style="text-align: right;">')
-        out.write('<A href="%s">%s</A>' % (Rinstpkgs_url, nb_inst_pkgs))
+        out.write('<A href="%s">%s</A>' % (Rinstpkgs_url, Rinstpkgcount))
         out.write('</TD>')
         out.write('</TR>\n')
     out.write('<TR>')
@@ -1610,7 +1631,7 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
     write_goback_links(out, topdir="..",
                        long_link=long_link, current_letter=current_letter)
     write_timestamp(out)
-    write_node_specs_table(out, about_node_dir='..', long_link=long_link)
+    write_node_specs_table(out, aboutnode_dir='..', long_link=long_link)
 
     out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
@@ -1716,7 +1737,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
     write_goback_links(out, topdir="..",
                        long_link=long_link, current_letter=current_letter)
     write_timestamp(out)
-    write_node_specs_table(out, about_node_dir='..', long_link=long_link)
+    write_node_specs_table(out, aboutnode_dir='..', long_link=long_link)
 
     out.write('<BR>\n')
     out.write('<H2>%s</H2>\n' % page_title)
@@ -2096,6 +2117,8 @@ if __name__ == "__main__":
 
     print("BBS> [stage6d] Will generate HTML report for nodes: %s" % \
           report_nodes)
+    make_all_aboutnode_pages(long_link=simple_layout)
+    make_all_Rinstpkgs_pages(long_link=simple_layout)
     make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps,
                          long_link=simple_layout)
     make_all_NodeReports(allpkgs, allpkgs_quickstats,
