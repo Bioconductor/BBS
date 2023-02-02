@@ -1716,7 +1716,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
     write_goback_links(out, topdir="..",
                        long_link=long_link, current_letter=current_letter)
     write_timestamp(out)
-    write_node_specs_table(out, about_node_dir='..')
+    write_node_specs_table(out, about_node_dir='..', long_link=long_link)
 
     out.write('<BR>\n')
     out.write('<H2>%s</H2>\n' % page_title)
@@ -1914,7 +1914,7 @@ def write_mainpage_asHTML(out, allpkgs, quickstats,
     simple_layout = long_link
     if not simple_layout:
         out.write('<BR>\n')
-        write_node_specs_table(out)
+        write_node_specs_table(out, long_link=long_link)
     out.write('<BR>\n')
     write_glyph_and_propagation_LED_table(out, simple_layout)
     if simple_layout:
