@@ -77,6 +77,20 @@ def write_goback_asHTML(out, href, current_letter=None):
     out.write('</TR></TABLE>\n')
     return
 
+def write_top_links(out, simp_link=False, long_link=False,
+                         topdir=".", current_letter=None):
+    if not simp_link and not long_link:
+        return
+    if simp_link and long_link:
+        write_goback_asHTML(out, topdir, current_letter):
+        return
+    if simp_link:
+        html = '<A href="./">Simplified report</A>'
+    else:
+        html = '<A href="./long-report.html">Long report</A>'
+    out.write('<P style="margin: 0px; text-align: left">%s</P>\n' % html)
+    return
+
 def write_timestamp(out):
     out.write('<P class="time_stamp">\n')
     date = bbs.jobs.currentDateString()
@@ -191,7 +205,7 @@ def make_about_node_page(Node_rdir, node):
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
-    write_goback_asHTML(out, "./index.html")
+    write_top_links(out, simp_link=True, long_link=True)
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
@@ -309,7 +323,7 @@ def make_Rinstpkgs_page(Node_rdir, node):
 
     write_HTML_header(out, page_title, 'report.css')
     out.write('<BODY>\n')
-    write_goback_asHTML(out, "./index.html")
+    write_top_links(out, simp_link=True, long_link=True)
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
@@ -1590,7 +1604,8 @@ def make_LeafReport(leafreport_ref, allpkgs):
     write_HTML_header(out, page_title, '../report.css', '../report.js')
     out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
-    write_goback_asHTML(out, "../index.html", current_letter)
+    write_top_links(out, simp_link=True, long_link=True,
+                         topdir="../", current_letter)
     write_timestamp(out)
     write_node_specs_table(out, about_node_dir='..')
 
@@ -1694,7 +1709,8 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None):
     write_HTML_header(out, page_title, '../report.css', '../report.js')
     out.write('<BODY onLoad="initialize();">\n')
     current_letter = pkg[0:1].upper()
-    write_goback_asHTML(out, "../index.html", current_letter)
+    write_top_links(out, simp_link=True, long_link=True,
+                         topdir="../", current_letter)
     write_timestamp(out)
     write_node_specs_table(out, about_node_dir='..')
 
@@ -1755,15 +1771,13 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None):
 ### Main page: HTML stuff above main table
 ##############################################################################
 
-def write_BioC_mainpage_top_asHTML(out, top_right_html=None):
+def write_BioC_mainpage_top_asHTML(out, simp_link=False, long_link=False):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     ## FH: Initialize the checkboxes when page is (re)loaded
     out.write('<BODY onLoad="initialize();">\n')
-    if top_right_html != None:
-        out.write('<P style="margin: 0px; text-align: right">%s</P>\n' % \
-                  top_right_html)
+    write_top_links(out, simp_link, long_link)
     out.write('<H1>%s</H1>\n' % title)
     if BBSvars.buildtype == "bioc-longtests":
         long_tests_howto_url = '/developers/how-to/long-tests/'
@@ -1788,13 +1802,12 @@ def write_BioC_mainpage_top_asHTML(out, top_right_html=None):
         out.write('</DIV>\n')
     return
 
-def write_CRAN_mainpage_top_asHTML(out, top_right_html=None):
+def write_CRAN_mainpage_top_asHTML(out, simp_link=False, long_link=False):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     title = BBSreportutils.make_report_title(report_nodes)
     write_HTML_header(out, None, 'report.css', 'report.js')
     out.write('<BODY onLoad="initialize();">\n')
-    if top_right_html != None:
-        out.write('<P style="text-align: right">%s</P>\n' % top_right_html)
+    write_top_links(out, simp_link, long_link)
     out.write('<H1>%s</H1>\n' % title)
     write_timestamp(out)
     write_motd_asTABLE(out)
@@ -1857,7 +1870,7 @@ def write_node_report(node, allpkgs, quickstats):
 
     write_HTML_header(out, page_title, 'report.css', 'report.js')
     out.write('<BODY onLoad="initialize();">\n')
-    write_goback_asHTML(out, "./index.html")
+    write_top_links(out, simp_link=True, long_link=True)
     write_timestamp(out)
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node.hostname.replace(".", "_"), page_title))
@@ -1889,11 +1902,12 @@ def make_all_NodeReports(allpkgs, quickstats):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs, quickstats,
-                          simple_layout=False, top_right_html=None):
+                               simp_link=False, long_link=False):
     if BBSvars.buildtype != "cran":
-        write_BioC_mainpage_top_asHTML(out, top_right_html)
+        write_BioC_mainpage_top_asHTML(out, simp_link, long_link)
     else: # "cran" buildtype
-        write_CRAN_mainpage_top_asHTML(out, top_right_html)
+        write_CRAN_mainpage_top_asHTML(out, simp_link, long_link)
+    simple_layout = long_link
     if not simple_layout:
         out.write('<BR>\n')
         write_node_specs_table(out)
@@ -1919,17 +1933,14 @@ def write_mainpage_asHTML(out, allpkgs, quickstats,
 def make_BioC_MainReport(allpkgs, quickstats, simple_layout=False):
     print("BBS> [make_BioC_MainReport] BEGIN ...")
     sys.stdout.flush()
-    top_right_html = None
     out = open('index.html', 'w')
-    if simple_layout:
-        top_right_html = '<A href="long-report.html">Long report</A>'
     write_mainpage_asHTML(out, allpkgs, quickstats,
-                          simple_layout, top_right_html)
+                               simp_link=False, long_link=simple_layout)
     out.close()
     if simple_layout:
         out = open('long-report.html', 'w')
-        top_right_html = '<A href="./">Simplified report</A>'
-        write_mainpage_asHTML(out, allpkgs, quickstats, False, top_right_html)
+        write_mainpage_asHTML(out, allpkgs, quickstats,
+                                   simp_link=True, long_link=False)
         out.close()
     print("BBS> [make_BioC_MainReport] END.")
     sys.stdout.flush()
@@ -1937,17 +1948,14 @@ def make_BioC_MainReport(allpkgs, quickstats, simple_layout=False):
 
 def make_CRAN_MainReport(allpkgs, quickstats, simple_layout=False):
     print("BBS> [make_CRAN_MainReport] BEGIN ...")
-    top_right_html = None
     out = open('index.html', 'w')
-    if simple_layout:
-        top_right_html = '<A href="long-report.html">Long report</A>'
     write_mainpage_asHTML(out, allpkgs, quickstats,
-                          simple_layout, top_right_html)
+                               simp_link=False, long_link=simple_layout)
     out.close()
     if simple_layout:
         out = open('long-report.html', 'w')
-        top_right_html = '<A href="./">Simplified report</A>'
-        write_mainpage_asHTML(out, allpkgs, quickstats, False, top_right_html)
+        write_mainpage_asHTML(out, allpkgs, quickstats,
+                                   simp_link=True, long_link=False)
         out.close()
     print("BBS> [make_CRAN_MainReport] END.")
     sys.stdout.flush()
