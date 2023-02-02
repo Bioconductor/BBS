@@ -71,8 +71,8 @@ def write_goback_links(out, topdir=".", long_link=False, current_letter=None):
     out.write('<TD style="%s"><I>' % TD_style)
     if long_link:
         out.write('Back to <B>%s</B>: ' % title)
-        out.write('<A href="%s/">simplified report</A>' % topdir)
-        out.write('<A href="%s/long-report.html">long report</A>' % topdir)
+        out.write('<A href="%s/">simplified</A> ' % topdir)
+        out.write('<A href="%s/long-report.html">long</A>' % topdir)
     else:
         out.write('<A href="%s/">Back to <B>%s</B></A>' % (topdir, title))
     out.write('</I></TD>')
