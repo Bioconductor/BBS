@@ -1865,18 +1865,18 @@ TESTING: Try to install the **Travel** package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.15 Install .NET 5.0 Runtime
+### 4.15 Install .NET Runtime
 
 Required by Bioconductor package **rmspc**.
 
 #### Install the runtime
 
 Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
-install the 5.0 .NET runtime corresponding to the build system's macOS.
+install the 6.0 .NET runtime corresponding to the build system's macOS.
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/a847df19-d530-41c8-b766-cb60ee8af9a4/7edd7c2eae38d25d0d7c90350eefea64/dotnet-runtime-5.0.9-osx-x64.pkg
-    shasum -a 512 dotnet-runtime-5.0.9-osx-x64.pkg
-    sudo installer -pkg dotnet-runtime-5.0.9-osx-x64.pkg -target /
+    curl -O https://download.visualstudio.microsoft.com/download/pr/2ef12357-499b-4a5b-a488-da45a5f310e6/fbe35c354bfb50934a976fc91c6d8d81/dotnet-runtime-6.0.13-osx-x64.pkg
+    shasum -a 512 dotnet-runtime-6.0.13-osx-x64.pkg
+    sudo installer -pkg dotnet-runtime-6.0.13-osx-x64.pkg -target /
 
 #### Testing
 
