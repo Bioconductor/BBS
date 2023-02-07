@@ -1335,13 +1335,13 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.15-bioc\meat`
     ..\R\bin\R CMD INSTALL Travel
 
 
-### 4.10 Install .NET 5.0 Runtime
+### 4.10 Install .NET Runtime
 
 This is needed by the rmspc package.
 
-Download the Windows x64 Installer for .NET 5.0 Runtime (file
-`dotnet-runtime-5.0.13-win-x64.exe` as of Dec. 2021) from
-https://dotnet.microsoft.com/download/dotnet/5.0
+Download the Windows x64 Installer for .NET 6.0 Runtime (file
+`dotnet-runtime-6.0.13-win-x64.exe` as of Feb. 2023) from
+https://dotnet.microsoft.com/download/dotnet/6.0
 
 Run the Installer.
 
