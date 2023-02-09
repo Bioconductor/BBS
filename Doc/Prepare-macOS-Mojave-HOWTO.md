@@ -1199,7 +1199,7 @@ as of Nov 2020):
               "Rmpfr", "pdftools", "av", "rgeos", "sf", "RcppAlgos",
               "glpkAPI", "gert", "RPostgres", "RMySQL", "RMariaDB",
               "protolite", "arrangements", "terra", "PoissonBinomial",
-              "igraph", "redux")
+              "igraph")
 
 First try to install with:
 
@@ -1912,25 +1912,8 @@ If GLPK is not available, one gets:
     Error in cluster_optimal(make_graph("Zachary")) :
       At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
 
-### 4.17 Install hiredis
 
-`hisredis` is required for CRAN package `redux`, which is a dependency of
-`RedisParam`.
-
-    brew install hiredis
-
-Then try installing `redux`:
-
-    install.packages("redux", repos="https://cran.r-project.org")
-
-TESTING:
-
-    cd ~/bbs-3.14-bioc/meat/
-    R CMD build RedisParam
-    R CMD check --no-vignettes RedisParam_X.Y.Z.tar.gz
-
-
-### 4.18 [OPTIONAL] Install autoconf & automake
+### 4.17 [OPTIONAL] Install autoconf & automake
 
 MAY 2020: Who needs this? Is this still needed?
 
@@ -1957,7 +1940,7 @@ permissions as described in the _Install Homebrew_ section if Simon's binary
 gets extracted there (normally the case for the `darwin17/x86_64` binaries).
 
 
-### 4.19 [OPTIONAL] Install ImageMagick
+### 4.18 [OPTIONAL] Install ImageMagick
 
 APRIL 2019: THIS SHOULD NO LONGER BE NEEDED! (was required by the **flowQ**
 package, which is now officially deprecated)
@@ -2024,7 +2007,7 @@ standalone commands `convert`, `identify`, and `montage`):
     R CMD build flowQ
 
 
-### 4.20 Install libSBML
+### 4.19 Install libSBML
 
 SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! Starting with BioC 3.12, **rsbml**
 is no longer supported on macOS. KEPT FOR THE RECORD ONLY.
