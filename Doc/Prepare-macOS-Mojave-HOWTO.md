@@ -1199,7 +1199,7 @@ as of Nov 2020):
               "Rmpfr", "pdftools", "av", "rgeos", "sf", "RcppAlgos",
               "glpkAPI", "gert", "RPostgres", "RMySQL", "RMariaDB",
               "protolite", "arrangements", "terra", "PoissonBinomial",
-              "igraph")
+              "igraph", "redux")
 
 First try to install with:
 
