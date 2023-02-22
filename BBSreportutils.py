@@ -169,8 +169,6 @@ def stages_to_display(buildtype):
         return ['install', 'buildsrc']
     if buildtype == "bioc-longtests":
         return ['checksrc']  # we run 'buildsrc' but don't display it
-    if buildtype in ["bioc-mac-arm64"]:
-        return ['install', 'buildsrc', 'buildbin']
     return ['install', 'buildsrc', 'checksrc', 'buildbin']
 
 ### Whether to display the package propagation status led or not for the
@@ -327,7 +325,7 @@ def import_BUILD_STATUS_DB(allpkgs):
             _update_quickstats(allpkgs_quickstats, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            if BBSvars.buildtype not in ["workflows", "books", "bioc-mac-arm64"]:
+            if BBSvars.buildtype not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
@@ -413,7 +411,7 @@ def compute_quickstats(pkgs):
             _update_quickstats(quickstats, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            if BBSvars.buildtype not in ["workflows", "books", "bioc-mac-arm64"]:
+            if BBSvars.buildtype not in ["workflows", "books"]:
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"

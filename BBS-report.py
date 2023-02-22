@@ -1711,7 +1711,7 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
             make_LeafReport(leafreport_ref, allpkgs, long_link)
 
         # CHECK leaf-report
-        if BBSvars.buildtype not in ["workflows", "books", "bioc-mac-arm64"]:
+        if BBSvars.buildtype not in ["workflows", "books"]:
             stage = 'checksrc'
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
