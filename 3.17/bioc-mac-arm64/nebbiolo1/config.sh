@@ -12,7 +12,7 @@ export BBS_DEBUG="0"
 export BBS_NODE_HOSTNAME="nebbiolo1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.17-bioc-mac-arm64"
-export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
+export BBS_R_HOME="/home/biocbuild/bbs-3.17-bioc/R"
 export BBS_NB_CPU=24        # 72 cores are available
 export BBS_CHECK_NB_CPU=30  # 72 cores are available
 
