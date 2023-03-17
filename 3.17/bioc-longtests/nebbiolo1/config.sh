@@ -13,6 +13,7 @@ export BBS_NODE_HOSTNAME="nebbiolo1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.17-bioc-longtests"
 export BBS_R_HOME="/home/biocbuild/bbs-3.17-bioc/R"
+export R_LIBS="$BBS_R_HOME/site-library"
 export BBS_NB_CPU=4  # 72 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"

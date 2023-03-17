@@ -171,7 +171,7 @@ def _bump_versions_and_create_branches(pkgs, branch, no_bump, push):
 ###   'push'      -> True or False
 ###   'branch'    -> string
 ###   'pkgs'      -> list of strings
-def parse_args(argv):
+def _parse_args(argv):
     usage_msg = 'Usage:\n' + \
         '    bump_version_and_create_branch.py [--no-bump] [--push] branch pkg1 pkg2 ...'
     if len(argv) < 2:
@@ -209,7 +209,7 @@ def parse_args(argv):
     return {'no_bump': no_bump, 'push': push, 'branch': branch, 'pkgs': argv}
 
 if __name__ == '__main__':
-    parsed_args = parse_args(sys.argv)
+    parsed_args = _parse_args(sys.argv)
     _bump_versions_and_create_branches(parsed_args['pkgs'],
                                        parsed_args['branch'],
                                        parsed_args['no_bump'],
