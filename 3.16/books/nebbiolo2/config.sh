@@ -13,6 +13,7 @@ export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.16-books"
 export BBS_R_HOME="/home/biocbuild/bbs-3.16-bioc/R"
+export R_LIBS="$BBS_R_HOME/site-library"
 export BBS_NB_CPU=8  # 72 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
