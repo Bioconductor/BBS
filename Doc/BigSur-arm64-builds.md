@@ -435,7 +435,7 @@ installation of Bioconductor software package ChemmineOB.
 
 What we're going to do about it: Nothing for now. Last time we
 installed OpenBabel on a Mac builder with brew
-[was a nightmare](https://github.com/Bioconductor/BBS/blob/master/Doc/Prepare-macOS-Mojave-HOWTO.md#48-install-open-babel) (it broke many
+[was a nightmare](https://github.com/Bioconductor/BBS/blob/devel/Doc/Prepare-macOS-Mojave-HOWTO.md#48-install-open-babel) (it broke many
 things on the system and it took a while to figure out what exactly
 and how to repair everything). So trying this on taxco will be delayed
 as much as it can be.

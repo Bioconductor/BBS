@@ -12,7 +12,7 @@ import bbs.gitutils
 gitserver = "git.bioconductor.org"
 commit_msg1 = "bump x.y.z version to even y prior to creation of %s branch"
 commit_msg2 = "bump x.y.z version to odd y following creation of %s branch"
-commit_msg3 = "bump version in master branch following creation of %s branch"
+commit_msg3 = "bump version in devel branch following creation of %s branch"
 
 ### Return the first 3 components only (additional components are ignored).
 def _split_version(version):
@@ -82,7 +82,7 @@ def _branch_exists(repo_path, branch):
     print("### Check that %s branch does not already exist" % branch)
     print()
     retcode = _run_git_cmd(repo_path, "checkout %s" % branch, check=False)
-    _run_git_cmd(repo_path, "checkout master")
+    _run_git_cmd(repo_path, "checkout devel")
     return retcode == 0
 
 def _first_version_bump(repo_path, branch):
@@ -106,7 +106,7 @@ def _create_branch(repo_path, branch):
     print("### Create branch")
     print()
     _run_git_cmd(repo_path, "checkout -b %s" % branch)
-    _run_git_cmd(repo_path, "checkout master")
+    _run_git_cmd(repo_path, "checkout devel")
     return
 
 def _second_version_bump(repo_path, branch):
@@ -134,7 +134,7 @@ def _push(repo_path):
 
 def _bump_version_and_create_branch(pkg, branch, no_bump, push):
     repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
-    bbs.gitutils.clone_or_pull_repo(pkg, repo_url, "master",
+    bbs.gitutils.clone_or_pull_repo(pkg, repo_url, "devel",
                                     discard_changes=True, cleanup=True)
     print()
     if _branch_exists(pkg, branch):
