@@ -16,7 +16,8 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.17-bioc-testing"
 # builds (because it's convenient) but we don't want the bioc-testing
 # builds to interfer in any way with the nightly software builds.
 # In particular STAGE2 should NOT install anything in
-# /home/biocbuild/bbs-3.17-bioc/R/library!
+# /home/biocbuild/bbs-3.17-bioc/R/library or
+# /home/biocbuild/bbs-3.17-bioc/R/site-library!
 # So we set R_LIBS to point to our own library folder.
 # IMPORTANT: Make sure to create the Rlibs folder on nebbiolo1 before
 # starting the bioc-testing builds. Otherwise the bioc-testing

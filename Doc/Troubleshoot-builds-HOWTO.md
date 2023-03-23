@@ -123,7 +123,7 @@ is not complete. Do a command like this:
     watch 'ls -l public_html/BBS/3.2/bioc/nodes/perceval/checksrc/ ' | tail -4
 
 This will show you the last 4 files that were pushed
-to the master node from perceval. The display will 
+to the primary node from perceval. The display will 
 refresh every few seconds. New filenames will show up
 in alphabetical order (and not case-sensitive). So
 if you are in the Y's, then you're near the end.
@@ -211,7 +211,7 @@ the log).
 
 Sometimes a build node failed. A common reason for this is
 that there was an error or timeout when attempting to 
-rsync build products from the node to the master builder.
+rsync build products from the node to the primary builder.
 This seems to happen most often on the Mac machines
 at FHCRC. We need to investigate and fix this. 
 (Maybe adjusting timeouts?)
@@ -229,8 +229,8 @@ to propagate.
 So, if we can get to it well before the daily deadline
 (when the prerun script is run) we should do the following:
 
-Temporarily edit the `config.sh` script for the master builder.
-Assuming the affected build is Bioconductor 3.2 and the master
+Temporarily edit the `config.sh` script for the primary builder.
+Assuming the affected build is Bioconductor 3.2 and the primary
 builder is `linux1.bioconductor.org`, we would do:
 
 ```
