@@ -46,7 +46,7 @@ def _write_pkg_results_to_BUILD_STATUS_DB(pkg, out):
                                          status)
         skipped_is_OK = status in ['TIMEOUT', 'ERROR']
         # CHECK status
-        if BBSvars.buildtype not in ['workflows', 'books', 'bioc-mac-arm64']:
+        if BBSvars.buildtype not in ['workflows', 'books']:
             stage = 'checksrc'
             if skipped_is_OK:
                 status = 'skipped'

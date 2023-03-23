@@ -45,17 +45,16 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
         return status != 'OK'
 
     ## Extract Status from CHECK summary.
-    if BBSvars.buildtype not in ["bioc-mac-arm64"]:
-        checksrc_path = os.path.join(node_path, 'checksrc')
-        summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
-        try:
-            dcf = open(summary_file, 'rb')
-        except IOError:
-            return True
-        status = bbs.parse.get_next_DCF_val(dcf, 'Status')
-        dcf.close()
-        if status not in ["OK", "WARNINGS"]:
-            return True
+    checksrc_path = os.path.join(node_path, 'checksrc')
+    summary_file = os.path.join(checksrc_path, summary_file0 % 'checksrc')
+    try:
+        dcf = open(summary_file, 'rb')
+    except IOError:
+        return True
+    status = bbs.parse.get_next_DCF_val(dcf, 'Status')
+    dcf.close()
+    if status not in ["OK", "WARNINGS"]:
+        return True
 
     if not is_doing_buildbin(node_hostname):
         return False
