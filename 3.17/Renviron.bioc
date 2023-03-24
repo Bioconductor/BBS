@@ -37,6 +37,18 @@ _R_CHECK_LENGTH_1_LOGIC2_=package:_R_CHECK_PACKAGE_NAME_,abort,verbose
 _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 #_R_S3_METHOD_LOOKUP_BASEENV_AFTER_GLOBALENV_=true
 #_R_CLASS_MATRIX_ARRAY_=true
+
+# _R_CHECK_SUGGESTS_ONLY_=true will allow 'R CMD check' to expose undeclared package dependencies.
+# Note that:
+# - The setting is effective **only** if base and recommended packages are installed in
+#   <R_HOME>/library and all other packages are installed somewhere else (e.g. in
+#   <R_HOME>/site-library). An easy way to achieve this setup is by creating the
+#   <R_HOME>/site-library folder right after installing R and **before** installing any
+#   package.
+# - Only the Bioconductor **Linux** builders use the above setup at the moment (i.e. all
+#   packages except base and recommended packages are installed in <R_HOME>/site-library).
+#   This means that 'R CMD check' can only expose undeclared dependencies on the Bioconductor
+#   Linux builders. It will NOT expose them on the Bioconductor Windows or Mac builders.
 _R_CHECK_SUGGESTS_ONLY_=true
 R_DEFAULT_INTERNET_TIMEOUT=600
 
