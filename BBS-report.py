@@ -112,18 +112,21 @@ def write_notes_to_developer(out, pkg):
         prefix = ''
     if BBSvars.buildtype == "bioc":
         url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
-        out.write('%sPlease allow up to 24 hours (and sometimes ' % prefix)
+        out.write('%sAllow up to 24 hours (and sometimes ' % prefix)
         out.write('48 hours) for your latest push to ')
         out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
-        out.write('to<BR>reflect on this report. ')
-        out.write('See <A href="%s">How and When does the builder ' % url)
-        out.write('pull? When will my changes propagate?</A> ')
-        out.write('for more information.<BR>\n')
+        out.write('to reflect on this report. ')
+        out.write('See <A href="%s">Troubleshooting Build Report</A> ')
+        out.write('for more information.<BR><BR>\n')
     if os.path.exists('Renviron.bioc'):
-        out.write('%sMake sure to ' % prefix)
-        out.write('<A href="../%s">use the following ' % 'Renviron.bioc')
-        out.write('settings</A> in order to reproduce any error ')
-        out.write('or warning you see on this page.<BR>\n')
+        out.write('%sUse the following ' % prefix)
+        out.write('<A href="../%s">Renviron settings</A> ' % 'Renviron.bioc')
+        out.write('to reproduce errors and warnings.<BR><BR>\n')
+        out.write('Note: If "R CMD check" recently failed on the Linux ')
+        out.write('builder over a missing dependency, add the missing ')
+        out.write('dependency to "Suggests" in your DESCRIPTION file. See ')
+        out.write('the <A href="../%s">Renviron.bioc</A> ' % 'Renviron.bioc')
+        out.write('for details.\n')
     out.write('</TD></TR></TABLE>\n')
     out.write('</DIV>\n')
     return
