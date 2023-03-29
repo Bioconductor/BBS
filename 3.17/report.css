@@ -83,7 +83,7 @@ DIV.motd {
     padding-bottom: 0px;
     /*font-weight: bold;*/
 }
-DIV.motd DIV {
+DIV.motd TABLE {
     width: 80%;
     margin: auto;
     border: 1px dotted black;
