@@ -105,7 +105,7 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
         meat_index.write('PackageStatus: %s\n' % package_status)
     OS_type = DESCRIPTION.get('OS_type')
     OS_type_is_unix = OS_type != none and OS_type.lower().find('unix') >= 0
-    if options != None || OS_type_is_unix:
+    if options != None or OS_type_is_unix:
         unsupported = None
         if options != None:
             unsupported = options.get('UnsupportedPlatforms')
