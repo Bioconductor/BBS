@@ -103,9 +103,20 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     package_status = DESCRIPTION.get('PackageStatus')
     if package_status != None:
         meat_index.write('PackageStatus: %s\n' % package_status)
-    if options != None:
-        unsupported = options.get('UnsupportedPlatforms')
-        meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
+    OS_type = DESCRIPTION.get('OS_type')
+    OS_type_is_unix = OS_type != none and OS_type.lower().find('unix') >= 0
+    if options != None || OS_type_is_unix:
+        unsupported = None
+        if options != None:
+            unsupported = options.get('UnsupportedPlatforms')
+        if unsupported == None:
+            if OS_type_is_unix:
+                unsupported = 'win'
+        else:
+            if unsupported.lower().find('win') < 0 and OS_type_is_unix:
+                unsupported += ', win'
+        if unsupported != None:
+            meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
     meat_index.write('\n')
     return 0  # package will be added to the "meat index"
 
