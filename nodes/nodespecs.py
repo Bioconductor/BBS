@@ -52,9 +52,9 @@ allnodes = {
                    'Platform': "x86_64-apple-darwin21.6.0",
                    'pkgType' : "mac.binary",
                    'encoding': "utf-8"},
-    'merida1':    {'OS'      : "macOS 10.14.6 Mojave",
+    'merida1':    {'OS'      : "macOS 12.6.4 Monterey",
                    'Arch'    : "x86_64",
-                   'Platform': "x86_64-apple-darwin18.7.0",
+                   'Platform': "x86_64-apple-darwin21.6.0",
                    'pkgType' : "mac.binary",
                    'encoding': "utf-8"}
 }
