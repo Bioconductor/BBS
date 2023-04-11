@@ -20,7 +20,15 @@ SINGLE_ARCH=true
 
 # Change dynamic shared library path for
 ARCH=`uname -m`  # x86_64 or arm64
-if [ "$ARCH" == "x86_64" ]; then
+UNIVERSAL_GFORTRAN=`gfortran --version | grep 12.2.0`
+
+if [ ! -z "$UNIVERSAL_GFORTRAN" -a "$ARCH" == "x86_64" ]; then
+    LOCAL_DYLIB_DIR="/usr/local/lib"
+    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/x86_64-apple-darwin20.0/12.2.0/"
+elif [ ! -z "$UNIVERSAL_GFORTRAN" -a "$ARCH" == "arm64" ]; then
+    LOCAL_DYLIB_DIR="/usr/local/lib"
+    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/aarch64-apple-darwin20.0/12.2.0/"
+elif [ "$ARCH" == "x86_64" ]; then
     LOCAL_DYLIB_DIR="/usr/local/lib"
     LOCAL_FORTRAN_DYLIB_DIR="/usr/local/gfortran/lib"
 else
@@ -82,7 +90,11 @@ else
     R_LIBS="`$R_CMD CMD sh -c 'echo "$R_HOME"'`/library"
 fi
 
-R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64")' | $R_CMD --no-echo`
+if [ -z "$UNIVERSAL_GFORTRAN" ]; then
+    R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64")' | $R_CMD --no-echo`
+else
+    R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64") else cat("-x86_64")' | $R_CMD --no-echo`
+fi
 
 R_lib_dir="/Library/Frameworks/R.framework/Versions/$R_xyversion/Resources/lib"
 
