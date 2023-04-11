@@ -48,7 +48,8 @@ elif uname -a | grep -q "Version 15."; then
 else
     # Builds on any macOS >= High Sierra with High Sierra as **target**.
     # On arm64 systems, libgcc_s.1.dylib is replaced with libgcc_s.1.1.dylib.
-    if [ "$ARCH" == "x86_64" ]; then
+
+    if [ -z "$UNIVERSAL_GFORTRAN" ]; then
         DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
     else
         DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
