@@ -1,6 +1,6 @@
 # ====================================================================
 # Environment variables used on the Bioconductor build machines to
-# control the behavior of R 4.3 for the BioC 3.17 builds
+# control the behavior of R 4.3 for the BioC 3.18 builds
 # ====================================================================
 #
 # BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the settings
