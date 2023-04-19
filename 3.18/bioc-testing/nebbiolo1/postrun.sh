@@ -13,10 +13,8 @@ script_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd "$BBS_CENTRAL_RDIR"
 
 # Remove target repo (no-vignettes source packages). It's no longer
-# needed so we can make room before we generate the HTML report below
-# and before we propagate packages (this will be done later by the
-# updateReposPkgs-bioc.sh script that we run from the biocpush
-# account). Can help significantly if the machine has limited disk capacity.
+# needed so we can make room before we generate the HTML report below.
+# Can help significantly if the machine has limited disk capacity.
 rm -rf src
 
 # Fix perms
@@ -27,13 +25,8 @@ set -e # Exit immediately if a simple command exits with a non-zero status.
 
 $BBS_PYTHON_CMD $BBS_HOME/BBS-make-BUILD_STATUS_DB.py
 
-if [ -n "$BBS_OUTGOING_MAP" ]; then
-    $BBS_PYTHON_CMD $BBS_HOME/BBS-make-OUTGOING.py
-    $BBS_PYTHON_CMD $BBS_HOME/BBS-make-PROPAGATION_STATUS_DB.py
-fi
-
 # Generate the HTML report
-$BBS_PYTHON_CMD $BBS_HOME/BBS-report.py
+$BBS_PYTHON_CMD $BBS_HOME/BBS-report.py no-alphabet-dispatch
 REPORT_DIRNAME=$(dirname "$BBS_REPORT_PATH")
 REPORT_BASENAME=$(basename "$BBS_REPORT_PATH")
 cd "$REPORT_DIRNAME"
