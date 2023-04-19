@@ -437,7 +437,7 @@ If this is a reinstallation of MiKTeX, make sure to uninstall it (from
 the Administrator account) before reinstalling.
 
 Go to https://miktex.org/download and download the latest Basic MiKTeX
-64-bit Installer (`basic-miktex-21.12-x64.exe` as of Dec. 2021).
+64-bit Installer (`basic-miktex-23.4-x64.exe` as of Apr. 2023).
 
 When running the installer:
 
@@ -687,9 +687,9 @@ packages.
 
 - Go to https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html
 
-- Download Rtools42 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools43/files/rtools43-5550-5548.exe`
+- Download Rtools43 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools43/files/rtools43-5550-5548.exe`
 
-- Run the installer and keep all the defaults. This will install Rtools42
+- Run the installer and keep all the defaults. This will install Rtools43
   in `C:\rtools43`.
 
 - Do **NOT** follow the "Putting Rtools on the PATH" instructions given
@@ -712,20 +712,20 @@ packages.
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
 
-    which which     # /usr/bin/which (provided by rtools42)
+    which which     # /usr/bin/which (provided by rtools43)
     which ssh       # /c/cygwin/bin/ssh
-    which rsync     # /usr/bin/rsync, because rsync from rtools42 should be
+    which rsync     # /usr/bin/rsync, because rsync from rtools43 should be
                     # before rsync from Cygwin in Path
-    which curl      # /usr/bin/curl, because curl from rtools42 should be
+    which curl      # /usr/bin/curl, because curl from rtools43 should be
                     # before curl from Cygwin in Path
     which vi        # /c/cygwin/bin/vi
     rsync           # Will crash if 64-bit Cygwin was installed instead
                     # of 32-bit Cygwin!
-    which make      # /usr/bin/make (provided by rtools42)
-    make --version  # GNU Make 4.3
-    which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by rtools42)
-    gcc --version   # gcc.exe (GCC) 10.4.0
-    which chmod     # /usr/bin/chmod (provided by rtools42)
+    which make      # /usr/bin/make (provided by rtools43)
+    make --version  # GNU Make 4.4.1
+    which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by rtools43)
+    gcc --version   # gcc.exe (GCC) 12.2.0
+    which chmod     # /usr/bin/chmod (provided by rtools43)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
 
@@ -1061,8 +1061,8 @@ Choose "JDK Download" then download the "Windows x64 Installer"
 
 Use the default settings when running the installer.
 
-Make sure that `C:\rtools42\usr\bin` and
-`C:\rtools42\x86_64-w64-mingw32.static.posix\bin`
+Make sure that `C:\rtools43\usr\bin` and
+`C:\rtools43\x86_64-w64-mingw32.static.posix\bin`
 are still first in the `Path`. In case the JDK installer prepended
 something like `C:\Program Files\Common Files\Oracle\Java\javapath`
 to `Path`, then move it towards the end of `Path` (e.g. anywhere after
@@ -1120,7 +1120,7 @@ depend on (CNVrd2, MADSEQ, infercnv).
 
 Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
 on "Download Latest Version" (`JAGS-4.3.0.exe` as of Dec. 2021). If
-you are using RTools42 + R UCRT, then download `JAGS-4.3.0.exe` from
+you are using RTools43 + R UCRT, then download `JAGS-4.3.0.exe` from
 https://www.r-project.org/nosvn/winutf8/ucrt3/extra/jags/ instead.
 
 Use the default settings when running the installer. Make sure that all
@@ -1213,7 +1213,7 @@ Depending on whether the Girke lab provides pre-compiled Windows binaries
 for Open Babel 3 or not, you'll need to follow one of the two methods below.
 
 Note: As of December 2021, the 3.0.0 pre-compiled Windows binary does not
-appear to work with the Rtools42, so you must compile Open Babel 3 from
+appear to work with the Rtools43, so you must compile Open Babel 3 from
 source at http://openbabel.org/wiki/Category:Installation.
 
 #### Method 1: Install Open Babel 3 pre-compiled Windows binaries
