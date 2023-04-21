@@ -1,0 +1,28 @@
+# APT packages needed for CRAN packages
+cmake                   # for nloptr
+libglu1-mesa-dev        # for rgl
+librsvg2-dev            # for rsvg
+libgmp-dev              # for gmp
+libssl-dev              # for openssl, mongolite
+libsasl2-dev            # for mongolite
+libxml2-dev             # for XML
+libcurl4-openssl-dev    # for RCurl, curl
+mpi-default-dev         # for Rmpi
+libudunits2-dev         # for units
+libv8-dev               # for V8
+libmpfr-dev             # for Rmpfr
+libfftw3-dev            # for fftw, fftwtools
+libmysqlclient-dev      # for RMySQL
+libpq-dev               # for RPostgreSQL, RPostgres
+libmagick++-dev         # for magick
+libgeos-dev             # for rgeos
+libproj-dev             # for proj4
+libgdal-dev             # for sf
+libpoppler-cpp-dev      # for pdftools
+libgit2-dev             # for gert
+jags                    # for rjags
+libprotobuf-dev         # for protolite
+protobuf-compiler       # for protolite
+libglpk-dev             # for glpkAPI and to compile igraph with GLPK support
+libhiredis-dev          # for redux
+libarchive-dev          # for archive, a dependency of AlpsNMR

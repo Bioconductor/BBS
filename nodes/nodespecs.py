@@ -17,7 +17,7 @@ allnodes = {
                    'Platform': "x86_64-linux-gnu",
                    'pkgType' : "source",
                    'encoding': "utf_8"},
-    'nebbiolo2':  {'OS'      : "Linux (Ubuntu 20.04.5 LTS)",
+    'nebbiolo2':  {'OS'      : "Linux (Ubuntu 22.04.2 LTS)",
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-linux-gnu",
                    'pkgType' : "source",
