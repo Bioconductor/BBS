@@ -12,7 +12,7 @@
 # OS version, etc.. can be obtained programmatically
 
 allnodes = {
-    'nebbiolo1':  {'OS'      : "Linux (Ubuntu 22.04.1 LTS)",
+    'nebbiolo1':  {'OS'      : "Linux (Ubuntu 22.04.2 LTS)",
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-linux-gnu",
                    'pkgType' : "source",
