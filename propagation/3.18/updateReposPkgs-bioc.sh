@@ -48,8 +48,8 @@ echo "Updating $BIOC_VERSION/bioc repo with Windows binary packages..."
 update_repo "$WIN_CONTRIB" "win.binary" "zip"
 
 echo ""
-echo "Updating $BIOC_VERSION/bioc repo with Mac (High Sierra) binary packages..."
-update_repo "$MAC_BIG_SUR_x86_64_CONTRIB" "mac.binary" "tgz"
+echo "Updating $BIOC_VERSION/bioc repo with Mac (Big Sur) binary packages..."
+update_repo "$MAC_BIG_SUR_x86_64_CONTRIB" "mac.binary.big-sur-x86_64" "tgz"
 
 echo ""
 

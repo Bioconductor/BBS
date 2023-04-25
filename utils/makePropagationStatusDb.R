@@ -300,7 +300,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
         return(invisible(NULL))
     }
     .prettymsg("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ")
-    type <- gsub(".big-sur-arm64", "", type, fixed = TRUE)
+    type <- gsub(".big-sur-(arm64|x86_64)", "", type, fixed = TRUE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
 }
@@ -344,7 +344,9 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
     out <- file(db_filepath, "w")
     on.exit(close(out))
     final_repo <- gsub("-mac-arm64", "", final_repo, fixed = TRUE)
-    OUTGOING_types <- c("source", "win.binary", "mac.binary", "mac.binary.big-sur-arm64")
+    OUTGOING_types <- c("source", "win.binary",
+                        "mac.binary.big-sur-arm64",
+                        "mac.binary.big-sur-x86_64")
     for (type in OUTGOING_types) {
         OUTGOING_subdir <- file.path(OUTGOING_dir, type)
         if (!file.exists(OUTGOING_subdir))
