@@ -65,39 +65,46 @@ The canonical location of the code is in GitHub:
 
 If you have a question not covered here:
 
-* Ask Herv&eacute; Pag&egrave;s or Lori Shepherd.
-* If neither of those two are available, Martin Morgan may know.
+* Ask Herv&eacute; Pag&egrave;s, Lori Shepherd, or Jen Wokaty.
 
 ## General overview of BBS
 
-Build start times for release and devel builders are summarized in the
-[Build Machines Daily Schedule](https://docs.google.com/document/d/1Ubp7Tcxr1I1HQ8Xrp9f73P40YQ0qhWQ_hSmHs05Ln_M/edit#heading=h.r7sorafgdpnf).
-
 In general, there are four *builds* that run during any given week:
 
-1. Release *software* builds. (*bioc* is the name for our
-   software package repository). These builds run nightly on
-   all release build machines.
-2. Release *experiment package* builds (*data-experiment* is the
-   name for our experiment package repository). These builds run
-   nightly on the release Linux primary builder only.
-3. Devel *software* builds. These builds run nightly on
-   all devel build machines.
-4. Devel *experiment package* builds. These builds run
-   nightly on the devel Linux primary builder only.
+1. Release *software package* (or "bioc") builds run Monday, Wednesday, and
+   Friday on the release Linux, Mac x86-64, and Windows build machines. The
+   release Mac ARM64 builds start Monday and finish on Thursday.
+2. Release *experiment package* (or "data-experiment") builds run Tuesday and
+   Thursday on the release Linux primary builder.
+3. Release *workflow package* builds run Tuesday and Friday on release Linux,
+   Mac x86-64, and Windows build machines.
+4. Release *book* builds run Monday, Wednesday, and Friday on release Linux
+   build machines.
+5. Devel *software* builds run daily, except on Sunday, on the release Linux,
+   Mac x86-64, and Windows build machines. The release Mac ARM64 builds start
+   Monday and finish on Thursday.
+6. Devel *experiment package* (or "data-experiment") builds run Tuesday and
+   Thursday on the devel Linux primary builder.
+7. Devel *workflow package* builds run Tuesday and Friday on devel Linux,
+   Mac x86-64, and Windows build machines.
+8. Devel *book* builds run Monday, Wednesday, and Friday on devel Linux
+   build machines.
 
 ## What builds where
 
-As of June 2021, the Linux builders are in the DFCI DMZ, the Windows builders
-are in the Roswell Park DMZ, and the Mac builders are in MacStadium.
+As of April 2023, the Linux builders and the Mac x86-64 builder named lconway
+are in the DFCI DMZ, the Windows builders are in Azure, and all other Mac
+builders are in MacStadium.
 
 ### About the build machines.
 
-There are three build machines each for release and devel.
+There are four build machines each for release and devel.
 
-* Linux (Ubuntu 20.04 LTS)
-* Windows Server (2019 Standard for devel and 2012 R2 Standard for release)
-* Mac OS X 10.14.6 (Mojave)
+* Linux (Ubuntu 22.04 LTS)
+* Windows Server (2022 Datacenter)
+* Mac x86-64 OSX 12.x (Monterey)
+* Mac ARM64 OSX 12.x (Monterey)
+* (soon) Mac ARM64 OSX 13.x (Ventura)
 
 ### How the build machines are organized.
 
@@ -117,71 +124,22 @@ transitioned to https.
 
 #### Address and canonical DNS records
 
-Each machine in the RPCI DMZ has both a public and private IP. These are the
-A (address) record DNS entries and they resolve to the public IPs:
-
-malbec1.roswellpark.org
-malbec2.roswellpark.org
-tokay1.roswellpark.org
-tokay2.roswellpark.org
-
-In AWS Route 53 we have CNAME (canonical) record DNS entries that point names
-with the .bioconductor.org extension to names with the .roswellpark.org
-extension.
+Some machines are available via a pubic IP.  In AWS Route 53 we have CNAME
+(canonical) record DNS entries that point to the .bioconductor.org extension.
 
 https://console.aws.amazon.com/route53/home?region=us-east-1#resource-record-sets:Z2LMJH3A2CQNZZ
 
-#### Traffic routing within the RPCI DMZ
-
-When http was used to communicate between the Windows and Linux
-builders the private IP was used instead of the hostname. This resulted in direct communication
-between private IPs within the DMZ and traffic was not routed to
-the public IP in the firewall.
-
-The direct IP approach doesn't work with https because the SSL certificate must
-be validated and it's registered to the .bioconductor.org name (not the IP).
-
-We tried using the .bioconductor.org name with https but there was a problem
-with the routing of traffic in the DMZ. The key issue was that the outgoing
-request path was different from the return response path. The
-return response was coming from a different IP than the outgoing request
-was sent to. Evidently certain protocols don't like this inconsistency and
-https is one of them.
-
-Outgoing traffic must use https://hostname.bioconductor.org which maps to
-the public IP in the firewall. The return traffic was not forced to use
-.bioconductor.org so it instead used the internal route table to lookup
-the private IP of the originating machine which is also in the DMZ.
-
-Example of tokay1 trying to talk to malbec1:
-
-Outgoing request:
-tokay1 -> firewall (public IP) -> malbec1
-
-Return response:
-malbec1 -> tokay1
-
-There were several attempts to modify firewall rules to make https work via the
-normal channels. These were unsuccessful and the alternative solution was to
-modify the `/etc/hosts` file on the DMZ builders. The modification overrides the
-DNS lookup (for this machine) such that .bioconductor.org now maps to the
-private IP instead of the public IP. As a result, traffic no longer goes
-through the firewall but instead occurs directly between the two machines which
-means the outgoing and return IP addresses are the same.
-
 #### Mac builders and the RPCI DMZ
 
-The Mac builders are located outside the RPCI DMZ. When they https
-to the *primary builder*, e.g., malbec1.bioconductor.org, they are
-directed to the public IP which redirects to the private IP. The
-outgoing and return routes are the same. This works fine, no problems here.
+The Mac builders are located outside the DFCI DMZ. When they https to the
+*primary builder* they are directed to the public IP which redirects to the
+private IP. The outgoing and return routes are the same.
 
 ### What machines are used in which builds?
 
 This changes with every release. The *active_devel_builders* and
 *active_release_builders* sections of
-[config.yaml](http://bioconductor.org/config.yaml) list the current
-builders.
+[config.yaml](http://bioconductor.org/config.yaml) list the current builders.
 
 #### A note about time zones.
 
@@ -199,9 +157,7 @@ The BBS code is checked out on all build machines. Each builder has a cron job
 machines, the build system runs as *biocbuild*.
 
 The crontab for the *biocbuild* user on one of the Linux build machines
-(a/k/a primary build nodes) lists all tasks involved in the builds. A
-visual summary of these same tasks (with Windows and Mac added) is in the
-[Build Machines Daily Schedule](https://docs.google.com/document/d/1Ubp7Tcxr1I1HQ8Xrp9f73P40YQ0qhWQ_hSmHs05Ln_M/edit#heading=h.r7sorafgdpnf).
+(a/k/a primary build nodes) lists all tasks involved in the builds.
 
 #### prerun
 
@@ -209,7 +165,7 @@ The first line in the crontab on the primary Linux builder is the start of
 the prerun script:
 
     # prerun
-    00 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.6/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.6-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    00 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.17/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.17-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
 
 The *prerun* step happens only on the primary build node. `prerun.sh`
 sources `config.sh` and then calls python script `BBS-prerun.py`.
@@ -246,7 +202,7 @@ build.
 The next line in the crontab starts the `run.sh` script:
 
     # run:
-    55 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.6/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.6-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    55 17 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.17/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.17-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 At the time of this writing, prerun takes about 55 min so the run script
 must start after that time.
@@ -282,7 +238,7 @@ in the crontab starts the posrun script. This must not start until the
 `run.sh` job has finished on all nodes.
 
     # postrun:
-    45 13 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.6/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.6-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 13 * * * /bin/bash --login -c 'cd /home/biocbuild/BBS/3.17/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.17-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 The prerun build script started at 17:00 and now it is 13:45 the following
 afternoon. We hope that all builders have finished by now, otherwise there will
@@ -298,7 +254,7 @@ This script performs stage6a:
 * stage6a: [Linux only] Create `BUILD_STATUS_DB.txt` file which records the status of
            STAGES 2-5 on all platforms.
 
-    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head BUILD_STATUS_DB.txt
+    biocbuild@malbec1:~/public_html/BBS/3.17/bioc$ head BUILD_STATUS_DB.txt
     a4#malbec1#install: NotNeeded
     a4#malbec1#buildsrc: OK
     a4#malbec1#checksrc: OK
@@ -318,7 +274,7 @@ creates the `PROPAGATION_STATUS_DB.txt` file.
 This file identifies which packages and what format, e.g., source or binary,
 will be pushed to the website.
 
-    biocbuild@malbec1:~/public_html/BBS/3.6/bioc$ head PROPAGATION_STATUS_DB.txt
+    biocbuild@malbec1:~/public_html/BBS/3.17/bioc$ head PROPAGATION_STATUS_DB.txt
     a4#source#propagate: UNNEEDED, same version is already published
     a4#win.binary#propagate: UNNEEDED, same version is already published
     a4#mac.binary.el-capitan#propagate: UNNEEDED, same version is already published
@@ -349,7 +305,7 @@ performed by the *biocpush* user and involve the primary builder only.
 
 Looking at *biocpush*'s crontab, we see:
 
-    35 14 * * * cd /home/biocpush/propagation/3.6 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.6/updateRepos-bioc-`date +\%Y\%m\%d`.log 2>&1
+    35 14 * * * cd /home/biocpush/propagation/3.17 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.17/updateRepos-bioc-`date +\%Y\%m\%d`.log 2>&1
 
 Notice the job starts at 14:35. This is hopefully enough time for
 the `postrun.sh` script (above) to have finished; otherwise we'll have to
