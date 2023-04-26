@@ -438,21 +438,21 @@ TABLE.abc_dispatcher TD {
  * Node specific background colors
  */
 
-/* nebbiolo1 (Ubuntu 20.04) */
+/* nebbiolo1 (Ubuntu 22.04) */
 .nebbiolo1,
 .gcard TD.nebbiolo1 {
-    background: #DBEAFB;
+    background: #DDE8FD;
 }
 .nebbiolo1.toned_down,
 TR.toned_down .nebbiolo1,
 TBODY.compact.gcard TR.even_row_number .nebbiolo1 {
-    background: #CBDAEB;
+    background: #CDD8ED;
 }
 DIV.nebbiolo1 {
     color: #005;
 }
 
-/* nebbiolo2 (Ubuntu 20.04) */
+/* nebbiolo2 (Ubuntu 22.04) */
 .nebbiolo2,
 .gcard TD.nebbiolo2 {
     background: #DDE8FD;
