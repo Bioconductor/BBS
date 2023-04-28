@@ -78,7 +78,7 @@ keep this file in sync with the actual versions present on the builders.
     sudo cp -R /System/Library/User\ Template/English.lproj /Users/biocbuild
     sudo chown -R biocbuild:staff /Users/biocbuild
 
-From now on we assume that the machine has a biocbuild account with admin
+    From now on we assume that the machine has a biocbuild account with admin
 privileges (i.e. who belongs to the admin group). Note that on the Linux and
 Windows builders the biocbuild user is just a regular user with no admin
 privileges (not even a sudoer on Linux). However, on a Mac builder, during
@@ -96,12 +96,24 @@ So all the configuration and management of the builds can and should be done
 from the biocbuild account.
 
 
-### 1.5 Install core team member public keys in the biocbuild account
+### 1.5 Add biocbuild authorized_keys
 
-TESTING: Logout and try to login again as biocbuild.
+Add authorized_keys to /Users/biocbuild/.ssh.
 
-FROM NOW ON, YOU SHOULD NEVER NEED THE ADMINISTRATOR ACCOUNT AGAIN (except
-for subsection 2.1 below). DO **EVERYTHING** FROM THE biocbuild ACCOUNT!
+
+### 1.6 Set remote login
+
+If you receive `Operation not permitted` when attempting to list
+`/Users/biocbuild/Downloads`, you may need to set the remote login.
+
+Testing:
+
+    $ biocbuild$ cd Downloads/
+    # Downloads biocbuild$ ls -la   # Operation not permitted
+
+Fix:
+
+    sudo systemsetup -setremotelogin On
 
 
 ## 2. Check hardware, OS, and connectivity with central build node
