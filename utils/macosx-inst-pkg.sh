@@ -24,10 +24,10 @@ UNIVERSAL_GFORTRAN=`gfortran --version | grep 12.2.0`
 
 if [ ! -z "$UNIVERSAL_GFORTRAN" -a "$ARCH" == "x86_64" ]; then
     LOCAL_DYLIB_DIR="/usr/local/lib"
-    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/x86_64-apple-darwin20.0/12.2.0/"
+    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/x86_64-apple-darwin20.0/12.2.0"
 elif [ ! -z "$UNIVERSAL_GFORTRAN" -a "$ARCH" == "arm64" ]; then
     LOCAL_DYLIB_DIR="/usr/local/lib"
-    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/aarch64-apple-darwin20.0/12.2.0/"
+    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/aarch64-apple-darwin20.0/12.2.0"
 elif [ "$ARCH" == "x86_64" ]; then
     LOCAL_DYLIB_DIR="/usr/local/lib"
     LOCAL_FORTRAN_DYLIB_DIR="/usr/local/gfortran/lib"
