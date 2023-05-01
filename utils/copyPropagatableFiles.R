@@ -23,6 +23,7 @@ copyPropagatableFiles <- function(srcDir, fileExt, propagationDb, destDir=".")
         'source'="src/contrib",
         'win.binary'=paste0("bin/windows/contrib/", rvers),
         'mac.binary'=paste0("bin/macosx/contrib/", rvers),
+        'mac.binary.big-sur-x86_64'=paste0("bin/macosx/big-sur-x86_64/contrib/", rvers),
         'mac.binary.big-sur-arm64'=paste0("bin/macosx/big-sur-arm64/contrib/", rvers),
         'mac.binary.mavericks'=paste0("bin/macosx/mavericks/contrib/", rvers),
         'mac.binary.el-capitan'=paste0("bin/macosx/el-capitan/contrib/", rvers))
