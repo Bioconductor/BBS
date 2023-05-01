@@ -1,14 +1,14 @@
 #!/bin/bash
-# ===========================
-# Local settings for kjohnson 
-# ===========================
+# ============================
+# Local settings for kjohnson1 
+# ============================
 
 
 if [ -z "$BBS_HOME" ]; then
     export BBS_HOME="/Users/biocbuild/BBS"
 fi
 
-export BBS_PYTHON_CMD="/opt/homebrew/bin/python3"
+export BBS_PYTHON_CMD="/usr/bin/python3"
 
 export BBS_SSH_CMD="/usr/bin/ssh"
 export BBS_RSYNC_CMD="/usr/bin/rsync"
