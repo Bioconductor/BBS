@@ -219,11 +219,17 @@ if [ -d "$so_path" ]; then
             if [ -e "$so_file" ]; then
                 echo ">>>>>>> "
                 echo -n ">>>>>>> "
-                echo "FIXING LINKS FOR $so_file"
+                echo "FIXING PATHS TO DYNAMIC LIBRARIES FOR $so_file"
                 echo ">>>>>>> "
                 echo ""
+                echo ">>>>>>> Paths before fix:"
+                otool -L "$so_file"
+                echo ""
+                echo ">>>>>>> Fix with install_name_tool:"
                 fix_dylib_links "$so_file"
                 echo ""
+                echo ">>>>>>> Paths after fix:"
+                otool -L "$so_file"
                 echo ""
             fi
         done
