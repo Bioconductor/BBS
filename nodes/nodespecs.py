@@ -42,7 +42,7 @@ allnodes = {
                    'Platform': "arm64-apple-darwin21.6.0",
                    'pkgType' : "mac.binary.big-sur-arm64",
                    'encoding': "utf-8"},
-    'lconway':    {'OS'      : "macOS 12.5.1 Monterey",
+    'lconway':    {'OS'      : "macOS 12.6.5 Monterey",
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-apple-darwin21.6.0",
                    'pkgType' : "mac.binary.big-sur-x86_64",
