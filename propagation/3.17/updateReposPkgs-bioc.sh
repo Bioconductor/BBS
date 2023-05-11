@@ -14,7 +14,7 @@ PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATION_STATUS_DB.txt"
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/bioc"
 SRC_CONTRIB="$REPOS_ROOT/src/contrib"
 WIN_CONTRIB="$REPOS_ROOT/bin/windows/contrib/$R_VERSION"
-MAC_CONTRIB="$REPOS_ROOT/bin/macosx/contrib/$R_VERSION"
+MAC_BIG_SUR_x86_64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-x86_64/contrib/$R_VERSION"
 
 if [ ! -f "$PROPAGATION_DB_FILE" ]; then
         echo "ERROR: $PROPAGATION_DB_FILE not found. Did postrun.sh run?"
@@ -48,8 +48,8 @@ echo "Updating $BIOC_VERSION/bioc repo with Windows binary packages..."
 update_repo "$WIN_CONTRIB" "win.binary" "zip"
 
 echo ""
-echo "Updating $BIOC_VERSION/bioc repo with Mac (High Sierra) binary packages..."
-update_repo "$MAC_CONTRIB" "mac.binary" "tgz"
+echo "Updating $BIOC_VERSION/bioc repo with Mac (Big Sur) binary packages..."
+update_repo "$MAC_BIG_SUR_x86_64_CONTRIB" "mac.binary.big-sur-x86_64" "tgz"
 
 echo ""
 
