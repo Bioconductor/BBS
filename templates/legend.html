@@ -1,0 +1,84 @@
+      <div class="container">
+        <div class="row">
+          <div class="col-sm">
+            <div class="row row-cols-2">
+              <div class="col col-sm-2">
+                Status
+              </div>
+              <div class="col col-sm-10">
+                Description
+              </div>
+              <div class="col col-sm-2">
+                <a class="btn">Timeout</a>
+              </div>
+              <div class="col col-sm-10">
+                INSTALL, BUILD, CHECK or BUILD BIN of package took more than 40
+                minutes
+              </div>
+              <div class="col col-sm-2">
+                Error 
+              </div>
+              <div class="col col-sm-10">
+                Bad DESCRIPTION file, or INSTALL, BUILD or BUILD BIN of package
+                failed, or CHECK produced errors
+              </div>
+              <div class="col col-sm-2">
+                Warning
+              </div>
+              <div class="col col-sm-10">
+                CHECK of package produced warnings
+              </div>
+              <div class="col col-sm-2">
+                OK
+              </div>
+              <div class="col col-sm-10">
+                INSTALL, BUILD, CHECK and BUILD BIN of package went OK
+              </div>
+              <div class="col col-sm-2">
+                NA
+              </div>
+              <div class="col col-sm-10">
+                INSTALL, BUILD, CHECK or BUILD BIN result is not available because
+                of an anomaly in the Build System
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm">
+            <div class="row">
+              <div class="row row-cols-2">
+                <div class="col col-sm-12">
+                  Package propagation is indicated by one of the following:
+                </div>
+                <div class="col col-sm-2">
+                  <a class="btn">Yes</a>
+                </div>
+                <div class="col col-sm-10">
+                  Package was propagated because it didn't previously exist or
+                  version was bumped. 
+                </div>
+                <div class="col col-sm-2">
+                  No 
+                </div>
+                <div class="col col-sm-10">
+                  Package was not propagated because of a problem (impossible
+                  dependencies or version lower than what is already propagated).
+                </div>
+                <div class="col col-sm-2">
+                  Unneeded 
+                </div>
+                <div class="col col-sm-10">
+                  Package was not propagated because it is already in the repository
+                  with this version. A version bump is required to propagate it.
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col col-sm-12">
+                  A <s>crossed out</s> package indicates the package is deprecated.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

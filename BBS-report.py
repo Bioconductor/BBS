@@ -15,6 +15,7 @@ import re
 import fnmatch
 import string
 import html
+from jinja3 import Environment, FileSystemLoader
 
 import bbs.fileutils
 import bbs.parse
@@ -24,13 +25,34 @@ import BBSutils
 import BBSvars
 import BBSreportutils
 
+
 node2aboutpage = {}
 node2Rinstpkgspage = {}
 node2Rinstpkgcount = {}
 
+environment = Environment(loader=FileSystemLoader("templates/"))
+
 ##############################################################################
 ### General stuff displayed on all pages
 ##############################################################################
+
+
+def write_report():
+   pass
+
+def write_header(out, page_title=None, css_file=None, js_file=None):
+    report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
+    title = BBSreportutils.make_report_title(report_nodes)
+    if page_title:
+        title += " - " + page_title
+    out.write('<TITLE>%s</TITLE>\n' % title)
+    if css_file:
+        out.write('<LINK rel="stylesheet" href="%s" type="text/css">\n' % css_file)
+    if js_file:
+        out.write('<SCRIPT type="text/javascript" src="%s"></SCRIPT>\n' % js_file)
+    out.write('</HEAD>\n')
+    return
+   
 
 def write_HTML_header(out, page_title=None, css_file=None, js_file=None):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
@@ -1118,6 +1140,29 @@ def write_gcard_list(out, allpkgs,
     out.write('</TABLE>\n')
     return
 
+def get_packages(allpkgs: dict) -> list:
+    """Get statuses of packages
+
+    Args:
+        allpkgs: A dict with package names as keys, including skipped packages
+        quickstats: A dict with Node ids as key with install, build, check,
+            buildbin stats as values
+
+    Returns:
+        list of dicts of package statuses
+    """
+
+    pkgs = [] 
+    nb_pkgs = len(allpkgs)
+    pkg_pos = 0
+    for pkg in allpkgs:
+        pkg_pos += 1
+        pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
+        pkgs.append({'name': pkg,
+                     'position': pkg_pos,
+                     'statuses': pkg_statuses})
+    return pkgs
+
 
 ##############################################################################
 ### Compact gcards (used for the single node reports)
@@ -1200,6 +1245,40 @@ def write_compact_gcard_list(out, node, allpkgs,
                 write_compact_gcard_header(out)
         write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs)
     out.write('</TABLE>\n')
+    return
+
+def write_compact_gcard_list(node, allpkgs):
+    nb_pkgs = len(allpkgs)
+    pkg_pos = 0
+    for pkg in allpkgs:
+        pkg_pos += 1
+        pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
+        if pkg in skipped_pkgs:
+            pkg_status_classes = 'error'
+        else:
+            pkg_status_classes = statuses2classes(pkg_statuses)
+        if pkg_pos % 2 == 0:
+            TRclass = 'even_row_number'
+        else:
+            TRclass = 'odd_row_number'
+        out.write('<TR class="%s">' % TRclass)
+        out.write('<TD class="leftmost row_number"><B>%d</B>/%d</TD>' % \
+                  (pkg_pos, nb_pkgs))
+        if len(pkg_statuses) != 0:
+            dcf_record = meat_index[pkg]
+            version = dcf_record['Version']
+            maintainer = dcf_record['Maintainer']
+            status = dcf_record.get('PackageStatus')
+        else:
+            version = status = maintainer = ''
+        deprecated = status == "Deprecated"
+        TDcontent = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
+        out.write('<TD>%s</TD>' % TDcontent)
+        out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
+        write_pkg_statuses_as_TDs(out, pkg, node)
+        out.write('<TD class="rightmost"></TD>')
+        out.write('</TR>\n')
+        out.write('</TBODY>\n')
     return
 
 
@@ -1855,87 +1934,99 @@ def write_CRAN_mainpage_top_asHTML(out, simp_link=False, long_link=False):
     write_motd_asTABLE(out)
     return
 
-def write_propagation_LED_table(out):
-    out.write('<TABLE style="width: 380px; border-spacing: 1px; border: solid black 1px;">\n')
-    out.write('<TR>\n')
-    out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic; border-bottom: solid black 1px;">')
-    out.write('<B>Package propagation status')
-    out.write(' is indicated by one of the following LEDs</B>')
-    out.write('</TD>\n')
-    out.write('</TR>\n')
-    out.write('<TR>\n')
-    out.write('<TD style="vertical-align: top;"><IMG border="0" width="10px" height="10px" alt="YES" src="120px-Green_Light_Icon.svg.png"></TD>\n')
-    out.write('<TD>YES: Package was propagated because it didn\'t previously exist or version was bumped</TD>\n')
-    out.write('</TR>\n')
-    out.write('<TR>\n')
-    out.write('<TD style="vertical-align: top;"><IMG border="0" width="10px" height="10px" alt="NO" src="120px-Red_Light_Icon.svg.png"></TD>\n')
-    out.write('<TD>NO: Package was not propagated because of a problem (impossible dependencies, or version lower than what is already propagated)</TD>\n')
-    out.write('</TR>\n')
-    out.write('<TR>\n')
-    out.write('<TD style="vertical-align: top;"><IMG border="0" width="10px" height="10px" alt="UNNEEDED" src="120px-Blue_Light_Icon.svg.png"></TD>\n')
-    out.write('<TD>UNNEEDED: Package was not propagated because it is already in the repository with this version. A version bump is required in order to propagate it</TD>\n')
-    out.write('</TR>\n')
-    out.write('</TABLE>\n')
-    return
+#def write_propagation_LED_table(out):
+#    out.write('<TABLE style="width: 380px; border-spacing: 1px; border: solid black 1px;">\n')
+#    out.write('<TR>\n')
+#    out.write('<TD COLSPAN="2" style="text-align: left; font-style: italic; border-bottom: solid black 1px;">')
+#    out.write('<B>Package propagation status')
+#    out.write(' is indicated by one of the following LEDs</B>')
+#    out.write('</TD>\n')
+#    out.write('</TR>\n')
+#    out.write('<TR>\n')
+#    out.write('<TD style="vertical-align: top;"><IMG border="0" width="10px" height="10px" alt="YES" src="120px-Green_Light_Icon.svg.png"></TD>\n')
+#    out.write('<TD>YES: Package was propagated because it didn\'t previously exist or version was bumped</TD>\n')
+#    out.write('</TR>\n')
+#    out.write('<TR>\n')
+#    out.write('<TD style="vertical-align: top;"><IMG border="0" width="10px" height="10px" alt="NO" src="120px-Red_Light_Icon.svg.png"></TD>\n')
+#    out.write('<TD>NO: Package was not propagated because of a problem (impossible dependencies, or version lower than what is already propagated)</TD>\n')
+#    out.write('</TR>\n')
+#    out.write('<TR>\n')
+#    out.write('<TD style="vertical-align: top;"><IMG border="0" width="10px" height="10px" alt="UNNEEDED" src="120px-Blue_Light_Icon.svg.png"></TD>\n')
+#    out.write('<TD>UNNEEDED: Package was not propagated because it is already in the repository with this version. A version bump is required in order to propagate it</TD>\n')
+#    out.write('</TR>\n')
+#    out.write('</TABLE>\n')
+#    return
 
-def write_glyph_and_propagation_LED_table(out, simple_layout=False):
-    out.write('<DIV style="font-size: smaller;">\n')
-    out.write('<TABLE style="margin-left: auto; margin-right: auto;"><TR>')
-    out.write('<TD style="vertical-align: top;">\n')
-    write_explain_glyph_table(out, simple_layout)
-    out.write('</TD>')
-    show_LEDs = not simple_layout and \
-                BBSreportutils.display_propagation_status(BBSvars.buildtype)
-    if show_LEDs:
-        out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
-        write_propagation_LED_table(out)
-        out.write('<P>\n')
-        out.write('A <s>crossed-out</s> package name indicates the package is')
-        out.write(' <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>')
-        out.write('</P>\n')
-        out.write('</TD>')
-    out.write('</TR></TABLE>\n')
-    out.write('</DIV>\n')
-    return
+#def write_glyph_and_propagation_LED_table(out, simple_layout=False):
+#    out.write('<DIV style="font-size: smaller;">\n')
+#    out.write('<TABLE style="margin-left: auto; margin-right: auto;"><TR>')
+#    out.write('<TD style="vertical-align: top;">\n')
+#    write_explain_glyph_table(out, simple_layout)
+#    out.write('</TD>')
+#    show_LEDs = not simple_layout and \
+#                BBSreportutils.display_propagation_status(BBSvars.buildtype)
+#    if show_LEDs:
+#        out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
+#        write_propagation_LED_table(out)
+#        out.write('<P>\n')
+#        out.write('A <s>crossed-out</s> package name indicates the package is')
+#        out.write(' <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>')
+#        out.write('</P>\n')
+#        out.write('</TD>')
+#    out.write('</TR></TABLE>\n')
+#    out.write('</DIV>\n')
+#    return
 
 
 ##############################################################################
 ### Node-specific reports
 ##############################################################################
 
-def write_node_report(node, allpkgs, quickstats, long_link=False):
-    print("BBS> [write_node_report] Node %s: BEGIN ..." % node.node_id)
+def write_node_report(node: Node, allpkgs: dict, quickstats: dict) -> str:
+    """Write html for all packages on a Node
+
+    Args:
+        node: A Node object as defined in BBSreportutils.py
+        allpkgs: A dict with package names as keys, including skipped packages
+        quickstats: A dict with Node ids as key with install, build, check,
+            buildbin stats as values
+
+    Returns:
+        Name of the file
+    """
+
+    node_name = node.node_id
+    print(f"BBS> [write_node_report] Node {node_name}: BEGIN ...")
     sys.stdout.flush()
-    node_index_file = '%s-index.html' % node.node_id
-    out = open(node_index_file, 'w')
-    page_title = "All results on %s" % node.node_id
 
-    write_HTML_header(out, page_title, 'report.css', 'report.js')
-    out.write('<BODY onLoad="initialize();">\n')
-    write_goback_links(out, long_link=long_link)
-    write_timestamp(out)
-    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
-              (node.hostname.replace(".", "_"), page_title))
-    out.write('<BR>\n')
+    node_index_file = f"{node_name}s-index.html"
+    template = environment.get_template("node_report.html")
+    page = template.render(title=f"All results on {node_name}",
+                           page_css="report.css",
+                           page_js="report.js",
+                           timestamp=bbs.jobs.currentDateString(),
+                           quickstats=quickstats,
+                           alphabetical_navigation=not no_alphabet_dispatch,
+                           packages=allpkgs)
+    with open(node_index_file, "w") as file:
+        file.write(page)
 
-    write_motd_asTABLE(out)
-
-    write_glyph_and_propagation_LED_table(out)
-    out.write('<HR>\n')
-    write_compact_gcard_list(out, node,
-                             allpkgs, quickstats=quickstats,
-                             alphabet_dispatch=not no_alphabet_dispatch)
-    out.write('</BODY>\n')
-    out.write('</HTML>\n')
-    out.close()
-    print("BBS> [write_node_report] Node %s: END." % node.node_id)
+    print(f"BBS> [write_node_report] Node {node_name}: END.")
     sys.stdout.flush()
     return node_index_file
 
-def make_all_NodeReports(allpkgs, quickstats, long_link=False):
+def make_all_NodeReports(allpkgs: dict, quickstats: dict) -> None:
+    """Write html files for all packages on all Nodes
+
+    Args:
+        allpkgs: A dict with package names as keys, including skipped packages
+        quickstats: A dict with Node ids as key with install, build, check,
+            buildbin stats as values
+    """
+
     if len(BBSreportutils.NODES) != 1:
         for node in BBSreportutils.NODES:
-            write_node_report(node, allpkgs, quickstats, long_link)
+            write_node_report(node, allpkgs, quickstats)
     return
 
 
