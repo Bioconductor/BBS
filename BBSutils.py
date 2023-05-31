@@ -3,7 +3,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: May 31, 2023
 ###
 ### IMPORTANT: The BBSutils.py file is imported by the Single Package Builder:
 ###   https://github.com/Bioconductor/packagebuilder.git
@@ -11,7 +11,14 @@
 
 import sys
 import os
+import shutil
+import urllib.request
+import hashlib
 import logging
+
+import bbs.fileutils
+import bbs.jobs
+import bbs.rdir
 
 logging.basicConfig(format='%(levelname)s: %(asctime)s %(filename)s - %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p',
@@ -99,4 +106,99 @@ def getNodeSpec(node_hostname, key):
     if key == 'pkgFileExt':
         return pkgType2FileExt[specs['pkgType']]
     return specs[key]
+
+
+##############################################################################
+### copyTheDamnedThingNoMatterWhat()
+##############################################################################
+
+### Copying stuff locally can be a **real** challenge on Windows!
+### It can fail for various reasons e.g. a process holding on the file to
+### copy, or the file path is too long.
+###
+### Example: shutil.copy2() will fail on Windows if a process is sill holding
+### on the file to copy. Similarly shutil.copytree() will fail if a process
+### is still holding on a file located inside the directory to copy, or if the
+### directory contains files with paths that are too long. The first situation
+### has been observed when calling shutil.copytree() on 'NetSAM.Rcheck' on a
+### Windows build machine right after 'R CMD check' failed. Note that the
+### latter failed with:
+###   ..
+###   * checking files in 'vignettes' ... OK
+###   * checking examples ... ERROR
+###   Running examples in 'NetSAM-Ex.R' failed
+###   Warning in file(con, "r") :
+###     cannot open file 'NetSAM-Ex.Rout': Permission denied
+###   Error in file(con, "r") : cannot open the connection
+###   Execution halted
+###
+### So it failed exactly for the very reason that a process was holding on
+### 'NetSAM.Rcheck\NetSAM-Ex.Rout' hence preventing 'R CMD check' from opening
+### the file to parse its content for errors.
+###
+### Then, when almost immediately after that, BBS tried to copy 'NetSAM.Rcheck'
+### with shutil.copytree(), it failed with:
+###
+###   [Errno 13] Permission denied: 'NetSAM.Rcheck\NetSAM-Ex.Rout'
+###
+### because the process holding on 'NetSAM.Rcheck\NetSAM-Ex.Rout' was still
+### there!
+### The magic bullet is to use rsync to copy stuff locally. Sounds overkill
+### but it seems to work no matter what.
+
+def copyTheDamnedThingNoMatterWhat(src, destdir):
+    bbs.rdir.set_readable_flag(src)
+    if sys.platform == 'win32':
+        ## rsync should do it no matter what.
+        src = bbs.fileutils.to_cygwin_style(src)
+        destdir = bbs.fileutils.to_cygwin_style(destdir)
+        cmd = '%s -rL %s %s' % (BBSvars.rsync_cmd, src, destdir)
+        ## Looks like rsync can sometimes have hiccups on Windows where it
+        ## gets stuck forever (timeout) even when trying to perform a local
+        ## copy. So we need to try harder (up to 3 attemps before we give up).
+        #bbs.jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
+        bbs.jobs.tryHardToRunJob(cmd, nb_attempts=3, stdout=None,
+                                 maxtime=60.0, sleeptime=10.0,
+                                 failure_is_fatal=False, verbose=True)
+    else:
+        print("BBS>   Copying %s to %s/ ..." % (src, destdir), end=" ")
+        sys.stdout.flush()
+        if os.path.isdir(src):
+            dst = os.path.join(destdir, os.path.basename(src))
+            shutil.copytree(src, dst)
+        else:
+            shutil.copy2(src, destdir)
+        print("OK")
+        sys.stdout.flush()
+    return
+
+
+##############################################################################
+### downloadFile()
+##############################################################################
+
+### From https://stackoverflow.com/questions/3431825/
+def _md5(file):
+    hash_md5 = hashlib.md5()
+    with open(file, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+def downloadFile(file, baseurl, destdir, MD5sum=None):
+    url = baseurl + '/' + file
+    destfile = os.path.join(destdir, file)
+    urllib.request.urlretrieve(url, destfile)
+    ## An alternative to urllib.request.urlretrieve() above (from
+    ## https://stackoverflow.com/questions/7243750/)
+    #response = urllib.request.urlopen(url)
+    #f = open(destfile, 'wb')
+    #shutil.copyfileobj(response, f)
+    #f.close()
+    if MD5sum != None:
+        current = _md5(destfile)
+        #print('(%s)' % current, end=' ')
+        #sys.stdout.flush()
+        assert current == MD5sum
+    return destfile
 

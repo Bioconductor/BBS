@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: May 31, 2023
 ###
 
 import sys
@@ -530,7 +530,7 @@ if __name__ == "__main__":
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "inject-git-fields-into-meat"
-    if arg1 == "" or arg1 == subtask:
+    if (arg1 == "" or arg1 == subtask) and BBSvars.MEAT0_type == 3:
         print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
         injectGitFieldsIntoMeat(gitlog_path, meat_path)

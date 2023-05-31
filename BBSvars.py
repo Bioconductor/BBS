@@ -3,7 +3,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: May 31, 2023
 ###
 
 import sys
@@ -70,6 +70,15 @@ BUILDBIN_timeout = float(BBSutils.getenv('BBS_BUILDBIN_TIMEOUT', False,
 ### BBS GLOBAL VARIABLES
 ##############################################################################
 
+hostname0 = bbs.jobs.getHostname().lower()
+node_hostname = BBSutils.getenv('BBS_NODE_HOSTNAME', False, None)
+if node_hostname == None:
+    node_hostname = hostname0
+elif node_hostname.lower() != hostname0:
+    print("BBSvars ERROR: Found hostname '%s', '%s' expected!" % \
+          (hostname0, node_hostname))
+    sys.exit("==> EXIT")
+
 work_topdir = BBSutils.getenv('BBS_WORK_TOPDIR')
 r_home = BBSutils.getenv('BBS_R_HOME')
 r_libs = BBSutils.getenv('R_LIBS', False)
@@ -130,13 +139,6 @@ if not no_transmission:
                       BBSutils.getenv('BBS_GITLOG_RUSER', False),
                       rsh_cmd, rsync_cmd, rsync_rsh_cmd, rsync_options)
     products_in_rdir = Central_rdir.subdir('products-in')
-    hostname0 = bbs.jobs.getHostname()
-    node_hostname = BBSutils.getenv('BBS_NODE_HOSTNAME', False, hostname0)
-    ### Check that 'node_hostname' matches the effective hostname:
-    if node_hostname.lower() != hostname0.lower():
-        print("BBSvars ERROR: Found hostname '%s', '%s' expected!" % \
-              (hostname0, node_hostname))
-        sys.exit("==> EXIT")
     node_id = BBSutils.getenv('BBS_NODE_ID', False, node_hostname)
     Node_rdir = products_in_rdir.subdir(node_id)
     install_rdir = Node_rdir.subdir('install')

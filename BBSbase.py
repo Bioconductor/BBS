@@ -8,7 +8,6 @@
 
 import sys
 import os
-import shutil
 import tarfile
 
 import bbs.fileutils
@@ -18,6 +17,30 @@ import bbs.rdir
 import BBSutils
 import BBSvars
 
+
+def cloneCRANstylePkgRepo(contrib_url, destdir):
+    print('BBS>   Start cloning CRAN-style package repo %s/ to %s/ ...' % \
+          (contrib_url, destdir))
+    print('BBS>     o downloading %s ...' % 'PACKAGES', end=' ')
+    sys.stdout.flush()
+    PACKAGES_path = BBSutils.downloadFile('PACKAGES', contrib_url, destdir)
+    print('ok')
+    PACKAGES = bbs.parse.parse_DCF(PACKAGES_path)
+    i = 0
+    for dcf_record in PACKAGES:
+        i += 1
+        pkgname = dcf_record['Package']
+        version = dcf_record['Version']
+        MD5sum = dcf_record['MD5sum']
+        srcpkg_file = '%s_%s.tar.gz' % (pkgname, version)
+        print('BBS>     o [%d/%d] downloading %s ...' % \
+              (i, len(PACKAGES), srcpkg_file), end=' ')
+        sys.stdout.flush()
+        BBSutils.downloadFile(srcpkg_file, contrib_url, destdir, MD5sum)
+        print('ok')
+    print('BBS>   Done cloning CRAN-style package repo %s/ to %s/' % \
+          (contrib_url, destdir))
+    return i
 
 def Untar(tarball, dir=None, verbose=False):
     key = 'BBS_TAR_CMD'
@@ -478,65 +501,6 @@ def getSTAGE5cmd(srcpkg_path):
 ## Output files produced by 'R CMD build/check'.
 ##############################################################################
 
-## Copying stuff locally can be a real challenge on Windows!
-## It can fail for various reasons e.g. a process holding on the file to
-## copy, or the file path is too long.
-##
-## Example: shutil.copy2() will fail on Windows if a process is sill holding
-## on the file to copy. Similarly shutil.copytree() will fail if a process
-## is still holding on a file located inside the directory to copy, or if the
-## directory contains files with paths that are too long. The first situation
-## has been observed when calling shutil.copytree() on 'NetSAM.Rcheck' on a
-## Windows build machine right after 'R CMD check' failed. Note that the
-## latter failed with:
-##   ..
-##   * checking files in 'vignettes' ... OK
-##   * checking examples ... ERROR
-##   Running examples in 'NetSAM-Ex.R' failed
-##   Warning in file(con, "r") :
-##     cannot open file 'NetSAM-Ex.Rout': Permission denied
-##   Error in file(con, "r") : cannot open the connection
-##   Execution halted
-##
-## So it failed exactly for the very reason that a process was holding on
-## 'NetSAM.Rcheck\NetSAM-Ex.Rout' hence preventing 'R CMD check' from opening
-## the file to parse its content for errors.
-##
-## Then, when almost immediately after that, BBS tried to copy 'NetSAM.Rcheck'
-## with shutil.copytree(), it failed with:
-##
-##   [Errno 13] Permission denied: 'NetSAM.Rcheck\NetSAM-Ex.Rout'
-##
-## because the process holding on 'NetSAM.Rcheck\NetSAM-Ex.Rout' was still
-## there!
-## The magic bullet is to use rsync to copy stuff locally. Sounds overkill
-## but it seems to work no matter what.
-def copy_the_damned_thing_no_matter_what(src, destdir):
-    bbs.rdir.set_readable_flag(src)
-    if sys.platform == 'win32':
-        ## rsync should do it no matter what.
-        src = bbs.fileutils.to_cygwin_style(src)
-        destdir = bbs.fileutils.to_cygwin_style(destdir)
-        cmd = '%s -rL %s %s' % (BBSvars.rsync_cmd, src, destdir)
-        ## Looks like rsync can sometimes have hiccups on Windows where it
-        ## gets stuck forever (timeout) even when trying to perform a local
-        ## copy. So we need to try harder (up to 3 attemps before we give up).
-        #bbs.jobs.runJob(cmd, stdout=None, maxtime=120.0, verbose=True)
-        bbs.jobs.tryHardToRunJob(cmd, nb_attempts=3, stdout=None,
-                                 maxtime=60.0, sleeptime=10.0,
-                                 failure_is_fatal=False, verbose=True)
-    else:
-        print("BBS>   Copying %s to %s/ ..." % (src, destdir), end=" ")
-        sys.stdout.flush()
-        if os.path.isdir(src):
-            dst = os.path.join(destdir, os.path.basename(src))
-            shutil.copytree(src, dst)
-        else:
-            shutil.copy2(src, destdir)
-        print("OK")
-        sys.stdout.flush()
-    return
-
 class PkgDumps:
     def __init__(self, product_path, prefix):
         self.product_path = product_path
@@ -559,7 +523,7 @@ class PkgDumps:
             destdir.Mput(products_to_push, False, True)
         else:
             for path in products_to_push:
-                copy_the_damned_thing_no_matter_what(path, destdir)
+                BBSutils.copyTheDamnedThingNoMatterWhat(path, destdir)
         return
 
 

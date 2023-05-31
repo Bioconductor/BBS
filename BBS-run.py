@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: May 31, 2023
 ###
 
 import sys
@@ -20,7 +20,7 @@ import BBSutils
 import BBSvars
 import BBSbase
 
-if BBSvars.asynchronous_transmission:
+if not BBSvars.synchronous_transmission:
     products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
 
 def make_stage_out_dir(stage):
@@ -45,7 +45,7 @@ def make_products_push_cmd(out_dir, rdir):
 ##############################################################################
 
 # 'R --version' writes to the standard output on Unix/Linux/Mac and to
-# the standard error on Windows :-/. Hence the '2>&1' in the command. 
+# the standard error on Windows :-/. Hence the '2>&1' in the command.
 def write_R_version():
     file = 'R-version.txt'
     syscmd = '%s --version >%s 2>&1' % (BBSvars.r_cmd, file)
@@ -98,7 +98,7 @@ def write_R_config():
 # If the command is not found (like gfortran on churchill) then the '2>&1'
 # guarantees that 'file' will be created anyway but with the shell error
 # message inside (e.g. '-bash: gfortran: command not found') instead of
-# the command output. 
+# the command output.
 def write_sys_command_version(var, config=True):
     file = '%s-version.txt' % var
     if config:
@@ -137,7 +137,11 @@ def makeNodeInfo():
                     'R-instpkgs.txt', 120.0, True) # ignore retcode
     print('BBS>   cd BBS_WORK_TOPDIR')
     os.chdir(BBSvars.work_topdir)
-    BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
+    if BBSvars.no_transmission:
+        BBSutils.copyTheDamnedThingNoMatterWhat(NodeInfo_subdir,
+                                                products_out_buf)
+    else:
+        BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
     return
 
 
@@ -162,16 +166,16 @@ def write_BBS_EndOfRun_ticket(ticket):
 ## builder. Memoized.
 @lru_cache  # clear cache with get_list_of_target_pkgs.cache_clear()
 def get_list_of_target_pkgs():
-    node_Arch = BBSutils.getNodeSpec(BBSvars.node_hostname, 'Arch')
-    node_pkgType = BBSutils.getNodeSpec(BBSvars.node_hostname, 'pkgType')
-    Central_rdir = BBSvars.Central_rdir
-    dcf = Central_rdir.WOpen(BBSutils.meat_index_file)
-    target_pkgs = bbs.parse.get_meat_packages_for_node(dcf,
-                                                       BBSvars.node_hostname,
-                                                       node_Arch,
-                                                       node_pkgType)
-    dcf.close()
-    return target_pkgs
+    node_hostname = BBSvars.node_hostname
+    node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
+    node_pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
+    meat_index_path = BBSutils.downloadFile(BBSutils.meat_index_file,
+                                            BBSvars.central_base_url,
+                                            BBSvars.meat_path)
+    return bbs.parse.get_meat_packages_for_node(meat_index_path,
+                                                node_hostname,
+                                                node_Arch,
+                                                node_pkgType)
 
 def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
     print('BBS> Get list of source tarballs to %s ...' % stage_label, end=' ')
@@ -268,9 +272,12 @@ def build_pkg_dep_graph(target_pkgs):
         sys.exit('=> EXIT.')
     print('OK')
 
-    # Send files 'target_pkgs.txt' and 'pkg_dep_graph.txt' to central
-    # build node.
-    BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, True, True)
+    # Send file 'pkg_dep_graph.txt' to central build node.
+    if BBSvars.no_transmission:
+        BBSutils.copyTheDamnedThingNoMatterWhat(BBSutils.pkg_dep_graph_file,
+                                                products_out_buf)
+    else:
+        BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, True, True)
 
     # Load file 'pkg_dep_graph.txt'.
     print('BBS> [build_pkg_dep_graph] Loading %s file ...' % \
@@ -406,13 +413,40 @@ def STAGE2():
     waitForTargetRepoToBeReady()
     if not BBSvars.no_transmission:
         BBSvars.install_rdir.RemakeMe(True)
-    if BBSvars.asynchronous_transmission:
-        out_dir = make_stage_out_dir('install')
-    else:
+    if BBSvars.synchronous_transmission:
         out_dir = BBSvars.install_rdir
+    else:
+        out_dir = make_stage_out_dir('install')
 
     meat_path = BBSvars.meat_path
-    BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
+    if BBSvars.no_transmission:
+        # Secondary nodes that use BBS_PRODUCT_TRANSMISSION_MODE="none"
+        # are typically "external nodes" and they are not allowed to
+        # rsync the meat. So they must get the meat by downloading the
+        # source tarballs from BBSvars.central_base_url + '/src/contrib
+        if os.path.exists(meat_path):
+            bbs.fileutils.remake_dir(meat_path, ignore_errors=True)
+        else:
+            os.mkdir(meat_path)
+        target_repo_path = os.path.join(BBSvars.work_topdir, 'target-repo')
+        if os.path.exists(target_repo_path):
+            bbs.fileutils.remake_dir(target_repo_path, ignore_errors=True)
+        else:
+            os.mkdir(target_repo_path)
+        contrib_url = BBSvars.central_base_url + '/src/contrib'
+        nb_pkgs = BBSbase.cloneCRANstylePkgRepo(contrib_url, target_repo_path)
+        print('BBS>   Extracting the %d source tarballs in %s/\n' % \
+              (nb_pkgs, target_repo_path),
+              'BBS>   to BBS_WORK_TOPDIR/meat/ ...', end=' ')
+        sys.stdout.flush()
+        srcpkg_files = bbs.fileutils.listSrcPkgFiles(target_repo_path)
+        for srcpkg_file in srcpkg_files:
+            srcpkg_filepath = os.path.join(target_repo_path, srcpkg_file)
+            BBSbase.Untar(srcpkg_filepath, meat_path)
+        print('OK')
+    else:
+        BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
+
     if BBSvars.MEAT0_type == 2:
         srcpkg_files = bbs.fileutils.listSrcPkgFiles(meat_path)
         for srcpkg_file in srcpkg_files:
@@ -420,9 +454,10 @@ def STAGE2():
             BBSbase.Untar(srcpkg_filepath, meat_path)
             os.remove(srcpkg_filepath)
 
-    print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog')
-    gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
-    BBSvars.GITLOG_rdir.syncLocalDir(gitlog_path, True)
+    if BBSvars.MEAT0_type == 3 and not BBSvars.no_transmission:
+        print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog')
+        gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
+        BBSvars.GITLOG_rdir.syncLocalDir(gitlog_path, True)
 
     print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp')
     STAGE2_tmp = os.path.join(BBSvars.work_topdir, 'STAGE2_tmp')
@@ -452,23 +487,23 @@ def STAGE2():
     pkg_dep_graph = build_pkg_dep_graph(target_pkgs)
     installed_pkgs = get_installed_pkgs()
 
-    # Inject additional fields into DESCRIPTION.
-    print('BBS> [STAGE2] cd BBS_MEAT_PATH')
-    print('BBS> [STAGE2] Injecting fields into DESCRIPTION')
-    os.chdir(meat_path)
-    for pkg in target_pkgs:
-
-        gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
-        if not os.path.exists(gitlog_file):
-            print('BBS> %s file does not exist --> skipping.' % gitlog_file)
-            continue 
-
-        desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
-        if not os.path.exists(desc_file):
-            print('BBS> %s file does not exist --> skipping.' % desc_file)
-            continue 
-
-        bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
+    if BBSvars.MEAT0_type == 3 and not BBSvars.no_transmission:
+        # Inject the git fields into the DESCRIPTION files. No need to do
+        # this if BBS_PRODUCT_TRANSMISSION_MODE="none" because in this case
+        # the DESCRIPTION files already contain those fields.
+        print('BBS> [STAGE2] cd BBS_MEAT_PATH')
+        print('BBS> [STAGE2] Injecting git fields into DESCRIPTION files')
+        os.chdir(meat_path)
+        for pkg in target_pkgs:
+            gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
+            if not os.path.exists(gitlog_file):
+                print('BBS> %s file does not exist --> skipping.' % gitlog_file)
+                continue
+            desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
+            if not os.path.exists(desc_file):
+                print('BBS> %s file does not exist --> skipping.' % desc_file)
+                continue
+            bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
 
     # Then re-install the supporting packages.
     print('BBS> [STAGE2] Re-install supporting packages')
@@ -556,10 +591,10 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
 def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
     BBSvars.buildsrc_rdir.RemakeMe(True)
-    if BBSvars.asynchronous_transmission:
-        out_dir = make_stage_out_dir('buildsrc')
-    else:
+    if BBSvars.synchronous_transmission:
         out_dir = BBSvars.buildsrc_rdir
+    else:
+        out_dir = make_stage_out_dir('buildsrc')
 
     # Even though we already generated the NodeInfo folder at end of STAGE2,
     # we generate it again now just in case we are running builds that
@@ -637,10 +672,10 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
 def STAGE4():
     print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
     BBSvars.checksrc_rdir.RemakeMe(True)
-    if BBSvars.asynchronous_transmission:
-        out_dir = make_stage_out_dir('checksrc')
-    else:
+    if BBSvars.synchronous_transmission:
         out_dir = BBSvars.checksrc_rdir
+    else:
+        out_dir = make_stage_out_dir('checksrc')
 
     print("BBS> [STAGE4] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
@@ -707,10 +742,10 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
 def STAGE5():
     print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
     BBSvars.buildbin_rdir.RemakeMe(True)
-    if BBSvars.asynchronous_transmission:
-        out_dir = make_stage_out_dir('buildbin')
-    else:
+    if BBSvars.synchronous_transmission:
         out_dir = BBSvars.buildbin_rdir
+    else:
+        out_dir = make_stage_out_dir('buildbin')
 
     print("BBS> [STAGE5] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
