@@ -20,8 +20,7 @@ import BBSutils
 import BBSvars
 import BBSbase
 
-asynchronous_mode = BBSvars.transmission_mode == 'asynchronous'
-if asynchronous_mode:
+if BBSvars.asynchronous_transmission:
     products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
 
 def make_stage_out_dir(stage):
@@ -192,8 +191,7 @@ def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
     return srcpkg_files
 
 def waitForTargetRepoToBeReady():
-    Central_rdir = BBSvars.Central_rdir
-    PACKAGES_url = Central_rdir.url + '/src/contrib/PACKAGES'
+    PACKAGES_url = BBSvars.central_base_url + '/src/contrib/PACKAGES'
     nb_attempts = 0
     while True:
         nb_attempts += 1
@@ -368,7 +366,7 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
 def STAGE2_loop(job_queue, nb_cpu, out_dir):
     print('BBS> BEGIN STAGE2 loop.')
     t1 = time.time()
-    if asynchronous_mode:
+    if BBSvars.asynchronous_transmission:
         rdir = BBSvars.install_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'install-push.log')
@@ -401,8 +399,9 @@ def STAGE2():
     # not finish on the main node, in which case we want to wait before we
     # sync the local meat dir with the central MEAT0 dir).
     waitForTargetRepoToBeReady()
-    BBSvars.install_rdir.RemakeMe(True)
-    if asynchronous_mode:
+    if not BBSvars.no_transmission:
+        BBSvars.install_rdir.RemakeMe(True)
+    if BBSvars.asynchronous_transmission:
         out_dir = make_stage_out_dir('install')
     else:
         out_dir = BBSvars.install_rdir
@@ -523,7 +522,7 @@ def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
 def STAGE3_loop(job_queue, nb_cpu, out_dir):
     print("BBS> BEGIN STAGE3 loop.")
     t1 = time.time()
-    if asynchronous_mode:
+    if BBSvars.asynchronous_transmission:
         rdir = BBSvars.buildsrc_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'buildsrc-push.log')
@@ -552,7 +551,7 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
 def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
     BBSvars.buildsrc_rdir.RemakeMe(True)
-    if asynchronous_mode:
+    if BBSvars.asynchronous_transmission:
         out_dir = make_stage_out_dir('buildsrc')
     else:
         out_dir = BBSvars.buildsrc_rdir
@@ -606,7 +605,7 @@ def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
 def STAGE4_loop(job_queue, nb_cpu, out_dir):
     print("BBS> BEGIN STAGE4 loop.")
     t1 = time.time()
-    if asynchronous_mode:
+    if BBSvars.asynchronous_transmission:
         rdir = BBSvars.checksrc_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'checksrc-push.log')
@@ -633,7 +632,7 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
 def STAGE4():
     print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
     BBSvars.checksrc_rdir.RemakeMe(True)
-    if asynchronous_mode:
+    if BBSvars.asynchronous_transmission:
         out_dir = make_stage_out_dir('checksrc')
     else:
         out_dir = BBSvars.checksrc_rdir
@@ -675,7 +674,7 @@ def prepare_STAGE5_job_queue(srcpkg_paths, out_dir):
 def STAGE5_loop(job_queue, nb_cpu, out_dir):
     print("BBS> BEGIN STAGE5 loop.")
     t1 = time.time()
-    if asynchronous_mode:
+    if BBSvars.asynchronous_transmission:
         rdir = BBSvars.buildbin_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
         products_push_log = os.path.join(products_out_buf, 'buildbin-push.log')
@@ -703,7 +702,7 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
 def STAGE5():
     print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
     BBSvars.buildbin_rdir.RemakeMe(True)
-    if asynchronous_mode:
+    if BBSvars.asynchronous_transmission:
         out_dir = make_stage_out_dir('buildbin')
     else:
         out_dir = BBSvars.buildbin_rdir
@@ -755,7 +754,7 @@ if __name__ == "__main__":
     print("BBS> ==============================================================")
     if stages in ["all", "all-no-bin"]:
         BBSvars.Node_rdir.RemakeMe(True)
-        if asynchronous_mode:
+        if BBSvars.asynchronous_transmission:
             bbs.fileutils.remake_dir(products_out_buf, ignore_errors=True)
     ticket = []
     ## STAGE2: preinstall dependencies

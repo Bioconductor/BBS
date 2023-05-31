@@ -15,7 +15,7 @@ import BBSutils
 
 
 ### Just a safety check. Global var 'user' is actually not used.
-if sys.platform == "win32":
+if sys.platform == 'win32':
     running_user = BBSutils.getenv('USERNAME')
 else:
     running_user = BBSutils.getenv('USER')
@@ -36,22 +36,22 @@ BBS_home = BBSutils.getenv('BBS_HOME')
 ### buildtype) in which case 'bioc_version' will be set to None.
 bioc_version = BBSutils.getenv('BBS_BIOC_VERSION', False)
 
-buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, "bioc")
+buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, 'bioc')
 
 ### Timeout limits
 
-default_INSTALL_timeout   =  "2400.0"  # 40 min
+default_INSTALL_timeout   =  '2400.0'  # 40 min
 
-if buildtype == "data-experiment":
-    default_BUILD_timeout =  "4800.0"  # 80 min
-elif buildtype == "workflows":
-    default_BUILD_timeout =  "7200.0"  #  2 h
-elif buildtype == "books":
-    default_BUILD_timeout = "18000.0"  #  5 h
-elif buildtype == "bioc-longtests":
-    default_BUILD_timeout = "21600.0"  #  6 h
+if buildtype == 'data-experiment':
+    default_BUILD_timeout =  '4800.0'  # 80 min
+elif buildtype == 'workflows':
+    default_BUILD_timeout =  '7200.0'  #  2 h
+elif buildtype == 'books':
+    default_BUILD_timeout = '18000.0'  #  5 h
+elif buildtype == 'bioc-longtests':
+    default_BUILD_timeout = '21600.0'  #  6 h
 else:
-    default_BUILD_timeout =  "2400.0"  # 40 min
+    default_BUILD_timeout =  '2400.0'  # 40 min
 
 INSTALL_timeout  = float(BBSutils.getenv('BBS_INSTALL_TIMEOUT',  False,
                                          default_INSTALL_timeout))
@@ -74,7 +74,7 @@ work_topdir = BBSutils.getenv('BBS_WORK_TOPDIR')
 r_home = BBSutils.getenv('BBS_R_HOME')
 r_libs = BBSutils.getenv('R_LIBS', False)
 
-nb_cpu = BBSutils.getenv('BBS_NB_CPU', False, "1")
+nb_cpu = BBSutils.getenv('BBS_NB_CPU', False, '1')
 install_nb_cpu = BBSutils.getenv('BBS_INSTALL_NB_CPU', False, nb_cpu)
 buildsrc_nb_cpu = BBSutils.getenv('BBS_BUILD_NB_CPU', False, nb_cpu)
 checksrc_nb_cpu = BBSutils.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
@@ -83,9 +83,13 @@ install_nb_cpu = int(install_nb_cpu)
 buildsrc_nb_cpu = int(buildsrc_nb_cpu)
 checksrc_nb_cpu = int(checksrc_nb_cpu)
 
-node_is_external = int(BBSutils.getenv('BBS_NODE_IS_EXTERNAL', False, "0")) != 0
-transmission_mode = BBSutils.getenv('BBS_PRODUCT_TRANSMISSION_MODE', False)
-dont_push_srcpkgs = int(BBSutils.getenv('DONT_PUSH_SRCPKGS', False, "0")) != 0
+transmission_mode = BBSutils.getenv('BBS_PRODUCT_TRANSMISSION_MODE',
+                                    False, 'synchronous')
+no_transmission = transmission_mode == 'none'
+asynchronous_transmission = transmission_mode == 'asynchronous'
+synchronous_transmission = transmission_mode == 'synchronous'
+
+dont_push_srcpkgs = int(BBSutils.getenv('DONT_PUSH_SRCPKGS', False, '0')) != 0
 
 STAGE2_mode = BBSutils.getenv('BBS_STAGE2_MODE', False)
 STAGE4_mode = BBSutils.getenv('BBS_STAGE4_MODE', False)
@@ -95,8 +99,9 @@ meat_path = BBSutils.getenv('BBS_MEAT_PATH')
 r_cmd = BBSutils.getenv('BBS_R_CMD')
 rscript_cmd = BBSutils.getenv('BBS_RSCRIPT_CMD', False)
 rsync_cmd = BBSutils.getenv('BBS_RSYNC_CMD')
+central_base_url = BBSutils.getenv('BBS_CENTRAL_BASEURL')
 
-if not node_is_external:
+if not no_transmission:
     ## Define a bunch of RemoteDir objects.
     rsh_cmd = BBSutils.getenv('BBS_RSH_CMD', False)
     rsync_rsh_cmd = BBSutils.getenv('BBS_RSYNC_RSH_CMD')
@@ -110,12 +115,12 @@ if not node_is_external:
     central_rdir_path = BBSutils.getenv('BBS_CENTRAL_RDIR', False)
     if central_rdir_path == None:
         Central_rdir = bbs.rdir.RemoteDir('BBS_CENTRAL_BASEURL',
-                           BBSutils.getenv('BBS_CENTRAL_BASEURL'))
+                           central_base_url)
     else:
         central_rhost = BBSutils.getenv('BBS_CENTRAL_RHOST', False)
         central_ruser = BBSutils.getenv('BBS_CENTRAL_RUSER', False)
         Central_rdir = bbs.rdir.RemoteDir('BBS_CENTRAL_BASEURL',
-                           BBSutils.getenv('BBS_CENTRAL_BASEURL'),
+                           central_base_url,
                            central_rdir_path, central_rhost, central_ruser,
                            rsh_cmd, rsync_cmd, rsync_rsh_cmd, rsync_options)
     GITLOG_rdir = bbs.rdir.RemoteDir('BBS_GITLOG_RDIR',
@@ -153,5 +158,5 @@ if MEAT0_type == 3:  # git-based builds
     manifest_path = os.path.join(manifest_clone_path, manifest_file)
     git_branch = BBSutils.getenv('BBS_BIOC_GIT_BRANCH')
     vcsmeta_file = 'gitlog/git-log.dcf'
-update_MEAT0 = int(BBSutils.getenv('BBS_UPDATE_MEAT0', False, "0")) != 0
+update_MEAT0 = int(BBSutils.getenv('BBS_UPDATE_MEAT0', False, '0')) != 0
 
