@@ -324,7 +324,7 @@ def update_MEAT0(MEAT0_path, snapshot_date):
     return
 
 def writeAndUploadMeatInfo(work_topdir):
-    MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
+    MEAT0_path = BBSvars.MEAT0_rdir.path  # hopefully this is local!
     snapshot_date = bbs.jobs.currentDateString()
     if BBSvars.buildtype == "bioc-incremental":
         pkgs = update_git_MEAT0(MEAT0_path, snapshot_date)
@@ -336,6 +336,25 @@ def writeAndUploadMeatInfo(work_topdir):
     collect_vcs_meta(snapshot_date)
     uploadSkippedIndex(work_topdir)
     return
+
+def injectGitFieldsIntoMeat(gitlog_path, meat_path):
+    print('BBS>   Injecting git fields into',
+          '%s/*/DESCRIPTION files ...' % meat_path, end=' ')
+    manifest_path = BBSvars.manifest_path
+    pkgs = bbs.manifest.read(manifest_path)
+    for pkg in pkgs:
+        gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
+        if not os.path.exists(gitlog_file):
+            print('(%s not found --> skip)' % gitlog_file, end=' ')
+            continue
+        desc_file = os.path.join(meat_path, pkg, 'DESCRIPTION')
+        if not os.path.exists(desc_file):
+            print('(%s not found --> skip)' % desc_file, end=' ')
+            continue
+        bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
+    print('OK')
+    return
+
 
 ##############################################################################
 
@@ -500,7 +519,7 @@ if __name__ == "__main__":
         ## (2) it works remotely, (3) it works with "nested working copies
         ## (like we have for the data-experiment MEAT0) and, (4) it's even
         ## slightly faster!
-        BBSvars.MEAT0_rdir.syncLocalDir(BBSvars.meat_path, True)
+        BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "extract-meat"
@@ -508,6 +527,13 @@ if __name__ == "__main__":
         print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
         pkgs = extractSrcPkgTarballs(meat_path)
         buildAndUploadMeatIndex(pkgs, meat_path)
+        print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
+
+    subtask = "inject-git-fields-into-meat"
+    if arg1 == "" or arg1 == subtask:
+        print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
+        gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
+        injectGitFieldsIntoMeat(gitlog_path, meat_path)
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "make-target-repo"
