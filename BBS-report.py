@@ -191,14 +191,19 @@ def write_Rconfig_table_from_file(out, Node_rdir, vars):
     out.write('</TABLE>\n')
     return
 
-def write_SysCommandVersion_from_file(out, Node_rdir, var):
+def write_SysCommandVersion_from_file(out, Node_rdir, var, config=True):
     filename = 'NodeInfo/%s-version.txt' % var
     f = Node_rdir.WOpen(filename, return_None_on_error=True)
     if f == None:
         return
-    cmd = get_Rconfig_value_from_file(Node_rdir, var)
-    syscmd = '%s --version' % cmd
-    out.write('<P><B>Compiler version</B> (\'%s\' output):</P>\n' % syscmd)
+    if config:
+        cmd = get_Rconfig_value_from_file(Node_rdir, var)
+        syscmd = '%s --version' % cmd
+        out.write('<P><B>Compiler version</B> (\'%s\' output):</P>\n' % syscmd)
+    else:
+        cmd = var.lower()
+        syscmd = '%s --version' % cmd
+        out.write('<P><B>%s version</B> (\'%s\' output):</P>\n' % (cmd, syscmd))
     out.write('<PRE style="margin-left: 12px;">\n')
     for line in f:
         out.write(bbs.parse.bytes2str(line))
@@ -296,6 +301,20 @@ def make_aboutnode_page(Node_rdir, node, long_link=False):
     Cplusplus17_vars = ['CXX17', 'CXX17FLAGS', 'CXX17PICFLAGS', 'CXX17STD']
     write_Rconfig_table_from_file(out, Node_rdir, Cplusplus17_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CXX17')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>Java</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    write_SysCommandVersion_from_file(out, Node_rdir, 'JAVA', False)
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>Pandoc</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    write_SysCommandVersion_from_file(out, Node_rdir, 'pandoc', False)
     out.write('</DIV>\n')
 
     out.write('<HR>\n')
