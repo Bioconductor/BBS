@@ -1,6 +1,6 @@
 #!/bin/bash
 # ======================
-# Settings for nebbiolo1
+# Settings for nebbiolo2
 # ======================
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="nebbiolo1"
+export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.18-bioc-testing"
 # We use the same R instance that is used for the nightly software
@@ -19,7 +19,7 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.18-bioc-testing"
 # /home/biocbuild/bbs-3.18-bioc/R/library or
 # /home/biocbuild/bbs-3.18-bioc/R/site-library!
 # So we set R_LIBS to point to our own library folder.
-# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo1 before
+# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo2 before
 # starting the bioc-testing builds. Otherwise the bioc-testing
 # builds will ignore the folder and will install packages in
 # /home/biocbuild/bbs-3.18-bioc/R/library!
@@ -47,7 +47,7 @@ cd "$wd0"
 # central node
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo1 palomino3:bin"
+export BBS_REPORT_NODES="nebbiolo2 palomino4:bin"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
@@ -64,6 +64,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-#export BBS_NOTIFY_NODES="nebbiolo1"
+#export BBS_NOTIFY_NODES="nebbiolo2"
 #export BBS_PUBLISHED_REPORT_URL="https://master.bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
