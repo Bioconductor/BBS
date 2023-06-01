@@ -10,26 +10,40 @@ Everything in this section must be done **from a sudoer account**.
 
 ### 1.1 Standalone vs non-standalone builder
 
-The machine could either be configured as a _standalone_ builder or as
-a _non-standalone_ builder. A _non-standalone_ builder is a build node that
-participates to builds run by a group of build machines. For example,
-3 machines participated to the BioC 3.11 software builds:
+A build machine can be set up either as a _standalone builder_ or as
+a _non-standalone builder_.
+
+A _non-standalone builder_ is a build node that participates to builds that
+are run by a group of build machines. For example, 3 machines participated
+to the BioC 3.11 software builds:
 https://bioconductor.org/checkResults/3.11/bioc-LATEST/
 
-When part of a group of build machines, one machine must be setup as the
-_central_ builder (a.k.a. _primary node_) e.g. malbec2 in the case of the
-BioC 3.11 software builds. All the other machines (called _secondary nodes_)
-must be able to communicate (SSH and HTTP/S) with the central builder.
-Note that this communication generates some fair amount of data transfer
-back and forth between each secondary node and the central builder (> 5GB
-every day on normal days).
+When part of a group of build machines, one machine must be set up as the
+_central builder_ (a.k.a. _primary node_) e.g. malbec2 in the case of the
+BioC 3.11 software builds. The other machines, called _satellite nodes_,
+only need to be set up as _non-standalone builders_, which is a
+lighter/simpler set up.
+
+There are 2 kinds of _non-standalone builders_:
+- builders managed by the BioC core team called _internal build nodes_
+- builders managed by an external group called _external build nodes_
+
+An _internal build node_ must be able to communicate with the _central builder_
+via HTTP/S and SSH. Note that this communication can generate some fair amount
+of data transfer back and forth between each _satellite node_ and the _central
+builder_ (> 5GB every day on normal days).
+
+An _external build node_ must be able to communicate with the _central
+builder_ via HTTP/S only. Additionally, the machine needs to be set up
+in a way that allows the _central builder_ to retrieve the content of
+`~/bbs-X.Y-bioc/products-out/` on a daily basis, typically via rsync.
 
 
 ### 1.2 Check hardware requirements
 
 These are the requirements for running the BioC software builds.
 
-For a _central_ builder:
+For a _central builder_:
 
 - At least 800GB of disk space
 
@@ -37,7 +51,7 @@ For a _central_ builder:
 
 - At least 48GB of RAM
 
-For a _secondary node_ or _standalone_ builder:
+For a _satellite node_ or _standalone builder_:
 
 - At least 400GB of disk space
 
@@ -51,6 +65,8 @@ as of Aug 2020.
 
 
 ### 1.3 Check `/etc/hostname` and `/etc/hosts`
+
+This applies to all build machines, _standalone_ or _non-standalone_.
 
 - `/etc/hostname` should contain the short name of the build
   machine as it will appear on the build report (e.g. `nebbiolo2`).
@@ -67,8 +83,9 @@ TESTING: You should be able to ping yourself with e.g.:
     ping nebbiolo2
 
 Note that not having this set properly will cause Bioconductor
-package **RGMQL** to fail. So if the software builds are already
-set up, you can start R from the biocbuild account and also try:
+package **RGMQL** to fail. So if you already have R and **RGMQL** installed
+on the machine (which would be the case if the software builds are
+already set up), you can start R and try:
 
     library(RGMQL)
     init_gmql()  # will fail if the short name of the machine
@@ -76,6 +93,8 @@ set up, you can start R from the biocbuild account and also try:
 
 
 ### 1.4 Apply any pending system updates and reboot
+
+This applies to all build machines, _standalone_ or _non-standalone_.
 
 #### Quick way:
 
@@ -148,6 +167,8 @@ keep this file in sync with the actual versions present on the builders.
 
 ### 1.5 Check locales
 
+This applies to all build machines, _standalone_ or _non-standalone_.
+
 The following command:
 
     cat /etc/default/locale
@@ -176,20 +197,23 @@ Then logout and login again for the change to take effect, and try:
     # Tue 20 Apr 16:26:10 EDT 2021
 
 
-### 1.6 Set up the biocbuild and pkgbuild accounts
+### 1.6 Set up the `biocbuild` and `pkgbuild` accounts
 
-#### Create the biocbuild account
+This only applies to build machines managed by the BioC core team.
+On an _external build node_, the builds can be run from any account.
+
+#### Create the `biocbuild` account
 
     sudo adduser biocbuild
 
 This should be set up as a regular account. In particular it should NOT have
-sudo privileges. Ask a core team member what password to use for biocbuild.
+sudo privileges. Ask a core team member what password to use for `biocbuild`.
 
 #### Install RSA keys
 
-Login as biocbuild and install the following RSA keys (in the `~biocbuild/.ssh/`
-folder):
-- biocbuild RSA private and public keys (`id_rsa` and `id_rsa.pub` files)
+Login as `biocbuild` and install the following RSA keys (in
+the `~biocbuild/.ssh/` folder):
+- `biocbuild` RSA private and public keys (`id_rsa` and `id_rsa.pub` files)
 - core team member public keys (in `authorized_keys` file)
 
 Easiest way to do this is to copy the keys from another build machine.
@@ -203,16 +227,16 @@ Then `chmod 400 ~/.ssh/id_rsa` so permissions look like this:
 
 If the machine will also run the single package builder then you
 should create the `pkgbuild` account. The process is the same as
-the biocbuild account, including the password. The group of public
+the `biocbuild` account, including the password. The group of public
 keys may differ, so ask if you are not sure who should have access.
 
 #### Testing
 
-- Logout and try to login again as biocbuild. If your public key was
+- Logout and try to login again as `biocbuild`. If your public key was
   added to `~biocbuild/.ssh/authorized_keys` then you should no longer
-  need to enter the biocbuild password or your passphrase.
+  need to enter the `biocbuild` password or your passphrase.
 
-- You should be able to ssh to master from the biocbuild account. Try:
+- You should be able to ssh to master from the `biocbuild` account. Try:
     ```
     ssh -A webadmin@master.bioconductor.org
     ```
@@ -220,12 +244,12 @@ keys may differ, so ask if you are not sure who should have access.
   won't be able to push the daily build reports to master.
 
 Then logout completely (i.e. first from the webadmin account on master, then
-from the biocbuild account on the Linux builder) and go back to your personal
+from the `biocbuild` account on the Linux builder) and go back to your personal
 account on the machine (sudoer account).
 
-TIP: Rather than using `sudo su -` to access the biocbuild account, it's
-strongly recommended that you always use the following method to access the
-biocbuild account, where `username` is replaced by your username and
+TIP: Rather than using `sudo su -` to access the `biocbuild` account, it's
+strongly recommended that you always use the following method to access
+the `biocbuild` account, where `username` is replaced by your username and
 `nebbiolo2` is replaced by its address:
 
     ssh -A -J username@ada.dfci.harvard.edu biocbuild@nebbiolo2
@@ -234,6 +258,8 @@ Otherwise, you may have issues when attempting subsequent configurations.
 
 
 ### 1.7 Run Xvfb as a service
+
+This applies to all build machines, _standalone_ or _non-standalone_.
 
 Some Bioconductor packages like **adSplit** or **lmdme**, contain examples that
 need access to an X11 display. However, when running `R CMD check` in the
@@ -257,7 +283,7 @@ problem is with:
     #Execution halted
 
 If the software builds are already set up, you can access the `Rscript`
-command by **going to the biocbuild account** and do:
+command by **going to the `biocbuild` account** and do:
 
     cd ~/bbs-3.18-bioc/
     R/bin/Rscript -e 'png("fig2.png", type="Xlib")'
@@ -383,7 +409,7 @@ environment. For now `echo $DISPLAY` should show nothing.
 
 #### Testing
 
-**From the biocbuild account**:
+**From the `biocbuild` account**:
 
     service xvfb status  # should be up and running
     echo $DISPLAY        # :1.0
@@ -392,6 +418,8 @@ environment. For now `echo $DISPLAY` should show nothing.
 
 
 ### 1.8 Install Ubuntu/deb packages
+
+This applies to all build machines, _standalone_ or _non-standalone_.
 
 The packages needed on a Linux build machine running Ubuntu are in the files
 under `BBS/Ubuntu-files/22.04/`. They can be installed with:
@@ -481,6 +509,8 @@ installed via `pip3`. See next section below.
 
 ### 1.9 Check Python 3 and install Python 3 modules
 
+This applies to all build machines, _standalone_ or _non-standalone_.
+
 #### Check Python 3
 
 Check that Python 3 is available and in the `PATH` with:
@@ -507,7 +537,7 @@ In `/etc/profile` add:
 
 Logout and login again for the changes to `/etc/profile` to take effect.
 
-TESTING: **From the biocbuild account**. If R is already installed on the
+TESTING: **From the `biocbuild` account**. If R is already installed on the
 machine, start it, and do:
 
     if (!require(reticulate))
@@ -544,7 +574,7 @@ w.r.t. those requirements.
 IMPORTANT NOTE: We deliberately install Python modules _system wide_
 (with `sudo -H pip3 install <module>`) on the builders. This will make them
 available to _all the builds_, independently of which account they will run
-from (e.g. biocbuild for BBS or pkgbuild for the Single Package Builder).
+from (e.g. `biocbuild` for BBS or `pkgbuild` for the Single Package Builder).
 Since we only install _trusted_ modules, this should not be a security
 concern. See
 https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practice)
@@ -615,7 +645,7 @@ with:
 
 ### 1.10 Run Apache server as a service
 
-Required only for a standalone or central builder.
+This is only required for a _standalone builder_ or _central builder_.
 
 Install Apache server:
 
@@ -632,9 +662,15 @@ Check its status:
 Service will automatically restart after each reboot.
 
 
-### 1.11 Logout and login again as biocbuild
+### 1.11 Logout and login again as `biocbuild`
 
-Almost everything in the next section must be done from the biocbuild account.
+This applies to all build machines, _standalone_ or _non-standalone_.
+
+For an _external build node_, replace `biocbuild` with the name of the
+account from which the builds will be run.
+
+Almost everything in the next section must be done from the `biocbuild`
+account.
 
 
 
@@ -643,9 +679,9 @@ Almost everything in the next section must be done from the biocbuild account.
 
 ### 2.1 Set Apache server DocumentRoot
 
-Required only for a standalone or central builder.
+This is only required for a _standalone builder_ or _central builder_.
 
-Create `/home/biocbuild/public_html/BBS` from the biocbuild account:
+Create `/home/biocbuild/public_html/BBS` from the `biocbuild` account:
 
     cd
     mkdir -p public_html/BBS
@@ -688,20 +724,22 @@ TESTING: From any account on the machine, you should be able to do:
 
 ### 2.2 Check connectivity with central builder
 
-Needed only if the machine is being configured as a secondary build node.
+This is needed only for a _non-standalone builder_.
 
-Must be done from the biocbuild account.
+#### 2.2.1 For an _internal build node_
 
-#### Check that you can ping the central builder
+Make sure to perform these checks from the `biocbuild` account.
+
+##### Check that you can ping the central builder
 
 Depending on whether the node you're ping'ing from is within RPCI's DMZ
-or not, use the central builder's short or long (i.e. hostname+domain)
+or not, use the _central builder_'s short or long (i.e. hostname+domain)
 hostname. For example:
 
     ping malbec2                                   # from within RPCI's DMZ
     ping malbec2.bioconductor.org                  # from anywhere else
 
-#### Check that you can ssh to the central builder
+##### Check that you can ssh to the central builder
 
     ssh malbec2                   # from within RPCI's DMZ
     ssh malbec2.bioconductor.org  # from anywhere else
@@ -715,24 +753,37 @@ Contact the IT folks at RPCI if that's the case:
     Radomski, Matthew <Matthew.Radomski@RoswellPark.org>
     Landsiedel, Timothy <tjlandsi@RoswellPark.org>
 
-#### Check that you can send HTTPS requests to the central builder
+##### Check that you can send HTTPS requests to the central builder
 
     curl https://nebbiolo2                           # from within DFCI
     curl https://nebbiolo2.bioconductor.org          # from anywhere else
 
 More details on https implementation in `BBS/README.md`.
 
+#### 2.2.2 For an _external build node_
+
+Make sure to perform this check from the account from which the builds will
+be run.
+
+Check that you can send HTTP requests to the _central builder_:
+
+    curl http://155.52.207.165   # if central builder is nebbiolo1
+    curl http://155.52.207.166   # if central builder is nebbiolo2
+
 
 ### 2.3 Clone BBS git tree and create bbs-X.Y-bioc directory structure
 
-Must be done from the biocbuild account.
+This applies to all build machines, _standalone_ or _non-standalone_.
+
+It must be done from the `biocbuild` account for an _internal build node_, or
+from the account from which the builds will be run for an _external build node_.
 
 #### Clone BBS git tree
 
     cd
     git clone https://github.com/bioconductor/BBS
 
-#### Temporarily disable propagation
+#### Temporarily disable propagation (central builder only)
 
 Propagation is documented in a separate document: Set-up-propagation-HOWTO.md
 
@@ -753,7 +804,7 @@ indicating propagation status.
 Note that the change is only temporary (don't commit it!), until we've set up
 propagation of the 3.18 software packages.
 
-#### Edit non_target_repos.txt
+#### Edit non_target_repos.txt (no longer needed)
 
 Only if we are a few weeks before the next Bioconductor release (Spring or
 Fall) and you are setting up the **future devel builds**.
@@ -797,6 +848,8 @@ public repos exist and get populated.
 
 #### Create bbs-X.Y-bioc directory structure
 
+This applies to all build machines, _standalone_ or _non-standalone_.
+
 For example, for the BioC 3.18 software builds:
 
     cd
@@ -807,10 +860,13 @@ For example, for the BioC 3.18 software builds:
 
 ### 2.4 Install R
 
-Must be done from the biocbuild account.
+This applies to all build machines, _standalone_ or _non-standalone_.
+
+It must be done from the `biocbuild` account for an _internal build node_, or
+from the account from which the builds will be run for an _external build node_.
 
 Note that we always build R **from source** on a Linux builder. We do not
-install a package for a Linux distribution (i.e. we don't use `apt-get`
+install a package from a Linux distribution (i.e. we don't use `apt-get`
 on Ubuntu).
 
 #### Get R source tarball from CRAN
@@ -1005,7 +1061,10 @@ Should we also remove package specific caches?
 
 ### 2.5 Add software builds to biocbuild's crontab
 
-Must be done from the biocbuild account.
+This applies to all build machines, _standalone_ or _non-standalone_.
+
+It must be done from the `biocbuild` account for an _internal build node_, or
+from the account from which the builds will be run for an _external build node_.
 
 First make sure to have the following lines at the top of the crontab:
 
@@ -1016,7 +1075,10 @@ First make sure to have the following lines at the top of the crontab:
     # It must be placed **before** /usr/bin.
     PATH=/usr/local/bin:/usr/bin:/bin
 
-Then add the following entries to the crontab:
+Then add the following entries to the crontab (all times are EST times,
+please adjust if your `satellite node` is in a different time zone):
+
+#### Central builder
 
     # BIOC 3.18 SOFTWARE BUILDS
     # -------------------------
@@ -1032,27 +1094,57 @@ Then add the following entries to the crontab:
     # postrun (must start after 'run.sh' has finished on all participating nodes):
     00 11 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
+#### Satellite node (i.e. non-standalone builder)
+
+IMPORTANT: All times above are EST times! Please adjust if your `satellite
+node` is in a different time zone.
+
+    # BIOC 3.18 SOFTWARE BUILDS
+    # -------------------------
+    
+    # run:
+    00 15 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+
 
 ### 2.6 First build report
 
-On the day after adding the software builds to biocbuild's crontab, you
+#### Central builder
+
+On the day after adding the software builds to `biocbuild`'s crontab, you
 should get the first build report at:
 
   https://master.bioconductor.org/checkResults/3.18/bioc-LATEST/
 
 Some red on the report is to be expected (the purpose of the next section is
-to minimize the amount of red) but if you are happy with the result so far
-and want to show it to the world, link the report from this page:
+to reduce the amount of red as much as possible) but if you are happy with
+the result so far and want to show it to the world, link the report from this
+page:
 
   https://master.bioconductor.org/checkResults/
 
 To do this, go on master (`ssh -A webadmin@master.bioconductor.org` from the
-biocbuild account) and edit `/extra/www/bioc/checkResults/index.html` (backup
+`biocbuild` account) and edit `/extra/www/bioc/checkResults/index.html` (backup
 the file first).
 
 Also note that the builds will automatically create and populate the
 `~/bbs-3.18-bioc/meat/` folder, which we will refer to and use in the
 next section.
+
+#### Satellite node (i.e. non-standalone builder)
+
+If you are running an _external build node_, please make arrangements
+with the BioC core team so that they can retrieve the content of
+the `~/bbs-X.Y-bioc/products-out/` folder. They'll typically set a cron
+job on the central builder to do this every day, from Monday to Saturday,
+between 10:30am and 11:00am EST.
+
+Once this is in place, the results for the new satellite node should
+appear on the daily report at:
+
+  https://bioconductor.org/checkResults/3.18/bioc-LATEST/
+
+Some red on the report is to be expected. The purpose of the next section
+is to reduce the amount of red as much as possible.
 
 
 
@@ -1137,7 +1229,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 #### Testing
 
-From the biocbuild account, try to build and check the **ensemblVEP**
+From the `biocbuild` account, try to build and check the **ensemblVEP**
 and **MMAPPR2** packages:
 
     cd ~/bbs-3.18-bioc/meat/
@@ -1168,7 +1260,7 @@ Required by Bioconductor package **GeneGA**.
 
 #### Testing
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     which RNAfold  # /usr/bin/RNAfold
 
@@ -1197,7 +1289,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 #### Testing
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     echo $LIBSBML_CFLAGS
     # -I/usr/include
@@ -1224,7 +1316,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 #### Testing
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     cd ~/bbs-3.18-bioc/meat/
     ../R/bin/R CMD build ImmuneSpaceR
@@ -1240,7 +1332,7 @@ Required by Bioconductor package **LowMACA**.
 
 #### Testing
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     cd ~/bbs-3.18-bioc/meat/
     ../R/bin/R CMD build LowMACA
@@ -1264,7 +1356,7 @@ For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core
 
 #### Testing
 
-From the biocbuild account, try to build and check the **rmspc** package:
+From the `biocbuild` account, try to build and check the **rmspc** package:
 
     cd ~/bbs-3.18-bioc/meat/
     ../R/bin/R CMD build rmspc
@@ -1325,7 +1417,7 @@ Also append `$ROOTSYS/bin` to `PATH` and `$ROOTSYS/lib/root` to
 
 #### Testing
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     which root-config      # /usr/local/root/bin/root-config
     root-config --version  # 6.22/01
@@ -1379,11 +1471,11 @@ As expected, this currently fails (with **xps** 1.49.0):
 
 ### 4.1 Annotation builds
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     mkdir -p ~/bbs-3.18-data-annotation/log
 
-Then add the following entries to biocbuild's crontab:
+Then add the following entries to `biocbuild`'s crontab:
 
     # BIOC 3.18 DATA ANNOTATION BUILDS
     # --------------------------------
@@ -1409,11 +1501,11 @@ If you're happy with the result, link the report from this page:
 
 ### 4.2 Experimental data builds
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     mkdir -p ~/bbs-3.18-data-experiment/log
 
-Then add the following entries to biocbuild's crontab:
+Then add the following entries to `biocbuild`'s crontab:
 
     # BIOC 3.18 DATA EXPERIMENT BUILDS
     # --------------------------------
@@ -1439,11 +1531,11 @@ If you're happy with the result, link the report from this page:
 
 ### 4.3 Workflows builds
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     mkdir -p ~/bbs-3.18-workflows/log
 
-Then add the following entries to biocbuild's crontab:
+Then add the following entries to `biocbuild`'s crontab:
 
     # BIOC 3.18 WORKFLOWS BUILDS
     # --------------------------
@@ -1470,11 +1562,11 @@ If you're happy with the result, link the report from this page:
 
 ### 4.4 Books builds
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     mkdir -p ~/bbs-3.18-books/log
 
-Then add the following entries to biocbuild's crontab:
+Then add the following entries to `biocbuild`'s crontab:
 
     # BIOC 3.18 BOOKS BUILDS
     # ----------------------
@@ -1501,11 +1593,11 @@ If you're happy with the result, link the report from this page:
 
 ### 4.5 Long Tests builds
 
-From the biocbuild account:
+From the `biocbuild` account:
 
     mkdir -p ~/bbs-3.18-bioc-longtests/log
 
-Then add the following entries to biocbuild's crontab:
+Then add the following entries to `biocbuild`'s crontab:
 
     # BIOC 3.18 SOFTWARE LONGTESTS BUILDS
     # -----------------------------------
