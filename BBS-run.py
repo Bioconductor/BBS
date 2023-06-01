@@ -436,6 +436,8 @@ def STAGE2():
         target_repo_path = os.path.join(BBSvars.work_topdir, 'target-repo')
         BBSbase.cloneCRANstylePkgRepo(contrib_url, target_repo_path,
                                       update_only=True)
+        PACKAGES_path = os.path.join(target_repo_path, 'PACKAGES')
+        BBSutils.copyTheDamnedThingNoMatterWhat(PACKAGES_path, products_out_buf)
         BBSbase.extractLocalCRANstylePkgRepo(target_repo_path, meat_path)
     else:
         BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
