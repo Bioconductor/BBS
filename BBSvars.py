@@ -30,8 +30,11 @@ if user != running_user:
 ### BBS CORE GLOBAL VARIABLES
 ##############################################################################
 
-
 BBS_home = BBSutils.getenv('BBS_HOME')
+
+### All build nodes must define BBS_CURL_CMD.
+curl_cmd = BBSutils.getenv('BBS_CURL_CMD')
+
 ### BBS_BIOC_VERSION is not necessarily defined (e.g. for the "cran"
 ### buildtype) in which case 'bioc_version' will be set to None.
 bioc_version = BBSutils.getenv('BBS_BIOC_VERSION', False)
@@ -107,12 +110,12 @@ STAGE5_mode = BBSutils.getenv('BBS_STAGE5_MODE', False)
 meat_path = BBSutils.getenv('BBS_MEAT_PATH')
 r_cmd = BBSutils.getenv('BBS_R_CMD')
 rscript_cmd = BBSutils.getenv('BBS_RSCRIPT_CMD', False)
-rsync_cmd = BBSutils.getenv('BBS_RSYNC_CMD')
 central_base_url = BBSutils.getenv('BBS_CENTRAL_BASEURL')
 
 if not no_transmission:
     ## Define a bunch of RemoteDir objects.
     rsh_cmd = BBSutils.getenv('BBS_RSH_CMD', False)
+    rsync_cmd = BBSutils.getenv('BBS_RSYNC_CMD')
     rsync_rsh_cmd = BBSutils.getenv('BBS_RSYNC_RSH_CMD')
     rsync_options = BBSutils.getenv('BBS_RSYNC_OPTIONS')
     MEAT0_rdir = bbs.rdir.RemoteDir('BBS_MEAT0_RDIR',

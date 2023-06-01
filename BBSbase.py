@@ -67,9 +67,9 @@ def cloneCRANstylePkgRepo(contrib_url, destdir, update_only=False):
 def extractLocalCRANstylePkgRepo(contrib_path, destdir):
     PACKAGES_path = os.path.join(contrib_path, 'PACKAGES')
     PACKAGES = bbs.parse.parse_DCF(PACKAGES_path)
-    print('BBS>   Extracting the %d source tarballs in %s/\n' % \
-          (len(PACKAGES), contrib_path),
-          'BBS>   to %s/ ...' % destdir, end=' ')
+    print('BBS>   Extracting the %d source tarballs in %s/' % \
+          (len(PACKAGES), contrib_path))
+    print('       to %s/ ...' % destdir, end=' ')
     sys.stdout.flush()
     for dcf_record in PACKAGES:
         pkgname = dcf_record['Package']
@@ -292,11 +292,10 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
 ##   peak load times) the install takes ~ 5-6 minutes, even when
 ##   done via the build system.
 def _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs=None):
-    curl_cmd = BBSutils.getenv('BBS_CURL_CMD')
     srcpkg_file = '%s_%s.tar.gz' % (pkg, version)
     srcpkg_url = BBSvars.Central_rdir.url + '/src/contrib/' + srcpkg_file
     zip_file = srcpkg_file.replace(".tar.gz", ".zip")
-    cmd = '%s -O %s' % (curl_cmd, srcpkg_url) + ' && ' + \
+    cmd = '%s -O %s' % (BBSvars.curl_cmd, srcpkg_url) + ' && ' + \
           _get_BuildBinPkg_cmd(srcpkg_file, win_archs) + ' && ' + \
           '%s %s' % (_get_RINSTALL_cmd0(), zip_file) + ' && ' + \
           'rm %s %s' % (srcpkg_file, zip_file)

@@ -30,7 +30,7 @@ def make_stage_out_dir(stage):
     else:
         os.mkdir(products_out_buf)
         os.mkdir(out_dir)
-    print('BBS>   Product buffer for asynchronous transmission: %s' % out_dir)
+    print('BBS>   products-out subdir: %s' % out_dir)
     return out_dir
 
 def make_products_push_cmd(out_dir, rdir):
@@ -169,12 +169,13 @@ def write_BBS_EndOfRun_ticket(ticket):
 ## builder. Memoized.
 @lru_cache  # clear cache with get_list_of_target_pkgs.cache_clear()
 def get_list_of_target_pkgs():
-    node_hostname = BBSvars.node_hostname
-    node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
-    node_pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
+    print('BBS> [get_list_of_target_pkgs]', end=' ')
     meat_index_path = BBSutils.downloadFile(BBSutils.meat_index_file,
                                             BBSvars.central_base_url,
                                             BBSvars.meat_path)
+    node_hostname = BBSvars.node_hostname
+    node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
+    node_pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
     return bbs.parse.get_meat_packages_for_node(meat_index_path,
                                                 node_hostname,
                                                 node_Arch,
@@ -479,23 +480,33 @@ def STAGE2():
     pkg_dep_graph = build_pkg_dep_graph(target_pkgs)
     installed_pkgs = get_installed_pkgs()
 
+    print('BBS> [STAGE2] cd BBS_MEAT_PATH')
+    os.chdir(meat_path)
     if BBSvars.MEAT0_type == 3 and not BBSvars.no_transmission:
         # Inject the git fields into the DESCRIPTION files. No need to do
         # this if BBS_PRODUCT_TRANSMISSION_MODE="none" because in this case
         # the DESCRIPTION files already contain those fields.
-        print('BBS> [STAGE2] cd BBS_MEAT_PATH')
-        print('BBS> [STAGE2] Injecting git fields into DESCRIPTION files')
-        os.chdir(meat_path)
+        print('BBS> [STAGE2] Injecting git fields into',
+              '*/DESCRIPTION files ...', end=' ')
         for pkg in target_pkgs:
             gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
             if not os.path.exists(gitlog_file):
-                print('BBS> %s file does not exist --> skipping.' % gitlog_file)
+                print('(%s not found --> skip)' % gitlog_file, end=' ')
                 continue
             desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
             if not os.path.exists(desc_file):
-                print('BBS> %s file does not exist --> skipping.' % desc_file)
+                print('(%s not found --> skip)' % desc_file, end=' ')
                 continue
-            bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
+            bbs.parse.injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file)
+        print('OK')
+
+    print('BBS> [STAGE2] Injecting Date/Publication into',
+          '*/DESCRIPTION files ...', end=' ')
+    for pkg in target_pkgs:
+        desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
+        date = time.strftime("%Y-%m-%d")
+        bbs.parse.injectPublicationDateIntoDESCRIPTION(desc_file, date)
+    print('OK')
 
     # Then re-install the supporting packages.
     print('BBS> [STAGE2] Re-install supporting packages')

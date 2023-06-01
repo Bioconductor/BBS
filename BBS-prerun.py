@@ -351,7 +351,7 @@ def injectGitFieldsIntoMeat(gitlog_path, meat_path):
         if not os.path.exists(desc_file):
             print('(%s not found --> skip)' % desc_file, end=' ')
             continue
-        bbs.parse.injectFieldsInDESCRIPTION(desc_file, gitlog_file)
+        bbs.parse.injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file)
     print('OK')
     return
 

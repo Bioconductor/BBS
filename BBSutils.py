@@ -12,7 +12,7 @@
 import sys
 import os
 import shutil
-import urllib.request
+#import urllib.request
 import hashlib
 import logging
 
@@ -150,9 +150,10 @@ def copyTheDamnedThingNoMatterWhat(src, destdir):
     bbs.rdir.set_readable_flag(src)
     if sys.platform == 'win32':
         ## rsync should do it no matter what.
+        rsync_cmd = getenv('BBS_RSYNC_CMD')
         src = bbs.fileutils.to_cygwin_style(src)
         destdir = bbs.fileutils.to_cygwin_style(destdir)
-        cmd = '%s -rL %s %s' % (BBSvars.rsync_cmd, src, destdir)
+        cmd = '%s -rL %s %s' % (rsync_cmd, src, destdir)
         ## Looks like rsync can sometimes have hiccups on Windows where it
         ## gets stuck forever (timeout) even when trying to perform a local
         ## copy. So we need to try harder (up to 3 attemps before we give up).
@@ -187,7 +188,7 @@ def _md5(file):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def downloadFile(file, baseurl, destdir, MD5sum=None):
+def downloadFile(file, baseurl, destdir, MD5sum=None, timeout=600):
     print('downloading %s' % file, end=' ')
     sys.stdout.flush()
     url = baseurl + '/' + file
@@ -199,13 +200,21 @@ def downloadFile(file, baseurl, destdir, MD5sum=None):
             return
     print('...', end=' ')
     sys.stdout.flush()
-    urllib.request.urlretrieve(url, destfile)
+    #urllib.request.urlretrieve(url, destfile)
     ## An alternative to urllib.request.urlretrieve() above (from
-    ## https://stackoverflow.com/questions/7243750/)
-    #response = urllib.request.urlopen(url)
+    ## https://stackoverflow.com/questions/7243750/).
+    ## Unlike urllib.request.urlretrieve(), this allows us to control
+    ## the timeout limit.
+    #response = urllib.request.urlopen(url, timeout=timeout)
     #f = open(destfile, 'wb')
     #shutil.copyfileobj(response, f)
     #f.close()
+    ## Unfortunately the urllib.request-based solutions above turn out to
+    ## very unreliable, timing out all the time for mysterious reasons.
+    ## So we just use good ol' curl command for the download.
+    curl_cmd = getenv('BBS_CURL_CMD')
+    cmd = '%s --silent %s --output %s' % (curl_cmd, url, destfile)
+    bbs.jobs.tryHardToRunJob(cmd, nb_attempts=3, maxtime=timeout, sleeptime=5.0)
     if MD5sum != None:
         current = _md5(destfile)
         #print('(%s)' % current, end=' ')

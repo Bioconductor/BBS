@@ -15,7 +15,6 @@
 import sys
 import os
 import re
-import time
 import subprocess
 
 
@@ -375,8 +374,7 @@ def get_meat_packages_for_node(meat_index_file, node_hostname,
     pkgs.sort(key=str.lower)
     return pkgs
 
-### Inject fields into DESCRIPTION
-def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
+def injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file):
     # git-log
     dcf = open(gitlog_file, 'rb')
     git_url = get_next_DCF_val(dcf, 'git_url')
@@ -395,13 +393,13 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
 
     # DESCRIPTION
     # Handle the following cases:
-    # - no EOL character at the end of the last line 
+    # - no EOL character at the end of the last line
     # - blank line at the end of the file
-    target_keys = ['git_url', 'git_branch', 'git_last_commit',
-                   'git_last_commit_date', 'Date/Publication']
     dcf = open(desc_file, 'rb')
     lines = dcf.read().splitlines()
     dcf.close()
+    target_keys = ['git_url', 'git_branch',
+                   'git_last_commit', 'git_last_commit_date']
     dcf = open(desc_file, 'wb')
     p = re.compile(':|'.join(target_keys) + ':')
     for line in lines:
@@ -424,8 +422,39 @@ def injectFieldsInDESCRIPTION(desc_file, gitlog_file):
     dcf.write('%s: %s\n' % (target_keys[1], git_branch))
     dcf.write('%s: %s\n' % (target_keys[2], git_last_commit))
     dcf.write('%s: %s\n' % (target_keys[3], git_last_commit_date))
-    dcf.write('%s: %s\n' % (target_keys[4], time.strftime("%Y-%m-%d")))
     dcf.close()
+    return
+
+def injectPublicationDateIntoDESCRIPTION(desc_file, date):
+    # DESCRIPTION
+    # Handle the following cases:
+    # - no EOL character at the end of the last line
+    # - blank line at the end of the file
+    dcf = open(desc_file, 'rb')
+    lines = dcf.read().splitlines()
+    dcf.close()
+    target_key = 'Date/Publication'
+    dcf = open(desc_file, 'wb')
+    p = re.compile(target_key + ':')
+    for line in lines:
+        s = bytes2str(line)
+        if not s.strip():  # drop empty lines
+            continue
+        if not p.match(s):
+            dcf.write(line + b'\n')
+    dcf.close()
+
+    # Note that we open the DESCRIPTION file for appending using the utf-8
+    # encoding (well, we don't know the original encoding of the file) so
+    # the lines we append to it will be encoded using an encoding that will
+    # not necessarily match the original encoding of the file. However, the
+    # strings we actually append only contain ASCII code so hopefully they
+    # get encoded the same way as if we had used the original encoding of
+    # the file.
+    dcf = open(desc_file, 'a', encoding="utf-8")
+    dcf.write('%s: %s\n' % (target_key, date))
+    dcf.close()
+    return
 
 
 ##############################################################################

@@ -10,6 +10,7 @@ fi
 
 export BBS_PYTHON_CMD="/usr/bin/python3"
 
+export BBS_CURL_CMD="/usr/bin/curl"
 export BBS_SSH_CMD="/usr/bin/ssh"
 export BBS_RSYNC_CMD="/usr/bin/rsync"
 
