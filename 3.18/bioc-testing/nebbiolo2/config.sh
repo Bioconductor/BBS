@@ -22,9 +22,9 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.18-bioc-testing"
 # IMPORTANT: Make sure to create the Rlibs folder on nebbiolo2 before
 # starting the bioc-testing builds. Otherwise the bioc-testing
 # builds will ignore the folder and will install packages in
-# /home/biocbuild/bbs-3.18-bioc/R/library!
+# /home/biocbuild/bbs-3.18-bioc/R/site-library!
 export BBS_R_HOME="/home/biocbuild/bbs-3.18-bioc/R"
-export R_LIBS="/home/biocbuild/bbs-3.18-bioc-testing/Rlibs"
+export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
 export BBS_NB_CPU=2        # 20 cores are available
 export BBS_CHECK_NB_CPU=4  # 20 cores are available
 

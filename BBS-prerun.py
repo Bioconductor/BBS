@@ -393,7 +393,10 @@ def write_PACKAGES(rdir):
     doing_what = 'creating PACKAGES index file for target repo'
     print('BBS> START %s at %s...' % (doing_what, time.asctime()))
     sys.stdout.flush()
-    Rexpr = r'library(tools);write_PACKAGES(\".\")'
+    git_fields = ['git_url', 'git_branch',
+                  'git_last_commit', 'git_last_commit_date']
+    fields_as_Rexpr = 'c("' + '","'.join(git_fields) + '")'
+    Rexpr = r'library(tools);write_PACKAGES(fields=%s)' % fields_as_Rexpr
     bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd(Rexpr))
     ## write_PACKAGES() won't create an empty PACKAGES file if no packages
     ## are found so we create one.
