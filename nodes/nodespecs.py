@@ -12,6 +12,7 @@
 # OS version, etc.. can be obtained programmatically
 
 allnodes = {
+    ## Internal nodes.
     'nebbiolo1':  {'OS'      : "Linux (Ubuntu 22.04.2 LTS)",
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-linux-gnu",
@@ -51,5 +52,11 @@ allnodes = {
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-apple-darwin21.6.0",
                    'pkgType' : "mac.binary.big-sur-x86_64",
-                   'encoding': "utf-8"}
+                   'encoding': "utf-8"},
+    ## External nodes.
+    'xps15':      {'OS'      : "Linux (Ubuntu 23.04)",
+                   'Arch'    : "x86_64",
+                   'Platform': "x86_64-linux-gnu",
+                   'pkgType' : "source",
+                   'encoding': "utf_8"}
 }

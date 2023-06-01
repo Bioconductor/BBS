@@ -14,16 +14,27 @@ import bbs.jobs
 import BBSutils
 
 
-### Just a safety check. Global var 'user' is actually not used.
-if sys.platform == 'win32':
-    running_user = BBSutils.getenv('USERNAME')
-else:
-    running_user = BBSutils.getenv('USER')
-user = BBSutils.getenv('BBS_USER', False, running_user)
-if user != running_user:
-    print("BBSvars ERROR: BBS running as user '%s', '%s' expected!" % \
-          (running_user, user))
+hostname0 = bbs.jobs.getHostname().lower()
+node_hostname = BBSutils.getenv('BBS_NODE_HOSTNAME', False)
+if node_hostname == None:
+    node_hostname = hostname0
+elif node_hostname.lower() != hostname0:
+    print("BBSvars ERROR: Found hostname '%s', '%s' expected!" % \
+          (hostname0, node_hostname))
     sys.exit("==> EXIT")
+
+### Just a safety check (global var 'bbs_user' is actually not used
+### beyond this check).
+bbs_user = BBSutils.getenv('BBS_USER', False)
+if bbs_user != None:
+    if sys.platform == 'win32':
+        user0 = BBSutils.getenv('USERNAME')
+    else:
+        user0 = BBSutils.getenv('USER')
+    if bbs_user != user0:
+        print("BBSvars ERROR: BBS running as user '%s', '%s' expected!" % \
+              (user0, bbs_user))
+        sys.exit("==> EXIT")
 
 
 ##############################################################################
@@ -39,7 +50,7 @@ curl_cmd = BBSutils.getenv('BBS_CURL_CMD')
 ### buildtype) in which case 'bioc_version' will be set to None.
 bioc_version = BBSutils.getenv('BBS_BIOC_VERSION', False)
 
-buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, 'bioc')
+buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, default='bioc')
 
 ### Timeout limits
 
@@ -73,35 +84,27 @@ BUILDBIN_timeout = float(BBSutils.getenv('BBS_BUILDBIN_TIMEOUT', False,
 ### BBS GLOBAL VARIABLES
 ##############################################################################
 
-hostname0 = bbs.jobs.getHostname().lower()
-node_hostname = BBSutils.getenv('BBS_NODE_HOSTNAME', False, None)
-if node_hostname == None:
-    node_hostname = hostname0
-elif node_hostname.lower() != hostname0:
-    print("BBSvars ERROR: Found hostname '%s', '%s' expected!" % \
-          (hostname0, node_hostname))
-    sys.exit("==> EXIT")
-
 work_topdir = BBSutils.getenv('BBS_WORK_TOPDIR')
 r_home = BBSutils.getenv('BBS_R_HOME')
 r_libs = BBSutils.getenv('R_LIBS', False)
 
-nb_cpu = BBSutils.getenv('BBS_NB_CPU', False, '1')
-install_nb_cpu = BBSutils.getenv('BBS_INSTALL_NB_CPU', False, nb_cpu)
-buildsrc_nb_cpu = BBSutils.getenv('BBS_BUILD_NB_CPU', False, nb_cpu)
-checksrc_nb_cpu = BBSutils.getenv('BBS_CHECK_NB_CPU', False, nb_cpu)
+nb_cpu = BBSutils.getenv('BBS_NB_CPU', False, default='1')
+install_nb_cpu = BBSutils.getenv('BBS_INSTALL_NB_CPU', False, default=nb_cpu)
+buildsrc_nb_cpu = BBSutils.getenv('BBS_BUILD_NB_CPU', False, default=nb_cpu)
+checksrc_nb_cpu = BBSutils.getenv('BBS_CHECK_NB_CPU', False, default=nb_cpu)
 nb_cpu = int(nb_cpu)
 install_nb_cpu = int(install_nb_cpu)
 buildsrc_nb_cpu = int(buildsrc_nb_cpu)
 checksrc_nb_cpu = int(checksrc_nb_cpu)
 
-transmission_mode = BBSutils.getenv('BBS_PRODUCT_TRANSMISSION_MODE',
-                                    False, 'synchronous')
+transmission_mode = BBSutils.getenv('BBS_PRODUCT_TRANSMISSION_MODE', False,
+                                    default='synchronous')
 no_transmission = transmission_mode == 'none'
 asynchronous_transmission = transmission_mode == 'asynchronous'
 synchronous_transmission = transmission_mode == 'synchronous'
 
-dont_push_srcpkgs = int(BBSutils.getenv('DONT_PUSH_SRCPKGS', False, '0')) != 0
+dont_push_srcpkgs = BBSutils.getenv('DONT_PUSH_SRCPKGS', False, default='0')
+dont_push_srcpkgs = int(dont_push_srcpkgs) != 0
 
 STAGE2_mode = BBSutils.getenv('BBS_STAGE2_MODE', False)
 STAGE4_mode = BBSutils.getenv('BBS_STAGE4_MODE', False)
@@ -142,7 +145,7 @@ if not no_transmission:
                       BBSutils.getenv('BBS_GITLOG_RUSER', False),
                       rsh_cmd, rsync_cmd, rsync_rsh_cmd, rsync_options)
     products_in_rdir = Central_rdir.subdir('products-in')
-    node_id = BBSutils.getenv('BBS_NODE_ID', False, node_hostname)
+    node_id = BBSutils.getenv('BBS_NODE_ID', False, default=node_hostname)
     Node_rdir = products_in_rdir.subdir(node_id)
     install_rdir = Node_rdir.subdir('install')
     buildsrc_rdir = Node_rdir.subdir('buildsrc')
@@ -150,11 +153,14 @@ if not no_transmission:
     buildbin_rdir = Node_rdir.subdir('buildbin')
 
 ### Used by BBS-prerun.py only
+
 MEAT0_type = int(BBSutils.getenv('BBS_MEAT0_TYPE'))
+
 if MEAT0_type == 1:  # svn-based builds
     manifest_file = BBSutils.getenv('BBS_BIOC_MANIFEST_FILE')
     manifest_path = os.path.join(MEAT0_rdir.path, manifest_file)
     vcsmeta_file = 'svninfo/svn-info.txt'
+
 if MEAT0_type == 3:  # git-based builds
     manifest_git_repo_url = BBSutils.getenv('BBS_BIOC_MANIFEST_GIT_REPO_URL')
     manifest_git_branch = BBSutils.getenv('BBS_BIOC_MANIFEST_GIT_BRANCH')
@@ -163,5 +169,7 @@ if MEAT0_type == 3:  # git-based builds
     manifest_path = os.path.join(manifest_clone_path, manifest_file)
     git_branch = BBSutils.getenv('BBS_BIOC_GIT_BRANCH')
     vcsmeta_file = 'gitlog/git-log.dcf'
-update_MEAT0 = int(BBSutils.getenv('BBS_UPDATE_MEAT0', False, '0')) != 0
+
+update_MEAT0 = BBSutils.getenv('BBS_UPDATE_MEAT0', False, default='0')
+update_MEAT0 = int(update_MEAT0) != 0
 
