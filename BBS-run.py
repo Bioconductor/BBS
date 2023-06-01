@@ -158,7 +158,10 @@ def write_BBS_EndOfRun_ticket(ticket):
     for t in ticket:
         f.write('%s | nb_cpu=%d | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
     f.close()
-    BBSvars.Node_rdir.Put(file_path, True, True)
+    if BBSvars.no_transmission:
+        BBSutils.copyTheDamnedThingNoMatterWhat(file_path, products_out_buf)
+    else:
+        BBSvars.Node_rdir.Put(file_path, True, True)
     print('BBS> END writing BBS_EndOfRun.txt ticket.')
     return
 
@@ -428,22 +431,11 @@ def STAGE2():
             bbs.fileutils.remake_dir(meat_path, ignore_errors=True)
         else:
             os.mkdir(meat_path)
-        target_repo_path = os.path.join(BBSvars.work_topdir, 'target-repo')
-        if os.path.exists(target_repo_path):
-            bbs.fileutils.remake_dir(target_repo_path, ignore_errors=True)
-        else:
-            os.mkdir(target_repo_path)
         contrib_url = BBSvars.central_base_url + '/src/contrib'
-        nb_pkgs = BBSbase.cloneCRANstylePkgRepo(contrib_url, target_repo_path)
-        print('BBS>   Extracting the %d source tarballs in %s/\n' % \
-              (nb_pkgs, target_repo_path),
-              'BBS>   to BBS_WORK_TOPDIR/meat/ ...', end=' ')
-        sys.stdout.flush()
-        srcpkg_files = bbs.fileutils.listSrcPkgFiles(target_repo_path)
-        for srcpkg_file in srcpkg_files:
-            srcpkg_filepath = os.path.join(target_repo_path, srcpkg_file)
-            BBSbase.Untar(srcpkg_filepath, meat_path)
-        print('OK')
+        target_repo_path = os.path.join(BBSvars.work_topdir, 'target-repo')
+        BBSbase.cloneCRANstylePkgRepo(contrib_url, target_repo_path,
+                                      update_only=True)
+        BBSbase.extractLocalCRANstylePkgRepo(target_repo_path, meat_path)
     else:
         BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
 
@@ -590,9 +582,9 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
-    BBSvars.buildsrc_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.buildsrc_rdir
+        out_dir.RemakeMe(True)
     else:
         out_dir = make_stage_out_dir('buildsrc')
 
@@ -671,9 +663,9 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE4():
     print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
-    BBSvars.checksrc_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.checksrc_rdir
+        out_dir.RemakeMe(True)
     else:
         out_dir = make_stage_out_dir('checksrc')
 
@@ -741,9 +733,9 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE5():
     print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
-    BBSvars.buildbin_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.buildbin_rdir
+        out_dir.RemakeMe(True)
     else:
         out_dir = make_stage_out_dir('buildbin')
 
@@ -793,8 +785,9 @@ if __name__ == "__main__":
     print()
     print("BBS> ==============================================================")
     if stages in ["all", "all-no-bin"]:
-        BBSvars.Node_rdir.RemakeMe(True)
-        if BBSvars.asynchronous_transmission:
+        if not BBSvars.no_transmission:
+            BBSvars.Node_rdir.RemakeMe(True)
+        if not BBSvars.synchronous_transmission:
             bbs.fileutils.remake_dir(products_out_buf, ignore_errors=True)
     ticket = []
     ## STAGE2: preinstall dependencies

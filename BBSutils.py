@@ -165,6 +165,8 @@ def copyTheDamnedThingNoMatterWhat(src, destdir):
         sys.stdout.flush()
         if os.path.isdir(src):
             dst = os.path.join(destdir, os.path.basename(src))
+            if os.path.exists(dst):
+                bbs.fileutils.nuke_tree(dst, ignore_errors=True)
             shutil.copytree(src, dst)
         else:
             shutil.copy2(src, destdir)
@@ -186,8 +188,17 @@ def _md5(file):
     return hash_md5.hexdigest()
 
 def downloadFile(file, baseurl, destdir, MD5sum=None):
+    print('downloading %s' % file, end=' ')
+    sys.stdout.flush()
     url = baseurl + '/' + file
     destfile = os.path.join(destdir, file)
+    if MD5sum != None and os.path.exists(destfile):
+        current = _md5(destfile)
+        if current == MD5sum:
+            print('--> skip (identical to local)')
+            return
+    print('...', end=' ')
+    sys.stdout.flush()
     urllib.request.urlretrieve(url, destfile)
     ## An alternative to urllib.request.urlretrieve() above (from
     ## https://stackoverflow.com/questions/7243750/)
@@ -200,5 +211,6 @@ def downloadFile(file, baseurl, destdir, MD5sum=None):
         #print('(%s)' % current, end=' ')
         #sys.stdout.flush()
         assert current == MD5sum
+    print('ok')
     return destfile
 
