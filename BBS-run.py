@@ -554,7 +554,8 @@ def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
             cmd = BBSbase.getSTAGE3cmd(pkgsrctree)
             pkgdumps_prefix = pkg + '.' + stage
             pkgdumps = BBSbase.PkgDumps(srcpkg_file, pkgdumps_prefix)
-            job = BBSbase.BuildPkg_Job(pkg, version, cmd, pkgdumps, out_dir)
+            job = BBSbase.BuildPkg_Job(pkg, version, cmd, pkgdumps, out_dir,
+                                   dont_push_product=BBSvars.dont_push_srcpkgs)
             jobs.append(job)
     print("OK")
     sys.stdout.flush()

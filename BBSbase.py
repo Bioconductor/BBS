@@ -627,7 +627,7 @@ class InstallPkg_Job(bbs.jobs.QueuedJob):
         self._MakeSummary()
 
 class BuildPkg_Job(bbs.jobs.QueuedJob):
-    def __init__(self, pkg, version, cmd, pkgdumps, out_dir):
+    def __init__(self, pkg, version, cmd, pkgdumps, out_dir, dont_push_product=False):
         ## Required fields
         self._name = pkg
         self._cmd = cmd
@@ -638,6 +638,7 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.pkgdumps = pkgdumps
         self.out_dir = out_dir
         self.summary = Summary(pkg, version, cmd)
+        self.dont_push_product = dont_push_product
     def _MakeSummary(self):
         self.summary.started_at = self._started_at
         self.summary.ended_at = self._ended_at
@@ -651,7 +652,7 @@ class BuildPkg_Job(bbs.jobs.QueuedJob):
         self.summary.Append('PackageFile', pkg_file)
         self.summary.Append('PackageFileSize', pkg_file_size)
         self.summary.Write(self.pkgdumps.summary_file)
-        self.pkgdumps.Push(self.out_dir, BBSvars.dont_push_srcpkgs)
+        self.pkgdumps.Push(self.out_dir, exclude_product=self.dont_push_product)
     def AfterRun(self):
         # Avoid leaving rogue processes messing around on the build machine.
         # self._proc.pid should be already dead but some of its children might
