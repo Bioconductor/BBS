@@ -18,4 +18,5 @@ export BBS_RSYNC_CMD="/usr/bin/rsync"
 #export BBS_SVN_CMD="/usr/bin/svn"
 export BBS_TAR_CMD="/usr/bin/tar"
 export BBS_GIT_CMD="/usr/bin/git"
+export BBS_CURL_CMD="/usr/bin/curl"
 
