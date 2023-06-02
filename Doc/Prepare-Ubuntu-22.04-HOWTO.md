@@ -1097,7 +1097,7 @@ please adjust if your _satellite node_ is in a different time zone):
 #### Satellite node (i.e. non-standalone builder):
 
 IMPORTANT: All times above are EST times! Please adjust the entry below to make sure
-that your _satellite node_ starts `run.sh` at 3.00 pm EST if it's located in a different
+that your _satellite node_ starts `run.sh` at 3:00 pm EST if it's located in a different
 time zone.
 
     # BIOC 3.18 SOFTWARE BUILDS
