@@ -395,7 +395,7 @@ def write_PACKAGES(rdir):
     sys.stdout.flush()
     git_fields = ['git_url', 'git_branch',
                   'git_last_commit', 'git_last_commit_date']
-    fields_as_Rexpr = 'c("' + '","'.join(git_fields) + '")'
+    fields_as_Rexpr = "c('" + "','".join(git_fields) + "')"
     Rexpr = r'library(tools);write_PACKAGES(fields=%s)' % fields_as_Rexpr
     bbs.jobs.doOrDie(BBSbase.Rexpr2syscmd(Rexpr))
     ## write_PACKAGES() won't create an empty PACKAGES file if no packages
