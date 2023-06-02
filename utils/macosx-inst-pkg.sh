@@ -193,6 +193,7 @@ $R_CMD CMD INSTALL --preclean --no-multiarch --library="$R_LIBS" "$srcpkg_filepa
 echo ""
 echo ""
 
+exit_code=0
 so_path="$R_LIBS/$pkgname/libs"
 if [ -d "$so_path" ]; then
     for arch in $TARGET_ARCHS; do
@@ -229,10 +230,16 @@ if [ -d "$so_path" ]; then
                 fix_dylib_links "$so_file"
                 echo ""
                 echo ">>>>>>> Paths after fix:"
-                otool -L "$so_file"
+                shared_libraries=`otool -L "$so_file"`
+                echo "$shared_libraries"
                 echo ""
+                bad_shared_libaries=`echo "$shared_libraries" | grep /opt/gfortran`
+                if [ ! -z "$bad_shared_libraries" ]; then
+                    exit_code=1
+                fi
             fi
         done
     done
 fi
 
+exit $exit_code
