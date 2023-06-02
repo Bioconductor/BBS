@@ -1076,9 +1076,9 @@ First make sure to have the following lines at the top of the crontab:
     PATH=/usr/local/bin:/usr/bin:/bin
 
 Then add the following entries to the crontab (all times are EST times,
-please adjust if your `satellite node` is in a different time zone):
+please adjust if your _satellite node_ is in a different time zone):
 
-#### Central builder
+#### Central builder:
 
     # BIOC 3.18 SOFTWARE BUILDS
     # -------------------------
@@ -1094,10 +1094,11 @@ please adjust if your `satellite node` is in a different time zone):
     # postrun (must start after 'run.sh' has finished on all participating nodes):
     00 11 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
-#### Satellite node (i.e. non-standalone builder)
+#### Satellite node (i.e. non-standalone builder):
 
-IMPORTANT: All times above are EST times! Please adjust if your `satellite
-node` is in a different time zone.
+IMPORTANT: All times above are EST times! Please adjust the entry below to make sure
+that your _satellite node_ starts `run.sh` at 3.00 pm EST if it's located in a different
+time zone.
 
     # BIOC 3.18 SOFTWARE BUILDS
     # -------------------------
@@ -1108,7 +1109,7 @@ node` is in a different time zone.
 
 ### 2.6 First build report
 
-#### Central builder
+#### Central builder:
 
 On the day after adding the software builds to `biocbuild`'s crontab, you
 should get the first build report at:
@@ -1130,7 +1131,7 @@ Also note that the builds will automatically create and populate the
 `~/bbs-3.18-bioc/meat/` folder, which we will refer to and use in the
 next section.
 
-#### Satellite node (i.e. non-standalone builder)
+#### Satellite node (i.e. non-standalone builder):
 
 If you are running an _external build node_, please make arrangements
 with the BioC core team so that they can retrieve the content of
@@ -1138,7 +1139,7 @@ the `~/bbs-X.Y-bioc/products-out/` folder. They'll typically set a cron
 job on the central builder to do this every day, from Monday to Saturday,
 between 10:30am and 11:00am EST.
 
-Once this is in place, the results for the new satellite node should
+Once this is in place, the results for the new _satellite node_ should
 appear on the daily report at:
 
   https://bioconductor.org/checkResults/3.18/bioc-LATEST/
