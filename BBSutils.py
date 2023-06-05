@@ -101,10 +101,12 @@ pkgType2FileExt = {
     'mac.binary.el-capitan': "tgz"
 }
 
-def getNodeSpec(node_hostname, key):
+def getNodeSpec(node_hostname, key, key_is_optional=False):
     specs = nodes.nodespecs.allnodes[node_hostname.lower()]
     if key == 'pkgFileExt':
         return pkgType2FileExt[specs['pkgType']]
+    if key_is_optional:
+        return specs.get(key)
     return specs[key]
 
 

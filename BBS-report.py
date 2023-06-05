@@ -116,7 +116,7 @@ def write_motd_asTABLE(out):
     out.write('</DIV>\n')
     return
 
-def write_notes_to_developer(out, pkg):
+def write_notes_to_developer(out, pkg, extra_note=None):
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
     if BBSvars.buildtype != "bioc" and not os.path.exists('Renviron.bioc'):
@@ -125,10 +125,10 @@ def write_notes_to_developer(out, pkg):
     out.write('<TABLE><TR><TD>\n')
     out.write('To the developers/maintainers ')
     out.write('of the %s package:<BR>\n' % pkg)
-    if BBSvars.buildtype == "bioc" and os.path.exists('Renviron.bioc'):
-        prefix = '- '
-    else:
-        prefix = ''
+    nnotes = int(BBSvars.buildtype == "bioc" +
+                 os.path.exists('Renviron.bioc') * 2 +
+                 extra_note != None)
+    prefix = '- ' if nnotes >= 2 else ''
     if BBSvars.buildtype == "bioc":
         url = 'https://bioconductor.org/developers/how-to/troubleshoot-build-report/'
         out.write('%sAllow up to 24 hours (and sometimes ' % prefix)
@@ -136,16 +136,19 @@ def write_notes_to_developer(out, pkg):
         out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
         out.write('to reflect on this report. ')
         out.write('See <A href="%s">Troubleshooting Build Report</A> ')
-        out.write('for more information.<BR><BR>\n')
+        out.write('for more information.<BR>\n')
     if os.path.exists('Renviron.bioc'):
         out.write('%sUse the following ' % prefix)
         out.write('<A href="../%s">Renviron settings</A> ' % 'Renviron.bioc')
-        out.write('to reproduce errors and warnings.<BR><BR>\n')
-        out.write('Note: If "R CMD check" recently failed on the Linux ')
-        out.write('builder over a missing dependency, add the missing ')
-        out.write('dependency to "Suggests" in your DESCRIPTION file. See ')
-        out.write('the <A href="../%s">Renviron.bioc</A> ' % 'Renviron.bioc')
-        out.write('for details.\n')
+        out.write('to reproduce errors and warnings.<BR>\n')
+        out.write('%sIf \'R CMD check\' started to fail recently ' % prefix)
+        out.write('on the Linux builder(s) over a missing dependency, ')
+        out.write('add the missing dependency to \'Suggests:\' in your ')
+        out.write('DESCRIPTION file. See ')
+        out.write('<A href="../%s">Renviron.bioc</A> ' % 'Renviron.bioc')
+        out.write('for more information.<BR>\n')
+    if extra_note != None:
+        out.write('%s%s\n' % (prefix, extra_note))
     out.write('</TD></TR></TABLE>\n')
     out.write('</DIV>\n')
     return
@@ -1676,7 +1679,9 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
 
     write_motd_asTABLE(out)
 
-    write_notes_to_developer(out, pkg)
+    extra_note = BBSutils.getNodeSpec(node_hostname, 'displayOnHTMLReport',
+                                      key_is_optional=True)
+    write_notes_to_developer(out, pkg, extra_note=extra_note)
 
     if not no_raw_results:
         raw_results_rel_url = 'raw-results/'
