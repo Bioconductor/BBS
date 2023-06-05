@@ -125,8 +125,8 @@ def write_notes_to_developer(out, pkg, extra_note=None):
     out.write('<TABLE><TR><TD>\n')
     out.write('To the developers/maintainers ')
     out.write('of the %s package:<BR>\n' % pkg)
-    nnotes = int(BBSvars.buildtype == "bioc") +
-             int(os.path.exists('Renviron.bioc')) * 2 +
+    nnotes = int(BBSvars.buildtype == "bioc") + \
+             int(os.path.exists('Renviron.bioc')) * 2 + \
              int(extra_note != None)
     prefix = '- ' if nnotes >= 2 else ''
     if BBSvars.buildtype == "bioc":
