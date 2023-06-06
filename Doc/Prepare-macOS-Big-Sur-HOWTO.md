@@ -1040,11 +1040,10 @@ as of Nov 2020):
 
     difficult_pkgs <- c("XML", "rJava", "gdtools", "units", "gsl", "V8",
               "magick", "rsvg", "gmp", "xml2", "jpeg", "tiff", "ncdf4",
-              "fftw", "fftwtools", "proj4", "textshaping", "ragg",
-              "Rmpfr", "pdftools", "av", "rgeos", "sf", "RcppAlgos",
-              "glpkAPI", "gert", "RPostgres", "RMySQL", "RMariaDB",
-              "protolite", "arrangements", "terra", "PoissonBinomial",
-              "igraph", "redux")
+              "fftw", "fftwtools", "proj4", "textshaping", "ragg",  "Rmpfr",
+              "pdftools", "av", "sf", "RcppAlgos", "glpkAPI", "gert",
+              "RPostgres", "RMySQL", "RMariaDB", "protolite", "arrangements",
+              "terra", "PoissonBinomial", "igraph", "redux")
 
 First try to install with:
 

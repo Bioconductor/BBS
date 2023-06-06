@@ -15,7 +15,6 @@ libfftw3-dev            # for fftw, fftwtools
 libmysqlclient-dev      # for RMySQL
 libpq-dev               # for RPostgreSQL, RPostgres
 libmagick++-dev         # for magick
-libgeos-dev             # for rgeos
 libproj-dev             # for proj4
 libgdal-dev             # for sf
 libpoppler-cpp-dev      # for pdftools

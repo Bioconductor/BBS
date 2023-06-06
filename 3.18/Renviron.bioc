@@ -70,3 +70,6 @@ OMP_NUM_THREADS=2
 KMP_DEVICE_THREAD_LIMIT=2
 KMP_TEAMS_THREAD_LIMIT=2
 
+# rgdal, rgeos and maptools will be archived by CRAN in October 2023
+# Use sf instead of rgal
+_SP_EVOLUTION_STATUS_=2
