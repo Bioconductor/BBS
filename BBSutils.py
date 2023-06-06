@@ -170,7 +170,9 @@ def copyTheDamnedThingNoMatterWhat(src, destdir):
             dst = os.path.join(destdir, os.path.basename(src))
             if os.path.exists(dst):
                 bbs.fileutils.nuke_tree(dst, ignore_errors=True)
-            shutil.copytree(src, dst)
+            ## We use 'dirs_exist_ok=True' in case bbs.fileutils.nuke_tree()
+            ## above failed to nuke 'dst'.
+            shutil.copytree(src, dst, symlinks=True, dirs_exist_ok=True)
         else:
             shutil.copy2(src, destdir)
         print("OK")
