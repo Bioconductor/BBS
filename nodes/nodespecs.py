@@ -58,5 +58,11 @@ allnodes = {
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-linux-gnu",
                    'pkgType' : "source",
-                   'encoding': "utf_8"}
+                   'encoding': "utf_8"},
+    'kunpeng2':   {'OS'      : "Linux (openEuler 22.03 LTS-SP1)",
+                   'Arch'    : "aarch64",
+                   'Platform': "aarch64-linux-gnu",
+                   'pkgType' : "source",
+                   'encoding': "utf-8",
+                   'displayOnHTMLReport': "See Martin Grigorov's <a target=\"_blank\" href=\"https://martin-grigorov.medium.com/emulated-building-and-testing-of-bioconductor-projects-for-linux-arm64-501c1f854dc1\">blog post</a> for how to debug Linux ARM64 related issues on a x86_64 host."}
 }
