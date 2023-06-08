@@ -75,15 +75,28 @@ TABLE.grid_layout DIV.hscrollable {
 
 
 /****************************************************************************
- * Message of the day
+ * Message of the day & other notes to developers
  */
 
 DIV.motd {
     padding-top: 10px;
     padding-bottom: 0px;
-    /*font-weight: bold;*/
+    text-align: center;
+    font-weight: bold;
+    background: white;
+    color: #D64;
 }
 DIV.motd TABLE {
+    width: 50%;
+    margin: auto;
+    /* border: 1px dotted black; */
+}
+
+DIV.notes_to_developers {
+    padding-top: 10px;
+    padding-bottom: 0px;
+}
+DIV.notes_to_developers TABLE {
     width: 80%;
     margin: auto;
     border: 1px dotted black;
@@ -561,5 +574,19 @@ TBODY.compact.gcard TR.even_row_number .kjohnson {
 }
 DIV.kjohnson {
     color: #050;
+}
+
+/* kunpeng2 (Linux ARM64 openEuler 22.03 LTS-SP1) */
+.kunpeng2,
+.gcard TD.kunpeng2 {
+    background: #E6E4FD;
+}
+.kunpeng2.toned_down,
+TR.toned_down .kunpeng2,
+TBODY.compact.gcard TR.even_row_number .kunpeng2 {
+    background: #D6D4ED;
+}
+DIV.kunpeng2 {
+    color: #404;
 }
 

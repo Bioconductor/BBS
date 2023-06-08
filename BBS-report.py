@@ -116,12 +116,12 @@ def write_motd_asTABLE(out):
     out.write('</DIV>\n')
     return
 
-def write_notes_to_developer(out, pkg, extra_note=None):
+def write_notes_to_developers(out, pkg, extra_note=None):
     # Renviron.bioc is expected to be found in BBS_REPORT_PATH which should
     # be the current working directory.
     if BBSvars.buildtype != "bioc" and not os.path.exists('Renviron.bioc'):
         return
-    out.write('<DIV class="motd">\n')
+    out.write('<DIV class="notes_to_developers">\n')
     out.write('<TABLE><TR><TD>\n')
     out.write('To the developers/maintainers ')
     out.write('of the %s package:<BR>\n' % pkg)
@@ -1018,7 +1018,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     out.write('<TD class="leftmost top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="width: 75px;">Hostname</TD>')
-    out.write('<TD style="width: 225px;">OS&nbsp;/&nbsp;Arch</TD>')
+    out.write('<TD style="width: 260px;">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_as_TDs(out, leafreport_ref)
     out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
@@ -1681,7 +1681,7 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
 
     extra_note = BBSutils.getNodeSpec(node_hostname, 'displayOnHTMLReport',
                                       key_is_optional=True)
-    write_notes_to_developer(out, pkg, extra_note=extra_note)
+    write_notes_to_developers(out, pkg, extra_note=extra_note)
 
     if not no_raw_results:
         raw_results_rel_url = 'raw-results/'
@@ -1786,7 +1786,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
 
     write_motd_asTABLE(out)
 
-    write_notes_to_developer(out, pkg)
+    write_notes_to_developers(out, pkg)
 
     if not no_raw_results:
         raw_results_rel_url = 'raw-results/'
