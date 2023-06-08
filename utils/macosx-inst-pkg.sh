@@ -242,4 +242,9 @@ if [ -d "$so_path" ]; then
     done
 fi
 
+if [ "$exit_code" -eq 1 ]; then
+    echo "Error: Bad BBS configuration."
+    echo "Bad library paths not corrected in macOS binaries. Contact the core team by filing an <a href="https://github.com/Bioconductor/BBS/issues">issue</a>."
+fi
+
 exit $exit_code
