@@ -79,17 +79,15 @@ TABLE.grid_layout DIV.hscrollable {
  */
 
 DIV.motd {
-    padding-top: 10px;
-    padding-bottom: 0px;
     text-align: center;
     font-weight: bold;
-    background: white;
-    color: #D64;
 }
 DIV.motd TABLE {
     width: 50%;
     margin: auto;
-    /* border: 1px dotted black; */
+    padding: 6px;
+    background: white;
+    color: #D64;
 }
 
 DIV.notes_to_developers {
@@ -97,9 +95,11 @@ DIV.notes_to_developers {
     padding-bottom: 0px;
 }
 DIV.notes_to_developers TABLE {
-    width: 80%;
+    width: 700pt;
     margin: auto;
-    border: 1px dotted black;
+    padding: 6px;
+    background: white;
+    color: #D64;
 }
 
 
