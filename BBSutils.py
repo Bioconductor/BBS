@@ -192,11 +192,14 @@ def _md5(file):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def downloadFile(file, baseurl, destdir, MD5sum=None, timeout=600):
+def downloadFile(file, baseurl, dest, MD5sum=None, timeout=600):
     print('downloading %s' % file, end=' ')
     sys.stdout.flush()
     url = baseurl + '/' + file
-    destfile = os.path.join(destdir, file)
+    if os.path.isdir(dest):
+        destfile = os.path.join(dest, file)
+    else:
+        destfile = dest
     if MD5sum != None and os.path.exists(destfile):
         current = _md5(destfile)
         if current == MD5sum:

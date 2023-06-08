@@ -48,21 +48,39 @@ def cloneCRANstylePkgRepo(contrib_url, destdir, update_only=False):
         bbs.fileutils.remake_dir(destdir, ignore_errors=True)
     print('BBS>     o', end=' ')
     sys.stdout.flush()
-    PACKAGES_path = BBSutils.downloadFile('PACKAGES', contrib_url, destdir)
-    PACKAGES = bbs.parse.parse_DCF(PACKAGES_path)
+    PACKAGES_new_path = os.path.join(destdir, 'PACKAGES.new')
+    BBSutils.downloadFile('PACKAGES', contrib_url, PACKAGES_new_path)
+    PACKAGES_new = bbs.parse.parse_DCF(PACKAGES_new_path)
+    PACKAGES_old_path = os.path.join(destdir, 'PACKAGES')
+    if os.path.exists(PACKAGES_old_path):
+        PACKAGES_old = bbs.parse.parse_DCF(PACKAGES_old_path)
+        old_pkgs = {}
+        for dcf_record in PACKAGES_old:
+            old_pkgs[dcf_record['Package']] = dcf_record
     i = 0
-    for dcf_record in PACKAGES:
+    for dcf_record in PACKAGES_new:
         i += 1
+        print('BBS>     o [%d/%d]' % (i, len(PACKAGES_new)), end=' ')
+        sys.stdout.flush()
         pkgname = dcf_record['Package']
+        if os.path.exists(PACKAGES_old_path):
+            git_last_commit = dcf_record.get('git_last_commit')
+            if git_last_commit != None:
+                old_dcf_record = old_pkgs.get(pkgname)
+                if old_dcf_record != None:
+                    old_git_last_commit = old_dcf_record.get('git_last_commit')
+                    if git_last_commit == old_git_last_commit:
+                        print('git_last_commit (%s) for ' % git_last_commit +
+                              'package %s has not changed --> skip' % pkgname)
+                        continue
         version = dcf_record['Version']
         MD5sum = dcf_record['MD5sum']
         srcpkg_file = '%s_%s.tar.gz' % (pkgname, version)
-        print('BBS>     o [%d/%d]' % (i, len(PACKAGES)), end=' ')
-        sys.stdout.flush()
         BBSutils.downloadFile(srcpkg_file, contrib_url, destdir, MD5sum)
+    os.rename(PACKAGES_new_path, PACKAGES_old_path)
     print('BBS>   Done cloning CRAN-style package repo %s/ to %s/' % \
           (contrib_url, destdir))
-    return PACKAGES_path
+    return PACKAGES_old_path
 
 def extractLocalCRANstylePkgRepo(contrib_path, destdir):
     PACKAGES_path = os.path.join(contrib_path, 'PACKAGES')
