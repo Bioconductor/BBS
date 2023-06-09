@@ -21,17 +21,17 @@ import BBSvars
 import BBSbase
 
 if not BBSvars.synchronous_transmission:
-    products_out_buf = os.path.join(BBSvars.work_topdir, 'products-out')
+    products_out_path = os.path.join(BBSvars.work_topdir, 'products-out')
 
-def make_stage_out_dir(stage):
-    out_dir = os.path.join(products_out_buf, stage)
-    if os.path.exists(products_out_buf):
-        bbs.fileutils.remake_dir(out_dir, ignore_errors=True)
+def make_products_out_subdir(stage):
+    products_out_subdir = os.path.join(products_out_path, stage)
+    if os.path.exists(products_out_path):
+        bbs.fileutils.remake_dir(products_out_subdir, ignore_errors=True)
     else:
-        os.mkdir(products_out_buf)
-        os.mkdir(out_dir)
-    print('BBS>   products-out subdir: %s' % out_dir)
-    return out_dir
+        os.mkdir(products_out_path)
+        os.mkdir(products_out_subdir)
+    print('BBS>   products-out subdir: %s' % products_out_subdir)
+    return products_out_subdir
 
 def make_products_push_cmd(out_dir, rdir):
     if sys.platform == "win32":
@@ -139,7 +139,7 @@ def makeNodeInfo():
     os.chdir(BBSvars.work_topdir)
     if BBSvars.no_transmission:
         BBSutils.copyTheDamnedThingNoMatterWhat(NodeInfo_subdir,
-                                                products_out_buf)
+                                                products_out_path)
     else:
         BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
     return
@@ -159,7 +159,7 @@ def write_BBS_EndOfRun_ticket(ticket):
         f.write('%s | nb_cpu=%d | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
     f.close()
     if BBSvars.no_transmission:
-        BBSutils.copyTheDamnedThingNoMatterWhat(file_path, products_out_buf)
+        BBSutils.copyTheDamnedThingNoMatterWhat(file_path, products_out_path)
     else:
         BBSvars.Node_rdir.Put(file_path, True, True)
     print('BBS> END writing BBS_EndOfRun.txt ticket.')
@@ -279,7 +279,7 @@ def build_pkg_dep_graph(target_pkgs):
     # Send file 'pkg_dep_graph.txt' to central build node.
     if BBSvars.no_transmission:
         BBSutils.copyTheDamnedThingNoMatterWhat(BBSutils.pkg_dep_graph_file,
-                                                products_out_buf)
+                                                products_out_path)
     else:
         BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, True, True)
 
@@ -385,7 +385,7 @@ def STAGE2_loop(job_queue, nb_cpu, out_dir):
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.install_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
-        products_push_log = os.path.join(products_out_buf, 'install-push.log')
+        products_push_log = os.path.join(products_out_path, 'install-push.log')
     else:
         products_push_cmd = products_push_log = None
     nb_installed = bbs.jobs.processJobQueue(job_queue, nb_cpu,
@@ -420,7 +420,7 @@ def STAGE2():
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.install_rdir
     else:
-        out_dir = make_stage_out_dir('install')
+        out_dir = make_products_out_subdir('install')
 
     meat_path = BBSvars.meat_path
     if BBSvars.no_transmission:
@@ -428,16 +428,14 @@ def STAGE2():
         # are typically "external nodes" and they are not allowed to
         # rsync the meat. So they must get the meat by downloading the
         # source tarballs from BBSvars.central_base_url + '/src/contrib
-        if os.path.exists(meat_path):
-            bbs.fileutils.remake_dir(meat_path, ignore_errors=True)
-        else:
-            os.mkdir(meat_path)
+        bbs.fileutils.remake_dir(meat_path, ignore_errors=True)
         contrib_url = BBSvars.central_base_url + '/src/contrib'
         target_repo_path = os.path.join(BBSvars.work_topdir, 'target-repo')
         BBSbase.cloneCRANstylePkgRepo(contrib_url, target_repo_path,
                                       update_only=True)
         PACKAGES_path = os.path.join(target_repo_path, 'PACKAGES')
-        BBSutils.copyTheDamnedThingNoMatterWhat(PACKAGES_path, products_out_buf)
+        BBSutils.copyTheDamnedThingNoMatterWhat(PACKAGES_path,
+                                                products_out_path)
         BBSbase.extractLocalCRANstylePkgRepo(target_repo_path, meat_path)
     else:
         BBSvars.MEAT0_rdir.syncLocalDir(meat_path, True)
@@ -571,7 +569,7 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.buildsrc_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
-        products_push_log = os.path.join(products_out_buf, 'buildsrc-push.log')
+        products_push_log = os.path.join(products_out_path, 'buildsrc-push.log')
     else:
         products_push_cmd = products_push_log = None
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
@@ -600,7 +598,7 @@ def STAGE3():
         out_dir = BBSvars.buildsrc_rdir
         out_dir.RemakeMe(True)
     else:
-        out_dir = make_stage_out_dir('buildsrc')
+        out_dir = make_products_out_subdir('buildsrc')
 
     # Even though we already generated the NodeInfo folder at end of STAGE2,
     # we generate it again now just in case we are running builds that
@@ -654,7 +652,7 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.checksrc_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
-        products_push_log = os.path.join(products_out_buf, 'checksrc-push.log')
+        products_push_log = os.path.join(products_out_path, 'checksrc-push.log')
     else:
         products_push_cmd = products_push_log = None
     bbs.jobs.processJobQueue(job_queue, nb_cpu,
@@ -681,7 +679,7 @@ def STAGE4():
         out_dir = BBSvars.checksrc_rdir
         out_dir.RemakeMe(True)
     else:
-        out_dir = make_stage_out_dir('checksrc')
+        out_dir = make_products_out_subdir('checksrc')
 
     print("BBS> [STAGE4] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
@@ -723,7 +721,7 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.buildbin_rdir
         products_push_cmd = make_products_push_cmd(out_dir, rdir)
-        products_push_log = os.path.join(products_out_buf, 'buildbin-push.log')
+        products_push_log = os.path.join(products_out_path, 'buildbin-push.log')
     else:
         products_push_cmd = products_push_log = None
     nb_products = bbs.jobs.processJobQueue(job_queue, nb_cpu,
@@ -751,7 +749,7 @@ def STAGE5():
         out_dir = BBSvars.buildbin_rdir
         out_dir.RemakeMe(True)
     else:
-        out_dir = make_stage_out_dir('buildbin')
+        out_dir = make_products_out_subdir('buildbin')
 
     print("BBS> [STAGE5] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
@@ -802,7 +800,7 @@ if __name__ == "__main__":
         if not BBSvars.no_transmission:
             BBSvars.Node_rdir.RemakeMe(True)
         if not BBSvars.synchronous_transmission:
-            bbs.fileutils.remake_dir(products_out_buf, ignore_errors=True)
+            bbs.fileutils.remake_dir(products_out_path, ignore_errors=True)
     ticket = []
     ## STAGE2: preinstall dependencies
     if stages in ["all", "all-no-bin"] or "STAGE2" in stages:
