@@ -123,8 +123,8 @@ def write_notes_to_developers(out, pkg, extra_note=None):
         return
     out.write('<DIV class="notes_to_developers">\n')
     out.write('<TABLE><TR><TD>\n')
-    out.write('To the developers/maintainers ')
-    out.write('of the %s package:<BR>\n' % pkg)
+    out.write('<B>To the developers/maintainers ')
+    out.write('of the %s package:</B><BR>\n' % pkg)
     nnotes = int(BBSvars.buildtype == "bioc") + \
              int(os.path.exists('Renviron.bioc')) * 2 + \
              int(extra_note != None)
