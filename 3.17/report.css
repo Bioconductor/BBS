@@ -75,18 +75,33 @@ TABLE.grid_layout DIV.hscrollable {
 
 
 /****************************************************************************
- * Message of the day
+ * Message of the day & other notes to developers
  */
 
 DIV.motd {
-    padding-top: 10px;
-    padding-bottom: 0px;
-    /*font-weight: bold;*/
+    text-align: center;
+    font-weight: bold;
 }
 DIV.motd TABLE {
-    width: 80%;
+    width: 50%;
     margin: auto;
-    border: 1px dotted black;
+    padding: 6px;
+    background: white;
+    color: #D64;
+    border: 1px dotted #D64;
+}
+
+DIV.notes_to_developers {
+    padding-top: 10px;
+    padding-bottom: 0px;
+}
+DIV.notes_to_developers TABLE {
+    width: 700pt;
+    margin: auto;
+    padding: 6px;
+    background: white;
+    color: #D64;
+    border: 1px dotted #D64;
 }
 
 
