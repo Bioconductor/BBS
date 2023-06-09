@@ -88,6 +88,7 @@ DIV.motd TABLE {
     padding: 6px;
     background: white;
     color: #D64;
+    border: 1px dotted #D64;
 }
 
 DIV.notes_to_developers {
@@ -100,6 +101,7 @@ DIV.notes_to_developers TABLE {
     padding: 6px;
     background: white;
     color: #D64;
+    border: 1px dotted #D64;
 }
 
 
@@ -579,12 +581,12 @@ DIV.kjohnson {
 /* kunpeng2 (Linux ARM64 openEuler 22.03 LTS-SP1) */
 .kunpeng2,
 .gcard TD.kunpeng2 {
-    background: #E6E4FD;
+    background: #E4E6FC;
 }
 .kunpeng2.toned_down,
 TR.toned_down .kunpeng2,
 TBODY.compact.gcard TR.even_row_number .kunpeng2 {
-    background: #D6D4ED;
+    background: #D4D6EC;
 }
 DIV.kunpeng2 {
     color: #404;
