@@ -1018,7 +1018,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     out.write('<TD class="leftmost top_left_corner"></TD>')
     out.write('<TD>Package <B>%d</B>/%d</TD>' % (pkg_pos, nb_pkgs))
     out.write('<TD style="width: 75px;">Hostname</TD>')
-    out.write('<TD style="width: 260px;">OS&nbsp;/&nbsp;Arch</TD>')
+    out.write('<TD style="width: 275px;">OS&nbsp;/&nbsp;Arch</TD>')
     write_pkg_stagelabels_as_TDs(out, leafreport_ref)
     out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
