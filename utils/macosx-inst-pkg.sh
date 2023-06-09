@@ -230,11 +230,10 @@ if [ -d "$so_path" ]; then
                 fix_dylib_links "$so_file"
                 echo ""
                 echo ">>>>>>> Paths after fix:"
+                echo ""
                 shared_libraries=`otool -L "$so_file"`
                 echo "$shared_libraries"
-                echo ""
-                bad_shared_libaries=`echo "$shared_libraries" | grep /opt/gfortran`
-                if [ ! -z "$bad_shared_libraries" ]; then
+                if [ -z "${shared_libraries##*/opt/gfortran*}" ]; then
                     exit_code=1
                 fi
             fi
@@ -242,7 +241,8 @@ if [ -d "$so_path" ]; then
     done
 fi
 
-if [ "$exit_code" -eq 1 ]; then
+if [ $exit_code -eq 1 ]; then
+    echo ""
     echo "Error: Bad BBS configuration."
     echo "Bad library paths not corrected in macOS binaries. Contact the core team by filing an <a href="https://github.com/Bioconductor/BBS/issues">issue</a>."
 fi
