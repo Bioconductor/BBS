@@ -193,6 +193,7 @@ $R_CMD CMD INSTALL --preclean --no-multiarch --library="$R_LIBS" "$srcpkg_filepa
 echo ""
 echo ""
 
+exit_code=0
 so_path="$R_LIBS/$pkgname/libs"
 if [ -d "$so_path" ]; then
     for arch in $TARGET_ARCHS; do
@@ -229,10 +230,21 @@ if [ -d "$so_path" ]; then
                 fix_dylib_links "$so_file"
                 echo ""
                 echo ">>>>>>> Paths after fix:"
-                otool -L "$so_file"
                 echo ""
+                shared_libraries=`otool -L "$so_file"`
+                echo "$shared_libraries"
+                if [ -z "${shared_libraries##*/opt/gfortran*}" ]; then
+                    exit_code=1
+                fi
             fi
         done
     done
 fi
 
+if [ $exit_code -eq 1 ]; then
+    echo ""
+    echo "Error: Bad BBS configuration."
+    echo "Bad library paths not corrected in macOS binaries. Contact the core team by filing an issue at https://github.com/Bioconductor/BBS/issues."
+fi
+
+exit $exit_code
