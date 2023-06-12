@@ -64,5 +64,5 @@ allnodes = {
                    'Platform': "aarch64-linux-gnu",
                    'pkgType' : "source",
                    'encoding': "utf-8",
-                   'displayOnHTMLReport': "See Martin Grigorov's <a target=\"_blank\" href=\"https://martin-grigorov.medium.com/emulated-building-and-testing-of-bioconductor-projects-for-linux-arm64-501c1f854dc1\">blog post</a> for how to debug Linux ARM64 related issues on a x86_64 host."}
+                   'displayOnHTMLReport': "See Martin Grigorov's <a target=\"_blank\" href=\"https://bioconductor.github.io/biocblog/posts/2023-06-09-debug-linux-arm64-on-docker/">blog post</a> for how to debug Linux ARM64 related issues on a x86_64 host."}
 }
