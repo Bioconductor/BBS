@@ -550,20 +550,6 @@ DIV.lconway {
     color: #050;
 }
 
-/* kjohnson */
-.kjohnson,
-.gcard TD.kjohnson {
-    background: #DCEDEA;
-}
-.kjohnson.toned_down,
-TR.toned_down .kjohnson,
-TBODY.compact.gcard TR.even_row_number .kjohnson {
-    background: #CCDDDA;
-}
-DIV.kjohnson {
-    color: #050;
-}
-
 /* kjohnson2 */
 .kjohnson2,
 .gcard TD.kjohnson2 {
@@ -577,4 +563,3 @@ TBODY.compact.gcard TR.even_row_number .kjohnson2 {
 DIV.kjohnson2 {
     color: #050;
 }
-
