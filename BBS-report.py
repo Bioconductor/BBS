@@ -1673,6 +1673,10 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
     write_node_specs_table(out, aboutnode_dir='..', long_link=long_link)
 
     out.write('<BR>\n')
+
+    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
+
+    out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
               (node_hostname.replace(".", "_"), page_title))
     out.write('<BR>\n')
@@ -1688,8 +1692,6 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
         out.write('<P style="text-align: center;">')
         out.write('<A href="%s">raw results</A>' % raw_results_rel_url)
         out.write('<P>\n')
-
-    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
