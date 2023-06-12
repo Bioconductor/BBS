@@ -564,17 +564,17 @@ DIV.lconway {
     color: #050;
 }
 
-/* kjohnson */
-.kjohnson,
-.gcard TD.kjohnson {
+/* kjohnson1 */
+.kjohnson1,
+.gcard TD.kjohnson1 {
     background: #DCEDEA;
 }
-.kjohnson.toned_down,
-TR.toned_down .kjohnson,
-TBODY.compact.gcard TR.even_row_number .kjohnson {
+.kjohnson1.toned_down,
+TR.toned_down .kjohnson1,
+TBODY.compact.gcard TR.even_row_number .kjohnson1 {
     background: #CCDDDA;
 }
-DIV.kjohnson {
+DIV.kjohnson1 {
     color: #050;
 }
 
