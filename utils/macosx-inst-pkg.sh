@@ -245,6 +245,5 @@ if [ $exit_code -eq 1 ]; then
     echo ""
     echo "Error: Bad BBS configuration."
     echo "Bad library paths not corrected in macOS binaries. Contact the core team by filing an issue at https://github.com/Bioconductor/BBS/issues."
+    exit 1
 fi
-
-exit $exit_code
