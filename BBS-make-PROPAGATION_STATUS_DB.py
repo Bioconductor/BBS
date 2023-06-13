@@ -23,7 +23,7 @@ def make_PROPAGATION_STATUS_DB(final_repo):
     script_path = os.path.join(BBSvars.BBS_home,
                                "utils",
                                "makePropagationStatusDb.R")
-    Rexpr = "source('%s');%s('%s','%s','%s')" % \
+    Rexpr = "source('%s');%s('%s','%s',db_filepath='%s')" % \
             (script_path, Rfunction, OUTGOING_dir, final_repo, db_filepath)
     cmd = BBSbase.Rexpr2syscmd(Rexpr)
     ## Nasty things (that I don't really understand) can happen with

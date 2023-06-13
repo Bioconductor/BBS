@@ -57,6 +57,23 @@
     stopifnot(identical(current, expected))
 }
 
+.update_available_pkgs <- function(available_pkgs, new_pkgs)
+{
+    replace_idx <- which(available_pkgs[ , "Package"] %in%
+                         new_pkgs[ , "Package"])
+    if (length(replace_idx) != 0L)
+        available_pkgs <- available_pkgs[-replace_idx, , drop=FALSE]
+    rbind(available_pkgs, new_pkgs[ , colnames(available_pkgs)])
+}
+
+### Simulate propagation by adding approved candidates to 'available_pkgs'.
+.update_available_pkgs_with_approved_pkgs <-
+        function(available_pkgs, candidate_pkgs, candidate_statuses)
+{
+    approved_pkgs <- candidate_pkgs[candidate_statuses$propagate, , drop=FALSE]
+    .update_available_pkgs(available_pkgs, approved_pkgs)
+}
+
 ### Return a data.frame with 3 cols: Package, propagate, explain.
 ### The "propagate" and "explain" cols are initialized with FALSE's
 ### and NA_character_'s, respectively.
@@ -153,21 +170,43 @@
 
 ### Return TRUE or a single string explaining the impossible dep.
 .check_candidate_deps <- function(pkg, required_pkgs, required_versions,
-                                  available_pkgs, candidate_statuses)
+                                  available_pkgs, candidate_statuses,
+                                  available_srcpkgs=NULL)
 {
     stopifnot(length(required_pkgs) == length(required_versions))
+    if (!is.null(available_srcpkgs)) {
+        needs_compil <- tolower(available_srcpkgs[ , "NeedsCompilation"])
+        available_nocompil_srcpkgs <-
+            available_srcpkgs[needs_compil %in% "no", , drop=FALSE]
+    }
     ignored_deps <- c("R", .get_base_packages())
     for (j in seq_along(required_pkgs)) {
         required_pkg <- required_pkgs[[j]]
         if (required_pkg %in% ignored_deps)
             next
         m <- match(required_pkg, available_pkgs[ , "Package"])
-        if (is.na(m)) {
-            fmt <- "NO, package depends on '%s' which is not available"
-            return(sprintf(fmt, required_pkg))
+        if (!is.na(m)) {
+            available_version <- available_pkgs[m, "Version"]
+        } else {
+            fmt <- "NO, package depends on '%s' which is "
+            if (is.null(available_srcpkgs)) {
+                fmt <- c(fmt, "not available")
+                return(sprintf(paste(fmt, collapse=""), required_pkg))
+            }
+            m <- match(required_pkg, available_nocompil_srcpkgs[ , "Package"])
+            if (is.na(m)) {
+                m <- match(required_pkg, available_srcpkgs[ , "Package"])
+                if (is.na(m)) {
+                    fmt <- c(fmt, "not available")
+                } else {
+                    fmt <- c(fmt, "only available as a source ",
+                                  "package that needs compilation")
+                }
+                return(sprintf(paste(fmt, collapse=""), required_pkg))
+            }
+            available_version <- available_nocompil_srcpkgs[m, "Version"]
         }
         required_version <- required_versions[[j]]
-        available_version <- available_pkgs[m, "Version"]
         res <- .check_required_version(required_pkg, required_version,
                                        available_version, candidate_statuses)
         if (!isTRUE(res))
@@ -179,7 +218,8 @@
 .update_candidate_statuses <- function(candidate_statuses,
                                        candidate_required_pkgs,
                                        candidate_required_versions,
-                                       available_pkgs)
+                                       available_pkgs,
+                                       available_srcpkgs=NULL)
 {
     .stop_if_bad_statuses(candidate_statuses)
     stopifnot(is.list(candidate_required_pkgs),
@@ -196,7 +236,8 @@
         required_pkgs <- candidate_required_pkgs[[i]]
         required_versions <- candidate_required_versions[[i]]
         res <- .check_candidate_deps(pkg, required_pkgs, required_versions,
-                                     available_pkgs, candidate_statuses)
+                                     available_pkgs, candidate_statuses,
+                                     available_srcpkgs=available_srcpkgs)
         if (isTRUE(res)) {
             candidate_statuses$propagate[i] <- TRUE
             candidate_statuses$explain[i] <- "YES"
@@ -207,27 +248,11 @@
     candidate_statuses
 }
 
-.update_available_pkgs <- function(available_pkgs, new_pkgs)
-{
-    replace_idx <- which(available_pkgs[ , "Package"] %in%
-                         new_pkgs[ , "Package"])
-    if (length(replace_idx) != 0L)
-        available_pkgs <- available_pkgs[-replace_idx, , drop=FALSE]
-    rbind(available_pkgs, new_pkgs[ , colnames(available_pkgs)])
-}
-
-### Simulate propagation by adding approved candidates to 'available_pkgs'.
-.update_available_pkgs_with_approved_pkgs <-
-        function(available_pkgs, candidate_pkgs, candidate_statuses)
-{
-    approved_pkgs <- candidate_pkgs[candidate_statuses$propagate, , drop=FALSE]
-    .update_available_pkgs(available_pkgs, approved_pkgs)
-}
-
 ### Return a data.frame with 3 cols: Package, propagate, explain.
 ### The "explain" col should contain "YES" or "NO, some explanation" strings
 ### for **all** packages, so no NA_character_'s.
-.compute_candidate_statuses <- function(candidate_pkgs, available_pkgs)
+.compute_candidate_statuses <- function(candidate_pkgs, available_pkgs,
+                                        available_srcpkgs=NULL)
 {
     .stop_if_bad_OUTGOING_pkgs(candidate_pkgs)
     .stop_if_bad_available_pkgs(available_pkgs)
@@ -240,10 +265,12 @@
     pass <- 1L
     while (TRUE) {
         .prettymsg("  - pass #", pass, " ... ")
-        updated_statuses <- .update_candidate_statuses(candidate_statuses,
-                                    candidate_required_pkgs,
-                                    candidate_required_versions,
-                                    available_pkgs)
+        updated_statuses <-
+            .update_candidate_statuses(candidate_statuses,
+                                       candidate_required_pkgs,
+                                       candidate_required_versions,
+                                       available_pkgs,
+                                       available_srcpkgs=available_srcpkgs)
         total_approved <- sum(updated_statuses$propagate)
         message("OK ==> total approved candidates = ", total_approved)
         if (identical(updated_statuses$propagate, candidate_statuses$propagate))
@@ -261,7 +288,8 @@
 }
 
 ### Return a data.frame with 3 cols: Package, propagate, explain.
-compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
+compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs,
+                                         available_srcpkgs=NULL)
 {
     .stop_if_bad_OUTGOING_pkgs(OUTGOING_pkgs)
     .stop_if_bad_available_pkgs(available_pkgs)
@@ -285,8 +313,8 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
                      published_version[lower_version_idx])
 
     ## Handle "OUTGOING version > published version" case.
-    ## In this case, propagate only if the propagated package will not have
-    ## impossible dependencies.
+    ## In this case, propagate only if the propagated package will not
+    ## have impossible dependencies.
     candidate_idx <- which(is.na(outgoing2available) |
                            OUTGOING_version > published_version)
     .prettymsg("  - nb of candidates = ", length(candidate_idx),
@@ -294,7 +322,8 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
     if (length(candidate_idx) != 0L) {
         candidate_pkgs <- OUTGOING_pkgs[candidate_idx, , drop=FALSE]
         candidate_statuses <- .compute_candidate_statuses(candidate_pkgs,
-                                                          available_pkgs)
+                                       available_pkgs,
+                                       available_srcpkgs=available_srcpkgs)
         stopifnot(!any(is.na(candidate_statuses$explain)))
         statuses[candidate_idx, ] <- candidate_statuses
     }
@@ -315,7 +344,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
         return(invisible(NULL))
     }
     .prettymsg("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ")
-    type <- gsub(".big-sur-(arm64|x86_64)", "", type, fixed = FALSE)
+    type <- gsub(".big-sur-(arm64|x86_64)", "", type, fixed=FALSE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
 }
@@ -332,12 +361,14 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 
 .fetch_available_pkgs <- function(final_repo, type, non_target_repos)
 {
-    final_contrib_url <- contrib.url(final_repo, type=type)
+    all_contrib_urls <- contrib.url(final_repo, type=type)
     ## We always look at availability of source packages in the non-target
     ## repos, even when computing the propagation status of Windows or
     ## Mac binaries. This is a feature!
-    non_target_contrib_urls <- contrib.url(non_target_repos, type="source")
-    all_contrib_urls <- c(final_contrib_url, non_target_contrib_urls)
+    if (length(non_target_repos) != 0L) {
+        contrib_urls <- contrib.url(non_target_repos, type="source")
+        all_contrib_urls <- c(all_contrib_urls, contrib_urls)
+    }
     if (type == "source") {
         available_pkgs <- available.packages(all_contrib_urls,
                                              fields="NeedsCompilation")
@@ -360,6 +391,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs)
 }
 
 makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
+                                    non_target_repos=.get_non_target_repos(),
                                     db_filepath="PROPAGATION_STATUS_DB.txt")
 {
     if (!file.exists(OUTGOING_dir))
@@ -367,7 +399,7 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
     .prettymsg("START creating ", db_filepath, " ...\n")
     out <- file(db_filepath, "w")
     on.exit(close(out))
-    final_repo <- gsub("-mac-arm64", "", final_repo, fixed = TRUE)
+    final_repo <- gsub("-mac-arm64", "", final_repo, fixed=TRUE)
     ## Type "source" must be first.
     OUTGOING_types <- c("source", "win.binary",
                         "mac.binary.big-sur-arm64",
@@ -381,16 +413,15 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
         .prettymsg("- Start computing propagation statuses for \"",
                    type, "\" packages:\n")
         available_pkgs <- .fetch_available_pkgs(final_repo, type,
-                                                .get_non_target_repos())
-        if (type != "source") {
-            ## Adding to 'available_pkgs' the source packages that:
-            ## - are already available (or were approved for propagation)
-            ## - and don't need compilation
-            needs_compil <- tolower(available_srcpkgs[ , "NeedsCompilation"])
-            new_pkgs <- available_srcpkgs[needs_compil %in% "no", , drop=FALSE]
-            available_pkgs <- .update_available_pkgs(available_pkgs, new_pkgs)
+                                                non_target_repos)
+        if (type == "source") {
+            statuses <- compute_propagation_statuses(OUTGOING_pkgs,
+                                            available_pkgs)
+        } else {
+            statuses <- compute_propagation_statuses(OUTGOING_pkgs,
+                                            available_pkgs,
+                                            available_srcpkgs=available_srcpkgs)
         }
-        statuses <- compute_propagation_statuses(OUTGOING_pkgs, available_pkgs)
         .prettymsg("- Done computing propagation statuses for \"",
                    type, "\" packages.\n")
         .prettymsg("- Write computed statuses to ", db_filepath, " ... ")
@@ -413,8 +444,83 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
 if (FALSE) {
   #OUTGOING_dir <- "~/public_html/BBS/3.13/bioc/OUTGOING"
   #final_repo <- "file://home/biocpush/PACKAGES/3.13/bioc"
-  OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
-  final_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
-  makePropagationStatusDb(OUTGOING_dir, final_repo)
+  #OUTGOING_dir <- "~/public_html/BBS/3.13/workflows/OUTGOING"
+  #final_repo <- "file://home/biocpush/PACKAGES/3.13/workflows"
+  #makePropagationStatusDb(OUTGOING_dir, final_repo)
+
+  OUTGOING_source_pkgs <- data.frame(
+      Package=letters[1:6],
+      Version=c(1:3, 1, 1, 1),
+      Depends=c(NA, NA, "b, i", "c", "z", "b (>= 3)"),
+      NeedsCompilation=c(NA, "no", "no", "yes", NA, NA))
+
+  OUTGOING_pkgs <- list(
+      source                      = OUTGOING_source_pkgs,
+      win.binary                  = OUTGOING_source_pkgs,
+      `mac.binary.big-sur-arm64`  = OUTGOING_source_pkgs,
+      `mac.binary.big-sur-x86_64` = OUTGOING_source_pkgs
+  )
+
+  final_repo_pkgs <- list(
+      source                      = data.frame(Package=letters[7:9],
+                                               Version=1:3),
+      win.binary                  = data.frame(Package=letters[7:8],
+                                               Version=1:2),
+      `mac.binary.big-sur-arm64`  = data.frame(Package=c(letters[7:8], "b"),
+                                               Version=c(1:2, 2)),
+      `mac.binary.big-sur-x86_64` = data.frame(Package=c(letters[7:8], "b"),
+                                               Version=c(1:2, 3))
+  )
+
+  create_OUTGOING_dir <- function(OUTGOING_dir, OUTGOING_pkgs)
+  {
+      unlink(OUTGOING_dir, recursive=TRUE)
+      dir.create(OUTGOING_dir)
+      types <- c("source", "win.binary",
+                           "mac.binary.big-sur-arm64",
+                           "mac.binary.big-sur-x86_64")
+      for (type in types) {
+          OUTGOING_subdir <- file.path(OUTGOING_dir, type)
+          dir.create(OUTGOING_subdir)
+          pkgs <- OUTGOING_pkgs[[type]]
+          write.dcf(pkgs, file.path(OUTGOING_subdir, "PACKAGES"))
+      }
+  }
+
+  create_final_repo <- function(final_repo_dir, final_repo_pkgs)
+  {
+      unlink(final_repo_dir, recursive=TRUE)
+      dir.create(final_repo_dir)
+      types <- c("source", "win.binary",
+                           "mac.binary.big-sur-arm64",
+                           "mac.binary.big-sur-x86_64")
+      for (type in types) {
+          repo_subdir <- contrib.url(final_repo_dir, type=type)
+          dir.create(repo_subdir, recursive=TRUE)
+          pkgs <- final_repo_pkgs[[type]]
+          write.dcf(pkgs, file.path(repo_subdir, "PACKAGES"))
+      }
+  }
+
+  test_makePropagationStatusDb <-
+          function(OUTGOING_dir, final_repo_dir,
+                   non_target_repos=NULL,
+                   db_filepath="PROPAGATION_STATUS_DB.txt")
+  {
+      if (missing(OUTGOING_dir)) {
+          OUTGOING_dir <- file.path(tempdir(), "OUTGOING")
+          create_OUTGOING_dir(OUTGOING_dir, OUTGOING_pkgs)
+      }
+      if (missing(final_repo_dir)) {
+          final_repo_dir <- file.path(tempdir(), "final_repo")
+          create_final_repo(final_repo_dir, final_repo_pkgs)
+      }
+      final_repo <- paste0("file:/", final_repo_dir)
+      makePropagationStatusDb(OUTGOING_dir, final_repo,
+                              non_target_repos=non_target_repos,
+                              db_filepath=db_filepath)
+  }
+
+  test_makePropagationStatusDb()
 }
 
