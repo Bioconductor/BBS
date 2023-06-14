@@ -230,12 +230,12 @@ if [ -d "$so_path" ]; then
                 fix_dylib_links "$so_file"
                 echo ""
                 echo ">>>>>>> Paths after fix:"
-                echo ""
                 shared_libraries=`otool -L "$so_file"`
                 echo "$shared_libraries"
                 if [ -z "${shared_libraries##*/opt/gfortran*}" ]; then
                     exit_code=1
                 fi
+                echo ""
             fi
         done
     done
