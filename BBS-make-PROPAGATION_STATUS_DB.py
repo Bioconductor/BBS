@@ -15,6 +15,7 @@ import subprocess
 import BBSutils
 import BBSvars
 import BBSbase
+import bbs.notify
 
 def make_PROPAGATION_STATUS_DB(final_repo):
     Rfunction = 'makePropagationStatusDb'
@@ -30,8 +31,20 @@ def make_PROPAGATION_STATUS_DB(final_repo):
     ## subprocess.run() if this code is runned by the Task Scheduler
     ## on Windows (the child process tends to almost always return an
     ## error). Apparently using 'stderr=subprocess.STDOUT' fixes this pb.
-    subprocess.run(cmd, stdout=None, stderr=subprocess.STDOUT, shell=True,
-                   check=True)
+    try:
+        subprocess.run(cmd, stdout=None, stderr=subprocess.STDOUT, shell=True,
+                       check=True)
+    except subprocess.CalledProcessError as e:
+        msg_body = f"""\
+        Postrun failed on the BBS with the following error:
+
+        Error: {e}"""
+        bbs.notify.mode = "do-it"
+        bbs.notify.sendtextmail("no-reply@bioconductor.org",
+                                ["maintainers@bioconductor.org"],
+                                "[BBS] PostRun Failed",
+                                msg_body)
+        raise e
     return
 
 ##############################################################################
