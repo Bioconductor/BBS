@@ -623,7 +623,7 @@ def STAGE3():
 
 
 ##############################################################################
-## STAGE4: Check the srcpkg files.
+## STAGE4: Run 'R CMD check' on the srcpkg files
 ##############################################################################
 
 def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
@@ -687,6 +687,74 @@ def STAGE4():
     job_queue = prepare_STAGE4_job_queue(srcpkg_paths, out_dir)
     STAGE4_loop(job_queue, BBSvars.checksrc_nb_cpu, out_dir)
     print("BBS> [STAGE4] DONE at %s." % time.asctime())
+    return
+
+
+##############################################################################
+## STAGE4B: Run Rscript -e "BiocCheck::BiocCheck('<srcpkg>')" on srcpkg files
+##############################################################################
+
+def prepare_STAGE4B_job_queue(srcpkg_paths, out_dir):
+    print("BBS> Preparing STAGE4B job queue ...", end=" ")
+    sys.stdout.flush()
+    stage = 'bioccheck'
+    jobs = []
+    for srcpkg_path in srcpkg_paths:
+        cmd = BBSbase.getSTAGE4Bcmd(srcpkg_path)
+        pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
+        version = bbs.parse.get_version_from_srcpkg_path(srcpkg_path)
+        BiocCheck_dir = pkg + '.BiocCheck'
+        pkgdumps_prefix = pkg + '.' + stage
+        pkgdumps = BBSbase.PkgDumps(BiocCheck_dir, pkgdumps_prefix)
+        job = BBSbase.CheckSrc_Job(pkg, version, cmd, pkgdumps, out_dir)
+        jobs.append(job)
+    print("OK")
+    sys.stdout.flush()
+    job_queue = bbs.jobs.JobQueue(stage, jobs, None)
+    job_queue._total = len(srcpkg_paths)
+    return job_queue
+
+def STAGE4B_loop(job_queue, nb_cpu, out_dir):
+    print("BBS> BEGIN STAGE4B loop.")
+    t1 = time.time()
+    if BBSvars.asynchronous_transmission:
+        rdir = BBSvars.bioccheck_rdir
+        products_push_cmd = make_products_push_cmd(out_dir, rdir)
+        products_push_log = os.path.join(products_out_path, 'bioccheck-push.log')
+    else:
+        products_push_cmd = products_push_log = None
+    bbs.jobs.processJobQueue(job_queue, nb_cpu,
+                             BBSvars.CHECK_timeout,
+                             products_push_cmd,
+                             products_push_log,
+                             verbose=True)
+    dt = time.time() - t1
+    print("BBS> END STAGE4B loop.")
+    nb_jobs = len(job_queue._jobs)
+    total = job_queue._total
+    print("BBS> -------------------------------------------------------------")
+    print("BBS> STAGE4B SUMMARY:")
+    print("BBS>   o Working dir: %s" % os.getcwd())
+    print("BBS>   o %d srcpkg file(s) in working dir" % total)
+    print("BBS>   o %d srcpkg file(s) queued and processed" % nb_jobs)
+    print("BBS>   o Total time: %.2f seconds" % dt)
+    print("BBS> -------------------------------------------------------------")
+    return
+
+def STAGE4B():
+    print("BBS> [STAGE4B] STARTING STAGE4B at %s" % time.asctime())
+    if BBSvars.synchronous_transmission:
+        out_dir = BBSvars.bioccheck_rdir
+        out_dir.RemakeMe(True)
+    else:
+        out_dir = make_products_out_subdir('bioccheck')
+
+    print("BBS> [STAGE4B] cd BBS_MEAT_PATH")
+    os.chdir(BBSvars.meat_path)
+    srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("CHECK")
+    job_queue = prepare_STAGE4B_job_queue(srcpkg_paths, out_dir)
+    STAGE4B_loop(job_queue, BBSvars.checksrc_nb_cpu, out_dir)
+    print("BBS> [STAGE4B] DONE at %s." % time.asctime())
     return
 
 
@@ -783,7 +851,7 @@ def stages_to_run(argv):
         return "all-no-bin"
     stages = ""
     for stage in argv[1:]:
-        if stage not in ['STAGE2', 'STAGE3', 'STAGE4', 'STAGE5']:
+        if stage not in ['STAGE2', 'STAGE3', 'STAGE4', 'STAGE4B', 'STAGE5']:
             print("ERROR: Invalid stage: %s" % stage)
             print()
             sys.exit(usage_msg)
@@ -826,6 +894,14 @@ if __name__ == "__main__":
         dt = time.time() - t1
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE4', BBSvars.checksrc_nb_cpu, started_at, ended_at, dt))
+    ## STAGE4B: check source packages
+    if stages in ["all", "all-no-bin"] or "STAGE4B" in stages:
+        started_at = bbs.jobs.currentDateString()
+        t1 = time.time()
+        STAGE4B()
+        dt = time.time() - t1
+        ended_at = bbs.jobs.currentDateString()
+        ticket.append(('STAGE4B', BBSvars.checksrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE5: build bin packages
     if stages == "all" or "STAGE5" in stages:
         started_at = bbs.jobs.currentDateString()

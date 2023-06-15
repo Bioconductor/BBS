@@ -185,7 +185,7 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
 
 ##############################################################################
 ### Generate the system commands used for installing (STAGE2), building
-### (STAGE3 and STAGE5), and checking (STAGE4) each package.
+### (STAGE3 and STAGE5), and checking (STAGE4 and STAGE4B) each package.
 ##############################################################################
 
 def _get_prepend_from_BBSoptions(pkgsrctree, key_prefix):
@@ -513,6 +513,10 @@ def getSTAGE4cmd(srcpkg_path):
     if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
     return cmd
+
+def getSTAGE4Bcmd(srcpkg_path):
+    Rexpr = "BiocCheck::BiocCheck('%s')" % srcpkg_path
+    return Rexpr2syscmd(Rexpr)
 
 ### On Windows we use 'R CMD INSTALL --build' on the source tarball produced
 ### at STAGE3. Note that zipping the package installation folder located in

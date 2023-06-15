@@ -25,8 +25,8 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.18-bioc-testing"
 # /home/biocbuild/bbs-3.18-bioc/R/site-library!
 export BBS_R_HOME="/home/biocbuild/bbs-3.18-bioc/R"
 export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
-export BBS_NB_CPU=2        # 20 cores are available
-export BBS_CHECK_NB_CPU=4  # 20 cores are available
+export BBS_NB_CPU=10        # 72 cores are available
+export BBS_CHECK_NB_CPU=12  # 72 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
@@ -47,7 +47,7 @@ cd "$wd0"
 # central node
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo2 palomino4:bin"
+export BBS_REPORT_NODES="nebbiolo2"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"

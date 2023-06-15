@@ -150,6 +150,7 @@ if not no_transmission:
     install_rdir = Node_rdir.subdir('install')
     buildsrc_rdir = Node_rdir.subdir('buildsrc')
     checksrc_rdir = Node_rdir.subdir('checksrc')
+    bioccheck_rdir = Node_rdir.subdir('bioccheck')
     buildbin_rdir = Node_rdir.subdir('buildbin')
 
 ### Used by BBS-prerun.py only
