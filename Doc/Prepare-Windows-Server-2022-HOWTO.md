@@ -678,7 +678,28 @@ for Windows Server 2022.
 - Then click OK on bottom.
 
 
-### 2.5 Install Rtools
+### 2.5 Change Active Hours
+
+Sometimes Windows will automatically perform updates and trigger a reboot
+during a build. To delay these updates, we can change the machine's active
+hours; however, since active hours can only be an 18-hour window, we can't
+prevent all restarts.
+
+**From a personal administrator account**:
+
+- Open "Windows Update settings".
+
+- Select "Change active hours".
+
+- Select "Change".
+
+- In the Active hours window, set the Start time to 12:00 PM and End time to
+  6:00 AM.
+
+- Select "Save".
+
+
+### 2.6 Install Rtools
 
 In Dec. 2021, CRAN has switched to a new toolchain to build R and R
 packages.
@@ -729,7 +750,7 @@ in a PowerShell window:
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
 
-### 2.8 Install Pandoc
+### 2.7 Install Pandoc
 
 **From a personal administrator account**:
 
