@@ -404,6 +404,7 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
     OUTGOING_types <- c("source", "win.binary",
                         "mac.binary.big-sur-arm64",
                         "mac.binary.big-sur-x86_64")
+    available_srcpkgs <- NULL
     for (type in OUTGOING_types) {
         OUTGOING_subdir <- file.path(OUTGOING_dir, type)
         if (!file.exists(OUTGOING_subdir))
@@ -418,6 +419,9 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
             statuses <- compute_propagation_statuses(OUTGOING_pkgs,
                                             available_pkgs)
         } else {
+            if (is.null(available_srcpkgs))
+                available_srcpkgs <- .fetch_available_pkgs(final_repo, "source",
+                                                           non_target_repos)
             statuses <- compute_propagation_statuses(OUTGOING_pkgs,
                                             available_pkgs,
                                             available_srcpkgs=available_srcpkgs)
