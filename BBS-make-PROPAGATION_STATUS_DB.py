@@ -44,7 +44,7 @@ def make_PROPAGATION_STATUS_DB(final_repo):
         Error: {e}"""
         bbs.notify.mode = "do-it"
         bbs.notify.sendtextmail("BBS-noreply@bioconductor.org",
-                                ["maintainers@bioconductor.org"],
+                                ["maintainer@bioconductor.org"],
                                 subject,
                                 msg_body)
         raise e
