@@ -12,10 +12,11 @@ import os
 import time
 import subprocess
 
+import bbs.notify
+
 import BBSutils
 import BBSvars
 import BBSbase
-import bbs.notify
 
 def make_PROPAGATION_STATUS_DB(final_repo):
     Rfunction = 'makePropagationStatusDb'
@@ -35,14 +36,16 @@ def make_PROPAGATION_STATUS_DB(final_repo):
         subprocess.run(cmd, stdout=None, stderr=subprocess.STDOUT, shell=True,
                        check=True)
     except subprocess.CalledProcessError as e:
+        subject = (f"[BBS] {BBSvars.bioc_version} {BBSvars.buildtype} Postrun "
+                   f"Failure")
         msg_body = f"""\
         Postrun failed on the BBS with the following error:
 
         Error: {e}"""
         bbs.notify.mode = "do-it"
-        bbs.notify.sendtextmail("no-reply@bioconductor.org",
+        bbs.notify.sendtextmail("BBS-noreply@bioconductor.org",
                                 ["maintainers@bioconductor.org"],
-                                "[BBS] PostRun Failed",
+                                subject,
                                 msg_body)
         raise e
     return
