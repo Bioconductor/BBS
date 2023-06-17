@@ -721,12 +721,14 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.summary.started_at = self._started_at
         self.summary.ended_at = self._ended_at
         self.summary.dt = self._t2 - self._t1
-        Rcheck_dir = self.pkgdumps.product_path
-        if os.path.exists(Rcheck_dir):
-            _clean_Rcheck_dir(Rcheck_dir, self.pkg)
-        else:
-            Rcheck_dir = 'None'
-        self.summary.Append('CheckDir', Rcheck_dir)
+        if self.pkgdumps.product_path != None:
+            # We're doing 'R CMD check' and not 'BiocCheck()'.
+            Rcheck_dir = self.pkgdumps.product_path
+            if os.path.exists(Rcheck_dir):
+                _clean_Rcheck_dir(Rcheck_dir, self.pkg)
+            else:
+                Rcheck_dir = 'None'
+            self.summary.Append('CheckDir', Rcheck_dir)
         self.summary.Append('Warnings', self.warnings)
         self.summary.Write(self.pkgdumps.summary_file)
         self.pkgdumps.Push(self.out_dir)
@@ -746,17 +748,36 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         # self.pkgdumps.Push(self.out_dir) above by holding on some of the
         # files that need to be pushed to the central build node.
         bbs.jobs.killProc(self._proc.pid)
-        self.summary.retcode = self._retcode
-        if self._retcode == 0:
-            self.warnings = bbs.parse.countWARNINGs(self._output_file)
-            if self.warnings == "0":
-                self.summary.status = 'OK'
+        cumul_inc = 0
+        if self.pkgdumps.product_path != None:
+            # We're doing 'R CMD check'.
+            self.summary.retcode = self._retcode
+            if self._retcode == 0:
+                self.warnings = bbs.parse.countWARNINGs(self._output_file)
+                if self.warnings == "0":
+                    self.summary.status = 'OK'
+                else:
+                    self.summary.status = 'WARNINGS'
+                cumul_inc = 1
             else:
-                self.summary.status = 'WARNINGS'
-            cumul_inc = 1
+                self.summary.status = 'ERROR'
         else:
-            self.summary.status = 'ERROR'
-            cumul_inc = 0
+            # We're doing 'BiocCheck()'.
+            self.summary.retcode = None
+            res = bbs.parse.extractBiocCheckResults(self._output_file)
+            if res == None:
+                self.summary.status = 'NA'
+            else:
+                (nberr, nbwarn, nbnote) = res
+                self.warnings = str(nbwarn)
+                if nberr != 0:
+                    self.summary.status = 'ERROR'
+                else:
+                    if nbwarn != 0:
+                        self.summary.status = 'WARNINGS'
+                    else:
+                        self.summary.status = 'OK'
+                    cumul_inc = 1
         self._MakeSummary()
         return cumul_inc
     def AfterTimeout(self, maxtime_per_job):

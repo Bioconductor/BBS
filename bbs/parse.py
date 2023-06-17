@@ -544,6 +544,20 @@ def installPkgWasOK(out_file, pkg):
             return False
     return True
 
+### Assume 'out_file' is a file containing the output of 'BiocCheck()'.
+### Only parse the last 12 lines of the output file.
+### Returns the triplet (nb of ERRORS, nb of WARNINGS, nb of NOTES) or None
+### if this information could not be extracted.
+def extractBiocCheckResults(out_file):
+    tail = readFileTail(out_file, 12)
+    regex = r'([^ ]*) *errors? *\| *([^ ]*) *warnings? *\| *([^ ]*) *notes?'
+    p = re.compile(regex)
+    for line in tail:
+        m = p.match(line.lower())
+        if m != None:
+            return (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+    return None
+
 ### Assume 'out_file' is a file containing the output of install.packages().
 ### Extract the name of the locking package from the last 12 lines of the output
 ### file.

@@ -10,6 +10,7 @@
 import sys
 import os
 import time
+import re
 import urllib.request
 from functools import lru_cache
 
@@ -703,9 +704,8 @@ def prepare_STAGE4B_job_queue(srcpkg_paths, out_dir):
         cmd = BBSbase.getSTAGE4Bcmd(srcpkg_path)
         pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
         version = bbs.parse.get_version_from_srcpkg_path(srcpkg_path)
-        BiocCheck_dir = pkg + '.BiocCheck'
         pkgdumps_prefix = pkg + '.' + stage
-        pkgdumps = BBSbase.PkgDumps(BiocCheck_dir, pkgdumps_prefix)
+        pkgdumps = BBSbase.PkgDumps(None, pkgdumps_prefix)
         job = BBSbase.CheckSrc_Job(pkg, version, cmd, pkgdumps, out_dir)
         jobs.append(job)
     print("OK")
@@ -860,6 +860,14 @@ def stages_to_run(argv):
         stages += stage
     return stages
 
+def stage_is_to_be_run(stage, stages):
+    if stages == "all":
+        return True
+    if stage != 'STAGE5' and stages == "all-no-bin":
+        return True
+    p = re.compile(r'\b%s\b' % stage)
+    return p.search(stages) != None
+
 if __name__ == "__main__":
     stages = stages_to_run(sys.argv)
     print()
@@ -871,7 +879,7 @@ if __name__ == "__main__":
             bbs.fileutils.remake_dir(products_out_path, ignore_errors=True)
     ticket = []
     ## STAGE2: preinstall dependencies
-    if stages in ["all", "all-no-bin"] or "STAGE2" in stages:
+    if stage_is_to_be_run('STAGE2', stages):
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE2()
@@ -879,7 +887,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE2', BBSvars.install_nb_cpu, started_at, ended_at, dt))
     ## STAGE3: build source packages
-    if stages in ["all", "all-no-bin"] or "STAGE3" in stages:
+    if stage_is_to_be_run('STAGE3', stages):
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE3()
@@ -887,7 +895,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE3', BBSvars.buildsrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE4: check source packages
-    if stages in ["all", "all-no-bin"] or "STAGE4" in stages:
+    if stage_is_to_be_run('STAGE4', stages):
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE4()
@@ -895,7 +903,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE4', BBSvars.checksrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE4B: check source packages
-    if stages in ["all", "all-no-bin"] or "STAGE4B" in stages:
+    if stage_is_to_be_run('STAGE4B', stages):
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE4B()
@@ -903,7 +911,7 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString()
         ticket.append(('STAGE4B', BBSvars.checksrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE5: build bin packages
-    if stages == "all" or "STAGE5" in stages:
+    if stage_is_to_be_run('STAGE5', stages):
         started_at = bbs.jobs.currentDateString()
         t1 = time.time()
         STAGE5()
