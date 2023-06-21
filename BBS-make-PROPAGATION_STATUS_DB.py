@@ -36,10 +36,11 @@ def make_PROPAGATION_STATUS_DB(final_repo):
         subprocess.run(cmd, stdout=None, stderr=subprocess.STDOUT, shell=True,
                        check=True)
     except subprocess.CalledProcessError as e:
-        subject = (f"[BBS] {BBSvars.bioc_version} {BBSvars.buildtype} Postrun "
-                   f"Failure")
+        subject = (f"[BBS] Postrun failure on {BBSvars.node_hostname} for "
+                   f"{BBSvars.bioc_version} {BBSvars.buildtype} builds")
         msg_body = f"""\
-        Postrun failed on the BBS with the following error:
+        Postrun failed on {BBSvars.node_hostname} for the {BBSvars.bioc_version}
+        {BBSvars.buildtype} builds with the following error:
 
         Error: {e}"""
         bbs.notify.mode = "do-it"
