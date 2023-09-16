@@ -1,6 +1,7 @@
 # How to set up a macOS Monterey machine for the daily builds
 
 
+
 ## 0. General information and tips
 
 
@@ -9,6 +10,7 @@
 - Watch https://mac.r-project.org/ for changes in requirements. Binaries can be
   found at https://mac.r-project.org/bin/.
 - As of April 2023, the minimum supported OS is MacOSX11.
+
 
 
 ## 1. Initial setup (from the administrator account)
@@ -114,6 +116,7 @@ Testing:
 Fix:
 
     sudo systemsetup -setremotelogin On
+
 
 
 ## 2. Check hardware, OS, and connectivity with central build node
@@ -772,6 +775,7 @@ TESTING
     merida1:~ biocbuild$ curl https://stat.ethz.ch/
 
 It should not produce any output that the certificate has expired.
+
 
 
 ## 3. Set up the Bioconductor software builds
@@ -1724,6 +1728,7 @@ If GLPK is not available, one gets:
 
     Error in cluster_optimal(make_graph("Zachary")) :
       At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
+
 
 
 ## 5. Set up other builds

@@ -1155,7 +1155,16 @@ is to reduce the amount of red as much as possible.
 Everything in this section must be done **from a sudoer account**.
 
 
-### 3.1 Install BibTeX style humannat.bst
+### 3.1 Install Quarto
+
+Required by CRAN package **quarto**.
+
+Download latest `quarto-X.Y.ZZZ-linux-amd64.deb` package from https://quarto.org/docs/download/ (`quarto-1.3.450-linux-amd64.deb` as of Sep 15, 2023).
+
+Install with `sudo dpkg -i quarto-X.Y.ZZZ-linux-amd64.deb`.
+
+
+### 3.2 Install BibTeX style humannat.bst
 
 Required by Bioconductor package **destiny**.
 
@@ -1171,7 +1180,7 @@ Install with:
     sudo texhash
 
 
-### 3.2 Install ensembl-vep
+### 3.3 Install ensembl-vep
 
 Required by Bioconductor packages **ensemblVEP** and **MMAPPR2**.
 
@@ -1244,7 +1253,7 @@ and **MMAPPR2** packages:
     ../R/bin/R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
 
 
-### 3.3 Install ViennaRNA
+### 3.4 Install ViennaRNA
 
 Required by Bioconductor package **GeneGA**.
 
@@ -1271,7 +1280,7 @@ Finally try to build the **GeneGA** package:
     ../R/bin/R CMD build GeneGA
 
 
-### 3.4 Set LIBSBML_CFLAGS and LIBSBML_LIBS
+### 3.5 Set LIBSBML_CFLAGS and LIBSBML_LIBS
 
 Required by Bioconductor package **rsbml**.
 
@@ -1302,7 +1311,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD INSTALL rsbml
 
 
-### 3.5 Install ImmuneSpace credentials
+### 3.6 Install ImmuneSpace credentials
 
 Required by Bioconductor package **ImmuneSpaceR**.
 
@@ -1323,7 +1332,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD build ImmuneSpaceR
 
 
-### 3.6 Install Perl module XML::Simple
+### 3.7 Install Perl module XML::Simple
 
 Required by Bioconductor package **LowMACA**.
 
@@ -1339,7 +1348,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD build LowMACA
 
 
-### 3.7 Install .NET runtime
+### 3.8 Install .NET runtime
 
 Required by Bioconductor package **rmspc**.
 
@@ -1364,7 +1373,7 @@ From the `biocbuild` account, try to build and check the **rmspc** package:
     ../R/bin/R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
 
 
-### 3.8 Install ROOT
+### 3.9 Install ROOT
 
 SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (**xps** was deprecated
 in BioC 3.12)
