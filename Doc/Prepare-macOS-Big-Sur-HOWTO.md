@@ -1047,7 +1047,7 @@ as of Nov 2020):
               "fftw", "fftwtools", "proj4", "textshaping", "ragg",  "Rmpfr",
               "pdftools", "av", "sf", "RcppAlgos", "glpkAPI", "gert",
               "RPostgres", "RMySQL", "RMariaDB", "protolite", "arrangements",
-              "terra", "PoissonBinomial", "igraph", "redux")
+              "terra", "PoissonBinomial", "igraph", "redux", "qqconf")
 
 First try to install with:
 
