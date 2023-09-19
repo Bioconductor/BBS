@@ -644,41 +644,7 @@ and the prerun script would fail to delete this folder.
   - Then click OK on bottom right
 
 
-### 2.4 Schedule installation of system updates before daily reboot
-
-This is not mandatory but RECOMMENDED.
-
-NOTE: Instructions below are for Windows Server 2012. TODO: Update them
-for Windows Server 2022.
-
-**From a personal administrator account**:
-
-- Open Control Panel.
-
-- Click on System and Security.
-
-- Click on Windows Update.
-
-- On the left panel click on Change Settings.
-
-  - Important updates:
-    - Make sure "Install updates automatically (recommended)" is selected.
-    - Click on Updates will be automatically installed during the maintenance
-      window.
-    - Change the time for "Run maintenance tasks daily at" to 1:00 PM (default
-      is 2:00 AM).
-    - Check "Allow scheduled maintenance to wake up my computer at the
-      scheduled time".
-    - Then click OK on bottom.
-
-  - Recommended updates:
-    - Check "Give me recommended updates the same way I receive important
-      updates".
-
-- Then click OK on bottom.
-
-
-### 2.5 Change Active Hours
+### 2.4 Change Active Hours
 
 Sometimes Windows will automatically perform updates and trigger a reboot
 during a build. To delay these updates, we can change the machine's active
@@ -699,7 +665,7 @@ prevent all restarts.
 - Select "Save".
 
 
-### 2.6 Install Rtools
+### 2.5 Install Rtools
 
 In Dec. 2021, CRAN has switched to a new toolchain to build R and R
 packages.
@@ -750,7 +716,7 @@ in a PowerShell window:
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
 
-### 2.7 Install Pandoc
+### 2.6 Install Pandoc
 
 **From a personal administrator account**:
 
