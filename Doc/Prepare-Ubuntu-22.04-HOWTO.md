@@ -1253,34 +1253,7 @@ and **MMAPPR2** packages:
     ../R/bin/R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
 
 
-### 3.4 Install ViennaRNA
-
-Required by Bioconductor package **GeneGA**.
-
-#### Download and install
-
-    ## No Ubuntu package for 22.04 yet (as of Aug. 2020) but the package for
-    ## Ubuntu 19.04 seems to work alright.
-    #wget https://www.tbi.univie.ac.at/RNA/download/ubuntu/ubuntu_19_04/viennarna_2.4.14-1_amd64.deb
-    #sudo dpkg -i viennarna_2.4.14-1_amd64.deb
-
-    ## There's one now! (Jan. 2021)
-    wget https://www.tbi.univie.ac.at/RNA/download/ubuntu/ubuntu_22.04/viennarna_2.4.17-1_amd64.deb
-    sudo dpkg -i viennarna_2.4.17-1_amd64.deb
-
-#### Testing
-
-From the `biocbuild` account:
-
-    which RNAfold  # /usr/bin/RNAfold
-
-Finally try to build the **GeneGA** package:
-
-    cd ~/bbs-3.18-bioc/meat/
-    ../R/bin/R CMD build GeneGA
-
-
-### 3.5 Set LIBSBML_CFLAGS and LIBSBML_LIBS
+### 3.4 Set LIBSBML_CFLAGS and LIBSBML_LIBS
 
 Required by Bioconductor package **rsbml**.
 
@@ -1311,7 +1284,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD INSTALL rsbml
 
 
-### 3.6 Install ImmuneSpace credentials
+### 3.5 Install ImmuneSpace credentials
 
 Required by Bioconductor package **ImmuneSpaceR**.
 
@@ -1332,7 +1305,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD build ImmuneSpaceR
 
 
-### 3.7 Install Perl module XML::Simple
+### 3.6 Install Perl module XML::Simple
 
 Required by Bioconductor package **LowMACA**.
 
@@ -1348,7 +1321,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD build LowMACA
 
 
-### 3.8 Install .NET runtime
+### 3.7 Install .NET runtime
 
 Required by Bioconductor package **rmspc**.
 
@@ -1371,108 +1344,6 @@ From the `biocbuild` account, try to build and check the **rmspc** package:
     cd ~/bbs-3.18-bioc/meat/
     ../R/bin/R CMD build rmspc
     ../R/bin/R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
-
-
-### 3.9 Install ROOT
-
-SEPT 2020: THIS SHOULD NO LONGER BE NEEDED! (**xps** was deprecated
-in BioC 3.12)
-
-Required by Bioconductor package **xps**.
-
-**xps** wants ROOT 5, not 6.
-
-ROOT supports 2 installation methods: "location independent" and "fix
-location". We will do "location independent" installation.
-
-#### Prerequisite
-
-    sudo apt-get install cmake
-    sudo apt-get install libxpm-dev
-
-#### Build
-
-    cd ~/sandbox/
-    ## Unfortunately ROOT v5-34-00 fails to compile on Ubuntu 20.04 so
-    ## we install ROOT v6-22-00 (current stable release as of July 2020).
-    ## We know that xps wants ROOT 5, not 6, so even though compiling
-    ## ROOT v6-22-00 is succesful we kind of anticipate bad things to
-    ## happen later.
-    #git clone --branch v5-34-00-patches https://github.com/root-project/root.git root_src
-    git clone --branch v6-22-00-patches https://github.com/root-project/root.git root_src
-    mkdir root_build
-    cd root_build/
-    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/root -Dgnuinstall=ON -Dfortran=OFF -Dmysql=OFF -Dsqlite=OFF ../root_src
-    cmake --build . -- -j20  # takes about 10 min.
-
-#### Install
-
-    sudo cmake --build . --target install
-
-Try to start a ROOT interactive session:
-
-    source bin/thisroot.sh
-    root  # then quit the session with .q
-
-#### Edit `/etc/profile`
-
-In `/etc/profile` add the following line (before the `PATH` and
-`DYLD_LIBRARY_PATH` lines):
-
-    export ROOTSYS="/usr/local/root"  # do NOT set ROOTSYS, it will break
-                                      # xps configure script!
-
-Also append `$ROOTSYS/bin` to `PATH` and `$ROOTSYS/lib/root` to
-`DYLD_LIBRARY_PATH`.
-
-#### Testing
-
-From the `biocbuild` account:
-
-    which root-config      # /usr/local/root/bin/root-config
-    root-config --version  # 6.22/01
-
-Finally try to install the **xps** package:
-
-    cd ~/bbs-3.18-bioc/meat/
-    ../R/bin/R CMD INSTALL xps
-
-As expected, this currently fails (with **xps** 1.49.0):
-
-    * installing to library ‘/home/biocbuild/bbs-3.12-bioc/R/library’
-    * installing *source* package ‘xps’ ...
-    ** using staged installation
-    checking for gcc... gcc
-    checking for C compiler default output file name... a.out
-    checking whether the C compiler works... yes
-    checking whether we are cross compiling... no
-    checking for suffix of executables...
-    checking for suffix of object files... o
-    checking whether we are using the GNU C compiler... yes
-    checking whether gcc accepts -g... yes
-    checking for gcc option to accept ANSI C... none needed
-    checking how to run the C preprocessor... gcc -E
-    checking for gcc... (cached) gcc
-    checking whether we are using the GNU C compiler... (cached) yes
-    checking whether gcc accepts -g... (cached) yes
-    checking for gcc option to accept ANSI C... (cached) none needed
-    found ROOT version 6.22/01 in directory /usr/local/root
-    ** libs
-    ** arch -
-    Unknown argument "--dicttype"!
-    Usage: root-config [--prefix[=DIR]] [--exec-prefix[=DIR]] [--version] [--cflags] [--auxcflags] [--ldflags] [--new] [--nonew] [--libs] [--glibs] [--evelibs] [--bindir] [--libdir] [--incdir] [--etcdir] [--tutdir] [--srcdir] [--noauxcflags] [--noauxlibs] [--noldflags] [--has-<feature>] [--arch][--python-version] [--python2-version] [--python3-version] [--cc] [--cxx] [--f77] [--ld ] [--help]
-    c++ -I/usr/local/root/include -O2 -Wall -fPIC -pthread -std=c++11 -m64 -I/usr/local/root/include/root -c TMLMath.cxx
-    TMLMath.cxx:1111: warning: "xmax" redefined
-     1111 | #define xmax  2.5327372760800758e+305
-          |
-    ...
-    ...
-    c++ -I/usr/local/root/include -O2 -Wall -fPIC -pthread -std=c++11 -m64 -I/usr/local/root/include/root -c rwrapper.cxx
-    Generating dictionary xpsDict.cxx...
-    rootcint: error while loading shared libraries: libRIO.so: cannot open shared object file: No such file or directory
-    make: *** [Makefile:112: xpsDict.cxx] Error 127
-    ERROR: compilation failed for package ‘xps’
-    * removing ‘/home/biocbuild/bbs-3.12-bioc/R/library/xps’
 
 
 
