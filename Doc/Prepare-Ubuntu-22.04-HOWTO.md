@@ -1630,3 +1630,16 @@ If you're happy with the result, link the report from this page:
 
   https://master.bioconductor.org/checkResults/
 
+
+## 5 Store the last 7 reports
+
+Save the 7 most recent software reports in `/home/biocbuild/archives`. Create the
+directory with `mkdir /home/biocbuild/archives` then add the following to
+the crontab:
+
+    # Archive reports
+    35 12 * * 1-6 cp /home/biocbuild/public_html/BBS/3.18/bioc/report/report.tgz /home/biocbuild/archives/bioc-report-`date +\%Y\%m\%d`.tgz
+
+    # Remove reports older than 1 week
+    40 12 * * 1-6 find /home/biocbuild/archives/bioc-report*.tgz -maxdepth 1 -mtime +7 -type f -delete
+
