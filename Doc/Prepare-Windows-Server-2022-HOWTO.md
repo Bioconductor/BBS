@@ -269,17 +269,17 @@ with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
 
 **From the Administrator account** in a PowerShell window:
 
-    pip install numpy scipy sklearn h5py pandas mofapy mofapy2
+    pip install numpy scipy scikit-learn h5py pandas mofapy mofapy2
     pip install tensorflow tensorflow_probability torch
 
 Notes:
 - `scipy` is needed by Bioconductor packages MOFA2 and also by
-  the `sklearn` module (when `sklearn` is imported and `scipy` is not present,
-  the former breaks). However, for some reason, `pip install sklearn`
+  the `scikit-learn` module (when `scikit-learn` is imported and `scipy` is not present,
+  the former breaks). However, for some reason, `pip install scikit-learn`
   does not install `scipy` and completes successfully even if `scipy` is
   not installed.
 
-- `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
+- `numpy`, `scikit-learn`, `h5py`, and `pandas` are needed by Bioconductor packages
   BiocSklearn, MOFA2, and `numpy` is also needed by Bioconductor package DChIPRep.
 
 - `mofapy2` is needed by Bioconductor package MOFA2.
