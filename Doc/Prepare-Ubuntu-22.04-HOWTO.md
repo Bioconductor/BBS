@@ -584,12 +584,12 @@ https://askubuntu.com/questions/802544/is-sudo-pip-install-still-a-broken-practi
 Notes:
 
 - `scipy` is needed by Bioconductor package **MOFA2** but also by
-  the `sklearn` module (when `sklearn` is imported and `scipy` is not present,
-  the former breaks). However, for some reason, `sudo -H pip3 install sklearn`
+  the `scikit-learn` module (when `scikit-learn` is imported and `scipy` is not present,
+  the former breaks). However, for some reason, `sudo -H pip3 install scikit-learn`
   does not install `scipy` and completes successfully even if `scipy` is
   not installed.
 
-- `numpy`, `sklearn`, `h5py`, and `pandas` are needed by Bioconductor packages
+- `numpy`, `scikit-learn`, `h5py`, and `pandas` are needed by Bioconductor packages
   **BiocSklearn**, **MOFA2**, and `numpy` is also needed by Bioconductor
   package **DChIPRep**.
 
