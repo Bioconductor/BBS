@@ -29,3 +29,4 @@ kallisto                    # for rkal
 mono-runtime                # for rawr
 libmono-system-data4.0-cil  # for rawr
 collectl                    # for Rcollectl
+vienna-rna                  # for GeneGA
