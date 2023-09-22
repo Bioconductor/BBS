@@ -1286,14 +1286,15 @@ From the `biocbuild` account:
 
 ### 3.5 Install ImmuneSpace credentials
 
-Required by Bioconductor package **ImmuneSpaceR**.
+Required by Bioconductor package **ImmuneSpaceR**. Get credentials from
+Bitwarden.
 
 #### Edit `/etc/profile`
 
 In `/etc/profile` add:
 
-    export ISR_login=bioc@immunespace.org
-    export ISR_pwd=1notCRAN
+    export ISR_login=*****
+    export ISR_pwd=****
 
 Logout and login again for the changes to `/etc/profile` to take effect.
 
