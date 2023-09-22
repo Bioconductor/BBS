@@ -254,25 +254,64 @@ is fine. If not:
 
 **From the Administrator account** in a PowerShell window:
 
-Set `$pkgs` to the path for the BBS `pip` files. For example
-
-    $pkgs = "F:\biocbuild\BBS\Ubuntu-files\22.04\"
-
-Install pkgs needed by the BBS:
-
-    pip install -r $pkgs_bbs.txt
+    pip install psutil
 
 #### Python 3 modules needed by the Single Package Builder only
 
 **From the Administrator account** in a PowerShell window:
 
-    pip install -r $pkgs_spb.txt
+`virtualenv` is used by the single package builder. Despite python3 shipping
+with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
+
+    pip install virtualenv
 
 #### Python 3 modules needed by some CRAN/Bioconductor packages
 
 **From the Administrator account** in a PowerShell window:
 
-    pip install -r $pkgs_pkgs.txt
+    pip install numpy scipy scikit-learn h5py pandas mofapy mofapy2
+    pip install tensorflow tensorflow_probability torch
+
+Notes:
+- `scipy` is needed by Bioconductor packages MOFA2 and also by
+  the `scikit-learn` module (when `scikit-learn` is imported and `scipy` is not present,
+  the former breaks). However, for some reason, `pip install scikit-learn`
+  does not install `scipy` and completes successfully even if `scipy` is
+  not installed.
+
+- `numpy`, `scikit-learn`, `h5py`, and `pandas` are needed by Bioconductor packages
+  BiocSklearn, MOFA2, and `numpy` is also needed by Bioconductor package DChIPRep.
+
+- `mofapy2` is needed by Bioconductor package MOFA2.
+
+- `tensorflow` is needed by Bioconductor packages scAlign and netReg.
+
+- `tensorflow_probability` is needed by Bioconductor package netReg.
+
+TESTING: In a PowerShell window, start Python and try to import the
+`tensorflow` module. You should see something like this:
+
+    >>> import tensorflow
+    2021-04-07 22:29:19.150396: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
+    2021-04-07 22:29:19.158058: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+    INFO:tensorflow:Enabling eager execution
+    INFO:tensorflow:Enabling v2 tensorshape
+    INFO:tensorflow:Enabling resource variables
+    INFO:tensorflow:Enabling tensor equality
+    INFO:tensorflow:Enabling control flow v2
+    >>>
+
+If instead of the above you get an error like this:
+
+    ImportError: Could not find the DLL(s) 'msvcp140.dll or msvcp140_1.dll'.
+    TensorFlow requires that these DLLs be installed in a directory that is
+    named in your %PATH% environment variable. You may install these DLLs by
+    downloading "Microsoft C++ Redistributable for Visual Studio 2015, 2017
+    and 2019" for your platform from this URL:
+    https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
+
+then please refer to the _Install Visual Studio Community 2022_ section above
+in this document for how to fix this.
 
 
 ### 1.10 Create personal administrator accounts
