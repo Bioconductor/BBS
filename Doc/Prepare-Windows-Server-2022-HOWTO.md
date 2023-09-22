@@ -186,8 +186,10 @@ calls in an `if (interactive()) ...` statement.
 
 ### 1.6 Install Visual Studio Community 2022
 
-Provides the `editbin` command, plus some DLLs apparently needed by the
-most recent versions of the `tensorflow` Python module.
+Only needed if the `tensorflow` Python module fails to load. See
+_Install Python 3 modules_ below. Provides the `editbin` command, plus some
+DLLs apparently needed by the most recent versions of the `tensorflow` Python
+module.
 
 **From the Administrator account**:
 
