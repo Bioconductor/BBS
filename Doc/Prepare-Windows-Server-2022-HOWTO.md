@@ -250,43 +250,22 @@ is fine. If not:
 
 ### 1.9 Install Python 3 modules
 
+**From the Administrator account** in a PowerShell window, set `$pipfile` to the
+path for the BBS `pip` requirements files. For example
+
+    $pipfile = "F:\biocbuild\BBS\Ubuntu-files\22.04\"
+
 #### Python 3 modules needed by BBS
 
-**From the Administrator account** in a PowerShell window:
-
-    pip install psutil
+    pip install -r $pipfile_bbs.txt
 
 #### Python 3 modules needed by the Single Package Builder only
 
-**From the Administrator account** in a PowerShell window:
-
-`virtualenv` is used by the single package builder. Despite python3 shipping
-with `venv`, `venv` is not sufficient. The SPB must use `virtualenv`.
-
-    pip install virtualenv
+    pip install -r $pipfile_spb.txt
 
 #### Python 3 modules needed by some CRAN/Bioconductor packages
 
-**From the Administrator account** in a PowerShell window:
-
-    pip install numpy scipy scikit-learn h5py pandas mofapy mofapy2
-    pip install tensorflow tensorflow_probability torch
-
-Notes:
-- `scipy` is needed by Bioconductor packages MOFA2 and also by
-  the `scikit-learn` module (when `scikit-learn` is imported and `scipy` is not present,
-  the former breaks). However, for some reason, `pip install scikit-learn`
-  does not install `scipy` and completes successfully even if `scipy` is
-  not installed.
-
-- `numpy`, `scikit-learn`, `h5py`, and `pandas` are needed by Bioconductor packages
-  BiocSklearn, MOFA2, and `numpy` is also needed by Bioconductor package DChIPRep.
-
-- `mofapy2` is needed by Bioconductor package MOFA2.
-
-- `tensorflow` is needed by Bioconductor packages scAlign and netReg.
-
-- `tensorflow_probability` is needed by Bioconductor package netReg.
+    pip install -r $pipfile_pkgs.txt
 
 TESTING: In a PowerShell window, start Python and try to import the
 `tensorflow` module. You should see something like this:
