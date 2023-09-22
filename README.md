@@ -73,12 +73,12 @@ If you have a question not covered here:
 | Release | Book              | Linux x86_64                                 | Mon, Wed, Fri         |
 | Release | Long Tests        | Linux x86_64                                 | Sat                   |
 | Devel   | Software ("bioc") | Linux (x86_64, aarch64), Mac x86_64, Win     | Mon-Sat               |
-| Devel   | Software ("bioc") | Mac ARM64                                    | Mon Wed Fri$          |
+| Devel   | Software ("bioc") | Mac ARM64                                    | Mon Wed Fri           |
 | Devel   | Data Annotation   | Linux x86_64                                 | Wed                   |
 | Devel   | Data Experiment   | Linux x86_64                                 | Tue, Thu              |
 | Devel   | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri              |
 | Devel   | Book              | Linux x86_64                                 | Mon, Wed, Fri         |
-| Devel   | Long Tests        | Linux x86_64                                 | Sat$                  |
+| Devel   | Long Tests        | Linux x86_64                                 | Sat                   |
 
 [^1]: As of 2023, there is a third-party guest builder running Linux aarch64 named kunpeng1.
 
