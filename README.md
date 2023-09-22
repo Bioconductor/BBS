@@ -1,6 +1,3 @@
-
-[![Build Status](https://travis-ci.org/Bioconductor/BBS.svg?branch=feature%2Fstatic-analysis)](https://travis-ci.org/Bioconductor/BBS)
-
 Table of Contents
 =================
 
@@ -15,8 +12,8 @@ Table of Contents
       * [How the build machines are organized\.](#how-the-build-machines-are-organized)
       * [DNS resolution and https specifics](#dns-resolution-and-https-specifics)
         * [Address and canonical DNS records](#address-and-cononical-dns-records)
-        * [Traffic routing within the RPCI DMZ](#traffic-routing-within-the-rpci-dmz)
-        * [Mac builders and the RPCI DMZ](#mac-builders-and-the-rpci-dmz)
+        * [Traffic routing within the DFCI DMZ](#traffic-routing-within-the-dfci-dmz)
+        * [Mac builders and the DFCI DMZ](#mac-builders-and-the-dfci-dmz)
       * [What machines are used in which builds?](#what-machines-are-used-in-which-builds)
         * [A note about time zones\.](#a-note-about-time-zones)
     * [How the build system works](#how-the-build-system-works)
@@ -39,21 +36,18 @@ Further documentation on specific tasks is in the [Doc](Doc/) directory.
 
 ## What is BBS?
 
-* A **nightly** build system, not incremental or continuous
-  integration. Maybe it can be replaced by those things
-  in the future.
-* Home-grown. The system was written originally by
-  Herv&eacute; Pag&egrave;s and is now maintained
-  Herv&eacute; and Lori.
-* Written in a mix of shell scripting (bash shell,
-  Windows batch files), Python, and R.
+* A **nightly** build system, not incremental or continuous integration. Maybe
+  it can be replaced by those things in the future.
+* Home-grown. The system was written originally by Herv&eacute; Pag&egrave;s
+  and is now maintained Herv&eacute;, Lori, and Jen.
+* Written in a mix of shell scripting (bash shell, Windows batch files),
+  Python, and R.
 
 ## What is BBS **not**?
 
-BBS is different from the Single Package Builder,
-which is triggered when a tarball is submitted
-to the new package tracker. Though there is some
-common code.
+BBS is different from the Single Package Builder, which is triggered when a
+tarball is submitted to the new package tracker. Though there is some common
+code.
 
 ## Where is the code?
 
@@ -69,42 +63,42 @@ If you have a question not covered here:
 
 ## General overview of BBS
 
-In general, there are four *builds* that run during any given week:
+| Branch  | Build             | Builders                                     | Schedule              |
+|---------|-------------------|----------------------------------------------|-----------------------|
+| Release | Software ("bioc") | Linux (x86_64, aarch64[^1]), Mac x86_64, Win | Mon-Sat$              |
+| Release | Software ("bioc") | Mac ARM64                                    | Start Sun, Finish Fr$ |
+| Release | Data Annotation   | Linux x86_64                                 | Wed$                  |
+| Release | Data Experiment   | Linux x86_64                                 | Tue, Thu$             |
+| Release | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri$             |
+| Release | Book              | Linux x86_64                                 | Mon, Wed, Fri$        |
+| Release | Long Tests        | Linux x86_64                                 | Sat$                  |
+| Devel   | Software ("bioc") | Linux (x86_64, aarch64), Mac x86_64, Win     | Mon-Sat$              |
+| Devel   | Software ("bioc") | Mac ARM64                                    | Mon Wed Fri$          |
+| Devel   | Data Annotation   | Linux x86_64                                 | Wed$                  |
+| Devel   | Data Experiment   | Linux x86_64                                 | Tue, Thu$             |
+| Devel   | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri$             |
+| Devel   | Book              | Linux x86_64                                 | Mon, Wed, Fri$        |
+| Devel   | Long Tests        | Linux x86_64                                 | Sat$                  |
 
-1. Release *software package* (or "bioc") builds run Monday, Wednesday, and
-   Friday on the release Linux, Mac x86-64, and Windows build machines. The
-   release Mac ARM64 builds start Monday and finish on Thursday.
-2. Release *experiment package* (or "data-experiment") builds run Tuesday and
-   Thursday on the release Linux primary builder.
-3. Release *workflow package* builds run Tuesday and Friday on release Linux,
-   Mac x86-64, and Windows build machines.
-4. Release *book* builds run Monday, Wednesday, and Friday on release Linux
-   build machines.
-5. Devel *software* builds run daily, except on Sunday, on the release Linux,
-   Mac x86-64, and Windows build machines. The release Mac ARM64 builds start
-   Monday and finish on Thursday.
-6. Devel *experiment package* (or "data-experiment") builds run Tuesday and
-   Thursday on the devel Linux primary builder.
-7. Devel *workflow package* builds run Tuesday and Friday on devel Linux,
-   Mac x86-64, and Windows build machines.
-8. Devel *book* builds run Monday, Wednesday, and Friday on devel Linux
-   build machines.
+[^1]: As of 2023, there is a third-party guest builder running Linux aarch64 named kunpeng1.
 
 ## What builds where
 
-As of April 2023, the Linux builders and the Mac x86-64 builder named lconway
-are in the DFCI DMZ, the Windows builders are in Azure, and all other Mac
-builders are in MacStadium.
+As of April 2023, the Linux x86_64 builders and the Mac x86_64 builder named
+lconway are in the DFCI DMZ, the Windows builders are in Azure, and the other
+Mac builders are in MacStadium.
 
 ### About the build machines.
 
-There are four build machines each for release and devel.
+Bioconductor maintains eight build machines, four each for release and devel.
 
-* Linux (Ubuntu 22.04 LTS)
-* Windows Server (2022 Datacenter)
-* Mac x86-64 OSX 12.x (Monterey)
-* Mac ARM64 OSX 12.x (Monterey)
-* (soon) Mac ARM64 OSX 13.x (Ventura)
+| Machine              | Arch         | OS                             |
+|----------------------|--------------|--------------------------------|
+| Nebbiolo1 Nebbiolo2  | x86_64       | Ubuntu 22.04 LTS               |
+| Palomino3, Palomino4 | x64          | Windows Server 2022 Datacenter |
+| Lconway, Merida1     | x86_64       | MacOS 12.x Monterey            |
+| Kjohnson2            | arm64        | MacOS 12.x Monterey            |
+| Kjohnson1            | arm64        | MacOS 13.x Ventura             |
 
 ### How the build machines are organized.
 
@@ -119,8 +113,7 @@ about the build, enough to construct the build report.
 ### DNS resolution and https specifics
 
 In Stage 2, the Windows and Mac builders get packages to build from the *primary
-builder*. Historically this was done via http and has recently been
-transitioned to https.
+builder*. Historically this was done via http then we transitioned to https.
 
 #### Address and canonical DNS records
 
@@ -129,7 +122,7 @@ Some machines are available via a pubic IP.  In AWS Route 53 we have CNAME
 
 https://console.aws.amazon.com/route53/home?region=us-east-1#resource-record-sets:Z2LMJH3A2CQNZZ
 
-#### Mac builders and the RPCI DMZ
+#### Mac builders and the DFCI DMZ
 
 The Mac builders are located outside the DFCI DMZ. When they https to the
 *primary builder* they are directed to the public IP which redirects to the
