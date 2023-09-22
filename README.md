@@ -65,19 +65,19 @@ If you have a question not covered here:
 
 | Branch  | Build             | Builders                                     | Schedule              |
 |---------|-------------------|----------------------------------------------|-----------------------|
-| Release | Software ("bioc") | Linux (x86_64, aarch64[^1]), Mac x86_64, Win | Mon-Sat$              |
-| Release | Software ("bioc") | Mac ARM64                                    | Start Sun, Finish Fr$ |
-| Release | Data Annotation   | Linux x86_64                                 | Wed$                  |
-| Release | Data Experiment   | Linux x86_64                                 | Tue, Thu$             |
-| Release | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri$             |
-| Release | Book              | Linux x86_64                                 | Mon, Wed, Fri$        |
-| Release | Long Tests        | Linux x86_64                                 | Sat$                  |
-| Devel   | Software ("bioc") | Linux (x86_64, aarch64), Mac x86_64, Win     | Mon-Sat$              |
+| Release | Software ("bioc") | Linux (x86_64, aarch64[^1]), Mac x86_64, Win | Mon-Sat               |
+| Release | Software ("bioc") | Mac ARM64                                    | Start Sun, Finish Fri |
+| Release | Data Annotation   | Linux x86_64                                 | Wed                   |
+| Release | Data Experiment   | Linux x86_64                                 | Tue, Thu              |
+| Release | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri              |
+| Release | Book              | Linux x86_64                                 | Mon, Wed, Fri         |
+| Release | Long Tests        | Linux x86_64                                 | Sat                   |
+| Devel   | Software ("bioc") | Linux (x86_64, aarch64), Mac x86_64, Win     | Mon-Sat               |
 | Devel   | Software ("bioc") | Mac ARM64                                    | Mon Wed Fri$          |
-| Devel   | Data Annotation   | Linux x86_64                                 | Wed$                  |
-| Devel   | Data Experiment   | Linux x86_64                                 | Tue, Thu$             |
-| Devel   | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri$             |
-| Devel   | Book              | Linux x86_64                                 | Mon, Wed, Fri$        |
+| Devel   | Data Annotation   | Linux x86_64                                 | Wed                   |
+| Devel   | Data Experiment   | Linux x86_64                                 | Tue, Thu              |
+| Devel   | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri              |
+| Devel   | Book              | Linux x86_64                                 | Mon, Wed, Fri         |
 | Devel   | Long Tests        | Linux x86_64                                 | Sat$                  |
 
 [^1]: As of 2023, there is a third-party guest builder running Linux aarch64 named kunpeng1.
