@@ -1,6 +1,7 @@
 # How to set up an Ubuntu 22.04 system for the daily builds
 
-
+Note: A machine running Ubuntu can be configured for the BBS with
+https://github.com/Bioconductor/bioconductor_salt.
 
 ## 1. Initial setup (from a sudoer account)
 
