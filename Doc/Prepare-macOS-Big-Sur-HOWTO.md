@@ -1,6 +1,7 @@
 # How to set up a macOS Monterey machine for the daily builds
 
-
+Note: A Mac can be configured for the BBS with
+https://github.com/Bioconductor/bioconductor_salt.
 
 ## 0. General information and tips
 

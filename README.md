@@ -73,7 +73,7 @@ If you have a question not covered here:
 | Release | Book              | Linux x86_64                                 | Mon, Wed, Fri         |
 | Release | Long Tests        | Linux x86_64                                 | Sat                   |
 | Devel   | Software ("bioc") | Linux (x86_64, aarch64), Mac x86_64, Win     | Mon-Sat               |
-| Devel   | Software ("bioc") | Mac ARM64                                    | Mon Wed Fri           |
+| Devel   | Software ("bioc") | Mac ARM64                                    | Mon, Wed, Fri         |
 | Devel   | Data Annotation   | Linux x86_64                                 | Wed                   |
 | Devel   | Data Experiment   | Linux x86_64                                 | Tue, Thu              |
 | Devel   | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri              |
@@ -94,7 +94,7 @@ Bioconductor maintains eight build machines, four each for release and devel.
 
 | Machine              | Arch         | OS                             |
 |----------------------|--------------|--------------------------------|
-| Nebbiolo1 Nebbiolo2  | x86_64       | Ubuntu 22.04 LTS               |
+| Nebbiolo1, Nebbiolo2 | x86_64       | Ubuntu 22.04 LTS               |
 | Palomino3, Palomino4 | x64          | Windows Server 2022 Datacenter |
 | Lconway, Merida1     | x86_64       | MacOS 12.x Monterey            |
 | Kjohnson2            | arm64        | MacOS 12.x Monterey            |
