@@ -10,7 +10,7 @@ https://github.com/Bioconductor/bioconductor_salt.
   https://wincent.com/wiki/Uninstalling_packages_(.pkg_files)_on_Mac_OS_X
 - Watch https://mac.r-project.org/ for changes in requirements. Binaries can be
   found at https://mac.r-project.org/bin/. These binaries should be preferred
-  other others.
+  over others.
 - As of April 2023, the minimum supported OS is MacOSX11.
 - This document describes how to prepare both x86_64 and arm64 machines for
   the BBS.
@@ -1182,7 +1182,7 @@ Everything in this section must be done **from the biocbuild account**.
 ### 4.1 Install Java
 
 Go to https://jdk.java.net/ and follow the link to the latest JDK. Then
-download the tarball for your specifc mac (e.g. `openjdk-18.0.1.1_macos-x64_bin.tar.gz`
+download the tarball for your specific mac (e.g. `openjdk-18.0.1.1_macos-x64_bin.tar.gz`
 or `openjdk-18.0.1.1_macos-aarch64_bin.tar.gz`) to `~/Downloads/`.
 
 Install with:
