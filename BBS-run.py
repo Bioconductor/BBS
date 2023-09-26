@@ -127,7 +127,8 @@ def makeNodeInfo():
     write_sys_command_version('CXX17')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
-    write_sys_command_version('JAVA')
+    config = BBSutils.getNodeSpec(BBSvars.node_hostname, 'OS').find('Windows')
+    write_sys_command_version('JAVA', not config)
     write_sys_command_version('pandoc', False)
     Rexpr = 'sessionInfo()'
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
