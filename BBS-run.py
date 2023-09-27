@@ -127,7 +127,11 @@ def makeNodeInfo():
     write_sys_command_version('CXX17')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
-    write_sys_command_version('JAVA')
+    # https://github.com/Bioconductor/BBS/pull/333#issuecomment-1736421562
+    if sys.platform == 'win32':
+        write_sys_command_version('java', config=False)
+    else:
+        write_sys_command_version('JAVA')
     write_sys_command_version('pandoc', False)
     Rexpr = 'sessionInfo()'
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
