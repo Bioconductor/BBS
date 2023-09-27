@@ -9,9 +9,11 @@ https://github.com/Bioconductor/bioconductor_salt.
 - For how to uninstall Mac packages (`.pkg` files) using native `pkgutil`:
   https://wincent.com/wiki/Uninstalling_packages_(.pkg_files)_on_Mac_OS_X
 - Watch https://mac.r-project.org/ for changes in requirements. Binaries can be
-  found at https://mac.r-project.org/bin/.
+  found at https://mac.r-project.org/bin/. These binaries should be preferred
+  over others.
 - As of April 2023, the minimum supported OS is MacOSX11.
-
+- This document describes how to prepare both x86_64 and arm64 machines for
+  the BBS.
 
 
 ## 1. Initial setup (from the administrator account)
@@ -591,7 +593,13 @@ TESTING:
 We need to make sure that, by default, the **reticulate** package will
 use the system-wide Python interpreter that is in the `PATH`.
 
-In `/etc/profile` add:
+In the terminal, execute
+
+    which python3
+
+This is the reticulate path that must be set in `/etc/profile`. For example, if
+the output of `which python3` is `/usr/local/bin/python3` then in `/etc/profile`
+add
 
     export RETICULATE_PYTHON="/usr/local/bin/python3"  # same as 'which python3'
 
@@ -609,7 +617,7 @@ TESTING: If R is already installed on the machine, start it, and do:
 
 #### Install Python 3 modules needed by BBS
 
-`BBS_UBUNTU_PATH` must be the path to `BBS/Ubuntu-files/20.04`.
+`BBS_UBUNTU_PATH` must be the path to `BBS/Ubuntu-files/22.04`.
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_bbs.txt
 
@@ -621,9 +629,12 @@ TESTING: If R is already installed on the machine, start it, and do:
 
     sudo -H pip3 install -r $BBS_UBUNTU_PATH/pip_pkgs.txt
 
-Optionally, install all of the above with 
+Optionally, install all of the above with
 
     python3 -m pip install $(cat $BBS_UBUNTU_PATH/pip_*.txt | awk '/^[^#]/ {print $1}')
+
+Note: it's ok if jupyter lab is not installed but everything else should be.
+Tensorflow is currently not available for Mac OS arm64.
 
 TESTING:
 
@@ -642,8 +653,6 @@ TESTING:
     nbformat         : 5.0.8
     traitlets        : 5.0.5
     ```
-    Note that it's ok if jupyter lab is not installed but everything else
-    should be.
 
 - Start python3 and try to import the above modules. Quit.
 
@@ -687,6 +696,8 @@ to the `PATH` take effect. Then:
 
 ### 2.15 Install Pandoc
 
+#### x86_64
+
 Install Pandoc 2.7.3 instead of the latest Pandoc (2.9.2.1 as of April 2020).
 The latter breaks `R CMD build` for 8 Bioconductor software packages
 (**FELLA**, **flowPloidy**, **MACPET**, **profileScoreDist**, **projectR**,
@@ -696,12 +707,22 @@ The latter breaks `R CMD build` for 8 Bioconductor software packages
 
 Download with:
 
-    cd ~/Downloads/
-    curl -LO https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-macOS.pkg
+    curl -LO https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-macOS.pkg > ~/Downloads/pandoc.pkg
+
+#### arm64
+
+Earlier releases are not available for arm64, so the latest version of pandoc
+should be installed.
+
+Download
+
+    curl -LO https://github.com/jgm/pandoc/releases/download/3.1.8/pandoc-3.1.8-arm64-macOS.pkg > ~/Downloads/pandoc.pkg
+
+#### For all macs
 
 Install with:
 
-    sudo installer -pkg pandoc-2.7.3-macOS.pkg -target /
+    sudo installer -pkg pandoc.pkg -target /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -853,9 +874,9 @@ the tarball (`.tar.gz` file) does NOT include Tcl/Tk (which is needed
 by R base package **tcltk**) so make sure to grab the former.
 
 If installing R release: download R from CRAN (e.g. from
-https://cloud.r-project.org/bin/macosx/). Pick up the 1st file. Make sure to
-pick the installer, not the source tarball, as the former contains Tcl/Tk
-libraries that will install in `/usr/local`.
+https://cloud.r-project.org/bin/macosx/). Make sure to pick the installer, not
+the source tarball, as the former contains Tcl/Tk libraries that will install
+in `/usr/local`.
 
 #### Download and install
 
@@ -864,11 +885,11 @@ Remove the previous R installation:
     cd /Library/Frameworks/
     sudo rm -rf R.framework
 
-Download and install with:
+For example, if installing for x86_64 mac, download and install with:
 
     cd ~/Downloads/
-    curl -O https://cran.r-project.org/bin/macosx/base/R-4.3.0.pkg
-    sudo installer -pkg R-4.3.0.pkg -target /
+    curl -O https://cloud.r-project.org/bin/macosx/big-sur-x86_64/base/R-4.3.1-x86_64.pkg
+    sudo installer -pkg R-4.3.1-x86_64.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
 *system-wide* installation of R i.e. it's in the `PATH` for all users on the
@@ -1160,14 +1181,14 @@ Everything in this section must be done **from the biocbuild account**.
 
 ### 4.1 Install Java
 
-Go to https://jdk.java.net/ and follow the link to the latest JDK (JDK
-14 as of April 1, 2020). Then download the tarball for macOS/x64 (e.g.
-`openjdk-14.0.1_osx-x64_bin.tar.gz`) to `~/Downloads/`.
+Go to https://jdk.java.net/ and follow the link to the latest JDK. Then
+download the tarball for your specific mac (e.g. `openjdk-18.0.1.1_macos-x64_bin.tar.gz`
+or `openjdk-18.0.1.1_macos-aarch64_bin.tar.gz`) to `~/Downloads/`.
 
 Install with:
 
     cd /usr/local/
-    sudo tar zxvf ~/Downloads/openjdk-14.0.1_osx-x64_bin.tar.gz
+    sudo tar zxvf ~/Downloads/openjdk-18.0.1.1_macos-x64_bin.tar.gz
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -1176,24 +1197,24 @@ Install with:
 Then:
 
     cd /usr/local/bin/
-    ln -s ../jdk-14.0.1.jdk/Contents/Home/bin/java
-    ln -s ../jdk-14.0.1.jdk/Contents/Home/bin/javac
-    ln -s ../jdk-14.0.1.jdk/Contents/Home/bin/jar
+    ln -s ../jdk-18.0.1.1.jdk/Contents/Home/bin/java
+    ln -s ../jdk-18.0.1.1.jdk/Contents/Home/bin/javac
+    ln -s ../jdk-18.0.1.1.jdk/Contents/Home/bin/jar
 
 In `/etc/profile` add the following line:
 
-    export JAVA_HOME=/usr/local/jdk-14.0.1.jdk/Contents/Home
+    export JAVA_HOME=/usr/local/jdk-18.0.1.1.jdk/Contents/Home
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
 
     java --version
-    # openjdk 14.0.1 2020-04-14
-    # OpenJDK Runtime Environment (build 14.0.1+7)
-    # OpenJDK 64-Bit Server VM (build 14.0.1+7, mixed mode, sharing)
+    # openjdk 18.0.1.1 2022-04-22
+    # OpenJDK Runtime Environment (build 18.0.1.1+2-6)
+    # OpenJDK 64-Bit Server VM (build 18.0.1.1+2-6, mixed mode, sharing)
 
     javac --version
-    # javac 14.0.1
+    # javac 18.0.1.1
 
 Finally reconfigure R to use this new Java installation:
 
@@ -1206,7 +1227,7 @@ TESTING: Try to install the **rJava** package:
     library(rJava)
     .jinit()
     .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
-    # [1] "14.0.1+7"
+    # [1] "18.0.1.1+2-6"
 
 
 ### 4.2 Install NetCDF and HDF5 system library
@@ -1215,13 +1236,22 @@ NetCDF is needed only if CRAN package **ncdf4** needs to be installed from
 source which is usually NOT the case (most of the time a Mac binary should
 be available on CRAN).
 
-Download and extract Simon's binaries with:
+Download and extract Simon's binaries:
 
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/bin/darwin17/x86_64/netcdf-4.8.1-darwin.17-x86_64.tar.xz
-    curl -O https://mac.r-project.org/bin/darwin17/x86_64/hdf5-1.12.1-darwin.17-x86_64.tar.xz
-    sudo tar fvxJ netcdf-4.8.1-darwin.17-x86_64.tar.xz -C /
-    sudo tar fvxJ hdf5-1.12.1-darwin.17-x86_64.tar.xz -C /
+#### x86_64
+
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/netcdf-4.8.1-darwin.17-x86_64.tar.xz > ~/Downloads/netcdf.tar.xz
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/hdf5-1.12.1-darwin.17-x86_64.tar.xz > ~/Downloads/hdf5.tar.xz
+
+#### arm64
+
+    curl -O https://mac.r-project.org/bin/darwin20/arm64/netcdf-4.8.1-darwin.20-arm64.tar.xz > ~/Downloads/netcdf.tar.xz
+    curl -O https://mac.r-project.org/bin/darwin20/arm64/hdf5-1.12.2-darwin.20-arm64.tar.xz > ~/Downloads/hdf5.tar.xz
+
+#### All macs
+
+    sudo tar fvxJ netcdf.tar.xz -C /
+    sudo tar fvxJ hdf5.tar.xz -C /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -1240,11 +1270,19 @@ that this takes much longer:
 
 ### 4.3 Install GSL system library
 
-Download and extract Simon's binary with:
+Download and extract Simon's binary
 
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/bin/darwin17/x86_64/gsl-2.7-darwin.17-x86_64.tar.xz
-    sudo tar fvxJ gsl-2.7-darwin.17-x86_64.tar.xz -C /
+#### x86_64
+
+    curl -O https://mac.r-project.org/bin/darwin17/x86_64/gsl-2.7-darwin.17-x86_64.tar.xz > ~/Downloads/gsl.tar.xz
+
+#### arm64
+
+    curl -O https://mac.r-project.org/bin/darwin20/arm64/gsl-2.7.1-darwin.20-arm64.tar.xz > ~/Downloads/gsl.tar.xz
+
+#### All macs
+
+    sudo tar fvxJ gsl.tar.xz -C /
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -1280,7 +1318,7 @@ TESTING: Try to install the **rjags** package *from source*:
 
 ### 4.5 Install CMake
 
-Needed for CRAN package **nlopter**, which is used by a few Bioconductor
+Needed for CRAN package **nloptr**, which is used by a few Bioconductor
 packages.
 
 Home page: https://cmake.org/
@@ -1300,10 +1338,10 @@ you already have a brewed CMake on the machine, make sure to remove it:
 Then:
 
     cd ~/Downloads/
-    curl -LO https://github.com/Kitware/CMake/releases/download/v3.16.5/cmake-3.16.5-Darwin-x86_64.dmg
-    sudo hdiutil attach cmake-3.16.5-Darwin-x86_64.dmg
-    cp -ri /Volumes/cmake-3.16.5-Darwin-x86_64/CMake.app /Applications/
-    sudo hdiutil detach /Volumes/cmake-3.16.5-Darwin-x86_64
+    curl -LO https://github.com/Kitware/CMake/releases/download/v3.23.0/cmake-3.23.0-macos-universal.dmg
+    sudo hdiutil attach cmake-3.23.0-macos-universal.dmg
+    cp -ri /Volumes/cmake-3.23.0-macos-universal/CMake.app /Applications/
+    sudo hdiutil detach /Volumes/cmake-3.23.0-macos-universal
 
 Then in `/etc/profile` *prepend* `/Applications/CMake.app/Contents/bin`
 to `PATH`, or, if the file as not line setting `PATH` already, add the
@@ -1319,6 +1357,8 @@ effect. Then:
 
 
 ### 4.6 Install Open Babel
+
+TODO: Modify instructions for arm64
 
 The **ChemmineOB** package requires Open Babel 3. Note that the Open Babel
 website seems very outdated:
@@ -1534,6 +1574,8 @@ Then try to install the **RMySQL** package *from source*:
 
 ### 4.9 Install Ensembl VEP script
 
+TODO: Modify instructions for arm64
+
 Required by Bioconductor packages **ensemblVEP** and **MMAPPR2**.
 
 Complete installation instructions are at
@@ -1629,10 +1671,13 @@ Then try to build the **GeneGA** package:
 
 ### 4.11 Set up ImmuneSpaceR package for connecting to ImmuneSpace
 
+Required by Bioconductor package **ImmuneSpaceR**. Get credentials from
+Bitwarden.
+
 In `/etc/profile` add:
 
-    export ISR_login=bioc@immunespace.org
-    export ISR_pwd=1notCRAN
+    export ISR_login=*****
+    export ISR_pwd=*****
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then try to build the **ImmuneSpaceR** package:
@@ -1667,13 +1712,16 @@ Required by Bioconductor package **Travel**.
 Download latest stable release from https://osxfuse.github.io/ e.g.:
 
     cd ~/Downloads/
-    curl -LO https://github.com/osxfuse/osxfuse/releases/download/macfuse-4.0.5/macfuse-4.0.5.dmg
+    curl -LO https://github.com/osxfuse/osxfuse/releases/download/macfuse-4.5.0/macfuse-4.5.0.dmg
 
 Install with:
 
-    sudo hdiutil attach macfuse-4.0.5.dmg
+    sudo hdiutil attach macfuse-4.5.0.dmg
     sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
     sudo hdiutil detach /Volumes/macFUSE
+
+You may need to enable support for third party kernel extensions if installing
+macFUSE for the first time. See https://github.com/macfuse/macfuse/wiki/Getting-Started.
 
 TESTING: Try to install the **Travel** package *from source*:
 
@@ -1690,9 +1738,18 @@ Required by Bioconductor package **rmspc**.
 Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
 install the 6.0 .NET runtime corresponding to the build system's macOS.
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/2ef12357-499b-4a5b-a488-da45a5f310e6/fbe35c354bfb50934a976fc91c6d8d81/dotnet-runtime-6.0.13-osx-x64.pkg
-    shasum -a 512 dotnet-runtime-6.0.13-osx-x64.pkg
-    sudo installer -pkg dotnet-runtime-6.0.13-osx-x64.pkg -target /
+##### x86_64
+
+    curl -O https://download.visualstudio.microsoft.com/download/pr/2ef12357-499b-4a5b-a488-da45a5f310e6/fbe35c354bfb50934a976fc91c6d8d81/dotnet-runtime-6.0.13-osx-x64.pkg > ~/Downloads/dotnet.pkg
+
+##### arm64
+
+    curl -O https://download.visualstudio.microsoft.com/download/pr/aa3b3150-80cb-4d30-87f8-dc36fa1dcf26/8ec9ff6836828175f1a6a60aefd4e63b/dotnet-runtime-6.0.13-osx-arm64.pkg > ~/Downloads/dotnet.pkg
+
+##### For all macs
+
+    shasum -a 512 dotnet.pkg
+    sudo installer -pkg dotnet.pkg -target /
 
 #### Testing
 
@@ -1709,9 +1766,17 @@ Required by Bioconductor package **MMUPHin**.
 
 Download and extract Simon's binary with:
 
-    cd ~/Downloads/
-    curl -O https://mac.r-project.org/bin/darwin20/x86_64/glpk-5.0-darwin.20-x86_64.tar.xz
-    sudo tar fvxJ glpk-5.0-darwin.20-x86_64.tar.xz -C /
+#### x86_64
+
+    curl -O https://mac.r-project.org/bin/darwin20/x86_64/glpk-5.0-darwin.20-x86_64.tar.xz > ~/Download/glpk.tar.xz
+
+#### arm64
+
+    curl -O https://mac.r-project.org/bin/darwin20/arm64/glpk-5.0-darwin.20-arm64.tar.xz > ~/Download/glpk.tar.xz
+
+#### For all macs
+
+    sudo tar fvxJ glpk.tar.xz -C /
 
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
