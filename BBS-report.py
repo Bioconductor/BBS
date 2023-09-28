@@ -310,7 +310,10 @@ def make_aboutnode_page(Node_rdir, node, long_link=False):
 
     out.write('<H2>Java</H2>\n')
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    write_SysCommandVersion_from_file(out, Node_rdir, 'JAVA', False)
+    if sys.platform == 'win32':
+        write_SysCommandVersion_from_file(out, Node_rdir, 'java', config=False)
+    else:
+        write_SysCommandVersion_from_file(out, Node_rdir, 'JAVA')
     out.write('</DIV>\n')
 
     out.write('<HR>\n')
