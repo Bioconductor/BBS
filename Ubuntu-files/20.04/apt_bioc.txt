@@ -25,6 +25,6 @@ libavfilter-dev             # for av/spacialHeatmap
 libfribidi-dev              # for EnhancedVolcano
 fuse                        # for Travel
 libfuse-dev                 # for Travel
-kallisto                    # for rkal
+kallisto                    # for BgeeCall
 mono-runtime                # for rawr
 libmono-system-data4.0-cil  # for rawr
