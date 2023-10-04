@@ -11,7 +11,7 @@ firefox                     # for packages using utils::browseURL()
 graphviz                    # for Rgraphviz
 libgraphviz-dev             # for Rgraphviz
 libgtkmm-2.4-dev            # for HilbertVisGUI
-libgsl-dev                  # for GSL
+libgsl-dev                  # for GLAD
 libsbml5-dev                # for rsbml
 automake                    # for RProtoBufLib
 libnetcdf-dev               # for mzR, RNetCDF
