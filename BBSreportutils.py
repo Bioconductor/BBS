@@ -63,11 +63,13 @@ class Node:
 ### A list of Node objects
 NODES = []
 
-def fancyname_has_a_bin_suffix(fancyname):
+def fancyname_has_suffix(fancyname, suffix):
     ns = fancyname.split(":")
-    if ns[0] == "" or len(ns) > 2 or (len(ns) == 2 and ns[1] != "bin"):
-        sys.exit("don't know what to report for '%s' => EXIT." % fancyname)
-    return len(ns) == 2
+    if len(ns) == 1:
+        return False
+    if len(ns) > 2:
+        sys.exit("Invalid node specification: %s => EXIT." % fancyname)
+    return ns[1] == suffix
 
 def set_NODES(fancynames_in_one_string):
     fancynames = fancynames_in_one_string.split(' ')
@@ -79,10 +81,15 @@ def set_NODES(fancynames_in_one_string):
         os_html = BBSutils.getNodeSpec(hostname, 'OS').replace(' ', '&nbsp;')
         arch = BBSutils.getNodeSpec(hostname, 'Arch')
         platform = BBSutils.getNodeSpec(hostname, 'Platform')
-        buildbin = fancyname_has_a_bin_suffix(fancyname)
-        pkgType = BBSutils.getNodeSpec(hostname, 'pkgType')
-        pkgs = bbs.parse.get_meat_packages_for_node(BBSutils.meat_index_file,
-                                                    hostname, arch, pkgType)
+        foreign = fancyname_has_suffix(fancyname, "foreign")
+        if foreign:
+            buildbin = pkgs = None
+        else:
+            buildbin = fancyname_has_suffix(fancyname, "bin")
+            pkgType = BBSutils.getNodeSpec(hostname, 'pkgType')
+            pkgs = bbs.parse.get_meat_packages_for_node(
+                                               BBSutils.meat_index_file,
+                                               hostname, arch, pkgType)
         node = Node(hostname, node_id, os_html, arch, platform, buildbin, pkgs)
         NODES.append(node)
     if len(NODES) == 0:
@@ -101,6 +108,8 @@ def is_supported(pkg, node):
 def supported_nodes(pkg):
     nodes = []
     for node in NODES:
+        if node.buildbin == None:  # foreign node
+            continue
         if is_supported(pkg, node):
             nodes.append(node)
     return nodes
@@ -275,6 +284,8 @@ def _set_pkg_status(pkg, node_id, stage, status):
 def _zero_quickstats():
     quickstats = {}
     for node in NODES:
+        if node.buildbin == None:  # foreign node
+            continue
         quickstats[node.node_id] = { 'install':     (0, 0, 0, 0, 0), \
                                      'buildsrc':    (0, 0, 0, 0, 0), \
                                      'checksrc':    (0, 0, 0, 0, 0), \
@@ -362,6 +373,8 @@ def get_distinct_pkg_statuses(pkg, nodes=None):
         nodes = NODES
     statuses = []
     for node in nodes:
+        if node.buildbin == None:  # foreign node
+            continue
         if not is_supported(pkg, node):
             continue
         stages = stages_to_display(BBSvars.buildtype)

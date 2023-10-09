@@ -759,8 +759,8 @@ def _get_all_show_classes():
     return ['show_%s_gcards' % status for status in status_classes]
 
 def _write_vertical_space(out):
-    colspan = BBSreportutils.ncol_to_display(BBSvars.buildtype) + 5
-    TD_html = '<TD COLSPAN="%s"></TD>' % colspan
+    ncol_to_display = BBSreportutils.ncol_to_display(BBSvars.buildtype)
+    TD_html = '<TD COLSPAN="%s"></TD>' % (ncol_to_display + 5)
     out.write('<TR class="vertical_space">%s</TR>\n' % TD_html)
     return
 
@@ -878,15 +878,14 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
                               leafreport_ref=None, topdir='.'):
     TDclasses = 'status %s' % node.hostname.replace(".", "_")
     buildtype = BBSvars.buildtype
+    ncol_to_display = BBSreportutils.ncol_to_display(buildtype)
     if pkg in skipped_pkgs:
-        TDattrs = 'COLSPAN="%s" class="%s"' % \
-                  (BBSreportutils.ncol_to_display(buildtype), TDclasses)
+        TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
         TDcontent = '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
         TDcontent += ' (Bad DESCRIPTION file)'
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     elif not BBSreportutils.is_supported(pkg, node):
-        TDattrs = 'COLSPAN="%s" class="%s"' % \
-                  (BBSreportutils.ncol_to_display(buildtype), TDclasses)
+        TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
         TDcontent = '... NOT SUPPORTED ...'
         TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
@@ -914,8 +913,8 @@ def write_abc_dispatcher_within_gcard_list(out, current_letter):
               (current_letter, current_letter))
     out.write('</TD></TR></TABLE>')
     out.write('</TD>')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.buildtype) + 3
-    out.write('<TD COLSPAN="%s">' % colspan)
+    ncol_to_display = BBSreportutils.ncol_to_display(BBSvars.buildtype)
+    out.write('<TD COLSPAN="%s">' % (ncol_to_display + 3))
     write_abc_dispatcher(out, "", current_letter)
     out.write('</TD>')
     out.write('</TR>\n')
@@ -1011,9 +1010,7 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
     out.write('</THEAD>\n')
     return
 
-### When 'leafreport_ref' is specified, then a list of 1 gcard is generated.
-### A non-compact gcard spans several table rows (TRs) grouped in a
-### TBODY element.
+### The gcard spans several table rows (TRs) grouped in a TBODY element.
 def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
                 pkg_statuses, pkg_status_classes):
     out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
@@ -1028,6 +1025,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
     nb_nodes = len(BBSreportutils.NODES)
     is_first = True
     last_i = nb_nodes - 1
+    ncol_to_display = BBSreportutils.ncol_to_display(BBSvars.buildtype)
     for i in range(nb_nodes):
         is_last = i == last_i
         node = BBSreportutils.NODES[i]
@@ -1078,7 +1076,16 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             node_html = '<B>%s</B>' % node_html
         _write_node_spec_as_TD(out, node, node_html, selected)
         _write_node_spec_as_TD(out, node, _node_OS_Arch_as_SPAN(node))
-        write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref, topdir)
+        if node.buildbin != None:
+            write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref, topdir)
+        else:
+            ## Foreign node.
+            url = '../bioc-mac-arm64-LATEST/' + pkg + '/'
+            if leafreport_ref != None:
+                url = '../' + url
+            TDcontent = 'see weekly results <A href="%s">here</A>' % url
+            out.write('<TD COLSPAN="%d" class="%s">%s</TD>' % \
+                      (ncol_to_display, node.node_id, TDcontent))
         if is_last:
             TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
         else:
@@ -1086,12 +1093,12 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
         out.write('<TD %s></TD>' % TDattrs)
         out.write('</TR>\n')
     out.write('<TR class="footer">')
-    colspan = BBSreportutils.ncol_to_display(BBSvars.buildtype) + 3
-    out.write('<TD COLSPAN="%d"></TD>' % colspan)
+    out.write('<TD COLSPAN="%d"></TD>' % (ncol_to_display + 3))
     out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
 
+### When 'leafreport_ref' is specified, then a list of 1 gcard is generated.
 def write_gcard_list(out, allpkgs,
                      quickstats=None, no_quickstats_links=False,
                      alphabet_dispatch=False,
@@ -1130,7 +1137,7 @@ def write_gcard_list(out, allpkgs,
             _write_vertical_space(out)
             out.write('</TBODY>\n')
         elif pkg == leafreport_ref.pkg:
-            # Display gcard for that package only.
+            ## Display gcard for that package only.
             pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
             if pkg in skipped_pkgs:
                 pkg_status_classes = 'error'
@@ -1973,7 +1980,7 @@ def make_all_NodeReports(allpkgs, quickstats, long_link=False):
 ##############################################################################
 
 def write_mainpage_asHTML(out, allpkgs, quickstats,
-                               simp_link=False, long_link=False):
+                          simp_link=False, long_link=False):
     if BBSvars.buildtype != "cran":
         write_BioC_mainpage_top_asHTML(out, simp_link, long_link)
     else: # "cran" buildtype
@@ -2006,12 +2013,12 @@ def make_BioC_MainReport(allpkgs, quickstats, simple_layout=False):
     sys.stdout.flush()
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs, quickstats,
-                               simp_link=False, long_link=simple_layout)
+                          simp_link=False, long_link=simple_layout)
     out.close()
     if simple_layout:
         out = open('long-report.html', 'w')
         write_mainpage_asHTML(out, allpkgs, quickstats,
-                                   simp_link=True, long_link=False)
+                              simp_link=True, long_link=False)
         out.close()
     print("BBS> [make_BioC_MainReport] END.")
     sys.stdout.flush()
@@ -2021,12 +2028,12 @@ def make_CRAN_MainReport(allpkgs, quickstats, simple_layout=False):
     print("BBS> [make_CRAN_MainReport] BEGIN ...")
     out = open('index.html', 'w')
     write_mainpage_asHTML(out, allpkgs, quickstats,
-                               simp_link=False, long_link=simple_layout)
+                          simp_link=False, long_link=simple_layout)
     out.close()
     if simple_layout:
         out = open('long-report.html', 'w')
         write_mainpage_asHTML(out, allpkgs, quickstats,
-                                   simp_link=True, long_link=False)
+                              simp_link=True, long_link=False)
         out.close()
     print("BBS> [make_CRAN_MainReport] END.")
     sys.stdout.flush()
