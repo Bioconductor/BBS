@@ -356,6 +356,8 @@ def make_aboutnode_page(Node_rdir, node, long_link=False):
 def make_all_aboutnode_pages(long_link=False):
     products_in_rdir = BBSvars.products_in_rdir
     for node in BBSreportutils.NODES:
+        if node.buildbin == None:  # foreign node
+            continue
         Node_rdir = products_in_rdir.subdir(node.node_id)
         aboutnode_page = make_aboutnode_page(Node_rdir, node, long_link)
         node2aboutpage[node.node_id] = aboutnode_page
@@ -402,6 +404,8 @@ def make_Rinstpkgs_page(Node_rdir, node, long_link=False):
 def make_all_Rinstpkgs_pages(long_link=False):
     products_in_rdir = BBSvars.products_in_rdir
     for node in BBSreportutils.NODES:
+        if node.buildbin == None:  # foreign node
+            continue
         Node_rdir = products_in_rdir.subdir(node.node_id)
         (Rinstpkgspage, Rinstpkgcount) = make_Rinstpkgs_page(Node_rdir, node,
                                                              long_link)
@@ -420,6 +424,8 @@ def write_node_specs_table(out, aboutnode_dir='.', long_link=False):
     out.write('</TR>\n')
     products_in_rdir = BBSvars.products_in_rdir
     for node in BBSreportutils.NODES:
+        if node.buildbin == None:  # foreign node
+            continue
         Node_rdir = products_in_rdir.subdir(node.node_id)
         aboutnode_page = node2aboutpage[node.node_id]
         aboutnode_url = '%s/%s' % (aboutnode_dir, aboutnode_page)
@@ -965,11 +971,18 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
     write_pkg_stagelabels_as_TDs(out)
     out.write('<TD class="rightmost top_right_corner"></TD>')
     out.write('</TR>\n')
-    nb_nodes = len(BBSreportutils.NODES)
-    last_i = nb_nodes - 1
+    nb_nodes = len(BBSreportutils.NODES);
+    ## Find index of last non foreign node.
+    last_non_foreign_ix = -1
     for i in range(nb_nodes):
-        is_last = i == last_i
+        if node.buildbin == None:  # foreign node
+            continue
+        last_non_foreign_ix = i
+    for i in range(nb_nodes):
         node = BBSreportutils.NODES[i]
+        if node.buildbin == None:  # foreign node
+            continue
+        is_last = i == last_non_foreign_ix
         selected = toned_down = False
         TRclasses = node.hostname.replace(".", "_")
         if selected_node != None:
@@ -1841,6 +1854,8 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None, long_link=False):
     print("OK")
     sys.stdout.flush()
     for node in BBSreportutils.NODES:
+        if node.buildbin == None:  # foreign node
+            continue
         make_node_LeafReports(allpkgs, node, long_link)
     return
 
@@ -1971,6 +1986,8 @@ def write_node_report(node, allpkgs, quickstats, long_link=False):
 def make_all_NodeReports(allpkgs, quickstats, long_link=False):
     if len(BBSreportutils.NODES) != 1:
         for node in BBSreportutils.NODES:
+            if node.buildbin == None:  # foreign node
+                continue
             write_node_report(node, allpkgs, quickstats, long_link)
     return
 
