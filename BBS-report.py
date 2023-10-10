@@ -1098,7 +1098,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             if leafreport_ref != None:
                 url = '../' + url
             TDcontent = 'see weekly results <A href="%s">here</A>' % url
-            out.write('<TD COLSPAN="%d" class="%s">%s</TD>' % \
+            out.write('<TD COLSPAN="%d" class="status %s">%s</TD>' % \
                       (ncol_to_display, node.node_id, TDcontent))
         if is_last:
             TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
