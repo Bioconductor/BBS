@@ -1100,7 +1100,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             TDcontent = ['see', 'weekly', 'results',
                          '<A href="%s">here</A>' % url]
             TDcontent = '&nbsp;'.join(TDcontent)
-            TDstyle = 'text-align: center;'
+            TDstyle = 'text-align: center; padding: 4px;'
             out.write('<TD COLSPAN="%d" class="%s" style="%s">' % \
                       (ncol_to_display, node.node_id, TDstyle))
             out.write('<I>%s</I>' % TDcontent)
