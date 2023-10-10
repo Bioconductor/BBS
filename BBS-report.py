@@ -1097,7 +1097,9 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             url = '../bioc-mac-arm64-LATEST/' + pkg + '/'
             if leafreport_ref != None:
                 url = '../' + url
-            TDcontent = 'see weekly results <A href="%s">here</A>' % url
+            TDcontent = ['see', 'weekly', 'results',
+                         '<A href="%s">here</A>' % url]
+            TDcontent = '&nbsp;'.join(TDcontent)
             out.write('<TD COLSPAN="%d" class="status %s">%s</TD>' % \
                       (ncol_to_display, node.node_id, TDcontent))
         if is_last:
