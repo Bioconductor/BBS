@@ -975,6 +975,7 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
     ## Find index of last non foreign node.
     last_non_foreign_ix = -1
     for i in range(nb_nodes):
+        node = BBSreportutils.NODES[i]
         if node.buildbin == None:  # foreign node
             continue
         last_non_foreign_ix = i
