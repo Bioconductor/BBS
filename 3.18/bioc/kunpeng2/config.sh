@@ -13,7 +13,7 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.18-bioc"
 export BBS_R_HOME="/home/biocbuild/R/R-4.3.1"
 export R_LIBS="$BBS_R_HOME/site-library"
 export BBS_NB_CPU=25         # 32 cores are available
-export BBS_BUILD_NB_CPU=20   # 32 cores are available
+export BBS_BUILD_NB_CPU=16   # 32 cores are available
 export BBS_CHECK_NB_CPU=20   # 32 cores are available
 
 export BBS_PRODUCT_TRANSMISSION_MODE="none"
