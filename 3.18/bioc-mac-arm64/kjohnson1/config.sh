@@ -14,7 +14,9 @@ export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.18-bioc-mac-arm64"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 export BBS_NB_CPU=8         # 10 cores are available
-export BBS_BUILD_NB_CPU=4   # 10 cores are available
+export BBS_BUILD_NB_CPU=5   # 10 cores are available
+# Setting BBS_CHECK_NB_CPU to 8 can lead to a load of up to 55.89
+# during STAGE4 which is waaaay too much!
 export BBS_CHECK_NB_CPU=6   # 10 cores are available
 
 # Central build node is nebbiolo2 at DFCI.
