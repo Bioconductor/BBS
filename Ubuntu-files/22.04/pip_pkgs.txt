@@ -5,7 +5,7 @@ scikit-learn                # BiocSklearn, MOFA2
 h5py == 2.10.0              # BiocSklearn, MOFA2
 pandas                      # BiocSklearn, MOFA2
 mofapy2                     # MOFA2
-tensorflow                  # scAlign, DeepPINCS
+tensorflow                  # DeepPINCS
 h5pyd                       # rhdf5client
 nbconvert                   # CRAN nbconvertR for BioC destiny
 jupyter                     # CRAN nbconvertR for BioC destiny 
