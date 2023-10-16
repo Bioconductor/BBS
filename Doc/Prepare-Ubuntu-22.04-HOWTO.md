@@ -596,21 +596,20 @@ Notes:
 
 - `mofapy2` is needed by Bioconductor package **MOFA2**.
 
-- `tensorflow` is needed by Bioconductor packages **scAlign**, **netReg**,
-  and **DeepPINCS**. Note that trying to load the module in a Python 3
-  session might raise the following error:
+- `tensorflow` is needed by Bioconductor packages **DeepPINCS**. Note that trying
+  to load the module in a Python 3 session, previous versions have raised the
+  following error:
     ```
     >>> import tensorflow
     2020-08-08 16:52:56.617223: W tensorflow/stream_executor/platform/default/dso_loader.cc:59] Could not load dynamic library 'libcudart.so.10.1'; dlerror: libcudart.so.10.1: cannot open shared object file: No such file or directory
     2020-08-08 16:52:56.617255: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
     ```
   Even though the message says that the error can be ignored, you can get rid
-  of it by installing the `libcudart10.1` package:
+  of it by installing the `libcudart` package. The most recent version of the
+  package is `libcudart11.0:
     ```
-    sudo apt-get install libcudart10.1
+    sudo apt-get install libcudart11.0
     ```
-
-- `tensorflow_probability` is needed by Bioconductor package **netReg**.
 
 - `h5pyd` is needed by Bioconductor package **rhdf5client**.
 

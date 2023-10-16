@@ -159,13 +159,7 @@ E.g. Google Chrome or Firefox.
 Known problem: There are some "file association" problems observed on some
 versions of Windows Server when running `R CMD check` on packages that contain
 calls to `browseURL()` in their examples. For example running `R CMD check` on
-BiocDockerManager or tRNAdbImport produces:
-
-    > BiocDockerManager::help()
-    Error in shell.exec(url) :
-      file association for 'https://hub.docker.com/r/bioconductor/bioconductor_docker' not available or invalid
-
-or:
+tRNAdbImport produces:
 
     > tRNAdbImport::open_tdbID("tdbD00000785")
     Error in shell.exec(url) :
@@ -173,15 +167,14 @@ or:
 
 when checking the examples. Note that these errors only happen in the context
 of the daily builds i.e. they can't be reproduced by running `R CMD check` on
-BiocDockerManager or tRNAdbImport in an interactive session in a PowerShell
-window.
+tRNAdbImport in an interactive session in a PowerShell window.
 
 The "file association" problem happens with both browsers, Google Chrome
 and Firefox.
 
 Until a solution is found it's been suggested to the maintainers of the
-BiocDockerManager and tRNAdbImport packages that they put the problematic
-calls in an `if (interactive()) ...` statement.
+tRNAdbImport packages that they put the problematic calls in an
+`if (interactive()) ...` statement.
 
 
 ### 1.6 Install Visual Studio Community 2022
