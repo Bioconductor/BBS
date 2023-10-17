@@ -1224,24 +1224,24 @@ Install with:
 Then:
 
     cd /usr/local/bin/
-    ln -s ../jdk-18.0.1.1.jdk/Contents/Home/bin/java
-    ln -s ../jdk-18.0.1.1.jdk/Contents/Home/bin/javac
-    ln -s ../jdk-18.0.1.1.jdk/Contents/Home/bin/jar
+    ln -s ../jdk-21.jdk/Contents/Home/bin/java
+    ln -s ../jdk-21.jdk/Contents/Home/bin/javac
+    ln -s ../jdk-21.jdk/Contents/Home/bin/jar
 
 In `/etc/profile` add the following line:
 
-    export JAVA_HOME=/usr/local/jdk-18.0.1.1.jdk/Contents/Home
+    export JAVA_HOME=/usr/local/jdk-21.jdk/Contents/Home
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
 
     java --version
-    # openjdk 18.0.1.1 2022-04-22
-    # OpenJDK Runtime Environment (build 18.0.1.1+2-6)
-    # OpenJDK 64-Bit Server VM (build 18.0.1.1+2-6, mixed mode, sharing)
+    # openjdk 21 2023-09-19
+    # OpenJDK Runtime Environment (build 21+35-2513)
+    # OpenJDK 64-Bit Server VM (build 21+35-2513, mixed mode, sharing)
 
     javac --version
-    # javac 18.0.1.1
+    # javac 21
 
 Finally reconfigure R to use this new Java installation:
 
@@ -1254,7 +1254,7 @@ TESTING: Try to install the **rJava** package:
     library(rJava)
     .jinit()
     .jcall("java/lang/System", "S", "getProperty", "java.runtime.version")
-    # [1] "18.0.1.1+2-6"
+    # [1] "21+35-2513"
 
 
 ### 4.2 Install JAGS
