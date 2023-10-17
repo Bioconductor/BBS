@@ -468,7 +468,93 @@ location.  Otherwise  we will produce broken binaries again (see
 https://support.bioconductor.org/p/95587/#95631).
 
 
-### 2.9 Install Homebrew
+### 2.9 Install Binaries for gsl, openssl, pkgconfig, xz
+
+We use binaries available at https://mac.r-project.org/bin, which are referred
+to as "Simon's Binaries." They should be preferred over installing via Homebrew.
+See IMPORTANT NOTE in the _Install Homebrew_ section above. Also make sure to
+fix `/usr/local/` permissions as described in the _Install Homebrew_ section if
+Simon's binary gets extracted there (normally the case for the
+`darwin20/x86_64` binaries).
+
+Following instructions at https://mac.r-project.org/bin
+
+    source("https://mac.R-project.org/bin/install.R")
+
+Install necessary packages:
+
+    pkgs <- c("gsl",                                # BioC GLAD
+              "glpk",                               # BioC MMUPHin
+              "hdf5",                               # CRAN ncdf4 for Bioc mzR
+              "netcdf",                             # CRAN ncdf4 for Bioc mzR
+              "openssl",
+              "pkgconfig",
+              "xz")
+    install.libs(pkgs)
+
+For openssl, in `/etc/profile` if x86_64:
+
+- Append `/opt/R/x86_64/bin` to `PATH`.
+
+- Add `/opt/R/x86_64/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+- Add the following line
+    ```
+    export OPENSSL_LIBS="/opt/R/x86_64/lib/libssl.a /opt/R/x86_64/lib/libcrypto.a"
+    ```
+For arm64:
+
+- Append `/opt/R/arm64/bin` to `PATH`.
+
+- Add `/opt/R/arm64/lib/pkgconfig` to `PKG_CONFIG_PATH`.
+
+- Add the following line
+    ```
+    export OPENSSL_LIBS="/opt/R/arm64/lib/libssl.a /opt/R/arm64/lib/libcrypto.a"
+    ```
+
+This will trigger statically linking of the **rtracklayer** package against
+the openssl libraries.
+
+Fix `/usr/local/` permissions if Simon's binary gets extracted there (normally
+the case for the `darwin17/x86_64` binaries).
+
+    # Fix /usr/local/ permissions:
+    sudo chown -R biocbuild:admin /usr/local/*
+    sudo chown -R root:wheel /usr/local/texlive
+
+TESTING: Try to install the **GLAD** package *from source* for GSL
+
+    library(BiocManager)
+    BiocManager::install("GLAD", type="source")
+
+TESTING: Try to install **MMUPHin** package *from source* for BioC GLPK
+
+Note: You may need to reinstall `igraph`.
+
+TESTING: The **MMUPHin** package uses `igraph::cluster_optimal()` internally
+which requires GLPK:
+
+    library(igraph)
+    cluster_optimal(make_graph("Zachary"))
+
+If GLPK is not available, one gets:
+
+    Error in cluster_optimal(make_graph("Zachary")) :
+      At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
+
+TESTING: Try to install the **ncdf4** package *from source*:
+
+    install.packages("ncdf4", type="source", repos="https://cran.r-project.org")
+
+If you have time, you can also try to install the **mzR** package but be aware
+that this takes much longer:
+
+    library(BiocManager)
+    BiocManager::install("mzR", type="source")  # takes between 7-10 min
+
+
+### 2.10 Install Homebrew
 
 IMPORTANT NOTE: We use Homebrew to install some of the libraries and other
 tools required by the Bioconductor daily builds. However, if those libraries
@@ -497,47 +583,7 @@ TESTING:
     brew doctor
 
 
-### 2.10 Install openssl
-
-    brew install openssl
-
-Note that the installation is keg-only i.e. not symlinked into /usr/local
-because macOS provides LibreSSL.
-
-Then in `/etc/profile`:
-
-- Append `/usr/local/opt/openssl@1.1/bin` to `PATH`.
-
-- Add `/usr/local/opt/openssl@1.1/lib/pkgconfig` to `PKG_CONFIG_PATH`.
-
-- Add the following line, replacing '1.1.1h' with the version installed:
-    ```
-    export OPENSSL_LIBS="/usr/local/opt/openssl@1.1/lib/libssl.a /usr/local/opt/openssl@1.1/lib/libcrypto.a"
-    ```
-  This will trigger statically linking of the **rtracklayer** package against
-  the openssl libraries.
-
-UPDATE (Sept 2022): Looks like `openssl` is available at
-https://mac.r-project.org/bin/ (Simon's binaries). Installing this binary
-should be preferred over installing via Homebrew. See IMPORTANT NOTE in
-the _Install Homebrew_ section above. Also make sure to fix `/usr/local/`
-permissions as described in the _Install Homebrew_ section if Simon's binary
-gets extracted there (normally the case for the `darwin17/x86_64` binaries).
-
-
-### 2.11 Install XZ Utils (includes lzma lib)
-
-    brew install xz
-
-UPDATE (Sept 2022): Looks like `xz` is available at
-https://mac.r-project.org/bin/ (Simon's binaries). Installing this binary
-should be preferred over installing via Homebrew. See IMPORTANT NOTE in
-the _Install Homebrew_ section above. Also make sure to fix `/usr/local/`
-permissions as described in the _Install Homebrew_ section if Simon's binary
-gets extracted there (normally the case for the `darwin17/x86_64` binaries).
-
-
-### 2.12 Install Python 3
+### 2.11 Install Python 3
 
 NOTE: As of Feb 3, 2021, the tensorflow module is not available yet for
 Python 3.9 so we install Python 3.8.
@@ -586,7 +632,7 @@ TESTING:
     python3 --version  # Python 3.8.10
 
 
-### 2.13 Set `RETICULATE_PYTHON` and install Python 3 modules
+### 2.12 Set `RETICULATE_PYTHON` and install Python 3 modules
 
 #### Set `RETICULATE_PYTHON` in `/etc/profile`
 
@@ -667,18 +713,18 @@ TESTING:
     ```
 
 
-### 2.14 Install MacTeX
+### 2.13 Install MacTeX
 
 Home page: https://www.tug.org/mactex/
 
 Download:
 
-    https://tug.org/mactex/mactex-download.html
+    https://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg
 
-As of May 2020 the above page is displaying "Downloading MacTeX 2020".
+As of October 2023 the above page is displaying "Downloading MacTeX 2023".
 
     cd ~/Downloads/
-    curl -LO https://tug.org/cgi-bin/mactex-download/MacTeX.pkg
+    curl -LO https://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg
 
 Install with:
 
@@ -694,7 +740,7 @@ to the `PATH` take effect. Then:
     which tex
 
 
-### 2.15 Install Pandoc
+### 2.14 Install Pandoc
 
 #### x86_64
 
@@ -729,26 +775,7 @@ Install with:
     sudo chown -R root:wheel /usr/local/texlive
 
 
-### 2.16 Install pkg-config
-
-NOVEMBER 2020: Who needs this? Is it really needed?
-
-    brew install pkg-config
-
-TESTING:
-
-    which pkg-config       # /usr/local/bin/pkg-config
-    pkg-config --list-all
-
-UPDATE (Sept 2022): Looks like `pkgconfig` is available at
-https://mac.r-project.org/bin/ (Simon's binaries). Installing this binary
-should be preferred over installing via Homebrew. See IMPORTANT NOTE in
-the _Install Homebrew_ section above. Also make sure to fix `/usr/local/`
-permissions as described in the _Install Homebrew_ section if Simon's binary
-gets extracted there (normally the case for the `darwin17/x86_64` binaries).
-
-
-### 2.17 Install pstree
+### 2.15 Install pstree
 
 These are just convenient to have when working interactively on a build
 machine but are not required by the daily builds or propagation pipe.
@@ -758,7 +785,7 @@ Install with:
     brew install pstree
 
 
-### 2.18 Replace `/etc/ssl/cert.pm` with CA bundle if necessary
+### 2.16 Replace `/etc/ssl/cert.pm` with CA bundle if necessary
 
 #### curl: (60) SSL certificate problem: certificate has expired
 
@@ -888,8 +915,8 @@ Remove the previous R installation:
 For example, if installing for x86_64 mac, download and install with:
 
     cd ~/Downloads/
-    curl -O https://cloud.r-project.org/bin/macosx/big-sur-x86_64/base/R-4.3.1-x86_64.pkg
-    sudo installer -pkg R-4.3.1-x86_64.pkg -target /
+    curl -O https://mac.r-project.org/big-sur-x86_64/R-devel/R-devel-x86_64.pkg
+    sudo installer -pkg R-4.4-x86_64.pkg -target /
 
 Note that, unlike what we do on the Linux and Windows builders, this is a
 *system-wide* installation of R i.e. it's in the `PATH` for all users on the
@@ -1062,7 +1089,7 @@ TESTING:
 If the builds are using R-devel and CRAN doesn't provide package binaries
 for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
-as of Nov 2020):
+as of Oct 2023):
 
     difficult_pkgs <- c("XML", "rJava", "gdtools", "units", "gsl", "V8",
               "magick", "rsvg", "gmp", "xml2", "jpeg", "tiff", "ncdf4",
@@ -1182,13 +1209,13 @@ Everything in this section must be done **from the biocbuild account**.
 ### 4.1 Install Java
 
 Go to https://jdk.java.net/ and follow the link to the latest JDK. Then
-download the tarball for your specific mac (e.g. `openjdk-18.0.1.1_macos-x64_bin.tar.gz`
-or `openjdk-18.0.1.1_macos-aarch64_bin.tar.gz`) to `~/Downloads/`.
+download the tarball for your specific mac (e.g. `openjdk-21_macos-x64_bin.tar.gz`
+for x86_64 or `openjdk-21_macos-aarch64_bin.tar.gz` for arm64) to `~/Downloads/`.
 
 Install with:
 
     cd /usr/local/
-    sudo tar zxvf ~/Downloads/openjdk-18.0.1.1_macos-x64_bin.tar.gz
+    sudo tar zxvf ~/Downloads/openjdk-21_macos-x64_bin.tar.gz
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -1230,71 +1257,7 @@ TESTING: Try to install the **rJava** package:
     # [1] "18.0.1.1+2-6"
 
 
-### 4.2 Install NetCDF and HDF5 system library
-
-NetCDF is needed only if CRAN package **ncdf4** needs to be installed from
-source which is usually NOT the case (most of the time a Mac binary should
-be available on CRAN).
-
-Download and extract Simon's binaries:
-
-#### x86_64
-
-    curl -O https://mac.r-project.org/bin/darwin17/x86_64/netcdf-4.8.1-darwin.17-x86_64.tar.xz > ~/Downloads/netcdf.tar.xz
-    curl -O https://mac.r-project.org/bin/darwin17/x86_64/hdf5-1.12.1-darwin.17-x86_64.tar.xz > ~/Downloads/hdf5.tar.xz
-
-#### arm64
-
-    curl -O https://mac.r-project.org/bin/darwin20/arm64/netcdf-4.8.1-darwin.20-arm64.tar.xz > ~/Downloads/netcdf.tar.xz
-    curl -O https://mac.r-project.org/bin/darwin20/arm64/hdf5-1.12.2-darwin.20-arm64.tar.xz > ~/Downloads/hdf5.tar.xz
-
-#### All macs
-
-    sudo tar fvxJ netcdf.tar.xz -C /
-    sudo tar fvxJ hdf5.tar.xz -C /
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-TESTING: Try to install the **ncdf4** package *from source*:
-
-    install.packages("ncdf4", type="source", repos="https://cran.r-project.org")
-
-If you have time, you can also try to install the **mzR** package but be aware
-that this takes much longer:
-
-    library(BiocManager)
-    BiocManager::install("mzR", type="source")  # takes between 7-10 min
-
-
-### 4.3 Install GSL system library
-
-Download and extract Simon's binary
-
-#### x86_64
-
-    curl -O https://mac.r-project.org/bin/darwin17/x86_64/gsl-2.7-darwin.17-x86_64.tar.xz > ~/Downloads/gsl.tar.xz
-
-#### arm64
-
-    curl -O https://mac.r-project.org/bin/darwin20/arm64/gsl-2.7.1-darwin.20-arm64.tar.xz > ~/Downloads/gsl.tar.xz
-
-#### All macs
-
-    sudo tar fvxJ gsl.tar.xz -C /
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-TESTING: Try to install the **GLAD** package *from source*:
-
-    library(BiocManager)
-    BiocManager::install("GLAD", type="source")
-
-
-### 4.4 Install JAGS
+### 4.2 Install JAGS
 
 Download with:
 
@@ -1316,7 +1279,7 @@ TESTING: Try to install the **rjags** package *from source*:
     install.packages("rjags", type="source", repos="https://cran.r-project.org")
 
 
-### 4.5 Install CMake
+### 4.3 Install CMake
 
 Needed for CRAN package **nloptr**, which is used by a few Bioconductor
 packages.
@@ -1356,7 +1319,7 @@ effect. Then:
     cmake --version
 
 
-### 4.6 Install Open Babel
+### 4.4 Install Open Babel
 
 TODO: Modify instructions for arm64
 
@@ -1463,7 +1426,7 @@ Then try to install ChemmineOB from source. From R:
     BiocManager::install("ChemmineOB", type="source")
 
 
-### 4.7 Install Clustal Omega
+### 4.5 Install Clustal Omega
 
 There is a standalone Mac binary at http://www.clustal.org/omega/
 Downnload it with:
@@ -1494,7 +1457,7 @@ TESTING: Try to build the **LowMACA** package (takes about 5 min):
     R CMD build LowMACA
 
 
-### 4.8 Install the MySQL client
+### 4.6 Install the MySQL client
 
 Note that we only need this for the **ensemblVEP** package. **RMySQL**
 doesn't need it as long as we can install the binary package.
@@ -1520,47 +1483,6 @@ libraries and will fail):
     ln -s /usr/local/opt/openssl/lib/libssl.dylib
     ln -s /usr/local/opt/openssl/lib/libcrypto.dylib
 
-
---------------------------------------------------------------------------
-NO LONGER NEEDED (kept for the record only)
-
-Installing the MySQL Community Server
-
-Download `mysql-8.0.0-dmr-osx10.11-x86_64.dmg` from:
-
-    https://downloads.mysql.com/archives/community/
-
-e.g. with:
-
-    cd ~/Downloads/
-    curl -O https://downloads.mysql.com/archives/get/file/mysql-8.0.0-dmr-osx10.11-x86_64.dmg
-
-Install with:
-
-    sudo hdiutil attach mysql-8.0.18-macos10.14-x86_64.dmg
-    sudo installer -pkg /Volumes/mysql-8.0.18-macos10.14-x86_64/mysql-8.0.18-macos10.14-x86_64.pkg -target /
-    sudo hdiutil detach /Volumes/mysql-8.0.18-macos10.14-x86_64
-    
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-Then in `/etc/profile` append `/usr/local/mysql/bin` to `PATH`,
-`/usr/local/mysql/lib` to `DYLD_LIBRARY_PATH`, and
-`/usr/local/mysql/lib/pkgconfig` to `PKG_CONFIG_PATH`.
-
-And finally (needed only for some MySQL builds that seem broken):
-
-    cd /usr/local/mysql/lib/
-    otool -L libmysqlclient.21.dylib
-    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
-    install_name_tool -add_rpath /usr/local/mysql/lib libmysqlclient.21.dylib
-
-    #install_name_tool -change @rpath/libmysqlclient.21.dylib /usr/local/mysql/lib/libmysqlclient.21.dylib libmysqlclient.21.dylib
-    otool -l libmysqlclient.21.dylib  # look for path in LC_RPATH section
-
---------------------------------------------------------------------------
-
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
 
@@ -1572,7 +1494,7 @@ Then try to install the **RMySQL** package *from source*:
     install("RMySQL", type="source")
 
 
-### 4.9 Install Ensembl VEP script
+### 4.7 Install Ensembl VEP script
 
 TODO: Modify instructions for arm64
 
@@ -1640,7 +1562,7 @@ Try to build and check the **ensemblVEP** and **MMAPPR2** packages:
     R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
 
 
-### 4.10 Install ViennaRNA
+### 4.8 Install ViennaRNA
 
 Required by Bioconductor package **GeneGA**.
 
@@ -1669,7 +1591,7 @@ Then try to build the **GeneGA** package:
     R CMD build GeneGA
 
 
-### 4.11 Set up ImmuneSpaceR package for connecting to ImmuneSpace
+### 4.9 Set up ImmuneSpaceR package for connecting to ImmuneSpace
 
 Required by Bioconductor package **ImmuneSpaceR**. Get credentials from
 Bitwarden.
@@ -1685,7 +1607,7 @@ effect. Then try to build the **ImmuneSpaceR** package:
     cd ~/bbs-3.18-bioc/meat/
     R CMD build ImmuneSpaceR
 
-### 4.12 Install mono
+### 4.10 Install mono
 
 Required by Bioconductor package **rawrr**.
 
@@ -1705,7 +1627,7 @@ Then try to install/build/check the **rawrr** package:
     R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
 
 
-### 4.13 Install macFUSE
+### 4.11 Install macFUSE
 
 Required by Bioconductor package **Travel**.
 
@@ -1729,7 +1651,7 @@ TESTING: Try to install the **Travel** package *from source*:
     BiocManager::install("Travel", type="source")
 
 
-### 4.14 Install .NET Runtime
+### 4.12 Install .NET Runtime
 
 Required by Bioconductor package **rmspc**.
 
@@ -1758,42 +1680,6 @@ You might need to logout and login again before trying this:
     cd ~/bbs-3.18-bioc/meat/
     R CMD build rmspc
     R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
-
-
-### 4.15 Install GLPK
-
-Required by Bioconductor package **MMUPHin**.
-
-Download and extract Simon's binary with:
-
-#### x86_64
-
-    curl -O https://mac.r-project.org/bin/darwin20/x86_64/glpk-5.0-darwin.20-x86_64.tar.xz > ~/Download/glpk.tar.xz
-
-#### arm64
-
-    curl -O https://mac.r-project.org/bin/darwin20/arm64/glpk-5.0-darwin.20-arm64.tar.xz > ~/Download/glpk.tar.xz
-
-#### For all macs
-
-    sudo tar fvxJ glpk.tar.xz -C /
-
-    # Fix /usr/local/ permissions:
-    sudo chown -R biocbuild:admin /usr/local/*
-    sudo chown -R root:wheel /usr/local/texlive
-
-Note: You may need to reinstall `igraph`.
-
-TESTING: The **MMUPHin** package uses `igraph::cluster_optimal()` internally
-which requires GLPK:
-
-    library(igraph)
-    cluster_optimal(make_graph("Zachary"))
-
-If GLPK is not available, one gets:
-
-    Error in cluster_optimal(make_graph("Zachary")) :
-      At optimal_modularity.c:84 : GLPK is not available, Unimplemented function call
 
 
 
