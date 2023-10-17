@@ -48,7 +48,7 @@ allnodes = {
                    'Platform': "x86_64-apple-darwin21.6.0",
                    'pkgType' : "mac.binary.big-sur-x86_64",
                    'encoding': "utf-8"},
-    'merida1':    {'OS'      : "macOS 12.6.4 Monterey",
+    'merida1':    {'OS'      : "macOS 12.7 Monterey",
                    'Arch'    : "x86_64",
                    'Platform': "x86_64-apple-darwin21.6.0",
                    'pkgType' : "mac.binary.big-sur-x86_64",
