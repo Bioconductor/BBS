@@ -411,7 +411,7 @@ If this is a reinstallation of MiKTeX, make sure to uninstall it (from
 the Administrator account) before reinstalling.
 
 Go to https://miktex.org/download and download the latest Basic MiKTeX
-64-bit Installer (`basic-miktex-23.4-x64.exe` as of Apr. 2023).
+64-bit Installer (`basic-miktex-23.10-x64.exe` as of Oct. 2023).
 
 When running the installer:
 
@@ -447,8 +447,8 @@ like LowMACA.
 
 We use Strawberry Perl available at https://strawberryperl.com.
 
-Download installer for Windows 64-bit (`strawberry-perl-5.32.1.1-64bit.msi`
-as of Dec. 2021).
+Download installer for Windows 64-bit (`strawberry-perl-5.38.0.1-64bit.msi`
+as of Oct. 2023).
 
 When running the installer, keep all the default settings.
 
@@ -741,7 +741,7 @@ if you were already logged on) in a PowerShell window:
 Then, if you already have R installed, try to build a package that uses
 Pandoc e.g.:
 
-    cd E:\biocbuild\bbs-3.18-bioc\meat
+    cd E:\biocbuild\bbs-3.19-bioc\meat
     ..\R\bin\R CMD build dagLogo
     ..\R\bin\R CMD build Harman
 
@@ -827,8 +827,8 @@ If R is already installed, you can also check this from R with:
 **From the `biocbuild` account** in a PowerShell window:
 
     cd E:\biocbuild
-    mkdir bbs-3.18-bioc
-    cd bbs-3.18-bioc
+    mkdir bbs-3.19-bioc
+    cd bbs-3.19-bioc
     mkdir log
     mkdir tmp
     mkdir tmpdir
@@ -849,19 +849,19 @@ If updating R, uninstall the current R before running the installer:
 - Open the Control Panel
 - Click on Uninstall a program
 - Make sure you pick up the correct R in case there is more than one instance!
-Then go in the File Explorer and remove `E:\biocbuild\bbs-3.18-bioc\R`.
+Then go in the File Explorer and remove `E:\biocbuild\bbs-3.19-bioc\R`.
 
 When running the installer:
 - Ignore warning about the current user not being an admin
-- Select destination location `E:\biocbuild\bbs-3.18-bioc\R`
+- Select destination location `E:\biocbuild\bbs-3.19-bioc\R`
 - Don't create a Start Menu Folder
 - Don't create a desktop or Quick Launch shortcut
 
 #### Install BiocManager
 
-In a PowerShell window, go to `E:\biocbuild\bbs-3.18-bioc` and start R:
+In a PowerShell window, go to `E:\biocbuild\bbs-3.19-bioc` and start R:
 
-    cd E:\biocbuild\bbs-3.18-bioc
+    cd E:\biocbuild\bbs-3.19-bioc
     R\bin\R  # check version of R displayed by startup message
 
 Then from R:
@@ -968,7 +968,7 @@ Should we also remove package specific caches?
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.18-bioc`
+    - Name: `bbs-3.19-bioc`
     - In Security options:
       - Use `PALOMINO\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -987,9 +987,9 @@ Should we also remove package specific caches?
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.18\bioc\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.18-bioc\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.18\bioc\palomino`
+      - Program/script: `E:\biocbuild\BBS\3.19\bioc\palomino\run.bat`
+      - Add arguments: `>>E:\biocbuild\bbs-3.19-bioc\log\palomino.log 2>&1`
+      - Start in: `E:\biocbuild\BBS\3.19\bioc\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1016,9 +1016,9 @@ You need the JDK (Java Development Kit). Available at:
   https://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 Choose "JDK Download" then download the "Windows x64 Installer"
-(`jdk-17_windows-x64_bin.exe` as of Dec. 2021). Direct link:
+(`jdk-21_windows-x64_bin.exe` as of Oct. 2023). Direct link:
 
-  https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.exe
+  https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.exe
 
 Use the default settings when running the installer.
 
@@ -1035,7 +1035,7 @@ TESTING: From the `biocbuild` account (log out and on again from this
 account if you were already logged on) try to load the rJava package
 (this package will be automatically installed after the 1st build run
 but it cannot be loaded if Java is not found on the system).
-To do this: open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc`,
+To do this: open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc`,
 start R (with `R\bin\R`), then:
 
     library(rJava)
@@ -1068,7 +1068,7 @@ delimiter.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the NetPathMiner package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc\meat`
+open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL NetPathMiner
@@ -1104,7 +1104,7 @@ but for some reason the latter fails with an error on our Windows builders.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to load the rjags package e.g. open a
-PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc`, start R (with
+PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc`, start R (with
 `R\bin\R`), then:
 
     library(rjags)
@@ -1132,7 +1132,7 @@ if you were already logged on):
     which gswin64  # /c/Program Files/gs/gs9.53.3/bin/gswin64
 
 Then try to build a package that uses Ghostscript for its vignette e.g. open
-a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc\meat` (this folder
+a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat` (this folder
 will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
@@ -1160,7 +1160,7 @@ environment variables_ section at the top of this document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the rsbml package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc\meat`
+open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL rsbml
@@ -1209,7 +1209,7 @@ a personal administrator account, this one needs to be installed from the
 
 From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the ChemmineOB package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc\meat`
+open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL ChemmineOB
@@ -1232,7 +1232,7 @@ document for how to do this).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build a package that uses Clustal Omega
-e.g. open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc\meat`
+e.g. open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build LowMACA
@@ -1249,7 +1249,7 @@ document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build the ImmuneSpaceR package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc\meat`
+open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build ImmuneSpaceR
@@ -1265,7 +1265,7 @@ Run the installer.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the Travel package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.18-bioc\meat`
+open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL Travel
@@ -1316,8 +1316,8 @@ Not run on Windows at the moment.
 In a PowerShell window from the `biocbuild` account:
 
     cd E:\biocbuild
-    mkdir bbs-3.18-data-experiment
-    mkdir bbs-3.18-data-experiment\log
+    mkdir bbs-3.19-data-experiment
+    mkdir bbs-3.19-data-experiment\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1326,7 +1326,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.18-data-experiment`
+    - Name: `bbs-3.19-data-experiment`
     - In Security options:
       - Use `PALOMINO\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1345,9 +1345,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.18\data-experiment\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.18-data-experiment\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.18\data-experiment\palomino`
+      - Program/script: `E:\biocbuild\BBS\3.19\data-experiment\palomino\run.bat`
+      - Add arguments: `>>E:\biocbuild\bbs-3.19-data-experiment\log\palomino.log 2>&1`
+      - Start in: `E:\biocbuild\BBS\3.19\data-experiment\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1364,8 +1364,8 @@ Then **from a personal administrator account** configure the task as follow:
 In a PowerShell window from the `biocbuild` account:
 
     cd E:\biocbuild
-    mkdir bbs-3.18-workflows
-    mkdir bbs-3.18-workflows\log
+    mkdir bbs-3.19-workflows
+    mkdir bbs-3.19-workflows\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1374,7 +1374,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.18-workflows`
+    - Name: `bbs-3.19-workflows`
     - In Security options:
       - Use `PALOMINO\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1393,9 +1393,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.18\workflows\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.18-workflows\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.18\workflows\palomino`
+      - Program/script: `E:\biocbuild\BBS\3.19\workflows\palomino\run.bat`
+      - Add arguments: `>>E:\biocbuild\bbs-3.19-workflows\log\palomino.log 2>&1`
+      - Start in: `E:\biocbuild\BBS\3.19\workflows\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1412,8 +1412,8 @@ Then **from a personal administrator account** configure the task as follow:
 In a PowerShell window from the `biocbuild` account:
 
     cd E:\biocbuild
-    mkdir bbs-3.18-books
-    mkdir bbs-3.18-books\log
+    mkdir bbs-3.19-books
+    mkdir bbs-3.19-books\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1422,7 +1422,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.18-books`
+    - Name: `bbs-3.19-books`
     - In Security options:
       - Use `PALOMINO\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1441,9 +1441,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.18\books\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.18-books\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.18\books\palomino`
+      - Program/script: `E:\biocbuild\BBS\3.19\books\palomino\run.bat`
+      - Add arguments: `>>E:\biocbuild\bbs-3.19-books\log\palomino.log 2>&1`
+      - Start in: `E:\biocbuild\BBS\3.19\books\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1460,8 +1460,8 @@ Then **from a personal administrator account** configure the task as follow:
 In a PowerShell window from the `biocbuild` account:
 
     cd E:\biocbuild
-    mkdir bbs-3.18-bioc-longtests
-    mkdir bbs-3.18-bioc-longtests\log
+    mkdir bbs-3.19-bioc-longtests
+    mkdir bbs-3.19-bioc-longtests\log
 
 Then **from a personal administrator account** configure the task as follow:
 
@@ -1470,7 +1470,7 @@ Then **from a personal administrator account** configure the task as follow:
 - Right-click on the `BBS` folder -> choose Create Task
 
   - Tab General:
-    - Name: `bbs-3.18-bioc-longtests`
+    - Name: `bbs-3.19-bioc-longtests`
     - In Security options:
       - Use `PALOMINO\biocbuild` account to run the task
       - Run whether user is logged on or not
@@ -1489,9 +1489,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.18\bioc-longtests\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.18-bioc-longtests\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.18\bioc-longtests\palomino`
+      - Program/script: `E:\biocbuild\BBS\3.19\bioc-longtests\palomino\run.bat`
+      - Add arguments: `>>E:\biocbuild\bbs-3.19-bioc-longtests\log\palomino.log 2>&1`
+      - Start in: `E:\biocbuild\BBS\3.19\bioc-longtests\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
