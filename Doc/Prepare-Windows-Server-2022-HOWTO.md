@@ -1117,8 +1117,9 @@ PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc`, start R (with
 
 Available at https://www.ghostscript.com/releases/
 
-Choose Ghostscript AGPL Release for 64-bit Windows (`gs9550w64.exe` as
-of Dec. 2021).
+Choose Ghostscript AGPL Release for 64-bit Windows
+(`https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10020/gs10020w64.exe`
+as of Oct. 2023).
 
 Use the default settings when running the installer.
 
@@ -1129,7 +1130,7 @@ document for how to do this).
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on):
 
-    which gswin64  # /c/Program Files/gs/gs9.53.3/bin/gswin64
+    which gswin64  # /c/Program Files/gs/gs10.02.0/bin/gswin64
 
 Then try to build a package that uses Ghostscript for its vignette e.g. open
 a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat` (this folder
