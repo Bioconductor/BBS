@@ -704,7 +704,7 @@ TESTING:
 
 - Try to build the **BiocSklearn** package (takes < 1 min):
     ```
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     R CMD build BiocSklearn
     ```
     and the destiny package:
@@ -886,7 +886,7 @@ look like this:
 
 #### Create bbs-x.y-bioc directory structure
 
-    mkdir -p bbs-3.18-bioc/log
+    mkdir -p bbs-3.19-bioc/log
 
 
 ### 3.3 Install R
@@ -1106,7 +1106,7 @@ It should fail for most (if not all) packages. However, it's still worth
 doing it as it will be able to install many dependencies from source.
 Then try to install the binaries built with the current R release:
 
-    contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.2"
+    contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.3"
     install.packages(setdiff(difficult_pkgs, rownames(installed.packages())), contriburl=contriburl)
 
 NOTES:
@@ -1123,25 +1123,25 @@ NOTES:
   via an absolute path that is specific to the version of R that was used
   when the object was compiled/linked e.g.
     ```
-    /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libR.dylib
+    /Library/Frameworks/R.framework/Versions/4.3/Resources/lib/libR.dylib
     ```
-  So loading them in a different version of R (e.g. R 4.3) will fail with
+  So loading them in a different version of R (e.g. R 4.4) will fail with
   an error like this:
     ```
     > library(XML)
     Error: package or namespace load failed for ‘XML’:
      .onLoad failed in loadNamespace() for 'XML', details:
       call: dyn.load(file, DLLpath = DLLpath, ...)
-      error: unable to load shared object '/Library/Frameworks/R.framework/Versions/4.3/Resources/library/XML/libs/XML.so':
-      dlopen(/Library/Frameworks/R.framework/Versions/4.3/Resources/library/XML/libs/XML.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.3/Resources/lib/libR.dylib
-      Referenced from: /Library/Frameworks/R.framework/Versions/4.3/Resources/library/XML/libs/XML.so
+      error: unable to load shared object '/Library/Frameworks/R.framework/Versions/4.4/Resources/library/XML/libs/XML.so':
+      dlopen(/Library/Frameworks/R.framework/Versions/4.4/Resources/library/XML/libs/XML.so, 6): Library not loaded: /Library/Frameworks/R.framework/Versions/4.4/Resources/lib/libR.dylib
+      Referenced from: /Library/Frameworks/R.framework/Versions/4.4/Resources/library/XML/libs/XML.so
       Reason: image not found
     ```
   However, they can easily be tricked by creating a symlink. Note that in R 4.3,
   paths became suffixed with `-x86_64`:
     ```
     cd /Library/Frameworks/R.framework/Versions
-    ln -s 4.3-x86_64 4.2
+    ln -s 4.3-x86_64 4.3
     ```
 
 - Do NOT install the Cairo binary built for a previous version of R (hopefully
@@ -1193,7 +1193,7 @@ Must be done from the biocbuild account.
 
 Add the following entry to biocbuild crontab:
 
-    00 15 * * 0-5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.18/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.18-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 15 * * 0-5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.19/bioc/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.19-bioc/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 Now you can proceed to the next section or wait for a complete build run
 before doing so.
@@ -1453,7 +1453,7 @@ Then:
 
 TESTING: Try to build the **LowMACA** package (takes about 5 min):
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     R CMD build LowMACA
 
 
@@ -1553,7 +1553,7 @@ Logout and login again so that the changes to `/etc/profile` take effect.
 
 Try to build and check the **ensemblVEP** and **MMAPPR2** packages:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
 
     R CMD build ensemblVEP
     R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
@@ -1587,7 +1587,7 @@ TESTING:
 
 Then try to build the **GeneGA** package:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     R CMD build GeneGA
 
 
@@ -1604,7 +1604,7 @@ In `/etc/profile` add:
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then try to build the **ImmuneSpaceR** package:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     R CMD build ImmuneSpaceR
 
 ### 4.10 Install mono
@@ -1621,7 +1621,7 @@ TESTING
 
 Then try to install/build/check the **rawrr** package:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     R CMD INSTALL rawrr
     R CMD build rawrr
     R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
@@ -1677,7 +1677,7 @@ install the 6.0 .NET runtime corresponding to the build system's macOS.
 
 You might need to logout and login again before trying this:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     R CMD build rmspc
     R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
 
@@ -1700,14 +1700,14 @@ Not run on Mac at the moment.
 
 From the biocbuild account:
 
-    mkdir -p ~/bbs-3.18-workflows/log
+    mkdir -p ~/bbs-3.19-workflows/log
 
 Then add the following entry to biocbuild's crontab:
 
-    # BIOC 3.18 WORKFLOWS BUILDS
+    # BIOC 3.19 WORKFLOWS BUILDS
     # --------------------------
     
-    00 08 * * 2,5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.18/workflows/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.18-workflows/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 08 * * 2,5 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.19/workflows/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.19-workflows/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 
 ### 5.4 Books builds
@@ -1719,12 +1719,12 @@ Not run on Mac at the moment.
 
 From the biocbuild account:
 
-    mkdir -p ~/bbs-3.18-bioc-longtests/log
+    mkdir -p ~/bbs-3.19-bioc-longtests/log
 
 Then add the following entry to biocbuild's crontab:
 
-    # BIOC 3.18 SOFTWARE LONGTESTS BUILDS
+    # BIOC 3.19 SOFTWARE LONGTESTS BUILDS
     # -----------------------------------
     
-    00 08 * * 6 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.18/bioc-longtests/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.18-bioc-longtests/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 08 * * 6 /bin/bash --login -c 'cd /Users/biocbuild/BBS/3.19/bioc-longtests/`hostname -s` && ./run.sh >>/Users/biocbuild/bbs-3.19-bioc-longtests/log/`hostname -s`-`date +\%Y\%m\%d`-run.log 2>&1'
 
