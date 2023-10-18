@@ -59,7 +59,7 @@ default_INSTALL_timeout   =  '2400.0'  # 40 min
 if buildtype == 'data-experiment':
     default_BUILD_timeout =  '4800.0'  # 80 min
 elif buildtype == 'workflows':
-    default_BUILD_timeout =  '7200.0'  #  2 h
+    default_BUILD_timeout = '10800.0'  #  3 h
 elif buildtype == 'books':
     default_BUILD_timeout = '18000.0'  #  5 h
 elif buildtype == 'bioc-longtests':
