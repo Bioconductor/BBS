@@ -468,7 +468,7 @@ location.  Otherwise  we will produce broken binaries again (see
 https://support.bioconductor.org/p/95587/#95631).
 
 
-### 2.9 Install Binaries for gsl, openssl, pkgconfig, xz
+### 2.9 Install Binaries for gsl, openssl, pkg-config, xz
 
 We use binaries available at https://mac.r-project.org/bin, which are referred
 to as "Simon's Binaries." They should be preferred over installing via Homebrew.
@@ -522,6 +522,12 @@ the case for the `darwin17/x86_64` binaries).
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
     sudo chown -R root:wheel /usr/local/texlive
+
+TESTING: Check pkg-config (possibly needed for open-babel)
+
+    which pkg-config # /opt/R/x86_64/bin/pkg-config or /opt/R/arm64/bin/pkg-config
+    pkg-config --list-all
+
 
 TESTING: Try to install the **GLAD** package *from source* for GSL
 
@@ -1404,10 +1410,14 @@ Install `boost` (this will install `icu4c` if not already installed):
 
     brew install boost
 
-Finally create the following symlink:
+Create the following symlink:
 
     cd /usr/local/lib
     ln -s ../Cellar/open-babel/3.1.1_1/lib openbabel3
+
+Add the directory containing `openbabel.pc` to `PKG_CONFIG_PATH`:
+
+    export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/openbabel3/pkgconfig
 
 TESTING:
 
