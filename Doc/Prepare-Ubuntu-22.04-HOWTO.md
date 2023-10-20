@@ -286,7 +286,7 @@ problem is with:
 If the software builds are already set up, you can access the `Rscript`
 command by **going to the `biocbuild` account** and do:
 
-    cd ~/bbs-3.18-bioc/
+    cd ~/bbs-3.19-bioc/
     R/bin/Rscript -e 'png("fig2.png", type="Xlib")'
 
 Running Xvfb (X virtual framebuffer) as a service addresses this problem.
@@ -414,7 +414,7 @@ environment. For now `echo $DISPLAY` should show nothing.
 
     service xvfb status  # should be up and running
     echo $DISPLAY        # :1.0
-    cd ~/bbs-3.18-bioc/
+    cd ~/bbs-3.19-bioc/
     R/bin/Rscript -e 'png("fig2.png", type="Xlib")'  # no more error!
 
 
@@ -788,7 +788,7 @@ from the account from which the builds will be run for an _external build node_.
 Propagation is documented in a separate document: Set-up-propagation-HOWTO.md
 
 Until we've set it up, we need to comment out the `export BBS_OUTGOING_MAP=...`
-line in `~/BBS/3.18/bioc/nebbiolo2/config.sh`.
+line in `~/BBS/3.19/bioc/nebbiolo2/config.sh`.
 
 We also need to add the build type to the list in `BBS/BBSreportutils.py`:
 
@@ -802,7 +802,7 @@ by the `postrun.sh` script won't have the little LEDs in the rightmost column
 indicating propagation status.
 
 Note that the change is only temporary (don't commit it!), until we've set up
-propagation of the 3.18 software packages.
+propagation of the 3.19 software packages.
 
 #### Edit non_target_repos.txt (no longer needed)
 
@@ -827,34 +827,34 @@ If we are in the situation described above (i.e. no X.Y repositories yet),
 then `~/BBS/X.Y/bioc/non_target_repos.txt` needs to be temporarily modified
 to point to the current devel repositories.
 
-For example, if we are a few weeks before the BioC 3.13 release,
-and you are setting up the future BioC 3.18 builds, then you need to
-make the following change to `~/BBS/3.18/bioc/non_target_repos.txt`:
-**replace every occurences of `BBS_BIOC_VERSION` with 3.13**.
+For example, if we are a few weeks before the BioC 3.19 release,
+and you are setting up the future BioC 3.19 builds, then you need to
+make the following change to `~/BBS/3.19/bioc/non_target_repos.txt`:
+**replace every occurences of `BBS_BIOC_VERSION` with 3.19**.
 
 The modified file should look like this:
 
-    https://bioconductor.org/packages/3.13/data/annotation
-    https://bioconductor.org/packages/3.13/data/experiment
-    https://bioconductor.org/packages/3.13/workflows
-    https://bioconductor.org/packages/3.13/books
+    https://bioconductor.org/packages/3.19/data/annotation
+    https://bioconductor.org/packages/3.19/data/experiment
+    https://bioconductor.org/packages/3.19/workflows
+    https://bioconductor.org/packages/3.19/books
 
 The reason we need to do this is for the build system to be able to find and
 install all the dependencies of the software packages (BBS doesn't and cannot
 use `BiocManager::install()` for that).
 
-Note that the change is only temporary (don't commit it!), until the 3.18
+Note that the change is only temporary (don't commit it!), until the 3.19
 public repos exist and get populated.
 
 #### Create bbs-X.Y-bioc directory structure
 
 This applies to all build machines, _standalone_ or _non-standalone_.
 
-For example, for the BioC 3.18 software builds:
+For example, for the BioC 3.19 software builds:
 
     cd
-    mkdir bbs-3.18-bioc
-    cd bbs-3.18-bioc/
+    mkdir bbs-3.19-bioc
+    cd bbs-3.19-bioc/
     mkdir rdownloads log
 
 
@@ -874,7 +874,7 @@ on Ubuntu).
 Move to the directory where we're going to download and extract the R source
 tarball from CRAN:
 
-    cd ~/bbs-3.18-bioc/rdownloads/
+    cd ~/bbs-3.19-bioc/rdownloads/
 
 The exact tarball to download depends on whether we're configuring builds
 for BioC release or devel. Remember that each version of Bioconductor is
@@ -931,7 +931,7 @@ Check version and revision with:
 
 Create the `<R_HOME>` folder, and `cd` to it:
 
-    cd ~/bbs-3.18-bioc/
+    cd ~/bbs-3.19-bioc/
     
     ## If we are updating R, let's keep the previous R/ subfolder around,
     ## just in case:
@@ -973,9 +973,9 @@ system:
 
 - Run the `R-fix-flags.sh` script to modify the compiler flags that will be
   used during package compilation. The script will modify `R/etc/Makeconf`.
-  It's important to run this from the `~/bbs-3.18-bioc/R/etc/` directory and
+  It's important to run this from the `~/bbs-3.19-bioc/R/etc/` directory and
   not one level up. Both locations contain `Makeconf` files but we only want
-  to modify the `Makeconf` file located in `~/bbs-3.18-bioc/R/etc/`:
+  to modify the `Makeconf` file located in `~/bbs-3.19-bioc/R/etc/`:
     ```
     cd etc/
     ~/BBS/utils/R-fix-flags.sh
@@ -990,7 +990,7 @@ system:
 
 Start R:
 
-    cd ~/bbs-3.18-bioc/
+    cd ~/bbs-3.19-bioc/
     R/bin/R         # check version displayed by startup message
 
 Then from R:
@@ -1080,19 +1080,19 @@ please adjust if your _satellite node_ is in a different time zone):
 
 #### Central builder:
 
-    # BIOC 3.18 SOFTWARE BUILDS
+    # BIOC 3.19 SOFTWARE BUILDS
     # -------------------------
     
     # prerun:
-    55 13 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.18-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    55 13 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/bioc/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.19-bioc/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    00 15 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 15 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.19-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # NEXT DAY
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    00 11 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 11 * * 1-6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/bioc/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.19-bioc/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 #### Satellite node (i.e. non-standalone builder):
 
@@ -1100,11 +1100,11 @@ IMPORTANT: All times above are EST times! Please adjust the entry below to make 
 that your _satellite node_ starts `run.sh` at 3:00 pm EST if it's located in a different
 time zone.
 
-    # BIOC 3.18 SOFTWARE BUILDS
+    # BIOC 3.19 SOFTWARE BUILDS
     # -------------------------
     
     # run:
-    00 15 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 15 * * 0-5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/bioc/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.19-bioc/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 
 ### 2.6 First build report
@@ -1114,7 +1114,7 @@ time zone.
 On the day after adding the software builds to `biocbuild`'s crontab, you
 should get the first build report at:
 
-  https://master.bioconductor.org/checkResults/3.18/bioc-LATEST/
+  https://master.bioconductor.org/checkResults/3.19/bioc-LATEST/
 
 Some red on the report is to be expected (the purpose of the next section is
 to reduce the amount of red as much as possible) but if you are happy with
@@ -1128,7 +1128,7 @@ To do this, go on master (`ssh -A webadmin@master.bioconductor.org` from the
 the file first).
 
 Also note that the builds will automatically create and populate the
-`~/bbs-3.18-bioc/meat/` folder, which we will refer to and use in the
+`~/bbs-3.19-bioc/meat/` folder, which we will refer to and use in the
 next section.
 
 #### Satellite node (i.e. non-standalone builder):
@@ -1142,7 +1142,7 @@ between 10:30am and 11:00am EST.
 Once this is in place, the results for the new _satellite node_ should
 appear on the daily report at:
 
-  https://bioconductor.org/checkResults/3.18/bioc-LATEST/
+  https://bioconductor.org/checkResults/3.19/bioc-LATEST/
 
 Some red on the report is to be expected. The purpose of the next section
 is to reduce the amount of red as much as possible.
@@ -1242,7 +1242,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 From the `biocbuild` account, try to build and check the **ensemblVEP**
 and **MMAPPR2** packages:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
 
     ## Takes about 4 min. to build and 8 min. to check:
     ../R/bin/R CMD build ensemblVEP
@@ -1280,7 +1280,7 @@ From the `biocbuild` account:
     # -lsbml
     # Check libsbml5-dev is installed
     dpkg-query -s libsbml5-dev
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     ../R/bin/R CMD INSTALL rsbml
 
 
@@ -1302,7 +1302,7 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 From the `biocbuild` account:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     ../R/bin/R CMD build ImmuneSpaceR
 
 
@@ -1318,7 +1318,7 @@ Required by Bioconductor package **LowMACA**.
 
 From the `biocbuild` account:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     ../R/bin/R CMD build LowMACA
 
 
@@ -1342,7 +1342,7 @@ For more about installing .NET, see https://docs.microsoft.com/en-us/dotnet/core
 
 From the `biocbuild` account, try to build and check the **rmspc** package:
 
-    cd ~/bbs-3.18-bioc/meat/
+    cd ~/bbs-3.19-bioc/meat/
     ../R/bin/R CMD build rmspc
     ../R/bin/R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
 
@@ -1355,26 +1355,26 @@ From the `biocbuild` account, try to build and check the **rmspc** package:
 
 From the `biocbuild` account:
 
-    mkdir -p ~/bbs-3.18-data-annotation/log
+    mkdir -p ~/bbs-3.19-data-annotation/log
 
 Then add the following entries to `biocbuild`'s crontab:
 
-    # BIOC 3.18 DATA ANNOTATION BUILDS
+    # BIOC 3.19 DATA ANNOTATION BUILDS
     # --------------------------------
     # run on Wednesday
     
     # prerun:
-    30 02 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/data-annotation/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.18-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    30 02 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/data-annotation/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.19-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    00 03 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/data-annotation/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 03 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/data-annotation/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.19-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    00 06 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/data-annotation/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 06 * * 3 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/data-annotation/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.19-data-annotation/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
-  https://master.bioconductor.org/checkResults/3.18/data-annotation-LATEST/
+  https://master.bioconductor.org/checkResults/3.19/data-annotation-LATEST/
 
 If you're happy with the result, link the report from this page:
 
@@ -1385,26 +1385,26 @@ If you're happy with the result, link the report from this page:
 
 From the `biocbuild` account:
 
-    mkdir -p ~/bbs-3.18-data-experiment/log
+    mkdir -p ~/bbs-3.19-data-experiment/log
 
 Then add the following entries to `biocbuild`'s crontab:
 
-    # BIOC 3.18 DATA EXPERIMENT BUILDS
+    # BIOC 3.19 DATA EXPERIMENT BUILDS
     # --------------------------------
     # run on Tuesdays and Thursdays
     
     # prerun:
-    30 08 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.18-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    30 08 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/data-experiment/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.19-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    00 10 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 10 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/data-experiment/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.19-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    45 14 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    45 14 * * 2,4 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/data-experiment/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.19-data-experiment/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
-  https://master.bioconductor.org/checkResults/3.18/data-experiment-LATEST/
+  https://master.bioconductor.org/checkResults/3.19/data-experiment-LATEST/
 
 If you're happy with the result, link the report from this page:
 
@@ -1415,27 +1415,27 @@ If you're happy with the result, link the report from this page:
 
 From the `biocbuild` account:
 
-    mkdir -p ~/bbs-3.18-workflows/log
+    mkdir -p ~/bbs-3.19-workflows/log
 
 Then add the following entries to `biocbuild`'s crontab:
 
-    # BIOC 3.18 WORKFLOWS BUILDS
+    # BIOC 3.19 WORKFLOWS BUILDS
     # --------------------------
     # run on Tuesdays and Fridays
     
     # prerun:
-    45 07 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/workflows/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.18-workflows/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    45 07 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/workflows/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.19-workflows/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run (start after the books builds to avoid concurrent INSTALLs and
     # competing for resources):
-    00 08 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/workflows/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-workflows/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 08 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/workflows/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.19-workflows/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    00 14 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 14 * * 2,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/workflows/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.19-workflows/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
-  https://master.bioconductor.org/checkResults/3.18/workflows-LATEST/
+  https://master.bioconductor.org/checkResults/3.19/workflows-LATEST/
 
 If you're happy with the result, link the report from this page:
 
@@ -1446,27 +1446,27 @@ If you're happy with the result, link the report from this page:
 
 From the `biocbuild` account:
 
-    mkdir -p ~/bbs-3.18-books/log
+    mkdir -p ~/bbs-3.19-books/log
 
 Then add the following entries to `biocbuild`'s crontab:
 
-    # BIOC 3.18 BOOKS BUILDS
+    # BIOC 3.19 BOOKS BUILDS
     # ----------------------
     # run on Mondays, Wednesdays, and Fridays
     
     # prerun:
-    45 06 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/books/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.18-books/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    45 06 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/books/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.19-books/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run (start before the workflows builds to avoid concurrent INSTALLs and
     # competing for resources):
-    00 07 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 07 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/books/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.19-books/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    00 14 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 14 * * 1,3,5 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/books/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.19-books/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
-  https://master.bioconductor.org/checkResults/3.18/books-LATEST/
+  https://master.bioconductor.org/checkResults/3.19/books-LATEST/
 
 If you're happy with the result, link the report from this page:
 
@@ -1477,26 +1477,26 @@ If you're happy with the result, link the report from this page:
 
 From the `biocbuild` account:
 
-    mkdir -p ~/bbs-3.18-bioc-longtests/log
+    mkdir -p ~/bbs-3.19-bioc-longtests/log
 
 Then add the following entries to `biocbuild`'s crontab:
 
-    # BIOC 3.18 SOFTWARE LONGTESTS BUILDS
+    # BIOC 3.19 SOFTWARE LONGTESTS BUILDS
     # -----------------------------------
     # run every Saturday
     
     # prerun:
-    55 06 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.18-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
+    55 06 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/bioc-longtests/`hostname` && ./prerun.sh >>/home/biocbuild/bbs-3.19-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-prerun.log 2>&1'
     
     # run:
-    00 08 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.18-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+    00 08 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/bioc-longtests/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.19-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
     
     # postrun (must start after 'run.sh' has finished on all participating nodes):
-    00 21 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.18/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.18-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
+    00 21 * * 6 /bin/bash --login -c 'cd /home/biocbuild/BBS/3.19/bioc-longtests/`hostname` && ./postrun.sh >>/home/biocbuild/bbs-3.19-bioc-longtests/log/`hostname`-`date +\%Y\%m\%d`-postrun.log 2>&1'
 
 After the builds complete, you should get the first build report at:
 
-  https://master.bioconductor.org/checkResults/3.18/bioc-longtests-LATEST/
+  https://master.bioconductor.org/checkResults/3.19/bioc-longtests-LATEST/
 
 If you're happy with the result, link the report from this page:
 
@@ -1510,7 +1510,7 @@ directory with `mkdir /home/biocbuild/archives` then add the following to
 the crontab:
 
     # Archive reports
-    35 12 * * 1-6 cp /home/biocbuild/public_html/BBS/3.18/bioc/report/report.tgz /home/biocbuild/archives/bioc-report-`date +\%Y\%m\%d`.tgz
+    35 12 * * 1-6 cp /home/biocbuild/public_html/BBS/3.19/bioc/report/report.tgz /home/biocbuild/archives/bioc-report-`date +\%Y\%m\%d`.tgz
 
     # Remove reports older than 1 week
     40 12 * * 1-6 find /home/biocbuild/archives/bioc-report*.tgz -maxdepth 1 -mtime +7 -type f -delete
