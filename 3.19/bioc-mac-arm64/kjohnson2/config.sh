@@ -19,10 +19,10 @@ export BBS_BUILD_NB_CPU=5   # 10 cores are available
 # during STAGE4 which is waaaay too much!
 export BBS_CHECK_NB_CPU=6   # 10 cores are available
 
-# Central build node is nebbiolo2 at DFCI.
-export BBS_CENTRAL_RHOST="nebbiolo2"
+# Central build node is nebbiolo1 at DFCI.
+export BBS_CENTRAL_RHOST="nebbiolo1"
 export BBS_RSH_CMD="ssh -F /Users/biocbuild/.ssh/config"
-export BBS_CENTRAL_ROOT_URL="http://155.52.207.166"
+export BBS_CENTRAL_ROOT_URL="http://155.52.207.165"
 export BBS_PRODUCT_TRANSMISSION_MODE="asynchronous"
 
 # Source tarballs produced during STAGE3 won't be propagated
