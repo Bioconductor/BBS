@@ -1,11 +1,11 @@
 @rem ======================
-@rem Settings for palomino3
+@rem Settings for palomino4
 @rem ======================
 
 
 set BBS_DEBUG=0
 
-set BBS_NODE_HOSTNAME=palomino3
+set BBS_NODE_HOSTNAME=palomino4
 set BBS_USER=bioctesting
 set BBS_WORK_TOPDIR=F:\bioctesting\bbs-3.18-bioc-testing
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
@@ -29,5 +29,5 @@ cd %wd0%
 
 
 @rem The Shared settings above already set BBS_HOME to the value defined
-@rem in BBS/nodes/palomino3/local-settings.bat. We need to override this value.
+@rem in BBS/nodes/palomino4/local-settings.bat. We need to override this value.
 set BBS_HOME=F:\bioctesting\BBS
