@@ -12,6 +12,7 @@ set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 set BBS_NB_CPU=18
 set BBS_BUILD_NB_CPU=14
 set BBS_CHECK_NB_CPU=16
+set BBS_EXTRA_CHECK_OPTIONS=--no-vignettes
 
 @rem Central build node is nebbiolo2 at DFCI.
 set BBS_CENTRAL_RHOST=nebbiolo2

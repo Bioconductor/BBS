@@ -18,6 +18,7 @@ export BBS_BUILD_NB_CPU=5   # 10 cores are available
 # Setting BBS_CHECK_NB_CPU to 8 can lead to a load of up to 55.89
 # during STAGE4 which is waaaay too much!
 export BBS_CHECK_NB_CPU=6   # 10 cores are available
+export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is nebbiolo2 at DFCI.
 export BBS_CENTRAL_RHOST="nebbiolo2"

@@ -497,8 +497,8 @@ def getSTAGE4cmd(srcpkg_path):
     else:
         ## Skip the vignette checks on Windows and Mac only, to reduce
         ## build times.
-        if sys.platform in ['win32', 'darwin']:
-            common_opts += ["--no-vignettes"]
+        if BBSvars.extra_check_options != None:
+            common_opts += [BBSvars.extra_check_options]
         common_opts += ["--timings"]
         ## Note that sys.platform is set to 'win32' on 64-bit Windows. This
         ## means that _noExampleArchs() may not be returning useful results

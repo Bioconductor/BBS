@@ -15,6 +15,7 @@ export R_LIBS="$BBS_R_HOME/site-library"
 export BBS_NB_CPU=25         # 32 cores are available
 export BBS_BUILD_NB_CPU=16   # 32 cores are available
 export BBS_CHECK_NB_CPU=22   # 32 cores are available
+export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 export BBS_PRODUCT_TRANSMISSION_MODE="none"
 

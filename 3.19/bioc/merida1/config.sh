@@ -16,6 +16,7 @@ export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 export BBS_NB_CPU=36        # 48 cores are available
 export BBS_BUILD_NB_CPU=26  # 48 cores are available
 export BBS_CHECK_NB_CPU=30  # 48 cores are available
+export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is nebbiolo1 at DFCI.
 export BBS_CENTRAL_RHOST="nebbiolo1"

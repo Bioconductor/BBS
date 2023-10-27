@@ -97,6 +97,8 @@ install_nb_cpu = int(install_nb_cpu)
 buildsrc_nb_cpu = int(buildsrc_nb_cpu)
 checksrc_nb_cpu = int(checksrc_nb_cpu)
 
+extra_check_options = BBSutils.getenv('BBS_EXTRA_CHECK_OPTIONS', False)
+
 transmission_mode = BBSutils.getenv('BBS_PRODUCT_TRANSMISSION_MODE', False,
                                     default='synchronous')
 no_transmission = transmission_mode == 'none'
