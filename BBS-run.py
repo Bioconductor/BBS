@@ -174,6 +174,8 @@ def write_BBS_EndOfRun_ticket(ticket):
 @lru_cache  # clear cache with get_list_of_target_pkgs.cache_clear()
 def get_list_of_target_pkgs():
     print('BBS> [get_list_of_target_pkgs]', end=' ')
+    if not os.path.isdir(BBSvars.meat_path):
+        os.mkdir(BBSvars.meat_path)
     meat_index_path = BBSutils.downloadFile(BBSutils.meat_index_file,
                                             BBSvars.central_base_url,
                                             BBSvars.meat_path)

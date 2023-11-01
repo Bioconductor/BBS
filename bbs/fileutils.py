@@ -56,9 +56,9 @@ def touch(file):
 ## Windows if the tree contains stuff that is Read-only).
 ## Note that shutil.rmtree() will still fail on Windows if the tree contains
 ## long paths. This happens for example with shutil.rmtree('RTCGA.Rcheck').
-def nuke_tree(dir, ignore_errors=False):
+def nuke_tree(dirpath, ignore_errors=False):
     if sys.platform == "win32":
-        for path, subdirs, files in os.walk(dir):
+        for path, subdirs, files in os.walk(dirpath):
             for file in files:
                 filename = os.path.join(path, file)
                 if not os.access(filename, os.W_OK):
@@ -66,14 +66,17 @@ def nuke_tree(dir, ignore_errors=False):
                         os.chmod(filename, 0o777)
                     except:
                         pass
-    shutil.rmtree(dir, ignore_errors=ignore_errors)
+    shutil.rmtree(dirpath, ignore_errors=ignore_errors)
     return
 
-def remake_dir(path, ignore_errors=False):
-    if os.path.exists(path):
-        nuke_tree(path, ignore_errors=ignore_errors)
-    if not os.path.exists(path):
-        os.mkdir(path)
+def remake_dir(dirpath, ignore_errors=False):
+    if os.path.exists(dirpath):
+        if os.path.islink(dirpath) or not os.path.isdir(dirpath):
+            raise NotADirectoryError("Exists but is not a directory: '%s'" % \
+                                     dirpath)
+        nuke_tree(dirpath, ignore_errors=ignore_errors)
+    if not os.path.exists(dirpath):
+        os.mkdir(dirpath)
     return
 
 ## rsync will interprets a path that starts with a drive letter followed by a
