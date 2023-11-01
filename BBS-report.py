@@ -1094,9 +1094,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref, topdir)
         else:
             ## Foreign node.
-            url = '../bioc-mac-arm64-LATEST/' + pkg + '/'
-            if leafreport_ref != None:
-                url = '../' + url
+            url = topdir + '/../bioc-mac-arm64-LATEST/' + pkg + '/'
             TDcontent = ['see', 'weekly', 'results',
                          '<A href="%s">here</A>' % url]
             TDcontent = '&nbsp;'.join(TDcontent)
