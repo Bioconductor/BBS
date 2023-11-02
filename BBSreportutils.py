@@ -57,8 +57,8 @@ class Node:
         self.os_html = os_html
         self.arch = arch
         self.platform = platform
-        self.buildbin = buildbin # boolean
-        self.pkgs = pkgs # list of pkg names
+        self.buildbin = buildbin  # boolean (or None if foreign node)
+        self.pkgs = pkgs  # list of pkg names
 
 ### A list of Node objects
 NODES = []
@@ -97,7 +97,7 @@ def set_NODES(fancynames_in_one_string):
     return
 
 def is_doing_buildbin(node):
-    return node.buildbin
+    return node.buildbin == True  # node.buildbin can be None if foreign node
 
 def supported_pkgs(node):
     return node.pkgs
