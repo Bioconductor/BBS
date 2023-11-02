@@ -1009,7 +1009,8 @@ TESTING: See "Install Java" below in this file for how to test Java/rJava.
 
 When R is updated, it's a good time to flush the cache for AnnotationHub,
 ExperimentHub, and BiocFileCache. This is done by removing the corresponding
-folders present in `~/Library/Caches/`.
+folders present in `~/Library/Caches/`. For example, basilisk's cache is at
+`~/Library/Caches/org.R-project.R/R/basilisk`.
 
 Removing these folders means all packages using these resources will have
 to re-download the files. This ensures that resources are still available.
