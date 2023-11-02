@@ -120,6 +120,12 @@ Fix:
 
     sudo systemsetup -setremotelogin On
 
+If after setting `remotelogin`, you get `Operation not permitted`,
+you may need to grant `Full Disk Access` to the terminal. If you
+have access to GUI, you can give access to the terminal in
+`System Settings` > `Security & Privacy` > `Full Disk Access`;
+otherwise, ask the system administrator to give `Full Disk Access`
+to the terminal.
 
 
 ## 2. Check hardware, OS, and connectivity with central build node
