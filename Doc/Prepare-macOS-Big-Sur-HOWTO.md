@@ -1066,11 +1066,11 @@ as of Nov 2020):
 
     difficult_pkgs <- c("arrangements", "av", "fftw", "fftwtools", "gdtools",
               "gert", "git2r", "glpkAPI", "gmp", "gsl", "igraph", "jpeg",
-              "magick", "ncdf4", "pdftools", "PoissonBinomial", "proj4",
-              "protolite", "qqconf", "ragg", "RcppAlgos", "redux", "rJava",
-              "RMariaDB", "Rmpfr", "RMySQL", "RPostgres", "rsvg", "sf",
-              "svglite", "terra", "textshaping", "tiff", "units", "V8", "XML",
-              "xml2")
+              "magick", "ncdf4", "pbdZMQ", "pdftools", "PoissonBinomial",
+              "proj4", "protolite", "qqconf", "ragg", "RcppAlgos", "redux",
+              "rJava", "RMariaDB", "Rmpfr", "RMySQL", "RPostgres", "rsvg",
+              "sf", "svglite", "sysfonts", "terra", "textshaping", "tiff",
+              "units", "V8", "XML", "xml2")
 
 First try to install with:
 
@@ -1080,7 +1080,8 @@ It should fail for most (if not all) packages. However, it's still worth
 doing it as it will be able to install many dependencies from source.
 Then try to install the binaries built with the current R release:
 
-    contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.2"
+    ## Replace 'x86_64' with 'arm64' if on arm64 Mac:
+    contriburl <- "https://cran.r-project.org/bin/macosx/big-sur-x86_64/contrib/4.3"
     install.packages(setdiff(difficult_pkgs, rownames(installed.packages())), contriburl=contriburl)
 
 NOTES:
