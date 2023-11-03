@@ -1069,8 +1069,8 @@ as of Nov 2020):
           "igraph", "jpeg", "lwgeom", "magick", "ncdf4", "pbdZMQ", "pdftools",
           "PoissonBinomial", "proj4", "protolite", "qqconf", "ragg",
           "RcppAlgos", "redux", "rJava", "RMariaDB", "Rmpfr", "RMySQL",
-          "RPostgres", "rsvg", "sf", "svglite", "sysfonts", "terra",
-          "textshaping", "tiff", "units", "V8", "XML", "xml2")
+          "RPostgres", "rsvg", "sf", "showtext", "svglite", "sysfonts",
+          "terra", "textshaping", "tiff", "units", "V8", "XML", "xml2")
 
 First try to install with:
 
