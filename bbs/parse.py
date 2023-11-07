@@ -152,7 +152,7 @@ class DcfFieldNotFoundError(Exception):
         self.filepath = filepath
         self.key = key
     def __str__(self):
-        return "Key '%s' not found in DCF file '%s'" % \
+        return "Field '%s' not found in DCF file '%s'" % \
                (self.key, self.filepath)
 
 ### Get the next key-value pair from a DCF file.
@@ -421,10 +421,10 @@ def injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file):
     fields = {}
     dcf = open(gitlog_file, 'rb')
     for key in keys:
-        dcf[key] = get_next_DCF_val(dcf, key)
+        fields[key] = get_next_DCF_val(dcf, key)
     dcf.close()
     for key in keys:
-        if dcf[key] == None:
+        if fields[key] == None:
             raise DcfFieldNotFoundError(gitlog_file, key)
     inject_DCF_fields(desc_file, fields)
     return
