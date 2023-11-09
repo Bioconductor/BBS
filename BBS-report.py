@@ -817,7 +817,7 @@ def _write_node_spec_as_TD(out, node, spec_html, selected=False):
     return
 
 def _write_pkg_status_as_TD(out, pkg, node, stage,
-                            leafreport_ref=None, topdir='.'):
+                            topdir='.', leafreport_ref=None):
     selected = leafreport_ref != None and \
                pkg == leafreport_ref.pkg and \
                node.node_id == leafreport_ref.node_id and \
@@ -829,10 +829,10 @@ def _write_pkg_status_as_TD(out, pkg, node, stage,
     if status in ["skipped", "NA"]:
         TDcontent = _status_as_glyph(status)
     else:
-        if leafreport_ref != None:
-            pkgdir = '.'
-        else:
+        if leafreport_ref == None:
             pkgdir = '%s/%s' % (topdir, pkg)
+        else:
+            pkgdir = '.'
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
         TDcontent = _make_link_with_mouseover(url, _status_as_glyph(status))
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
@@ -881,7 +881,7 @@ def write_pkg_propagation_status_as_TD(out, pkg, node):
     return
 
 def write_pkg_statuses_as_TDs(out, pkg, node,
-                              leafreport_ref=None, topdir='.'):
+                              topdir='.', leafreport_ref=None):
     TDclasses = 'status %s' % node.hostname.replace(".", "_")
     buildtype = BBSvars.buildtype
     ncol_to_display = BBSreportutils.ncol_to_display(buildtype)
@@ -899,7 +899,7 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         for stage in BBSreportutils.stages_to_display(buildtype):
             if stage != 'buildbin' or BBSreportutils.is_doing_buildbin(node):
                 _write_pkg_status_as_TD(out, pkg, node, stage,
-                                        leafreport_ref, topdir)
+                                        topdir, leafreport_ref)
             else:
                 out.write('<TD class="%s"></TD>' % TDclasses)
         if BBSreportutils.display_propagation_status(buildtype):
@@ -1025,7 +1025,7 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
     return
 
 ### The gcard spans several table rows (TRs) grouped in a TBODY element.
-def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
+def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
                 pkg_statuses, pkg_status_classes):
     out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
     out.write('<TR class="header">')
@@ -1090,13 +1090,8 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
             node_html = '<B>%s</B>' % node_html
         _write_node_spec_as_TD(out, node, node_html, selected)
         _write_node_spec_as_TD(out, node, _node_OS_Arch_as_SPAN(node))
-        if node.buildbin != None:
-            write_pkg_statuses_as_TDs(out, pkg, node, leafreport_ref, topdir)
-        else:
-            ## Foreign node.
-            url = '../bioc-mac-arm64-LATEST/' + pkg + '/'
-            if leafreport_ref != None:
-                url = '../' + url
+        if node.buildbin == None:  # foreign node
+            url = topdir + '/../bioc-mac-arm64-LATEST/' + pkg + '/'
             TDcontent = ['see', 'weekly', 'results',
                          '<A href="%s">here</A>' % url]
             TDcontent = '&nbsp;'.join(TDcontent)
@@ -1105,6 +1100,8 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
                       (ncol_to_display, node.node_id, TDstyle))
             out.write('<I>%s</I>' % TDcontent)
             out.write('</TD>')
+        else:
+            write_pkg_statuses_as_TDs(out, pkg, node, topdir, leafreport_ref)
         if is_last:
             TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
         else:
@@ -1119,9 +1116,9 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
 
 ### When 'leafreport_ref' is specified, then a list of 1 gcard is generated.
 def write_gcard_list(out, allpkgs,
+                     topdir='.', leafreport_ref=None,
                      quickstats=None, no_quickstats_links=False,
-                     alphabet_dispatch=False,
-                     leafreport_ref=None, topdir='.'):
+                     alphabet_dispatch=False):
     full_list = not leafreport_ref
     TABLEclasses = 'gcard_list'
     if full_list:
@@ -1164,7 +1161,7 @@ def write_gcard_list(out, allpkgs,
                 pkg_status_classes = statuses2classes(pkg_statuses)
         else:
             continue
-        write_gcard(out, pkg, pkg_pos, nb_pkgs, leafreport_ref, topdir,
+        write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
                     pkg_statuses, pkg_status_classes)
     out.write('</TABLE>\n')
     return
@@ -1703,7 +1700,7 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
 
     out.write('<BR>\n')
 
-    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
+    write_gcard_list(out, allpkgs, topdir='..', leafreport_ref=leafreport_ref)
 
     out.write('<BR>\n')
     out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
@@ -1826,7 +1823,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
         out.write('<P>\n')
 
     leafreport_ref = LeafReportReference(pkg, None, None, None)
-    write_gcard_list(out, allpkgs, leafreport_ref=leafreport_ref)
+    write_gcard_list(out, allpkgs, topdir='..', leafreport_ref=leafreport_ref)
 
     if BBSvars.buildtype in ["bioc", "bioc-mac-arm64"] and len(pkg_rev_deps) != 0:
         quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
@@ -1834,9 +1831,8 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
         out.write('Results for Bioconductor software packages ')
         out.write('that depend directly on package %s' % pkg)
         out.write('</H3>\n')
-        write_gcard_list(out, pkg_rev_deps,
-                         quickstats=quickstats, no_quickstats_links=True,
-                         topdir='..')
+        write_gcard_list(out, pkg_rev_deps, topdir='..',
+                         quickstats=quickstats, no_quickstats_links=True)
 
     out.write('</BODY>\n')
     out.write('</HTML>\n')

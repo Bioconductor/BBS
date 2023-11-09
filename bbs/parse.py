@@ -148,21 +148,22 @@ def parse_DCF(filepath, merge_records=False):
 ###
 
 class DcfFieldNotFoundError(Exception):
-    def __init__(self, filepath, field):
+    def __init__(self, filepath, key):
         self.filepath = filepath
-        self.field = field
+        self.key = key
     def __str__(self):
         return "Field '%s' not found in DCF file '%s'" % \
-               (self.field, self.filepath)
+               (self.key, self.filepath)
 
-### Get the next field/value pair from a DCF file.
-### The field value starts at the first non-whitespace character following
-### the ":". Where it ends depends on the value of the full_line arg:
+### Get the next key-value pair from a DCF file.
+### The value associated with a key starts at the first non-whitespace
+### character following the ":". Where it ends depends on the value of
+### the full_line arg:
 ###   - if full_line is True: it ends at the end of the line,
 ###   - if full_line is False: it ends at the first whitespace following
 ###     the start of the value.
 ###   - if the value is empty, return ""
-def get_next_DCF_fieldval(dcf, full_line=False):
+def get_next_DCF_keyval(dcf, full_line=False):
     if full_line:
         val_regex = '\\S.*'
     else:
@@ -173,22 +174,22 @@ def get_next_DCF_fieldval(dcf, full_line=False):
         line = bytes2str(line)
         m = p.match(line)
         if m:
-            field = m.group(1)
+            key = m.group(1)
             val = m.group(2)
-            return (field, val)
+            return (key, val)
     return None
 
-### Get the next value of the field specified by the user from a DCF file.
-def get_next_DCF_val(dcf, field, full_line=False):
+### Return next value associated with 'key' in DCF file.
+def get_next_DCF_val(dcf, key, full_line=False):
     if full_line:
         val_regex = '\\S.*'
     else:
         val_regex = '\\S+'
-    regex = '%s\\s*:\\s*(%s)' % (field, val_regex)
+    regex = '%s\\s*:\\s*(%s)' % (key, val_regex)
     p = re.compile(regex)
     for line in dcf:
         line = bytes2str(line)
-        if not line.startswith(field + ":"):
+        if not line.startswith(key + ":"):
             continue
         m = p.match(line)
         if m:
@@ -197,6 +198,47 @@ def get_next_DCF_val(dcf, field, full_line=False):
             val = ""
         return val
     return None
+
+
+##############################################################################
+### DCF field injection
+###
+
+def inject_DCF_fields(infile, fields={}, outfile=None):
+    if outfile == None:
+        outfile = infile
+
+    # Pass 1: Remove fields already present in file.
+    # Also sanitize the file by:
+    # - removing blank lines
+    # - adding missing EOLs
+    dcf = open(infile, 'rb')
+    lines = dcf.read().splitlines()
+    dcf.close()
+    keys = list(fields.keys())
+    if len(keys) != 0:
+        p = re.compile('^' + ':|^'.join(keys) + ':')
+    out = open(outfile, 'wb')
+    for line in lines:
+        s = bytes2str(line)
+        if not s.strip():  # remove blank line
+            continue
+        if len(fields) == 0 or not p.match(s):
+            out.write(line + b'\n')
+    out.close()
+
+    # Pass 2: Append fields to file.
+    # Note that we open the file for appending using the utf-8 encoding (well,
+    # we don't know the original encoding of the file) so the lines we append
+    # to it will be encoded using an encoding that will not necessarily match
+    # its original encoding. However, if the strings we actually append only
+    # contain ASCII code then hopefully they will get encoded the same way as
+    # if we had used the original encoding of the file.
+    out = open(outfile, 'a', encoding="utf-8")
+    for key in keys:
+        out.write('%s: %s\n' % (key, str(fields[key])))
+    out.close()
+    return outfile
 
 
 ##############################################################################
@@ -304,17 +346,17 @@ def get_BBSoption_from_pkgsrctree(pkgsrctree, key):
 ### Extract specific fields from a package index in DCF format
 ###
 
-def getPkgFieldFromDCF(dcf, pkg, field, data_desc):
+def getPkgFieldFromDCF(dcf, pkg, key, data_desc):
     pkg2 = ""
     while pkg2 != pkg:
         pkg2 = get_next_DCF_val(dcf, 'Package', False)
         if pkg2 == None:
             print("ERROR: Can't find package '%s' in DCF file '%s'!" % (pkg, data_desc))
             raise DcfFieldNotFoundError(data_desc, 'Package')
-    val = get_next_DCF_val(dcf, field, True)
+    val = get_next_DCF_val(dcf, key, True)
     if val == None:
-        print("ERROR: Can't find field '%s' for package '%s' in DCF file '%s'!" % (field, pkg, data_desc))
-        raise DcfFieldNotFoundError(data_desc, field)
+        print("ERROR: Can't find field '%s' for package '%s' in DCF file '%s'!" % (key, pkg, data_desc))
+        raise DcfFieldNotFoundError(data_desc, key)
     return val
 
 ### Return the list of package names if 'as_dict' is False, otherwise a dict
@@ -375,54 +417,16 @@ def get_meat_packages_for_node(meat_index_file, node_hostname,
     return pkgs
 
 def injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file):
-    # git-log
+    keys = ['git_url', 'git_branch', 'git_last_commit', 'git_last_commit_date']
+    fields = {}
     dcf = open(gitlog_file, 'rb')
-    git_url = get_next_DCF_val(dcf, 'git_url')
-    git_branch = get_next_DCF_val(dcf, 'git_branch')
-    git_last_commit = get_next_DCF_val(dcf, 'git_last_commit')
-    git_last_commit_date = get_next_DCF_val(dcf, 'git_last_commit_date')
+    for key in keys:
+        fields[key] = get_next_DCF_val(dcf, key)
     dcf.close()
-    if git_url == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'git_url')
-    if git_branch == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'git_branch')
-    if git_last_commit == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'git_last_commit')
-    if git_last_commit_date == None:
-        raise DcfFieldNotFoundError(gitlog_file, 'git_last_commit_date')
-
-    # DESCRIPTION
-    # Handle the following cases:
-    # - no EOL character at the end of the last line
-    # - blank line at the end of the file
-    dcf = open(desc_file, 'rb')
-    lines = dcf.read().splitlines()
-    dcf.close()
-    target_keys = ['git_url', 'git_branch',
-                   'git_last_commit', 'git_last_commit_date']
-    dcf = open(desc_file, 'wb')
-    p = re.compile(':|'.join(target_keys) + ':')
-    for line in lines:
-        s = bytes2str(line)
-        if not s.strip():  # drop empty lines
-            continue
-        if not p.match(s):
-            dcf.write(line + b'\n')
-    dcf.close()
-
-    # Note that we open the DESCRIPTION file for appending using the utf-8
-    # encoding (well, we don't know the original encoding of the file) so
-    # the lines we append to it will be encoded using an encoding that will
-    # not necessarily match the original encoding of the file. However, the
-    # strings we actually append only contain ASCII code so hopefully they
-    # get encoded the same way as if we had used the original encoding of
-    # the file.
-    dcf = open(desc_file, 'a', encoding="utf-8")
-    dcf.write('%s: %s\n' % (target_keys[0], git_url))
-    dcf.write('%s: %s\n' % (target_keys[1], git_branch))
-    dcf.write('%s: %s\n' % (target_keys[2], git_last_commit))
-    dcf.write('%s: %s\n' % (target_keys[3], git_last_commit_date))
-    dcf.close()
+    for key in keys:
+        if fields[key] == None:
+            raise DcfFieldNotFoundError(gitlog_file, key)
+    inject_DCF_fields(desc_file, fields)
     return
 
 def injectPublicationDateIntoDESCRIPTION(desc_file, date):

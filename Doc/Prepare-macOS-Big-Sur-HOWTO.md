@@ -1031,12 +1031,14 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Oct 2023):
 
-    difficult_pkgs <- c("XML", "rJava", "gdtools", "units", "gsl", "V8",
-              "magick", "rsvg", "gmp", "xml2", "jpeg", "tiff", "ncdf4",
-              "fftw", "fftwtools", "proj4", "textshaping", "ragg",  "Rmpfr",
-              "pdftools", "av", "sf", "RcppAlgos", "glpkAPI", "gert",
-              "RPostgres", "RMySQL", "RMariaDB", "protolite", "arrangements",
-              "terra", "PoissonBinomial", "igraph", "redux", "qqconf")
+    difficult_pkgs <- c("archive", "arrangements", "av", "fftw", "fftwtools",
+          "gdtools", "gert", "ggiraph", "git2r", "glpkAPI", "gmp", "gsl",
+          "hdf5r", "igraph", "jpeg", "lwgeom", "magick", "ncdf4", "pbdZMQ",
+          "pdftools", "PoissonBinomial", "proj4", "protolite", "qqconf",
+          "ragg", "RcppAlgos", "redux", "rJava", "RMariaDB", "Rmpfr", "RMySQL",
+          "RPostgres", "rsvg", "sf", "showtext", "svglite", "sysfonts",
+          "terra", "textshaping", "tiff", "units", "vdiffr", "V8", "XML",
+          "xml2")
 
 First try to install with:
 
@@ -1046,7 +1048,8 @@ It should fail for most (if not all) packages. However, it's still worth
 doing it as it will be able to install many dependencies from source.
 Then try to install the binaries built with the current R release:
 
-    contriburl <- "https://cran.r-project.org/bin/macosx/contrib/4.3"
+    ## Replace 'x86_64' with 'arm64' if on arm64 Mac:
+    contriburl <- "https://cran.r-project.org/bin/macosx/big-sur-x86_64/contrib/4.3"
     install.packages(setdiff(difficult_pkgs, rownames(installed.packages())), contriburl=contriburl)
 
 NOTES:
