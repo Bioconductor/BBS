@@ -14,6 +14,35 @@ https://github.com/Bioconductor/bioconductor_salt.
 - As of April 2023, the minimum supported OS is MacOSX11.
 - This document describes how to prepare both x86_64 and arm64 machines for
   the BBS.
+- Since Ventura, the terminal needs Full Disk Access to access the contents of
+  a user's Downloads directory. Even if the Downloads directory is created
+  manually, working with files in the Downloads directory may result in
+  unexpected behavior:
+
+      # User is created via GUI
+      kjohnson3:Downloads auser$ ls -la
+      Operation not permitted
+
+      # User created via terminal; Downloads created manually
+      kjohnson3:Downloads biocbuild$ sudo installer -verbose -pkg XQuartz-2.8.5.pkg -target /
+
+      installer: Package name is
+      installer: Upgrading at base path /
+      installer: Preparing for installation….....
+      installer: Preparing the disk….....
+      installer: Preparing ….....
+      installer: Waiting for other installations to complete….....
+      installer: Configuring the installation….....
+      installer:
+       
+      installer: The upgrade failed. (The Installer encountered an error that
+      caused the installation to fail. Contact the software manufacturer for
+      assistance. An error occurred while extracting files from the package
+      “XQuartz-2.8.5.pkg”.)
+
+  As a consequence, it's recommended to use another location rather than
+  Downloads.
+
 
 
 ## 1. Initial setup (from the administrator account)
@@ -106,27 +135,6 @@ from the biocbuild account.
 Add authorized_keys to /Users/biocbuild/.ssh.
 
 
-### 1.6 Set remote login
-
-If you receive `Operation not permitted` when attempting to list
-`/Users/biocbuild/Downloads`, you may need to set the remote login.
-
-Testing:
-
-    $ biocbuild$ cd Downloads/
-    # Downloads biocbuild$ ls -la   # Operation not permitted
-
-Fix:
-
-    sudo systemsetup -setremotelogin On
-
-If after setting `remotelogin`, you get `Operation not permitted`,
-you may need to grant `Full Disk Access` to the terminal. If you
-have access to GUI, you can give access to the terminal in
-`System Settings` > `Security & Privacy` > `Full Disk Access`;
-otherwise, ask the system administrator to give `Full Disk Access`
-to the terminal.
-
 
 ## 2. Check hardware, OS, and connectivity with central build node
 
@@ -198,7 +206,7 @@ Check the kernel version (should be Darwin 21 for macOS Monterey):
 
 Download it from https://xquartz.macosforge.org/
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -LO https://github.com/XQuartz/XQuartz/releases/download/XQuartz-2.8.5/XQuartz-2.8.5.pkg
 
 Install with:
@@ -451,7 +459,7 @@ https://github.com/R-macos/gcc-12-branch/releases/tag/12.2-darwin-r0.
 
 Download with:
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -LO https://github.com/R-macos/gcc-12-branch/releases/download/12.2-darwin-r0/gfortran-12.2-darwin20-r0-universal.tar.xz
 
 Install with:
@@ -735,7 +743,7 @@ Download:
 
 As of October 2023 the above page is displaying "Downloading MacTeX 2023".
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -LO https://mirror.ctan.org/systems/mac/mactex/MacTeX.pkg
 
 Install with:
@@ -765,7 +773,7 @@ The latter breaks `R CMD build` for 8 Bioconductor software packages
 
 Download with:
 
-    curl -LO https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-macOS.pkg > ~/Downloads/pandoc.pkg
+    curl -LO https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-macOS.pkg > /tmp/pandoc.pkg
 
 #### arm64
 
@@ -774,7 +782,7 @@ should be installed.
 
 Download
 
-    curl -LO https://github.com/jgm/pandoc/releases/download/3.1.8/pandoc-3.1.8-arm64-macOS.pkg > ~/Downloads/pandoc.pkg
+    curl -LO https://github.com/jgm/pandoc/releases/download/3.1.8/pandoc-3.1.8-arm64-macOS.pkg > /tmp/pandoc.pkg
 
 #### For all macs
 
@@ -926,7 +934,7 @@ Remove the previous R installation:
 
 For example, if installing for x86_64 mac, download and install with:
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -O https://mac.r-project.org/big-sur-x86_64/R-devel/R-devel-x86_64.pkg
     sudo installer -pkg R-4.4-x86_64.pkg -target /
 
@@ -1153,12 +1161,12 @@ Everything in this section must be done **from the biocbuild account**.
 
 Go to https://jdk.java.net/ and follow the link to the latest JDK. Then
 download the tarball for your specific mac (e.g. `openjdk-21_macos-x64_bin.tar.gz`
-for x86_64 or `openjdk-21_macos-aarch64_bin.tar.gz` for arm64) to `~/Downloads/`.
+for x86_64 or `openjdk-21_macos-aarch64_bin.tar.gz` for arm64) to `/tmp/`.
 
 Install with:
 
     cd /usr/local/
-    sudo tar zxvf ~/Downloads/openjdk-21_macos-x64_bin.tar.gz
+    sudo tar zxvf /tmp/openjdk-21_macos-x64_bin.tar.gz
     
     # Fix /usr/local/ permissions:
     sudo chown -R biocbuild:admin /usr/local/*
@@ -1204,7 +1212,7 @@ TESTING: Try to install the **rJava** package:
 
 Download with:
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -LO https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Mac%20OS%20X/JAGS-4.3.0.dmg
 
 Install with:
@@ -1243,7 +1251,7 @@ you already have a brewed CMake on the machine, make sure to remove it:
 
 Then:
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -LO https://github.com/Kitware/CMake/releases/download/v3.23.0/cmake-3.23.0-macos-universal.dmg
     sudo hdiutil attach cmake-3.23.0-macos-universal.dmg
     cp -ri /Volumes/cmake-3.23.0-macos-universal/CMake.app /Applications/
@@ -1378,7 +1386,7 @@ Then try to install ChemmineOB from source. From R:
 There is a standalone Mac binary at http://www.clustal.org/omega/
 Downnload it with:
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -O http://www.clustal.org/omega/clustal-omega-1.2.3-macosx
 
 Make it executable with:
@@ -1515,7 +1523,7 @@ Required by Bioconductor package **GeneGA**.
 
 Download with:
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -O https://www.tbi.univie.ac.at/RNA/download/osx/macosx/ViennaRNA-2.4.11-MacOSX.dmg
 
 Install with:
@@ -1580,7 +1588,7 @@ Required by Bioconductor package **Travel**.
 
 Download latest stable release from https://osxfuse.github.io/ e.g.:
 
-    cd ~/Downloads/
+    cd /tmp/
     curl -LO https://github.com/osxfuse/osxfuse/releases/download/macfuse-4.5.0/macfuse-4.5.0.dmg
 
 Install with:
@@ -1609,11 +1617,11 @@ install the 6.0 .NET runtime corresponding to the build system's macOS.
 
 ##### x86_64
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/2ef12357-499b-4a5b-a488-da45a5f310e6/fbe35c354bfb50934a976fc91c6d8d81/dotnet-runtime-6.0.13-osx-x64.pkg > ~/Downloads/dotnet.pkg
+    curl -O https://download.visualstudio.microsoft.com/download/pr/2ef12357-499b-4a5b-a488-da45a5f310e6/fbe35c354bfb50934a976fc91c6d8d81/dotnet-runtime-6.0.13-osx-x64.pkg > /tmp/dotnet.pkg
 
 ##### arm64
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/aa3b3150-80cb-4d30-87f8-dc36fa1dcf26/8ec9ff6836828175f1a6a60aefd4e63b/dotnet-runtime-6.0.13-osx-arm64.pkg > ~/Downloads/dotnet.pkg
+    curl -O https://download.visualstudio.microsoft.com/download/pr/aa3b3150-80cb-4d30-87f8-dc36fa1dcf26/8ec9ff6836828175f1a6a60aefd4e63b/dotnet-runtime-6.0.13-osx-arm64.pkg > /tmp/dotnet.pkg
 
 ##### For all macs
 
