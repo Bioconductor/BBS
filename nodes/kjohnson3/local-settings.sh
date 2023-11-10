@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================
-# Local settings for kjohnson2
+# Local settings for kjohnson3
 # ============================
 
 
