@@ -1356,10 +1356,17 @@ Install `boost` (this will install `icu4c` if not already installed):
 
     brew install boost
 
-Create the following symlink:
+Find the Cellar:
+
+    brew --Cellar # /opt/homebrew/Cellar for arm64, /usr/local/Cellar on x86_64
+
+Create the following symlink to the Cellar:
 
     cd /usr/local/lib
+    # x86_64
     ln -s ../Cellar/open-babel/3.1.1_1/lib openbabel3
+    # arm64
+    ln -s /opt/homebrew/Cellar/open-babel/3.1.1_1/lib openbabel3
 
 Add the directory containing `openbabel.pc` to `PKG_CONFIG_PATH`:
 
@@ -1371,10 +1378,12 @@ TESTING:
     # Open Babel 3.1.0 -- Oct 21 2020 -- 21:57:42  # version looks wrong!
     
     pkg-config --cflags openbabel-3
-    # -I/usr/local/Cellar/open-babel/3.1.1_1/include/openbabel3
+    # -I/usr/local/Cellar/open-babel/3.1.1_1/include/openbabel3     # x86_64
+    # -I/opt/homebrew/Cellar/open-babel/3.1.1_1/include/openbabel3  # arm64
     
     pkg-config --libs openbabel-3
-    # -L/usr/local/Cellar/open-babel/3.1.1_1/lib -lopenbabel
+    # -L/usr/local/Cellar/open-babel/3.1.1_1/lib -lopenbabel        # x86_64
+    # -L/opt/homebrew/Cellar/open-babel/3.1.1_1/lib -lopenbabel     # arm64
 
 Then try to install ChemmineOB from source. From R:
 
