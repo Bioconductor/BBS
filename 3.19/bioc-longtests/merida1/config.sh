@@ -13,7 +13,7 @@ export BBS_NODE_HOSTNAME="merida1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.19-bioc-longtests"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
-export BBS_NB_CPU=12    # 48 cores are available
+export BBS_NB_CPU=8    # 24 cores are available
 
 # Central build node is nebbiolo1 at DFCI.
 export BBS_CENTRAL_RHOST="nebbiolo1"
