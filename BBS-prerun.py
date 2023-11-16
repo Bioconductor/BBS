@@ -337,24 +337,6 @@ def writeAndUploadMeatInfo(work_topdir):
     uploadSkippedIndex(work_topdir)
     return
 
-def injectGitFieldsIntoMeat(gitlog_path, meat_path):
-    print('BBS>   Injecting git fields into',
-          '%s/*/DESCRIPTION files ...' % meat_path, end=' ')
-    manifest_path = BBSvars.manifest_path
-    pkgs = bbs.manifest.read(manifest_path)
-    for pkg in pkgs:
-        gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
-        if not os.path.exists(gitlog_file):
-            print('(%s not found --> skip)' % gitlog_file, end=' ')
-            continue
-        desc_file = os.path.join(meat_path, pkg, 'DESCRIPTION')
-        if not os.path.exists(desc_file):
-            print('(%s not found --> skip)' % desc_file, end=' ')
-            continue
-        bbs.parse.injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file)
-    print('OK')
-    return
-
 
 ##############################################################################
 
@@ -464,7 +446,8 @@ def makeTargetRepo(rdir):
     rdir.Call('rm -f *')
     print("BBS> [makeTargetRepo] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
-    print("BBS> [makeTargetRepo] Get list of pkgs from %s" % BBSutils.meat_index_file)
+    print("BBS> [makeTargetRepo] Get list of pkgs from %s" % \
+          BBSutils.meat_index_file)
     meat_index_path = os.path.join(BBSvars.work_topdir,
                                    BBSutils.meat_index_file)
     pkgs = bbs.parse.get_meat_packages(meat_index_path)
@@ -532,11 +515,12 @@ if __name__ == "__main__":
         buildAndUploadMeatIndex(pkgs, meat_path)
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
-    subtask = "inject-git-fields-into-meat"
-    if (arg1 == "" or arg1 == subtask) and BBSvars.MEAT0_type == 3:
+    subtask = "inject-fields-into-meat"
+    if (arg1 == "" or arg1 == subtask):
         print("BBS> [prerun] STARTING %s at %s..." % (subtask, time.asctime()))
-        gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
-        injectGitFieldsIntoMeat(gitlog_path, meat_path)
+        manifest_path = BBSvars.manifest_path
+        target_pkgs = bbs.manifest.read(manifest_path)
+        BBSbase.injectFieldsIntoMeat(meat_path, target_pkgs)
         print("BBS> [prerun] DONE %s at %s." % (subtask, time.asctime()))
 
     subtask = "make-target-repo"

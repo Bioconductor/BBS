@@ -39,6 +39,30 @@ def Untar(tarball, dir=None, verbose=False):
         tar.close()
     return
 
+def injectFieldsIntoMeat(meat_path, target_pkgs):
+    print('BBS>   Injecting fields into',
+          '%s/*/DESCRIPTION files ...' % meat_path, end=' ')
+    for pkg in target_pkgs:
+        desc_file = os.path.join(meat_path, pkg, 'DESCRIPTION')
+        if not os.path.exists(desc_file):
+            print('(%s not found --> skip)' % desc_file, end=' ')
+            continue
+        if BBSvars.MEAT0_type == 3:
+            # Inject git fields.
+            gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
+            gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
+            if os.path.exists(gitlog_file):
+                bbs.parse.injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file)
+            else:
+                print('(%s not found --> skip git fields)' % gitlog_file,
+                      end=' ')
+        if BBSvars.bioc_version != None:
+            # Inject Repository field.
+            fields = {'Repository': 'Bioconductor %s' % BBSvars.bioc_version}
+            bbs.parse.inject_DCF_fields(desc_file, fields)
+    print('OK')
+    return
+
 def cloneCRANstylePkgRepo(contrib_url, destdir, update_only=False):
     print('BBS>   Start cloning CRAN-style package repo %s/ to %s/ ...' % \
           (contrib_url, destdir))

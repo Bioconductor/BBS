@@ -488,31 +488,23 @@ def STAGE2():
 
     print('BBS> [STAGE2] cd BBS_MEAT_PATH')
     os.chdir(meat_path)
-    if BBSvars.MEAT0_type == 3 and not BBSvars.no_transmission:
-        # Inject the git fields into the DESCRIPTION files. No need to do
-        # this if BBS_PRODUCT_TRANSMISSION_MODE="none" because in this case
-        # the DESCRIPTION files already contain those fields.
-        print('BBS> [STAGE2] Injecting git fields into',
+    # If BBS_PRODUCT_TRANSMISSION_MODE="none" then the meat got downloaded
+    # from the target repo which got already injected during prerun, so no
+    # need to inject again.
+    if not BBSvars.no_transmission:
+        BBSbase.injectFieldsIntoMeat(meat_path, target_pkgs)
+
+    if BBSvars.buildtype != 'cran':
+        print('BBS>   Injecting Date/Publication field into',
               '*/DESCRIPTION files ...', end=' ')
         for pkg in target_pkgs:
-            gitlog_file = os.path.join(gitlog_path, 'git-log-%s.dcf' % pkg)
-            if not os.path.exists(gitlog_file):
-                print('(%s not found --> skip)' % gitlog_file, end=' ')
-                continue
-            desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
+            desc_file = os.path.join(meat_path, pkg, 'DESCRIPTION')
             if not os.path.exists(desc_file):
                 print('(%s not found --> skip)' % desc_file, end=' ')
                 continue
-            bbs.parse.injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file)
+            fields = {'Date/Publication': time.strftime("%Y-%m-%d")}
+            bbs.parse.inject_DCF_fields(desc_file, fields)
         print('OK')
-
-    print('BBS> [STAGE2] Injecting Date/Publication into',
-          '*/DESCRIPTION files ...', end=' ')
-    for pkg in target_pkgs:
-        desc_file = os.path.join(BBSvars.meat_path, pkg, 'DESCRIPTION')
-        date = time.strftime("%Y-%m-%d")
-        bbs.parse.injectPublicationDateIntoDESCRIPTION(desc_file, date)
-    print('OK')
 
     # Then re-install the supporting packages.
     print('BBS> [STAGE2] Re-install supporting packages')

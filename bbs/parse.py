@@ -429,37 +429,6 @@ def injectGitFieldsIntoDESCRIPTION(desc_file, gitlog_file):
     inject_DCF_fields(desc_file, fields)
     return
 
-def injectPublicationDateIntoDESCRIPTION(desc_file, date):
-    # DESCRIPTION
-    # Handle the following cases:
-    # - no EOL character at the end of the last line
-    # - blank line at the end of the file
-    dcf = open(desc_file, 'rb')
-    lines = dcf.read().splitlines()
-    dcf.close()
-    target_key = 'Date/Publication'
-    dcf = open(desc_file, 'wb')
-    p = re.compile(target_key + ':')
-    for line in lines:
-        s = bytes2str(line)
-        if not s.strip():  # drop empty lines
-            continue
-        if not p.match(s):
-            dcf.write(line + b'\n')
-    dcf.close()
-
-    # Note that we open the DESCRIPTION file for appending using the utf-8
-    # encoding (well, we don't know the original encoding of the file) so
-    # the lines we append to it will be encoded using an encoding that will
-    # not necessarily match the original encoding of the file. However, the
-    # strings we actually append only contain ASCII code so hopefully they
-    # get encoded the same way as if we had used the original encoding of
-    # the file.
-    dcf = open(desc_file, 'a', encoding="utf-8")
-    dcf.write('%s: %s\n' % (target_key, date))
-    dcf.close()
-    return
-
 
 ##############################################################################
 ### Load package dep graph
