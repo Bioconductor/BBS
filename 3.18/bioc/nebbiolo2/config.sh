@@ -15,8 +15,8 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.18-bioc"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 export BBS_NB_CPU=24        # 72 cores are available
-export BBS_BUILD_NB_CPU=20  # 72 cores are available
-export BBS_CHECK_NB_CPU=25  # 72 cores are available
+export BBS_BUILD_NB_CPU=16  # 72 cores are available
+export BBS_CHECK_NB_CPU=28  # 72 cores are available
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
