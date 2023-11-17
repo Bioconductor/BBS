@@ -83,7 +83,7 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
     srcdir  = os.path.join(BBSvars.products_in_rdir.path, products_in_subdir)
     if not os.path.exists(srcdir):
         msg =  "Directory '%s' does not exist!\n\n" % srcdir
-        msg += "  %s is late or stopped sending build products?" % node_hostname
+        msg += "  %s is late or stopped building?" % node_hostname
         raise FileExistsError(msg)
     ## Workflow and book packages do not have manuals/ because we do not run
     ## `R CMD check`.
