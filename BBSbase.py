@@ -14,6 +14,8 @@ import bbs.fileutils
 import bbs.parse
 import bbs.jobs
 import bbs.rdir
+import bbs.notify
+
 import BBSutils
 import BBSvars
 
@@ -204,6 +206,24 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
                 os.remove(path)
             except:
                 pass
+    return
+
+def kindly_notify_us(failure_type, e, to_addrs=None):
+    if to_addrs == None:
+        to_addrs = ['maintainer@bioconductor.org']
+    subject = (f'[BBS] {failure_type} on {BBSvars.node_hostname} for '
+               f'{BBSvars.bioc_version} {BBSvars.buildtype} builds')
+    msg_body = f'Postrun failed on {BBSvars.node_hostname} ' + \
+               f'for the {BBSvars.bioc_version} builds ' + \
+               f'with the following error:\n\n' + \
+               f'  Error: {e}\n\n' + \
+               f'See logs in {BBSvars.work_topdir}/log/ ' + \
+               f'on {BBSvars.node_hostname} for more information.'
+    bbs.notify.mode = 'do-it'
+    bbs.notify.sendtextmail('BBS-noreply@bioconductor.org',
+                            to_addrs,
+                            subject,
+                            msg_body)
     return
 
 
