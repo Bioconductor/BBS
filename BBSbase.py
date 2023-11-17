@@ -216,8 +216,12 @@ def kindly_notify_us(what, e, to_addrs=None):
                f'on {BBSvars.node_hostname}')
     msg_body = f'{what} failed on {BBSvars.node_hostname} ' + \
                f'for the {BBSvars.bioc_version} builds ' + \
-               f'with the following error:\n\n' + \
-               f'  Error: {e}\n\n' + \
+               f'with the following error:\n' + \
+               f'\n' + \
+               f'  -----------------------------------------------------\n' + \
+               f'  {e}\n' + \
+               f'  -----------------------------------------------------\n' + \
+               f'\n' + \
                f'See logs in {BBSvars.work_topdir}/log/ ' + \
                f'on {BBSvars.node_hostname} for more information.'
     bbs.notify.mode = 'do-it'
