@@ -17,6 +17,7 @@ import bbs.parse
 
 import BBSutils
 import BBSvars
+import BBSbase
 
 def is_doing_buildbin(node_hostname):
     return BBSutils.getNodeSpec(node_hostname, 'pkgType') != "source"
@@ -81,8 +82,8 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
     fileext = BBSutils.getNodeSpec(node_hostname, 'pkgFileExt')
     srcdir  = os.path.join(BBSvars.products_in_rdir.path, products_in_subdir)
     if not os.path.exists(srcdir):
-        msg =  "Directory '%s' does not exist!\n" % srcdir
-        msg += "%s is late or stopped sending build products." % node_hostname
+        msg =  "Directory '%s' does not exist!\n\n" % srcdir
+        msg += "  %s is late or stopped sending build products?" % node_hostname
         raise FileExistsError(msg)
     ## Workflow and book packages do not have manuals/ because we do not run
     ## `R CMD check`.
