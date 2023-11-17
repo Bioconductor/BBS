@@ -14,13 +14,14 @@ import shutil
 
 import bbs.fileutils
 import bbs.parse
+
 import BBSutils
 import BBSvars
 
 def is_doing_buildbin(node_hostname):
     return BBSutils.getNodeSpec(node_hostname, 'pkgType') != "source"
 
-def pkgMustBeRejected(node_hostname, node_id, pkg):
+def block_package(node_hostname, node_id, pkg):
     nodes_path = BBSvars.products_in_rdir.path
     node_path = os.path.join(nodes_path, node_id)
     summary_file0 = "%s.%%s-summary.dcf" % pkg
@@ -70,15 +71,19 @@ def pkgMustBeRejected(node_hostname, node_id, pkg):
     dcf.close()
     return status != 'OK'
 
-def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
-    tmp = fresh_pkgs_subdir.split("/")
+### Copy the outgoing packages to the current directory.
+def copy_outgoing_pkgs(products_in_subdir, source_node):
+    tmp = products_in_subdir.split("/")
     if len(tmp) != 2:
-        sys.exit("ERROR: Invalid relative path to fresh pkgs %s (must be of the form node/subdir)" % fresh_pkgs_subdir)
+        sys.exit("ERROR: Invalid relative path to fresh pkgs %s (must be of the form node/subdir)" % products_in_subdir)
     node_id = tmp[0]
     node_hostname = node_id.split("-")[0]
     fileext = BBSutils.getNodeSpec(node_hostname, 'pkgFileExt')
-    fresh_pkgs_subdir = os.path.join(BBSvars.products_in_rdir.path, fresh_pkgs_subdir)
-
+    srcdir  = os.path.join(BBSvars.products_in_rdir.path, products_in_subdir)
+    if not os.path.exists(srcdir):
+        msg =  "Directory '%s' does not exist!\n" % srcdir
+        msg += "%s is late or stopped sending build products." % node_hostname
+        raise FileExistsError(msg)
     ## Workflow and book packages do not have manuals/ because we do not run
     ## `R CMD check`.
     manuals_dir = "../manuals"
@@ -87,8 +92,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
     elif source_node:
         print("BBS> [stage6b] mkdir %s" % manuals_dir)
         os.mkdir(manuals_dir)
-    print("BBS> [stage6b] BEGIN copying outgoing packages from %s." % \
-          fresh_pkgs_subdir)
+    print("BBS> [stage6b] BEGIN copying outgoing packages from %s." % srcdir)
     node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
     node_pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
     meat_index_path = os.path.join(BBSvars.Central_rdir.path,
@@ -97,13 +101,13 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
                                                 node_Arch, node_pkgType)
     meat_index = bbs.parse.get_meat_packages(meat_index_path, as_dict=True)
     for pkg in pkgs:
-        if pkgMustBeRejected(node_hostname, node_id, pkg):
+        if block_package(node_hostname, node_id, pkg):
             continue
         dcf_record = meat_index[pkg]
         version = dcf_record['Version']
-        ## Copy pkg from 'fresh_pkgs_subdir2'.
+        ## Copy pkg from 'srcdir'.
         pkg_file = "%s_%s.%s" % (pkg, version, fileext)
-        pkg_path = os.path.join(fresh_pkgs_subdir, pkg_file)
+        pkg_path = os.path.join(srcdir, pkg_file)
         print("BBS> [stage6b]   - copying %s to OUTGOING folder ..." % pkg_path)
         if os.path.exists(pkg_path):
             #shutil.copy(pkg_path, ".")
@@ -125,7 +129,7 @@ def copy_outgoing_pkgs(fresh_pkgs_subdir, source_node):
                 os.link(pdf_file, dst) # create hard link to avoid making a copy
             else:
                 print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pdf_file)
-    print("BBS> [stage6b] END copying outgoing packages from %s." % fresh_pkgs_subdir)
+    print("BBS> [stage6b] END copying outgoing packages from %s." % srcdir)
     return
 
 def stage6_make_OUTGOING():
@@ -134,8 +138,8 @@ def stage6_make_OUTGOING():
     print("BBS> [stage6b] remake_dir %s" % OUTGOING_dir)
     bbs.fileutils.remake_dir(OUTGOING_dir)
     ## Loop over each element of the OUTGOING map
-    OUTGOING_map = BBSutils.getenv('BBS_OUTGOING_MAP')
-    map_elts = OUTGOING_map.split(" ")
+    OUTGOING_MAP = BBSutils.getenv('BBS_OUTGOING_MAP')
+    map_elts = OUTGOING_MAP.split(" ")
     for map_elt in map_elts:
         tmp = map_elt.split(":")
         if len(tmp) != 2:
@@ -148,7 +152,11 @@ def stage6_make_OUTGOING():
         os.mkdir(OUTGOING_subdir)
         print("BBS> [stage6b] cd %s/" % OUTGOING_subdir)
         os.chdir(OUTGOING_subdir)
-        copy_outgoing_pkgs(tmp[1], source_node)
+        try:
+            copy_outgoing_pkgs(tmp[1], source_node)
+        except FileExistsError as e:
+            BBSbase.kindly_notify_us('Postrun', e)
+            raise e
     return
 
 

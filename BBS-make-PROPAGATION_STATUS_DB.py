@@ -12,8 +12,6 @@ import os
 import time
 import subprocess
 
-import bbs.notify
-
 import BBSutils
 import BBSvars
 import BBSbase
@@ -28,28 +26,18 @@ def make_PROPAGATION_STATUS_DB(final_repo):
     Rexpr = "source('%s');%s('%s','%s',db_filepath='%s')" % \
             (script_path, Rfunction, OUTGOING_dir, final_repo, db_filepath)
     cmd = BBSbase.Rexpr2syscmd(Rexpr)
-    ## Nasty things (that I don't really understand) can happen with
-    ## subprocess.run() if this code is runned by the Task Scheduler
-    ## on Windows (the child process tends to almost always return an
-    ## error). Apparently using 'stderr=subprocess.STDOUT' fixes this pb.
     try:
+        ## Nasty things (that I don't really understand) can happen with
+        ## subprocess.run() if this code is runned by the Task Scheduler
+        ## on Windows (the child process tends to almost always return an
+        ## error). Apparently using 'stderr=subprocess.STDOUT' fixes this pb.
         subprocess.run(cmd, stdout=None, stderr=subprocess.STDOUT, shell=True,
                        check=True)
     except subprocess.CalledProcessError as e:
-        subject = (f"[BBS] Postrun failure on {BBSvars.node_hostname} for "
-                   f"{BBSvars.bioc_version} {BBSvars.buildtype} builds")
-        msg_body = f"""\
-        Postrun failed on {BBSvars.node_hostname} for the {BBSvars.bioc_version}
-        {BBSvars.buildtype} builds with the following error:
-
-        Error: {e}"""
-        bbs.notify.mode = "do-it"
-        bbs.notify.sendtextmail("BBS-noreply@bioconductor.org",
-                                ["maintainer@bioconductor.org"],
-                                subject,
-                                msg_body)
+        BBSbase.kindly_notify_us('Postrun', e)
         raise e
     return
+
 
 ##############################################################################
 ### MAIN SECTION
