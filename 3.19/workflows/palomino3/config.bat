@@ -12,6 +12,7 @@ set BBS_R_HOME=F:\biocbuild\bbs-3.19-bioc\R
 
 @rem palomino3 has 32 logical CPUs.
 set BBS_NB_CPU=10
+set BBS_BUILD_NB_CPU=8
 
 @rem Central build node is nebbiolo1 at DFCI.
 set BBS_CENTRAL_RHOST=nebbiolo1
