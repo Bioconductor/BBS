@@ -12,9 +12,11 @@ export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.19-bioc"
 export BBS_R_HOME="/home/biocbuild/R/R-4.4-devel-2023.11.02"
 export R_LIBS="$BBS_R_HOME/site-library"
-export BBS_NB_CPU=25         # 32 cores are available
-export BBS_BUILD_NB_CPU=16   # 32 cores are available
-export BBS_CHECK_NB_CPU=22   # 32 cores are available
+
+# kunpeng2 has 32 logical CPUs.
+export BBS_NB_CPU=25
+export BBS_BUILD_NB_CPU=16
+export BBS_CHECK_NB_CPU=22
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 export BBS_PRODUCT_TRANSMISSION_MODE="none"

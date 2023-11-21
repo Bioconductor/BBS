@@ -14,8 +14,10 @@ export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.19-data-experiment"
 export BBS_R_HOME="/home/biocbuild/bbs-3.19-bioc/R"
 export R_LIBS="$BBS_R_HOME/site-library"
-export BBS_NB_CPU=10        # 72 cores are available
-export BBS_CHECK_NB_CPU=14  # 72 cores are available
+
+# nebbiolo1 has 72 logical CPUs.
+export BBS_NB_CPU=10
+export BBS_CHECK_NB_CPU=14
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"

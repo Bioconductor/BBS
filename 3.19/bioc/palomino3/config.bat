@@ -1,6 +1,6 @@
-@rem ===================
+@rem ======================
 @rem Settings for palomino3
-@rem ===================
+@rem ======================
 
 
 set BBS_DEBUG=0
@@ -9,6 +9,8 @@ set BBS_NODE_HOSTNAME=palomino3
 set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=F:\biocbuild\bbs-3.19-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
+
+@rem palomino3 has 32 logical CPUs.
 set BBS_NB_CPU=18
 set BBS_BUILD_NB_CPU=14
 set BBS_CHECK_NB_CPU=16

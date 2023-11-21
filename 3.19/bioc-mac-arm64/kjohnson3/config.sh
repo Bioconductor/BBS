@@ -13,11 +13,11 @@ export BBS_NODE_HOSTNAME="kjohnson3"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.19-bioc-mac-arm64"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
-export BBS_NB_CPU=20        # 24 coress are available
-export BBS_BUILD_NB_CPU=12  # 24 coress are available
-# Setting BBS_CHECK_NB_CPU to 8 (out of 10) can lead to a load of up to 55.89
-# during STAGE4 which is waaaay too much!
-export BBS_CHECK_NB_CPU=15  # 24 coress are available
+
+# kjohnson3 has 24 logical CPUs.
+export BBS_NB_CPU=20
+export BBS_BUILD_NB_CPU=12
+export BBS_CHECK_NB_CPU=15
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is nebbiolo1 at DFCI.

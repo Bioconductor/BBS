@@ -13,7 +13,9 @@ export BBS_NODE_HOSTNAME="xps15"
 export BBS_WORK_TOPDIR="/home/hpages/bbs-3.19-bioc"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
-export BBS_NB_CPU=10  # 20 cores are available
+
+# xps15 has 20 logical CPUs.
+export BBS_NB_CPU=10
 
 export BBS_PRODUCT_TRANSMISSION_MODE="none"
 

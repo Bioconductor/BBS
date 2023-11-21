@@ -1,6 +1,6 @@
 #!/bin/bash
 # ====================
-# Settings for merida1 
+# Settings for merida1
 # ====================
 
 
@@ -13,9 +13,11 @@ export BBS_NODE_HOSTNAME="merida1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.19-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
-export BBS_NB_CPU=22        # 24 cores are available
-export BBS_BUILD_NB_CPU=16  # 24 cores are available
-export BBS_CHECK_NB_CPU=23  # 24 cores are available
+
+# merida1 has 24 logical CPUs.
+export BBS_NB_CPU=22
+export BBS_BUILD_NB_CPU=16
+export BBS_CHECK_NB_CPU=23
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is nebbiolo1 at DFCI.

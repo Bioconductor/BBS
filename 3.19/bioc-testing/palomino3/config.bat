@@ -9,6 +9,8 @@ set BBS_NODE_HOSTNAME=palomino3
 set BBS_USER=bioctesting
 set BBS_WORK_TOPDIR=F:\bioctesting\bbs-3.19-bioc-testing
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
+
+@rem palomino3 has 32 logical CPUs.
 set BBS_NB_CPU=2
 set BBS_CHECK_NB_CPU=3
 

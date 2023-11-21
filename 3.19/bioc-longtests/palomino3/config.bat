@@ -9,6 +9,8 @@ set BBS_NODE_HOSTNAME=palomino3
 set BBS_USER=biocbuild
 set BBS_WORK_TOPDIR=F:\biocbuild\bbs-3.19-bioc-longtests
 set BBS_R_HOME=F:\biocbuild\bbs-3.19-bioc\R
+
+@rem palomino3 has 32 logical CPUs.
 set BBS_NB_CPU=8
 
 @rem Central build node is nebbiolo1 at DFCI.
