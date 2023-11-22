@@ -16,7 +16,7 @@ export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
 # merida1 has 24 logical CPUs.
 export BBS_NB_CPU=22
-export BBS_BUILD_NB_CPU=16
+export BBS_BUILD_NB_CPU=19
 export BBS_CHECK_NB_CPU=23
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
