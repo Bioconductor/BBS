@@ -483,7 +483,7 @@ location.  Otherwise  we will produce broken binaries again (see
 https://support.bioconductor.org/p/95587/#95631).
 
 
-### 2.9 Install Binaries for gsl, openssl, pkg-config, xz
+### 2.9 Install Simon's Binaries
 
 We use binaries available at https://mac.r-project.org/bin, which are referred
 to as "Simon's Binaries." They should be preferred over installing via Homebrew.
@@ -492,18 +492,27 @@ fix `/usr/local/` permissions as described in the _Install Homebrew_ section if
 Simon's binary gets extracted there (normally the case for the
 `darwin20/x86_64` binaries).
 
+You will need to `sudo R` to allow the binaries to be installed.
+
 Following instructions at https://mac.r-project.org/bin
 
     source("https://mac.R-project.org/bin/install.R")
 
 Install necessary packages:
 
-    pkgs <- c("gsl",                                # BioC GLAD
+    pkgs <- c("fftw",                               # CRAN ffw, ffwtools, PoissonBinomial, qqconf
+              "fribidi",                            # CRAN ragg, textshaping
+              "gsl",                                # BioC GLAD
               "glpk",                               # BioC MMUPHin
               "hdf5",                               # CRAN ncdf4 for Bioc mzR
+              "harfbuzz",                           # CRAN ragg, textshaping
               "netcdf",                             # CRAN ncdf4 for Bioc mzR
               "openssl",
               "pkgconfig",
+              "pcre2",                              # CRAN rJava
+              "proj",                               # CRAN proj4
+              "protobuf",                           # CRAN protolib
+              "udunits",                            # CRAN lwgeom, sf, units
               "xz")
     install.libs(pkgs)
 
