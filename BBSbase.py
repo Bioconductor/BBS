@@ -3,7 +3,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: Nov 22, 2023
 ###
 
 import sys
@@ -124,17 +124,21 @@ def extractLocalCRANstylePkgRepo(contrib_path, destdir):
     print('OK')
     return
 
-# The R expression passed thru 'Rexpr' must NOT contain spaces or it will
-# break on Windows!
+# 'Rexpr' must be a single string containing an R expression. It should NOT
+# contain spaces or it will break on Windows!
 def Rexpr2syscmd(Rexpr):
-    if BBSvars.rscript_cmd == None:
-        if sys.platform == 'win32':
+    if sys.platform == 'win32':
+        # We can't put quotes around Rexpr on Windows. This means that we
+        # can't have spaces in Rexpr.
+        if Rexpr.find(' ') >= 0:
+            sys.exit("ERROR in Rexpr2syscmd(): 'Rexpr' contains spaces!")
+        if BBSvars.rscript_cmd == None:
             syscmd = 'echo %s | %s --no-echo' % (Rexpr, BBSvars.r_cmd)
         else:
-            syscmd = 'echo "%s" | %s --no-echo' % (Rexpr, BBSvars.r_cmd)
-    else:
-        if sys.platform == 'win32':
             syscmd = '%s -e %s' % (BBSvars.rscript_cmd, Rexpr)
+    else:
+        if BBSvars.rscript_cmd == None:
+            syscmd = 'echo "%s" | %s --no-echo' % (Rexpr, BBSvars.r_cmd)
         else:
             syscmd = '%s -e "%s"' % (BBSvars.rscript_cmd, Rexpr)
     return syscmd

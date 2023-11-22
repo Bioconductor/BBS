@@ -17,6 +17,7 @@ def _deploy_book(pkg, version, dest_dir):
     print("Deploying content from book tarball '%s' to '%s/' ..." % \
           (srcpkg_file, dest_subdir), end=' ')
     sys.stdout.flush()
+    shutil.rmtree(pkg, ignore_errors=True)  # if leftover from previous run
     if not os.path.exists(srcpkg_file):
         errmsg = "oops.. couldn't find book tarball '%s' " % srcpkg_file + \
                  "in\ndirectory:\n\n  %s\n\n" % os.getcwd() + \

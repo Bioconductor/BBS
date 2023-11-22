@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: May 24, 2021
+### Last modification: Nov 22, 2023
 ###
 
 import sys
@@ -17,15 +17,20 @@ import BBSvars
 import BBSbase
 
 def make_PROPAGATION_STATUS_DB(final_repo):
-    Rfunction = 'makePropagationStatusDb'
+    ## Prepare Rexpr (must be a single string with no spaces).
+    Rscript_path = os.path.join(BBSvars.BBS_home,
+                                'utils',
+                                'makePropagationStatusDb.R')
+    Rfun = 'makePropagationStatusDb'
     OUTGOING_dir = 'OUTGOING'
     db_filepath = 'PROPAGATION_STATUS_DB.txt'
-    script_path = os.path.join(BBSvars.BBS_home,
-                               "utils",
-                               "makePropagationStatusDb.R")
-    Rexpr = "source('%s');%s('%s','%s',db_filepath='%s')" % \
-            (script_path, Rfunction, OUTGOING_dir, final_repo, db_filepath)
+    Rfuncall = "%s('%s','%s',db_filepath='%s')" % \
+               (Rfun, OUTGOING_dir, final_repo, db_filepath)
+    Rexpr = "source('%s');%s" % (Rscript_path, Rfuncall)
+
+    ## Turn Rexpr into a system command.
     cmd = BBSbase.Rexpr2syscmd(Rexpr)
+
     try:
         ## Nasty things (that I don't really understand) can happen with
         ## subprocess.run() if this code is runned by the Task Scheduler
