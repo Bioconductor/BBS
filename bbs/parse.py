@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Sep 9, 2020
+### Last modification: Nov 22, 2023
 ###
 ### bbs.parse module
 ###
