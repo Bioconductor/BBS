@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Oct 6, 2020
+### Last modification: Nov 23, 2023
 ###
 
 import sys
@@ -47,9 +47,11 @@ msg_footnote = "Notes:\n\n" \
              + "Thanks for contributing to the Bioconductor project!\n\n" 
 
 def collect_problems(pkg, node):
-    stage2command = {'install': 'R CMD INSTALL',
-                     'buildsrc': 'R CMD build',
-                     'checksrc': 'R CMD check'}
+    stage2command = {
+        'install':  'R CMD INSTALL',
+        'buildsrc': 'R CMD build',
+        'checksrc': 'R CMD check' if BBSvars.buildtype != 'books' else 'CHECK'
+    }
     stages_on_report = BBSreportutils.stages_to_display(BBSvars.buildtype)
     stages_to_collect = list(stage2command.keys() & stages_on_report)
     problem_descs = []
@@ -163,8 +165,7 @@ print("OK")
 sys.stdout.flush()
 
 print("BBS> [stage7] Notifying package maintainers for nodes: %s" % notify_nodes)
-buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, "bioc")
-if buildtype == "cran":
+if BBSvars.buildtype == "cran":
     send_CRAN_notifications(allpkgs)
 else:
     send_BioC_notifications(allpkgs)
