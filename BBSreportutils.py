@@ -172,9 +172,9 @@ def stage_label(stage):
 ## we run 'buildsrc' (STAGE3) and 'checksrc' (STAGE4) but we only display
 ## the results of 'checksrc' (CHECK column on the report).
 def stages_to_display(buildtype):
-    if buildtype in ["data-annotation", "data-experiment"]:
+    if buildtype in ["data-annotation", "data-experiment", "books"]:
         return ['install', 'buildsrc', 'checksrc']
-    if buildtype in ["workflows", "books"]:
+    if buildtype == "workflows":
         return ['install', 'buildsrc']
     if buildtype == "bioc-longtests":
         return ['checksrc']  # we run 'buildsrc' but don't display it
@@ -336,7 +336,7 @@ def import_BUILD_STATUS_DB(allpkgs):
             _update_quickstats(allpkgs_quickstats, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            if BBSvars.buildtype not in ["workflows", "books"]:
+            if BBSvars.buildtype != "workflows":
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"
@@ -424,7 +424,7 @@ def compute_quickstats(pkgs):
             _update_quickstats(quickstats, node.node_id, stage, status)
             skipped_is_OK = status in ["TIMEOUT", "ERROR"]
             # CHECK status
-            if BBSvars.buildtype not in ["workflows", "books"]:
+            if BBSvars.buildtype != "workflows":
                 stage = 'checksrc'
                 if skipped_is_OK:
                     status = "skipped"

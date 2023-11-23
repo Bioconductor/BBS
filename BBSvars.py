@@ -67,6 +67,11 @@ elif buildtype == 'bioc-longtests':
 else:
     default_BUILD_timeout =  '2400.0'  # 40 min
 
+if buildtype == 'books':
+    default_CHECK_timeout =   '300.0'  #  5 min
+else:
+    default_CHECK_timeout = default_BUILD_timeout
+
 INSTALL_timeout  = float(BBSutils.getenv('BBS_INSTALL_TIMEOUT',  False,
                                          default_INSTALL_timeout))
 
@@ -74,7 +79,7 @@ BUILD_timeout    = float(BBSutils.getenv('BBS_BUILD_TIMEOUT',    False,
                                          default_BUILD_timeout))
 
 CHECK_timeout    = float(BBSutils.getenv('BBS_CHECK_TIMEOUT',    False,
-                                         default_BUILD_timeout))
+                                         default_CHECK_timeout))
 
 BUILDBIN_timeout = float(BBSutils.getenv('BBS_BUILDBIN_TIMEOUT', False,
                                          default_INSTALL_timeout))

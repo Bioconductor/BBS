@@ -1742,9 +1742,11 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
         if not no_raw_results:
             os.mkdir(os.path.join(pkg, 'raw-results', node.node_id))
 
+        stages_to_display = BBSreportutils.stages_to_display(BBSvars.buildtype)
+
         # INSTALL leaf-report
-        if BBSvars.buildtype != "bioc-longtests":
-            stage = "install"
+        stage = "install"
+        if stage in stages_to_display:
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if status != "skipped":
                 leafreport_ref = LeafReportReference(pkg,
@@ -1757,17 +1759,18 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
 
         # BUILD leaf-report
         stage = "buildsrc"
-        status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
-        if not status in ["skipped", "NA"]:
-            leafreport_ref = LeafReportReference(pkg,
-                                                 node.hostname,
-                                                 node.node_id,
-                                                 stage)
-            make_LeafReport(leafreport_ref, allpkgs, long_link)
+        if stage in stages_to_display:
+            status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
+            if not status in ["skipped", "NA"]:
+                leafreport_ref = LeafReportReference(pkg,
+                                                     node.hostname,
+                                                     node.node_id,
+                                                     stage)
+                make_LeafReport(leafreport_ref, allpkgs, long_link)
 
         # CHECK leaf-report
-        if BBSvars.buildtype not in ["workflows", "books"]:
-            stage = 'checksrc'
+        stage = 'checksrc'
+        if stage in stages_to_display:
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
@@ -1777,8 +1780,9 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
                 make_LeafReport(leafreport_ref, allpkgs, long_link)
 
         # BUILD BIN leaf-report
-        if BBSreportutils.is_doing_buildbin(node):
-            stage = "buildbin"
+        stage = "buildbin"
+        if stage in stages_to_display and \
+           BBSreportutils.is_doing_buildbin(node):
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
