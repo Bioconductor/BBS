@@ -633,9 +633,13 @@ def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
         cmd = BBSbase.getSTAGE4cmd(srcpkg_path)
         pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
         version = bbs.parse.get_version_from_srcpkg_path(srcpkg_path)
-        Rcheck_dir = pkg + '.Rcheck'
         pkgdumps_prefix = pkg + '.' + stage
-        pkgdumps = BBSbase.PkgDumps(Rcheck_dir, pkgdumps_prefix)
+        if BBSvars.buildtype == 'books':
+            deploy_dest_dir = pkg + '.book'
+            pkgdumps = BBSbase.PkgDumps(deploy_dest_dir, pkgdumps_prefix)
+        else:
+            Rcheck_dir = pkg + '.Rcheck'
+            pkgdumps = BBSbase.PkgDumps(Rcheck_dir, pkgdumps_prefix)
         job = BBSbase.CheckSrc_Job(pkg, version, cmd, pkgdumps, out_dir)
         jobs.append(job)
     print("OK")

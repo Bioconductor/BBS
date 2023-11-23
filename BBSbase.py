@@ -1,10 +1,10 @@
 ##############################################################################
-###
-### This file is part of the BBS software (Bioconductor Build System).
-###
-### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: Nov 22, 2023
-###
+##
+## This file is part of the BBS software (Bioconductor Build System).
+##
+## Author: Hervé Pagès <hpages.on.github@gmail.com>
+## Last modification: Nov 22, 2023
+##
 
 import sys
 import os
@@ -143,6 +143,36 @@ def Rexpr2syscmd(Rexpr):
             syscmd = '%s -e "%s"' % (BBSvars.rscript_cmd, Rexpr)
     return syscmd
 
+def get_install_cmd_for_non_target_pkg(pkg):
+    Rscript_path = os.path.join(BBSvars.BBS_home, 'utils',
+                                'installNonTargetPkg.R')
+    # Backslahes in the path injected in 'Rexpr' will be seen as escape
+    # characters by R so we need to replace them. Nothing will be replaced
+    # on a Unix-like platform, only on Windows where the paths can actually
+    # contain backslahes.
+    Rscript_path = Rscript_path.replace('\\', '/')
+    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
+        Rfuncall = "installNonTargetPkg('%s',multiArch=TRUE)" % pkg
+    else:
+        Rfuncall = "installNonTargetPkg('%s')" % pkg
+    Rexpr = "source('%s');%s" % (Rscript_path, Rfuncall)
+    return Rexpr2syscmd(Rexpr)
+
+def get_update_cmd_for_non_target_pkgs():
+    Rscript_path = os.path.join(BBSvars.BBS_home, 'utils',
+                                'installNonTargetPkg.R')
+    # Backslahes in the path injected in 'Rexpr' will be seen as escape
+    # characters by R so we need to replace them. Nothing will be replaced
+    # on a Unix-like platform, only on Windows where the paths can actually
+    # contain backslahes.
+    Rscript_path = Rscript_path.replace('\\', '/')
+    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
+        Rfuncall = "updateNonTargetPkgs(multiArch=TRUE)"
+    else:
+        Rfuncall = "updateNonTargetPkgs()"
+    Rexpr = "source('%s');%s" % (Rscript_path, Rfuncall)
+    return Rexpr2syscmd(Rexpr)
+
 # The <pkg>.Rcheck/ folder can be huge (several GB for some packages, even
 # for some software packages!) but, fortunately, the things that we need to
 # send to the central node are small.
@@ -237,8 +267,7 @@ def kindly_notify_us(what, e, to_addrs=None):
 
 
 ##############################################################################
-### Generate the system commands used for installing (STAGE2), building
-### (STAGE3 and STAGE5), and checking (STAGE4) each package.
+## Low-level helpers used by the getSTAGE[1-5]cmd() functions
 ##############################################################################
 
 def _get_prepend_from_BBSoptions(pkgsrctree, key_prefix):
@@ -256,6 +285,7 @@ def _get_prepend_from_BBSoptions(pkgsrctree, key_prefix):
             prepend = prepend_mac
     return prepend
 
+## 2023/11/22: Not used at the moment!
 def _BiocGreaterThanOrEqualTo(x, y):
     # If 'BBSvars.bioc_version' is not defined, then we assume it's the
     # latest version.
@@ -323,7 +353,7 @@ def _get_RINSTALL_cmd0(win_archs=None):
             cmd0 += ' --merge-multiarch'
     return cmd0
 
-### 'srcpkg_path' must be the path to a package source tarball.
+## 'srcpkg_path' must be the path to a package source tarball.
 def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     pkg_instdir = "%s.buildbin-libdir" % pkg
@@ -333,7 +363,7 @@ def _get_BuildBinPkg_cmd(srcpkg_path, win_archs=None):
         cmd0 = _get_RINSTALL_cmd0(win_archs)
         cmd = '%s --build --library=%s %s' % (cmd0, pkg_instdir, srcpkg_path)
     else:
-        cmd0 = '%s/utils/build-universal.sh' % BBSvars.BBS_home
+        cmd0 = os.path.join(BBSvars.BBS_home, 'utils', 'build-universal.sh')
         cmd = '%s %s %s %s' % (cmd0, srcpkg_path, BBSvars.r_cmd, pkg_instdir)
     cmd = 'rm -rf %s && mkdir %s && %s' % (pkg_instdir, pkg_instdir, cmd)
     return cmd
@@ -396,114 +426,33 @@ def _get_Rbuild_cmd(pkgsrctree):
     return cmd
 
 def _get_Rcheck_cmd0(win_archs=None):
-    cmd = BBSvars.r_cmd
+    cmd0 = BBSvars.r_cmd
     if win_archs != None and len(win_archs) == 1:
-        cmd += ' --arch %s' % win_archs[0]
-    cmd += ' CMD check'
+        cmd0 += ' --arch %s' % win_archs[0]
+    cmd0 += ' CMD check'
     if win_archs != None:
         if len(win_archs) <= 1:
-            cmd += ' --no-multiarch'
+            cmd0 += ' --no-multiarch'
         else:
-            cmd += ' --force-multiarch'
-    return cmd
+            cmd0 += ' --force-multiarch'
+    return cmd0
 
-### During STAGE1, we need to build a "light" source tarball for each package.
-### By "light" here we mean that we don't care about the vignette or \Sexpr
-### directives in the man pages: trying to execute the code contained in the
-### vignette and/or the \Sexpr directives is too expensive (it can take a long
-### time) and, most importantly, it's too risky (it can fail).
-### Using 'R CMD build --no-vignettes' for building a "light" source tarball
-### isn't good enough: it will still try to install the package if the man
-### pages contain \Sexpr directives. Unfortunately, at this time (R 2.14),
-### there doesn't seem to be any option for turning off the evaluation of the
-### \Sexpr. So, for now, we build the "light" source tarball "by hand" i.e.
-### we just use 'tar zcf'.
-def getSTAGE1cmd(pkgsrctree):
-    #cmd = _get_Rbuild_cmd(pkgsrctree) + ' --no-build-vignettes ' + pkgsrctree
-    key = 'BBS_TAR_CMD'
-    tar_cmd = os.environ[key]
-    srcpkg_file = bbs.parse.make_srcpkg_file_from_pkgsrctree(pkgsrctree)
-    cmd = '%s zcf %s %s' % (tar_cmd, srcpkg_file, pkgsrctree)
-    return cmd
-
-def get_install_cmd_for_non_target_pkg(pkg):
-    script_path = os.path.join(BBSvars.BBS_home,
-                               "utils",
-                               "installNonTargetPkg.R")
-    # Backslahes in the path injected in 'Rexpr' will be seen as escape
-    # characters by R so we need to replace them. Nothing will be replaced
-    # on a Unix-like platform, only on Windows where the paths can actually
-    # contain backslahes.
-    script_path = script_path.replace('\\', '/')
-    Rexpr = "source('%s');" % script_path
-    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
-        Rexpr += "installNonTargetPkg('%s',multiArch=TRUE)" % pkg
-    else:
-        Rexpr += "installNonTargetPkg('%s')" % pkg
-    return Rexpr2syscmd(Rexpr)
-
-def get_update_cmd_for_non_target_pkgs():
-    script_path = os.path.join(BBSvars.BBS_home,
-                               "utils",
-                               "installNonTargetPkg.R")
-    # Backslahes in the path injected in 'Rexpr' will be seen as escape
-    # characters by R so we need to replace them. Nothing will be replaced
-    # on a Unix-like platform, only on Windows where the paths can actually
-    # contain backslahes.
-    script_path = script_path.replace('\\', '/')
-    Rexpr = "source('%s');" % script_path
-    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
-        Rexpr += "updateNonTargetPkgs(multiArch=TRUE)"
-    else:
-        Rexpr += "updateNonTargetPkgs()"
-    return Rexpr2syscmd(Rexpr)
-
-def getSTAGE2cmd(pkg, version):
-    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
-        win_archs = _supportedWinArchs(pkg)
-        if len(win_archs) == 2:
-            # Use crazy long command for multiarch INSTALLs.
-            # See _get_InstallPkgFromTargetRepo_cmd() above for more info.
-            cmd = _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
-        else:
-            # Use arch-specific INSTALL command:
-            #   R --arch x64 CMD INSTALL --no-multiarch <pkg>
-            # or:
-            #   R --arch i386 CMD INSTALL --no-multiarch <pkg>
-            cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
-    else:
-        # Use standard INSTALL command: R CMD INSTALL <pkg>
-        cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
-    prepend = _get_prepend_from_BBSoptions(pkg, 'INSTALL')
-    if prepend != None and prepend != '':
-        cmd = '%s %s' % (prepend, cmd)
-    return cmd
-
-def getSTAGE3cmd(pkgsrctree):
-    cmd =  _get_Rbuild_cmd(pkgsrctree) + ' ' + pkgsrctree
-    prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'BUILD')
-    if prepend != None and prepend != '':
-        cmd = '%s %s' % (prepend, cmd)
-    return cmd
-
-### Note that 'R CMD check' installs the package in <pkg>.Rcheck. However,
-### an undocumented 'R CMD check' feature allows one to avoid this installation
-### if the package is already installed somewhere and if the output of the
-### 'R CMD INSTALL' command that led to this installation was captured in a
-### file. Typical use of this feature:
-###   R CMD INSTALL toto_0.17.31.tar.gz >toto.install-out.txt 2>&1
-###   R CMD check --install=check:toto.install-out.txt \
-###               --library=path/to/R/library \
-###               toto_0.17.31.tar.gz
-### All there is about this is a comment in tools/R/check.R at the beginning
-### of the check_install() function. Also this feature was mentioned once by
-### Uwe Ligges on the R-devel mailing list:
-###   https://stat.ethz.ch/pipermail/r-devel/2011-June/061377.html
-### and, more recently, by Tomas Kalibera in an off-list discussion about
-### 'packages writing to "library" directory during their tests' (Feb 2018).
-### 'srcpkg_path' must be the path to a package source tarball.
-def getSTAGE4cmd(srcpkg_path):
-    pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
+## Note that 'R CMD check' installs the package in <pkg>.Rcheck. However,
+## an undocumented 'R CMD check' feature allows one to avoid this installation
+## if the package is already installed somewhere and if the output of the
+## 'R CMD INSTALL' command that led to this installation was captured in a
+## file. Typical use of this feature:
+##   R CMD INSTALL toto_0.17.31.tar.gz >toto.install-out.txt 2>&1
+##   R CMD check --install=check:toto.install-out.txt \
+##               --library=path/to/R/library \
+##               toto_0.17.31.tar.gz
+## All there is about this is a comment in tools/R/check.R at the beginning
+## of the check_install() function. Also this feature was mentioned once by
+## Uwe Ligges on the R-devel mailing list:
+##   https://stat.ethz.ch/pipermail/r-devel/2011-June/061377.html
+## and, more recently, by Tomas Kalibera in an off-list discussion about
+## 'packages writing to "library" directory during their tests' (Feb 2018).
+def _get_Rcheck_cmd(pkg):
     if sys.platform != 'win32':
         win_archs = None
     else:
@@ -561,17 +510,91 @@ def getSTAGE4cmd(srcpkg_path):
         if sys.platform in no_example_archs:
             common_opts += ["--no-examples"]
     common_opts = ' '.join(common_opts)
-    cmd = '%s %s %s' % (cmd0, common_opts, srcpkg_path)
+    return '%s %s' % (cmd0, common_opts)
+
+def _get_deploy_book_cmd0():
+    return os.path.join(BBSvars.BBS_home, "utils", "deploy_book.py")
+
+
+##############################################################################
+## The getSTAGE[1-5]cmd() functions
+##############################################################################
+## All these functions return a single string containing a standalone command
+## that could be run in a terminal. The command will be displayed on the build
+## report.
+
+## Generate the command used on each package to produce the "light" source
+## tarballs.
+## During STAGE1, we need to build a "light" source tarball for each package.
+## By "light" here we mean that we don't care about the vignette or \Sexpr
+## directives in the man pages: trying to execute the code contained in the
+## vignette and/or the \Sexpr directives is too expensive (it can take a long
+## time) and, most importantly, it's too risky (it can fail).
+## Using 'R CMD build --no-vignettes' for building a "light" source tarball
+## isn't good enough: it will still try to install the package if the man
+## pages contain \Sexpr directives. Unfortunately, at this time (R 2.14),
+## there doesn't seem to be any option for turning off the evaluation of the
+## \Sexpr. So, for now, we build the "light" source tarball "by hand" i.e.
+## we just use 'tar zcf'.
+def getSTAGE1cmd(pkgsrctree):
+    #cmd = _get_Rbuild_cmd(pkgsrctree) + ' --no-build-vignettes ' + pkgsrctree
+    key = 'BBS_TAR_CMD'
+    tar_cmd = os.environ[key]
+    srcpkg_file = bbs.parse.make_srcpkg_file_from_pkgsrctree(pkgsrctree)
+    cmd = '%s zcf %s %s' % (tar_cmd, srcpkg_file, pkgsrctree)
+    return cmd
+
+## Generate the command used on each package for the INSTALL stage.
+def getSTAGE2cmd(pkg, version):
+    if sys.platform == 'win32' and BBSvars.STAGE2_mode == 'multiarch':
+        win_archs = _supportedWinArchs(pkg)
+        if len(win_archs) == 2:
+            # Use crazy long command for multiarch INSTALLs.
+            # See _get_InstallPkgFromTargetRepo_cmd() above for more info.
+            cmd = _get_InstallPkgFromTargetRepo_cmd(pkg, version, win_archs)
+        else:
+            # Use arch-specific INSTALL command:
+            #   R --arch x64 CMD INSTALL --no-multiarch <pkg>
+            # or:
+            #   R --arch i386 CMD INSTALL --no-multiarch <pkg>
+            cmd = '%s %s' % (_get_RINSTALL_cmd0(win_archs), pkg)
+    else:
+        # Use standard INSTALL command: R CMD INSTALL <pkg>
+        cmd = '%s %s' % (_get_RINSTALL_cmd0(), pkg)
+    prepend = _get_prepend_from_BBSoptions(pkg, 'INSTALL')
+    if prepend != None and prepend != '':
+        cmd = '%s %s' % (prepend, cmd)
+    return cmd
+
+## Generate the command used on each package for the BUILD stage.
+def getSTAGE3cmd(pkgsrctree):
+    cmd = _get_Rbuild_cmd(pkgsrctree) + ' ' + pkgsrctree
+    prepend = _get_prepend_from_BBSoptions(pkgsrctree, 'BUILD')
+    if prepend != None and prepend != '':
+        cmd = '%s %s' % (prepend, cmd)
+    return cmd
+
+## Generate the command used on each package for the CHECK stage.
+## 'srcpkg_path' must be the path to a package source tarball.
+def getSTAGE4cmd(srcpkg_path):
+    pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
+    if BBSvars.buildtype == 'books':
+        deploy_dest_dir = pkg + '.book'
+        cmd0 = _get_deploy_book_cmd0()
+        cmd = cmd0 + ' ' + srcpkg_path + ' ' + deploy_dest_dir
+    else:
+        cmd = _get_Rcheck_cmd(pkg) + ' ' + srcpkg_path
     prepend = _get_prepend_from_BBSoptions(pkg, 'CHECK')
     if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
-### On Windows we use 'R CMD INSTALL --build' on the source tarball produced
-### at STAGE3. Note that zipping the package installation folder located in
-### R_HOME\library would avoid an extra package installation/compilation
-### but would also produce a .zip file with no vignettes in it.
-### 'srcpkg_path' must be the path to a package source tarball.
+## Generate the command used on each package for the BUILD BIN stage.
+## On Windows we use 'R CMD INSTALL --build' on the source tarball produced
+## at STAGE3. Note that zipping the package installation folder located in
+## R_HOME\library would avoid an extra package installation/compilation
+## but would also produce a .zip file with no vignettes in it.
+## 'srcpkg_path' must be the path to a package source tarball.
 def getSTAGE5cmd(srcpkg_path):
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     if sys.platform == 'win32' and BBSvars.STAGE5_mode == 'multiarch':
@@ -583,6 +606,7 @@ def getSTAGE5cmd(srcpkg_path):
     if prepend != None and prepend != '':
         cmd = '%s %s' % (prepend, cmd)
     return cmd
+
 
 ##############################################################################
 ## Output files produced by 'R CMD build/check'.
@@ -615,13 +639,13 @@ class PkgDumps:
 
 
 ##############################################################################
-### The Summary class is used by the _MakeSummary() method of the BuildPkg_Job
-### and CheckSrc_Job classes to generate a summary.
+## The Summary class is used by the _MakeSummary() method of the BuildPkg_Job
+## and CheckSrc_Job classes to generate a summary.
 ##############################################################################
 
-### Finally, I opted for the Append() solution to add extra stuff to the
-### summary (and not for the "derive the Summary class and overwrite the
-### Write() method" solution).
+## Finally, I opted for the Append() solution to add extra stuff to the
+## summary (and not for the "derive the Summary class and overwrite the
+## Write() method" solution).
 class Summary:
     def __init__(self, pkg, version, cmd):
         self.pkg = pkg
@@ -651,7 +675,7 @@ class Summary:
 
 
 ##############################################################################
-### CORE FUNCTIONS: Called by the STAGE<N>_loop() functions (N=2,3,4,5).
+## CORE FUNCTIONS: Called by the STAGE<N>_loop() functions (N=2,3,4,5).
 ##############################################################################
 
 class InstallPkg_Job(bbs.jobs.QueuedJob):
@@ -763,27 +787,25 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.out_dir = out_dir
         self.summary = Summary(pkg, version, cmd)
         self.warnings = 'NA'
-        #NOT NEEDED. '00install.out' is under the '<pkg>.Rcheck' dir
-        #and we already push this dir to self.out_dir as part of self.pkgdumps
-        #self.install_out = os.path.join('%s.Rcheck' % pkg, '00install.out')
     def _MakeSummary(self):
         self.summary.started_at = self._started_at
         self.summary.ended_at = self._ended_at
         self.summary.dt = self._t2 - self._t1
-        Rcheck_dir = self.pkgdumps.product_path
-        if os.path.exists(Rcheck_dir):
-            _clean_Rcheck_dir(Rcheck_dir, self.pkg)
+        if BBSvars.buildtype == 'books':
+            deploy_dest_dir = self.pkgdumps.product_path
+            if not os.path.exists(deploy_dest_dir):
+                deploy_dest_dir = 'None'
+            self.summary.Append('DeployDestDir', deploy_dest_dir)
         else:
-            Rcheck_dir = 'None'
-        self.summary.Append('CheckDir', Rcheck_dir)
+            Rcheck_dir = self.pkgdumps.product_path
+            if os.path.exists(Rcheck_dir):
+                _clean_Rcheck_dir(Rcheck_dir, self.pkg)
+            else:
+                Rcheck_dir = 'None'
+            self.summary.Append('CheckDir', Rcheck_dir)
         self.summary.Append('Warnings', self.warnings)
         self.summary.Write(self.pkgdumps.summary_file)
         self.pkgdumps.Push(self.out_dir)
-        ## Sometimes, '00install.out' is not generated (e.g. when some required
-        ## packages are not available)
-        #NOT NEEDED (see above).
-        #if os.path.exists(self.install_out):
-        #    self.out_dir.Put(self.install_out, True, True)
     def AfterRun(self):
         # Avoid leaving rogue processes messing around on the build machine.
         # self._proc.pid should be already dead but some of its children might

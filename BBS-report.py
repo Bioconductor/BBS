@@ -2067,7 +2067,7 @@ def make_CRAN_MainReport(allpkgs, quickstats, simple_layout=False):
 ###   Key                       Value
 ###   'no-alphabet-dispatch' -> True or False
 ###   'no-raw-results'       -> True or False
-def parse_options(argv):
+def _parse_options(argv):
     usage_msg = 'Usage:\n' + \
         '    BBS-report.py [simple-layout] [no-alphabet-dispatch] [no-raw-results]\n'
     valid_options = ['simple-layout', 'no-alphabet-dispatch', 'no-raw-results']
@@ -2080,7 +2080,7 @@ def parse_options(argv):
     return options
 
 if __name__ == "__main__":
-    options = parse_options(sys.argv)
+    options = _parse_options(sys.argv)
     print()
     if not os.path.isfile(BBSreportutils.BUILD_STATUS_DB_file):
         print('mmh.. I don\'t see the \'%s\' file in the current directory!' \

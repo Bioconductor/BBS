@@ -34,22 +34,24 @@ def version_is_valid(version_string):
     return m != None
 
 ### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
-def get_pkgname_from_srcpkg_path(srcpkg_path):
+### The file doesn't need to exist.
+def _parse_srcpkg_path(srcpkg_path):
     srcpkg_file = os.path.basename(srcpkg_path)
     srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
     p = re.compile(srcpkg_regex)
     m = p.match(srcpkg_file)
-    pkgname = m.group(1)
-    return pkgname
+    if m == None:
+        errmsg = "Failed to parse name of source tarball " + \
+                 "(file name '%s' " % srcpkg_file + \
+                 "not of the form '<pkgname>_<version>.tar.gz')"
+        raise ValueError(errmsg)
+    return m
 
-### 'srcpkg_path' must be the path to a package source tarball (.tar.gz file).
+def get_pkgname_from_srcpkg_path(srcpkg_path):
+    return _parse_srcpkg_path(srcpkg_path).group(1)
+
 def get_version_from_srcpkg_path(srcpkg_path):
-    srcpkg_file = os.path.basename(srcpkg_path)
-    srcpkg_regex = '^([^_]+)_([^_]+)\\.tar\\.gz$'
-    p = re.compile(srcpkg_regex)
-    m = p.match(srcpkg_file)
-    version = m.group(2)
-    return version
+    return _parse_srcpkg_path(srcpkg_path).group(2)
 
 
 ##############################################################################
