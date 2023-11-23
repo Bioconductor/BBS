@@ -20,7 +20,7 @@ import BBSutils
 import BBSvars
 
 
-def Untar(tarball, dir=None, verbose=False):
+def Untar(tarball, destdir=None, verbose=False):
     key = 'BBS_TAR_CMD'
     if key in os.environ and os.environ[key] != "":
         tar_cmd = os.environ[key]
@@ -28,13 +28,13 @@ def Untar(tarball, dir=None, verbose=False):
         if verbose:
             options += 'v'
         cmd = tar_cmd + ' ' + options + ' ' + tarball
-        if dir != None:
-            cmd += ' -C %s' % dir
+        if destdir != None:
+            cmd += ' -C %s' % destdir
         bbs.jobs.doOrDie(cmd)
     else:
         ## This method doesn't restore the file permissions on Windows!
-        if dir != None:
-            sys.exit("ERROR in Untar(): dir != None is not supported")
+        if destdir != None:
+            sys.exit("ERROR in Untar(): destdir != None is not supported")
         tar = tarfile.open(tarball, mode='r:gz')
         for tarinfo in tar:
             tar.extract(tarinfo)
@@ -579,9 +579,11 @@ def getSTAGE3cmd(pkgsrctree):
 def getSTAGE4cmd(srcpkg_path):
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     if BBSvars.buildtype == 'books':
-        deploy_dest_dir = pkg + '.book'
+        deploy_destdir = pkg + '.book'
         cmd0 = _get_deploy_book_cmd0()
-        cmd = cmd0 + ' ' + srcpkg_path + ' ' + deploy_dest_dir
+        cmd = 'rm -rf %s && ' % deploy_destdir + \
+              'mkdir %s && ' % deploy_destdir + \
+              cmd0 + ' ' + srcpkg_path + ' ' + deploy_destdir
     else:
         cmd = _get_Rcheck_cmd(pkg) + ' ' + srcpkg_path
     prepend = _get_prepend_from_BBSoptions(pkg, 'CHECK')
@@ -792,10 +794,10 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
         self.summary.ended_at = self._ended_at
         self.summary.dt = self._t2 - self._t1
         if BBSvars.buildtype == 'books':
-            deploy_dest_dir = self.pkgdumps.product_path
-            if not os.path.exists(deploy_dest_dir):
-                deploy_dest_dir = 'None'
-            self.summary.Append('DeployDestDir', deploy_dest_dir)
+            deploy_destdir = self.pkgdumps.product_path
+            if not os.path.exists(deploy_destdir):
+                deploy_destdir = 'None'
+            self.summary.Append('DeployDestDir', deploy_destdir)
         else:
             Rcheck_dir = self.pkgdumps.product_path
             if os.path.exists(Rcheck_dir):

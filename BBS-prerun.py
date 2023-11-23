@@ -4,7 +4,7 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: May 31, 2023
+### Last modification: Nov 22, 2023
 ###
 
 import sys
@@ -341,15 +341,15 @@ def writeAndUploadMeatInfo(work_topdir):
 ##############################################################################
 
 ### Used typically for extracting CRAN src pkg tarballs
-def extractSrcPkgTarballs(dest_dir):
+def extractSrcPkgTarballs(destdir):
     MEAT0_path = BBSvars.MEAT0_rdir.path # Hopefully this is local!
     srcpkg_files = bbs.fileutils.listSrcPkgFiles(MEAT0_path)
-    bbs.fileutils.remake_dir(dest_dir)
+    bbs.fileutils.remake_dir(destdir)
     pkgs = []
     for srcpkg_file in srcpkg_files:
         pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_file)
         srcpkg_filepath = os.path.join(MEAT0_path, srcpkg_file)
-        BBSbase.Untar(srcpkg_filepath, dest_dir)
+        BBSbase.Untar(srcpkg_filepath, destdir)
         pkgs.append(pkg)
     return pkgs
 

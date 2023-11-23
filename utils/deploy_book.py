@@ -10,9 +10,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import bbs.parse
 import bbs.jobs
 
-def deploy_book(srcpkg_path, dest_dir, use_rsync=False):
+def deploy_book(srcpkg_path, destdir, use_rsync=False):
+    if not use_rsync and not os.path.isdir(destdir):
+        errmsg = "Can't deploy book to '%s': No such directory" % destdir
+        raise NotADirectoryError(errmsg)
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
-    dest_subdir = os.path.join(dest_dir, pkg)
+    dest_subdir = os.path.join(destdir, pkg)
     print("Deploying content from book tarball '%s' to '%s/' ..." % \
           (srcpkg_path, dest_subdir), end=' ')
     sys.stdout.flush()
@@ -41,7 +44,7 @@ def deploy_book(srcpkg_path, dest_dir, use_rsync=False):
         if os.path.exists(tmp_path):
             shutil.rmtree(tmp_path, ignore_errors=True)
         os.rename(content_path, tmp_path)
-        cmd = "rsync --delete -q -ave ssh %s %s" % (tmp_path, dest_dir)
+        cmd = "rsync --delete -q -ave ssh %s %s" % (tmp_path, destdir)
         bbs.jobs.call(cmd, check=True)
     else:
         if os.path.exists(dest_subdir):
@@ -59,7 +62,7 @@ def deploy_book(srcpkg_path, dest_dir, use_rsync=False):
 
 def _parse_options(argv):
     usage_msg = 'Usage:\n' + \
-        '    deploy_book.py <srcpkg-path> <dest-dir> [--use-rsync]\n'
+        '    deploy_book.py <srcpkg-path> <destdir> [--use-rsync]\n'
     if len(argv) < 3 or len(argv) > 4:
         sys.exit(usage_msg)
     use_rsync = False
@@ -67,12 +70,12 @@ def _parse_options(argv):
         if argv[3] != '--use-rsync':
             sys.exit(usage_msg)
         use_rsync = True
-    return {'srcpkg_path': argv[1], 'dest_dir': argv[2], 'use_rsync': use_rsync}
+    return {'srcpkg_path': argv[1], 'destdir': argv[2], 'use_rsync': use_rsync}
 
 if __name__ == '__main__':
     options = _parse_options(sys.argv)
     srcpkg_path = options['srcpkg_path']
-    dest_dir = options['dest_dir']
+    destdir = options['destdir']
     use_rsync = options['use_rsync']
-    deploy_book(srcpkg_path, dest_dir, use_rsync=use_rsync)
+    deploy_book(srcpkg_path, destdir, use_rsync=use_rsync)
 
