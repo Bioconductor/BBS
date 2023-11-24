@@ -1668,14 +1668,15 @@ def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
     return
 
 def write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stage):
-    if stage != "checksrc":
+    if stage != 'checksrc':
         write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
         return
-    if BBSvars.buildtype == "bioc-longtests":
+    if BBSvars.buildtype == 'bioc-longtests':
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
     write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage)
-    write_Installation_output_asHTML(out, node_hostname, pkg, node_id)
-    if BBSvars.buildtype != "bioc-longtests":
+    if BBSvars.buildtype != 'books':
+        write_Installation_output_asHTML(out, node_hostname, pkg, node_id)
+    if BBSvars.buildtype not in ['books', 'bioc-longtests']:
         write_Tests_output_asHTML(out, node_hostname, pkg, node_id)
         write_Example_timings_asHTML(out, node_hostname, pkg, node_id)
     return
