@@ -166,7 +166,7 @@ MEAT0_type = int(BBSutils.getenv('BBS_MEAT0_TYPE'))
 if MEAT0_type == 1:  # svn-based builds
     manifest_file = BBSutils.getenv('BBS_BIOC_MANIFEST_FILE')
     manifest_path = os.path.join(MEAT0_rdir.path, manifest_file)
-    vcsmeta_file = 'svninfo/svn-info.txt'
+    vcsmeta_file = os.path.join('svninfo', 'svn-info.txt')
 
 if MEAT0_type == 3:  # git-based builds
     manifest_git_repo_url = BBSutils.getenv('BBS_BIOC_MANIFEST_GIT_REPO_URL')
@@ -175,7 +175,7 @@ if MEAT0_type == 3:  # git-based builds
     manifest_file = BBSutils.getenv('BBS_BIOC_MANIFEST_FILE')
     manifest_path = os.path.join(manifest_clone_path, manifest_file)
     git_branch = BBSutils.getenv('BBS_BIOC_GIT_BRANCH')
-    vcsmeta_file = 'gitlog/git-log.dcf'
+    vcsmeta_file = os.path.join('gitlog', 'git-log.dcf')
 
 update_MEAT0 = BBSutils.getenv('BBS_UPDATE_MEAT0', False, default='0')
 update_MEAT0 = int(update_MEAT0) != 0

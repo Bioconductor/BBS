@@ -1393,10 +1393,6 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     return
 
 def write_info_dcf(pkg, node_id):
-    filename = 'git-log-%s.dcf' % (pkg)
-    filepath = os.path.join(BBSvars.central_rdir_path, 'gitlog', filename)
-    dest = os.path.join(pkg, 'raw-results', 'info.dcf')
-    shutil.copyfile(filepath, dest)
     dcf_record = meat_index[pkg]
     info = {}
     info['Package'] = dcf_record.get('Package', 'NA')
@@ -1404,9 +1400,14 @@ def write_info_dcf(pkg, node_id):
     info['Maintainer'] = dcf_record.get('Maintainer', 'NA')
     maintainer_email = dcf_record.get('MaintainerEmail', 'NA')
     info['MaintainerEmail'] = maintainer_email.replace('@', ' at ')
-    with open(dest, 'a', encoding='utf-8') as dcf:
+    gitlog_file = 'git-log-%s.dcf' % pkg
+    gitlog_path = os.path.join(BBSvars.central_rdir_path, 'gitlog', gitlog_file)
+    gitlog = bbs.parse.parse_DCF(gitlog_path, merge_records=True)
+    info = info | gitlog
+    dest = os.path.join(pkg, 'raw-results', 'info.dcf')
+    with open(dest, 'a', encoding='utf-8') as out:
         for key, value in info.items():
-            dcf.write('%s: %s\n' % (key, value))
+            out.write('%s: %s\n' % (key, value))
     return
 
 def write_filepath_asHTML(out, Rcheck_dir, filepath):
