@@ -1515,3 +1515,50 @@ the crontab:
     # Remove reports older than 1 week
     40 12 * * 1-6 find /home/biocbuild/archives/bioc-report*.tgz -maxdepth 1 -mtime +7 -type f -delete
 
+
+## 6 Miscellaneous
+
+Note: This might be suitable for another location since it is information
+specific to a machine.
+
+### 6.1 Nebbiolo1 missing disk space
+
+Nebbiolo1 has a 1.7T disk at `data/home`; however, it doesn't show its correct
+size after possibly updating:
+
+    Filesystem      Size  Used Avail Use% Mounted on
+    tmpfs            13G  2.6M   13G   1% /run
+    /dev/sdc2       218G   43G  164G  21% /
+    tmpfs            63G   16K   63G   1% /dev/shm
+    tmpfs           5.0M     0  5.0M   0% /run/lock
+    /dev/sdc1       511M  6.1M  505M   2% /boot/efi
+    data            128G  128K  128G   1% /data
+    data/home       946G  818G  128G  87% /home           # This should be 1.7T
+    tmpfs            13G  4.0K   13G   1% /run/user/1003
+    tmpfs            13G  4.0K   13G   1% /run/user/1001
+    tmpfs            13G  4.0K   13G   1% /run/user/1005
+    tmpfs            13G  4.0K   13G   1% /run/user/1004
+
+This is likely due to a snapshot taking up space, which can be removed with
+`zfs destroy`:
+
+    $ zfs list -t snap
+    NAME                   USED  AVAIL     REFER  MOUNTPOINT
+    data/home@01-03-2023   782G      -      815G  -
+    $ sudo zfs destroy data/home@01-03-2023
+    sudo zfs destroy data/home@01-03-2023
+    $ zfs list -t snap
+    no datasets available
+    $ df -h
+    Filesystem      Size  Used Avail Use% Mounted on
+    tmpfs            13G  2.6M   13G   1% /run
+    /dev/sdc2       218G   43G  164G  21% /
+    tmpfs            63G   16K   63G   1% /dev/shm
+    tmpfs           5.0M     0  5.0M   0% /run/lock
+    /dev/sdc1       511M  6.1M  505M   2% /boot/efi
+    data            822G  128K  822G   1% /data
+    data/home       1.7T  818G  822G  50% /home
+    tmpfs            13G  4.0K   13G   1% /run/user/1003
+    tmpfs            13G  4.0K   13G   1% /run/user/1001
+    tmpfs            13G  4.0K   13G   1% /run/user/1005
+    tmpfs            13G  4.0K   13G   1% /run/user/1004
