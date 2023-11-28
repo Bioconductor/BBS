@@ -1454,8 +1454,8 @@ see above in this file) and create the following symlinks (without them
 libraries and will fail):
 
     cd /usr/local/opt/mysql-client/lib/
-    ln -s /usr/local/opt/openssl/lib/libssl.dylib
-    ln -s /usr/local/opt/openssl/lib/libcrypto.dylib
+    ln -s libssl.1.1.dylib libssl.dylib
+    ln -s libcrypto.1.1.dylib libcrypto.dylib
 
 TESTING: Logout and login again so that the changes to `/etc/profile` take
 effect. Then:
