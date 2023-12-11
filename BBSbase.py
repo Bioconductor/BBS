@@ -3,12 +3,13 @@
 ## This file is part of the BBS software (Bioconductor Build System).
 ##
 ## Author: Hervé Pagès <hpages.on.github@gmail.com>
-## Last modification: Nov 22, 2023
+## Last modification: Dec 11, 2023
 ##
 
 import sys
 import os
 import tarfile
+import urllib.request
 
 import bbs.fileutils
 import bbs.parse
@@ -63,6 +64,31 @@ def injectFieldsIntoMeat(meat_path, target_pkgs):
             fields = {'Repository': 'Bioconductor %s' % BBSvars.bioc_version}
             bbs.parse.inject_DCF_fields(desc_file, fields)
     print('OK')
+    return
+
+def waitForTargetRepoToBeReady():
+    PACKAGES_url = BBSvars.central_base_url + '/src/contrib/PACKAGES'
+    nb_attempts = 0
+    while True:
+        nb_attempts += 1
+        try:
+            f = urllib.request.urlopen(PACKAGES_url)
+        except urllib.error.HTTPError:
+            print('BBS> [waitForTargetRepoToBeReady]', end=' ')
+            print('Unable to access %s. ' % PACKAGES_url + \
+                  'Looks like the target repo is not ready yet!')
+        else:
+            break
+        if nb_attempts == 30:
+            print('BBS> [waitForTargetRepoToBeReady]', end=' ')
+            print('FATAL ERROR: was unable to access %s after %d attempts. ' % \
+                  (PACKAGES_url, nb_attempts) + 'Giving up.')
+            sys.exit('=> EXIT.')
+        print('BBS> [waitForTargetRepoToBeReady]', end=' ')
+        print('-> will wait 3 minutes before trying again ...')
+        sys.stdout.flush()
+        bbs.jobs.sleep(180.0)
+    f.close()
     return
 
 def cloneCRANstylePkgRepo(contrib_url, destdir, update_only=False):

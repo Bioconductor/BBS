@@ -4,13 +4,12 @@
 ### This file is part of the BBS software (Bioconductor Build System).
 ###
 ### Author: Hervé Pagès <hpages.on.github@gmail.com>
-### Last modification: May 31, 2023
+### Last modification: Dec 11, 2023
 ###
 
 import sys
 import os
 import time
-import urllib.request
 from functools import lru_cache
 
 import bbs.fileutils
@@ -209,31 +208,6 @@ def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
     sys.stdout.flush()
     return srcpkg_files
 
-def waitForTargetRepoToBeReady():
-    PACKAGES_url = BBSvars.central_base_url + '/src/contrib/PACKAGES'
-    nb_attempts = 0
-    while True:
-        nb_attempts += 1
-        try:
-            f = urllib.request.urlopen(PACKAGES_url)
-        except urllib.error.HTTPError:
-            print('BBS> [waitForTargetRepoToBeReady]', end=' ')
-            print('Unable to access %s. ' % PACKAGES_url + \
-                  'Looks like the target repo is not ready yet!')
-        else:
-            break
-        if nb_attempts == 30:
-            print('BBS> [waitForTargetRepoToBeReady]', end=' ')
-            print('FATAL ERROR: was unable to access %s after %d attempts. ' % \
-                  (PACKAGES_url, nb_attempts) + 'Giving up.')
-            sys.exit('=> EXIT.')
-        print('BBS> [waitForTargetRepoToBeReady]', end=' ')
-        print('-> will wait 3 minutes before trying again ...')
-        sys.stdout.flush()
-        bbs.jobs.sleep(180.0)
-    f.close()
-    return
-
 
 ##############################################################################
 ## STAGE2: Update ALL packages and re-install target packages + dependencies.
@@ -420,7 +394,7 @@ def STAGE2():
     # (if it's not ready yet it probably means that the prerun.sh script did
     # not finish on the main node, in which case we want to wait before we
     # sync the local meat dir with the central MEAT0 dir).
-    waitForTargetRepoToBeReady()
+    BBSbase.waitForTargetRepoToBeReady()
     if not BBSvars.no_transmission:
         BBSvars.install_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
