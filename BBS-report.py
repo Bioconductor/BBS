@@ -135,7 +135,7 @@ def write_notes_to_developers(out, pkg, extra_note=None):
         out.write('48 hours) for your latest push to ')
         out.write('git@git.bioconductor.org:packages/%s.git ' % pkg)
         out.write('to reflect on this report. ')
-        out.write('See <A href="%s">Troubleshooting Build Report</A> ')
+        out.write('See <A href="%s">Troubleshooting Build Report</A> ' % url)
         out.write('for more information.<BR>\n')
     if os.path.exists('Renviron.bioc'):
         out.write('%sUse the following ' % prefix)
