@@ -1518,47 +1518,56 @@ the crontab:
 
 ## 6 Miscellaneous
 
-Note: This might be suitable for another location since it is information
-specific to a machine.
+### 6.1 Disk space invisibly used on zfs partitions
 
-### 6.1 Nebbiolo1 missing disk space
+Zfs is a volume manager and a filesystem with a snapshot feature that can reduce
+the visible space of a partition using it when inspecting with `df`. Nebbiolo1
+has a 1.7T zfs partition at `data`; however, the visible space appeared
+smaller possibly after an update or upgrade.
 
-Nebbiolo1 has a 1.7T disk at `data/home`; however, it doesn't show its correct
-size after possibly updating:
+#### Diagnosis
 
+Check the partition size with `df`:
+
+    $ df -Th
     Filesystem      Size  Used Avail Use% Mounted on
-    tmpfs            13G  2.6M   13G   1% /run
-    /dev/sdc2       218G   43G  164G  21% /
-    tmpfs            63G   16K   63G   1% /dev/shm
-    tmpfs           5.0M     0  5.0M   0% /run/lock
-    /dev/sdc1       511M  6.1M  505M   2% /boot/efi
-    data            128G  128K  128G   1% /data
-    data/home       946G  818G  128G  87% /home           # This should be 1.7T
-    tmpfs            13G  4.0K   13G   1% /run/user/1003
-    tmpfs            13G  4.0K   13G   1% /run/user/1001
-    tmpfs            13G  4.0K   13G   1% /run/user/1005
-    tmpfs            13G  4.0K   13G   1% /run/user/1004
+    tmpfs          tmpfs   13G  2.6M   13G   1% /run
+    /dev/sdc2      ext4   218G   43G  164G  21% /
+    tmpfs          tmpfs   63G   16K   63G   1% /dev/shm
+    tmpfs          tmpfs  5.0M     0  5.0M   0% /run/lock
+    /dev/sdc1      vfat   511M  6.1M  505M   2% /boot/efi
+    data           zfs    128G  128K  128G   1% /data
+    data/home      zfs    946G  818G  128G  87% /home          # Should be 1.7T
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1003
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1001
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1005
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1004
 
-This is likely due to a snapshot taking up space, which can be removed with
-`zfs destroy`:
+List any existing snapshots. (None should exist.)
 
+    # A snapshot exists
     $ zfs list -t snap
     NAME                   USED  AVAIL     REFER  MOUNTPOINT
     data/home@01-03-2023   782G      -      815G  -
+
+
+#### Fix
+
+Remove the snapshot to release the space with `zfs destroy <name of snapshot>:
+
     $ sudo zfs destroy data/home@01-03-2023
     sudo zfs destroy data/home@01-03-2023
-    $ zfs list -t snap
-    no datasets available
-    $ df -h
+
+    $ df -Th
     Filesystem      Size  Used Avail Use% Mounted on
-    tmpfs            13G  2.6M   13G   1% /run
-    /dev/sdc2       218G   43G  164G  21% /
-    tmpfs            63G   16K   63G   1% /dev/shm
-    tmpfs           5.0M     0  5.0M   0% /run/lock
-    /dev/sdc1       511M  6.1M  505M   2% /boot/efi
-    data            822G  128K  822G   1% /data
-    data/home       1.7T  818G  822G  50% /home
-    tmpfs            13G  4.0K   13G   1% /run/user/1003
-    tmpfs            13G  4.0K   13G   1% /run/user/1001
-    tmpfs            13G  4.0K   13G   1% /run/user/1005
-    tmpfs            13G  4.0K   13G   1% /run/user/1004
+    tmpfs          tmpfs   13G  2.6M   13G   1% /run
+    /dev/sdc2      ext4   218G   43G  164G  21% /
+    tmpfs          tmpfs   63G   16K   63G   1% /dev/shm
+    tmpfs          tmpfs  5.0M     0  5.0M   0% /run/lock
+    /dev/sdc1      vfat   511M  6.1M  505M   2% /boot/efi
+    data           zfs    822G  128K  822G   1% /data
+    data/home      zfs    1.7T  818G  822G  50% /home          # Correct size
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1003
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1001
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1005
+    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1004
