@@ -1532,19 +1532,9 @@ attempting to write to disk.
 
 Check the partition size with `df`:
 
-    $ df -Th
+    $ df -Th /home
     Filesystem      Size  Used Avail Use% Mounted on
-    tmpfs          tmpfs   13G  2.6M   13G   1% /run
-    /dev/sdc2      ext4   218G   43G  164G  21% /
-    tmpfs          tmpfs   63G   16K   63G   1% /dev/shm
-    tmpfs          tmpfs  5.0M     0  5.0M   0% /run/lock
-    /dev/sdc1      vfat   511M  6.1M  505M   2% /boot/efi
-    data           zfs    128G  128K  128G   1% /data
     data/home      zfs    946G  818G  128G  87% /home          # Should be 1.7T
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1003
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1001
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1005
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1004
 
 List any existing snapshots. (None should exist.)
 
@@ -1560,16 +1550,6 @@ Remove the snapshot to release the space with `zfs destroy <name of snapshot>`:
     $ sudo zfs destroy data/home@01-03-2023
     sudo zfs destroy data/home@01-03-2023
 
-    $ df -Th
+    $ df -Th /home
     Filesystem      Size  Used Avail Use% Mounted on
-    tmpfs          tmpfs   13G  2.6M   13G   1% /run
-    /dev/sdc2      ext4   218G   43G  164G  21% /
-    tmpfs          tmpfs   63G   16K   63G   1% /dev/shm
-    tmpfs          tmpfs  5.0M     0  5.0M   0% /run/lock
-    /dev/sdc1      vfat   511M  6.1M  505M   2% /boot/efi
-    data           zfs    822G  128K  822G   1% /data
     data/home      zfs    1.7T  818G  822G  50% /home          # Correct size
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1003
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1001
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1005
-    tmpfs          tmpfs   13G  4.0K   13G   1% /run/user/1004
