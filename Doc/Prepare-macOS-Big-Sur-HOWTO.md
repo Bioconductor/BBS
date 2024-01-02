@@ -633,11 +633,11 @@ Logout and login again for the changes to `/etc/profile` to take effect.
 
 Note: If `brew` is used to install Bioconductor package dependencies, some
 brew formulas install another version of Python as a dependency, which can take
-presedence over the default system-wide Python interpreter. If the brewed
-Python must be kept, it can `unlink`ed to prevent it from taking precedence with
-`brew unlink <formula>`. Otherwise, the brewed Python can be removed with
+precedence over the default system-wide Python interpreter. If the brewed
+Python must be kept, it can be `unlink`ed to prevent it from taking precedence
+with `brew unlink <formula>`. Otherwise, the brewed Python can be removed with
 `brew uninstall --ignore-dependencies <formula>` and its dependencies can be
-cleaned up with `brew autoremove`
+cleaned up with `brew autoremove`.
 
 TESTING: If R is already installed on the machine, start it, and do:
 
