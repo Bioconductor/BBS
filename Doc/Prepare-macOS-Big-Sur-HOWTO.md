@@ -612,56 +612,7 @@ TESTING:
     brew doctor
 
 
-### 2.11 Install Python 3
-
-NOTE: As of Feb 3, 2021, the tensorflow module is not available yet for
-Python 3.9 so we install Python 3.8.
-
-    #brew install python3  # don't do this yet, it will install Python 3.9!
-
-The brew formula for Python 3.8 (`python@3.8` as of Nov 3rd, 2020) will
-install dependencies `gdbm`, `readline` and `sqlite`:
-
-    brew install python@3.8
-
-Note that the installation is keg-only i.e. not symlinked into `/usr/local`,
-because this is an alternate version of the python3 formula (which is an
-alias for python@3.9).
-
-Note that installation of `readline` and `sqlite` are keg-only, which is
-as expected.
-
-Then, install Python 3.9. It is needed by Open Babel 3:
-
-    brew install python3  # will install Python 3.9
-
-Python 3.9 is now the main Python 3 installation (it's in the `PATH`):
-
-    which python3
-    python3 --version  # Python 3.9.0
-
-HOWEVER, WE DON'T WANT THIS! We want to make Python 3.8 the main Python 3
-installation. To do this, we need to manually fix a bunch of symlinks:
-
-- In `/usr/local/bin/`: Fix symlinks `2to3`, `idle3`, `pip3`, `pydoc3`,
-  `python3`, `python3-config`, and `wheel3` (e.g. have them point to
-   stuff in `../Cellar/python@3.8/3.8.10/bin/` instead of stuff in
-   `../Cellar/python@3.9/3.9.5/bin/`).
-
-- In `/usr/local/lib/pkgconfig/`: Fix symlinks `python3-embed.pc`
-  and `python3.pc` in the same manner.
-
-- In `/usr/local/opt/`: Fix symlinks `python`, `python3`, and `python@3`
-  (e.g. have them point to `../Cellar/python@3.8/3.8.10` instead of
-  `../Cellar/python@3.9/3.9.5`).
-
-TESTING:
-
-    which python3
-    python3 --version  # Python 3.8.10
-
-
-### 2.12 Set `RETICULATE_PYTHON` and install Python 3 modules
+### 2.11 Set `RETICULATE_PYTHON` and install Python 3 modules
 
 #### Set `RETICULATE_PYTHON` in `/etc/profile`
 
@@ -673,12 +624,20 @@ In the terminal, execute
     which python3
 
 This is the reticulate path that must be set in `/etc/profile`. For example, if
-the output of `which python3` is `/usr/local/bin/python3` then in `/etc/profile`
+the output of `which python3` is `/usr/bin/python3` then in `/etc/profile`
 add
 
-    export RETICULATE_PYTHON="/usr/local/bin/python3"  # same as 'which python3'
+    export RETICULATE_PYTHON="/usr/bin/python3"  # same as 'which python3'
 
 Logout and login again for the changes to `/etc/profile` to take effect.
+
+Note: If `brew` is used to install Bioconductor package dependencies, some
+brew formulas install another version of Python as a dependency, which can take
+precedence over the default system-wide Python interpreter. If the brewed
+Python must be kept, it can be `unlink`ed to prevent it from taking precedence
+with `brew unlink <formula>`. Otherwise, the brewed Python can be removed with
+`brew uninstall --ignore-dependencies <formula>` and its dependencies can be
+cleaned up with `brew autoremove`.
 
 TESTING: If R is already installed on the machine, start it, and do:
 
@@ -709,7 +668,6 @@ Optionally, install all of the above with
     python3 -m pip install $(cat $BBS_UBUNTU_PATH/pip_*.txt | awk '/^[^#]/ {print $1}')
 
 Note: it's ok if jupyter lab is not installed but everything else should be.
-Tensorflow is currently not available for Mac OS arm64.
 
 TESTING:
 
@@ -742,7 +700,7 @@ TESTING:
     ```
 
 
-### 2.13 Install MacTeX
+### 2.12 Install MacTeX
 
 Home page: https://www.tug.org/mactex/
 
@@ -769,7 +727,7 @@ to the `PATH` take effect. Then:
     which tex
 
 
-### 2.14 Install Pandoc
+### 2.13 Install Pandoc
 
 #### x86_64
 
@@ -804,7 +762,7 @@ Install with:
     sudo chown -R root:wheel /usr/local/texlive
 
 
-### 2.15 Install pstree
+### 2.14 Install pstree
 
 These are just convenient to have when working interactively on a build
 machine but are not required by the daily builds or propagation pipe.
@@ -814,7 +772,7 @@ Install with:
     brew install pstree
 
 
-### 2.16 Replace `/etc/ssl/cert.pm` with CA bundle if necessary
+### 2.15 Replace `/etc/ssl/cert.pm` with CA bundle if necessary
 
 #### curl: (60) SSL certificate problem: certificate has expired
 
