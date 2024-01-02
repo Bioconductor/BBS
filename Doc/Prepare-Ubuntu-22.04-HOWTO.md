@@ -1516,6 +1516,7 @@ the crontab:
     40 12 * * 1-6 find /home/biocbuild/archives/bioc-report*.tgz -maxdepth 1 -mtime +7 -type f -delete
 
 
+
 ## 6 Miscellaneous
 
 ### 6.1 Disk space invisibly used on zfs partitions
@@ -1550,10 +1551,9 @@ List any existing snapshots. (None should exist.)
     NAME                   USED  AVAIL     REFER  MOUNTPOINT
     data/home@01-03-2023   782G      -      815G  -
 
-
 #### Fix
 
-Remove the snapshot to release the space with `zfs destroy <name of snapshot>:
+Remove the snapshot to release the space with `zfs destroy <name of snapshot>`:
 
     $ sudo zfs destroy data/home@01-03-2023
     sudo zfs destroy data/home@01-03-2023
