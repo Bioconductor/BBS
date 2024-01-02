@@ -1523,8 +1523,10 @@ the crontab:
 
 Zfs is a volume manager and a filesystem with a snapshot feature that can reduce
 the visible space of a partition using it when inspecting with `df`. Nebbiolo1
-has a 1.7T zfs partition at `data`; however, the visible space appeared
-smaller possibly after an update or upgrade.
+has a 1.7T zfs partition at `data`; however, the visible space can appear
+smaller, possibly after an update or upgrade, when a snapshot is automatically
+taken. This can also potentially lead to a `No space left on device` error when
+attempting to write to disk.
 
 #### Diagnosis
 
