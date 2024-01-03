@@ -1515,3 +1515,41 @@ the crontab:
     # Remove reports older than 1 week
     40 12 * * 1-6 find /home/biocbuild/archives/bioc-report*.tgz -maxdepth 1 -mtime +7 -type f -delete
 
+
+
+## 6 Miscellaneous
+
+### 6.1 Disk space invisibly used on zfs partitions
+
+Zfs is a volume manager and a filesystem with a snapshot feature that can reduce
+the visible space of a partition using it when inspecting with `df`. Nebbiolo1
+has a 1.7T zfs partition at `data`; however, the visible space can appear
+smaller, possibly after an update or upgrade, when a snapshot is automatically
+taken. This can also potentially lead to a `No space left on device` error when
+attempting to write to disk.
+
+#### Diagnosis
+
+Check the partition size with `df`:
+
+    $ df -Th /home
+    Filesystem      Size  Used Avail Use% Mounted on
+    data/home      zfs    946G  818G  128G  87% /home          # Should be 1.7T
+
+List any existing snapshots. (None should exist.)
+
+    # A snapshot exists
+    $ zfs list -t snap
+    NAME                   USED  AVAIL     REFER  MOUNTPOINT
+    data/home@01-03-2023   782G      -      815G  -
+
+#### Fix
+
+Remove the snapshot to release the space with `zfs destroy <name of snapshot>`:
+
+    $ sudo zfs destroy data/home@01-03-2023
+    sudo zfs destroy data/home@01-03-2023
+
+    $ df -Th /home
+    Filesystem      Size  Used Avail Use% Mounted on
+    data/home      zfs    1.7T  818G  822G  50% /home          # Correct size
