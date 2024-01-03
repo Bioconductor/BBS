@@ -466,20 +466,6 @@ DIV.nebbiolo2 {
     color: #005;
 }
 
-/* riesling1 */
-.riesling1,
-.gcard TD.riesling1 {
-    background: #FAE0DE;
-}
-.riesling1.toned_down,
-TR.toned_down .riesling1,
-TBODY.compact.gcard TR.even_row_number .riesling1 {
-    background: #EAD0CE;
-}
-DIV.riesling1 {
-    color: #500;
-}
-
 /* palomino3 */
 .palomino3,
 .gcard TD.palomino3 {
