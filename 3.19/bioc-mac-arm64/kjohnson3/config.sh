@@ -15,9 +15,9 @@ export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.19-bioc-mac-arm64"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
 # kjohnson3 has 24 logical CPUs.
-export BBS_NB_CPU=20
-export BBS_BUILD_NB_CPU=12
-export BBS_CHECK_NB_CPU=15
+export BBS_NB_CPU=16
+export BBS_BUILD_NB_CPU=10
+export BBS_CHECK_NB_CPU=13
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is nebbiolo1 at DFCI.
