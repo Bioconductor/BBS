@@ -16,7 +16,7 @@ export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
 # kjohnson3 has 24 logical CPUs.
 export BBS_NB_CPU=16
-export BBS_BUILD_NB_CPU=10
+export BBS_BUILD_NB_CPU=12
 export BBS_CHECK_NB_CPU=13
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
