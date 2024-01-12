@@ -14,3 +14,4 @@ phate                       # CRAN phateR for BioC phemd
 torch                       # Bioc APL
 leidenalg                   # Bioc scBubbletree
 packaging                   # Bioc seqArchR
+owlready2                   # Bioc ontoProc
