@@ -641,14 +641,13 @@ prevent all restarts.
 
 ### 2.5 Install Rtools
 
-In Dec. 2021, CRAN has switched to a new toolchain to build R and R
-packages.
+In Dec. 2021, CRAN switched to a new toolchain to build R and R packages.
 
 **From a personal administrator account**:
 
 - Go to https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html
 
-- Download Rtools43 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools43/files/rtools43-5550-5548.exe`
+- Download Rtools43 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools43/files/rtools43-5948-5818.exe`
 
 - Run the installer and keep all the defaults. This will install Rtools43
   in `C:\rtools43`.
@@ -685,7 +684,7 @@ in a PowerShell window:
     which make      # /usr/bin/make (provided by rtools43)
     make --version  # GNU Make 4.4.1
     which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by rtools43)
-    gcc --version   # gcc.exe (GCC) 12.2.0
+    gcc --version   # gcc.exe (GCC) 12.3.0
     which chmod     # /usr/bin/chmod (provided by rtools43)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
