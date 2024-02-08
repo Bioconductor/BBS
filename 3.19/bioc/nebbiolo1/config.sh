@@ -18,7 +18,7 @@ export R_LIBS="$BBS_R_HOME/site-library"
 # nebbiolo1 has 72 logical CPUs.
 export BBS_NB_CPU=24
 export BBS_BUILD_NB_CPU=16
-export BBS_CHECK_NB_CPU=28
+export BBS_CHECK_NB_CPU=24
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
