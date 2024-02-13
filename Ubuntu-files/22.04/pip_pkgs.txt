@@ -2,7 +2,7 @@
 numpy                       # BiocSklearn, MOFA2
 scipy                       # MOFA2, Python scikit-learn package
 scikit-learn                # BiocSklearn, MOFA2
-h5py == 2.10.0              # BiocSklearn, MOFA2
+h5py                        # BiocSklearn, MOFA2
 pandas                      # BiocSklearn, MOFA2
 mofapy2                     # MOFA2
 tensorflow                  # DeepPINCS
