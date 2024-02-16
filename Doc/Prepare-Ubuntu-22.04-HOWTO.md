@@ -67,7 +67,7 @@ Bioconductor grows). The above numbers reflect the current state of affairs
 as of Jan 2024.
 
 If using a swap file, it's easy to increase the swap space (courtesy of
-Nikos George <nikos@datasciences.dfci.harvard.edu>):
+Nikos George `<nikos@datasciences.dfci.harvard.edu>`):
 
     # 1. List swap file(s) (e.g. for nebbiolo1 it's /swapfile1):
     swapon -s
