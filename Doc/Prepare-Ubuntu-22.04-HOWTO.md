@@ -78,7 +78,7 @@ Nikos George <nikos@datasciences.dfci.harvard.edu>):
     sudo swapoff -a
     
     # 3. Create a different swapfile:
-    fsudo allocate -l 24G /swapfile2
+    sudo allocate -l 24G /swapfile2
     
     # 4.
     sudo chmod 600 /swapfile2
@@ -92,12 +92,12 @@ Nikos George <nikos@datasciences.dfci.harvard.edu>):
 Now `swapon -s` should report that the new file (`/swapfile2`) is used as swap.
 
 7. Then edit `/etc/fstab` and replace `/swapfile1` with `/swapfile2` (no other
-changes) so that the new swapfile will be used after the next reboot. DON'T
+changes) so that the new swap file will be used after the next reboot. DON'T
 SKIP THIS!
 
 8. OPTIONAL: Reboot the machine.
 
-9. Finally, if everything looks good, delete the previous swapfile
+9. Finally, if everything looks good, delete the previous swap file
 (`sudo rm /swapfile1`).
 
 
