@@ -50,7 +50,9 @@ For a _central builder_:
 
 - At least 32 logical cores
 
-- At least 48GB of RAM
+- At least 128GB of RAM
+
+- At least 16GB of swap
 
 For a _satellite node_ or _standalone builder_:
 
@@ -58,11 +60,45 @@ For a _satellite node_ or _standalone builder_:
 
 - At least 20 logical cores
 
-- At least 32GB of RAM
+- At least 64GB of RAM
 
 These requirements are _very_ approximate and tend to increase over time (as
 Bioconductor grows). The above numbers reflect the current state of affairs
-as of Aug 2020.
+as of Jan 2024.
+
+If using a swap file, it's easy to increase the swap space (courtesy of
+Nikos George <nikos@datasciences.dfci.harvard.edu>):
+
+    # 1. List swap file(s) (e.g. for nebbiolo1 it's /swapfile1):
+    swapon -s
+    
+    # 2. Disable the use of swap for current processes (better to have stopped
+    # most of the build processes otherwise the command may take a long time
+    # to complete):
+    sudo swapoff -a
+    
+    # 3. Create a different swapfile:
+    fsudo allocate -l 24G /swapfile2
+    
+    # 4.
+    sudo chmod 600 /swapfile2
+    
+    # 5. Mark the file as swap:
+    sudo mkswap /swapfile2
+    
+    # 6. Activate the new swap:
+    sudo swapon /swapfile2
+
+Now `swapon -s` should report that the new file (`/swapfile2`) is used as swap.
+
+7. Then edit `/etc/fstab` and replace `/swapfile1` with `/swapfile2` (no other
+changes) so that the new swapfile will be used after the next reboot. DON'T
+SKIP THIS!
+
+8. OPTIONAL: Reboot the machine.
+
+9. Finally, if everything looks good, delete the previous swapfile
+(`sudo rm /swapfile1`).
 
 
 ### 1.3 Check `/etc/hostname` and `/etc/hosts`
