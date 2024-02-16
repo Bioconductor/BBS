@@ -42,25 +42,25 @@ in a way that allows the _central builder_ to retrieve the content of
 
 ### 1.2 Check hardware requirements
 
-These are the requirements for running the BioC software builds.
+These are the minimum requirements for running the BioC software builds.
 
 For a _central builder_:
 
-- At least 800GB of disk space
+- 1TB of disk space
 
-- At least 32 logical cores
+- 32 logical cores
 
-- At least 128GB of RAM
+- 128GB of RAM
 
-- At least 16GB of swap
+- 16GB of swap
 
 For a _satellite node_ or _standalone builder_:
 
-- At least 400GB of disk space
+- 400GB of disk space
 
-- At least 20 logical cores
+- 20 logical cores
 
-- At least 64GB of RAM
+- 64GB of RAM
 
 These requirements are _very_ approximate and tend to increase over time (as
 Bioconductor grows). The above numbers reflect the current state of affairs
