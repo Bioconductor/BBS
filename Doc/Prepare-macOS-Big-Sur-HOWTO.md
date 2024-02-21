@@ -1390,8 +1390,11 @@ TESTING: Try to build the **LowMACA** package (takes about 5 min):
 
 ### 4.6 Install the MySQL client
 
-Note that we only need this for the **ensemblVEP** package. **RMySQL**
-doesn't need it as long as we can install the binary package.
+Note: **Skip this section.** We only need this for the **ensemblVEP** package,
+which may be deprecated in the future. A brewed openssl poses build
+complications; however, this is previously how we had access to the dynamic
+libraries needed for relevant Perl modules to be installed for **ensemblVEP**.
+**RMySQL** doesn't need this as long as we can install the binary package.
 
 Even though we only need the MySQL client, we used to install the MySQL
 Community Server because it was an easy way to get the MySQL client.
