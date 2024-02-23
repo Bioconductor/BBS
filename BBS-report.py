@@ -1392,7 +1392,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('</DIV>\n')
     return
 
-def write_info_dcf(pkg, node_id):
+def write_info_dcf(pkg):
     dcf_record = meat_index[pkg]
     info = {}
     info['Package'] = dcf_record.get('Package', 'NA')
@@ -1756,8 +1756,6 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
                                                      node.node_id,
                                                      stage)
                 make_LeafReport(leafreport_ref, allpkgs, long_link)
-                if not no_raw_results:
-                    write_info_dcf(pkg, node.node_id)
 
         # BUILD leaf-report
         stage = "buildsrc"
@@ -1854,6 +1852,7 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None, long_link=False):
         os.mkdir(pkg)
         if not no_raw_results:
             os.mkdir(os.path.join(pkg, 'raw-results'))
+            write_info_dcf(pkg)
         if allpkgs_inner_rev_deps != None:
             pkg_rev_deps = allpkgs_inner_rev_deps[pkg]
         else:
