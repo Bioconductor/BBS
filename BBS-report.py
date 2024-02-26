@@ -1715,11 +1715,13 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
                                       key_is_optional=True)
     write_notes_to_developers(out, pkg, extra_note=extra_note)
 
-    if not no_raw_results:
+    if not no_raw_results and pkg not in skipped_pkgs:
         raw_results_rel_url = 'raw-results/'
         out.write('<P style="text-align: center;">')
         out.write('<A href="%s">raw results</A>' % raw_results_rel_url)
         out.write('<P>\n')
+    else:
+        out.write('<P></P>\n')
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
@@ -1820,11 +1822,13 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
 
     write_notes_to_developers(out, pkg)
 
-    if not no_raw_results:
+    if not no_raw_results and pkg not in skipped_pkgs:
         raw_results_rel_url = 'raw-results/'
         out.write('<P style="text-align: center;">')
         out.write('<A href="%s">raw results</A>' % raw_results_rel_url)
         out.write('<P>\n')
+    else:
+        out.write('<P></P>\n')
 
     leafreport_ref = LeafReportReference(pkg, None, None, None)
     write_gcard_list(out, allpkgs, topdir='..', leafreport_ref=leafreport_ref)
@@ -1850,7 +1854,7 @@ def make_all_LeafReports(allpkgs, allpkgs_inner_rev_deps=None, long_link=False):
     sys.stdout.flush()
     for pkg in allpkgs:
         os.mkdir(pkg)
-        if not no_raw_results:
+        if not no_raw_results and pkg not in skipped_pkgs:
             os.mkdir(os.path.join(pkg, 'raw-results'))
             write_info_dcf(pkg)
         if allpkgs_inner_rev_deps != None:
