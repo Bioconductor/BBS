@@ -1,7 +1,7 @@
 #!/bin/bash
-# ===================
-# Settings for lconway
-# ===================
+# ====================
+# Settings for merida1
+# ====================
 
 
 
@@ -9,13 +9,15 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="lconway"
+export BBS_NODE_HOSTNAME="merida1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.18-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
-export BBS_NB_CPU=36        # 48 cores are available
-export BBS_BUILD_NB_CPU=26  # 48 cores are available
-export BBS_CHECK_NB_CPU=30  # 48 cores are available
+
+# merida1 has 24 logical CPUs.
+export BBS_NB_CPU=23
+export BBS_BUILD_NB_CPU=22
+export BBS_CHECK_NB_CPU=24
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is nebbiolo2 at DFCI.
