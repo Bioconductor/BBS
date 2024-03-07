@@ -887,7 +887,7 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
     ncol_to_display = BBSreportutils.ncol_to_display(buildtype)
     if pkg in skipped_pkgs:
         TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
-        TDcontent = '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
+        TDcontent = _status_as_glyph('ERROR')
         TDcontent += ' (Bad DESCRIPTION file)'
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     elif not BBSreportutils.is_supported(pkg, node):
@@ -1276,7 +1276,7 @@ def write_simple_gcard_header(out):
 ### Return decorated glyph describing overall package build status.
 def make_pkg_overall_status_HTML(pkg, statuses, topdir='.'):
     if pkg in skipped_pkgs:
-        return '<SPAN class=%s>&nbsp;%s&nbsp;</SPAN>' % ('ERROR', 'ERROR')
+        return _status_as_glyph('ERROR')
     if 'ERROR' in statuses:
         overall_status = 'ERROR'
     elif 'TIMEOUT' in statuses:
