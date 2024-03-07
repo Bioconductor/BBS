@@ -51,6 +51,10 @@ _R_CHECK_S3_METHODS_NOT_REGISTERED_=true
 #   This means that 'R CMD check' can only expose undeclared dependencies on the Bioconductor
 #   Linux builders. It will NOT expose them on the Bioconductor Windows or Mac builders.
 _R_CHECK_SUGGESTS_ONLY_=true
+
+# Raise an error if using ordered comparisons on language objects
+_R_COMPARE_LANG_OBJECTS=eqonly
+
 R_DEFAULT_INTERNET_TIMEOUT=600
 
 # Package code can use this to detect that it's running on a Bioconductor
