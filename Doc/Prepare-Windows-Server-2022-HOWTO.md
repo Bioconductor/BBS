@@ -645,47 +645,47 @@ In Dec. 2021, CRAN switched to a new toolchain to build R and R packages.
 
 **From a personal administrator account**:
 
-- Go to https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html
+- Go to https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html
 
-- Download Rtools43 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools43/files/rtools43-5958-5975.exe`
+- Download Rtools44 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools44/files/rtools44-6104-6039.exe`
 
-- Run the installer and keep all the defaults. This will install Rtools43
-  in `C:\rtools43`.
+- Run the installer and keep all the defaults. This will install Rtools44
+  in `C:\Rtools44`.
 
 - Do **NOT** follow the "Putting Rtools on the PATH" instructions given
   on Rtools webpage as they put Rtools on the PATH only in the context of
   running R. We want Rtools to **always** be on the PATH, not just in the
   context of an R session.
 
-- **Prepend** `C:\rtools43\usr\bin` and `C:\rtools43\x86_64-w64-mingw32.static.posix\bin`
+- **Prepend** `C:\rtools44\usr\bin` and `C:\rtools44\x86_64-w64-mingw32.static.posix\bin`
   to `Path` (see _Edit an environment variable_ in the _Managing environment variables_
   section at the top of this document for how to do this).
 
-  IMPORTANT: On a Windows build machine, `C:\rtools43\usr\bin` and
-  `C:\rtools43\x86_64-w64-mingw32.static.posix\bin` should **always be first**
+  IMPORTANT: On a Windows build machine, `C:\rtools44\usr\bin` and
+  `C:\rtools44\x86_64-w64-mingw32.static.posix\bin` should **always be first**
   in the `Path`.
 
-- Finally, rename the `perl.exe` file located in `C:\rtools43\usr\bin` to
+- Finally, rename the `perl.exe` file located in `C:\rtools44\usr\bin` to
   avoid any conflict with Strawberry Perl (we will install this later).
   E.g. rename to `perl_DO_NOT_USE.exe`.
 
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
 
-    which which     # /usr/bin/which (provided by rtools43)
+    which which     # /usr/bin/which (provided by Rtools44)
     which ssh       # /c/cygwin/bin/ssh
-    which rsync     # /usr/bin/rsync, because rsync from rtools43 should be
+    which rsync     # /usr/bin/rsync, because rsync from Rtools44 should be
                     # before rsync from Cygwin in Path
-    which curl      # /usr/bin/curl, because curl from rtools43 should be
+    which curl      # /usr/bin/curl, because curl from Rtools44 should be
                     # before curl from Cygwin in Path
     which vi        # /c/cygwin/bin/vi
     rsync           # Will crash if 64-bit Cygwin was installed instead
                     # of 32-bit Cygwin!
-    which make      # /usr/bin/make (provided by rtools43)
+    which make      # /usr/bin/make (provided by Rtools44)
     make --version  # GNU Make 4.4.1
-    which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by rtools43)
+    which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by Rtools44)
     gcc --version   # gcc.exe (GCC) 12.3.0
-    which chmod     # /usr/bin/chmod (provided by rtools43)
+    which chmod     # /usr/bin/chmod (provided by Rtools44)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
 
@@ -1021,8 +1021,8 @@ Choose "JDK Download" then download the "Windows x64 Installer"
 
 Use the default settings when running the installer.
 
-Make sure that `C:\rtools43\usr\bin` and
-`C:\rtools43\x86_64-w64-mingw32.static.posix\bin`
+Make sure that `C:\rtools44\usr\bin` and
+`C:\rtools44\x86_64-w64-mingw32.static.posix\bin`
 are still first in the `Path`. In case the JDK installer prepended
 something like `C:\Program Files\Common Files\Oracle\Java\javapath`
 to `Path`, then move it towards the end of `Path` (e.g. anywhere after
@@ -1080,7 +1080,7 @@ depend on (CNVrd2, MADSEQ, infercnv).
 
 Go to https://www.sourceforge.net/projects/mcmc-jags/files and click
 on "Download Latest Version" (`JAGS-4.3.0.exe` as of Dec. 2021). If
-you are using RTools43 + R UCRT, then download `JAGS-4.3.0.exe` from
+you are using Rtools44 + R UCRT, then download `JAGS-4.3.0.exe` from
 https://www.r-project.org/nosvn/winutf8/ucrt3/extra/jags/ instead.
 
 Use the default settings when running the installer. Make sure that all
