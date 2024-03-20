@@ -1750,7 +1750,7 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
         stage = "install"
         if stage in stages_to_display:
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
-            if status != "skipped":
+            if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
                                                      node.hostname,
                                                      node.node_id,
