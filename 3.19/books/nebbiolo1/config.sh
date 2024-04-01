@@ -58,6 +58,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-#export BBS_NOTIFY_NODES="nebbiolo1"
-#export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
+export BBS_NOTIFY_NODES="nebbiolo1"
+export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
