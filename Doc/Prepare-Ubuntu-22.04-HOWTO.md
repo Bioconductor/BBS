@@ -1180,9 +1180,9 @@ appear on the daily report at:
 
   https://bioconductor.org/checkResults/3.19/bioc-LATEST/
 
-Some red on the report is to be expected. The purpose of the section 3
-below (_Install additional stuff for Bioconductor packages with special needs_)
-is to reduce the amount of red as much as possible.
+Some red on the report is to be expected. The purpose of section 3 below
+(_Install additional stuff for Bioconductor packages with special needs_)
+will be to reduce the amount of red as much as possible.
 
 
 ### 2.7 Set up automatic archiving of last 7 build reports
