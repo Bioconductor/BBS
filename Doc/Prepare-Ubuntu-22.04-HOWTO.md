@@ -1180,8 +1180,24 @@ appear on the daily report at:
 
   https://bioconductor.org/checkResults/3.19/bioc-LATEST/
 
-Some red on the report is to be expected. The purpose of the next section
+Some red on the report is to be expected. The purpose of the section 3
+below (_Install additional stuff for Bioconductor packages with special needs_)
 is to reduce the amount of red as much as possible.
+
+
+### 2.7 Set up automatic archiving of last 7 build reports
+
+We want to keep around the 7 most recent software reports e.g.
+in `/home/biocbuild/archived_reports`.
+
+Create the directory with `mkdir /home/biocbuild/archived_reports` and add
+the following to the crontab:
+
+    # Archive reports
+    35 12 * * 1-6 cp /home/biocbuild/public_html/BBS/3.19/bioc/report/report.tgz /home/biocbuild/archived_reports/bioc-report-`date +\%Y\%m\%d`.tgz
+
+    # Remove reports older than 1 week
+    40 12 * * 1-6 find /home/biocbuild/archived_reports/bioc-report*.tgz -maxdepth 1 -mtime +7 -type f -delete
 
 
 
@@ -1539,23 +1555,10 @@ If you're happy with the result, link the report from this page:
   https://master.bioconductor.org/checkResults/
 
 
-## 5 Store the last 7 reports
 
-Save the 7 most recent software reports in `/home/biocbuild/archives`. Create the
-directory with `mkdir /home/biocbuild/archives` then add the following to
-the crontab:
+## 5 Miscellaneous
 
-    # Archive reports
-    35 12 * * 1-6 cp /home/biocbuild/public_html/BBS/3.19/bioc/report/report.tgz /home/biocbuild/archives/bioc-report-`date +\%Y\%m\%d`.tgz
-
-    # Remove reports older than 1 week
-    40 12 * * 1-6 find /home/biocbuild/archives/bioc-report*.tgz -maxdepth 1 -mtime +7 -type f -delete
-
-
-
-## 6 Miscellaneous
-
-### 6.1 Disk space invisibly used on zfs partitions
+### 5.1 Disk space invisibly used on zfs partitions
 
 Zfs is a volume manager and a filesystem with a snapshot feature that can reduce
 the visible space of a partition using it when inspecting with `df`. Nebbiolo1
