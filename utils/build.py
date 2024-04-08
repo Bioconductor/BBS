@@ -5,7 +5,7 @@ This script works functions as a cronjob to schedule the build for Apple Silicon
 machines where cronjobs run slow due to receiving a "utility" quality of service
 (QoS) clamp, which is the lower bound of the QoS. The long-running script should
 get an "unspecified" clamp, which is slightly higher than "utility". See
-https://github.com/Bioconductor/BBS/issues/387 for more detail.
+https://github.com/Bioconductor/BBS/issues/387 for details.
 
 Screen Commands
 ---------------

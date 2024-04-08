@@ -1117,6 +1117,26 @@ Now you can proceed to the next section or wait for a complete build run
 before doing so.
 
 
+### 3.5 Alternatively run builds with Python3
+
+If the build on an Apple Silicon runs slow when being kicked off by a cronjob,
+it may be due to a low effective Quality of Service (QoS) clamp, which is the
+lower bound of QoS. If the QoS is "utility", efficiency processers will be used.
+We can get around this by kicking a script manually, which will give us an
+"unspecified" QoS clamp, which is slightly higher so that performance cores
+will be engaged.
+
+Use `utils/build.py` to run the build with Python3 in a `screen`. It will
+produce a log at `LOG_PATH`.
+
+    python3 -m venv env
+    source env/bin/active
+    pip3 install schedule pytz
+    python3 BBS/utils/build.py
+
+See https://github.com/Bioconductor/BBS/issues/387 for details troubleshooting
+on kjohnson3.
+
 
 ## 4. Install additional stuff for Bioconductor packages with special needs
 
