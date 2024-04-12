@@ -1600,7 +1600,7 @@ upgrade introduces a break in the build system or a package's build. Two
 examples of this are `pandoc` and `libcurl4-openssl-dev`. Newer versions of
 `pandoc` break building vignettes. `libcurl4-gnutls-dev` has a bad symlink that
 can break `zellkonverter` so we want to keep `libcurl4-openssl-dev`, which has
-the correct sysmlink. We use `apt-mark hold` to keep apt packages at a
+the correct symlink. We use `apt-mark hold` to keep apt packages at a
 particular version.
 
     ~$ sudo apt-mark hold libcurl4-openssl-dev
