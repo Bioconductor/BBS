@@ -1592,3 +1592,22 @@ Remove the snapshot to release the space with `zfs destroy <name of snapshot>`:
     $ df -Th /home
     Filesystem      Size  Used Avail Use% Mounted on
     data/home      zfs    1.7T  818G  822G  50% /home          # Correct size
+
+### 5.2 Holding an apt package to prevent upgrading
+
+Sometimes we may want to `hold` an apt package at a specific version because an
+upgrade introduces a break in the build system or a package's build. Two
+examples of this are `pandoc` and `libcurl4-openssl-dev`. Newer versions of
+`pandoc` break building vignettes. `libcurl4-gnutls-dev` has a bad symlink that
+can break `zellkonverter` so we want to keep `libcurl4-openssl-dev`, which has
+the correct sysmlink. We use `apt-mark hold` to keep apt packages at a
+particular version.
+
+    ~$ sudo apt-mark hold libcurl4-openssl-dev
+    libcurl4-openssl-dev set on hold.
+    ~$ sudo apt-mark showhold
+    libcurl4-openssl-dev
+    pandoc
+
+`apt-mark unhold` can be used to stop holding a package. For more details, see
+https://help.ubuntu.com/community/PinningHowto#Introduction_to_Holding_Packages.
