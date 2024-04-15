@@ -11,12 +11,14 @@ Screen Commands
 ---------------
 
 screen - to start (press enter)
+screen -ls
+screen -XS <session-id> quit - close a screen
 ctrl+a d - to detact
 screen -r - to resume a screen
-screen -ls
 ctrl+a, ctrl+S - new horizontal screen
-ctrl+a, tab - move to next window
-ctrl+a, c - activate new window
+ctrl+a tab - move to next window
+ctrl+a c - activate new window
+ctrl+a k - kill a screen
 
 
 Run the Script
