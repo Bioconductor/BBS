@@ -33,7 +33,7 @@ allnodes = {
                    'Platform': "x86_64-w64-mingw32",
                    'pkgType' : "win.binary",
                    'encoding': "iso8859"},
-    'kjohnson1':  {'OS'      : "macOS 13.6.1 Ventura",
+    'kjohnson1':  {'OS'      : "macOS 13.6.6 Ventura",
                    'Arch'    : "arm64",
                    'Platform': "arm64-apple-darwin22.6.0",
                    'pkgType' : "mac.binary.big-sur-arm64",
