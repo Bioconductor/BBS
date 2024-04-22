@@ -1215,32 +1215,7 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
     ..\R\bin\R CMD INSTALL ChemmineOB
 
 
-### 4.7 Install Clustal Omega
-
-Available at http://www.clustal.org/omega/ (this site does not support HTTPS)
-
-Download Windows 64-bit zip file (`clustal-omega-1.2.2-win64.zip` as
-of Dec. 2021).
-
-Extract all the files in `C:\ClustalO` (last letter is the letter O, not
-the number zero!). Make sure that the files get extracted in `C:\ClustalO\`
-and not in a subdirectory (e.g. in `C:\ClustalO\clustal-omega-1.2.2-win64\`).
-
-Append `C:\ClustalO` to `Path` (see _Edit an environment variable_
-in the _Managing environment variables_ section at the top of this
-document for how to do this).
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to build a package that uses Clustal Omega
-e.g. open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD build LowMACA
-
-(Note that this package also needs Perl.)
-
-
-### 4.8 Install ImmuneSpace credentials
+### 4.7 Install ImmuneSpace credentials
 
 Set environment variable `ISR_login` and `ISR_pwd` to `bioc@immunespace.org`
 and `1notCRAN`, respectively. See _Edit an environment variable_
@@ -1255,29 +1230,13 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
     ..\R\bin\R CMD build ImmuneSpaceR
 
 
-### 4.9 Install Dokan
-
-This is needed by the Travel package.
-
-Download `DokanSetup.exe` from https://dokan-dev.github.io/
-
-Run the installer.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to compile the Travel package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD INSTALL Travel
-
-
-### 4.10 Install .NET Runtime
+### 4.8 Install .NET Runtime
 
 This is needed by the rmspc package.
 
-Download the Windows x64 Installer for .NET 6.0 Runtime (file
-`dotnet-runtime-6.0.13-win-x64.exe` as of Feb. 2023) from
-https://dotnet.microsoft.com/download/dotnet/6.0
+Download the Windows x64 Installer for .NET 8.0 Runtime (file
+`dotnet-runtime-8.0.4-win-x64.exe` as of Feb. 2023) from
+https://dotnet.microsoft.com/download/dotnet/8.0
 
 Run the Installer.
 

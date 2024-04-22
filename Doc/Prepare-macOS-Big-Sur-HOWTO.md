@@ -1377,38 +1377,7 @@ Then try to install ChemmineOB from source. From R:
     BiocManager::install("ChemmineOB", type="source")
 
 
-### 4.5 Install Clustal Omega
-
-There is a standalone Mac binary at http://www.clustal.org/omega/
-Downnload it with:
-
-    cd /Users/biocbuild/Downloads
-    curl -O http://www.clustal.org/omega/clustal-omega-1.2.3-macosx
-
-Make it executable with:
-
-    chmod +x clustal-omega-1.2.3-macosx
-
-Move it to `/usr/local/bin` with:
-
-    mv -i clustal-omega-1.2.3-macosx /usr/local/bin/
-
-Create clustalo symlink in `/usr/local/bin/` with:
-
-    cd /usr/local/bin/
-    ln -s clustal-omega-1.2.3-macosx clustalo
-
-Then:
-
-    which clustalo
-
-TESTING: Try to build the **LowMACA** package (takes about 5 min):
-
-    cd ~/bbs-3.19-bioc/meat/
-    R CMD build LowMACA
-
-
-### 4.6 Install the MySQL client
+### 4.5 Install the MySQL client
 
 Note that we only need this for the **ensemblVEP** package. **RMySQL**
 doesn't need it as long as we can install the binary package.
@@ -1445,7 +1414,7 @@ Then try to install the **RMySQL** package *from source*:
     install("RMySQL", type="source")
 
 
-### 4.7 Install Ensembl VEP script
+### 4.6 Install Ensembl VEP script
 
 TODO: Modify instructions for arm64
 
@@ -1513,7 +1482,7 @@ Try to build and check the **ensemblVEP** and **MMAPPR2** packages:
     R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
 
 
-### 4.8 Install ViennaRNA
+### 4.7 Install ViennaRNA
 
 Required by Bioconductor package **GeneGA**.
 
@@ -1542,7 +1511,7 @@ Then try to build the **GeneGA** package:
     R CMD build GeneGA
 
 
-### 4.9 Set up ImmuneSpaceR package for connecting to ImmuneSpace
+### 4.8 Set up ImmuneSpaceR package for connecting to ImmuneSpace
 
 Required by Bioconductor package **ImmuneSpaceR**. Get credentials from
 Bitwarden.
@@ -1558,7 +1527,7 @@ effect. Then try to build the **ImmuneSpaceR** package:
     cd ~/bbs-3.19-bioc/meat/
     R CMD build ImmuneSpaceR
 
-### 4.10 Install mono
+### 4.9 Install mono
 
 Required by Bioconductor package **rawrr**.
 
@@ -1578,48 +1547,22 @@ Then try to install/build/check the **rawrr** package:
     R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
 
 
-### 4.11 Install macFUSE
-
-Required by Bioconductor package **Travel**.
-
-Download latest stable release from https://osxfuse.github.io/ e.g.:
-
-    cd /Users/biocbuild/Downloads
-    curl -LO https://github.com/osxfuse/osxfuse/releases/download/macfuse-4.5.0/macfuse-4.5.0.dmg
-
-Install with:
-
-    sudo hdiutil attach macfuse-4.5.0.dmg
-    sudo installer -pkg "/Volumes/macFUSE/Install macFUSE.pkg" -target /
-    sudo hdiutil detach /Volumes/macFUSE
-
-You may need to enable support for third party kernel extensions if installing
-macFUSE for the first time. See https://github.com/macfuse/macfuse/wiki/Getting-Started.
-
-TESTING: Try to install the **Travel** package *from source*:
-
-    library(BiocManager)
-    BiocManager::install("Travel", type="source")
-
-
-### 4.12 Install .NET Runtime
+### 4.10 Install .NET Runtime
 
 Required by Bioconductor package **rmspc**.
 
 #### Install the runtime
 
 Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
-install the 6.0 .NET runtime corresponding to the build system's macOS.
+install the 8.0 .NET runtime corresponding to the build system's macOS.
 
 ##### x86_64
 
-    curl -O
-    https://download.visualstudio.microsoft.com/download/pr/2ef12357-499b-4a5b-a488-da45a5f310e6/fbe35c354bfb50934a976fc91c6d8d81/dotnet-runtime-6.0.13-osx-x64.pkg > /Users/biocbuild/Downloads/dotnet.pkg
+    curl -O https://download.visualstudio.microsoft.com/download/pr/4f3f1c85-67aa-4b3e-b4d2-951b9f8468ad/d6b7b5f7c5cea4f72417a4738da3d941/dotnet-runtime-8.0.4-osx-x64.pkg
 
 ##### arm64
 
-    curl -O
-    https://download.visualstudio.microsoft.com/download/pr/aa3b3150-80cb-4d30-87f8-dc36fa1dcf26/8ec9ff6836828175f1a6a60aefd4e63b/dotnet-runtime-6.0.13-osx-arm64.pkg > /Users/biocbuild/Downloads/dotnet.pkg
+    curl -O https://download.visualstudio.microsoft.com/download/pr/8d8977c0-499c-405a-b687-00e7bca8c783/66057685d4fbdfe80b7b9dd96a47b45a/dotnet-runtime-8.0.4-osx-arm64.pkg
 
 ##### For all macs
 
