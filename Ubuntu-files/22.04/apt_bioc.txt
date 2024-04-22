@@ -17,14 +17,11 @@ automake                    # for RProtoBufLib
 libnetcdf-dev               # for mzR, RNetCDF
 libopenbabel-dev            # for ChemmineOB
 libeigen3-dev               # for ChemmineOB
-clustalo                    # for LowMACA
 ocl-icd-opencl-dev          # for gpuMagic
 libavfilter-dev             # for av/spacialHeatmap
 # libfribidi-dev is for CRAN package textshaping which BioC
 # package EnhancedVolcano indirectly depends on via ragg and ggrastr.
 libfribidi-dev              # for EnhancedVolcano
-fuse                        # for Travel
-libfuse-dev                 # for Travel
 kallisto                    # for BgeeCall
 mono-runtime                # for rawr
 libmono-system-data4.0-cil  # for rawr
