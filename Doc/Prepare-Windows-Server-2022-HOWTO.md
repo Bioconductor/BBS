@@ -442,8 +442,7 @@ the `biocbuild` and `pkgbuild` accounts, respectively).
 
 ### 1.16 Install Perl
 
-Required by MiKTeX command `pdfcrop.exe` and some Bioconductor packages
-like LowMACA.
+Required by MiKTeX command `pdfcrop.exe` and some Bioconductor packages.
 
 We use Strawberry Perl available at https://strawberryperl.com.
 
@@ -1015,7 +1014,7 @@ You need the JDK (Java Development Kit). Available at:
   https://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 Choose "JDK Download" then download the "Windows x64 Installer"
-(`jdk-21_windows-x64_bin.exe` as of Oct. 2023). Direct link:
+(`jdk-22_windows-x64_bin.exe` as of Oct. 2023). Direct link:
 
   https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.exe
 
@@ -1117,12 +1116,12 @@ PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc`, start R (with
 Available at https://www.ghostscript.com/releases/
 
 Choose Ghostscript AGPL Release for 64-bit Windows
-(`https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10020/gs10020w64.exe`
-as of Oct. 2023).
+(`https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10030/gs10030w64.exe`
+as of Mar. 2024).
 
 Use the default settings when running the installer.
 
-Append `C:\Program Files\gs\gs9.55.0\bin` to `Path` (see _Edit an environment
+Append `C:\Program Files\gs\gs10.03.0\bin` to `Path` (see _Edit an environment
 variable_ in the _Managing environment variables_ section at the top of this
 document for how to do this).
 
