@@ -4,5 +4,5 @@
 # =========================================================
 
 BIOC_VERSION="3.20"
-R_VERSION="4.5"
+R_VERSION="4.4"
 Rscript="$HOME/bin/Rscript-$R_VERSION"
