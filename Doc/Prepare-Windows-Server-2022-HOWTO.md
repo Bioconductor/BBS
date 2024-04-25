@@ -1234,8 +1234,8 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 This is needed by the rmspc package.
 
 Download the Windows x64 Installer for .NET 8.0 Runtime (file
-`dotnet-runtime-8.0.4-win-x64.exe` as of Feb. 2023) from
-https://dotnet.microsoft.com/download/dotnet/8.0
+`dotnet-runtime-6.0.29-win-x64.exe` as of Apr. 2024) from
+https://dotnet.microsoft.com/download/dotnet/6.0
 
 Run the Installer.
 

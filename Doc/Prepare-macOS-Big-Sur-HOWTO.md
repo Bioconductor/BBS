@@ -1554,15 +1554,15 @@ Required by Bioconductor package **rmspc**.
 #### Install the runtime
 
 Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
-install the 8.0 .NET runtime corresponding to the build system's macOS.
+install the 6.0 .NET runtime corresponding to the build system's macOS.
 
 ##### x86_64
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/4f3f1c85-67aa-4b3e-b4d2-951b9f8468ad/d6b7b5f7c5cea4f72417a4738da3d941/dotnet-runtime-8.0.4-osx-x64.pkg
+    curl -O https://download.visualstudio.microsoft.com/download/pr/8583970d-ca62-4053-9b25-01c2d2742062/8a5c9a04863a80655f483d67c3725255/dotnet-runtime-6.0.29-osx-x64.pkg
 
 ##### arm64
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/8d8977c0-499c-405a-b687-00e7bca8c783/66057685d4fbdfe80b7b9dd96a47b45a/dotnet-runtime-8.0.4-osx-arm64.pkg
+    curl -O https://download.visualstudio.microsoft.com/download/pr/99a222a4-b8fb-4d19-a91a-a69aeaf9ba06/fdd439f0dc45cb1357b03a30e2bc8f98/dotnet-runtime-6.0.29-osx-arm64.pkg
 
 ##### For all macs
 
