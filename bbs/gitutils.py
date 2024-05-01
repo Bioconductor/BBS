@@ -19,6 +19,7 @@ import subprocess
 
 sys.path.insert(0, os.path.dirname(__file__))
 import fileutils
+import jobs
 
 try:
     _git_cmd = os.environ['BBS_GIT_CMD']
@@ -30,6 +31,7 @@ verbose = True
 def _print_msg(msg):
     if verbose:
         print(msg)
+        sys.stdout.flush()
     return
 
 ### 'out_path' must be the path to file where to capture stdout. If 'cwd' is
@@ -47,7 +49,6 @@ def _run(cmd, cwd=None, out_path=None, prompt=''):
     else:
         out = None
     _print_msg('%s%s' % (prompt, cmd2))
-    sys.stdout.flush()
     try:
         ## Nasty things (that I don't really understand) can happen with
         ## subprocess.run() if this code is runned by the Task Scheduler
@@ -63,7 +64,6 @@ def _run(cmd, cwd=None, out_path=None, prompt=''):
         out.close()
     if cwd != None:
         _print_msg('%scd %s' % (prompt, previous_cwd))
-        sys.stdout.flush()
         os.chdir(previous_cwd)
     _print_msg('')
     if run_error != None:
@@ -83,6 +83,33 @@ def _clone_repo(repo_path, repo_url, branch=None, depth=None):
         gitcmd += ' --depth %s' % depth
     gitcmd = '%s %s %s' % (gitcmd, repo_url, repo_path)
     _run_gitcmd(gitcmd, prompt='bbs.gitutils._clone_repo> ')
+    return
+
+def _try_hard_to_clone_repo(repo_path, repo_url, branch=None, depth=None,
+                            nb_attempts=10):
+    prompt = 'bbs.gitutils._try_hard_to_clone_repo> '
+    if os.path.exists(repo_path):
+        _print_msg('%srm -r %s' % (prompt, repo_path))
+        fileutils.nuke_tree(repo_path)
+        _print_msg('')
+    attempt_count = 0
+    while True:
+        attempt_count += 1
+        try:
+            _clone_repo(repo_path, repo_url, branch, depth)
+        except subprocess.CalledProcessError as e:
+            _print_msg('%s%s() failed with error code %d!' % \
+                       (prompt, '_clone_repo', e.returncode))
+            if attempt_count == nb_attempts:
+                _print_msg('%s==> giving up after %d attempts.' % \
+                           (prompt, attempt_count))
+                raise e
+            _print_msg('%s==> will wait 5 seconds before trying again...' % \
+                       prompt)
+            jobs.sleep(5.0)
+            _print_msg('')
+        else:
+            break
     return
 
 def is_git_repo(repo_path):
@@ -173,6 +200,7 @@ def clone_or_pull_repo(repo_path, repo_url, branch=None, depth=None,
         gitcmd = 'checkout -f'
         _run_gitcmd(gitcmd, cwd=repo_path, prompt=prompt)
     if os.path.exists(repo_path):
+        ## Try to pull or fetch+merge.
         try:
             if snapshot_date == None:
                 what = '_pull_repo'
@@ -188,13 +216,11 @@ def clone_or_pull_repo(repo_path, repo_url, branch=None, depth=None,
             _print_msg('%s%s() failed with error code %d!' % \
                        (prompt, what, e.returncode))
             _print_msg('%s==> will try to re-clone ...' % prompt)
-            _print_msg('%srm -r %s' % (prompt, repo_path))
-            fileutils.nuke_tree(repo_path)
-            _print_msg('')
         else:
             return branch_has_changed
-    _clone_repo(repo_path, repo_url, branch, depth)
-    return False
+    ## Now try to clone.
+    _try_hard_to_clone_repo(repo_path, repo_url, branch, depth)
+    return True
 
 def collect_git_clone_meta(repo_path, out_path, snapshot_date):
     previous_cwd = os.getcwd()
