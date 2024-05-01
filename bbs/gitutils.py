@@ -212,7 +212,6 @@ def clone_or_pull_repo(repo_path, repo_url, branch=None, depth=None,
         except subprocess.CalledProcessError as e:
             if not reclone_if_pull_fails:
                 raise e
-            _print_msg('')
             _print_msg('%s%s() failed with error code %d!' % \
                        (prompt, what, e.returncode))
             _print_msg('%s==> will try to re-clone ...' % prompt)
