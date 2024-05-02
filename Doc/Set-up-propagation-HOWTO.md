@@ -155,13 +155,19 @@ Create empty package repositories inside 3.15:
     repos="bioc data/annotation data/experiment workflows books"
     mkdir -p $repos
 
-For now we'll just populate them with symlinks that redirect to the 3.14 repos:
+For now we'll just populate them with relative symlinks that redirect to the 3.14 repos:
 
-    previous_release=/extra/www/bioc/packages/3.14
     for repo in $repos; do
+        case $repo in
+            "data/annotation"|"data/experiment")
+                 previous_release=../../../3.14
+            ;;
+            *)
+                 previous_release=../../3.14
+        esac
         ln -s $previous_release/$repo/VIEWS $repo/
         mkdir -p $repo/src
-        ln -s $previous_release/$repo/src/contrib $repo/src/
+        ln -s ../$previous_release/$repo/src/contrib $repo/src/
     done
 
 Note that this is temporary only, until each repository gets populated by the
@@ -173,20 +179,20 @@ replaced with real content.
 .
 ├── bioc
 │   └── src
-│       └── contrib -> /extra/www/bioc/packages/3.14/bioc/src/contrib
+│       └── contrib -> ../../../3.14/bioc/src/contrib
 ├── books
 │   └── src
-│       └── contrib -> /extra/www/bioc/packages/3.14/books/src/contrib
+│       └── contrib -> ../../../3.14/books/src/contrib
 ├── data
 │   ├── annotation
 │   │   └── src
-│   │       └── contrib -> /extra/www/bioc/packages/3.14/data/annotation/src/contrib
+│   │       └── contrib -> ../../../../3.14/data/annotation/src/contrib
 │   └── experiment
 │       └── src
-│           └── contrib -> /extra/www/bioc/packages/3.14/data/experiment/src/contrib
+│           └── contrib -> ../../../../3.14/data/experiment/src/contrib
 └── workflows
     └── src
-        └── contrib -> /extra/www/bioc/packages/3.14/workflows/src/contrib
+        └── contrib -> ../../../3.14/workflows/src/contrib
 
 11 directories, 5 files
 ```
