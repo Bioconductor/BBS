@@ -43,7 +43,7 @@ export BBS_OUTGOING_MAP="source:nebbiolo1/buildsrc win.binary:palomino3/buildbin
 export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/bioc"
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo1 palomino3:bin lconway:bin kunpeng2 kjohnson3:foreign"
+export BBS_REPORT_NODES="nebbiolo1 palomino3:bin lconway:bin kjohnson3:foreign"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
