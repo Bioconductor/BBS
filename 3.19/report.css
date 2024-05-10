@@ -578,3 +578,17 @@ DIV.kunpeng2 {
     color: #404;
 }
 
+/* kjohnson3 */
+.kjohnson3,
+.gcard TD.kjohnson3 {
+    background: #d5def5;
+}
+.kjohnson3.toned_down,
+TR.toned_down .kjohnson3,
+TBODY.compact.gcard TR.even_row_number .kjohnson3 {
+    background: #d5def5;
+}
+DIV.kjohnson3 {
+    color: #d5def5;
+}
+
