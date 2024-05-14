@@ -564,6 +564,20 @@ DIV.kjohnson1 {
     color: #050;
 }
 
+/* kjohnson3 */
+.kjohnson3,
+.gcard TD.kjohnson3 {
+    background: #DAEDEC;
+}
+.kjohnson3.toned_down,
+TR.toned_down .kjohnson3,
+TBODY.compact.gcard TR.even_row_number .kjohnson3 {
+    background: #CADDDC;
+}
+DIV.kjohnson3 {
+    color: #050;
+}
+
 /* kunpeng2 (Linux ARM64 openEuler 22.03 LTS-SP1) */
 .kunpeng2,
 .gcard TD.kunpeng2 {
@@ -576,19 +590,5 @@ TBODY.compact.gcard TR.even_row_number .kunpeng2 {
 }
 DIV.kunpeng2 {
     color: #404;
-}
-
-/* kjohnson3 */
-.kjohnson3,
-.gcard TD.kjohnson3 {
-    background: #d5def5;
-}
-.kjohnson3.toned_down,
-TR.toned_down .kjohnson3,
-TBODY.compact.gcard TR.even_row_number .kjohnson3 {
-    background: #d5def5;
-}
-DIV.kjohnson3 {
-    color: #d5def5;
 }
 
