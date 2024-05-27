@@ -16,10 +16,10 @@ set BBS_BUILD_NB_CPU=18
 set BBS_CHECK_NB_CPU=20
 set BBS_EXTRA_CHECK_OPTIONS=--no-vignettes
 
-@rem Central build node is nebbiolo2 at DFCI.
-set BBS_CENTRAL_RHOST=nebbiolo2
+@rem Central build node is nocera1 on Jetstream2.
+set BBS_CENTRAL_RHOST=nocera1
 set BBS_RSH_CMD=ssh -F /cygdrive/f/biocbuild/.ssh/config
-set BBS_CENTRAL_ROOT_URL=http://155.52.207.166
+set BBS_CENTRAL_ROOT_URL=http://149.165.172.10
 set BBS_PRODUCT_TRANSMISSION_MODE=asynchronous
 
 @rem Source tarballs produced during STAGE3 won't be propagated
