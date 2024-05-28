@@ -12,6 +12,8 @@ export BBS_DEBUG="0"
 export BBS_NODE_HOSTNAME="bbscentral1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-bioc"
+export BBS_R_HOME="/home/biocbuild/R/R-4.4"
+export R_LIBS="$BBS_R_HOME/site-library"
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
