@@ -1,7 +1,7 @@
 #!/bin/bash
-# ======================
-# Settings for nebbiolo2
-# ======================
+# ========================
+# Settings for bbscentral1
+# ========================
 
 
 
@@ -9,14 +9,11 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="nebbiolo2"
+export BBS_NODE_HOSTNAME="bbscentral1"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-workflows"
-export BBS_R_HOME="/home/biocbuild/bbs-3.20-bioc/R"
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-bioc-longtests"
+export BBS_R_HOME="/home/biocbuild/R/R-4.4"
 export R_LIBS="$BBS_R_HOME/site-library"
-
-# nebbiolo2 has 72 logical CPUs.
-export BBS_NB_CPU=10
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
@@ -36,10 +33,6 @@ cd "$wd0"
 # The variables below control postrun.sh so only need to be defined on the
 # central node
 
-# Control propagation:
-export BBS_OUTGOING_MAP="source:nebbiolo2/buildsrc"
-export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/workflows"
-
 # Control generation of the report:
 export BBS_REPORT_NODES="nebbiolo2 palomino4 merida1"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
@@ -58,6 +51,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-export BBS_NOTIFY_NODES="nebbiolo2"
-export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
+#export BBS_NOTIFY_NODES="nebbiolo2"
+#export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 

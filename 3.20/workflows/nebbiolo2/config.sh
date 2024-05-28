@@ -16,7 +16,7 @@ export BBS_R_HOME="/home/biocbuild/bbs-3.20-bioc/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
 # nebbiolo2 has 72 logical CPUs.
-export BBS_NB_CPU=18
+export BBS_NB_CPU=10
 
 # Central build node is bbscentral1 on Jetstream2.
 export BBS_CENTRAL_RHOST="bbscentral1"
