@@ -480,20 +480,6 @@ DIV.nebbiolo2 {
     color: #005;
 }
 
-/* xps15 (Ubuntu 23.04) */
-.xps15,
-.gcard TD.xps15 {
-    background: #DDECF8;
-}
-.xps15.toned_down,
-TR.toned_down .xps15,
-TBODY.compact.gcard TR.even_row_number .xps15 {
-    background: #CDDCE8;
-}
-DIV.xps15 {
-    color: #005;
-}
-
 /* palomino3 */
 .palomino3,
 .gcard TD.palomino3 {
