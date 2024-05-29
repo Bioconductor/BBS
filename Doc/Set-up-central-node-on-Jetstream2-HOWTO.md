@@ -54,7 +54,10 @@ Once logged as `exouser`, install the usual public keys.
 
 
 
-## From the exouser account
+## Basic configuration of the VM
+
+
+### From the exouser account
 
 - Set locale to `en_US.UTF-8`:
     ```
@@ -91,8 +94,7 @@ Once logged as `exouser`, install the usual public keys.
     ```
 
 
-
-## From the biocbuild account
+### From the biocbuild account
 
 - Install ssh keys (`biocbuild`'s private key + the usual public keys).
 
@@ -102,37 +104,53 @@ Once logged as `exouser`, install the usual public keys.
     chmod 755 /home/biocbuild
     ```
 
+- Create `.BBS/` folder with `smtp_config.yaml` in it (copy content from other
+  central builder e.g. from nebbiolo1 or nebbiolo2).
+
+
+### From the biocpush account
+
+- Install ssh keys (`biocbuild`'s private key + the usual public keys).
+
+- The `postrun.sh` script that we will run from the `biocbuild` account will
+  need read access to `biocpush`'s home. Enable this with:
+    ```
+    chmod 755 /home/biocpush
+    ```
+
+
+
+## Set up VM as central non-building node for the 3.20 builds
+
+
+### From the biocbuild account
+
 - Create the following folders in `/media/volume/bbs1/biocbuild/`:
 
-  - `bbs-3.20-bioc`
   - `public_html`
+  - `bbs-3.20-bioc`
 
   and the corresponding symlinks in `biocbuild`'s home:
 
-  - from `bbs-3.20-bioc` to `/media/volume/bbs1/biocbuild/bbs-3.20-bioc`
   - from `public_html` to `/media/volume/bbs1/biocbuild/public_html`
+  - from `bbs-3.20-bioc` to `/media/volume/bbs1/biocbuild/bbs-3.20-bioc`
 
 - Then create the `~biocbuild/public_html/BBS` folder.
 
 
-
-## Install and configure Apache2
+### Install and configure Apache2
 
 This requires sudo privileges so needs to be done from the `exouser` account.
 See `Prepare-Ubuntu-22.04-HOWTO.md` for the details.
 
 
-
-## Back to the biocbuild account
+### Back to the biocbuild account
 
 - Clone BBS repo:
     ```
     cd
     git clone https://github.com/bioconductor/BBS
     ```
-
-- Create `.BBS/` folder with `smtp_config.yaml` in it (copy content from other
-  central builder e.g. nebbiolo1 or nebbiolo2).
 
 - Create `bbs-3.20-bioc/log/`.
 
@@ -148,8 +166,23 @@ See `Prepare-Ubuntu-22.04-HOWTO.md` for the details.
     on the satellite nodes.
 
 
+### On each satellite node
 
-## Change BBS code
+Go on each satellite node (`biocbuild` account) and add the following lines
+to the SSH config file (`~/.ssh/config`):
+
+    Host bbscentral1
+        HostName 149.165.171.124
+
+After doing this, try to ssh to `bbscentral1` from the satellite node with:
+
+    ssh biocbuild@bbscentral1
+
+It's important to connect manually to the central node at least once from
+each satellite node.
+
+
+### Change BBS code
 
 On your local machine, clone the BBS repo and make the following changes:
 
@@ -172,21 +205,12 @@ On your local machine, clone the BBS repo and make the following changes:
   and `bioc-longtests`). Note that `stage7-notify.sh` is not needed for
   the `bioc-longtests` builds.
 
-- Commit and push. Then deploy on `bbscentral1` and all the satellite nodes.
-
-- Add the following lines to the SSH config file (`~/.ssh/config`) on all
-  satellite nodes:
-    ```
-    Host bbscentral1
-        HostName 149.165.171.124
-    ```
+- Commit and push. Then deploy on `bbscentral1` and all satellite nodes.
 
 
+### Edit the biocbuild crontabs
 
-## Edit the biocbuild crontabs
-
-
-### 3.20 software builds
+#### 3.20 software builds
 
 Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
 `merida1` (Mac x86_64), `kjohnson1` (Mac arm64).
@@ -196,8 +220,7 @@ Wednesday mornings, finish on Tuesday and Friday in the afternoon).
 
 See crontabs on `bbscentral1` and all the satellite nodes for the details.
 
-
-### 3.20 workflows builds
+#### 3.20 workflows builds
 
 Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
 `merida1` (Mac x86_64).
@@ -207,8 +230,7 @@ day (about 4 hrs after the builds started).
 
 See crontabs on `bbscentral1` and all the satellite nodes for the details.
 
-
-### 3.20 long tests
+#### 3.20 long tests
 
 Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
 `merida1` (Mac x86_64).
@@ -220,14 +242,6 @@ See crontabs on `bbscentral1` and all the satellite nodes for the details.
 
 
 ## Set up staging repos and propagation from the biocpush account
-
-- Install ssh keys (`biocbuild`'s private key + the usual public keys).
-
-- The `postrun.sh` script that we will run from the biocbuild account will
-  need read access to `biocpush`'s home. Enable this with:
-    ```
-    chmod 755 /home/biocpush
-    ```
 
 - Create the `PACKAGES` folder in `/media/volume/bbs1/biocpush` and make
   corresponding symlink in `~biocpush/`.
