@@ -480,20 +480,6 @@ DIV.nebbiolo2 {
     color: #005;
 }
 
-/* nocera1 (Ubuntu 22.04) */
-.nocera1,
-.gcard TD.nocera1 {
-    background: #DDE8FD;
-}
-.nocera1.toned_down,
-TR.toned_down .nocera1,
-TBODY.compact.gcard TR.even_row_number .nocera1 {
-    background: #CDD8ED;
-}
-DIV.nocera1 {
-    color: #005;
-}
-
 /* palomino3 */
 .palomino3,
 .gcard TD.palomino3 {
