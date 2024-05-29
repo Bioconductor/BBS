@@ -12,12 +12,18 @@
 # OS version, etc.. can be obtained programmatically
 
 allnodes = {
-    ## Internal nodes.
+    ## Non-building central nodes on Jetstream2.
     'bbscentral1': {'OS'      : "Linux (Ubuntu 22.04.4 LTS)",
                     'Arch'    : "x86_64",
                     'Platform': "x86_64-linux-gnu",
                     'pkgType' : "source",
                     'encoding': "utf_8"},
+    'bbscentral2': {'OS'      : "Linux (Ubuntu 22.04.4 LTS)",
+                    'Arch'    : "x86_64",
+                    'Platform': "x86_64-linux-gnu",
+                    'pkgType' : "source",
+                    'encoding': "utf_8"},
+    ## Internal build nodes.
     'nebbiolo1':   {'OS'      : "Linux (Ubuntu 22.04.3 LTS)",
                     'Arch'    : "x86_64",
                     'Platform': "x86_64-linux-gnu",

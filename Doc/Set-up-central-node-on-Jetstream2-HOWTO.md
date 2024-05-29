@@ -1,6 +1,7 @@
 # How to set up a light central node on Jetstream2
 
 
+
 ## What's a "light" central node?
 
 A light central node is a non-building central node, that is, a node
@@ -18,12 +19,15 @@ pushed/propagated to master.bioconductor.org.
 
 ## Create the VM on Jetstream2
 
-We'll create the VM via the Exosphere interface:
-https://jetstream2.exosphere.app/exosphere/
+We'll use the Exosphere interface at https://jetstream2.exosphere.app/exosphere/
+to create the VM.
 
 Once connected to Jetstream2 via Exosphere, select allocation BIR190004.
 
-Create a new instance:
+The new VM will be used as the central non-building node for the BioC 3.20
+software, workflows, and long tests builds.
+
+Create the instance:
 
 - Name: `bbscentral1`
 
@@ -87,6 +91,7 @@ Once logged as `exouser`, install the usual public keys.
     ```
 
 
+
 ## From the biocbuild account
 
 - Install ssh keys (`biocbuild`'s private key + the usual public keys).
@@ -106,6 +111,8 @@ Once logged as `exouser`, install the usual public keys.
 
   - from `bbs-3.20-bioc` to `/media/volume/bbs1/biocbuild/bbs-3.20-bioc`
   - from `public_html` to `/media/volume/bbs1/biocbuild/public_html`
+
+- Then create the `~biocbuild/public_html/BBS` folder.
 
 
 
@@ -132,8 +139,13 @@ See `Prepare-Ubuntu-22.04-HOWTO.md` for the details.
 - Even though this is a non-building node, R is still needed by the `prerun.sh`
   and `postrun.sh` scripts. Download and install it.
   On `bbscentral1`, I downloaded R-4.4.0.tar.gz to `~/rdownloads/` and
-  installed it in `~/R/R 4.4/`. Note that this version of R won't need to
-  be updated on a regular basis like we do on the satellite nodes.
+  installed it in `~/R/R-4.4/`.
+  Note that:
+  - Compiling R might fail on a VM with little RAM. Configuring
+    with `--disable-byte-compiled-packages` might help in that case.
+  - No need to install any R package.
+  - This R instance won't need to be updated on a regular basis like we do
+    on the satellite nodes.
 
 
 
@@ -150,28 +162,34 @@ On your local machine, clone the BBS repo and make the following changes:
   and in each of them modify `config.sh` to use `bbscentral1` as central
   node.
 
+  The satellite nodes participating to the 3.20 software builds are:
+  - `nebbiolo2`: Linux Ubuntu 22.04 machine at DFCI
+  - `palomino4`: Windows VM on Azure
+  - `merida1`: Mac x86_64 VM on MacStadium
+  - `kjohnson1`: Mac arm64 VM (Mac Studio) on MacStadium
+
 - Repeat the above for other builds if necessary (e.g. `workflows`
   and `bioc-longtests`). Note that `stage7-notify.sh` is not needed for
   the `bioc-longtests` builds.
 
 - Commit and push. Then deploy on `bbscentral1` and all the satellite nodes.
 
+- Add the following lines to the SSH config file (`~/.ssh/config`) on all
+  satellite nodes:
+    ```
+    Host bbscentral1
+        HostName 149.165.171.124
+    ```
+
 
 
 ## Edit the biocbuild crontabs
 
 
-`bbscentral1` is used as central non-building node for the 3.20 software,
-workflows, and long tests builds at the moment (as of May 29, 2024).
-
-
 ### 3.20 software builds
 
-The satellite nodes participating to these builds are:
-- `nebbiolo2`: Linux Ubuntu 22.04 machine at DFCI
-- `palomino4`: Windows VM on Azure
-- `merida1`: Mac x86_64 VM on MacStadium
-- `kjohnson1`: Mac arm64 VM (Mac Studio) on MacStadium
+Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
+`merida1` (Mac x86_64), `kjohnson1` (Mac arm64).
 
 Right now, these builds run twice a week only (start on Sunday and
 Wednesday mornings, finish on Tuesday and Friday in the afternoon).
@@ -181,8 +199,8 @@ See crontabs on `bbscentral1` and all the satellite nodes for the details.
 
 ### 3.20 workflows builds
 
-The satellite nodes participating to these builds are: `nebbiolo2` (Linux),
-`palomino4` (Windows), `merida1` (Mac x86_64).
+Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
+`merida1` (Mac x86_64).
 
 These builds run on Tuesdays and Fridays, with report published the same
 day (about 4 hrs after the builds started).
@@ -192,8 +210,8 @@ See crontabs on `bbscentral1` and all the satellite nodes for the details.
 
 ### 3.20 long tests
 
-The satellite nodes participating to these builds are: `nebbiolo2` (Linux),
-`palomino4` (Windows), `merida1` (Mac x86_64).
+Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
+`merida1` (Mac x86_64).
 
 These builds run on Saturdays with report published the same day.
 
