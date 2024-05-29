@@ -3,8 +3,9 @@
 
 ## What's a "light" central node?
 
-A light central node (a.k.a. non-building node) only runs `prerun.sh`,
-`postrun.sh`, and propagation. It does NOT run the `run.sh` script.
+A light central node is a non-building central node, that is, a node
+that only runs `prerun.sh`, `postrun.sh`, and propagation. In particular
+it does NOT run the `run.sh` script.
 
 After `prerun.sh` is complete, all the satellite nodes start running `run.sh`
 and report their results to the central node.
@@ -24,7 +25,7 @@ Once connected to Jetstream2 via Exosphere, select allocation BIR190004.
 
 Create a new instance:
 
-- Name: bbscentral1
+- Name: `bbscentral1`
 
 - Image: Ubuntu 22.04
 
@@ -33,6 +34,9 @@ Create a new instance:
   actually building or checking packages). Next time maybe try the `m3.quad`
   flavor (4 CPUs, RAM 15GB, Root Disk 20GB).
 
+- Choose an SSH public key: choose yours or upload it if you've not done it
+  yet.
+
 - Advanced Options:
   - `auto_allocated_network` (default)
   - Public IP Address: Assign a public IP address
@@ -40,27 +44,29 @@ Create a new instance:
 Once the VM is created, you should be able to `ssh` to the `exouser` account
 on the machine. E.g. to connect to `bbscentral1`:
 
-    exouser@149.165.171.124
+    ssh exouser@149.165.171.124
+
+Once logged as `exouser`, install the usual public keys.
 
 
 
 ## From the exouser account
 
 - Set locale to `en_US.UTF-8`:
-
+    ```
     sudo locale-gen en_US.UTF-8
     sudo update-locale LANG=en_US.UTF-8
     sudo reboot
-
+    ```
   or, if the above didn't work:
-
+    ```
     sudo dpkg-reconfigure locales
     sudo reboot
-
+    ```
 - Set timezone to NY:
-
+    ```
     sudo timedatectl set-timezone America/New_York
-
+    ```
   Check the time with `date`. If it gets diplayed in the AM/PM format then
   see `Prepare-Ubuntu-22.04-HOWTO.md` for how to change this to 24-hour
   format.
@@ -72,13 +78,13 @@ on the machine. E.g. to connect to `bbscentral1`:
   disk space. 400GB would probably be enough.
 
 - Create the `biocbuild` and `biocpush` folders at the root of the new volume:
-
+    ```
     cd /media/volume/bbs1
     mkdir biocbuild
     sudo chown biocbuild:biocbuild biocbuild
     mkdir biocpush
     sudo chown biocpush:biocpush biocpush
-
+    ```
 
 
 ## From the biocbuild account
@@ -87,13 +93,17 @@ on the machine. E.g. to connect to `bbscentral1`:
 
 - The propagation scripts that we will run from the `biocpush` account will
   need read access to `biocbuild`'s home. Enable this with:
-
+    ```
     chmod 755 /home/biocbuild
+    ```
 
 - Create the following folders in `/media/volume/bbs1/biocbuild/`:
+
   - `bbs-3.20-bioc`
   - `public_html`
+
   and the corresponding symlinks in `biocbuild`'s home:
+
   - from `bbs-3.20-bioc` to `/media/volume/bbs1/biocbuild/bbs-3.20-bioc`
   - from `public_html` to `/media/volume/bbs1/biocbuild/public_html`
 
@@ -109,9 +119,10 @@ See `Prepare-Ubuntu-22.04-HOWTO.md` for the details.
 ## Back to the biocbuild account
 
 - Clone BBS repo:
-
+    ```
     cd
     git clone https://github.com/bioconductor/BBS
+    ```
 
 - Create `.BBS/` folder with `smtp_config.yaml` in it (copy content from other
   central builder e.g. nebbiolo1 or nebbiolo2).
@@ -143,7 +154,7 @@ On your local machine, clone the BBS repo and make the following changes:
   and `bioc-longtests`). Note that `stage7-notify.sh` is not needed for
   the `bioc-longtests` builds.
 
-- Commit, push, and deploy on `bbscentral1` and all the satellite nodes.
+- Commit and push. Then deploy on `bbscentral1` and all the satellite nodes.
 
 
 
@@ -196,8 +207,9 @@ See crontabs on `bbscentral1` and all the satellite nodes for the details.
 
 - The `postrun.sh` script that we will run from the biocbuild account will
   need read access to `biocpush`'s home. Enable this with:
-
+    ```
     chmod 755 /home/biocpush
+    ```
 
 - Create the `PACKAGES` folder in `/media/volume/bbs1/biocpush` and make
   corresponding symlink in `~biocpush/`.
