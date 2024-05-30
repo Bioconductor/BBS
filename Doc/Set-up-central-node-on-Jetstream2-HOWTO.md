@@ -81,8 +81,7 @@ Once logged as `exouser`, install the usual public keys.
 - Create the `biocbuild` and `biocpush` accounts.
 
 - In Exosphere: Create a volume and attach it to the VM. For `bbscentral1`
-  I created an 800GB volume (`bbs1`) but we actually don't need that much
-  disk space. 400GB would probably be enough.
+  I created a 400GB volume called `bbs1`.
 
 - Create the `biocbuild` and `biocpush` folders at the root of the new volume:
     ```
@@ -224,8 +223,8 @@ On your local machine, clone the BBS repo and make the following changes:
 Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
 `merida1` (Mac x86_64), `kjohnson1` (Mac arm64).
 
-Right now, these builds run twice a week only (start on Sunday and
-Wednesday mornings, finish on Tuesday and Friday in the afternoon).
+Right now, these builds run twice a week only (1st run: Sunday to Tuesday;
+2nd run: Wednesday to Friday).
 
 See crontabs on `bbscentral1` and all the satellite nodes for the details.
 
@@ -234,8 +233,9 @@ See crontabs on `bbscentral1` and all the satellite nodes for the details.
 Participating satellite nodes: `nebbiolo2` (Linux), `palomino4` (Windows),
 `merida1` (Mac x86_64).
 
-These builds run on Tuesdays and Fridays, with report published the same
-day (about 4 hrs after the builds started).
+These builds run on Tuesday and Friday afternoons, after the software builds
+are done, with report published the same day (about 4 hrs after the builds
+started).
 
 See crontabs on `bbscentral1` and all the satellite nodes for the details.
 

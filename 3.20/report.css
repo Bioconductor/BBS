@@ -511,12 +511,12 @@ DIV.palomino4 {
 /* merida1 */
 .merida1,
 .gcard TD.merida1 {
-    background: #E0EDE5;
+    background: #E6EDD0;
 }
 .merida1.toned_down,
 TR.toned_down .merida1,
 TBODY.compact.gcard TR.even_row_number .merida1 {
-    background: #D0DDD5;
+    background: #D6DDC0;
 }
 DIV.merida1 {
     color: #050;
@@ -525,12 +525,12 @@ DIV.merida1 {
 /* lconway */
 .lconway,
 .gcard TD.lconway {
-    background: #E0EDE5;
+    background: #E6EDD0;
 }
 .lconway.toned_down,
 TR.toned_down .lconway,
 TBODY.compact.gcard TR.even_row_number .lconway {
-    background: #D0DDD5;
+    background: #D6DDC0;
 }
 DIV.lconway {
     color: #050;
@@ -539,12 +539,12 @@ DIV.lconway {
 /* kjohnson1 */
 .kjohnson1,
 .gcard TD.kjohnson1 {
-    background: #DAEDEC;
+    background: #D8EEED;
 }
 .kjohnson1.toned_down,
 TR.toned_down .kjohnson1,
 TBODY.compact.gcard TR.even_row_number .kjohnson1 {
-    background: #CADDDC;
+    background: #C8DEDD;
 }
 DIV.kjohnson1 {
     color: #050;
@@ -553,12 +553,12 @@ DIV.kjohnson1 {
 /* kjohnson3 */
 .kjohnson3,
 .gcard TD.kjohnson3 {
-    background: #DAEDEC;
+    background: #D8EEED;
 }
 .kjohnson3.toned_down,
 TR.toned_down .kjohnson3,
 TBODY.compact.gcard TR.even_row_number .kjohnson3 {
-    background: #CADDDC;
+    background: #C8DEDD;
 }
 DIV.kjohnson3 {
     color: #050;
