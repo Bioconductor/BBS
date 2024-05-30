@@ -14,7 +14,7 @@ export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.20-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
-# kjohnson1 has 10 cores available.
+# kjohnson1 has 10 logical CPUs.
 export BBS_NB_CPU=7
 export BBS_BUILD_NB_CPU=5
 export BBS_CHECK_NB_CPU=6

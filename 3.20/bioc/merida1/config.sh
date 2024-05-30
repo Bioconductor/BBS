@@ -24,8 +24,8 @@ export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 export BBS_CENTRAL_ROOT_URL="http://149.165.154.78"
 export BBS_PRODUCT_TRANSMISSION_MODE="none"
 
-# Source tarballs produced during STAGE3 won't be propagated
-# so we don't need to push them to the central builder.
+# Source tarballs produced during STAGE3 won't be propagated so
+# we don't need to make them available to the central builder.
 export DONT_PUSH_SRCPKGS="1"
 
 
