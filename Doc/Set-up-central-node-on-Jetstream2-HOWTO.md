@@ -129,11 +129,19 @@ Once logged as `exouser`, install the usual public keys.
 
   - `public_html`
   - `bbs-3.20-bioc`
+  - `bbs-3.20-workflows`
+  - `bbs-3.20-bioc-longtests`
 
   and the corresponding symlinks in `biocbuild`'s home:
 
-  - from `public_html` to `/media/volume/bbs1/biocbuild/public_html`
-  - from `bbs-3.20-bioc` to `/media/volume/bbs1/biocbuild/bbs-3.20-bioc`
+  - from `public_html`
+    to `/media/volume/bbs1/biocbuild/public_html`
+  - from `bbs-3.20-bioc`
+    to `/media/volume/bbs1/biocbuild/bbs-3.20-bioc`
+  - from `bbs-3.20-workflows`
+    to `/media/volume/bbs1/biocbuild/bbs-3.20-workflows`
+  - from `bbs-3.20-bioc-longtests`
+    to `/media/volume/bbs1/biocbuild/bbs-3.20-bioc-longtests`
 
 - Then create the `~biocbuild/public_html/BBS` folder.
 
@@ -146,14 +154,6 @@ See `Prepare-Ubuntu-22.04-HOWTO.md` for the details.
 
 ### Back to the biocbuild account
 
-- Clone BBS repo:
-    ```
-    cd
-    git clone https://github.com/bioconductor/BBS
-    ```
-
-- Create `bbs-3.20-bioc/log/`.
-
 - Even though this is a non-building node, R is still needed by the `prerun.sh`
   and `postrun.sh` scripts. Download and install it.
   On `bbscentral1`, I downloaded R-4.4.0.tar.gz to `~/rdownloads/` and
@@ -164,6 +164,15 @@ See `Prepare-Ubuntu-22.04-HOWTO.md` for the details.
   - No need to install any R package.
   - This R instance won't need to be updated on a regular basis like we do
     on the satellite nodes.
+
+- Clone BBS repo:
+    ```
+    cd
+    git clone https://github.com/bioconductor/BBS
+    ```
+
+- Create folders `bbs-3.20-bioc/log/`, `bbs-3.20-workflows/log/`,
+  `bbs-3.20-bioc-longtests/log/`.
 
 
 ### On each satellite node
