@@ -455,12 +455,12 @@ TABLE.abc_dispatcher TD {
 /* nebbiolo1 (Ubuntu 22.04) */
 .nebbiolo1,
 .gcard TD.nebbiolo1 {
-    background: #DDE8FD;
+    background: #E5E3FD;
 }
 .nebbiolo1.toned_down,
 TR.toned_down .nebbiolo1,
 TBODY.compact.gcard TR.even_row_number .nebbiolo1 {
-    background: #CDD8ED;
+    background: #D5D3ED;
 }
 DIV.nebbiolo1 {
     color: #005;
@@ -469,12 +469,12 @@ DIV.nebbiolo1 {
 /* nebbiolo2 (Ubuntu 22.04) */
 .nebbiolo2,
 .gcard TD.nebbiolo2 {
-    background: #DDE8FD;
+    background: #E5E3FD;
 }
 .nebbiolo2.toned_down,
 TR.toned_down .nebbiolo2,
 TBODY.compact.gcard TR.even_row_number .nebbiolo2 {
-    background: #CDD8ED;
+    background: #D5D3ED;
 }
 DIV.nebbiolo2 {
     color: #005;
