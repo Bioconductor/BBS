@@ -140,11 +140,11 @@ def makeNodeInfo():
                     'R-instpkgs.txt', 120.0, True) # ignore retcode
     print('BBS>   cd BBS_WORK_TOPDIR')
     os.chdir(BBSvars.work_topdir)
-    if BBSvars.no_transmission:
+    if BBSvars.synchronous_transmission:
+        BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
+    else:
         BBSutils.copyTheDamnedThingNoMatterWhat(NodeInfo_subdir,
                                                 products_out_path)
-    else:
-        BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
     return
 
 
