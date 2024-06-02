@@ -399,6 +399,7 @@ def STAGE2():
         BBSvars.install_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.install_rdir
+        out_dir.RemakeMe(True)
     else:
         out_dir = make_products_out_subdir('install')
 
@@ -566,6 +567,8 @@ def STAGE3_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE3():
     print("BBS> [STAGE3] STARTING STAGE3 at %s" % time.asctime())
+    if not BBSvars.no_transmission:
+        BBSvars.buildsrc_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.buildsrc_rdir
         out_dir.RemakeMe(True)
@@ -651,6 +654,8 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE4():
     print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
+    if not BBSvars.no_transmission:
+        BBSvars.checksrc_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.checksrc_rdir
         out_dir.RemakeMe(True)
@@ -721,6 +726,8 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE5():
     print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
+    if not BBSvars.no_transmission:
+        BBSvars.buildbin_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
         out_dir = BBSvars.buildbin_rdir
         out_dir.RemakeMe(True)
