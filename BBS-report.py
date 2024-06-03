@@ -1373,14 +1373,13 @@ def _get_Rcheck_path(pkg, node_id):
     return path
 
 def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
-    out.write('<HR>\n<H3>Summary</H3>\n')
+    out.write('<BR>\n<H3>Summary</H3>\n')
     filepath = _get_incoming_raw_result_path(pkg, node_id, stage, 'summary.dcf')
     if not no_raw_results:
         dest = _get_outgoing_raw_result_path(pkg, node_id, stage, 'summary.dcf')
         shutil.copyfile(filepath, dest)
     summary = bbs.parse.parse_DCF(filepath, merge_records=True)
-    out.write('<DIV class="%s hscrollable">\n' % \
-              node_hostname.replace(".", "_"))
+    out.write('<DIV class="hscrollable">\n')
     out.write('<TABLE>\n')
     for key, value in summary.items():
         if key == 'Status':
@@ -1422,8 +1421,7 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     pattern_detected = False
     if pattern != None:
         regex = re.compile(pattern)
-    out.write('<DIV class="%s hscrollable">\n' % \
-              node_hostname.replace(".", "_"))
+    out.write('<DIV class="hscrollable">\n')
     out.write('<PRE style="padding: 3px;">\n')
     i = 0
     for line in f:
@@ -1444,10 +1442,11 @@ def write_file_asHTML(out, f, node_hostname, pattern=None):
     return pattern_detected
 
 def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
+    out.write('<BR>\n')
     if stage == "checksrc" and BBSvars.buildtype == "bioc-longtests":
-        out.write('<HR>\n<H3>&apos;R CMD check&apos; output</H3>\n')
+        out.write('<H3>&apos;R CMD check&apos; output</H3>\n')
     else:
-        out.write('<HR>\n<H3>Command output</H3>\n')
+        out.write('<H3>Command output</H3>\n')
     filepath = _get_incoming_raw_result_path(pkg, node_id, stage, 'out.txt')
     if not os.path.exists(filepath):
         out.write('<P class="noresult"><SPAN>')
@@ -1466,7 +1465,7 @@ def write_Command_output_asHTML(out, node_hostname, pkg, node_id, stage):
     return
 
 def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
-    out.write('<HR>\n<H3>Installation output</H3>\n')
+    out.write('<BR>\n<H3>Installation output</H3>\n')
     Rcheck_path = _get_Rcheck_path(pkg, node_id)
     filename = '00install.out'
     filepath = os.path.join(Rcheck_path, filename)
@@ -1578,7 +1577,7 @@ def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
     return
 
 def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
-    out.write('<HR>\n<H3>Tests output</H3>\n')
+    out.write('<BR>\n<H3>Tests output</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
     Rcheck_path = os.path.join(BBSvars.central_rdir_path, "products-in",
                                node_id, "checksrc", Rcheck_dir)
@@ -1611,8 +1610,7 @@ def write_Tests_output_asHTML(out, node_hostname, pkg, node_id):
 def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
     f = open(filepath, 'rb')
     write_filepath_asHTML(out, Rcheck_dir, filepath)
-    out.write('<DIV class="%s hscrollable">\n' % \
-              node_hostname.replace(".", "_"))
+    out.write('<DIV class="hscrollable">\n')
     out.write('<TABLE>\n')
     for line in f:
         line = bbs.parse.bytes2str(line)
@@ -1625,7 +1623,7 @@ def write_Example_timings_from_file(out, node_hostname, Rcheck_dir, filepath):
     return
 
 def write_Example_timings_asHTML(out, node_hostname, pkg, node_id):
-    out.write('<HR>\n<H3>Example timings</H3>\n')
+    out.write('<BR>\n<H3>Example timings</H3>\n')
     Rcheck_dir = pkg + ".Rcheck"
     Rcheck_path = os.path.join(BBSvars.central_rdir_path, "products-in",
                                node_id, "checksrc", Rcheck_dir)
@@ -1701,11 +1699,13 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
     out.write('<BR>\n')
 
     write_gcard_list(out, allpkgs, topdir='..', leafreport_ref=leafreport_ref)
+    out.write('<HR>\n')
 
     out.write('<BR>\n')
-    out.write('<H2><SPAN class="%s">%s</SPAN></H2>\n' % \
-              (node_hostname.replace(".", "_"), page_title))
-    out.write('<BR>\n')
+
+    out.write('<DIV class="leafreport %s">\n' % node_hostname.replace(".", "_"))
+
+    out.write('<H2>%s</H2>\n' % page_title)
 
     write_motd_asTABLE(out)
 
@@ -1723,7 +1723,7 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
 
     status = BBSreportutils.get_pkg_status(pkg, node_id, stage)
     if stage == "install" and status == "NotNeeded":
-        out.write('<HR>\n')
+        out.write('<BR>\n')
         out.write('<DIV class="%s">\n' % node_hostname.replace(".", "_"))
         out.write('REASON FOR NOT INSTALLING: no other package that will ')
         out.write('be built and checked on this platform needs %s' % pkg)
@@ -1731,6 +1731,8 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
     else:
         write_Summary_asHTML(out, node_hostname, pkg, node_id, stage)
         write_leaf_outputs_asHTML(out, node_hostname, pkg, node_id, stage)
+
+    out.write('</DIV>\n')
     out.write('</BODY>\n')
     out.write('</HTML>\n')
     out.close()
@@ -1833,7 +1835,7 @@ def make_package_all_results_page(pkg, allpkgs, pkg_rev_deps=None,
 
     if BBSvars.buildtype in ["bioc", "bioc-mac-arm64"] and len(pkg_rev_deps) != 0:
         quickstats = BBSreportutils.compute_quickstats(pkg_rev_deps)
-        out.write('<H3 style="padding: 18px;">')
+        out.write('<HR><BR><BR>\n<H3 style="padding: 18px;">')
         out.write('Results for Bioconductor software packages ')
         out.write('that depend directly on package %s' % pkg)
         out.write('</H3>\n')

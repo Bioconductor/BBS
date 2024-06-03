@@ -11,10 +11,11 @@ H1 {
     text-align: center;
 }
 H2 {
-    font-size: 15pt;
-    margin-top: 10px;
-    margin-bottom: 6px;
+    padding: 10px;
+    margin-top: 4px;
+    margin-bottom: 3px;
     text-align: center;
+    font-size: 15pt;
 }
 H2 SPAN {
     padding: 8px;
@@ -23,10 +24,13 @@ H2 SPAN {
     border-radius: 12px;
 }
 H3 {
-    font-size: 13pt;
-    margin-top: 2px;
+    background-color: #666;
+    padding: 3px;
+    margin-top: 4px;
     margin-bottom: 3px;
     text-align: center;
+    font-size: 13pt;
+    color: #FFF;
 }
 H4 {
     font-size: 12pt;
@@ -56,15 +60,21 @@ TABLE.grid_layout TD {
 }
 
 SPAN.filename {
-    font-family: monospace;
-    background: #445555;
-    color: #AADDDD;
     padding: 3px;
+    font-family: monospace;
+    background: #DDD;
+    color: black;
 }
 SPAN.filename.fail {
-    background: #B33;
+    background: #C44;
+    color: white;
 }
 
+DIV.leafreport {
+    padding: 4px;
+    border-radius: 16px;
+    border: 1px solid #666;
+}
 DIV.hscrollable {
     overflow: auto;
     white-space: nowrap;
@@ -189,7 +199,7 @@ TABLE.Rconfig TD {
     color: white;
 }
 .glyph.ERROR {
-    background: #B33;
+    background: #C44;
     color: white;
 }
 .glyph.WARNINGS {
