@@ -23,15 +23,6 @@ H2 SPAN {
     padding-right: 20px;
     border-radius: 12px;
 }
-H3 {
-    background-color: #666;
-    padding: 3px;
-    margin-top: 4px;
-    margin-bottom: 3px;
-    text-align: center;
-    font-size: 13pt;
-    color: #FFF;
-}
 H4 {
     font-size: 12pt;
     margin-top: 0px;
@@ -70,10 +61,23 @@ SPAN.filename.fail {
     color: white;
 }
 
+H3 {
+    border: 1px solid #555;
+    text-align: center;
+}
 DIV.leafreport {
-    padding: 4px;
-    border-radius: 16px;
-    border: 1px solid #666;
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #555;
+}
+DIV.leafreport H3 {
+    background-color: #555;
+    padding: 3px;
+    margin-top: 4px;
+    margin-bottom: 3px;
+    text-align: center;
+    font-size: 14pt;
+    color: #FFF;
 }
 DIV.hscrollable {
     overflow: auto;
