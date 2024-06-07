@@ -518,7 +518,8 @@ def _write_git_log_for_pkg_as_TRs(out, pkg, full_info=False):
     ## metadata other than snapshot date exists only for individual pkg repos
     if pkg == None:
         out.write('<TR>')
-        key = 'Approx. Package Snapshot Date (git pull)'
+        key = 'Approx. Package Snapshot Date/Time ' + \
+	      '(<SPAN style="font-family: monospace;">git pull</SPAN>)'
         val = BBSreportutils.get_vcs_meta(None, 'Snapshot Date')
         if not full_info:
             val = ' '.join(val.split(' ')[0:3])
@@ -1892,7 +1893,8 @@ def write_BioC_mainpage_top_asHTML(out, simp_link=False, long_link=False):
     write_motd_asTABLE(out)
     if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
         out.write('<DIV class="svn_info">\n')
-        out.write('<TABLE class="centered"><TR><TD>\n')
+        out.write('<TABLE class="centered">\n')
+        out.write('<TR><TD>\n')
         if BBSvars.MEAT0_type == 1:
             vcs = 'svn'
             heading = 'svn info'
@@ -1902,7 +1904,12 @@ def write_BioC_mainpage_top_asHTML(out, simp_link=False, long_link=False):
         #    heading = 'git log'
         #    out.write('<P style="text-align: center;">%s</P>\n' % heading)
         write_vcs_meta_for_pkg_as_TABLE(out, None, True)
-        out.write('</TD></TR></TABLE>\n')
+        out.write('</TD></TR>\n')
+        out.write('<TR><TD>\n')
+        out.write('See <A href="../../">this page</A> for all ')
+        out.write('the Bioconductor builds and their schedule.')
+        out.write('</TD></TR>\n')
+        out.write('</TABLE>\n')
         out.write('</DIV>\n')
     return
 

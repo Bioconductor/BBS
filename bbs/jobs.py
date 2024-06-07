@@ -45,20 +45,24 @@ import parse
 ## time.localtime(). See http://docs.python.org/lib/module-time.html
 ## for more info.
 ## Example:
-##   >>> dateString(time.localtime())
-##   '2007-12-07 10:03:15 -0800 (Fri, 07 Dec 2007)'
+##   >>> _date_string(time.localtime())
+##   '2007-12-07 10:03 -0800 (Fri, 07 Dec 2007)'
 ## Note that this is how 'svn log' and 'svn info' format the dates.
-def dateString(tm):
+def _date_string(tm, with_seconds=False):
+    format = '%Y-%m-%d %H:%M'
+    if with_seconds:
+        format += ':%S'
     if tm.tm_isdst:
         utc_offset = time.altzone # 7 hours in Seattle
     else:
         utc_offset = time.timezone # 8 hours in Seattle
     utc_offset //= 3600
-    format = "%%Y-%%m-%%d %%H:%%M:%%S -0%d00 (%%a, %%d %%b %%Y)" % utc_offset
+    format += ' -0%d00' % utc_offset
+    format += ' (%a, %d %b %Y)'
     return time.strftime(format, tm)
 
-def currentDateString():
-    return dateString(time.localtime())
+def currentDateString(with_seconds=False):
+    return _date_string(time.localtime(), with_seconds)
 
 
 ##############################################################################
@@ -353,7 +357,7 @@ class JobProductsPusher:
             self.log.write('-----------------------------------------------\n')
             if last:
                 self.log.write('LAST PUSH!\n')
-            self.log.write('%s\n' % currentDateString())
+            self.log.write('%s\n' % currentDateString(with_seconds=True))
             self.log.write('nb_jobs_completed_since_last_push: %d\n' % \
                            self.nb_jobs_completed_since_last_push)
             self.log.write('push command: %s\n' % self.cmd)
@@ -514,7 +518,7 @@ def _start_QueuedJob(job, verbose, nb_jobs, nb_slots, job_deps):
     if verbose:
         _logActionOnQueuedJob("START", job, nb_jobs, nb_slots, job_deps)
     job._t1 = time.time()
-    job._started_at = dateString(time.localtime(job._t1))
+    job._started_at = _date_string(time.localtime(job._t1), with_seconds=True)
     job._output = open(job._output_file, 'w')
     job._nb_runs = 1
     _writeRunHeader(job._output, job._cmd, job._nb_runs)
@@ -581,7 +585,7 @@ def _check_QueuedJob_status(job, maxtime_per_job, verbose, nb_jobs, nb_slots):
     return 1
 
 def _logSlotEvent(logfile, event_type, job0, slot0, slots):
-    date = currentDateString()
+    date = currentDateString(with_seconds=True)
     logfile.write("\n")
     logfile.write("===============================================================================\n")
     logfile.write("%s event on SLOT %s/%s on %s:\n" % \
@@ -683,10 +687,10 @@ def processJobQueue(job_queue, nb_slots=1, maxtime_per_job=3600.0,
                     slots[slot] = _restart_QueuedJob(job, verbose,
                                                      nb_jobs, nb_slots)
                     continue
-                job._ended_at = dateString(time.localtime(job._t2))
+                job._ended_at = _date_string(time.localtime(job._t2), with_seconds=True)
                 cumul += job.AfterRun()
             else: # timed out
-                job._ended_at = dateString(time.localtime(job._t2))
+                job._ended_at = _date_string(time.localtime(job._t2), with_seconds=True)
                 job.AfterTimeout(maxtime_per_job)
             processed_jobs.append(job._name)
             slots[slot] = None

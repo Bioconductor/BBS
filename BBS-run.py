@@ -787,34 +787,34 @@ if __name__ == "__main__":
     ticket = []
     ## STAGE2: preinstall dependencies
     if stages in ["all", "all-no-bin"] or "STAGE2" in stages:
-        started_at = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString(with_seconds=True)
         t1 = time.time()
         STAGE2()
         dt = time.time() - t1
-        ended_at = bbs.jobs.currentDateString()
+        ended_at = bbs.jobs.currentDateString(with_seconds=True)
         ticket.append(('STAGE2', BBSvars.install_nb_cpu, started_at, ended_at, dt))
     ## STAGE3: build source packages
     if stages in ["all", "all-no-bin"] or "STAGE3" in stages:
-        started_at = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString(with_seconds=True)
         t1 = time.time()
         STAGE3()
         dt = time.time() - t1
-        ended_at = bbs.jobs.currentDateString()
+        ended_at = bbs.jobs.currentDateString(with_seconds=True)
         ticket.append(('STAGE3', BBSvars.buildsrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE4: check source packages
     if stages in ["all", "all-no-bin"] or "STAGE4" in stages:
-        started_at = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString(with_seconds=True)
         t1 = time.time()
         STAGE4()
         dt = time.time() - t1
-        ended_at = bbs.jobs.currentDateString()
+        ended_at = bbs.jobs.currentDateString(with_seconds=True)
         ticket.append(('STAGE4', BBSvars.checksrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE5: build bin packages
     if stages == "all" or "STAGE5" in stages:
-        started_at = bbs.jobs.currentDateString()
+        started_at = bbs.jobs.currentDateString(with_seconds=True)
         t1 = time.time()
         STAGE5()
         dt = time.time() - t1
-        ended_at = bbs.jobs.currentDateString()
+        ended_at = bbs.jobs.currentDateString(with_seconds=True)
         ticket.append(('STAGE5', BBSvars.nb_cpu, started_at, ended_at, dt))
     write_BBS_EndOfRun_ticket(ticket)
