@@ -1905,7 +1905,7 @@ def write_BioC_mainpage_top_asHTML(out, simp_link=False, long_link=False):
         #    out.write('<P style="text-align: center;">%s</P>\n' % heading)
         write_vcs_meta_for_pkg_as_TABLE(out, None, True)
         out.write('</TD></TR>\n')
-        out.write('<TR><TD>\n')
+        out.write('<TR><TD style="text-align: center;">\n')
         out.write('See <A href="../../">this page</A> for all ')
         out.write('the Bioconductor builds and their schedule.')
         out.write('</TD></TR>\n')
