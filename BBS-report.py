@@ -465,8 +465,9 @@ def _make_link_with_mouseover(url, content):
     return '<A href="%s" onmouseover="%s" onmouseout="%s">%s</A>' % \
            (url, onmouseover, onmouseout, content)
 
-def _keyval_as_HTML(key, val):
-    key = key.replace(' ', '&nbsp;')
+def _keyval_as_HTML(key, val, inject_nbsp_in_key=True):
+    if inject_nbsp_in_key:
+        key = key.replace(' ', '&nbsp;')
     val = val.replace(' ', '&nbsp;')
     return '%s:&nbsp;<SPAN class="svn_info">%s</SPAN>' % (key, val)
 
@@ -518,12 +519,14 @@ def _write_git_log_for_pkg_as_TRs(out, pkg, full_info=False):
     ## metadata other than snapshot date exists only for individual pkg repos
     if pkg == None:
         out.write('<TR>')
-        key = 'Approx. Package Snapshot Date/Time ' + \
-	      '(<SPAN style="font-family: monospace;">git pull</SPAN>)'
+        key = 'Approx. Package Snapshot Date/Time '
+        key = key.replace(' ', '&nbsp;')
+        key += '(<SPAN style="font-family: monospace;">git&nbsp;pull</SPAN>)'
         val = BBSreportutils.get_vcs_meta(None, 'Snapshot Date')
         if not full_info:
             val = ' '.join(val.split(' ')[0:3])
-        _write_keyval_as_TD(out, key, val)
+        html = _keyval_as_HTML(key, val, inject_nbsp_in_key=False)
+        out.write('<TD class="svn_info">%s</TD>' % html)
         out.write('</TR>\n')
     else:
         if full_info:
