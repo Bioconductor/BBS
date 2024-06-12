@@ -15,7 +15,7 @@ screen -ls
 screen -XS <session-id> quit - close a screen
 ctrl+a d - to detact
 screen -r - to resume a screen
-ctrl+a, ctrl+S - new horizontal screen
+ctrl+a, ctrl+s - new horizontal screen
 ctrl+a tab - move to next window
 ctrl+a c - activate new window
 ctrl+a k - kill a screen
@@ -48,8 +48,8 @@ LOG_PATH = "/Users/biocbuild/build.log"
 def build(logger):
     logger.debug("START job")
     yyyymmdd = date.today().strftime('%Y%m%d')
-    run_path = f"/Users/biocbuild/BBS/3.19/bioc-mac-arm64/{HOSTNAME}" 
-    log_path = f"/Users/biocbuild/bbs-3.19-bioc-mac-arm64/log/{HOSTNAME}-{yyyymmdd}-run.log"
+    run_path = f"/Users/biocbuild/BBS/3.20/bioc-mac-arm64/{HOSTNAME}" 
+    log_path = f"/Users/biocbuild/bbs-3.20-bioc-mac-arm64/log/{HOSTNAME}-{yyyymmdd}-run.log"
     job = ["/bin/bash", "--login", "-c", f"cd {run_path} && ./run.sh >> {log_path} 2>&1"]
     result = run(job, stdout=PIPE, stderr=STDOUT)
     if result.stdout.decode():
