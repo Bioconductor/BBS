@@ -20,7 +20,9 @@ export BBS_BUILD_NB_CPU=22
 export BBS_CHECK_NB_CPU=24
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
-# Central build node is bbscentral2 on Jetstream2.
+# Central build node is bbscentral1 on Jetstream2.
+export BBS_CENTRAL_RHOST="bbscentral1"
+export BBS_RSH_CMD="ssh -F /Users/biocbuild/.ssh/config"
 export BBS_CENTRAL_ROOT_URL="http://149.165.171.124"
 export BBS_PRODUCT_TRANSMISSION_MODE="none"
 
