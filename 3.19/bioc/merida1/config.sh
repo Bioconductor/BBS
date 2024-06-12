@@ -24,7 +24,7 @@ export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 export BBS_CENTRAL_RHOST="bbscentral1"
 export BBS_RSH_CMD="ssh -F /Users/biocbuild/.ssh/config"
 export BBS_CENTRAL_ROOT_URL="http://149.165.171.124"
-export BBS_PRODUCT_TRANSMISSION_MODE="asynchronous"
+export BBS_PRODUCT_TRANSMISSION_MODE="none"
 
 # Source tarballs produced during STAGE3 won't be propagated so
 # we don't need to make them available to the central builder.
