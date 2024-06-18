@@ -343,7 +343,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs,
         .prettymsg("    ==> skip write_PACKAGES()\n")
         return(invisible(NULL))
     }
-    .prettymsg("- write_PACKAGES() to ", OUTGOING_subdir, "/ ... ")
+    .prettymsg("- Run write_PACKAGES() on ", OUTGOING_subdir, "/ ... ")
     type <- gsub(".big-sur-(arm64|x86_64)", "", type, fixed=FALSE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
