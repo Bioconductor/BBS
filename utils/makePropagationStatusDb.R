@@ -344,7 +344,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs,
         return(invisible(NULL))
     }
     .prettymsg("- Run write_PACKAGES() on ", OUTGOING_subdir, "/ ... ")
-    type <- gsub(".big-sur-(arm64|x86_64)", "", type, fixed=FALSE)
+    type <- gsub(".big-sur-(x86_64|arm64)", "", type, fixed=FALSE)
     tools::write_PACKAGES(OUTGOING_subdir, type=type)
     message("OK")
 }
@@ -402,8 +402,8 @@ makePropagationStatusDb <- function(OUTGOING_dir, final_repo,
     final_repo <- gsub("-mac-arm64", "", final_repo, fixed=TRUE)
     ## Type "source" must be first.
     OUTGOING_types <- c("source", "win.binary",
-                        "mac.binary.big-sur-arm64",
-                        "mac.binary.big-sur-x86_64")
+                        "mac.binary.big-sur-x86_64",
+                        "mac.binary.big-sur-arm64")
     available_srcpkgs <- NULL
     for (type in OUTGOING_types) {
         OUTGOING_subdir <- file.path(OUTGOING_dir, type)
@@ -461,8 +461,8 @@ if (FALSE) {
   OUTGOING_pkgs <- list(
       source                      = OUTGOING_source_pkgs,
       win.binary                  = OUTGOING_source_pkgs,
-      `mac.binary.big-sur-arm64`  = OUTGOING_source_pkgs,
-      `mac.binary.big-sur-x86_64` = OUTGOING_source_pkgs
+      `mac.binary.big-sur-x86_64` = OUTGOING_source_pkgs,
+      `mac.binary.big-sur-arm64`  = OUTGOING_source_pkgs
   )
 
   final_repo_pkgs <- list(
@@ -470,10 +470,10 @@ if (FALSE) {
                                                Version=1:3),
       win.binary                  = data.frame(Package=letters[7:8],
                                                Version=1:2),
-      `mac.binary.big-sur-arm64`  = data.frame(Package=c(letters[7:8], "b"),
-                                               Version=c(1:2, 2)),
       `mac.binary.big-sur-x86_64` = data.frame(Package=c(letters[7:8], "b"),
-                                               Version=c(1:2, 3))
+                                               Version=c(1:2, 3)),
+      `mac.binary.big-sur-arm64`  = data.frame(Package=c(letters[7:8], "b"),
+                                               Version=c(1:2, 2))
   )
 
   create_OUTGOING_dir <- function(OUTGOING_dir, OUTGOING_pkgs)
@@ -481,8 +481,8 @@ if (FALSE) {
       unlink(OUTGOING_dir, recursive=TRUE)
       dir.create(OUTGOING_dir)
       types <- c("source", "win.binary",
-                           "mac.binary.big-sur-arm64",
-                           "mac.binary.big-sur-x86_64")
+                           "mac.binary.big-sur-x86_64",
+                           "mac.binary.big-sur-arm64")
       for (type in types) {
           OUTGOING_subdir <- file.path(OUTGOING_dir, type)
           dir.create(OUTGOING_subdir)
@@ -496,8 +496,8 @@ if (FALSE) {
       unlink(final_repo_dir, recursive=TRUE)
       dir.create(final_repo_dir)
       types <- c("source", "win.binary",
-                           "mac.binary.big-sur-arm64",
-                           "mac.binary.big-sur-x86_64")
+                           "mac.binary.big-sur-x86_64",
+                           "mac.binary.big-sur-arm64")
       for (type in types) {
           repo_subdir <- contrib.url(final_repo_dir, type=type)
           dir.create(repo_subdir, recursive=TRUE)
