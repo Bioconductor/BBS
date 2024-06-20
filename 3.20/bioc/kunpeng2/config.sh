@@ -12,7 +12,7 @@ export BBS_DEBUG="0"
 export BBS_NODE_HOSTNAME="kunpeng2"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-bioc"
-export BBS_R_HOME="/home/biocbuild/R/R-devel_2024-01-16_r85812"
+export BBS_R_HOME="/home/biocbuild/R/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
 # kunpeng2 has 32 logical CPUs.
