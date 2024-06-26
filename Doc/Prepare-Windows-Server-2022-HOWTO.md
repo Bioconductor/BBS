@@ -194,7 +194,7 @@ module.
   - On the first screen, go to "Individual components" and select the
     latest "MSVC v143 - VS 2022 C++ x64/x86 build tools" in the "Compilers,
     build tools, and runtimes" section.
-    Total space required (bottom right) should go up from 1.39GB to 3.49GB.
+    Total space required (bottom right) should go up from 1.GB to 3.49GB.
     Click Install. When asked "Do you want to continue without workloads?",
     click on "Continue".
 
@@ -216,15 +216,15 @@ https://www.python.org/downloads/windows/
 Choose the "Windows installer (64-bit)".
 
 When running the installer:
-- Select "Add Python 3.9 to PATH" then click on "Customize installation".
+- Select "Add Python 3.11 to PATH" then click on "Customize installation".
 - In the "Optional Features" screen, everything should be selected. Click
   Next without changing anything.
 - In "Advanced Options" choose "Install for all users" and change install
-  location from `C:\Program Files\Python39` to `C:\Python39`, then click
+  location from `C:\Program Files\Python` to `C:\Python311`, then click
   on "Install".
 
 ALSO: You might need to explicitly associate `.py` files with Python. To
-test whether the association works, go to `C:\Python39\Tools\demo` in the
+test whether the association works, go to `C:\Python\Tools\demo` in the
 File Explorer, and double click on `hanoi`. If the program starts, then all
 is fine. If not:
 - A popup window will ask you: How do you want to open this type of file
@@ -232,7 +232,7 @@ is fine. If not:
   checked. Click on "More apps".
 - Scroll all the way down and click on "Look for another app on this PC".
   This opens the File Explorer.
-- In the File Explorer find the python file in `C:\Python39` and
+- In the File Explorer find the python file in `C:\Python` and
   double-click on it.
 
 
@@ -280,7 +280,7 @@ TESTING: In a PowerShell window, start Python and try to import the
 `tensorflow` module. You should see something like this:
 
     >>> import tensorflow
-    2021-04-07 22:29:19.150396: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
+    2021-04-07 22:29:19.1506: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'cudart64_110.dll'; dlerror: cudart64_110.dll not found
     2021-04-07 22:29:19.158058: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
     INFO:tensorflow:Enabling eager execution
     INFO:tensorflow:Enabling v2 tensorshape
@@ -378,7 +378,7 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 Add `biocbuild` user.
 
 
-### 1.14 Install 32-bit Cygwin (for all users)
+### 1.14 Install 64-bit Cygwin (for all users)
 
 Cygwin is needed for `ssh`, `rsync`, `curl`, and `vim`.
 
@@ -395,7 +395,7 @@ In the installer:
 Finally **prepend** `C:\cygwin64\bin` to `Path` (see _Edit an environment
 variable_ in the _Managing environment variables_ section at the top of
 this document for how to do this). At this point `C:\cygwin64\bin` should
-be first in `Path`, right before `C:\Python39\Scripts\` and `C:\Python39\`.
+be first in `Path`, right before `C:\Python\Scripts\` and `C:\Python311\`.
 
 TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
 in it. Do this by just typing the name of the command followed by <Enter>.
@@ -523,7 +523,7 @@ is already logged on when the task starts).
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `C:\Python39\python.exe`
+      - Program/script: `C:\Python\python.exe`
       - Add arguments: `F:\biocbuild\BBS\utils\do_nothing_forever.py`
       - Start in: `F:\biocbuild\log`
 
@@ -648,7 +648,7 @@ In Dec. 2021, CRAN switched to a new toolchain to build R and R packages.
 
 - Go to https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html
 
-- Download Rtools44 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools44/files/rtools44-6104-6039.exe`
+- Download Rtools44 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools44/files/rtools44-6104-60.exe`
 
 - Run the installer and keep all the defaults. This will install Rtools44
   in `C:\Rtools44`.
