@@ -44,7 +44,7 @@ allnodes = {
                     'Platform': "x86_64-w64-mingw32",
                     'pkgType' : "win.binary",
                     'encoding': "iso8859"},
-    'palomino4':   {'OS'      : "Windows Server 2022 Datacenter",
+    'palomino7':   {'OS'      : "Windows Server 2022 Datacenter",
                     'Arch'    : "x64",
                     'Platform': "x86_64-w64-mingw32",
                     'pkgType' : "win.binary",
