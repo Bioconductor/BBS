@@ -98,7 +98,7 @@ A lot of disk space is required to run the builds. Make sure that the machine
 has at least 768GB of available space on one of its disks (`C:`, `D:`, `E:`,
 or `F:`). On an Azure VM, we use a dedicated data disk for the builds. Note
 that this disk needs to be created as an additional resource (e.g.
-`palomino_DataDisk_0`) and it typically shows up as "Local Disk E:". If the
+`palomino_DataDisk_0`) and it typically shows up as "Local Disk F:". If the
 disk is attached but not visible, it's probably because it was not initialized
 yet.
 
@@ -134,8 +134,8 @@ To check the paging size:
 
 - In the "Performance Options" window, go to the Advanced tab and check
   the Total paging file size for all drives. This should be set to _at least_
-  1.5 times the amount of RAM. For example on a F16s\_v2 VM, this should be
-  set to 48 Gb.
+  1.5 times the amount of RAM. For example on a F16s_v2 VM, this should be
+  set to 48 Gb. For F32s_v2 VM, 96 Gb.
 
 To increase the paging size:
 
@@ -145,7 +145,7 @@ To increase the paging size:
 - Click on the drive that says System managed.
 
 - Select Custom size, then enter the Initial and Maximum sizes in MB e.g.
-  50000 and 100000 for a F16s\_v2 VM.
+  50000 and 100000 for a F16s\_v2 VM. For F32s_v2 VM, 96000 and 192000.
 
 - Click on Set, then on OK.
 
@@ -243,24 +243,38 @@ is fine. If not:
     python -m pip install --upgrade pip
 
 
-### 1.9 Install Python 3 modules
+### 1.9 Install git client for Windows
+
+Available at https://git-scm.com/download/win
+
+Keep all the default settings on all the screens (there are many) when
+running the installer.
+
+TESTING: Open a PowerShell window and try to run `git --version`
+
+Clone the BBS repository
+
+    git clone https://github.com/Bioconductor/BBS
+
+
+### 1.10 Install Python 3 modules
 
 **From the Administrator account** in a PowerShell window, set `$pipfile` to the
 path for the BBS `pip` requirements files. For example
 
-    $pipfile = "F:\biocbuild\BBS\Ubuntu-files\22.04\"
+    $pipfile = "F:\biocbuild\BBS\Ubuntu-files\22.04\pip_"
 
 #### Python 3 modules needed by BBS
 
-    pip install -r $pipfile_bbs.txt
+    pip install -r $pipfile"bbs.txt"
 
 #### Python 3 modules needed by the Single Package Builder only
 
-    pip install -r $pipfile_spb.txt
+    pip install -r $pipfile"spb.txt"
 
 #### Python 3 modules needed by some CRAN/Bioconductor packages
 
-    pip install -r $pipfile_pkgs.txt
+    pip install -r $pipfile"pkgs.txt"
 
 TESTING: In a PowerShell window, start Python and try to import the
 `tensorflow` module. You should see something like this:
@@ -288,7 +302,7 @@ then please refer to the _Install Visual Studio Community 2022_ section above
 in this document for how to fix this.
 
 
-### 1.10 Create personal administrator accounts
+### 1.11 Create personal administrator accounts
 
 Go in Computer Management
       -> System Tools
@@ -330,7 +344,7 @@ TESTING: Try to access your new account via a remote desktop client (e.g.
 rdesktop or Remmina on Linux).
 
 
-### 1.11 Create the `biocbuild` account
+### 1.12 Create the `biocbuild` account
 
 Username: `biocbuild`
 
@@ -341,7 +355,7 @@ For this account:
 - [ ] Account is disabled
 
 By default, the home folder will be `C:\Users\biocbuild`. If space on `C:` is
-limited this might need to be changed to something else (e.g. `E:\biocbuild`).
+limited this might need to be changed to something else (e.g. `F:\biocbuild`).
 To do this: double-click on the `biocbuild` user and make the change in the
 Profile tab. Note that the `C:\Users\biocbuild` folder will still be created
 and populated at first logon.
@@ -352,7 +366,7 @@ personal administrator accounts created earlier don't need this because members
 of the `Administrators` group are automatically allow RDP access.
 
 
-### 1.12 Grant the `biocbuild` user "Log on as batch job" rights
+### 1.13 Grant the `biocbuild` user "Log on as batch job" rights
 
 (This is needed in order to define scheduled tasks run by the `biocbuild`
 user.)
@@ -364,45 +378,33 @@ In the right pane, right-click on 'Log on as a batch job' -> Properties
 Add `biocbuild` user.
 
 
-### 1.13 Install 32-bit Cygwin (for all users)
+### 1.14 Install 32-bit Cygwin (for all users)
 
 Cygwin is needed for `ssh`, `rsync`, `curl`, and `vim`.
 
 Go to https://www.cygwin.com/, click on Install Cygwin, then download
-and run `setup-x86.exe` to install or update Cygwin. IMPORTANT: Do NOT
-install the 64-bit version!
+and run `setup-x86_64.exe` to install or update Cygwin.
 
 In the installer:
 - Install for all users.
 - In the Editors category: make sure package `vim` is selected.
 - In the Net category: make sure packages `curl`, `openssh`, and `rsync` are
   selected.
-- Note that the Cygwin 32-bit DLL will automatically be installed.
 - Don't Create icon on Desktop.
 
-Finally **prepend** `C:\cygwin\bin` to `Path` (see _Edit an environment
+Finally **prepend** `C:\cygwin64\bin` to `Path` (see _Edit an environment
 variable_ in the _Managing environment variables_ section at the top of
-this document for how to do this). At this point `C:\cygwin\bin` should
+this document for how to do this). At this point `C:\cygwin64\bin` should
 be first in `Path`, right before `C:\Python39\Scripts\` and `C:\Python39\`.
 
 TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
 in it. Do this by just typing the name of the command followed by <Enter>.
 If `Path` was set correctly, the command should be found (the Cygwin
-executables are in `C:\cygwin\bin`).
+executables are in `C:\cygwin64\bin`).
 
 IMPORTANT NOTE: We usually don't need the Cygwin terminal. Generally speaking,
 the PowerShell window is the preferred command line environment when working
 interactively on a Windows build machine.
-
-
-### 1.14 Install git client for Windows
-
-Available at https://git-scm.com/download/win
-
-Keep all the default settings on all the screens (there are many) when
-running the installer.
-
-TESTING: Open a PowerShell window and try to run `git --version`
 
 
 ### 1.15 Install MiKTeX
@@ -411,7 +413,7 @@ If this is a reinstallation of MiKTeX, make sure to uninstall it (from
 the Administrator account) before reinstalling.
 
 Go to https://miktex.org/download and download the latest Basic MiKTeX
-64-bit Installer (`basic-miktex-23.10-x64.exe` as of Oct. 2023).
+64-bit Installer (`basic-miktex-24.1-x64.exe` as of Jan. 2024).
 
 When running the installer:
 
@@ -446,8 +448,8 @@ Required by MiKTeX command `pdfcrop.exe` and some Bioconductor packages.
 
 We use Strawberry Perl available at https://strawberryperl.com.
 
-Download installer for Windows 64-bit (`strawberry-perl-5.38.0.1-64bit.msi`
-as of Oct. 2023).
+Download installer for Windows 64-bit (`strawberry-perl-5.38.2.2-64bit.msi`
+as of Dec. 2023).
 
 When running the installer, keep all the default settings.
 
@@ -466,11 +468,11 @@ Most actions in this section must be done **from a personal administrator
 account**.
 
 
-### 2.1 In `biocbuild`'s home: clone BBS git and create log folder
+### 2.1 In `biocbuild`'s home clone BBS git and create log folder
 
 **From the `biocbuild` account** in a PowerShell window:
 
-    cd E:\biocbuild
+    cd F:\biocbuild
     git clone https://github.com/Bioconductor/BBS
     mkdir log
 
@@ -522,8 +524,8 @@ is already logged on when the task starts).
     - Action: Start a program
     - In Settings:
       - Program/script: `C:\Python39\python.exe`
-      - Add arguments: `E:\biocbuild\BBS\utils\do_nothing_forever.py`
-      - Start in: `E:\biocbuild\log`
+      - Add arguments: `F:\biocbuild\BBS\utils\do_nothing_forever.py`
+      - Start in: `F:\biocbuild\log`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -534,9 +536,9 @@ is already logged on when the task starts).
 
   - Then click OK on bottom right (requires `biocbuild`'s password)
 
-Before the task can be started, the `E:\biocbuild\log` folder should
+Before the task can be started, the `F:\biocbuild\log` folder should
 be created from the `biocbuild` account. The first time the task will be
-started, the `E:\biocbuild\log\loggon_biocbuild_at_startup.log` file
+started, the `F:\biocbuild\log\loggon_biocbuild_at_startup.log` file
 will be created and the task will write 1 line to it. Each subsequent time
 the task will be started in the future (i.e. each time the machine will be
 rebooted), 1 additional line will be added to this file. So this file will
@@ -678,12 +680,10 @@ in a PowerShell window:
     which curl      # /usr/bin/curl, because curl from Rtools44 should be
                     # before curl from Cygwin in Path
     which vi        # /c/cygwin/bin/vi
-    rsync           # Will crash if 64-bit Cygwin was installed instead
-                    # of 32-bit Cygwin!
     which make      # /usr/bin/make (provided by Rtools44)
     make --version  # GNU Make 4.4.1
     which gcc       # /x86_64-w64-mingw32.static.posix/bin/gcc (provided by Rtools44)
-    gcc --version   # gcc.exe (GCC) 12.3.0
+    gcc --version   # gcc.exe (GCC) 13.2.0
     which chmod     # /usr/bin/chmod (provided by Rtools44)
     which perl      # /c/Strawberry/perl/bin/perl (NOT /usr/bin/perl)
 
@@ -739,7 +739,7 @@ if you were already logged on) in a PowerShell window:
 Then, if you already have R installed, try to build a package that uses
 Pandoc e.g.:
 
-    cd E:\biocbuild\bbs-3.19-bioc\meat
+    cd F:\biocbuild\bbs-3.19-bioc\meat
     ..\R\bin\R CMD build dagLogo
     ..\R\bin\R CMD build Harman
 
@@ -754,17 +754,17 @@ window and from the `biocbuild` account.
 
 #### Check that you can ssh to the central builder
 
-Create the `E:\biocbuild\.ssh` folder and populate it with:
+Create the `F:\biocbuild\.ssh` folder and populate it with:
 - biocbuild's private RSA key (copy the `id_rsa` file from another builder).
 - an SSH config the you copy and adapt from another Windows builder.
 
 Then:
 
-    ssh -F /cygdrive/e/biocbuild/.ssh/config biocbuild@nebbiolo1
+    ssh -F /cygdrive/f/biocbuild/.ssh/config biocbuild@bbscentral1
 
 #### Check that you can send HTTP requests to the central builder
 
-    curl http://155.52.207.165
+    curl http://149.165.171.124
 
 
 ### 3.2 [OPTIONAL] Customize locations of AnnotationHub & ExperimentHub caches
@@ -795,14 +795,14 @@ If R is already installed, you can check this from R with:
     getExperimentHubOption("CACHE")
 
 If space on `C:` is limited, you might want to consider changing these
-locations to something else e.g. to `E:\biocbuild\AnnotationHub_cache`
-and `E:\biocbuild\ExperimentHub_cache`. The location of the caches can
+locations to something else e.g. to `F:\biocbuild\AnnotationHub_cache`
+and `F:\biocbuild\ExperimentHub_cache`. The location of the caches can
 be controlled via environment variables `ANNOTATION_HUB_CACHE`
 and `EXPERIMENT_HUB_CACHE`, which you can set permanently by using
 the `setx.exe` command in a PowerShell window e.g.:
 
-    setx ANNOTATION_HUB_CACHE "E:\biocbuild\AnnotationHub_cache"
-    setx EXPERIMENT_HUB_CACHE "E:\biocbuild\ExperimentHub_cache"
+    setx ANNOTATION_HUB_CACHE "F:\biocbuild\AnnotationHub_cache"
+    setx EXPERIMENT_HUB_CACHE "F:\biocbuild\ExperimentHub_cache"
 
 IMPORTANT: Make sure to do this from the `biocbuild` account!
 
@@ -824,7 +824,7 @@ If R is already installed, you can also check this from R with:
 
 **From the `biocbuild` account** in a PowerShell window:
 
-    cd E:\biocbuild
+    cd F:\biocbuild
     mkdir bbs-3.19-bioc
     cd bbs-3.19-bioc
     mkdir log
@@ -847,19 +847,19 @@ If updating R, uninstall the current R before running the installer:
 - Open the Control Panel
 - Click on Uninstall a program
 - Make sure you pick up the correct R in case there is more than one instance!
-Then go in the File Explorer and remove `E:\biocbuild\bbs-3.19-bioc\R`.
+Then go in the File Explorer and remove `F:\biocbuild\bbs-3.19-bioc\R`.
 
 When running the installer:
 - Ignore warning about the current user not being an admin
-- Select destination location `E:\biocbuild\bbs-3.19-bioc\R`
+- Select destination location `F:\biocbuild\bbs-3.19-bioc\R`
 - Don't create a Start Menu Folder
 - Don't create a desktop or Quick Launch shortcut
 
 #### Install BiocManager
 
-In a PowerShell window, go to `E:\biocbuild\bbs-3.19-bioc` and start R:
+In a PowerShell window, go to `F:\biocbuild\bbs-3.19-bioc` and start R:
 
-    cd E:\biocbuild\bbs-3.19-bioc
+    cd F:\biocbuild\bbs-3.19-bioc
     R\bin\R  # check version of R displayed by startup message
 
 Then from R:
@@ -985,9 +985,9 @@ Should we also remove package specific caches?
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.19\bioc\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.19-bioc\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.19\bioc\palomino`
+      - Program/script: `F:\biocbuild\BBS\3.19\bioc\palomino\run.bat`
+      - Add arguments: `>>F:\biocbuild\bbs-3.19-bioc\log\palomino.log 2>&1`
+      - Start in: `F:\biocbuild\BBS\3.19\bioc\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1033,7 +1033,7 @@ TESTING: From the `biocbuild` account (log out and on again from this
 account if you were already logged on) try to load the rJava package
 (this package will be automatically installed after the 1st build run
 but it cannot be loaded if Java is not found on the system).
-To do this: open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc`,
+To do this: open a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc`,
 start R (with `R\bin\R`), then:
 
     library(rJava)
@@ -1066,7 +1066,7 @@ delimiter.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the NetPathMiner package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
+open a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL NetPathMiner
@@ -1102,7 +1102,7 @@ but for some reason the latter fails with an error on our Windows builders.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to load the rjags package e.g. open a
-PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc`, start R (with
+PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc`, start R (with
 `R\bin\R`), then:
 
     library(rjags)
@@ -1116,22 +1116,22 @@ PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc`, start R (with
 Available at https://www.ghostscript.com/releases/
 
 Choose Ghostscript AGPL Release for 64-bit Windows
-(`https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10030/gs10030w64.exe`
-as of Mar. 2024).
+(`https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10031/gs10031w64.exe`
+as of Jun. 2024).
 
 Use the default settings when running the installer.
 
-Append `C:\Program Files\gs\gs10.03.0\bin` to `Path` (see _Edit an environment
+Append `C:\Program Files\gs\gs10.03.1\bin` to `Path` (see _Edit an environment
 variable_ in the _Managing environment variables_ section at the top of this
 document for how to do this).
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on):
 
-    which gswin64  # /c/Program Files/gs/gs10.02.0/bin/gswin64
+    which gswin64  # /c/Program Files/gs/gs10.03.1/bin/gswin64
 
 Then try to build a package that uses Ghostscript for its vignette e.g. open
-a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat` (this folder
+a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc\meat` (this folder
 will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build clustComp
@@ -1159,7 +1159,7 @@ environment variables_ section at the top of this document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the rsbml package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
+open a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL rsbml
@@ -1181,7 +1181,7 @@ source at http://openbabel.org/wiki/Category:Installation.
 This is the easiest method.
 
 Download the pre-compiled Windows binaries (`openbabel3-build.zip`)
-from https://github.com/girke-lab/ChemmineOB/releases/tag/3.0.0
+from https://github.com/girke-lab/ChemmineOB/releases/download/3.1.1/openbabel3r42.zip
 
 Extract all the files to `C:\openbabel3`.
 
@@ -1208,7 +1208,7 @@ a personal administrator account, this one needs to be installed from the
 
 From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to compile the ChemmineOB package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
+open a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD INSTALL ChemmineOB
@@ -1223,7 +1223,7 @@ document for how to do this.
 
 TESTING: From the `biocbuild` account (log out and on again from this account
 if you were already logged on) try to build the ImmuneSpaceR package e.g.
-open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
+open a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc\meat`
 (this folder will be automatically created after the 1st build run), then:
 
     ..\R\bin\R CMD build ImmuneSpaceR
@@ -1233,8 +1233,8 @@ open a PowerShell window, `cd` to `E:\biocbuild\bbs-3.19-bioc\meat`
 
 This is needed by the rmspc package.
 
-Download the Windows x64 Installer for .NET 8.0 Runtime (file
-`dotnet-runtime-6.0.29-win-x64.exe` as of Apr. 2024) from
+Download the Windows x64 Installer for .NET 6.0 Runtime (file
+`dotnet-runtime-6.0.31-win-x64.exe` as of May. 2024) from
 https://dotnet.microsoft.com/download/dotnet/6.0
 
 Run the Installer.
@@ -1273,7 +1273,7 @@ Not run on Windows at the moment.
 
 In a PowerShell window from the `biocbuild` account:
 
-    cd E:\biocbuild
+    cd F:\biocbuild
     mkdir bbs-3.19-data-experiment
     mkdir bbs-3.19-data-experiment\log
 
@@ -1303,9 +1303,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.19\data-experiment\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.19-data-experiment\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.19\data-experiment\palomino`
+      - Program/script: `F:\biocbuild\BBS\3.19\data-experiment\palomino\run.bat`
+      - Add arguments: `>>F:\biocbuild\bbs-3.19-data-experiment\log\palomino.log 2>&1`
+      - Start in: `F:\biocbuild\BBS\3.19\data-experiment\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1321,7 +1321,7 @@ Then **from a personal administrator account** configure the task as follow:
 
 In a PowerShell window from the `biocbuild` account:
 
-    cd E:\biocbuild
+    cd F:\biocbuild
     mkdir bbs-3.19-workflows
     mkdir bbs-3.19-workflows\log
 
@@ -1351,9 +1351,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.19\workflows\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.19-workflows\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.19\workflows\palomino`
+      - Program/script: `F:\biocbuild\BBS\3.19\workflows\palomino\run.bat`
+      - Add arguments: `>>F:\biocbuild\bbs-3.19-workflows\log\palomino.log 2>&1`
+      - Start in: `F:\biocbuild\BBS\3.19\workflows\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1369,7 +1369,7 @@ Then **from a personal administrator account** configure the task as follow:
 
 In a PowerShell window from the `biocbuild` account:
 
-    cd E:\biocbuild
+    cd F:\biocbuild
     mkdir bbs-3.19-books
     mkdir bbs-3.19-books\log
 
@@ -1399,9 +1399,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.19\books\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.19-books\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.19\books\palomino`
+      - Program/script: `F:\biocbuild\BBS\3.19\books\palomino\run.bat`
+      - Add arguments: `>>F:\biocbuild\bbs-3.19-books\log\palomino.log 2>&1`
+      - Start in: `F:\biocbuild\BBS\3.19\books\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1417,7 +1417,7 @@ Then **from a personal administrator account** configure the task as follow:
 
 In a PowerShell window from the `biocbuild` account:
 
-    cd E:\biocbuild
+    cd F:\biocbuild
     mkdir bbs-3.19-bioc-longtests
     mkdir bbs-3.19-bioc-longtests\log
 
@@ -1447,9 +1447,9 @@ Then **from a personal administrator account** configure the task as follow:
     - New Action
     - Action: Start a program
     - In Settings:
-      - Program/script: `E:\biocbuild\BBS\3.19\bioc-longtests\palomino\run.bat`
-      - Add arguments: `>>E:\biocbuild\bbs-3.19-bioc-longtests\log\palomino.log 2>&1`
-      - Start in: `E:\biocbuild\BBS\3.19\bioc-longtests\palomino`
+      - Program/script: `F:\biocbuild\BBS\3.19\bioc-longtests\palomino\run.bat`
+      - Add arguments: `>>F:\biocbuild\bbs-3.19-bioc-longtests\log\palomino.log 2>&1`
+      - Start in: `F:\biocbuild\BBS\3.19\bioc-longtests\palomino`
 
   - Tab Conditions:
       nothing to do (keep all the defaults)
@@ -1476,7 +1476,7 @@ For this account:
 - [ ] Account is disabled
 
 By default, the home folder will be `C:\Users\pkgbuild`. If space on `C:` is
-limited this might need to be changed to something else (e.g. `E:\pkgbuild`).
+limited this might need to be changed to something else (e.g. `F:\pkgbuild`).
 To do this: double-click on the `pkgbuild` user and make the change in the
 Profile tab. Note that the `C:\Users\pkgbuild` folder will still be created
 and populated at first logon.
@@ -1501,7 +1501,7 @@ Add `pkgbuild` user.
 Grant the `pkgbuild` user permissions within the `biocbuild` user folder
 using the Users security group.
 
-- `E:\biocbuild`
+- `F:\biocbuild`
 
   Using File Explorer, go to `C:\Users` and right click the `biocbuild` folder
   and choose properties. Go to the Security tab:
@@ -1523,9 +1523,9 @@ by the daily builds. I'm not sure why the SPB would need to access or
 even know about these folders so I suspect that the settings below
 are not actually needed (in any case they shouldn't).
 
-- `E:\biocbuild\bbs-3.12-bioc\meat`
+- `F:\biocbuild\bbs-3.12-bioc\meat`
 
-  Using File Explorer, go to `E:\biocbuild\bbs-3.12-bioc` and right
+  Using File Explorer, go to `F:\biocbuild\bbs-3.12-bioc` and right
   click the `meat` folder and choose properties. Go to the Security tab:
   - Click Edit
   - Click Add
@@ -1537,9 +1537,9 @@ are not actually needed (in any case they shouldn't).
 
   Click OK.
 
-- `E:\biocbuild\bbs-3.12-bioc\NodeInfo`
+- `F:\biocbuild\bbs-3.12-bioc\NodeInfo`
 
-  Using File Explorer, go to `E:\biocbuild\bbs-3.12-bioc` and right
+  Using File Explorer, go to `F:\biocbuild\bbs-3.12-bioc` and right
   click the `NodeInfo` folder and choose properties. Go to the Security tab:
   - Click Edit
   - Click Add
