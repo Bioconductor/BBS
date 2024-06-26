@@ -392,15 +392,16 @@ In the installer:
   selected.
 - Don't Create icon on Desktop.
 
-Finally **prepend** `C:\cygwin64\bin` to `Path` (see _Edit an environment
+If cygwin is installed in `C:\cygwin64`, rename it to `C:\cygwin`.
+Finally **prepend** `C:\cygwin\bin` to `Path` (see _Edit an environment
 variable_ in the _Managing environment variables_ section at the top of
-this document for how to do this). At this point `C:\cygwin64\bin` should
+this document for how to do this). At this point `C:\cygwin\bin` should
 be first in `Path`, right before `C:\Python\Scripts\` and `C:\Python311\`.
 
 TESTING: Open a PowerShell window and try to run `ssh`, `rsync`, or `curl`
-in it. Do this by just typing the name of the command followed by <Enter>.
+in it. Do this by just typing the name of the command followed by Enter.
 If `Path` was set correctly, the command should be found (the Cygwin
-executables are in `C:\cygwin64\bin`).
+executables are in `C:\cygwin\bin`).
 
 IMPORTANT NOTE: We usually don't need the Cygwin terminal. Generally speaking,
 the PowerShell window is the preferred command line environment when working
