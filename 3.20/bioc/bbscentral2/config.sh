@@ -38,7 +38,7 @@ export BBS_OUTGOING_MAP="source:nebbiolo2/buildsrc mac.binary.big-sur-x86_64:lco
 export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/bioc"
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo2 palomino6:bin lconway:bin kjohnson3:bin kunpeng2:foreign"
+export BBS_REPORT_NODES="nebbiolo2 palomino6:bin lconway:bin kjohnson3:bin kunpeng2:bin"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
