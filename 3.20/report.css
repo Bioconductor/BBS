@@ -514,22 +514,16 @@ DIV.palomino7 {
     color: #500;
 }
 
-/* palomino4, palomino6 */
-.palomino4,
-.gcard TD.palomino4,
+/* palomino6 */
 .palomino6,
 .gcard TD.palomino6 {
     background: #FAE0DE;
 }
-.palomino4.toned_down,
-TR.toned_down .palomino4,
-TBODY.compact.gcard TR.even_row_number .palomino4,
 .palomino6.toned_down,
 TR.toned_down .palomino6,
 TBODY.compact.gcard TR.even_row_number .palomino6 {
     background: #EAD0CE;
 }
-DIV.palomino4,
 DIV.palomino6 {
     color: #500;
 }
