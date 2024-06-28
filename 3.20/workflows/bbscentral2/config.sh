@@ -38,7 +38,7 @@ export BBS_OUTGOING_MAP="source:nebbiolo2/buildsrc"
 export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/workflows"
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo2 palomino4 lconway palomino6"
+export BBS_REPORT_NODES="nebbiolo2 palomino6 lconway"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
