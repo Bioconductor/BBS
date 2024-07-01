@@ -494,22 +494,16 @@ DIV.nebbiolo2 {
     color: #005;
 }
 
-/* palomino3, palomino7 */
-.palomino3,
-.gcard TD.palomino3,
+/* palomino7 */
 .palomino7,
 .gcard TD.palomino7 {
     background: #FAE0DE;
 }
-.palomino3.toned_down,
-TR.toned_down .palomino3,
-TBODY.compact.gcard TR.even_row_number .palomino3,
 .palomino7.toned_down,
 TR.toned_down .palomino7,
 TBODY.compact.gcard TR.even_row_number .palomino7 {
     background: #EAD0CE;
 }
-DIV.palomino3,
 DIV.palomino7 {
     color: #500;
 }
