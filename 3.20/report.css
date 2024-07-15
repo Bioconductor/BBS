@@ -510,15 +510,21 @@ DIV.palomino7 {
 
 /* palomino6 */
 .palomino6,
-.gcard TD.palomino6 {
+.gcard TD.palomino6,
+.palomino8,
+.gcard TD.palomino8 {
     background: #FAE0DE;
 }
 .palomino6.toned_down,
 TR.toned_down .palomino6,
-TBODY.compact.gcard TR.even_row_number .palomino6 {
+TBODY.compact.gcard TR.even_row_number .palomino6,
+.palomino8.toned_down,
+TR.toned_down .palomino8,
+TBODY.compact.gcard TR.even_row_number .palomino8 {
     background: #EAD0CE;
 }
-DIV.palomino6 {
+DIV.palomino6,
+DIV.palomino8 {
     color: #500;
 }
 
