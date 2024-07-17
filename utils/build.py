@@ -1,11 +1,36 @@
 #! /usr/bin/env python3
 
 """
-This script works functions as a cronjob to schedule the build for Apple Silicon
+This script works like a cronjob to schedule the build for Apple Silicon
 machines where cronjobs run slow due to receiving a "utility" quality of service
 (QoS) clamp, which is the lower bound of the QoS. The long-running script should
 get an "unspecified" clamp, which is slightly higher than "utility". See
 https://github.com/Bioconductor/BBS/issues/387 for details.
+
+Note: This could be run in a screen (or tmux if available) or as a background
+processes. Be careful that the `kill` in the corresponding run script doesn't
+also kill the process running this script.
+
+Set Up
+------
+
+python3 -m venv env
+source env/bin/active
+pip3 install schedule pytz
+
+Run in Background
+-----------------
+
+# Use python in the env path
+env/bin/python /Users/biocbuild/BBS/utils/build.py &
+
+Run the Script
+--------------
+
+In a screen, run the following commands to create an environment and run the
+script. It will produce a log at LOG_PATH.
+
+python3 build.py
 
 Screen Commands
 ---------------
@@ -21,16 +46,6 @@ ctrl+a c - activate new window
 ctrl+a k - kill a screen
 
 
-Run the Script
---------------
-
-In a screen, run the following commands to create an environment and run the
-script. It will produce a log at LOG_PATH.
-
-python3 -m venv env
-source env/bin/active
-pip3 install schedule pytz
-python3 build.py
 """
 
 
@@ -43,13 +58,13 @@ from time import sleep
 
 
 HOSTNAME = "kjohnson3"
-LOG_PATH = "/Users/biocbuild/build.log"
+LOG_PATH = "/Users/biocbuild/bbs-3.20-bioc/log/build.log"
 
 def build(logger):
     logger.debug("START job")
     yyyymmdd = date.today().strftime('%Y%m%d')
-    run_path = f"/Users/biocbuild/BBS/3.20/bioc-mac-arm64/{HOSTNAME}" 
-    log_path = f"/Users/biocbuild/bbs-3.20-bioc-mac-arm64/log/{HOSTNAME}-{yyyymmdd}-run.log"
+    run_path = f"/Users/biocbuild/BBS/3.20/bioc/{HOSTNAME}"
+    log_path = f"/Users/biocbuild/bbs-3.20-bioc/log/{HOSTNAME}-{yyyymmdd}-run.log"
     job = ["/bin/bash", "--login", "-c", f"cd {run_path} && ./run.sh >> {log_path} 2>&1"]
     result = run(job, stdout=PIPE, stderr=STDOUT)
     if result.stdout.decode():
