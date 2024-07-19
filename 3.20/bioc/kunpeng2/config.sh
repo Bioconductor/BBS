@@ -22,7 +22,7 @@ export BBS_CHECK_NB_CPU=22
 export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is bbscentral2 on Jetstream2.
-export BBS_CENTRAL_ROOT_URL="http://149.165.154.78"
+export BBS_CENTRAL_ROOT_URL="http://149.165.152.87"
 export BBS_PRODUCT_TRANSMISSION_MODE="none"
 
 # Source tarballs produced during STAGE3 won't be propagated so
