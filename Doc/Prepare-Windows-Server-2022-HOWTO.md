@@ -4,7 +4,11 @@
 
 This document describes the process of setting up a Windows Server 2022
 machine to run the Bioconductor daily builds. It's been used to configure
-palomino, an Azure VM running Windows Server 2022 Datacenter Azure Edition.
+a VM in Azure running Windows Server 2022 Datacenter or in Jetstream2
+running Windows Server 2022 JS2 Beta. See
+[Azure-VMs](https://github.com/Bioconductor/BBS/Doc/Azure-VMs.md) and
+[Jetstream2-Windows-VMs](https://github.com/Bioconductor/BBS/Doc/Jetstream2-Windows-VMs.md)
+for configuration details when creating a VM..
 
 
 
@@ -74,9 +78,9 @@ Everything in this section must be done **from the Administrator account**.
 For an Azure VM, an account with the same username as the name of the VM
 should already exist and have admin privileges.
 
-On a freshly installed Windows OS, the first time you'll log on to the
-Administrator account, you'll be asked if you want this PC to be discoverable
-by other PCs and devices on this network. Answer "No".
+On a freshly installed Windows OS or Jetstream2, the first time you'll log on
+to the Administrator account, you'll be asked if you want this PC to be
+discoverable by other PCs and devices on this network. Answer "No".
 
 
 ### 1.1 Install all pending Windows Updates
@@ -104,6 +108,11 @@ yet.
 
 See https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-managed-disk-portal for how to initialize the disk.
 
+The instructions below often use the dedicated disk path when referring
+to biocbuild's home path; however, the path should be modified to
+`C:\Users\biocbuild` for Jetstream2 since we don't need to attach a dedicated
+disk.
+
 
 ### 1.3 Check time and time zone
 
@@ -116,9 +125,9 @@ at the moment.
 
 ### 1.4 Check the size of the paging file (virtual memory)
 
-Azure VMs tend to use a very small paging file by default. For example, on
-a VM of size F16s\_v2 (32 Gb of RAM), the paging file is only 16 Gb, which
-will likely cause the builds to fail with the following error:
+Azure and Jetstream2 VMs tend to use a very small paging file by default. For
+example, on a VM of size F16s\_v2 (32 Gb of RAM), the paging file is only 16
+Gb, which will likely cause the builds to fail with the following error:
 
     The paging file is too small for this operation to complete
 
