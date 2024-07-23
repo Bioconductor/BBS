@@ -24,4 +24,6 @@ libprotobuf-dev         # for protolite
 protobuf-compiler       # for protolite
 libglpk-dev             # for glpkAPI and to compile igraph with GLPK support
 libhiredis-dev          # for redux
-libarchive-dev          # for archive, a dependency of AlpsNMR
+libarchive-dev          # for archive < BioC AlpsNMR
+cargo			# for clarabel < CRAN CVXR < BioC ANCOMBC
+rustc			# for clarabel < CRAN CVXR < BioC ANCOMBC
