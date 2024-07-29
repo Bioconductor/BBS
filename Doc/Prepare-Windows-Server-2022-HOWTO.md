@@ -1024,9 +1024,9 @@ You need the JDK (Java Development Kit). Available at:
   https://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 Choose "JDK Download" then download the "Windows x64 Installer"
-(`jdk-22_windows-x64_bin.exe` as of Oct. 2023). Direct link:
+(`jdk-22_windows-x64_bin.exe` as of July 2024). Direct link:
 
-  https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.exe
+  https://download.oracle.com/java/22/latest/jdk-22_windows-x64_bin.exe
 
 Use the default settings when running the installer.
 
