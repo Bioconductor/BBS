@@ -120,7 +120,7 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
             pass
         elif source_node:
             pdf_file = os.path.join(BBSvars.products_in_rdir,
-                                    BBSutils.getSourceNode(BBSvars.buildtype)?
+                                    BBSutils.getSourceNode(),
                                     '%s.Rcheck' % pkg,
                                     '%s-manual.pdf' % pkg)
             print('BBS> [stage6b]   - copying %s to OUTGOING/manuals folder...' % pdf_file)
