@@ -119,11 +119,12 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
         if BBSvars.buildtype in ['workflows', 'books', 'bioc-mac-arm64']:
             pass
         elif source_node:
-            pdf_file = os.path.join(BBSutils.getenv('BBS_WORK_TOPDIR'),
-                                    'meat',
+            pdf_file = os.path.join(BBSvars.products_in_rdir.path,
+                                    BBSutils.getSourceNode(),
+                                    'checksrc',
                                     '%s.Rcheck' % pkg,
                                     '%s-manual.pdf' % pkg)
-            print('BBS> [stage6b]   - copying %s manual to OUTGOING/manuals folder...' % pkg)
+            print('BBS> [stage6b]   - copying %s to OUTGOING/manuals folder...' % pdf_file)
             if os.path.exists(pdf_file):
                 dst = os.path.join(manuals_dir, '%s.pdf' % pkg)
                 #shutil.copy(pdf_file, dst)

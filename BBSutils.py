@@ -109,6 +109,14 @@ def getNodeSpec(node_hostname, key, key_is_optional=False):
         return specs.get(key)
     return specs[key]
 
+# Return Source node's name to construct a path
+def getSourceNode():
+    source_machines = []
+    for build in getenv('BBS_OUTGOING_MAP').split(" "):
+        if build.count("source"):
+            source_machines.append(build.strip("source:|/buildsrc)"))
+    return source_machines[0]
+
 
 ##############################################################################
 ### copyTheDamnedThingNoMatterWhat()
