@@ -119,8 +119,9 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
         if BBSvars.buildtype in ['workflows', 'books', 'bioc-mac-arm64']:
             pass
         elif source_node:
-            pdf_file = os.path.join(BBSvars.products_in_rdir,
+            pdf_file = os.path.join(BBSvars.products_in_rdir.path,
                                     BBSutils.getSourceNode(),
+                                    'checksrc',
                                     '%s.Rcheck' % pkg,
                                     '%s-manual.pdf' % pkg)
             print('BBS> [stage6b]   - copying %s to OUTGOING/manuals folder...' % pdf_file)
