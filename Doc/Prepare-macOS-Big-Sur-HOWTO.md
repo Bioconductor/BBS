@@ -499,20 +499,7 @@ Following instructions at https://mac.r-project.org/bin
 
 Install necessary packages:
 
-    pkgs <- c("fftw",                               # CRAN ffw, ffwtools, PoissonBinomial, qqconf
-              "fribidi",                            # CRAN ragg, textshaping
-              "gsl",                                # BioC GLAD
-              "glpk",                               # BioC MMUPHin
-              "hdf5",                               # CRAN ncdf4 for Bioc mzR
-              "harfbuzz",                           # CRAN ragg, textshaping
-              "netcdf",                             # CRAN ncdf4 for Bioc mzR
-              "openssl",
-              "pkgconfig",
-              "pcre2",                              # CRAN rJava
-              "proj",                               # CRAN proj4
-              "protobuf",                           # CRAN protolib
-              "udunits",                            # CRAN lwgeom, sf, units
-              "xz")
+    pkgs <- readLines("../mac-files/required_cran.txt")
     install.libs(pkgs)
 
 For openssl, in `/etc/profile` if x86_64:
@@ -1006,14 +993,7 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Oct 2023):
 
-    difficult_pkgs <- c("archive", "arrangements", "av", "fftw", "fftwtools",
-          "gdtools", "gert", "ggiraph", "git2r", "glpkAPI", "gmp", "gsl",
-          "hdf5r", "igraph", "jpeg", "lwgeom", "magick", "ncdf4", "pbdZMQ",
-          "pdftools", "PoissonBinomial", "proj4", "protolite", "qqconf",
-          "ragg", "RcppAlgos", "redux", "rJava", "RMariaDB", "Rmpfr", "RMySQL",
-          "RPostgres", "rsvg", "sf", "showtext", "svglite", "sysfonts",
-          "terra", "textshaping", "tiff", "units", "vdiffr", "V8", "XML",
-          "xml2")
+    pkgs <- readLines("../mac-files/difficult_cran.txt")
 
 First try to install with:
 

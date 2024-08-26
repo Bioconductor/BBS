@@ -1,0 +1,14 @@
+fftw                               # CRAN ffw, ffwtools, PoissonBinomial, qqconf
+fribidi                            # CRAN ragg, textshaping
+gsl                                # BioC GLAD
+glpk                               # BioC MMUPHin
+hdf5                               # CRAN ncdf4 for Bioc mzR
+harfbuzz                           # CRAN ragg, textshaping
+netcdf                             # CRAN ncdf4 for Bioc mzR
+openssl
+pkgconfig
+pcre2                              # CRAN rJava
+proj                               # CRAN proj4
+protobuf                           # CRAN protolib
+udunits                            # CRAN lwgeom, sf, units
+xz
