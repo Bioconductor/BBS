@@ -499,7 +499,9 @@ Following instructions at https://mac.r-project.org/bin
 
 Install necessary packages:
 
-    pkgs <- readLines("../mac-files/required_cran.txt")
+    bbs_home <- Sys.getenv("BBS_HOME")
+    file_path <- file.path(bbs_home, "mac-files/required_cran.txt")
+    pkgs <- readLines(file_path)
     install.libs(pkgs)
 
 For openssl, in `/etc/profile` if x86_64:
@@ -993,7 +995,9 @@ for Mac yet, install the following package binaries (these are the
 Bioconductor deps that are "difficult" to compile from source on Mac,
 as of Oct 2023):
 
-    pkgs <- readLines("../mac-files/difficult_cran.txt")
+    bbs_home <- Sys.getenv("BBS_HOME")
+    file_path <- file.path(bbs_home, "mac-files/difficult_cran.txt")
+    pkgs <- readLines(file_path)
 
 First try to install with:
 
