@@ -36,7 +36,9 @@ Create the instance:
 - Flavor: `m3.medium` (8 CPUs, RAM 30GB, Root Disk 60GB). Note that this is
   probably a little bit oversized for the job (the light central node is not
   actually building or checking packages). Next time maybe try the `m3.quad`
-  flavor (4 CPUs, RAM 15GB, Root Disk 20GB).
+  flavor (4 CPUs, RAM 15GB, Root Disk 20GB). However note that by default
+  the size of the Root Disk is only 20GB on the `m3.quad` flavor, which might
+  not be enough, so increase it to 40GB if possible.
 
 - Choose an SSH public key: choose yours or upload it if you've not done it
   yet.

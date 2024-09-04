@@ -997,7 +997,7 @@ as of Oct 2023):
 
     bbs_home <- Sys.getenv("BBS_HOME")
     file_path <- file.path(bbs_home, "mac-files/difficult_cran.txt")
-    pkgs <- readLines(file_path)
+    difficult_pkgs <- readLines(file_path)
 
 First try to install with:
 
