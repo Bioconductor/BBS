@@ -1,0 +1,4 @@
+# APT Always nice to have packages
+tree
+manpages-dev    # man pages for C standard library
+plocate         # Provides the locate command

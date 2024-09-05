@@ -1,0 +1,30 @@
+# APT packages needed for BioC packages
+
+# firefox (or any other web browser) is needed by many Bioconductor
+# packages which use `utils::browseURL()` to open URLs in a browser.
+# Note that `utils::browseURL()` will return a success code (0) even if
+# it fails to find a browser. As a consequence most packages will still
+# pass `R CMD build` and `R CMD check` if no browser is to be found on
+# the system, with the exception of BrowserViz whose unit tests will
+# timeout in that case.
+firefox                     # for packages using utils::browseURL()
+graphviz                    # for Rgraphviz
+libgraphviz-dev             # for Rgraphviz
+libgtkmm-2.4-dev            # for HilbertVisGUI
+libgsl-dev                  # for GLAD
+libsbml5-dev                # for rsbml
+automake                    # for RProtoBufLib
+libnetcdf-dev               # for mzR, RNetCDF
+libopenbabel-dev            # for ChemmineOB
+libeigen3-dev               # for ChemmineOB
+ocl-icd-opencl-dev          # for gpuMagic
+libavfilter-dev             # for av/spacialHeatmap
+# libfribidi-dev is for CRAN package textshaping which BioC
+# package EnhancedVolcano indirectly depends on via ragg and ggrastr.
+libfribidi-dev              # for EnhancedVolcano
+kallisto                    # for BgeeCall
+mono-runtime                # for rawr
+libmono-system-data4.0-cil  # for rawr
+collectl                    # for Rcollectl
+vienna-rna                  # for GeneGA
+aspnetcore-runtime-8.0      # for rmspc
