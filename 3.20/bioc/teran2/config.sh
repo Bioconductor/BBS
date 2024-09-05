@@ -18,7 +18,7 @@ export R_LIBS="$BBS_R_HOME/site-library"
 # teran2 has 16 logical CPUs.
 export BBS_NB_CPU=12
 export BBS_BUILD_NB_CPU=12
-export BBS_CHECK_NB_CPU=14
+export BBS_CHECK_NB_CPU=13
 
 # Central build node is bbscentral2 on Jetstream2.
 export BBS_CENTRAL_RHOST="bbscentral2"
