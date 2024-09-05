@@ -494,6 +494,20 @@ DIV.nebbiolo2 {
     color: #005;
 }
 
+/* teran2 (Ubuntu 24.04) */
+.teran2,
+.gcard TD.teran2 {
+    background: #E5E3FD;
+}
+.teran2.toned_down,
+TR.toned_down .teran2,
+TBODY.compact.gcard TR.even_row_number .teran2 {
+    background: #D5D3ED;
+}
+DIV.teran2 {
+    color: #005;
+}
+
 /* palomino7 */
 .palomino7,
 .gcard TD.palomino7 {
