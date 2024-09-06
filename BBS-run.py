@@ -251,7 +251,10 @@ def build_pkg_dep_graph(target_pkgs):
     if retcode != 0:
         print('ERROR!')
         print('BBS> [build_pkg_dep_graph] Command %s' % cmd, end=' ')
-        print('returned an error (%d)' % retcode, end=' ')
+        if retcode == None:
+            print('timed out', end=' ')
+        else:
+            print('returned an error (%d)' % retcode, end=' ')
         sys.stdout.flush()
         sys.exit('=> EXIT.')
     print('OK')
