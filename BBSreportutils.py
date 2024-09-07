@@ -211,12 +211,14 @@ def map_package_type_to_outgoing_node(package_type):
 def map_outgoing_node_to_package_type(node):
     map = {}
     rawmap = os.getenv("BBS_OUTGOING_MAP")
+    if rawmap == None:
+        return None
     segs = rawmap.split(" ")
     for seg in segs:
         pkgtype, rest = seg.split(":")
         anode = rest.split("/")[0]
         map[anode] = pkgtype
-    if (not node in map):
+    if not node in map:
         return None
     return map[node]
 
