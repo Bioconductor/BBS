@@ -2,3 +2,4 @@
 python3-minimal
 python3-pip
 git
+python3-psutil

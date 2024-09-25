@@ -28,3 +28,4 @@ libmono-system-data4.0-cil  # for rawr
 collectl                    # for Rcollectl
 vienna-rna                  # for GeneGA
 aspnetcore-runtime-8.0      # for rmspc
+python3-sklearn        # for seqArchR

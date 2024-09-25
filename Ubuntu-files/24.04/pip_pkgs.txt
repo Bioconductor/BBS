@@ -1,17 +1,4 @@
 # PIP packages required by CRAN or Bioconductor packages
-numpy                       # BiocSklearn, MOFA2
-scipy                       # MOFA2, Python scikit-learn package
-scikit-learn                # BiocSklearn, MOFA2
-h5py                        # BiocSklearn, MOFA2
-pandas                      # BiocSklearn, MOFA2
-mofapy2                     # MOFA2
+
 tensorflow                  # DeepPINCS
-h5pyd                       # rhdf5client
-nbconvert                   # CRAN nbconvertR for BioC destiny
-jupyter                     # CRAN nbconvertR for BioC destiny 
-matplotlib                  # CRAN phateR for BioC phemd
-phate                       # CRAN phateR for BioC phemd
 torch                       # Bioc APL
-leidenalg                   # Bioc scBubbletree
-packaging                   # Bioc seqArchR
-owlready2                   # Bioc ontoProc
