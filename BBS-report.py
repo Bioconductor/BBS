@@ -1484,7 +1484,7 @@ def write_Installation_output_asHTML(out, node_hostname, pkg, node_id):
     return
 
 def build_test2filename_dict(dirpath, dups):
-    p = re.compile('(.*)\.Rout.*')
+    p = re.compile('(.*)\\.Rout.*')
     test2filename = {}
     for filename in os.listdir(dirpath):
         m = p.match(filename)
@@ -1563,7 +1563,7 @@ def write_Tests_outputs_in_2TD_TRs(out, node_hostname, Rcheck_dir,
     return
 
 def write_Tests_outputs_from_dir(out, node_hostname, Rcheck_dir, tests_dir):
-    p = re.compile('(.*)\.Rout.*')
+    p = re.compile('(.*)\\.Rout.*')
     filenames = []
     for filename in os.listdir(tests_dir):
         m = p.match(filename)
