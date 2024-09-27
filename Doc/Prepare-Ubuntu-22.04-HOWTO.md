@@ -1411,6 +1411,17 @@ version.
     curl -L -O https://meme-suite.org/meme/meme-software/$MEME_VERSION/meme-$MEME_VERSION.tar.gz
     tar zxf meme-$MEME_VERSION.tar.gz
     cd meme-$MEME_VERSION
+
+Install Perl dependences, which can be descovered by `perl scripts/dependencies.pl'. Install
+with `cpan` or `cpanm`:
+
+    sudo apt search libexpat-dev | grep installed	# Install if needed for XML::Simple
+    sudo cpanm -vn HTML::Template
+    sudo cpanm -vn XML::Simple missing
+    sudo cpanm -vn Sys::Info
+
+Configure
+
     ./configure --prefix=$MEME_PATH/meme --with-url=http://meme-suite.org/ --enable-build-libxml2 --enable-build-libxslt
     sudo make install
 
