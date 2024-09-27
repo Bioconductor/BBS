@@ -6,6 +6,7 @@ https://github.com/Bioconductor/bioconductor_salt.
 ## 0. General information and tips
 
 
+- Use `sudo fdesetup authrestart` to reboot; otherwise, it may come back online.
 - For how to uninstall Mac packages (`.pkg` files) using native `pkgutil`:
   https://wincent.com/wiki/Uninstalling_packages_(.pkg_files)_on_Mac_OS_X
 - Watch https://mac.r-project.org/ for changes in requirements. Binaries can be
