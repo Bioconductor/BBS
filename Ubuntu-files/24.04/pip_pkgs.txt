@@ -2,3 +2,4 @@
 
 tensorflow                  # DeepPINCS
 torch                       # Bioc APL
+owlready2                   # ontoProc
