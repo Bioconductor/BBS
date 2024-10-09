@@ -1417,7 +1417,7 @@ with `cpan` or `cpanm`:
 
     sudo apt search libexpat-dev | grep installed	# Install if needed for XML::Simple
     sudo cpanm -vn HTML::Template
-    sudo cpanm -vn XML::Simple missing
+    sudo cpanm -vn XML::Simple
     sudo cpanm -vn Sys::Info
 
 Configure
