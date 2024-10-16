@@ -1,11 +1,11 @@
 # ====================================================================
 # Environment variables used on the Bioconductor build machines to
-# control the behavior of R 4.4 for the BioC 3.21 builds
+# control the behavior of R 4.5 for the BioC 3.21 builds
 # ====================================================================
 #
 # BIOCONDUCTOR PACKAGE DEVELOPERS/MAINTAINERS: Please use the settings
 # below on your machine when working on the devel branch of your
-# package. Also make sure to use a recent version of R 4.4. This
+# package. Also make sure to use a recent version of R 4.5. This
 # should allow you to reproduce any error or warning you see on the
 # Bioconductor build reports. The easiest way to use the settings
 # below is to add them to your .Renviron file. However, please note
