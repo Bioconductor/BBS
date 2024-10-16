@@ -11,7 +11,7 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="kjohnson1"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.20-bioc-mac-arm64"
+export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.21-bioc-mac-arm64"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
 # kjohnson1 has 10 cores available

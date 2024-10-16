@@ -1,6 +1,6 @@
 #!/bin/bash
 # ================================================================================
-# Settings shared by all the Unix nodes involved in the 3.20-bioc-longtests builds
+# Settings shared by all the Unix nodes involved in the 3.21-bioc-longtests builds
 # ================================================================================
 
 
@@ -22,7 +22,7 @@ export BBS_MEAT0_TYPE=3
 # Needed only if BBS_MEAT0_TYPE is 3
 export BBS_BIOC_MANIFEST_GIT_REPO_URL="https://git.bioconductor.org/admin/manifest"
 export BBS_BIOC_MANIFEST_GIT_BRANCH="devel"
-export BBS_BIOC_MANIFEST_CLONE_PATH="/home/biocbuild/bbs-3.20-bioc/manifest"
+export BBS_BIOC_MANIFEST_CLONE_PATH="/home/biocbuild/bbs-3.21-bioc/manifest"
 
 # Needed if BBS_MEAT0_TYPE is 1 or 3
 export BBS_BIOC_MANIFEST_FILE="software.txt"
@@ -30,7 +30,7 @@ export BBS_BIOC_MANIFEST_FILE="software.txt"
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="$BBS_CENTRAL_RHOST"
 export BBS_MEAT0_RUSER="$BBS_CENTRAL_RUSER"
-export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.20-bioc/MEAT0"
+export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.21-bioc/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
 export BBS_UPDATE_MEAT0=1

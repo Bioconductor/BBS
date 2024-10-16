@@ -11,8 +11,8 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="teran2"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-data-experiment"
-export BBS_R_HOME="/home/biocbuild/bbs-3.20-bioc/R"
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-data-experiment"
+export BBS_R_HOME="/home/biocbuild/bbs-3.21-bioc/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
 # teran2 has 16 logical CPUs.

@@ -11,7 +11,7 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="bbscentral2"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-workflows"
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-workflows"
 export BBS_R_HOME="/home/biocbuild/R/R-4.4"
 export R_LIBS="$BBS_R_HOME/site-library"
 

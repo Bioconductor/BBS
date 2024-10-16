@@ -1,6 +1,6 @@
 #!/bin/bash
 # ================================================================================
-# Settings shared by all the Unix nodes involved in the 3.20-bioc-mac-arm64 builds
+# Settings shared by all the Unix nodes involved in the 3.21-bioc-mac-arm64 builds
 # ================================================================================
 
 
@@ -30,7 +30,7 @@ export BBS_BIOC_MANIFEST_FILE="software.txt"
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="$BBS_CENTRAL_RHOST"
 export BBS_MEAT0_RUSER="$BBS_CENTRAL_RUSER"
-export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.20-bioc-mac-arm64/MEAT0"
+export BBS_MEAT0_RDIR="/home/biocbuild/bbs-3.21-bioc-mac-arm64/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
 export BBS_UPDATE_MEAT0=1

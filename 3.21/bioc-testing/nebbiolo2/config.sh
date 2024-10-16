@@ -11,19 +11,19 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-bioc-testing"
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-bioc-testing"
 # We use the same R instance that is used for the nightly software
 # builds (because it's convenient) but we don't want the bioc-testing
 # builds to interfer in any way with the nightly software builds.
 # In particular STAGE2 should NOT install anything in
-# /home/biocbuild/bbs-3.20-bioc/R/library or
-# /home/biocbuild/bbs-3.20-bioc/R/site-library!
+# /home/biocbuild/bbs-3.21-bioc/R/library or
+# /home/biocbuild/bbs-3.21-bioc/R/site-library!
 # So we set R_LIBS to point to our own library folder.
 # IMPORTANT: Make sure to create the Rlibs folder on nebbiolo2 before
 # starting the bioc-testing builds. Otherwise the bioc-testing
 # builds will ignore the folder and will install packages in
-# /home/biocbuild/bbs-3.20-bioc/R/site-library!
-export BBS_R_HOME="/home/biocbuild/bbs-3.20-bioc/R"
+# /home/biocbuild/bbs-3.21-bioc/R/site-library!
+export BBS_R_HOME="/home/biocbuild/bbs-3.21-bioc/R"
 export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
 
 # nebbiolo2 has 72 logical CPUs.

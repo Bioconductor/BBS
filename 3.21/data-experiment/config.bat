@@ -1,5 +1,5 @@
 @rem ====================================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.20-data-experiment builds
+@rem Settings shared by all the Windows nodes involved in the 3.21-data-experiment builds
 @rem ====================================================================================
 
 
@@ -29,7 +29,7 @@ set BBS_BIOC_MANIFEST_FILE=data-experiment.txt
 @rem Where is the fresh meat to be stored by prerun (stage1)
 set BBS_MEAT0_RHOST=%BBS_CENTRAL_RHOST%
 set BBS_MEAT0_RUSER=%BBS_CENTRAL_RUSER%
-set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.20-data-experiment/MEAT0
+set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.21-data-experiment/MEAT0
 
 @rem Triggers a MEAT0 update at beginning of prerun (stage1)
 set BBS_UPDATE_MEAT0=1

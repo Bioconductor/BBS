@@ -11,8 +11,8 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="nebbiolo2"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.20-data-annotation"
-export BBS_R_HOME="/home/biocbuild/bbs-3.20-bioc/R"
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-data-annotation"
+export BBS_R_HOME="/home/biocbuild/bbs-3.21-bioc/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
 # nebbiolo2 has 72 logical CPUs.

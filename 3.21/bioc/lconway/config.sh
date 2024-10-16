@@ -11,7 +11,7 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="lconway"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.20-bioc"
+export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.21-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
 # lconway has 48 logical CPUs.
