@@ -11,24 +11,13 @@ export BBS_DEBUG="0"
 
 export BBS_NODE_HOSTNAME="nebbiolo1"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-bioc-testing"
-# We use the same R instance that is used for the nightly software
-# builds (because it's convenient) but we don't want the bioc-testing
-# builds to interfer in any way with the nightly software builds.
-# In particular STAGE2 should NOT install anything in
-# /home/biocbuild/bbs-3.21-bioc/R/library or
-# /home/biocbuild/bbs-3.21-bioc/R/site-library!
-# So we set R_LIBS to point to our own library folder.
-# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo1 before
-# starting the bioc-testing builds. Otherwise the bioc-testing
-# builds will ignore the folder and will install packages in
-# /home/biocbuild/bbs-3.21-bioc/R/site-library!
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-data-annotation"
 export BBS_R_HOME="/home/biocbuild/bbs-3.21-bioc/R"
-export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
+export R_LIBS="$BBS_R_HOME/site-library"
 
 # nebbiolo1 has 72 logical CPUs.
-export BBS_NB_CPU=20
-export BBS_CHECK_NB_CPU=25
+export BBS_NB_CPU=16
+export BBS_CHECK_NB_CPU=20
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
@@ -48,6 +37,10 @@ cd "$wd0"
 # The variables below control postrun.sh so only need to be defined on the
 # central node
 
+# Control propagation:
+export BBS_OUTGOING_MAP="source:nebbiolo1/buildsrc"
+export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/data/annotation"
+
 # Control generation of the report:
 export BBS_REPORT_NODES="nebbiolo1"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
@@ -66,6 +59,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-#export BBS_NOTIFY_NODES="nebbiolo1"
-#export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
+export BBS_NOTIFY_NODES="nebbiolo1"
+export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 

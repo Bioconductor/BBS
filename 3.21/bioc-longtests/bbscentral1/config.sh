@@ -1,7 +1,7 @@
 #!/bin/bash
-# ======================
-# Settings for nebbiolo1
-# ======================
+# ========================
+# Settings for bbscentral1
+# ========================
 
 
 
@@ -9,26 +9,11 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="nebbiolo1"
+export BBS_NODE_HOSTNAME="bbscentral1"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-bioc-testing"
-# We use the same R instance that is used for the nightly software
-# builds (because it's convenient) but we don't want the bioc-testing
-# builds to interfer in any way with the nightly software builds.
-# In particular STAGE2 should NOT install anything in
-# /home/biocbuild/bbs-3.21-bioc/R/library or
-# /home/biocbuild/bbs-3.21-bioc/R/site-library!
-# So we set R_LIBS to point to our own library folder.
-# IMPORTANT: Make sure to create the Rlibs folder on nebbiolo1 before
-# starting the bioc-testing builds. Otherwise the bioc-testing
-# builds will ignore the folder and will install packages in
-# /home/biocbuild/bbs-3.21-bioc/R/site-library!
-export BBS_R_HOME="/home/biocbuild/bbs-3.21-bioc/R"
-export R_LIBS="$BBS_WORK_TOPDIR/Rlibs"
-
-# nebbiolo1 has 72 logical CPUs.
-export BBS_NB_CPU=20
-export BBS_CHECK_NB_CPU=25
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.21-bioc-longtests"
+export BBS_R_HOME="/home/biocbuild/R/R-4.5"
+export R_LIBS="$BBS_R_HOME/site-library"
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
@@ -49,7 +34,7 @@ cd "$wd0"
 # central node
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo1"
+export BBS_REPORT_NODES="nebbiolo1 palomino7 merida1"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
