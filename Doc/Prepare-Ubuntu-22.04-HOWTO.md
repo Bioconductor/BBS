@@ -1336,29 +1336,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD INSTALL rsbml
 
 
-### 3.5 Install ImmuneSpace credentials
-
-Required by Bioconductor package **ImmuneSpaceR**. Get credentials from
-Bitwarden.
-
-#### Edit `/etc/profile`
-
-In `/etc/profile` add:
-
-    export ISR_login=*****
-    export ISR_pwd=****
-
-Logout and login again for the changes to `/etc/profile` to take effect.
-
-#### Testing
-
-From the `biocbuild` account:
-
-    cd ~/bbs-3.19-bioc/meat/
-    ../R/bin/R CMD build ImmuneSpaceR
-
-
-### 3.6 Install Perl module XML::Simple
+### 3.5 Install Perl module XML::Simple
 
 Required by Bioconductor package **LowMACA**.
 
@@ -1374,7 +1352,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD build LowMACA
 
 
-### 3.7 Install .NET runtime
+### 3.6 Install .NET runtime
 
 Required by Bioconductor package **rmspc**.
 

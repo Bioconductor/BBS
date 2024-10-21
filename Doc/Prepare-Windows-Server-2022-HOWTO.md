@@ -1224,22 +1224,7 @@ open a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc\meat`
     ..\R\bin\R CMD INSTALL ChemmineOB
 
 
-### 4.7 Install ImmuneSpace credentials
-
-Set environment variable `ISR_login` and `ISR_pwd` to `bioc@immunespace.org`
-and `1notCRAN`, respectively. See _Edit an environment variable_
-in the _Managing environment variables_ section at the top of this
-document for how to do this.
-
-TESTING: From the `biocbuild` account (log out and on again from this account
-if you were already logged on) try to build the ImmuneSpaceR package e.g.
-open a PowerShell window, `cd` to `F:\biocbuild\bbs-3.19-bioc\meat`
-(this folder will be automatically created after the 1st build run), then:
-
-    ..\R\bin\R CMD build ImmuneSpaceR
-
-
-### 4.8 Install .NET Runtime
+### 4.7 Install .NET Runtime
 
 This is needed by the rmspc package.
 

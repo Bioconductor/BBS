@@ -1496,23 +1496,7 @@ Then try to build the **GeneGA** package:
     R CMD build GeneGA
 
 
-### 4.8 Set up ImmuneSpaceR package for connecting to ImmuneSpace
-
-Required by Bioconductor package **ImmuneSpaceR**. Get credentials from
-Bitwarden.
-
-In `/etc/profile` add:
-
-    export ISR_login=*****
-    export ISR_pwd=*****
-
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then try to build the **ImmuneSpaceR** package:
-
-    cd ~/bbs-3.19-bioc/meat/
-    R CMD build ImmuneSpaceR
-
-### 4.9 Install mono
+### 4.8 Install mono
 
 Required by Bioconductor package **rawrr**.
 
@@ -1532,7 +1516,7 @@ Then try to install/build/check the **rawrr** package:
     R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
 
 
-### 4.10 Install .NET Runtime
+### 4.9 Install .NET Runtime
 
 Required by Bioconductor package **rmspc**.
 
