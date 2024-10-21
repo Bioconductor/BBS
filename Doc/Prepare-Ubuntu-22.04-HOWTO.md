@@ -1232,80 +1232,7 @@ Install with:
     sudo texhash
 
 
-### 3.3 Install ensembl-vep
-
-Required by Bioconductor packages **ensemblVEP** and **MMAPPR2**.
-
-Complete installation instructions are at
-https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
-
-#### Install Perl modules
-
-According to ensembl-vep README, the following Perl modules are required:
-
-    ## Needed by both ensemblVEP and MMAPPR2:
-    sudo cpan install Archive::Zip
-    sudo cpan install File::Copy::Recursive
-    sudo cpan install DBI
-    sudo cpan install DBD::mysql  # MySQL client needed!
-    
-    ## Needed by MMAPPR2 only:
-    sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
-    sudo cpan install IO::String
-    sudo cpan install Bio::SeqFeature::Lite  # takes a while...
-
-Install `libhts-dev` and create some symlinks (needed for Tabix Perl module):
-
-    sudo apt-get install libhts-dev
-    cd /usr/lib/
-    sudo ln -s x86_64-linux-gnu/libhts.so
-    sudo ln -s x86_64-linux-gnu/libhts.a
-
-Then:
-
-    sudo cpan install Bio::DB::HTS::Tabix
-
-#### Install ensembl-vep
-
-    cd /usr/local/
-    sudo git clone https://github.com/Ensembl/ensembl-vep.git
-    cd ensembl-vep/
-    #sudo git checkout release/100  # select desired branch
-
-    # Avoid the hassle of getting HTSlib to compile because ensemblVEP and
-    # MMAPPR2 pass 'R CMD build' and 'R CMD check' without that and that's
-    # all we care about.
-    sudo perl INSTALL.pl --NO_HTSLIB
-    # When asked if you want to install any cache files - say no
-    # When asked if you want to install any FASTA files - say no
-    # When asked if you want to install any plugins - say no
-
-#### Edit `/etc/profile`
-
-In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
-Note that the `/etc/profile` file has read-only permissions (factory
-settings). To save changes you will need to force save, e.g., in the
-`vi` editor this is `w!`.
-
-Logout and login again for the changes to `/etc/profile` to take effect.
-
-#### Testing
-
-From the `biocbuild` account, try to build and check the **ensemblVEP**
-and **MMAPPR2** packages:
-
-    cd ~/bbs-3.19-bioc/meat/
-
-    ## Takes about 4 min. to build and 8 min. to check:
-    ../R/bin/R CMD build ensemblVEP
-    ../R/bin/R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
-
-    ## Takes about 2 min. to build and 4 min. to check:
-    ../R/bin/R CMD build MMAPPR2
-    ../R/bin/R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
-
-
-### 3.4 Set LIBSBML_CFLAGS and LIBSBML_LIBS
+### 3.3 Set LIBSBML_CFLAGS and LIBSBML_LIBS
 
 Required by Bioconductor package **rsbml**.
 
@@ -1336,7 +1263,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD INSTALL rsbml
 
 
-### 3.5 Install Perl module XML::Simple
+### 3.4 Install Perl module XML::Simple
 
 Required by Bioconductor package **LowMACA**.
 
@@ -1352,7 +1279,7 @@ From the `biocbuild` account:
     ../R/bin/R CMD build LowMACA
 
 
-### 3.6 Install .NET runtime
+### 3.5 Install .NET runtime
 
 Required by Bioconductor package **rmspc**.
 

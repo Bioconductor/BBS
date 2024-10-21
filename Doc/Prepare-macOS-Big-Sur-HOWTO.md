@@ -1362,112 +1362,7 @@ Then try to install ChemmineOB from source. From R:
     BiocManager::install("ChemmineOB", type="source")
 
 
-### 4.5 Install the MySQL client
-
-Note that we only need this for the **ensemblVEP** package. **RMySQL**
-doesn't need it as long as we can install the binary package.
-
-Even though we only need the MySQL client, we used to install the MySQL
-Community Server because it was an easy way to get the MySQL client.
-Not anymore! Our attempt to use the recent binaries available at
-https://dev.mysql.com/downloads/ for macOS Monterey gave us too much
-headache when trying to install Perl module DBD::mysql or install RMySQL
-from source. So we switched to installing the MySQL client only via brew:
-
-    brew install mysql-client
-
-Then in `/etc/profile` append `/usr/local/opt/mysql-client/bin` to `PATH`
-and `/usr/local/opt/mysql-client/lib/pkgconfig` to `PKG_CONFIG_PATH`.
-
-Finally, make sure that you have a brewed `openssl` (`brew install openssl`,
-see above in this file) and create the following symlinks (without them
-`sudo cpan install DBD::mysql` won't be able to find the `ssl` or `crypto`
-libraries and will fail):
-
-    cd /usr/local/opt/mysql-client/lib/
-    ln -s /usr/local/opt/openssl/lib/libssl.dylib
-    ln -s /usr/local/opt/openssl/lib/libcrypto.dylib
-
-TESTING: Logout and login again so that the changes to `/etc/profile` take
-effect. Then:
-
-    which mysql_config  # /usr/local/opt/mysql-client/bin/mysql_config
-
-Then try to install the **RMySQL** package *from source*:
-
-    library(BiocManager)
-    install("RMySQL", type="source")
-
-
-### 4.6 Install Ensembl VEP script
-
-TODO: Modify instructions for arm64
-
-Required by Bioconductor packages **ensemblVEP** and **MMAPPR2**.
-
-Complete installation instructions are at
-https://www.ensembl.org/info/docs/tools/vep/script/vep_download.html
-
-#### Install Perl modules
-
-- Make sure the MySQL client is installed on the system (see "Install
-  the MySQL client" above in this file).
-
-- According to ensembl-vep README, the following Perl modules are required:
-    ```
-    ## Needed by both ensemblVEP and MMAPPR2:
-    sudo cpan install Archive::Zip
-    sudo cpan install File::Copy::Recursive
-    sudo cpan install DBI
-    sudo cpan install DBD::mysql  # MySQL client needed!
-    
-    ## Needed by MMAPPR2 only:
-    sudo cpan install -f XML::DOM::XPath  # -f to force install despite tests failing
-    sudo cpan install IO::String
-    sudo cpan install Bio::SeqFeature::Lite
-    brew install htslib
-    sudo cpan install Bio::DB::HTS::Tabix
-    ```
-
-#### Install ensembl-vep
-
-    cd /usr/local/
-    sudo git clone https://github.com/Ensembl/ensembl-vep.git
-    cd ensembl-vep/
-    sudo chown -R biocbuild:admin .
-    #git checkout release/100  # select desired branch
-
-    # Avoid the hassle of getting HTSlib to compile because ensemblVEP and
-    # MMAPPR2 pass 'R CMD build' and 'R CMD check' without that and that's
-    # all we care about. No sudo!
-    perl INSTALL.pl --NO_HTSLIB
-    # When asked if you want to install any cache files - say no
-    # When asked if you want to install any FASTA files - say no
-    # When asked if you want to install any plugins - say no
-
-#### Edit `/etc/profile`
-
-In `/etc/profile` append `/usr/local/ensembl-vep` to `PATH`.
-Note that the `/etc/profile` file has read-only permissions (factory
-settings). To save changes you will need to force save, e.g., in the
-`vi` editor this is `w!`.
-
-Logout and login again so that the changes to `/etc/profile` take effect.
-
-#### Testing
-
-Try to build and check the **ensemblVEP** and **MMAPPR2** packages:
-
-    cd ~/bbs-3.19-bioc/meat/
-
-    R CMD build ensemblVEP
-    R CMD check --no-vignettes ensemblVEP_X.Y.Z.tar.gz
-
-    R CMD build MMAPPR2
-    R CMD check --no-vignettes MMAPPR2_X.Y.Z.tar.gz
-
-
-### 4.7 Install ViennaRNA
+### 4.5 Install ViennaRNA
 
 Required by Bioconductor package **GeneGA**.
 
@@ -1496,7 +1391,7 @@ Then try to build the **GeneGA** package:
     R CMD build GeneGA
 
 
-### 4.8 Install mono
+### 4.6 Install mono
 
 Required by Bioconductor package **rawrr**.
 
@@ -1516,7 +1411,7 @@ Then try to install/build/check the **rawrr** package:
     R CMD check --no-vignettes rawrr_X.Y.Z.tar.gz
 
 
-### 4.9 Install .NET Runtime
+### 4.7 Install .NET Runtime
 
 Required by Bioconductor package **rmspc**.
 
