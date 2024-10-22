@@ -1304,6 +1304,46 @@ From the `biocbuild` account, try to build and check the **rmspc** package:
     ../R/bin/R CMD check --no-vignettes rmspc_X.Y.Z.tar.gz
 
 
+### 3.8 Install MEME suite
+
+Required by Bioconductor package **MotifPeeker**.
+
+Download, configure and install MEME suite. Set `MEME_VERSION` to the latest
+version.
+
+    MEME_VERSION=5.5.5 
+    MEME_PATH=/opt
+    curl -L -O https://meme-suite.org/meme/meme-software/$MEME_VERSION/meme-$MEME_VERSION.tar.gz
+    tar zxf meme-$MEME_VERSION.tar.gz
+    cd meme-$MEME_VERSION
+
+Install Perl dependences, which can be descovered by `perl scripts/dependencies.pl'. Install
+with `cpan` or `cpanm`:
+
+    sudo apt search libexpat-dev | grep installed	# Install if needed for XML::Simple
+    sudo cpanm -vn HTML::Template
+    sudo cpanm -vn XML::Simple
+    sudo cpanm -vn Sys::Info
+
+Configure
+
+    ./configure --prefix=$MEME_PATH/meme --with-url=http://meme-suite.org/ --enable-build-libxml2 --enable-build-libxslt
+    sudo make install
+
+Add MEME suite to the path and export `MEME_BIN` in `/etc/profile`:
+
+    export PATH=$PATH:/opt/meme/bin
+    export PATH=$PATH:/opt/meme/libexec/meme-5.5.5
+    export MEME_BIN=/opt/meme/bin
+
+#### Testing
+
+From the `biocbuild` account, log back in then try to build and check the
+**MotifPeeker** package:
+
+    cd ~/bbs-3.19-bioc/meat/
+    ../R/bin/R CMD build MotifPeeker
+
 
 ## 4. Set up other builds
 
