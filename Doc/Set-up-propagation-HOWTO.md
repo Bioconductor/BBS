@@ -204,26 +204,26 @@ repos exist even though they don't.
 
 The above solution works when devel and release use the same version of R;
 however, when devel and release are different, the following warning appears
-for macos because it expected `4.2` where `4.1` only existed.
+for macos because it expected `4.5` where `4.4` only existed.
 
     The downloaded source packages are in
        '/private/var/folders/1w/xf7rrsr1483d4rg7vwbkdy780000gp/T/RtmpSo8mys/downloaded_packages'
     Warning messages:
     1: In .inet_warning(msg) :
-      unable to access index for repository https://bioconductor.org/packages/3.21/data/annotation/bin/macosx/contrib/4.2:
-      cannot open URL 'https://bioconductor.org/packages/3.21/data/annotation/bin/macosx/contrib/4.2/PACKAGES'
+      unable to access index for repository https://bioconductor.org/packages/3.21/data/annotation/bin/macosx/contrib/4.5:
+      cannot open URL 'https://bioconductor.org/packages/3.21/data/annotation/bin/macosx/contrib/4.5/PACKAGES'
     2: In .inet_warning(msg) :
-      unable to access index for repository https://cloud.r-project.org/bin/macosx/contrib/4.2:
-      cannot open URL 'https://cloud.r-project.org/bin/macosx/contrib/4.2/PACKAGES' 
+      unable to access index for repository https://cloud.r-project.org/bin/macosx/contrib/4.5:
+      cannot open URL 'https://cloud.r-project.org/bin/macosx/contrib/4.5/PACKAGES' 
 
-The solution is to create a symlink from `4.1` to `4.2` in `/home/biocpush/PACKAGES/3.20/data/annotation/bin/macosx/contrib`
+The solution is to create a symlink from `4.4` to `4.5` in `/home/biocpush/PACKAGES/3.20/data/annotation/bin/macosx/contrib`
 and in `/home/biocpush/PACKAGES/3.20/data/annotation/bin/windows/contrib` then run `./pushRepos-data-annotation.sh` to put
 it on `master.bioconductor.org`.
 
     oses="macosx windows"
     data_annotation=/home/biocpush/PACKAGES/3.20/data/annotation/bin
     for os in $oses; do
-        ln -s $data_annotation/$os/contrib/4.1 4.2
+        ln -s $data_annotation/$os/contrib/4.4 4.5
     done
     ./pushRepos-data-annotation.sh
 
@@ -268,11 +268,11 @@ official CRAN layout. For an empty repo, this layout is:
 ├── bin
 │   ├── macosx
 │   │   └── contrib
-│   │       └── 4.2
+│   │       └── 4.5
 │   │           └── PACKAGES
 │   └── windows
 │       └── contrib
-│           └── 4.2
+│           └── 4.5
 │               └── PACKAGES
 └── src
     └── contrib
@@ -284,10 +284,10 @@ The above layout needs to be manually created inside each repo. For example
 to create it inside the software repository:
 
     cd ~/PACKAGES/3.21/bioc
-    mkdir -p src/contrib bin/windows/contrib/4.2 bin/macosx/contrib/4.2
+    mkdir -p src/contrib bin/windows/contrib/4.5 bin/macosx/contrib/4.5
     touch src/contrib/PACKAGES
-    touch bin/windows/contrib/4.2/PACKAGES
-    touch bin/macosx/contrib/4.2/PACKAGES
+    touch bin/windows/contrib/4.5/PACKAGES
+    touch bin/macosx/contrib/4.5/PACKAGES
 
 Then check the layout with `tree`.
 
@@ -299,22 +299,22 @@ Then check the layout with `tree`.
 From the biocpush account:
 
 - Choose the version of R that matches the version of Bioconductor that
-  we're going to propagate. For example, for BioC 3.21, this is R 4.2.
+  we're going to propagate. For example, for BioC 3.21, this is R 4.5.
 
-- Create folders `rdownloads`, `R-4.2`, `bin`, and `pkgs_to_install` in
+- Create folders `rdownloads`, `R-4.5`, `bin`, and `pkgs_to_install` in
   biocpush's home. Note that `~/bin` will automatically be added to the
   `PATH` next time you login as biocpush, but it's a good idea to logout
   and login again now so it takes effect now.
 
 - Download and extract latest R source tarball to `~/rdownloads`.
 
-- Configure and compile in `~/R-4.2`.
+- Configure and compile in `~/R-4.5`.
 
 - Create symlinks in `~/bin`:
     ```
     cd ~/bin
-    ln -s ~/R-4.2/bin/R R-4.2
-    ln -s ~/R-4.2/bin/Rscript Rscript-4.2
+    ln -s ~/R-4.5/bin/R R-4.5
+    ln -s ~/R-4.5/bin/Rscript Rscript-4.5
     ```
 
 - Install the BiocManager package:
@@ -358,7 +358,7 @@ Save but don't commit.
     ## important after the biocViews vocab has changed.
     cd ~/pkgs_to_install
     git clone https://git.bioconductor.org/packages/biocViews
-    R-4.2 CMD INSTALL biocViews
+    R-4.5 CMD INSTALL biocViews
     ```
 
 If you previously got the message that BiocManager doesn't support your version
@@ -415,10 +415,10 @@ Three important things before we run these scripts:
    many little green LEDs in the rightmost column of the report indicating
    propagation status.
 
-3. Check that `~/bin/Rscript-4.2` works and that it can load the biocViews
+3. Check that `~/bin/Rscript-4.5` works and that it can load the biocViews
    package:
     ```
-    ~/bin/Rscript-4.2 -e 'library(biocViews);cat("SUCCESS!\n")'
+    ~/bin/Rscript-4.5 -e 'library(biocViews);cat("SUCCESS!\n")'
     ```
 
 
