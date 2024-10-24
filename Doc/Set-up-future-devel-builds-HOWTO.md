@@ -111,63 +111,8 @@ git commit -m 'Add config files and scripts for 3.19 builds'
 
 ## 3. Create 3.19 destinations on master.bioconductor.org
 
-We need to create destination folders for 3.19 build reports and packages
-on master.bioconductor.org.
-
-```
-ssh -A webadmin@master.bioconductor.org
-```
-
-
-### In /extra/www/bioc/packages
-
-```
-cd /extra/www/bioc/packages
-```
-
-Create folder `3.19` and subfolders `bioc`, `data`, and `workflows`:
-```
-mkdir 3.19
-cd 3.19
-mkdir bioc data workflows
-```
-
-Create symlink from `3.19/data/annotation` to `3.18/data/annotation`:
-```
-cd data
-ln -s ../../3.18/data/annotation
-```
-
-The new 3.19 directory tree should look like this:
-```
-    webadmin@ip-172-30-4-20:/extra/www/bioc/packages$ tree 3.19
-    3.19
-    ├── bioc
-    ├── data
-    │   └── annotation -> ../../3.18/data/annotation
-    └── workflows
-
-    4 directories, 0 files
-```
-
-
-### In /extra/www/bioc/checkResults
-
-```
-cd /extra/www/bioc/checkResults
-```
-
-Create folder `3.19` folder and subfolders `bioc-LATEST`,
-`data-experiment-LATEST`, `workflows-LATEST`, and `bioc-longtests-LATEST`:
-```
-mkdir 3.19
-cd 3.19
-mkdir bioc-LATEST data-annotation-LATEST data-experiment-LATEST workflows-LATEST bioc-longtests-LATEST
-```
-
-This is where the build reports will be published.
-
-Add the new build background color to `/extra/www/bioc/checkResults/index.html`.
+See `3. Create https://bioconductor.org/packages/X.Y on master` in
+`Set-up-propagation-HOWTO.md`.
 
 
 ## 4. Activate builds on central builder
