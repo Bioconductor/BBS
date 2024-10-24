@@ -134,13 +134,13 @@ From the biocpush account:
 
 ### Create https://bioconductor.org/packages/X.Y
 
-Say we're setting up propagation for Bioconductor 3.15:
+Say we're setting up propagation for Bioconductor 3.21:
 
     cd /extra/www/bioc/packages
 
-If the `3.15` folder doesn't exist yet:
+If the `3.21` folder doesn't exist yet:
 
-    mkdir 3.15
+    mkdir 3.21
 
 Note that we cannot test the https://bioconductor.org/packages/X.Y URL
 because trying to open it in a browser is not expected to work at this
@@ -149,21 +149,21 @@ moment.
 
 ### Create fake X.Y repositories
 
-Create empty package repositories inside 3.15:
+Create empty package repositories inside 3.21:
 
-    cd 3.15
+    cd 3.21
     repos="bioc data/annotation data/experiment workflows books"
     mkdir -p $repos
 
-For now we'll just populate them with relative symlinks that redirect to the 3.14 repos:
+For now we'll just populate them with relative symlinks that redirect to the 3.20 repos:
 
     for repo in $repos; do
         case $repo in
             "data/annotation"|"data/experiment")
-                 previous_release=../../../3.14
+                 previous_release=../../../3.20
             ;;
             *)
-                 previous_release=../../3.14
+                 previous_release=../../3.20
         esac
         ln -s $previous_release/$repo/VIEWS $repo/
         mkdir -p $repo/src
@@ -179,25 +179,25 @@ replaced with real content.
 .
 ├── bioc
 │   └── src
-│       └── contrib -> ../../../3.14/bioc/src/contrib
+│       └── contrib -> ../../../3.20/bioc/src/contrib
 ├── books
 │   └── src
-│       └── contrib -> ../../../3.14/books/src/contrib
+│       └── contrib -> ../../../3.20/books/src/contrib
 ├── data
 │   ├── annotation
 │   │   └── src
-│   │       └── contrib -> ../../../../3.14/data/annotation/src/contrib
+│   │       └── contrib -> ../../../../3.20/data/annotation/src/contrib
 │   └── experiment
 │       └── src
-│           └── contrib -> ../../../../3.14/data/experiment/src/contrib
+│           └── contrib -> ../../../../3.20/data/experiment/src/contrib
 └── workflows
     └── src
-        └── contrib -> ../../../3.14/workflows/src/contrib
+        └── contrib -> ../../../3.20/workflows/src/contrib
 
 11 directories, 5 files
 ```
 
-The symlinks will trick `install.packages()` into believing that the 3.15
+The symlinks will trick `install.packages()` into believing that the 3.21
 repos exist even though they don't.
 
 #### When devel and release use different versions of R
@@ -210,18 +210,18 @@ for macos because it expected `4.2` where `4.1` only existed.
        '/private/var/folders/1w/xf7rrsr1483d4rg7vwbkdy780000gp/T/RtmpSo8mys/downloaded_packages'
     Warning messages:
     1: In .inet_warning(msg) :
-      unable to access index for repository https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/contrib/4.2:
-      cannot open URL 'https://bioconductor.org/packages/3.15/data/annotation/bin/macosx/contrib/4.2/PACKAGES'
+      unable to access index for repository https://bioconductor.org/packages/3.21/data/annotation/bin/macosx/contrib/4.2:
+      cannot open URL 'https://bioconductor.org/packages/3.21/data/annotation/bin/macosx/contrib/4.2/PACKAGES'
     2: In .inet_warning(msg) :
       unable to access index for repository https://cloud.r-project.org/bin/macosx/contrib/4.2:
       cannot open URL 'https://cloud.r-project.org/bin/macosx/contrib/4.2/PACKAGES' 
 
-The solution is to create a symlink from `4.1` to `4.2` in `/home/biocpush/PACKAGES/3.14/data/annotation/bin/macosx/contrib`
-and in `/home/biocpush/PACKAGES/3.14/data/annotation/bin/windows/contrib` then run `./pushRepos-data-annotation.sh` to put
+The solution is to create a symlink from `4.1` to `4.2` in `/home/biocpush/PACKAGES/3.20/data/annotation/bin/macosx/contrib`
+and in `/home/biocpush/PACKAGES/3.20/data/annotation/bin/windows/contrib` then run `./pushRepos-data-annotation.sh` to put
 it on `master.bioconductor.org`.
 
     oses="macosx windows"
-    data_annotation=/home/biocpush/PACKAGES/3.14/data/annotation/bin
+    data_annotation=/home/biocpush/PACKAGES/3.20/data/annotation/bin
     for os in $oses; do
         ln -s $data_annotation/$os/contrib/4.1 4.2
     done
@@ -232,16 +232,16 @@ it on `master.bioconductor.org`.
 
 Thanks to the symlinks, the following should work. However it's important
 to realize that it will install the version of the BiocGenerics package
-that belongs to BioC 3.14:
+that belongs to BioC 3.20:
 
     ## From R:
-    repo <- "https://bioconductor.org/packages/3.15/bioc"
+    repo <- "https://bioconductor.org/packages/3.21/bioc"
     install.packages("BiocGenerics", repos=repo)
 
 This is a temprary situation only, until we propagate the packages produced
-by the 3.15 daily builds.
+by the 3.21 daily builds.
 
-Note that trying to open the https://bioconductor.org/packages/3.15/bioc
+Note that trying to open the https://bioconductor.org/packages/3.21/bioc
 URL in a browser is not expected to work at this point (you should get
 "Error 403 - Access Forbidden").
 
@@ -252,14 +252,14 @@ URL in a browser is not expected to work at this point (you should get
 
 From the biocpush account.
 
-Create `~/PACKAGES/3.15` and the 4 CRAN-style package repos: `bioc` (software),
+Create `~/PACKAGES/3.21` and the 4 CRAN-style package repos: `bioc` (software),
 `data/experiment`, `workflows`, and `books` below it. No `data/annotation`
 repo for now:
 
-    mkdir -p ~/PACKAGES/3.15/bioc
-    mkdir -p ~/PACKAGES/3.15/data/experiment/
-    mkdir -p ~/PACKAGES/3.15/workflows
-    mkdir -p ~/PACKAGES/3.15/books
+    mkdir -p ~/PACKAGES/3.21/bioc
+    mkdir -p ~/PACKAGES/3.21/data/experiment/
+    mkdir -p ~/PACKAGES/3.21/workflows
+    mkdir -p ~/PACKAGES/3.21/books
 
 Each repo must be set up as a CRAN-style repository so must follow the
 official CRAN layout. For an empty repo, this layout is:
@@ -283,7 +283,7 @@ where `PACKAGES` are empty files.
 The above layout needs to be manually created inside each repo. For example
 to create it inside the software repository:
 
-    cd ~/PACKAGES/3.15/bioc
+    cd ~/PACKAGES/3.21/bioc
     mkdir -p src/contrib bin/windows/contrib/4.2 bin/macosx/contrib/4.2
     touch src/contrib/PACKAGES
     touch bin/windows/contrib/4.2/PACKAGES
@@ -299,7 +299,7 @@ Then check the layout with `tree`.
 From the biocpush account:
 
 - Choose the version of R that matches the version of Bioconductor that
-  we're going to propagate. For example, for BioC 3.15, this is R 4.2.
+  we're going to propagate. For example, for BioC 3.21, this is R 4.2.
 
 - Create folders `rdownloads`, `R-4.2`, `bin`, and `pkgs_to_install` in
   biocpush's home. Note that `~/bin` will automatically be added to the
@@ -338,7 +338,7 @@ your R version then use the following hack in the local `biocViews` in
     ```
     # Replace
     # all_repos <- repositories()
-    all_repos <- BiocManager:::.repositories(character(), version="3.15")
+    all_repos <- BiocManager:::.repositories(character(), version="3.21")
     ```
 
 Save but don't commit.
@@ -365,7 +365,7 @@ If you previously got the message that BiocManager doesn't support your version
 of R, you can use the following hack to to install biocViews:
 
     ```
-    repos <- BiocManager:::.repositories(character(), version="3.14")
+    repos <- BiocManager:::.repositories(character(), version="3.20")
     install.packages("biocViews", repos=repos)
     ```
 
@@ -392,7 +392,7 @@ Then you can install biocViews in the `~/pkgs_to_install` directory.
 
 From the biocpush account.
 
-The propagation scripts for BioC 3.15 are located in the `~/propagation/3.15/`
+The propagation scripts for BioC 3.21 are located in the `~/propagation/3.21/`
 folder. For the software packages, they are: `updateReposPkgs-bioc.sh`,
 `prepareRepos-bioc.sh`, and `pushRepos-bioc.sh`.
 
@@ -401,10 +401,10 @@ folder. For the software packages, they are: `updateReposPkgs-bioc.sh`,
 
 Three important things before we run these scripts:
 
-1. Create `~/cron.log/3.15`.
+1. Create `~/cron.log/3.21`.
 
 2. From the biocbuild account: Make sure to uncomment the
-   `export BBS_OUTGOING_MAP=...` line in `~/BBS/3.15/bioc/nebbiolo2/config.sh`
+   `export BBS_OUTGOING_MAP=...` line in `~/BBS/3.21/bioc/nebbiolo2/config.sh`
    before `postrun.sh` runs. If `postrun.sh` has run already and the report
    has already been published, uncomment the line anyway and rerun `postrun.sh`.
    This 2nd run of `postrun.sh` will take much longer because the script now
@@ -443,36 +443,36 @@ that goes from about 12:20 pm EST to 14:50 pm EST.
 
 Run it with:
 
-    cd ~/propagation/3.15
-    ./updateReposPkgs-bioc.sh >>~/cron.log/3.15/updateReposPkgs-bioc.first-run.log 2>&1 &
+    cd ~/propagation/3.21
+    ./updateReposPkgs-bioc.sh >>~/cron.log/3.21/updateReposPkgs-bioc.first-run.log 2>&1 &
 
 This script should not take long, typically < 1 min.
 
 Check that it was successful with:
 
-    tail ~/cron.log/3.15/updateReposPkgs-bioc.first-run.log
+    tail ~/cron.log/3.21/updateReposPkgs-bioc.first-run.log
 
 The last line should be:
 
     DONE.
 
 Also if some packages were allowed ot propagate, you should see them in
-`~/PACKAGES/3.15/bioc`.
+`~/PACKAGES/3.21/bioc`.
 
 #### Manual run of prepareRepos-bioc.sh
 
 This script can be run any time, except when another instance of the script
 is already running. Run it with:
 
-    cd ~/propagation/3.15
-    ./prepareRepos-bioc.sh >>~/cron.log/3.15/prepareRepos-bioc.first-run.log 2>&1 &
+    cd ~/propagation/3.21
+    ./prepareRepos-bioc.sh >>~/cron.log/3.21/prepareRepos-bioc.first-run.log 2>&1 &
 
 For big repositories like software and data-experiment, it can take a while
 e.g. between 15 min. (software) and more than 1 hour (data-experiment).
 
 Check that it was successful with:
 
-    tail ~/cron.log/3.15/prepareRepos-bioc.first-run.log
+    tail ~/cron.log/3.21/prepareRepos-bioc.first-run.log
 
 The last line should be:
 
@@ -481,10 +481,10 @@ The last line should be:
 #### Manual run of pushRepos-bioc.sh
 
 This script should be run right after `prepareRepos-bioc.sh`. All it does
-is rsync the content of the public software repo on master (https://bioconductor.org/packages/3.15/bioc) with the local `~/PACKAGES/3.15/bioc` repo (a.k.a.
+is rsync the content of the public software repo on master (https://bioconductor.org/packages/3.21/bioc) with the local `~/PACKAGES/3.21/bioc` repo (a.k.a.
 staging software repo).
 
-    cd ~/propagation/3.15
+    cd ~/propagation/3.21
     ./pushRepos-bioc.sh
 
 If you run it a 2nd time after that, it should only display something like
@@ -505,46 +505,46 @@ Add the following lines to the crontab:
 
 - For propagation of software packages:
     ```
-    # PROPAGATE BIOC 3.15 SOFTWARE PACKAGES
+    # PROPAGATE BIOC 3.21 SOFTWARE PACKAGES
     # -------------------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    00 12 * * 1-6 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.15/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1
+    00 12 * * 1-6 cd /home/biocpush/propagation/3.21 && (./updateReposPkgs-bioc.sh && ./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.21/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1
     ```
 
 - For propagation of data annotation packages:
 
     ```
-    # PROPAGATE BIOC 3.15 DATA ANNOTATION PACKAGES
+    # PROPAGATE BIOC 3.21 DATA ANNOTATION PACKAGES
     # --------------------------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    00 07 * * 3 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-data-annotation.sh && ./prepareRepos-data-annotation.sh && ./pushRepos-data-annotation.sh) >>/home/biocpush/cron.log/3.15/propagate-data-annotation-`date +\%Y\%m\%d`.log 2>&1
+    00 07 * * 3 cd /home/biocpush/propagation/3.21 && (./updateReposPkgs-data-annotation.sh && ./prepareRepos-data-annotation.sh && ./pushRepos-data-annotation.sh) >>/home/biocpush/cron.log/3.21/propagate-data-annotation-`date +\%Y\%m\%d`.log 2>&1
     ```
 
 - For propagation of data experiment packages:
     ```
-    # PROPAGATE BIOC 3.15 DATA EXPERIMENT PACKAGES
+    # PROPAGATE BIOC 3.21 DATA EXPERIMENT PACKAGES
     # --------------------------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    45 15 * * 2,4 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocpush/cron.log/3.15/propagate-data-experiment-`date +\%Y\%m\%d`.log 2>&1
+    45 15 * * 2,4 cd /home/biocpush/propagation/3.21 && (./updateReposPkgs-data-experiment.sh && ./prepareRepos-data-experiment.sh && ./pushRepos-data-experiment.sh) >>/home/biocpush/cron.log/3.21/propagate-data-experiment-`date +\%Y\%m\%d`.log 2>&1
     ```
 - For propagation of workflow packages:
     ```
-    # PROPAGATE BIOC 3.15 WORKFLOWS
+    # PROPAGATE BIOC 3.21 WORKFLOWS
     # -----------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    45 14 * * 2,5 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-workflows.sh && ./prepareRepos-workflows.sh && ./pushRepos-workflows.sh) >>/home/biocpush/cron.log/3.15/propagate-workflows-`date +\%Y\%m\%d`.log 2>&1
+    45 14 * * 2,5 cd /home/biocpush/propagation/3.21 && (./updateReposPkgs-workflows.sh && ./prepareRepos-workflows.sh && ./pushRepos-workflows.sh) >>/home/biocpush/cron.log/3.21/propagate-workflows-`date +\%Y\%m\%d`.log 2>&1
     ```
 - For propagation of books:
     ```
-    # PROPAGATE BIOC 3.15 BOOKS
+    # PROPAGATE BIOC 3.21 BOOKS
     # -------------------------
     
     # Must start **after** 'biocbuild' has finished its "postrun.sh" job!
-    35 14 * * 1,3,5 cd /home/biocpush/propagation/3.15 && (./updateReposPkgs-books.sh && ./prepareRepos-books.sh && ./pushRepos-books.sh && ./deploy-books.sh) >>/home/biocpush/cron.log/3.15/propagate-books-`date +\%Y\%m\%d`.log 2>&1
+    35 14 * * 1,3,5 cd /home/biocpush/propagation/3.21 && (./updateReposPkgs-books.sh && ./prepareRepos-books.sh && ./pushRepos-books.sh && ./deploy-books.sh) >>/home/biocpush/cron.log/3.21/propagate-books-`date +\%Y\%m\%d`.log 2>&1
     ```
   Note that for books, we run one more script, the `deploy-books.sh` script.
 
