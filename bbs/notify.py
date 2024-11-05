@@ -37,7 +37,7 @@ def sendtextmail(from_addr, to_addrs, subject, msg_body):
 
     config_path = os.path.expanduser(os.path.join("~", ".BBS", "smtp_config.yaml"))
     with open(config_path, 'r') as stream:
-        config = yaml.load(stream)
+        config = yaml.load(stream, Loader = yaml.FullLoader)
     server = smtplib.SMTP(config['host'], config['port'])
     server.ehlo()
     if config['use_tls']:
@@ -138,7 +138,7 @@ def sendhtmlmail(from_addr, to_addrs, subject, html_msg, text_msg):
 
     config_path = os.path.expanduser(os.path.join("~", ".BBS", "smtp_config.yaml"))
     with open(config_path, 'r') as stream:
-        config = yaml.load(stream)
+        config = yaml.load(stream, Loader = yaml.FullLoader)
     server = smtplib.SMTP(config['host'], config['port'])
     server.ehlo()
     if config['use_tls']:
