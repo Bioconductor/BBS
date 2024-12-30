@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =========================================
-# Local settings for kunpeng2 (openEuler Linux ARM64)
+# Local settings for taishan (openEuler Linux ARM64)
 # =========================================
 
 
