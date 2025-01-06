@@ -592,7 +592,7 @@ DIV.kjohnson3 {
     color: #050;
 }
 
-/* kunpeng2 (Linux ARM64 openEuler 22.03 LTS-SP1) */
+/* kunpeng2 (Linux ARM64 openEuler) */
 .kunpeng2,
 .gcard TD.kunpeng2 {
     background: #E4E6FC;
@@ -606,3 +606,16 @@ DIV.kunpeng2 {
     color: #404;
 }
 
+/* taishan (Linux ARM64 openEuler) */
+.taishan,
+.gcard TD.taishan {
+    background: #E4E6FC;
+}
+.taishan.toned_down,
+TR.toned_down .taishan,
+TBODY.compact.gcard TR.even_row_number .taishan {
+    background: #D4D6EC;
+}
+DIV.taishan {
+    color: #404;
+}
