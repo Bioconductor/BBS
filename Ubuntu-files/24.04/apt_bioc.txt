@@ -8,6 +8,7 @@
 # the system, with the exception of BrowserViz whose unit tests will
 # timeout in that case.
 firefox                     # for packages using utils::browseURL()
+libaec-dev                  # to enable support for S3 VFD in Rhdf5lib
 graphviz                    # for Rgraphviz
 libgraphviz-dev             # for Rgraphviz
 libgtkmm-2.4-dev            # for HilbertVisGUI
