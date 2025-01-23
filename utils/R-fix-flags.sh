@@ -4,20 +4,24 @@ set -e  # Exit immediately if a simple command exits with a non-zero status
 
 new_flag="-Wall -Werror=format-security"
 
-echo "Add '$new_flag' to *FLAGS?"
-echo ""
-echo "IMPORTANT NOTE: Only do this for BioC >= 3.21 + R >= 4.5."
-echo "If you're installing R < 4.5 (for BioC < 3.21 builds), then"
-echo "use the R-fix-flags-old.sh script instead."
-echo ""
-while true; do
-	read -p "Please answer yes or no: " yn
-	case $yn in
-		[Yy]* ) break;;
-		[Nn]* ) exit;;
-		* ) ;;
-	esac
-done
+if [[ $# -eq 1 && $1 == "-y" ]]; then
+	echo "Applying $new_flag"
+else
+	echo "Add '$new_flag' to *FLAGS?"
+	echo ""
+	echo "IMPORTANT NOTE: Only do this for BioC >= 3.21 + R >= 4.5."
+	echo "If you're installing R < 4.5 (for BioC < 3.21 builds), then"
+	echo "use the R-fix-flags-old.sh script instead."
+	echo ""
+	while true; do
+		read -p "Please answer yes or no: " yn
+		case $yn in
+			[Yy]* ) break;;
+			[Nn]* ) exit;;
+			* ) ;;
+		esac
+	done
+fi
 
 cflags_line="^CFLAGS *=.*"
 cxxflags_line="^CXXFLAGS *=.*"
@@ -29,7 +33,11 @@ cxx23flags_line="^CXX23FLAGS *=.*"
 fcflags_line="^FCFLAGS *=.*"
 fflags_line="^FFLAGS *=.*"
 
-mv -i Makeconf Makeconf.original
+if [[ $# -eq 1 && $1 == "noninteractive" ]]; then
+	mv Makeconf Makeconf.original
+else
+	mv -i Makeconf Makeconf.original
+fi
 
 cat Makeconf.original \
 	| sed -r "s/^($cflags_line) $new_flag +(.*)$/\\1 \\2/" \
