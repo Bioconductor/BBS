@@ -12,6 +12,12 @@
 
 set -e  # Exit immediately if a simple command exits with a non-zero status
 
+if [ "x$2" != "x" ]; then
+    R_CMD="$2"
+else
+    R_CMD="R"
+fi
+
 # Extra .so for the following archs will be installed (in addition to the
 # native .so):
 #TARGET_ARCHS="/ppc /x86_64 /ppc64"
@@ -20,16 +26,16 @@ SINGLE_ARCH=true
 
 # Change dynamic shared library path for
 ARCH=`uname -m`  # x86_64 or arm64
-UNIVERSAL_GFORTRAN=`gfortran --version | grep 12.2.0`
+GFORTRAN_VERSION=`gfortran --version | grep "GNU Fortran" | awk -F ' ' '{print $4}'`
+GFORTRAN_MAJOR_VERSION=`echo "$GFORTRAN_VERSION" | awk -F '.' '{print $1}'`
 
-if [ ! -z "$UNIVERSAL_GFORTRAN" -a "$ARCH" == "x86_64" ]; then
-    LOCAL_DYLIB_DIR="/usr/local/lib"
-    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/x86_64-apple-darwin20.0/12.2.0"
-elif [ ! -z "$UNIVERSAL_GFORTRAN" -a "$ARCH" == "arm64" ]; then
-    LOCAL_DYLIB_DIR="/usr/local/lib"
-    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/aarch64-apple-darwin20.0/12.2.0"
+LOCAL_DYLIB_DIR="/usr/local/lib"
+
+if [ "$GFORTRAN_MAJOR_VERSION" -ge 12 -a "$ARCH" == "x86_64" ]; then
+    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/x86_64-apple-darwin20.0/$GFORTRAN_VERSION"
+elif [ "$GFORTRAN_MAJOR_VERSION" -ge 12 -a "$ARCH" == "arm64" ]; then
+    LOCAL_FORTRAN_DYLIB_DIR="/opt/gfortran/lib/gcc/aarch64-apple-darwin20.0/$GFORTRAN_VERSION"
 elif [ "$ARCH" == "x86_64" ]; then
-    LOCAL_DYLIB_DIR="/usr/local/lib"
     LOCAL_FORTRAN_DYLIB_DIR="/usr/local/gfortran/lib"
 else
     LOCAL_DYLIB_DIR="/opt/R/arm64/lib"
@@ -47,9 +53,11 @@ elif uname -a | grep -q "Version 15."; then
     DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
 else
     # Builds on any macOS >= High Sierra with High Sierra as **target**.
-    # On arm64 systems, libgcc_s.1.dylib is replaced with libgcc_s.1.1.dylib.
+    # From R 4.3 libgcc_s.1.dylib is replaced with libgcc_s.1.1.dylib.
 
-    if [ -z "$UNIVERSAL_GFORTRAN" ]; then
+    R_MINOR_VERSION=`echo 'cat(strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L])' | $R_CMD --no-echo`
+
+    if [ "$R_MINOR_VERSION" -le 3 ]; then
         DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
     else
         DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
@@ -77,13 +85,6 @@ srcpkg_filename=`echo "$srcpkg_filepath" | sed 's/.*\///'`
 
 FILENAME_PARSER="^(.*)_([^_]+)\.tar\.gz$"
 pkgname=`echo "$srcpkg_filename" | sed -E "s/$FILENAME_PARSER/\1/"`
-#pkgversion=`echo "$srcpkg_filename" | sed -E "s/$FILENAME_PARSER/\2/"`
-
-if [ "x$2" != "x" ]; then
-    R_CMD="$2"
-else
-    R_CMD="R"
-fi
 
 if [ "x$3" != "x" ]; then
     R_LIBS="$3"
@@ -91,7 +92,7 @@ else
     R_LIBS="`$R_CMD CMD sh -c 'echo "$R_HOME"'`/library"
 fi
 
-if [ -z "$UNIVERSAL_GFORTRAN" ]; then
+if [ "$R_MINOR_VERSION" -le 3 ]; then
     R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64")' | $R_CMD --no-echo`
 else
     R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64") else cat("-x86_64")' | $R_CMD --no-echo`
