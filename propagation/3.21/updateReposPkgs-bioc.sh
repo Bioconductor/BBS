@@ -67,10 +67,13 @@ echo ""
 MANUALS_DEST="$REPOS_ROOT/manuals"
 MANUALS_SRC="$BBS_OUTGOING_DIR/manuals"
 echo "Updating $BIOC_VERSION/bioc repo with reference manuals..."
-for i in `ls $MANUALS_SRC`; do
+for i in `ls $MANUALS_SRC/*.pdf`; do
 	pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
 	mkdir -p $MANUALS_DEST/$pkg/man
-	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
+	cp --update --verbose $MANUALS_SRC/$i.pdf $MANUALS_DEST/$pkg/man
+        if [ -f $i.html ]; then
+		cp --update --verbose $MANUALS_SRC/$i.html $MANUALS_DEST/$pkg/man
+	fi
 done
 
 echo "DONE."
