@@ -54,7 +54,7 @@ MANUALS_DEST="$REPOS_ROOT/manuals"
 MANUALS_SRC="$BBS_OUTGOING_DIR/manuals"
 echo "Updating $BIOC_VERSION/data/annotation repo with reference manuals..."
 for i in `ls $MANUALS_SRC`; do
-	pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
+	pkg=`echo $i| awk '{split($0,a,".(html|pdf)"); print(a[1])}'`
 	mkdir -p $MANUALS_DEST/$pkg/man
 	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
