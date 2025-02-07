@@ -17,13 +17,22 @@ makeMetaDbs <- function(outgoing_path, db_filepath) {
   # directory and always create all the databases
   web_dir <- file.path(bbs_central_rdir, "web", "packages")
   meta_dir <- file.path(bbs_central_rdir, "OUTGOING", "Meta")
-  dir.create(meta_dir, recursive = TRUE)
+  if (!dir.exists(meta_dir)) {
+    dir.create(meta_dir, recursive = TRUE)
+  }
 
-  biocViews::build_db_from_source(file.path(meat_dir, pkgs), bbs_central_rdir)
+  pkg_paths <- file.path(meat_dir, pkgs)
+  for (pkg_path in pkg_paths) {
+    biocViews::build_db_from_source(pkg_path, bbs_central_rdir)
+  }
 
   aliases_db_file <- file.path(meta_dir, "aliases.rds")
-  biocViews::build_meta_aliases_db(web_dir, aliases_db_file, TRUE)
+  meta_aliases_db <- biocViews::build_meta_aliases_db(web_dir, aliases_db_file,
+                                                      TRUE)
+  saveRDS(meta_aliases_db, aliases_db_file, version = 2)
 
   rdxrefs_db_file <- file.path(meta_dir, "rdxrefs.rds")
-  biocViews::build_meta_rdxrefs_db(web_dir, rdxrefs_db_file, TRUE)
+  meta_rdxrefs_db <- biocViews::build_meta_rdxrefs_db(web_dir, rdxrefs_db_file,
+                                                      TRUE)
+  saveRDS(meta_rdxrefs_db, rdxrefs_db_file, version = 2)
 }
