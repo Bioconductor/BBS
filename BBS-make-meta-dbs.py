@@ -9,12 +9,12 @@ import BBSutils
 import BBSvars
 import BBSbase
 
-def make_meta():
+def make_meta_dbs():
     ## Prepare Rexpr (must be a single string with no spaces).
     Rscript_path = os.path.join(BBSvars.BBS_home,
                                 'utils',
-                                'generateMetaDbs.R')
-    Rfun = 'generateMetaDbs'
+                                'makeMetaDbs.R')
+    Rfun = 'makeMetaDbs'
     OUTGOING_dir = 'OUTGOING'
     db_filepath = 'PROPAGATION_STATUS_DB.txt'
     Rfuncall = f"{Rfun}('{OUTGOING_dir}','{db_filepath}')"
@@ -48,8 +48,8 @@ if __name__ == "__main__":
         )
         sys.exit('=> EXIT.')
     print('BBS> ==============================================================')
-    print(f'BBS> [generateMetaDbs] STARTING on {time.asctime()} ...')
+    print(f'BBS> [makeMetaDbs] STARTING on {time.asctime()} ...')
     sys.stdout.flush()
-    generate_meta_dbs()
-    print(f'BBS> [generateMetaDbs] DONE on {time.asctime()} ...')
+    make_meta_dbs()
+    print(f'BBS> [makeMetaDbs] DONE on {time.asctime()} ...')
 

@@ -1,4 +1,4 @@
-generateMetaDbs <- function(outgoing_path, db_filepath) {
+makeMetaDbs <- function(outgoing_path, db_filepath) {
 
   meat_dir <- Sys.getenv("BBS_MEAT_PATH")
   bbs_central_rdir <- Sys.getenv("BBS_CENTRAL_RDIR")
