@@ -32,6 +32,7 @@ if [ -n "$BBS_OUTGOING_MAP" ]; then
     find OUTGOING -type d -exec chmod 755 {} \;
     $BBS_PYTHON_CMD $BBS_HOME/BBS-make-PROPAGATION_STATUS_DB.py
     chmod -R +r .
+    $BBS_PYTHON_CMD $BBS_HOME/BBS-make-meta.py
 fi
 
 # Generate the HTML report
