@@ -7,7 +7,7 @@ makeMetaDbs <- function(outgoing_path, db_filepath) {
   pkgs <- c()
   for (i in 1:dim(prop_status)[2]) {
     pkg_type_stage <- strsplit(colnames(prop_status)[i], "#")[[1]]
-    if ("source" %in% pkg_type_stage && 
+    if ("source" %in% pkg_type_stage &&
         strsplit(prop_status[i], ",")[[1]][1] %in% c("YES", "UNNEEDED")) {
         pkgs <- c(pkgs, pkg_type_stage[1])
     }

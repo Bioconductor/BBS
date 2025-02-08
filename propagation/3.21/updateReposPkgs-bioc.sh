@@ -73,5 +73,9 @@ for i in `ls $MANUALS_SRC`; do
 	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
 
+echo "Updating $SRC_CONTRIB with aliases and cross references dbs ..."
+META_SRC="$BBS_OUTGOING_DIR/Meta"
+cp --recursive --update --verbose $META_SRC $SRC_CONTRIB
+
 echo "DONE."
 exit 0
