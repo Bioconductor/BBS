@@ -17,6 +17,9 @@ WIN_CONTRIB="$REPOS_ROOT/bin/windows/contrib/$R_VERSION"
 MAC_BIG_SUR_x86_64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-x86_64/contrib/$R_VERSION"
 MAC_BIG_SUR_arm64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-arm64/contrib/$R_VERSION"
 
+META_SRC="$SRC_CONTRIB/Meta"
+META_R_EXPR="source('/home/biocbuild/BBS/utils/makeMetaDbs.R')"
+
 if [ ! -f "$PROPAGATION_DB_FILE" ]; then
         echo "ERROR: $PROPAGATION_DB_FILE not found. Did postrun.sh run?"
         exit 1
@@ -63,6 +66,7 @@ echo "========================================================================"
 /bin/date
 echo "------------------------------------------------------------------------"
 
+echo "Updating $META_SRC with aliases and cross refences dbs..."
 $Rscript -e "$META_R_EXPR; try(makeMetaDbs('$PROPAGATION_DB_FILE', '$REPOS_ROOT', '$META_SRC'))"
 
 echo ""
@@ -82,9 +86,6 @@ for i in `ls $MANUALS_SRC`; do
 	mkdir -p $MANUALS_DEST/$pkg/man
 	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
-
-echo "Updating $SRC_CONTRIB with aliases and cross references dbs ..."
-cp --recursive --update --verbose $META_SRC $SRC_CONTRIB
 
 echo "DONE."
 exit 0

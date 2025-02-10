@@ -12,7 +12,7 @@ makeMetaDbs <- function(db_filepath, repos_root, meta_path) {
     }
   }
 
-  web_dir <- file.path(repos_root "web", "packages")
+  web_dir <- file.path(repos_root, "web", "packages")
   meta_dir <- file.path(meta_path)
   if (!dir.exists(meta_dir)) {
     dir.create(meta_dir, recursive = TRUE)
