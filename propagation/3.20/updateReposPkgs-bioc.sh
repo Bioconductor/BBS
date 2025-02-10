@@ -58,6 +58,16 @@ update_repo "$MAC_BIG_SUR_arm64_CONTRIB" "mac.binary.big-sur-arm64" "tgz"
 
 echo ""
 
+echo ""
+echo "========================================================================"
+/bin/date
+echo "------------------------------------------------------------------------"
+
+$Rscript -e "$META_R_EXPR; try(makeMetaDbs('$PROPAGATION_DB_FILE', '$REPOS_ROOT', '$META_SRC'))"
+
+echo ""
+
+
 ## FIXME: Why aren't manuals propagated based on the same criteria as source
 ## packages? Looks like the former are propagated based on their timestamps
 ## only (see below) while for source packages we use the more refined
@@ -68,13 +78,12 @@ MANUALS_DEST="$REPOS_ROOT/manuals"
 MANUALS_SRC="$BBS_OUTGOING_DIR/manuals"
 echo "Updating $BIOC_VERSION/bioc repo with reference manuals..."
 for i in `ls $MANUALS_SRC`; do
-	pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
+	pkg=`echo $i| awk '{split($0,a,".(html|pdf)"); print(a[1])}'`
 	mkdir -p $MANUALS_DEST/$pkg/man
 	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
 
 echo "Updating $SRC_CONTRIB with aliases and cross references dbs ..."
-META_SRC="$BBS_OUTGOING_DIR/Meta"
 cp --recursive --update --verbose $META_SRC $SRC_CONTRIB
 
 echo "DONE."

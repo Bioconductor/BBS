@@ -17,6 +17,9 @@ WIN_CONTRIB="$REPOS_ROOT/bin/windows/contrib/$R_VERSION"
 MAC_BIG_SUR_x86_64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-x86_64/contrib/$R_VERSION"
 MAC_BIG_SUR_arm64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-arm64/contrib/$R_VERSION"
 
+META_SRC="$SRC_CONTRIB/Meta"
+META_R_EXPR="source('/home/biocbuild/BBS/utils/makeMetaDbs.R')"
+
 if [ ! -f "$PROPAGATION_DB_FILE" ]; then
         echo "ERROR: $PROPAGATION_DB_FILE not found. Did postrun.sh run?"
         exit 1
@@ -58,6 +61,16 @@ update_repo "$MAC_BIG_SUR_arm64_CONTRIB" "mac.binary.big-sur-arm64" "tgz"
 
 echo ""
 
+echo ""
+echo "========================================================================"
+/bin/date
+echo "------------------------------------------------------------------------"
+
+$Rscript -e "$META_R_EXPR; try(makeMetaDbs('$PROPAGATION_DB_FILE', '$REPOS_ROOT', '$META_SRC'))"
+
+echo ""
+
+
 ## FIXME: Why aren't manuals propagated based on the same criteria as source
 ## packages? Looks like the former are propagated based on their timestamps
 ## only (see below) while for source packages we use the more refined
@@ -74,7 +87,6 @@ for i in `ls $MANUALS_SRC`; do
 done
 
 echo "Updating $SRC_CONTRIB with aliases and cross references dbs ..."
-META_SRC="$BBS_OUTGOING_DIR/Meta"
 cp --recursive --update --verbose $META_SRC $SRC_CONTRIB
 
 echo "DONE."
