@@ -3,7 +3,7 @@ texlive
 texlive-font-utils          # for epstopdf
 texlive-pstricks            # provides pstricks.sty
 texlive-latex-extra         # provides fullpage.sty
-texlive-fonts-extra         # provides incosolata.sty
+texlive-fonts-extra         # provides inconsolata.sty
 texlive-bibtex-extra        # provides unsrturl.bst
 texlive-science             # provides algorithm.sty
 texlive-luatex              # provides luatex85.sty
