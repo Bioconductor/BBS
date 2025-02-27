@@ -6,6 +6,10 @@ Flavor >= g3.medium required for RbowtieCuda (g3.small is not enough)
 
 ## From the exouser account
 
+### Check locales
+
+See `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
+
 ### Install Ubuntu packages
 
 Install all Ubuntu packages listed in `BBS/Ubuntu-files/24.04/apt_optional_compile_R.txt`:

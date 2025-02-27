@@ -61,24 +61,7 @@ Once logged as `exouser`, install the usual public keys.
 
 ### From the exouser account
 
-- Set locale to `en_US.UTF-8`:
-    ```
-    sudo locale-gen en_US.UTF-8
-    sudo update-locale LANG=en_US.UTF-8
-    sudo reboot
-    ```
-  or, if the above didn't work:
-    ```
-    sudo dpkg-reconfigure locales
-    sudo reboot
-    ```
-- Set timezone to NY:
-    ```
-    sudo timedatectl set-timezone America/New_York
-    ```
-  Check the time with `date`. If it gets diplayed in the AM/PM format then
-  see `Prepare-Ubuntu-22.04-HOWTO.md` for how to change this to 24-hour
-  format.
+- Check locales: see `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
 
 - Create the `biocbuild` and `biocpush` accounts.
 
