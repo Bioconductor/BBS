@@ -158,16 +158,17 @@ account).
 
 - In `~/bin`, create symlinks to the `R` and `Rscript` executables used by
   the GPU-enabled builds. For example:
-
+    ```
     cd ~/bin
     ln -s ~biocbuild/bbs-3.21-bioc-gpu/R/bin/R
     ln -s ~biocbuild/bbs-3.21-bioc-gpu/R/bin/Rscript
+    ```
 
 - Start `R` (by just typing `R`) and try to install a Bioconductor package e.g.:
-
+    ```
     library(BiocCheck)
     install("BiocCheck", force=TRUE)
-
+    ```
   This will ask you if you'd like to create a personal library. Answer yes.
 
 ### For each review
