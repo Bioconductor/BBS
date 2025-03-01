@@ -1,10 +1,10 @@
-# Running Bioconductor GPU builds on Jetstream2 (experimental)
+# Running Bioconductor GPU-enabled builds on Jetstream2 (experimental)
 
 
 Flavor >= g3.medium required for RbowtieCuda (g3.small is not enough)
 
 
-## From the exouser account
+## 1. From the exouser account
 
 ### Check locales
 
@@ -45,8 +45,24 @@ Set Apache server DocumentRoot.
 
 See `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
 
+### Schedule automatic reboot every day at 5:45 am
 
-## From the biocbuild account
+Looks like repeatedly building/checking **RbowtieCuda** tends to put
+the builder in a weird state after a while, where it becomes hard to
+connect to it via ssh (it takes an abnormally long time to establish
+the ssh connection). Not sure why, this would require some investigation.
+In the meantime, we schedule a daily reboot, to reset the state of the
+builder.
+
+Add the following line to `exouser`'s crontab (`crontab -e`):
+
+    45 05   *   *   *    sudo /sbin/shutdown -r +1
+
+Note that we use a similar trick on the daily Windows builder to reset the
+state of the machine every day (see `Prepare-Windows-Server-2022-HOWTO.md`).
+
+
+## 2. From the biocbuild account
 
 Install the usual stuff in `~/.ssh/`.
 
@@ -86,7 +102,7 @@ Once R is compiled/installed, make sure to load the module again:
     module load nvhpc/24.7/nvhpc
 
 
-## Set up the GPU-enabled builds
+## 3. Set up the GPU-enabled builds
 
 WORK-IN-PROGRESS!
 
@@ -114,7 +130,7 @@ either and the report will simply mention that they are being built/checked
 somewhere else with a link to the GPU-enabled build report.
 
 
-## Set up reviewer account
+## 4. Set up reviewer account
 
 This is a temporary solution until we come up with something better/safer
 that can scale up as more packages with a strong GPU dep get submitted to
