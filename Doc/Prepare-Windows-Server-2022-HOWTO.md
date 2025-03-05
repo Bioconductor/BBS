@@ -658,7 +658,7 @@ In Dec. 2021, CRAN switched to a new toolchain to build R and R packages.
 
 - Go to https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html
 
-- Download Rtools44 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools44/files/rtools44-6104-60.exe`
+- Download Rtools44 for Windows 64-bit: `https://cran.r-project.org/bin/windows/Rtools/rtools44/files/rtools44-6459-6401.exe`
 
 - Run the installer and keep all the defaults. This will install Rtools44
   in `C:\Rtools44`.
