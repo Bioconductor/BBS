@@ -1418,15 +1418,15 @@ Required by Bioconductor package **rmspc**.
 #### Install the runtime
 
 Visit https://docs.microsoft.com/en-us/dotnet/core/install/macos. Download and
-install the 6.0 .NET runtime corresponding to the build system's macOS.
+install the 9.0 .NET runtime corresponding to the build system's macOS.
 
 ##### x86_64
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/8583970d-ca62-4053-9b25-01c2d2742062/8a5c9a04863a80655f483d67c3725255/dotnet-runtime-6.0.29-osx-x64.pkg
+    curl -LO https://download.visualstudio.microsoft.com/download/pr/e59ade14-21cb-4303-8875-69373a17234c/fdd434f76c113afae01211b02470c302/dotnet-runtime-9.0.3-osx-x64.pkg
 
 ##### arm64
 
-    curl -O https://download.visualstudio.microsoft.com/download/pr/99a222a4-b8fb-4d19-a91a-a69aeaf9ba06/fdd439f0dc45cb1357b03a30e2bc8f98/dotnet-runtime-6.0.29-osx-arm64.pkg
+    curl -LO https://download.visualstudio.microsoft.com/download/pr/c17c9c8a-11dc-41b4-975f-89b5b101a0e3/dbefaaf56c7388afb76cc96c76a13316/dotnet-runtime-9.0.3-osx-arm64.pkg
 
 ##### For all macs
 
