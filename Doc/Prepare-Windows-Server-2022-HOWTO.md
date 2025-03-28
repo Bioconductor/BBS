@@ -680,6 +680,11 @@ In Dec. 2021, CRAN switched to a new toolchain to build R and R packages.
   avoid any conflict with Strawberry Perl (we will install this later).
   E.g. rename to `perl_DO_NOT_USE.exe`.
 
+- **NOTE**: Whenever Rtools is updated, the CRAN package repository from the
+  biocpush account should be flushed. Remove the package binaries and
+  corresponding `PACKAGES` files along the windows `contrib` path, leaving a
+  blank `PACKAGES` file, then run the corresponding `pushRepos-*.sh`.
+
 TESTING: Log out and on again so that the changes to `Path` take effect. Then
 in a PowerShell window:
 
