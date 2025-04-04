@@ -7,7 +7,7 @@ set BBS_DEBUG=0
 
 set BBS_NODE_HOSTNAME=palomino8
 set BBS_USER=biocbuild
-set BBS_WORK_TOPDIR=E:\biocbuild\bbs-3.22-bioc
+set BBS_WORK_TOPDIR=F:\biocbuild\bbs-3.22-bioc
 set BBS_R_HOME=%BBS_WORK_TOPDIR%\R
 
 @rem palomino8 has 32 logical CPUs.
