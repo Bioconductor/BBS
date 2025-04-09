@@ -904,7 +904,7 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         ## (buildtype == 'bioc-gpu') and to incorporate the GPU-capable
         ## builders to the software builds, then we can get rid of this hack.
         display_link_to_gpu_builds = buildtype == 'bioc' and \
-                                     sys.platform not in ['win32', 'darwin']:
+                                     sys.platform not in ['win32', 'darwin']
         if display_link_to_gpu_builds:
             url = '%s/../bioc-gpu-LATEST/' % topdir
             TDcontent = 'see GPU-enabled build/check ' + \
