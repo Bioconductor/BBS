@@ -896,8 +896,22 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     elif not BBSreportutils.is_supported(pkg, node):
         TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
-        TDcontent = '... NOT SUPPORTED ...'
-        TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
+        ## This is only a temporary hack based on the questionable assumption
+        ## that a software package unsupported on Linux is GPU-reliant, which
+        ## is of course not necessarily the case in general, but it just
+        ## happens to be true at the moment for Bioconductor software packages.
+        ## TODO: If we decide to get rid of the dedicated GPU-enabled builds
+        ## (buildtype == 'bioc-gpu') and to incorporate the GPU-capable
+        ## builders to the software builds, then we can get rid of this hack.
+        display_link_to_gpu_builds = buildtype == 'bioc' and \
+                                     sys.platform not in ['win32', 'darwin']:
+        if display_link_to_gpu_builds:
+            url = '%s/../bioc-gpu-LATEST/' % topdir
+            TDcontent = 'see GPU-enabled build/check ' + \
+                        'report <A href="%s">here</A>' % url
+        else:
+            TDcontent = '... NOT SUPPORTED ...'
+            TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
     else:
         for stage in BBSreportutils.stages_to_display(buildtype):

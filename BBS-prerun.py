@@ -117,6 +117,10 @@ def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
                 unsupported += ', win'
         if unsupported != None:
             meat_index.write('UnsupportedPlatforms: %s\n' % unsupported)
+    if options != None:
+        GPU_reliance = options.get('GPU_reliance')
+        if GPU_reliance != None:
+            meat_index.write('GPU_reliance: %s\n' % GPU_reliance)
     meat_index.write('\n')
     return 0  # package will be added to the "meat index"
 

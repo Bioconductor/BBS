@@ -406,14 +406,23 @@ def _is_supported(unsupported_platforms, node_hostname,
 ### 'node_Arch' and 'node_pkgType' are the Arch and pkgType of node of name
 ### 'node_hostname', as specified in BBS/nodes/nodespecs.py.
 def get_meat_packages_for_node(meat_index_file, node_hostname,
-                               node_Arch=None, node_pkgType=None):
+                               node_Arch=None, node_pkgType=None,
+                               buildtype=None):
     dcf_records = parse_DCF(meat_index_file)
     pkgs = []
     for dcf_record in dcf_records:
         pkg = dcf_record['Package']
         unsupported_platforms = dcf_record.get('UnsupportedPlatforms')
-        if (_is_supported(unsupported_platforms, node_hostname,
-                          node_Arch, node_pkgType)):
+        ok1 = _is_supported(unsupported_platforms, node_hostname,
+                            node_Arch, node_pkgType)
+        GPU_reliance = dcf_record.get('GPU_reliance')
+        if buildtype == 'bioc':
+            ok2 = GPU_reliance != 'required'
+        elif buildtype == 'bioc-gpu':
+            ok2 = GPU_reliance in ['required', 'optional']
+        else:
+            ok2 = True
+        if ok1 and ok2:
             pkgs.append(pkg)
     pkgs.sort(key=str.lower)
     return pkgs
