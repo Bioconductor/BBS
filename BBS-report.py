@@ -903,12 +903,12 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         ## TODO: If we decide to get rid of the dedicated GPU-enabled builds
         ## (buildtype == 'bioc-gpu') and to incorporate the GPU-capable
         ## builders to the software builds, then we can get rid of this hack.
-        display_link_to_gpu_builds = buildtype == 'bioc' and \
-                                     sys.platform not in ['win32', 'darwin']
-        if display_link_to_gpu_builds:
+        pkgType = BBSutils.getNodeSpec(node.hostname, 'pkgType')
+        show_link_to_gpu_builds = buildtype == 'bioc' and pkgType == "source"
+        if show_link_to_gpu_builds:
             url = '%s/../bioc-gpu-LATEST/' % topdir
-            TDcontent = 'see GPU-enabled build/check ' + \
-                        'report <A href="%s">here</A>' % url
+            TDcontent = 'see&nbsp;GPU-enabled&nbsp;build/check&nbsp;' + \
+                        'report&nbsp;<A href="%s">here</A>' % url
         else:
             TDcontent = '... NOT SUPPORTED ...'
             TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
