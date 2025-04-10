@@ -907,8 +907,9 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         show_link_to_gpu_builds = buildtype == 'bioc' and pkgType == "source"
         if show_link_to_gpu_builds:
             url = '%s/../bioc-gpu-LATEST/' % topdir
-            TDcontent = 'see&nbsp;GPU-enabled&nbsp;build/check&nbsp;' + \
-                        'report&nbsp;<A href="%s">here</A>' % url
+            Astyle = "display: inline; text-decoration: underline;"
+            TDcontent = 'see GPU-enabled build/check report ' + \
+                        '<A href="%s" style="%s">here</A>' % (url, Astyle)
         else:
             TDcontent = '... NOT SUPPORTED ...'
             TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
