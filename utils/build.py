@@ -58,7 +58,7 @@ from time import sleep
 
 
 HOSTNAME = "kjohnson3"
-BIOC_VERSION = "3.21"
+BIOC_VERSION = "3.22"
 LOG_PATH = f"/Users/biocbuild/bbs-{BIOC_VERSION}-bioc/log/build.log"
 
 def build(logger):
