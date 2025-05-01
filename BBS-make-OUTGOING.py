@@ -11,7 +11,6 @@ import sys
 import os
 import time
 import shutil
-import subprocess
 
 import bbs.fileutils
 import bbs.parse
@@ -121,7 +120,6 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
         if BBSvars.buildtype in ['workflows', 'books', 'bioc-mac-arm64']:
             pass
         elif source_node:
-            # pdf manuals
             pdf_file = os.path.join(BBSvars.products_in_rdir.path,
                                     BBSutils.getSourceNode(),
                                     'checksrc',
@@ -134,20 +132,6 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
                 os.link(pdf_file, dst) # create hard link to avoid making a copy
             else:
                 print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pdf_file)
-            # html manuals
-            rel_link = "../../%s/man/%s.html"
-            hooks = f"hooks <- list(pkg_href = function(pkg) sprintf('{rel_link}', pkg, pkg));"
-            html_file = os.path.join(BBSvars.Central_rdir.path,
-                                     "OUTGOING/manuals",
-                                    '%s.html' % pkg)
-            Rexpr = hooks + f"tools::pkg2HTML('{pkg_path}',out='{html_file}',hooks=hooks)"
-            cmd = BBSbase.Rexpr2syscmd(Rexpr)
-            try:
-                print(Rexpr)
-                subprocess.run(cmd, stdout=None, stderr=subprocess.STDOUT,
-                              shell=True, check=True)
-            except subprocess.CalledProcessError as e:
-                print("BBS> [stage6b]     SKIPPED (could not generate %s)" % html_file)
     print('BBS> [stage6b] END copying outgoing packages from %s.' % srcdir)
     return
 
