@@ -12,7 +12,7 @@ libaec-dev                  # to enable support for S3 VFD in Rhdf5lib
 graphviz                    # for Rgraphviz
 libgraphviz-dev             # for Rgraphviz
 libgtkmm-2.4-dev            # for HilbertVisGUI
-libgsl-dev                  # for GLAD
+libgsl-dev                  # for GLAD and DirichletMultinomial
 libsbml5-dev                # for rsbml
 automake                    # for RProtoBufLib
 libnetcdf-dev               # for mzR, RNetCDF
