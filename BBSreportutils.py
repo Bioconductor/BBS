@@ -131,6 +131,8 @@ def make_report_title(report_nodes):
         title = "Books build"
     elif buildtype == "bioc-longtests":
         title = "Long Tests"
+    elif buildtype == "bioc-gpu":
+        title = '---&nbsp;experimental!&nbsp;---<BR>GPU-enabled build/check'
     elif buildtype == "bioc-mac-arm64":
         title = "Mac ARM64 build"
     elif buildtype == "bioc-rapid":
@@ -158,6 +160,8 @@ def make_report_title(report_nodes):
             title += " annotations"
         elif buildtype == "data-experiment":
             title += " experimental data"
+        elif buildtype == "bioc-gpu":
+            title += "<BR>Report updated every 6 hours"
     return title
 
 def stage_label(stage):
@@ -177,7 +181,7 @@ def stage_label(stage):
 ## we run 'buildsrc' (STAGE3) and 'checksrc' (STAGE4) but we only display
 ## the results of 'checksrc' (CHECK column on the report).
 def stages_to_display(buildtype):
-    if buildtype in ["data-annotation", "data-experiment", "books", "bioc-rapid"]:
+    if buildtype in ["data-annotation", "data-experiment", "books", "bioc-gpu", "bioc-rapid"]:
         return ['install', 'buildsrc', 'checksrc']
     if buildtype == "workflows":
         return ['install', 'buildsrc']

@@ -40,6 +40,17 @@ def remakeCentralRdir(Central_rdir):
 ### case it wil go to the "skipped index"), and 2 if it's ignored.
 def _add_or_skip_or_ignore_package(pkgsrctree, meat_index):
     options = bbs.parse.parse_BBSoptions_from_pkgsrctree(pkgsrctree)
+    if BBSvars.buildtype == "bioc-gpu":
+        ## Ignore the package if it has no .BBSoptions file, or if the file
+        ## has no GPU_reliance entry, or if the entry is not 'required'
+        ## or 'optional'.
+        if options == None:
+            return 2  # package will be ignored
+        GPU_reliance = options.get('GPU_reliance')
+        if GPU_reliance == None:
+            return 2  # package will be ignored
+        if GPU_reliance not in ['required', 'optional']:
+            return 2  # package will be ignored
     if BBSvars.buildtype == "bioc-longtests":
         ## Ignore the package if it has no .BBSoptions file, or if the file
         ## has no RunLongTests entry, or if the entry is not TRUE.

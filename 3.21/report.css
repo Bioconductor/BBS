@@ -508,6 +508,34 @@ DIV.teran2 {
     color: #005;
 }
 
+/* biocgpu (Ubuntu 22.04) */
+.biocgpu,
+.gcard TD.biocgpu {
+    background: #E7E2FC;
+}
+.biocgpu.toned_down,
+TR.toned_down .biocgpu,
+TBODY.compact.gcard TR.even_row_number .biocgpu {
+    background: #D7D2EC;
+}
+DIV.biocgpu {
+    color: #005;
+}
+
+/* kakapo1 (Ubuntu 22.04) */
+.kakapo1,
+.gcard TD.kakapo1 {
+    background: #E0E4FE;
+}
+.kakapo1.toned_down,
+TR.toned_down .kakapo1,
+TBODY.compact.gcard TR.even_row_number .kakapo1 {
+    background: #D0D4EE;
+}
+DIV.kakapo1 {
+    color: #005;
+}
+
 /* palomino7 */
 .palomino7,
 .gcard TD.palomino7 {
