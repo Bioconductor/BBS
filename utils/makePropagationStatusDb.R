@@ -335,6 +335,19 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs,
 ### makePropagationStatusDb()
 ###
 
+### Strangely tools::write_PACKAGES() refuses to write an empty PACKAGES file
+### if it finds no packages in 'dir'. .write_PACKAGES2() fixes that.
+.write_PACKAGES2 <- function(dir=".", ...)
+{
+    stopifnot(dir.exists(dir))
+    n <- tools::write_PACKAGES(dir, ...)
+    if (n == 0L) {
+        PACKAGES_path <- file.path(dir, "PACKAGES")
+        file.create(PACKAGES_path)  # creates empty file
+    }
+    invisible(n)
+}
+
 .write_PACKAGES_to_OUTGOING_subdir <- function(OUTGOING_subdir, type)
 {
     PACKAGES_path <- file.path(OUTGOING_subdir, "PACKAGES")
@@ -345,7 +358,7 @@ compute_propagation_statuses <- function(OUTGOING_pkgs, available_pkgs,
     }
     .prettymsg("- Run write_PACKAGES() on ", OUTGOING_subdir, "/ ... ")
     type <- gsub(".big-sur-(x86_64|arm64)", "", type, fixed=FALSE)
-    tools::write_PACKAGES(OUTGOING_subdir, type=type)
+    .write_PACKAGES2(OUTGOING_subdir, type=type)
     message("OK")
 }
 
