@@ -45,22 +45,6 @@ Set Apache server DocumentRoot.
 
 See `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
 
-### Schedule automatic reboot every day at 5:45 am
-
-Looks like repeatedly building/checking **RbowtieCuda** tends to put
-the builder in a weird state after a while, where it becomes hard to
-connect to it via ssh (it takes an abnormally long time to establish
-the ssh connection). Not sure why, this would require some investigation.
-In the meantime, we schedule a daily reboot, to reset the state of the
-builder.
-
-Add the following line to `exouser`'s crontab (`crontab -e`):
-
-    45 05   *   *   *    sudo /sbin/shutdown -r +1
-
-Note that we use a similar trick on the daily Windows builder to reset the
-state of the machine every day (see `Prepare-Windows-Server-2022-HOWTO.md`).
-
 
 ## 2. From the biocbuild account
 
@@ -104,13 +88,9 @@ Once R is compiled/installed, make sure to load the module again:
 
 ## 3. Set up the GPU-enabled builds
 
-WORK-IN-PROGRESS!
-
-Some tweaks to the BBS code will be needed to support the GPU-enabled builds.
-
-In the short term, these builds are going to run as _standalone_ builds i.e.
-they will run independently of the daily builds, will have their own schedule,
-and will produce their own build report. The only thing that they share with
+For now these builds are running as _standalone_ builds i.e. they run
+independently of the daily builds, with their own schedule, and they
+produce their own build report. The only thing that they share with
 the software daily builds is that they will propagate the package source
 tarballs to the software repo.
 
@@ -119,7 +99,7 @@ package) need to be added to these builds. These packages should still
 be added to the usual software manifest but they also need to have
 a `.BBSoptions` file with the following lines:
 
-    GPUbuilds: TRUE
+    GPU_reliance: required
     UnsupportedPlatforms: win, mac
 
 These package will still show up on the daily software report but they
@@ -128,6 +108,11 @@ NOT SUPPORTED on Windows and Mac like any other package not supported
 on these platforms. On Linux, they won't go thru INSTALL/BUILD/CHECK
 either and the report will simply mention that they are being built/checked
 somewhere else with a link to the GPU-enabled build report.
+
+Other packages that can take advantage of the presence of a GPU but don't
+require it only need to add the following line in their `.BBSoptions` file:
+
+    GPU_reliance: optional
 
 
 ## 4. Set up reviewer account
