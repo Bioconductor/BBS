@@ -508,6 +508,20 @@ DIV.teran2 {
     color: #005;
 }
 
+/* biocgpu (Ubuntu 22.04) */
+.biocgpu,
+.gcard TD.biocgpu {
+    background: #E7E2FC;
+}
+.biocgpu.toned_down,
+TR.toned_down .biocgpu,
+TBODY.compact.gcard TR.even_row_number .biocgpu {
+    background: #D7D2EC;
+}
+DIV.biocgpu {
+    color: #005;
+}
+
 /* palomino8 */
 .palomino8,
 .gcard TD.palomino8 {
