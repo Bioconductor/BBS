@@ -18,7 +18,6 @@ automake                    # for RProtoBufLib
 libnetcdf-dev               # for mzR, RNetCDF
 libopenbabel-dev            # for ChemmineOB
 libeigen3-dev               # for ChemmineOB
-ocl-icd-opencl-dev          # for gpuMagic
 libavfilter-dev             # for av/spacialHeatmap
 # libfribidi-dev is for CRAN package textshaping which BioC
 # package EnhancedVolcano indirectly depends on via ragg and ggrastr.
@@ -30,4 +29,3 @@ collectl                    # for Rcollectl
 vienna-rna                  # for GeneGA
 aspnetcore-runtime-8.0      # for rmspc
 python3-sklearn             # for seqArchR
-

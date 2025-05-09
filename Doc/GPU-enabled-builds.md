@@ -8,13 +8,16 @@ Flavor >= g3.medium required for RbowtieCuda (g3.small is not enough)
 
 ### Check locales
 
-See `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
+See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for the details.
 
 ### Install Ubuntu packages
 
-Install all Ubuntu packages listed in `BBS/Ubuntu-files/24.04/apt_optional_compile_R.txt`:
+Install all Ubuntu packages listed in `/apt_optional_compile_R.txt`,
+`BBS/Ubuntu-files//apt_cran.txt`,  and `BBS/Ubuntu-files/24.04/apt_bioc.txt`:
 
-    sudo apt install gobjc libpng-dev libjpeg-dev libtiff-dev libcairo2-dev libicu-dev tcl-dev tk-dev default-jdk
+    BBS_UBUNTU_PATH=
+    BBS_PACKAGES_FILE=
+    sudo apt install $(cat $BBS_UBUNTU_PATH/$BBS_PACKAGES_FILE | awk '/^[^#]/ {print $1}')
 
 Plus:
 
@@ -22,14 +25,15 @@ Plus:
     sudo apt install pandoc
     sudo apt install texlive-latex-base texlive-fonts-extra
 
-    sudo apt install libxml2-dev  # required by CRAN package xml2 and XML
     sudo apt install libthrust-dev libcub-dev  # required by RbowtieCuda
 
-No need to install anything else for now.
+Note: OpenCL (`ocl-icd-opencl-dev`) can break the Nvidia drivers in Jetstream2
+that are not available anywhere. If a driver breaks, you will have to submit
+a support ticket and ask for the driver to be reinstalled.
 
 ### Run Xvfb as a service
 
-See `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
+See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for the details.
 
 ### Create `biocbuild` account
 
@@ -43,8 +47,14 @@ Create `/home/biocbuild/public_html/BBS` from the `biocbuild` account.
 
 Set Apache server DocumentRoot.
 
-See `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
+See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for the details.
 
+### Add volume if running release and devel on same machine
+
+Since the default g3.medium has 60GB, it may be necessary to add an extra
+volume if running both the release and devel builds. Some of
+`/home/biocbuild/bbs-*-bioc-gpu` or `/home/biocpush/PACKAGES` can reside on
+the volume.
 
 ## 2. From the biocbuild account
 
@@ -72,7 +82,7 @@ Create `bbs-X.Y-bioc-gpu` directory structure e.g.:
 
 Install R:
 
-See `BBS/Doc/Prepare-Ubuntu-22.04-HOWTO.md` for the details.
+See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for the details.
 
 IMPORTANT: The GPU builds need access to the nvidia compiler (`nvcc` command)
 which is provided by the `nvhpc/24.7/nvhpc` module. However, for some reason
@@ -170,4 +180,3 @@ account).
 
 Preferrably only one reviewer at a time should work on the machine so they
 don't step on each other toes.
-
