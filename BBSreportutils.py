@@ -136,7 +136,8 @@ def make_report_title(report_nodes):
     elif buildtype == "bioc-mac-arm64":
         title = "Mac ARM64 build"
     elif buildtype == "bioc-rapid":
-        title = 'Rapid builds (Linux only) of a subset of BioC 3.21<BR>' + \
+        title = 'Rapid builds (Linux only) of a subset ' + \
+                'of BioC %s<BR>' % BBSvars.bioc_version + \
                 'Report updated every 6 hours'
         return title
     elif buildtype == "bioc-testing":
