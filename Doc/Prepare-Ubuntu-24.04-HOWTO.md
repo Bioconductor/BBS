@@ -526,6 +526,12 @@ For CRAN packages, install [apt_cran.txt](../Ubuntu-files/24.04/apt_cran.txt).
 
 For BioC packages, install [apt_bioc.txt](../Ubuntu-files/24.04/apt_bioc.txt).
 
+#### Packages needed by some CRAN and/or BioC packages that conflict with Nvidia drivers
+
+Warning: These packages can break Nvidia drivers. For machines without Nvidia
+drivers, install
+[apt_nvidia_conflict.txt](../Ubuntu-files/24.04/apt_nvidia_conflict.txt).
+
 #### IMPORTANT NOTES
 
 The list of things that need to be installed on a Linux builder is in

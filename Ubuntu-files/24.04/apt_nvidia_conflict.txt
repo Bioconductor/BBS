@@ -1,0 +1,2 @@
+# Required apt packages that can break Nvidia drivers
+ocl-icd-opencl-dev          # for bioc gpuMagic

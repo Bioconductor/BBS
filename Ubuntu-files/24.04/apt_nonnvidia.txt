@@ -1,2 +1,0 @@
-# Required apt package that can break Nvidia drivers
-ocl-icd-opencl-dev          # for gpuMagic

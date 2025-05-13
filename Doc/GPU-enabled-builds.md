@@ -31,6 +31,21 @@ Note: OpenCL (`ocl-icd-opencl-dev`) can break the Nvidia drivers in Jetstream2
 that are not available anywhere. If a driver breaks, you will have to submit
 a support ticket and ask for the driver to be reinstalled.
 
+#### Holding packages
+
+To prevent accidental removal, the following packages have been held on
+`biocgpu`:
+
+    network-manager
+    network-manager-config-connectivity-ubuntu
+    network-manager-openvpn-gnome
+    network-manager-pptp-gnome
+    nvidia-linux-grid-535
+
+See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for more details on holding.
+Removal of Nvidia drivers require you to submit a support ticket
+to Jetstream2 for reinstallation.
+
 ### Run Xvfb as a service
 
 See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for the details.
