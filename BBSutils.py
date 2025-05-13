@@ -114,7 +114,8 @@ def getSourceNode():
     source_machines = []
     for build in getenv('BBS_OUTGOING_MAP').split(" "):
         if build.count("source"):
-            source_machines.append(build.strip("source:|/buildsrc)"))
+            nn = build.replace("source:", "").replace("/buildsrc", "")
+            source_machines.append(nn)
     return source_machines[0]
 
 
