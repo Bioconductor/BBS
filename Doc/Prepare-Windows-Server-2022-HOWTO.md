@@ -1244,6 +1244,29 @@ if you were already logged on), in a PowerShell window:
     which dotnet    # /c/Program Files/dotnet/dotnet
 
 
+###  4.8 Set LongPathsEnabled
+
+Some packages, like `orthos`, may install Python packages along long file paths
+and `R CMD build` will fail if `LongPathsEnabled` isn't `1` in the Windows
+registry. The build report results may not reveal the cause of the failure;
+however, if you manually `R CMD build`, `pip` may display a warning that long
+file paths aren't enabled.
+
+Check if `LongPathsEnabled` is set:
+
+    Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
+-Name "LongPathsEnabled"
+
+Set `LongPathsEnabled`:
+
+    New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
+    -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+
+You may need to reboot for it to take effect.
+
+For more details, see
+https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=powershell#enable-long-paths-in-windows-10-version-1607-and-later.
+
 
 ## 5. Known issues
 
