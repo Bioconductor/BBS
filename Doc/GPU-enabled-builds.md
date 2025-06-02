@@ -71,44 +71,45 @@ volume if running both the release and devel builds. Some of
 `/home/biocbuild/bbs-*-bioc-gpu` or `/home/biocpush/PACKAGES` can reside on
 the volume.
 
+
 ## 2. From the biocbuild account
 
-Install the usual stuff in `~/.ssh/`.
+- Install the usual stuff in `~/.ssh/`.
 
-Add `module load nvhpc/24.7/nvhpc` to `~/.profile`. Logout and login again
-for the change to take effect.
+- Add the following lines to `~/.profile`:
+    ```
+    module load nvhpc/24.7/nvhpc
+    unset CC CXX F77 F90 FC
+    ```
+  Logout and login again for the change to take effect.
+  Doing `unset CC CXX F77 F90 FC` prevents the NVIDIA compiler from
+  becoming the default compiler.
+  Note that the NVIDIA compiler is not a substitute for `gcc` in general
+  e.g. it cannot be used to compile R or Python or any code that relies
+  on compilation flags supported by the latter but not the former.
 
-Check:
-
+- Check:
+    ```
     nvidia-smi
     nvcc --version
+    echo $CC $CXX $F77 $F90 $FC  # should display a blank line
+    ```
 
-Clone BBS:
-
+- Clone BBS:
+    ```
     cd
     git clone git@github.com:Bioconductor/BBS
+    ```
 
-Create `bbs-X.Y-bioc-gpu` directory structure e.g.:
-
+- Create `bbs-X.Y-bioc-gpu` directory structure e.g.:
+    ```
     cd
     mkdir bbs-3.21-bioc-gpu
     cd bbs-3.21-bioc-gpu
     mkdir rdownloads log
+    ```
 
-Install R:
-
-See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for the details.
-
-IMPORTANT: The GPU builds need access to the nvidia compiler (`nvcc` command)
-which is provided by the `nvhpc/24.7/nvhpc` module. However, for some reason
-the module breaks R configure script so make sure to unload it before
-installing R:
-
-    module unload nvhpc/24.7/nvhpc
-
-Once R is compiled/installed, make sure to load the module again:
-
-    module load nvhpc/24.7/nvhpc
+- Install R: See `BBS/Doc/Prepare-Ubuntu-24.04-HOWTO.md` for the details.
 
 
 ## 3. Set up the GPU-enabled builds
@@ -157,13 +158,18 @@ account).
 
 - Create folders `~/bin` and `~/sandbox`.
 
-- Add `module load nvhpc/24.7/nvhpc` to `~/.profile`. Logout and login again
-  for the change to take effect.
+- Add the following lines to `~/.profile`:
+    ```
+    module load nvhpc/24.7/nvhpc
+    unset CC CXX F77 F90 FC
+    ```
+  Logout and login again for the change to take effect.
 
 - Check:
     ```
     nvidia-smi
     nvcc --version
+    echo $CC $CXX $F77 $F90 $FC  # should display a blank line
     ```
 
 - In `~/bin`, create symlinks to the `R` and `Rscript` executables used by
