@@ -1531,7 +1531,7 @@ particular version.
 
     ~$ sudo apt-mark hold libcurl4-openssl-dev
     libcurl4-openssl-dev set on hold.
-    ~$ sudo apt-mark showhold
+    ~$ apt-mark showhold
     libcurl4-openssl-dev
     pandoc
 
