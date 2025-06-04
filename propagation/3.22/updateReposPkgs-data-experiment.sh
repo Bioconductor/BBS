@@ -14,10 +14,6 @@ PROPAGATION_DB_FILE="$BBS_OUTGOING_DIR/../PROPAGATION_STATUS_DB.txt"
 REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/data/experiment"
 SRC_CONTRIB="$REPOS_ROOT/src/contrib"
 
-META_SRC="$SRC_CONTRIB/Meta"
-META_R_EXPR="source('/home/biocbuild/BBS/utils/makeMetaDbs.R')"
-MEAT_PATH="/home/biocbuild/bbs-$BIOC_VERSION-data-experiment/meat"
-
 if [ ! -f "$PROPAGATION_DB_FILE" ]; then
         echo "ERROR: $PROPAGATION_DB_FILE not found. Did postrun.sh run?"
         exit 1
@@ -62,13 +58,6 @@ for i in `ls $MANUALS_SRC`; do
 	mkdir -p $MANUALS_DEST/$pkg/man
 	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
 done
-echo ""
-echo "========================================================================"
-/bin/date
-echo "------------------------------------------------------------------------"
-
-echo "Updating $META_SRC with aliases and cross refences dbs..."
-$Rscript -e "$META_R_EXPR; try(makeMetaDbs('$PROPAGATION_DB_FILE', '$MEAT_PATH', '$REPOS_ROOT', '$META_SRC'))"
 
 echo "DONE."
 exit 0
