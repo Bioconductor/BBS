@@ -201,3 +201,105 @@ account).
 
 Preferrably only one reviewer at a time should work on the machine so they
 don't step on each other toes.
+
+
+## 5. Alternatively setting up a GPU build using a container
+
+You can run nvidia-based BBS containers at
+https://github.com/Bioconductor/bioconductor_salt/pkgs/container/bioconductor_salt.
+
+### 5.1 Prepare the host machine
+
+You must install `nvidia-container-toolkit` to expose the host machine's GPU to
+the container. Prior to installing you should have the proper Nvidia drivers
+installed and you should be able to use `nvidia-smi` to display the version.
+
+Note: installing the `nvidia-container-toolkit` may alter software on the host
+container, so it should be done carefully noting what may be installed or
+removed.
+
+    sudo apt install docker nvidia-container-toolkit
+
+After installation, restart the host machine and verify containers are able to
+see GPU and do not require sudo:
+
+    docker run --gpus all nvidia/cuda nvidia-smi
+
+You should see output similar to running `nvidia-smi` on the host machine.
+
+Note: You can use `docker ps -a` to show the name of the container and use
+`docker rm` to remove it.
+
+### 5.2 Set up biocbuild account
+
+Set up biocbuild account as previously described but set the user id to 1007
+as the container assumes this is the user who will run the builds.
+
+    sudo useradd biocbuild -u 1007
+
+Also, set up the `.ssh/config` and add the ssh key.
+
+Note: If 1007 cannot be used as the id, it should be altered by the container.
+
+### 5.3 Initial container run
+
+The container will have volumes assigned to the following locations:
+* /home/biocbuild/.ssh
+* /home/biocbuild/.cache
+* /home/biocbuild/BBS
+* /home/biocbuild/bbs-3.22-bioc-gpu
+
+So these locations should exist and the log should be created inside the gpu
+build directory.
+
+You can then download the container with
+
+    docker run \
+      --name bbscontainer \
+      -h amarone \
+      --gpus all \
+      -v /home/biocbuild/.ssh:/home/biocbuild/.ssh \
+      -v /home/biocbuild/.cache:/home/biocbuild/.cache \
+      -v /home/biocbuild/bbs-3.22-bioc-gpu:/home/biocbuild/bbs-3.22-bioc-gpu \
+      -v /home/biocbuild/BBS:/home/biocbuild/BBS \
+      -it ghcr.io/bioconductor/bioconductor_salt:devel-nvidia-noble-24.04-bioc-3.22 bash
+
+You can use this to check if you can create files in the container that will
+reside on the host machine as well as use `nvidia-smi` to determine GPUs are
+available to the container.
+
+For example, to check that you can create files that remain on the host
+
+    docker exec bbscontainer touch /home/biocbuild/bbs-3.22-bioc-gpu/mytmp
+    ls /home/biocbuild/bbs-3.22-bioc-gpu/mytmp # on the host machine
+
+Note that because we mount the bioc-gpu directory as a volume, R must be
+available in another directory, which is the bioc directory in the container.
+
+The container can be stopped and started with `docker stop bbscontainer` and
+`docker start bbscontainer`. You can use `docker exec -it bbscontainer bash` to
+start a bash session for troubleshooting.
+
+### 5.4 Run the build for the first time
+
+Run the build with
+
+    docker exec bbscontainer /bin/bash --login -c 'export USER=biocbuild && cd /home/biocbuild/BBS/3.22/bioc-gpu/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.22-bioc-gpu/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+Note that `USER` is exported. Without it, the build will fail because it expects
+to have `USER` available but it is not inside the container. This may be due to
+the fact that you can pass the name of the user as an argument to docker.
+
+After the initial build, verify all the products are created in the bioc-gpu
+directory and that they have been rsynced to the primary builder.
+
+### 5.5 Set up the cronjob
+
+For the cronjob, we same docker command. In the example below, we start and
+stop the container; however, it may not be necessary.
+
+    40 03,09,15,21 * * * docker start bbscontainer
+
+    45 03,09,15,21 * * * docker exec bbscontainer /bin/bash --login -c 'export USER=biocbuild && cd /home/biocbuild/BBS/3.22/bioc-gpu/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.22-bioc-gpu/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
+
+    00 05,11,17,23 * * * docker stop bbscontainer
