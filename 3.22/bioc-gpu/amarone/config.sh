@@ -12,7 +12,7 @@ export BBS_DEBUG="0"
 export BBS_NODE_HOSTNAME="amarone"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.22-bioc-gpu"
-export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
+export BBS_R_HOME="/home/biocbuild/bbs-3.22-bioc/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
 # amarone has many logical CPUs but only 1 GPU so for now we err on the side
