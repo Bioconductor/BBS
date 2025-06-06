@@ -180,10 +180,11 @@ def get_list_of_target_pkgs():
                                             BBSvars.meat_path)
     node_hostname = BBSvars.node_hostname
     node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
+    node_Platform = BBSutils.getNodeSpec(node_hostname, 'Platform')
     node_pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
     return bbs.parse.get_meat_packages_for_node(meat_index_path, node_hostname,
-                                                node_Arch, node_pkgType,
-                                                BBSvars.buildtype)
+                                       node_Arch, node_Platform, node_pkgType,
+                                       BBSvars.buildtype)
 
 def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
     print('BBS> Get list of source tarballs to %s ...' % stage_label, end=' ')

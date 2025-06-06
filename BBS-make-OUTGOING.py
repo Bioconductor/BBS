@@ -95,12 +95,13 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
         os.mkdir(manuals_dir)
     print('BBS> [stage6b] BEGIN copying outgoing packages from %s.' % srcdir)
     node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
+    node_Platform = BBSutils.getNodeSpec(node_hostname, 'Platform')
     node_pkgType = BBSutils.getNodeSpec(node_hostname, 'pkgType')
     meat_index_path = os.path.join(BBSvars.Central_rdir.path,
                                    BBSutils.meat_index_file)
     pkgs = bbs.parse.get_meat_packages_for_node(meat_index_path, node_hostname,
-                                                node_Arch, node_pkgType,
-                                                BBSvars.buildtype)
+                                       node_Arch, node_Platform, node_pkgType,
+                                       BBSvars.buildtype)
     meat_index = bbs.parse.get_meat_packages(meat_index_path, as_dict=True)
     for pkg in pkgs:
         if block_package(node_hostname, node_id, pkg):

@@ -89,7 +89,8 @@ def set_NODES(fancynames_in_one_string):
             pkgType = BBSutils.getNodeSpec(hostname, 'pkgType')
             pkgs = bbs.parse.get_meat_packages_for_node(
                                                BBSutils.meat_index_file,
-                                               hostname, arch, pkgType,
+                                               hostname,
+                                               arch, platform, pkgType,
                                                BBSvars.buildtype)
         node = Node(hostname, node_id, os_html, arch, platform, buildbin, pkgs)
         NODES.append(node)
