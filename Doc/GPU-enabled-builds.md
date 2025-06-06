@@ -208,6 +208,9 @@ don't step on each other toes.
 You can run nvidia-based BBS containers at
 https://github.com/Bioconductor/bioconductor_salt/pkgs/container/bioconductor_salt.
 
+The only machine currently running containers is amarone. It is also running in
+UTC time.
+
 ### 5.1 Prepare the host machine
 
 You must install `nvidia-container-toolkit` to expose the host machine's GPU to
@@ -296,7 +299,7 @@ directory and that they have been rsynced to the primary builder.
 
 ### 5.5 Set up the cronjob
 
-For the cronjob, we same docker command. In the example below, we start and
+For the cronjob, we use the same docker command. In the example below, we start and
 stop the container; however, it may not be necessary.
 
     40 03,09,15,21 * * * docker start bbscontainer
