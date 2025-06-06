@@ -239,11 +239,13 @@ as the container assumes this is the user who will run the builds.
 
 Also, set up the `.ssh/config` and add the ssh key.
 
-Note: If 1007 cannot be used as the id, it should be altered by the container.
+Note: If 1007 cannot be used as the id, the container should be altered. The
+id of the host and container users must be the same.
 
 ### 5.3 Initial container run
 
-The container will have volumes assigned to the following locations:
+The container will have volumes mounted to the following locations:
+
 * /home/biocbuild/.ssh
 * /home/biocbuild/.cache
 * /home/biocbuild/BBS
@@ -265,10 +267,10 @@ You can then download the container with
       -it ghcr.io/bioconductor/bioconductor_salt:devel-nvidia-noble-24.04-bioc-3.22 bash
 
 You can use this to check if you can create files in the container that will
-reside on the host machine as well as use `nvidia-smi` to determine GPUs are
+reside on the host machine as well as use `nvidia-smi` to determine if GPUs are
 available to the container.
 
-For example, to check that you can create files that remain on the host
+For example, to check that you can create files in mounted volumes
 
     docker exec bbscontainer touch /home/biocbuild/bbs-3.22-bioc-gpu/mytmp
     ls /home/biocbuild/bbs-3.22-bioc-gpu/mytmp # on the host machine
@@ -287,8 +289,7 @@ Run the build with
     docker exec bbscontainer /bin/bash --login -c 'export USER=biocbuild && cd /home/biocbuild/BBS/3.22/bioc-gpu/`hostname` && ./run.sh >>/home/biocbuild/bbs-3.22-bioc-gpu/log/`hostname`-`date +\%Y\%m\%d`-run.log 2>&1'
 
 Note that `USER` is exported. Without it, the build will fail because it expects
-to have `USER` available but it is not inside the container. This may be due to
-the fact that you can pass the name of the user as an argument to docker.
+to have `USER` available but it does not exist inside the container.
 
 After the initial build, verify all the products are created in the bioc-gpu
 directory and that they have been rsynced to the primary builder.
