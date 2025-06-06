@@ -522,6 +522,20 @@ DIV.biocgpu {
     color: #005;
 }
 
+/* amarone  */
+.amarone,
+.gcard TD.amarone {
+    background: #CEDACB;
+}
+.amarone.toned_down,
+TR.toned_down .amarone,
+TBODY.compact.gcard TR.even_row_number .amarone {
+    background: #CEDACB;
+}
+DIV.amarone {
+    color: #005;
+}
+
 /* palomino8 */
 .palomino8,
 .gcard TD.palomino8 {
