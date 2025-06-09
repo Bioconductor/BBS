@@ -98,14 +98,14 @@ def write_R_config():
 # guarantees that 'file' will be created anyway but with the shell error
 # message inside (e.g. '-bash: gfortran: command not found') instead of
 # the command output.
-def write_sys_command_version(var, config=True):
+def write_sys_command_version(var, config=True, version_flag='--version'):
     file = '%s-version.txt' % var
     if config:
         cmd = getRconfigValue(var)
     else:
         cmd = var
     if cmd.strip():
-        syscmd = '%s --version >%s 2>&1' % (cmd, file)
+        syscmd = '%s %s >%s 2>&1' % (cmd, version_flag, file)
         bbs.jobs.call(syscmd) # ignore retcode
     return
 
@@ -133,8 +133,8 @@ def makeNodeInfo():
         write_sys_command_version('JAVA')
     write_sys_command_version('pandoc', False)
     if bbs.jobs.call('nvidia-smi') != '0':
-        write_system_command_version('nvidia-smi', False)
-        write_system_command_version('nvcc --version', False)
+        write_sys_command_version('nvidia-smi', False, '')
+        write_sys_command_version('nvcc --version', False)
     Rexpr = 'sessionInfo()'
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
