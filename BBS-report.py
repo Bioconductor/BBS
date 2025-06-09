@@ -894,35 +894,31 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         TDcontent = _status_as_glyph('ERROR')
         TDcontent += ' (Bad DESCRIPTION file)'
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
-    elif not BBSreportutils.is_supported(pkg, node):
+        return
+    dcf_record = meat_index[pkg]
+    GPU_reliance = dcf_record.get('GPU_reliance')
+    if buildtype == 'bioc' and GPU_reliance == 'required':
         TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
-        ## This is only a temporary hack based on the questionable assumption
-        ## that a software package unsupported on Linux is GPU-reliant, which
-        ## is of course not necessarily the case in general, but it just
-        ## happens to be true at the moment for Bioconductor software packages.
-        ## TODO: If we decide to get rid of the dedicated GPU-enabled builds
-        ## (buildtype == 'bioc-gpu') and to incorporate the GPU-capable
-        ## builders to the software builds, then we can get rid of this hack.
-        pkgType = BBSutils.getNodeSpec(node.hostname, 'pkgType')
-        show_link_to_gpu_builds = buildtype == 'bioc' and pkgType == "source"
-        if show_link_to_gpu_builds:
-            url = '%s/../bioc-gpu-LATEST/' % topdir
-            Astyle = 'display: inline; text-decoration: underline;'
-            TDcontent = 'see GPU-enabled build/check report ' + \
-                        '<A href="%s" style="%s">here</A>' % (url, Astyle)
-        else:
-            TDcontent = '... NOT SUPPORTED ...'
-            TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
+        url = '%s/../bioc-gpu-LATEST/' % topdir
+        Astyle = 'display: inline; text-decoration: underline;'
+        TDcontent = 'see GPU-enabled build/check report ' + \
+                    '<A href="%s" style="%s">here</A>' % (url, Astyle)
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
-    else:
-        for stage in BBSreportutils.stages_to_display(buildtype):
-            if stage != 'buildbin' or BBSreportutils.is_doing_buildbin(node):
-                _write_pkg_status_as_TD(out, pkg, node, stage,
-                                        topdir, leafreport_ref)
-            else:
-                out.write('<TD class="%s"></TD>' % TDclasses)
-        if BBSreportutils.display_propagation_status(buildtype):
-            write_pkg_propagation_status_as_TD(out, pkg, node)
+        return
+    if not BBSreportutils.is_supported(pkg, node):
+        TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
+        TDcontent = '... NOT SUPPORTED ...'
+        TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
+        out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
+        return
+    for stage in BBSreportutils.stages_to_display(buildtype):
+        if stage != 'buildbin' or BBSreportutils.is_doing_buildbin(node):
+            _write_pkg_status_as_TD(out, pkg, node, stage,
+                                    topdir, leafreport_ref)
+        else:
+            out.write('<TD class="%s"></TD>' % TDclasses)
+    if BBSreportutils.display_propagation_status(buildtype):
+        write_pkg_propagation_status_as_TD(out, pkg, node)
     return
 
 ### Produce 2 full TRs.
