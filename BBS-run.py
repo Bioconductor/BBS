@@ -132,6 +132,9 @@ def makeNodeInfo():
     else:
         write_sys_command_version('JAVA')
     write_sys_command_version('pandoc', False)
+    if bbs.jobs.call('nvidia-smi') != '0':
+        write_system_command_version('nvidia-smi', False)
+        write_system_command_version('nvcc --version', False)
     Rexpr = 'sessionInfo()'
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
                     'R-sessionInfo.txt', 60.0, True) # ignore retcode
