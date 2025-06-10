@@ -466,7 +466,7 @@ TABLE.abc_dispatcher TD {
  * Node specific background colors
  */
 
-/* nebbiolo1 (Ubuntu 22.04) */
+/* nebbiolo1 (Ubuntu 24.04) */
 .nebbiolo1,
 .gcard TD.nebbiolo1 {
     background: #E5E3FD;
@@ -480,7 +480,7 @@ DIV.nebbiolo1 {
     color: #005;
 }
 
-/* nebbiolo2 (Ubuntu 22.04) */
+/* nebbiolo2 (Ubuntu 24.04) */
 .nebbiolo2,
 .gcard TD.nebbiolo2 {
     background: #E5E3FD;
@@ -508,7 +508,7 @@ DIV.teran2 {
     color: #005;
 }
 
-/* biocgpu (Ubuntu 22.04) */
+/* biocgpu (Ubuntu 24.04) */
 .biocgpu,
 .gcard TD.biocgpu {
     background: #E7E2FC;
@@ -620,7 +620,7 @@ DIV.kjohnson3 {
     color: #050;
 }
 
-/* kunpeng2 (Linux ARM64 openEuler 22.03 LTS-SP1) */
+/* kunpeng2 (Linux ARM64 openEuler 22.03 LTS) */
 .kunpeng2,
 .gcard TD.kunpeng2 {
     background: #E4E6FC;
@@ -631,6 +631,20 @@ TBODY.compact.gcard TR.even_row_number .kunpeng2 {
     background: #D4D6EC;
 }
 DIV.kunpeng2 {
+    color: #404;
+}
+
+/* taishan (Linux ARM64 openEuler 24.03 LTS) */
+.taishan,
+.gcard TD.taishan {
+    background: #E4E6FC;
+}
+.taishan.toned_down,
+TR.toned_down .taishan,
+TBODY.compact.gcard TR.even_row_number .taishan {
+    background: #D4D6EC;
+}
+DIV.taishan {
     color: #404;
 }
 
