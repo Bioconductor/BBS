@@ -15,7 +15,7 @@ REPOS_ROOT="$HOME/PACKAGES/$BIOC_VERSION/data/experiment"
 SRC_CONTRIB="$REPOS_ROOT/src/contrib"
 
 META_SRC="$SRC_CONTRIB/Meta"
-META_R_EXPR="source('/home/biocbuild/BBS/utils/makeMetaDbs.R')"
+META_R_EXPR="source('/home/biocpush/BBS/utils/makeMetaDbs.R')"
 MEAT_PATH="/home/biocbuild/bbs-$BIOC_VERSION-data-experiment/meat"
 
 if [ ! -f "$PROPAGATION_DB_FILE" ]; then

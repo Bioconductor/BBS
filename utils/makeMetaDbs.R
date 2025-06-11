@@ -22,7 +22,7 @@ makeMetaDbs <- function(db_filepath, meat_path, repos_root, meta_path) {
     tryCatch(
       biocViews::build_db_from_source(pkg_path, repos_root),
       error = function(e) {
-        print(paste('Failed to build db for', pkg, '-', e))
+        print(paste('Failed to build db for', pkg_path, '-', e))
       }
     )
   }

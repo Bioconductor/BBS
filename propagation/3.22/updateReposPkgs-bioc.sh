@@ -18,7 +18,7 @@ MAC_BIG_SUR_x86_64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-x86_64/contrib/$R_VER
 MAC_BIG_SUR_arm64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-arm64/contrib/$R_VERSION"
 
 META_SRC="$SRC_CONTRIB/Meta"
-META_R_EXPR="source('/home/biocbuild/BBS/utils/makeMetaDbs.R')"
+META_R_EXPR="source('/home/biocpush/BBS/utils/makeMetaDbs.R')"
 MEAT_PATH="/home/biocbuild/bbs-$BIOC_VERSION-bioc/meat"
 
 if [ ! -f "$PROPAGATION_DB_FILE" ]; then
