@@ -325,6 +325,22 @@ def make_aboutnode_page(Node_rdir, node, long_link=False):
 
     out.write('<HR>\n')
 
+    if os.path.exists(os.path.join(Node_rdir.get_full_remote_path(), 'NodeInfo/nvidia-smi-version.txt')):
+
+        out.write('<H2>NVIDIA CUDA Compiler Driver</H2>\n')
+        out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+        write_SysCommandVersion_from_file(out, Node_rdir, 'nvcc', False)
+        out.write('</DIV>\n')
+
+        out.write('<HR>\n')
+
+        out.write('<H2>NVIDIA System Management Interface</H2>\n')
+        out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+        write_SysCommandVersion_from_file(out, Node_rdir, 'nvidia-smi', False)
+        out.write('</DIV>\n')
+
+        out.write('<HR>\n')
+
     #out.write('<H2>Fortran 77 compiler</H2>\n')
     #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     #Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
