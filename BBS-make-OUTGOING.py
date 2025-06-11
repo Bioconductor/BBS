@@ -85,14 +85,6 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
         errmsg = "Directory '%s' does not exist!\n\n" % srcdir + \
                  "  %s is late or stopped building?" % node_hostname
         raise FileExistsError(errmsg)
-    ## Workflow and book packages do not have manuals/ because we do not run
-    ## `R CMD check`.
-    manuals_dir = '../manuals'
-    if BBSvars.buildtype in ['workflows', 'books', 'bioc-mac-arm64']:
-        pass
-    elif source_node:
-        print('BBS> [stage6b] mkdir %s' % manuals_dir)
-        os.mkdir(manuals_dir)
     print('BBS> [stage6b] BEGIN copying outgoing packages from %s.' % srcdir)
     node_Arch = BBSutils.getNodeSpec(node_hostname, 'Arch')
     node_Platform = BBSutils.getNodeSpec(node_hostname, 'Platform')
@@ -117,22 +109,6 @@ def copy_outgoing_pkgs(products_in_subdir, source_node):
             os.link(pkg_path, pkg_file)  # create hard link to avoid making a copy
         else:
             print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pkg_path)
-        ## Get reference manual from pkg.Rcheck directory.
-        if BBSvars.buildtype in ['workflows', 'books', 'bioc-mac-arm64']:
-            pass
-        elif source_node:
-            pdf_file = os.path.join(BBSvars.products_in_rdir.path,
-                                    BBSutils.getSourceNode(),
-                                    'checksrc',
-                                    '%s.Rcheck' % pkg,
-                                    '%s-manual.pdf' % pkg)
-            print('BBS> [stage6b]   - copying %s to OUTGOING/manuals folder...' % pdf_file)
-            if os.path.exists(pdf_file):
-                dst = os.path.join(manuals_dir, '%s.pdf' % pkg)
-                #shutil.copy(pdf_file, dst)
-                os.link(pdf_file, dst) # create hard link to avoid making a copy
-            else:
-                print("BBS> [stage6b]     SKIPPED (file %s doesn't exist)" % pdf_file)
     print('BBS> [stage6b] END copying outgoing packages from %s.' % srcdir)
     return
 

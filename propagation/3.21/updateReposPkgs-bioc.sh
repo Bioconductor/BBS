@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e  # exit immediately if a simple command returns a non-zero status
 
 cd "$HOME/propagation/3.21"
@@ -57,21 +56,6 @@ echo "Updating $BIOC_VERSION/bioc repo with Mac arm64 binary packages..."
 update_repo "$MAC_BIG_SUR_arm64_CONTRIB" "mac.binary.big-sur-arm64" "tgz"
 
 echo ""
-
-## FIXME: Why aren't manuals propagated based on the same criteria as source
-## packages? Looks like the former are propagated based on their timestamps
-## only (see below) while for source packages we use the more refined
-## propagation criteria. This can easily lead to situations where the manual
-## available on a package landing page doesn't match the version of the
-## source package. Not good!
-MANUALS_DEST="$REPOS_ROOT/manuals"
-MANUALS_SRC="$BBS_OUTGOING_DIR/manuals"
-echo "Updating $BIOC_VERSION/bioc repo with reference manuals..."
-for i in `ls $MANUALS_SRC`; do
-	pkg=`echo $i| awk '{split($0,a,".pdf"); print(a[1])}'`
-	mkdir -p $MANUALS_DEST/$pkg/man
-	cp --update --verbose $MANUALS_SRC/$i $MANUALS_DEST/$pkg/man
-done
 
 echo "DONE."
 exit 0
