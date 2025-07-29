@@ -265,6 +265,7 @@ You can then download the container with
       --gpus all \
       -v /home/biocbuild/.ssh:/home/biocbuild/.ssh \
       -v /home/biocbuild/.cache:/home/biocbuild/.cache \
+      -v /home/biocbuild/.pyenv:/home/biocbuild/.pyenv \
       -v /home/biocbuild/bbs-3.22-bioc-gpu:/home/biocbuild/bbs-3.22-bioc-gpu \
       -v /home/biocbuild/BBS:/home/biocbuild/BBS \
       -it ghcr.io/bioconductor/bioconductor_salt:devel-nvidia-noble-24.04-bioc-3.22 bash
