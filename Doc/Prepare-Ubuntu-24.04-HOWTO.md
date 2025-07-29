@@ -1537,3 +1537,112 @@ particular version.
 
 `apt-mark unhold` can be used to stop holding a package. For more details, see
 https://help.ubuntu.com/community/PinningHowto#Introduction_to_Holding_Packages.
+
+### 5.3 Large basilisk cache
+
+`basilisk`'s cache can grow quite large (40G+). This can be problematic for new
+packages building on the single package builder (SPB), which has restrictions
+on the amount of time allowed to build a package. To help packages that use
+`basilisk` build faster, we can allow the SPB to share the same cache as the
+main builds.
+
+#### Share group ownership /var/cache/basilisk
+
+One method described by hpages that works for both linux and mac uses a shared
+`/var/cache/basilisk` owned by the `biocbuild` group on linux or `staff` on mac`.
+On linux, the `pkgbuild` should be added to `biocbuild`.
+
+From https://github.com/Bioconductor/BBS/issues/400#issuecomment-1933446122:
+
+1. Change the primary group of the pkgbuild user to make it the same as the
+primary group of the biocbuild user.
+
+Check their primary groups (gid) with id biocbuild and id pkgbuild.
+
+Assuming that biocbuild's primary group is biocbuild, make this the primary
+group of the pkgbuild user with:
+
+    sudo usermod -g biocbuild pkgbuild
+
+Then check their primary groups again.
+
+An additional check is to check their effective group ids with `id -g biocbuild`
+and `id -g pkgbuild`. They should be the same.
+
+2. Create basilisk's cache folder in `/var/cache/`:
+
+    cd /var/cache
+    sudo mkdir basilisk
+    sudo chown biocbuild:biocbuild basilisk
+    sudo chmod 775 basilisk
+
+3. Basic testing. Log as biocbuild and do:
+
+    cd /var/cache/basilisk
+    mkdir titi
+
+The folder should be writable by any member of the group. Check this with:
+
+    ls -ld titi
+
+This should display something like:
+
+    drwxrwxr-x 2 biocbuild biocbuild 4096 Feb  8 01:04 titi
+
+In particular the flags must be `drwxrwxr-x`. If not, then set `umask` to `002`
+in `~/.profile`, logout and login again for the change to take effect, and try
+to create another folder in `/var/cache/basilisk/`.
+
+Then log as pkgbuild and do:
+
+    cd /var/cache/basilisk
+    mkdir toto
+
+The folder should be writable by any member of the group:
+
+    ls -ld toto
+
+This should display something like:
+
+    drwxrwxr-x 2 pkgbuild biocbuild 4096 Feb  8 01:03 toto
+
+If not, then set `umask` to `002` in `~/.profile`, logout and login again for
+the change to take effect, and try to create another folder in
+`/var/cache/basilisk/`.
+
+Finally clean `/var/cache/basilisk/` with:
+
+    cd /var/cache/basilisk
+    rm -rf *
+    Set BASILISK_EXTERNAL_DIR to /var/cache/basilisk in ~/.profile for biocbuild and pkgbuild by putting the following line at the end of each file:
+
+    export BASILISK_EXTERNAL_DIR="/var/cache/basilisk"
+
+Do NOT put this in `/etc/profile`!
+
+IMPORTANT: This setting won't be effective on the SPB until the SPB server gets
+restarted (even if, in an interactive R session,
+`basilisk.utils::getExternalDir()` points to the new location).
+
+5. Next build run will repopulate `/var/cache/basilisk/`.
+
+6. Add the following to the `biocbuild` cronjob to fix permissions:
+
+    # Fix permissions of files/dirs in basilisk's cache (see https://github.com/Bioconductor/BBS/issues/400):
+00,15,30,45 * * * * cd /var/cache/basilisk && (date && chmod --quiet -Rc g+rw . && find . -type d -exec chmod --quiet -c go+rx {} \;) >>/home/biocbuild/bbs-3.22-bioc/log/fix_basilisk_cache_perms.log 2>&1
+
+#### Mount /var/cache/basilisk at /home/biocbuild/.cache/R/basilisk
+
+Nebbiolo2's `/` is `50G`, which is too small to share the `basilisk` cache.
+Alternatively, you can create the shared directory and mount `biocbuild`'s
+`basilisk`'s cache there since `/home` is large.
+
+    sudo mkdir /var/cache/basilisk
+    mount --bind /home/biocbuild/.cache/R/basilisk /var/cache/basilisk
+
+As above, add `pkgbuild` to the `biocbuild` group and set
+`BASILISK_EXTERNAL_DIR=/var/cache/basilisk` in the `pkgbuild` `~/.profile`.
+
+To remount on boot, add the following to `/etc/fstab`
+
+    /home/biocbuild/.cache/R/basilisk /var/cache/basilisk none bind
