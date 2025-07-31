@@ -242,8 +242,28 @@ as the container assumes this is the user who will run the builds.
 
 Also, set up the `.ssh/config` and add the ssh key.
 
-Note: If 1007 cannot be used as the id, the container should be altered. The
-id of the host and container users must be the same.
+Note: If 1007 cannot be used as the id, the user and group ids in container
+should be altered. The id and group of the and container users must be the
+same in order for the user in the container to access files on the host.
+
+First, determine the id of biocbuild user on the host.
+
+    biocbuild@kakapo1:~$ id
+    uid=1001(biocbuild) gid=1001(biocbuild) groups=1001(biocbuild),999(docker)
+
+Enter the container then `sudo su` to root to change the ids of the user and
+group. You may need to start the container if it is stopped.
+
+    biocbuild@kakapo1:~$ docker start bbscontainer
+    bbscontainer
+    biocbuild@kakapo1:~$ docker exec -it bbscontainer bash
+    biocbuild@kakapo1:~$ sudo su
+    root@kakapo1:/home/biocbuild# id biocbuild
+    uid=1007(biocbuild) gid=1007(biocbuild) groups=1007(biocbuild),27(sudo)
+    root@kakapo1:/home/biocbuild# usermod -u 1001 biocbuild
+    root@kakapo1:/home/biocbuild# groupmod -g 1001 biocbuild
+
+You must exit the container for the changes to take effect.
 
 ### 5.3 Initial container run
 
