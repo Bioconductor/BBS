@@ -270,7 +270,7 @@ def _clean_Rcheck_dir(Rcheck_dir, pkg):
 
 def kindly_notify_us(what, e, to_addrs=None):
     if to_addrs == None:
-        to_addrs = ['maintainer@bioconductor.org']
+        to_addrs = ['bioconductorcoreteam@bioconductor.org']
     subject = (f'[BBS] {what} failure '
                f'for {BBSvars.bioc_version} {BBSvars.buildtype} builds '
                f'on {BBSvars.node_hostname}')
