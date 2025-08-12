@@ -7,6 +7,17 @@ https://github.com/Bioconductor/bioconductor_salt.
 
 
 - Use `sudo fdesetup authrestart` to reboot; otherwise, it may come back online.
+  Warning: `fdesetup` doesn't always work possibly due to a limitation of
+  authrestart over ssh:
+      sudo fdesetup authrestart
+
+      Password:
+      Enter the user name:biocbuild
+      Enter the password for user 'biocbuild':
+      Error: Unable to restart (error = -536870194).
+  If you are unable to restart, contact `systems AT ds.dfci.harvard.edu`
+  for help. It's best to schedule beforehand as someone will need to visit
+  the data center.
 - For how to uninstall Mac packages (`.pkg` files) using native `pkgutil`:
   https://wincent.com/wiki/Uninstalling_packages_(.pkg_files)_on_Mac_OS_X
 - Watch https://mac.r-project.org/ for changes in requirements. Binaries can be
