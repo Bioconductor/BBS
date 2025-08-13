@@ -69,7 +69,7 @@ allnodes = {
                     'Platform': "arm64-apple-darwin22.6.0",
                     'pkgType' : "mac.binary.big-sur-arm64",
                     'encoding': "utf-8"},
-    'kjohnson3':   {'OS'      : "macOS 13.7.1 Ventura",
+    'kjohnson3':   {'OS'      : "macOS 13.7.7 Ventura",
                     'Arch'    : "arm64",
                     'Platform': "arm64-apple-darwin22.6.0",
                     'pkgType' : "mac.binary.big-sur-arm64",
