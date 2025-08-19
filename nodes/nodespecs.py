@@ -34,7 +34,7 @@ allnodes = {
                     'Platform': "x86_64-linux-gnu",
                     'pkgType' : "source",
                     'encoding': "utf_8"},
-    'teran2':      {'OS'      : "Linux (Ubuntu 24.04.2 LTS)",
+    'teran2':      {'OS'      : "Linux (Ubuntu 24.04.3 LTS)",
                     'Arch'    : "x86_64",
                     'Platform': "x86_64-linux-gnu",
                     'pkgType' : "source",
