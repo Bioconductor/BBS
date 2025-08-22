@@ -1122,13 +1122,26 @@ We can get around this by kicking a script manually, which will give us an
 "unspecified" QoS clamp, which is slightly higher so that performance cores
 will be engaged.
 
-Use `utils/build.py` to run the build with Python3 in a `screen`. It will
-produce a log at `LOG_PATH`.
+Use one of the provided `build_runner.py` scripts to run the builds with
+Python3 in a `screen`. It will produce a log at `LOG_PATH`.
 
     python3 -m venv env
     source env/bin/active
     pip3 install schedule pytz
-    python3 BBS/utils/build.py
+
+Then, to start the software builds on kjohnson3:
+
+    python3 BBS/3.22/bioc/kjohnson3/build_runner.py
+
+The script will take care of starting the software builds daily from
+Sunday to Friday on kjohnson3.
+
+To start the book builds on kjohnson3:
+
+    python3 BBS/3.22/books/kjohnson3/build_runner.py
+
+The script will take care of starting the book builds on Mondays,
+Wednesdays, and Fridays on kjohnson3.
 
 See https://github.com/Bioconductor/BBS/issues/387 for details troubleshooting
 on kjohnson3.

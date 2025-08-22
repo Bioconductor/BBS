@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 """
 This script works like a cronjob to schedule the build for Apple Silicon
@@ -22,7 +22,7 @@ Run in Background
 -----------------
 
 # Use python in the env path
-env/bin/python /Users/biocbuild/BBS/utils/build.py &
+~/env/bin/python /Users/biocbuild/BBS/3.22/bioc/kjohnson3/build_runner.py &
 
 Run the Script
 --------------
@@ -30,7 +30,7 @@ Run the Script
 In a screen, run the following commands to create an environment and run the
 script. It will produce a log at LOG_PATH.
 
-python3 build.py
+python3 build_runner.py
 
 Screen Commands
 ---------------
@@ -59,9 +59,9 @@ from time import sleep
 
 HOSTNAME = "kjohnson3"
 BIOC_VERSION = "3.22"
-LOG_PATH = f"/Users/biocbuild/bbs-{BIOC_VERSION}-bioc/log/build.log"
+LOG_PATH = f"/Users/biocbuild/bbs-{BIOC_VERSION}-bioc/log/build_runner.log"
 
-def build(logger):
+def build_runner(logger):
     logger.debug("START job")
     yyyymmdd = date.today().strftime('%Y%m%d')
     run_path = f"/Users/biocbuild/BBS/{BIOC_VERSION}/bioc/{HOSTNAME}"
@@ -77,14 +77,16 @@ if __name__ == "__main__":
     logging.basicConfig(filename = LOG_PATH, format = "%(asctime)s %(message)s",
                         datefmt = "%m/%d/%Y %I:%M:%S %p", level = logging.DEBUG)
     logger = logging.getLogger('schedule')
-    logger.debug("Starting build.py")
-    every().sunday.at("15:00", timezone("US/Eastern")).do(build, logger=logger)
-    every().monday.at("15:00", timezone("US/Eastern")).do(build, logger=logger)
-    every().tuesday.at("15:00", timezone("US/Eastern")).do(build, logger=logger)
-    every().wednesday.at("15:00", timezone("US/Eastern")).do(build, logger=logger)
-    every().thursday.at("15:00", timezone("US/Eastern")).do(build, logger=logger)
-    every().friday.at("15:00", timezone("US/Eastern")).do(build, logger=logger)
+    logger.debug("Starting build_runner.py")
+    build_days = [every().sunday,
+                  every().monday,
+                  every().tuesday,
+                  every().wednesday,
+                  every().thursday,
+                  every().friday]
+    for d in build_days:
+        d.at("15:00", timezone("US/Eastern")).do(build_runner, logger=logger)
     while True:
         run_pending()
         sleep(1)
-    logger.debug("Ending build.py")
+    logger.debug("Ending build_runner.py")
