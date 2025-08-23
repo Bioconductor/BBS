@@ -23,10 +23,10 @@ export BBS_NB_CPU=5
 export BBS_BUILD_NB_CPU=1
 export BBS_CHECK_NB_CPU=1
 
-# Central build node is biocgpu on Jetstream2.
-export BBS_CENTRAL_RHOST="biocgpu"
+# Central build node is bbscentral2 on Jetstream2.
+export BBS_CENTRAL_RHOST="bbscentral2"
 export BBS_RSH_CMD="ssh -F /home/biocbuild/.ssh/config"
-export BBS_CENTRAL_ROOT_URL="http://149.165.152.218"
+export BBS_CENTRAL_ROOT_URL="http://149.165.152.87"
 export BBS_PRODUCT_TRANSMISSION_MODE="asynchronous"
 
 # Source tarballs produced during STAGE3 won't be propagated
