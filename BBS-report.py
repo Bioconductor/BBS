@@ -911,20 +911,21 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         TDcontent += ' (Bad DESCRIPTION file)'
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
         return
-    if not BBSreportutils.is_supported(pkg, node):
-        TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
-        TDcontent = '... NOT SUPPORTED ...'
-        TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
-        out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
-        return
     dcf_record = meat_index[pkg]
     GPU_reliance = dcf_record.get('GPU_reliance')
-    if buildtype == 'bioc' and GPU_reliance == 'required':
+    if buildtype == 'bioc' and GPU_reliance == 'required' and \
+       BBSreportutils.is_supported(pkg, node):
         TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
         url = '%s/../bioc-gpu-LATEST/' % topdir
         Astyle = 'display: inline; text-decoration: underline;'
         TDcontent = 'see GPU-enabled build/check report ' + \
                     '<A href="%s" style="%s">here</A>' % (url, Astyle)
+        out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
+        return
+    if not BBSreportutils.is_supported(pkg, node):
+        TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
+        TDcontent = '... NOT SUPPORTED ...'
+        TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
         return
     for stage in BBSreportutils.stages_to_display(buildtype):
