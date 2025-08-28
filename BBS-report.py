@@ -911,6 +911,12 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         TDcontent += ' (Bad DESCRIPTION file)'
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
         return
+    if not BBSreportutils.is_supported(pkg, node):
+        TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
+        TDcontent = '... NOT SUPPORTED ...'
+        TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
+        out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
+        return
     dcf_record = meat_index[pkg]
     GPU_reliance = dcf_record.get('GPU_reliance')
     if buildtype == 'bioc' and GPU_reliance == 'required':
@@ -919,12 +925,6 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         Astyle = 'display: inline; text-decoration: underline;'
         TDcontent = 'see GPU-enabled build/check report ' + \
                     '<A href="%s" style="%s">here</A>' % (url, Astyle)
-        out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
-        return
-    if not BBSreportutils.is_supported(pkg, node):
-        TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
-        TDcontent = '... NOT SUPPORTED ...'
-        TDcontent = '%s' % TDcontent.replace(' ', '&nbsp;')
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
         return
     for stage in BBSreportutils.stages_to_display(buildtype):
@@ -1091,13 +1091,13 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
         out.write('<TD %s></TD>' % TDattrs)
         if is_first:
             is_first = False
-            if len(pkg_statuses) != 0:
+            if pkg in skipped_pkgs:
+                version = maintainer = status = ''
+            else:
                 dcf_record = meat_index[pkg]
                 version = dcf_record['Version']
                 maintainer = dcf_record['Maintainer']
                 status = dcf_record.get('PackageStatus')
-            else:
-                version = maintainer = status = ''
             deprecated = status == "Deprecated"
             TDstyle = 'vertical-align: top;'
             out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
