@@ -815,15 +815,35 @@ def _pkgname_as_HTML(pkg, pkgdir=None):
         return pkg
     return '<A href="%s/">%s</A>' % (pkgdir, pkg)
 
-def _pkgname_and_version_as_HTML(pkg, version, pkgdir=None, deprecated=False):
+def _pkgname_and_version_as_HTML(pkg, version, pkgdir=None,
+                                 is_deprecated=False):
     html1 = '<B>%s&nbsp;%s</B>' % (_pkgname_as_HTML(pkg, pkgdir), version)
-    if deprecated:
+    if is_deprecated:
         html1 = '<s>%s</s>' % html1
     url = _url_to_pkg_landing_page(pkg)
     SPANcontent = '(<A href="%s">landing page</A>)' % url
     SPANstyle = 'font-size: smaller; font-style: italic;'
     html2 = '<SPAN style="%s">%s</SPAN>' % (SPANstyle, SPANcontent)
     return '%s&nbsp;&nbsp;%s' % (html1, html2)
+
+### Returns decorated glyph describing overall package build status.
+def _make_pkg_overall_status_HTML(pkg, statuses, topdir='.'):
+    if pkg in skipped_pkgs or 'ERROR' in statuses:
+        overall_status = 'ERROR'
+    elif 'TIMEOUT' in statuses:
+        overall_status = 'TIMEOUT'
+    elif 'WARNINGS' in statuses:
+        overall_status = 'WARNINGS'
+    elif 'NA' in statuses:
+        overall_status = 'NA'
+    elif 'OK' in statuses:
+        overall_status = 'OK'
+    else:
+        overall_status = 'unknown'
+    html = _status_as_glyph(overall_status)
+    pkgdir = '%s/%s' % (topdir, pkg)
+    html = _make_link_with_mouseover(pkgdir, html)
+    return html
 
 def _node_OS_Arch_as_SPAN(node):
     return '<SPAN style="font-size: smaller;">%s&nbsp;/&nbsp;%s</SPAN>' % \
@@ -1055,7 +1075,7 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
 
 ### The gcard spans several table rows (TRs) grouped in a TBODY element.
 def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
-                pkg_statuses, pkg_status_classes):
+                pkg_status_classes):
     out.write('<TBODY class="gcard %s">\n' % pkg_status_classes)
     out.write('<TR class="header">')
     out.write('<TD class="leftmost top_left_corner"></TD>')
@@ -1089,14 +1109,6 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
         out.write('<TD %s></TD>' % TDattrs)
         if is_first:
             is_first = False
-            if pkg in skipped_pkgs:
-                version = maintainer = status = ''
-            else:
-                dcf_record = meat_index[pkg]
-                version = dcf_record['Version']
-                maintainer = dcf_record['Maintainer']
-                status = dcf_record.get('PackageStatus')
-            deprecated = status == "Deprecated"
             TDstyle = 'vertical-align: top;'
             out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
             if leafreport_ref == None:
@@ -1105,8 +1117,16 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
                 pkgdir = '.'
             else:
                 pkgdir = None
+            if pkg in skipped_pkgs:
+                version = maintainer = status = ''
+            else:
+                dcf_record = meat_index[pkg]
+                version = dcf_record['Version']
+                maintainer = dcf_record['Maintainer']
+                status = dcf_record.get('PackageStatus')
+            is_deprecated = status == 'Deprecated'
             html = _pkgname_and_version_as_HTML(pkg, version, pkgdir,
-                                                deprecated)
+                                                is_deprecated)
             out.write(html)
             out.write('<BR>%s' % maintainer)
             if (BBSvars.MEAT0_type == 1 or BBSvars.MEAT0_type == 3):
@@ -1191,33 +1211,23 @@ def write_gcard_list(out, allpkgs,
         else:
             continue
         write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
-                    pkg_statuses, pkg_status_classes)
+                    pkg_status_classes)
     out.write('</TABLE>\n')
     return
 
 
 ##############################################################################
-### Compact gcards (used for the single node reports)
+### Compact gcards (used for the single node reports and simplified report)
 ##############################################################################
 
 ### Produces one full TR.
-def write_compact_gcard_header(out):
-    ## Using the collapsable_rows class here too to blend out the alphabetical
-    ## selection + this header when "ok" packages are unselected.
-    out.write('<TBODY class="collapsable_rows">\n')
-    out.write('<TR class="header">')
-    out.write('<TD></TD>')
-    out.write('<TD>Package</TD>')
-    out.write('<TD COLSPAN="2">Maintainer</TD>')
-    write_pkg_stagelabels_as_TDs(out)
-    out.write('<TD></TD>')
-    out.write('</TR>\n')
-    out.write('</TBODY>\n')
-    return
-
-### Produces one full TR.
+### When 'node' is None, produces an ultra compact gcard (a.k.a. "simple
+### gcard") like those used in the simplified report. Each simple gcard
+### uses 5 TDs and displays a single glyph per package that summarizes its
+### overall build status.
 def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
-    pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, [node])
+    nodes = None if node == None else [node]
+    pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, nodes)
     if pkg in skipped_pkgs:
         pkg_status_classes = 'error'
     else:
@@ -1231,19 +1241,39 @@ def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     out.write('<TR class="%s">' % TRclass)
     out.write('<TD class="leftmost row_number"><B>%d</B>/%d</TD>' % \
               (pkg_pos, nb_pkgs))
-    if len(pkg_statuses) != 0:
+    if pkg in skipped_pkgs:
+        version = maintainer = status = ''
+    else:
         dcf_record = meat_index[pkg]
         version = dcf_record['Version']
         maintainer = dcf_record['Maintainer']
         status = dcf_record.get('PackageStatus')
-    else:
-        version = status = maintainer = ''
-    deprecated = status == "Deprecated"
-    TDcontent = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
+    is_deprecated = status == 'Deprecated'
+    TDcontent = _pkgname_and_version_as_HTML(pkg, version, pkg, is_deprecated)
     out.write('<TD>%s</TD>' % TDcontent)
-    out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
-    write_pkg_statuses_as_TDs(out, pkg, node)
+    if node == None:
+        out.write('<TD>%s</TD>' % maintainer)
+        TDcontent = _make_pkg_overall_status_HTML(pkg, pkg_statuses)
+        out.write('<TD class="status">%s</TD>' % TDcontent)
+    else:
+        out.write('<TD COLSPAN="2">%s</TD>' % maintainer)
+        write_pkg_statuses_as_TDs(out, pkg, node)
     out.write('<TD class="rightmost"></TD>')
+    out.write('</TR>\n')
+    out.write('</TBODY>\n')
+    return
+
+### Produces one full TR.
+def write_compact_gcard_header(out):
+    ## Using the collapsable_rows class here too to blend out the alphabetical
+    ## selection + this header when "ok" packages are unselected.
+    out.write('<TBODY class="collapsable_rows">\n')
+    out.write('<TR class="header">')
+    out.write('<TD></TD>')
+    out.write('<TD>Package</TD>')
+    out.write('<TD COLSPAN="2">Maintainer</TD>')
+    write_pkg_stagelabels_as_TDs(out)
+    out.write('<TD></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
@@ -1279,11 +1309,6 @@ def write_compact_gcard_list(out, node, allpkgs,
     out.write('</TABLE>\n')
     return
 
-
-##############################################################################
-### Simple gcards (a single glyph per package showing its overall build status)
-##############################################################################
-
 ### Produces one full TR with 5 TDs in it.
 def write_simple_gcard_header(out):
     ## Using the collapsable_rows class here too to blend out the alphabetical
@@ -1298,59 +1323,6 @@ def write_simple_gcard_header(out):
         stage_labels.remove('BUILD BIN')
     out.write('<TD class="STAGE">%s</TD>' % '/'.join(stage_labels))
     out.write('<TD></TD>')
-    out.write('</TR>\n')
-    out.write('</TBODY>\n')
-    return
-
-### Return decorated glyph describing overall package build status.
-def make_pkg_overall_status_HTML(pkg, statuses, topdir='.'):
-    if pkg in skipped_pkgs or 'ERROR' in statuses:
-        overall_status = 'ERROR'
-    elif 'TIMEOUT' in statuses:
-        overall_status = 'TIMEOUT'
-    elif 'WARNINGS' in statuses:
-        overall_status = 'WARNINGS'
-    elif 'NA' in statuses:
-        overall_status = 'NA'
-    elif 'OK' in statuses:
-        overall_status = 'OK'
-    else:
-        overall_status = 'unknown'
-    html = _status_as_glyph(overall_status)
-    pkgdir = '%s/%s' % (topdir, pkg)
-    html = _make_link_with_mouseover(pkgdir, html)
-    return html
-
-### Produces one full TR with 5 TDs in it.
-def write_simple_gcard(out, pkg, pkg_pos, nb_pkgs):
-    pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
-    if pkg in skipped_pkgs:
-        pkg_status_classes = 'error'
-    else:
-        pkg_status_classes = statuses2classes(pkg_statuses)
-    TBODYclasses = 'compact gcard %s' % pkg_status_classes
-    out.write('<TBODY class="%s">\n' % TBODYclasses)
-    if pkg_pos % 2 == 0:
-        TRclass = 'even_row_number'
-    else:
-        TRclass = 'odd_row_number'
-    out.write('<TR class="%s">' % TRclass)
-    out.write('<TD class="leftmost row_number"><B>%d</B>/%d</TD>' % \
-              (pkg_pos, nb_pkgs))
-    if len(pkg_statuses) != 0:
-        dcf_record = meat_index[pkg]
-        version = dcf_record['Version']
-        maintainer = dcf_record['Maintainer']
-        status = dcf_record.get('PackageStatus')
-    else:
-        version = status = maintainer = ''
-    deprecated = status == "Deprecated"
-    TDcontent = _pkgname_and_version_as_HTML(pkg, version, pkg, deprecated)
-    out.write('<TD>%s</TD>' % TDcontent)
-    out.write('<TD>%s</TD>' % maintainer)
-    TDcontent = make_pkg_overall_status_HTML(pkg, pkg_statuses)
-    out.write('<TD class="status">%s</TD>' % TDcontent)
-    out.write('<TD class="rightmost"></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
     return
@@ -1376,7 +1348,7 @@ def write_simple_gcard_list(out, allpkgs, alphabet_dispatch=False):
                 current_letter = first_letter
                 write_abc_dispatcher_within_gcard_list(out, current_letter)
                 write_simple_gcard_header(out)
-        write_simple_gcard(out, pkg, pkg_pos, nb_pkgs)
+        write_compact_gcard(out, pkg, None, pkg_pos, nb_pkgs)
     out.write('</TABLE>\n')
     return
 
@@ -1987,8 +1959,9 @@ def write_glyph_and_propagation_LED_table(out, simple_layout=False):
         out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
-        out.write('A <s>crossed-out</s> package name indicates the package is')
-        out.write(' <a href="https://bioconductor.org/developers/package-end-of-life/">deprecated</a>')
+        url <- 'https://bioconductor.org/developers/package-end-of-life/'
+        out.write('A <s>crossed-out</s> package name indicates that ')
+        out.write('the package is <a href="%s">deprecated</a>' % url)
         out.write('</P>\n')
         out.write('</TD>')
     out.write('</TR></TABLE>\n')
