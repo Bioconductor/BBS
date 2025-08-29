@@ -1959,7 +1959,7 @@ def write_glyph_and_propagation_LED_table(out, simple_layout=False):
         out.write('<TD style="vertical-align: top; padding-left: 6px;">\n')
         write_propagation_LED_table(out)
         out.write('<P>\n')
-        url <- 'https://bioconductor.org/developers/package-end-of-life/'
+        url = 'https://bioconductor.org/developers/package-end-of-life/'
         out.write('A <s>crossed-out</s> package name indicates that ')
         out.write('the package is <a href="%s">deprecated</a>' % url)
         out.write('</P>\n')
