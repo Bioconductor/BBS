@@ -935,7 +935,10 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         TDattrs = 'COLSPAN="%s" class="%s"' % (ncol_to_display, TDclasses)
         dcf_record = meat_index[pkg]
         GPU_reliance = dcf_record.get('GPU_reliance')
-        if buildtype == 'bioc' and GPU_reliance == 'required':
+        ## We only display the link to the GPU-enabled build/check report if
+        ## the builder is an Intel Linux machine.
+        if buildtype == 'bioc' and 'x86_64-linux' in node.platform and \
+           GPU_reliance == 'required':
             url = '%s/../bioc-gpu-LATEST/' % topdir
             Astyle = 'display: inline; text-decoration: underline;'
             TDcontent = 'see GPU-enabled build/check report ' + \
