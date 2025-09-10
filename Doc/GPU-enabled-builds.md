@@ -78,7 +78,6 @@ the volume.
 
 - Add the following lines to `~/.profile`:
     ```
-    module load nvhpc/24.7/nvhpc
     unset CC CXX F77 F90 FC
     ```
   Logout and login again for the change to take effect.
@@ -160,7 +159,6 @@ account).
 
 - Add the following lines to `~/.profile`:
     ```
-    module load nvhpc/24.7/nvhpc
     unset CC CXX F77 F90 FC
     ```
   Logout and login again for the change to take effect.
@@ -193,7 +191,7 @@ account).
 
 - Give them the ssh command to connect to the machine e.g.
     ```
-    ssh -A reviewer@149.165.152.218
+    ssh -A reviewer@149.165.171.242
     ```
   for access to biocgpu.
 
