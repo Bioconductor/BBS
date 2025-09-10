@@ -59,46 +59,48 @@ The canonical location of the code is in GitHub:
 
 If you have a question not covered here:
 
-* Ask Herv&eacute; Pag&egrave;s, Lori Shepherd, or Jen Wokaty.
+* Ask Herv&eacute; Pag&egrave;s, Lori Shepherd, or Andres Wokaty.
 
 ## General overview of BBS
 
-| Branch  | Build             | Builders                                     | Schedule              |
-|---------|-------------------|----------------------------------------------|-----------------------|
-| Release | Software ("bioc") | Linux (x86_64, aarch64[^1]), Mac x86_64, Win | Mon-Sat               |
-| Release | Software ("bioc") | Mac ARM64                                    | Start Sun, Finish Fri |
-| Release | Data Annotation   | Linux x86_64                                 | Wed                   |
-| Release | Data Experiment   | Linux x86_64                                 | Tue, Thu              |
-| Release | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri              |
-| Release | Book              | Linux x86_64                                 | Mon, Wed, Fri         |
-| Release | Long Tests        | Linux x86_64                                 | Sat                   |
-| Devel   | Software ("bioc") | Linux (x86_64, aarch64), Mac x86_64, Win     | Mon-Sat               |
-| Devel   | Software ("bioc") | Mac ARM64                                    | Mon, Wed, Fri         |
-| Devel   | Data Annotation   | Linux x86_64                                 | Wed                   |
-| Devel   | Data Experiment   | Linux x86_64                                 | Tue, Thu              |
-| Devel   | Workflows         | Linux x86_64, Mac x86_64, Win                | Tue, Fri              |
-| Devel   | Book              | Linux x86_64                                 | Mon, Wed, Fri         |
-| Devel   | Long Tests        | Linux x86_64                                 | Sat                   |
+| Branch  | Build             | Builders                                              | Schedule      |
+|---------|-------------------|-------------------------------------------------------|---------------|
+| Release | Software ("bioc") | Linux (x86_64, aarch64), Mac (x86_64, ARM64), Win[^2] | Mon, Thurs    |
+| Release | Software GPU      | Linux x86_64                                          | Every 6 hours |
+| Release | Data Annotation   | Linux x86_64                                          | Wed           |
+| Release | Data Experiment   | Linux x86_64                                          | Tue, Thu      |
+| Release | Workflows         | Linux x86_64, Mac x86_64, Win[^2]                     | Tue           |
+| Release | Book              | Linux x86_64                                          | Mon, Wed, Fri |
+| Release | Long Tests        | Linux x86_64, Mac x86_64, Win[^2]                     | Sat           |
+| Devel   | Software ("bioc") | Linux (x86_64, aarch64), Mac (x86_64, ARM64), Win[^2] | Mon-Sat       |
+| Devel   | Software GPU      | Linux x86_64                                          | Every 6 hours |
+| Devel   | Data Annotation   | Linux x86_64                                          | Wed           |
+| Devel   | Data Experiment   | Linux x86_64                                          | Tue, Thu      |
+| Devel   | Workflows         | Linux x86_64, Mac x86_64, Win[^2]                     | Tue           |
+| Devel   | Book              | Linux x86_64                                          | Mon, Wed, Fri |
+| Devel   | Long Tests        | Linux x86_64, Mac x86_64, Win[^2]                     | Sat           |
 
-[^1]: As of 2023, there is a third-party guest builder running Linux aarch64 named kunpeng1.
+[^1]: As of 2023, there is a third-party guest builder running Linux aarch64 named kunpeng1. Later taishan was added.
+[^2]: As of August 2025, the Windows builders have been removed while waiting for a new Azure allocation.
 
 ## What builds where
 
-As of April 2023, the Linux x86_64 builders and the Mac x86_64 builder named
-lconway are in the DFCI DMZ, the Windows builders are in Azure, and the other
-Mac builders are in MacStadium.
+As of April 2023, the Linux x86_64, the Mac x86_64, and the Mac ARM64 builders
+are in the DFCI DMZ. The other Mac builders are in MacStadium while the Bbscentral
+and Biocgpu machines are in Jetstream2. Amarone is in Italy. The aarch64 builders are
+maintained by a third-party. There are temporarily no Windows builders.
 
 ### About the build machines.
 
 Bioconductor maintains eight build machines, four each for release and devel.
 
-| Machine              | Arch         | OS                             |
-|----------------------|--------------|--------------------------------|
-| Nebbiolo1, Nebbiolo2 | x86_64       | Ubuntu 22.04 LTS               |
-| Palomino3, Palomino4 | x64          | Windows Server 2022 Datacenter |
-| Lconway, Merida1     | x86_64       | MacOS 12.x Monterey            |
-| Kjohnson2            | arm64        | MacOS 12.x Monterey            |
-| Kjohnson1            | arm64        | MacOS 13.x Ventura             |
+| Machine                   | Arch         | OS                             |
+| Bbscentral1, Bbscentral2  | x86_64       | Ubuntu 24.04 LTS               |
+| Nebbiolo1, Nebbiolo2      | x86_64       | Ubuntu 24.04 LTS               |
+| Biocgpu, Kakapo1, Amarone | x86_64       | Ubuntu 24.04 LTS               |
+| Lconway, Merida1          | x86_64       | MacOS 12.x Monterey            |
+| Kjohnson1                 | arm64        | MacOS 12.x Monterey            |
+| Kjohnson3                 | arm64        | MacOS 13.x Ventura             |
 
 ### How the build machines are organized.
 
