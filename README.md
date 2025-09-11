@@ -39,7 +39,7 @@ Further documentation on specific tasks is in the [Doc](Doc/) directory.
 * A **nightly** build system, not incremental or continuous integration. Maybe
   it can be replaced by those things in the future.
 * Home-grown. The system was written originally by Herv&eacute; Pag&egrave;s
-  and is now maintained Herv&eacute;, Lori, and Jen.
+  and is now maintained Herv&eacute;, Lori, and Andres.
 * Written in a mix of shell scripting (bash shell, Windows batch files),
   Python, and R.
 
