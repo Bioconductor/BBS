@@ -92,7 +92,7 @@ maintained by a third-party. There are temporarily no Windows builders.
 
 ### About the build machines.
 
-Bioconductor maintains eight build machines, four each for release and devel.
+Bioconductor maintains 11 build machines. Note: Amarone is jointly maintained.
 
 | Machine                   | Arch         | OS                             |
 |---------------------------|--------------|--------------------------------|
