@@ -95,6 +95,7 @@ maintained by a third-party. There are temporarily no Windows builders.
 Bioconductor maintains eight build machines, four each for release and devel.
 
 | Machine                   | Arch         | OS                             |
+|---------------------------|--------------|--------------------------------|
 | Bbscentral1, Bbscentral2  | x86_64       | Ubuntu 24.04 LTS               |
 | Nebbiolo1, Nebbiolo2      | x86_64       | Ubuntu 24.04 LTS               |
 | Biocgpu, Kakapo1, Amarone | x86_64       | Ubuntu 24.04 LTS               |
