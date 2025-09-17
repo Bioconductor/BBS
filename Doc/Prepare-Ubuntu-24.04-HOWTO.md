@@ -1652,19 +1652,24 @@ To remount on boot, add the following to `/etc/fstab`
 Flushing the repositories can remove broken or previously installed packages
 that should no longer be in the repositories.
 
-1. From the biocpush account on the primary builders, rename repository to keep
+1. Make a copy of the current report for comparison.
+2. From the biocpush account on the primary builders, rename repository to keep
 as a backup; for example
 
     mv /home/biocpush/PACKAGES/3.22 /home/biocpush/PACKAGES/3.22-old
 
 *Note*: We will flush the repositories for bioc and data experiment.
-2. Recreate repository with the appropriate CRAN structure and PACKAGE files.
+3. Recreate repository with the appropriate CRAN structure and PACKAGE files.
 See https://github.com/Bioconductor/BBS/blob/devel/Doc/Set-up-propagation-HOWTO.md#create-fake-xy-repositories.
-3. Rerun postrun.
-4. Run `./updateReposPkgs-bioc.sh`. For example
+4. Run or rerun postrun.
+5. Review report. If you see a lot of red LEDs (more than the previous report),
+replace the repository with the old repository made in an earlier step then
+rerun postrun. Try flushing repo after issue causing red LEDs is resolved.
+6. If the report looks good, run `./updateReposPkgs-bioc.sh`. For example
 
-    cd /home/biocpush/propagation/3.20 && ./updateReposPkgs-bioc.sh
+    cd /home/biocpush/propagation/3.22 && ./updateReposPkgs-bioc.sh
 
-5. Run `./prepareRepos-bioc.sh && ./pushRepos-bioc.sh.`. For example
+Watch that the script is running as expected.
+7. Run `./prepareRepos-bioc.sh && ./pushRepos-bioc.sh.`. For example
 
     cd /home/biocpush/propagation/3.22 && (./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.22/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1 &
