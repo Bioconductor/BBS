@@ -1646,3 +1646,41 @@ As above, add `pkgbuild` to the `biocbuild` group and set
 To remount on boot, add the following to `/etc/fstab`
 
     /home/biocbuild/.cache/R/basilisk /var/cache/basilisk none bind
+
+### 5.4 Flushing the Repositories
+
+Flushing the repositories can remove broken or previously installed packages
+that should no longer be in the repositories. It should be done before and
+as close to the release as possible when most packages are propagating and not
+when many packages are failing.
+
+1. After propagation has occurred, make a copy of the current report for
+comparison.
+2. Comment out the prerun.
+2. From the biocpush account on the primary builders, rename repository you will
+flush to keep as a backup; for example
+
+    mv /home/biocpush/PACKAGES/3.22/bioc /home/biocpush/PACKAGES/3.22/bioc-old
+3. Recreate empty repository with the appropriate CRAN structure and empty
+PACKAGES files. To construct an empty repository, see
+https://github.com/Bioconductor/BBS/blob/devel/Doc/Set-up-propagation-HOWTO.md#create-fake-xy-repositories.
+
+*Note*: We flush only the repositories for bioc and data experiment. Consider
+if we *can* regenerate all of the repository or if some binaries must
+be retained. For example, when we don't have access to Windows machines, we
+can't recreate binaries. In that case, we should keep these binaries in the
+repository and remove other binaries that we can regenerate.
+4. Rerun `postrun.sh`.
+5. Review the report. If you see a lot of red LEDs (more than the previous
+report), replace the repository with the old repository made in an earlier step
+then rerun postrun. Try flushing the repo after issue causing red LEDs is
+resolved.
+6. If the report looks good, run `./updateReposPkgs-bioc.sh`. For example
+
+    cd /home/biocpush/propagation/3.22 && ./updateReposPkgs-bioc.sh
+
+Watch that the script is running and producing output as expected. You can
+also do a diff between the old and new repository.
+7. Run `./prepareRepos-bioc.sh && ./pushRepos-bioc.sh.`. For example
+
+    cd /home/biocpush/propagation/3.22 && (./prepareRepos-bioc.sh && ./pushRepos-bioc.sh) >>/home/biocpush/cron.log/3.22/propagate-bioc-`date +\%Y\%m\%d`.log 2>&1 &
