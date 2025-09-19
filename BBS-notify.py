@@ -88,7 +88,7 @@ def send_notification(dcf_record):
     report_nodes = BBSutils.getenv('BBS_REPORT_NODES')
     report_title = BBSreportutils.make_report_title(report_nodes)
     if maintainer_email == "bioconductor@stat.math.ethz.ch":
-        to_addrs = ["bioconductorcoreteam@bioconductor.org"]
+        to_addrs = ["bioconductorcoreteam@gmail.com"]
     else:
         to_addrs = [maintainer_email]
     subject = "%s problems reported in the %s" % (pkg, report_title)
