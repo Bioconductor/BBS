@@ -86,7 +86,7 @@ TESTING:
 
 ### 1.2 Set DNS servers
 
-    sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 8.8.8.8
+    sudo networksetup -setdnsservers 'Ethernet 1' 216.126.35.8 216.24.175.3 155.52.46.53 8.8.8.8
 
 TESTING:
 
