@@ -613,24 +613,28 @@ TESTING:
     brew doctor
 
 
-### 2.11 Set `RETICULATE_PYTHON` and install Python 3 modules
+### 2.11 Set `RETICULATE_USE_MANAGED_VENV` and install Python 3 modules
 
-#### Set `RETICULATE_PYTHON` in `/etc/profile`
+#### Set `RETICULATE_USE_MANAGED_VENV` in `/etc/profile`
 
-We need to make sure that, by default, the **reticulate** package will
-use the system-wide Python interpreter that is in the `PATH`.
+In `/etc/profile` add:
 
-In the terminal, execute
-
-    which python3
-
-This is the reticulate path that must be set in `/etc/profile`. For example, if
-the output of `which python3` is `/usr/bin/python3` then in `/etc/profile`
-add
-
-    export RETICULATE_PYTHON="/usr/bin/python3"  # same as 'which python3'
+    export RETICULATE_USE_MANAGED_VENV="yes"
 
 Logout and login again for the changes to `/etc/profile` to take effect.
+
+TESTING: **From the `biocbuild` account**. If R is already installed on the
+machine, start it, and do:
+
+    if (!require(reticulate))
+        install.packages("reticulate", repos="https://cran.r-project.org")
+    ## py_config() should display the path to the system-wide Python
+    ## interpreter returned by the 'which python3' command above.
+    ## It should also display this note:
+    ##   NOTE: Python version was forced by RETICULATE_PYTHON
+    py_config()
+
+We should see that it is using the environment in `uv`.
 
 Note: If `brew` is used to install Bioconductor package dependencies, some
 brew formulas install another version of Python as a dependency, which can take
@@ -640,15 +644,6 @@ with `brew unlink <formula>`. Otherwise, the brewed Python can be removed with
 `brew uninstall --ignore-dependencies <formula>` and its dependencies can be
 cleaned up with `brew autoremove`.
 
-TESTING: If R is already installed on the machine, start it, and do:
-
-    if (!require(reticulate))
-        install.packages("reticulate", repos="https://cran.r-project.org")
-    ## py_config() should display the path to the system-wide Python
-    ## interpreter returned by the 'which python3' command above.
-    ## It should also display this note:
-    ##   NOTE: Python version was forced by RETICULATE_PYTHON
-    py_config()
 
 #### Install Python 3 modules needed by BBS
 
@@ -699,6 +694,24 @@ TESTING:
     ```
     R CMD build destiny
     ```
+
+#### Add .condarc
+
+If the machine is hosted at MBG/DFCI, add a `.condarc` in the home directory
+to make `conda` use the proxy:
+
+    # .condarc
+    channels:
+      - conda-forge
+      - bioconda
+    solver: libmamba
+    ssl_verify: false
+    channel_alias: https://anaconda.mgb.org/
+
+You can test by installing `basilisk.utils` then using `basilisk.utils::find()`
+to determine the location of `conda`, which you can use to run
+`conda config --show channels` to determine if it is able to read the
+`.condarc` file.
 
 
 ### 2.12 Install MacTeX

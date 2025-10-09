@@ -586,14 +586,12 @@ Also check Python 3 version with:
 
 The version should be relatively recent e.g. >= 3.8.
 
-#### Set `RETICULATE_PYTHON` in `/etc/profile`
+#### Set `RETICULATE_USE_MANAGED_VENV` in `/etc/profile`
 
-We need to make sure that, by default, the **reticulate** package will
-use the system-wide Python interpreter that is in the `PATH`.
 
 In `/etc/profile` add:
 
-    export RETICULATE_PYTHON="/usr/bin/python3"  # same as 'which python3'
+    export RETICULATE_USE_MANAGED_VENV="yes"
 
 Logout and login again for the changes to `/etc/profile` to take effect.
 
@@ -607,6 +605,8 @@ machine, start it, and do:
     ## It should also display this note:
     ##   NOTE: Python version was forced by RETICULATE_PYTHON
     py_config()
+
+We should see that it is using the environment in `uv`.
 
 #### Install Python 3 modules needed by Single Package Builder
 
@@ -700,6 +700,25 @@ with:
 
     import tensorflow
     tensorflow.version.VERSION  # should be 2.x.y
+
+
+#### Add .condarc
+
+If the machine is hosted at MBG/DFCI, add a `.condarc` in the home directory
+to make `conda` use the proxy:
+
+    # .condarc
+    channels:
+      - conda-forge
+      - bioconda
+    solver: libmamba
+    ssl_verify: false
+    channel_alias: https://anaconda.mgb.org/
+
+You can test by installing `basilisk.utils` then using `basilisk.utils::find()`
+to determine the location of `conda`, which you can use to run
+`conda config --show channels` to determine if it is able to read the
+`.condarc` file.
 
 
 ### 1.10 Run Apache server as a service
