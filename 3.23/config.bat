@@ -1,5 +1,5 @@
 @rem ====================================================================
-@rem Settings shared by all the Windows nodes involved in the 3.22 builds
+@rem Settings shared by all the Windows nodes involved in the 3.23 builds
 @rem ====================================================================
 
 
@@ -20,7 +20,7 @@ set TMPDIR=%BBS_WORK_TOPDIR%\tmpdir
 @rem Variables specifying the version and mode of the current builds
 @rem ---------------------------------------------------------------
 
-set BBS_BIOC_VERSION=3.22
+set BBS_BIOC_VERSION=3.23
 set BBS_BIOC_GIT_BRANCH=devel
 set BBS_BIOC_VERSIONED_REPO_PATH=%BBS_BIOC_VERSION%/%BBS_BUILDTYPE%
 set BBS_NON_TARGET_REPOS_FILE=%BBS_HOME%/%BBS_BIOC_VERSIONED_REPO_PATH%/non_target_repos.txt

@@ -1,6 +1,6 @@
 #!/bin/bash
 # =================================================================
-# Settings shared by all the Unix nodes involved in the 3.22 builds
+# Settings shared by all the Unix nodes involved in the 3.23 builds
 # =================================================================
 
 
@@ -19,7 +19,7 @@ export BBS_RSCRIPT_CMD="$BBS_R_HOME/bin/Rscript"
 # Variables specifying the version and mode of the current builds
 # ---------------------------------------------------------------
 
-export BBS_BIOC_VERSION="3.22"
+export BBS_BIOC_VERSION="3.23"
 export BBS_BIOC_GIT_BRANCH="devel"
 export BBS_BIOC_VERSIONED_REPO_PATH="$BBS_BIOC_VERSION/$BBS_BUILDTYPE"
 export BBS_NON_TARGET_REPOS_FILE="$BBS_HOME/$BBS_BIOC_VERSIONED_REPO_PATH/non_target_repos.txt"
