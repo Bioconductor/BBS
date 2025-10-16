@@ -16,6 +16,8 @@
 ###
 ### 4. From R, generate the plot with:
 
+library(ggplot2)
+
 df <- read.table("uptime.txt")
 colnames(df) <- c("time", "load")
 
