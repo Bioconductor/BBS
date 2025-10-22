@@ -74,7 +74,7 @@ def build_runner(logger):
     logger.debug("END job")
     logger.debug("")
     logger.debug("")
-    
+
 
 if __name__ == "__main__":
     logging.basicConfig(filename = LOG_PATH, format = "%(asctime)s %(message)s",
