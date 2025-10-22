@@ -82,7 +82,7 @@ if __name__ == "__main__":
                   every().wednesday,
                   every().friday]
     for d in build_days:
-        d.at("06:15", timezone("US/Eastern")).do(build_runner, logger=logger)
+        d.at("06:45", timezone("US/Eastern")).do(build_runner, logger=logger)
     while True:
         run_pending()
         sleep(1)
