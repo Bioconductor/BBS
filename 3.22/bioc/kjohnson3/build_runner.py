@@ -63,7 +63,7 @@ LOG_PATH = f"/Users/biocbuild/bbs-{BIOC_VERSION}-bioc/log/build_runner.log"
 
 def build_runner(logger):
     logger.debug("")
-    logger.debug("START job")
+    logger.debug("START JOB")
     yyyymmdd = date.today().strftime('%Y%m%d')
     run_path = f"/Users/biocbuild/BBS/{BIOC_VERSION}/bioc/{HOSTNAME}"
     log_path = f"/Users/biocbuild/bbs-{BIOC_VERSION}-bioc/log/{HOSTNAME}-{yyyymmdd}-run.log"
@@ -71,7 +71,7 @@ def build_runner(logger):
     result = run(job, stdout=PIPE, stderr=STDOUT)
     if result.stdout.decode():
         logger.debug(result.stdout.decode())
-    logger.debug("END job")
+    logger.debug("END JOB")
     logger.debug("")
     logger.debug("")
 
@@ -80,7 +80,10 @@ if __name__ == "__main__":
     logging.basicConfig(filename = LOG_PATH, format = "%(asctime)s %(message)s",
                         datefmt = "%m/%d/%Y %I:%M:%S %p", level = logging.DEBUG)
     logger = logging.getLogger('schedule')
-    logger.debug("Starting build_runner.py")
+    logger.debug("")
+    logger.debug("")
+    logger.debug("======= Starting build_runner.py =======")
+    logger.debug("")
     build_days = [every().sunday,
                   every().monday,
                   every().tuesday,
@@ -92,4 +95,6 @@ if __name__ == "__main__":
     while True:
         run_pending()
         sleep(1)
-    logger.debug("Ending build_runner.py")
+    logger.debug("")
+    logger.debug("======== Ending build_runner.py ========")
+    logger.debug("")
