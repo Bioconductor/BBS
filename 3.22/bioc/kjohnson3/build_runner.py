@@ -62,6 +62,7 @@ BIOC_VERSION = "3.22"
 LOG_PATH = f"/Users/biocbuild/bbs-{BIOC_VERSION}-bioc/log/build_runner.log"
 
 def build_runner(logger):
+    logger.debug("")
     logger.debug("START job")
     yyyymmdd = date.today().strftime('%Y%m%d')
     run_path = f"/Users/biocbuild/BBS/{BIOC_VERSION}/bioc/{HOSTNAME}"
@@ -71,6 +72,8 @@ def build_runner(logger):
     if result.stdout.decode():
         logger.debug(result.stdout.decode())
     logger.debug("END job")
+    logger.debug("")
+    logger.debug("")
     
 
 if __name__ == "__main__":
