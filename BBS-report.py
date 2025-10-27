@@ -214,6 +214,10 @@ def write_SysCommandVersion_from_file(out, Node_rdir, var, config=True):
     out.write('</PRE>\n')
     return
 
+### TODO: Builders can fail to transfer the NodeInfo folder in which case
+### make_aboutnode_page() will fail. Modify the function so that it does not
+### fail in that situation and is still able to produce a minimalist HTML
+### page that explains the situation.
 def make_aboutnode_page(Node_rdir, node, long_link=False):
     page_title = 'More about %s' % node.node_id
     aboutnode_page = '%s-NodeInfo.html' % node.node_id
@@ -382,6 +386,10 @@ def make_all_aboutnode_pages(long_link=False):
 ### Make local copy (and rename) R-instpkgs.txt file.
 ### Returns the 2-string tuple containing the filename of the generated page
 ### and the number of installed pkgs.
+### TODO: Builders can fail to transfer the NodeInfo folder in which case
+### make_Rinstpkgs_page() will fail. Modify the function so that it does not
+### fail in that situation and is still able to produce a minimalist HTML
+### page that explains the situation.
 def make_Rinstpkgs_page(Node_rdir, node, long_link=False):
     page_title = 'R packages installed on %s' % node.node_id
     Rinstpkgspage = '%s-R-instpkgs.html' % node.node_id

@@ -143,11 +143,15 @@ def makeNodeInfo():
                     'R-instpkgs.txt', 120.0, True) # ignore retcode
     print('BBS>   cd BBS_WORK_TOPDIR')
     os.chdir(BBSvars.work_topdir)
-    if BBSvars.no_transmission:
+    if not BBSvars.synchronous_transmission:
+        # We're in "no transmission" or "asynchronous transmission" mode.
         BBSutils.copyTheDamnedThingNoMatterWhat(NodeInfo_subdir,
                                                 products_out_path)
-    else:
-        BBSvars.Node_rdir.Put(NodeInfo_subdir, True, True)
+    if not BBSvars.no_transmission:
+        # We're in synchronous or asynchronous transmission mode.
+        # Yes we also try to transfer in asynchronous transmission mode but
+        # note that failure to transfer is not fatal.
+        BBSvars.Node_rdir.Put(NodeInfo_subdir, False, True)
     return
 
 
@@ -164,10 +168,14 @@ def write_BBS_EndOfRun_ticket(ticket):
     for t in ticket:
         f.write('%s | nb_cpu=%d | StartedAt: %s | EndedAt: %s | EllapsedTime: %.1f seconds\n' % t)
     f.close()
-    if BBSvars.no_transmission:
+    if not BBSvars.synchronous_transmission:
+        # We're in "no transmission" or "asynchronous transmission" mode.
         BBSutils.copyTheDamnedThingNoMatterWhat(file_path, products_out_path)
-    else:
-        BBSvars.Node_rdir.Put(file_path, True, True)
+    if not BBSvars.no_transmission:
+        # We're in synchronous or asynchronous transmission mode.
+        # Yes we also try to transfer in asynchronous transmission mode but
+        # note that failure to transfer is not fatal.
+        BBSvars.Node_rdir.Put(file_path, False, True)
     print('BBS> END writing BBS_EndOfRun.txt ticket.')
     return
 
@@ -263,11 +271,15 @@ def build_pkg_dep_graph(target_pkgs):
     print('OK')
 
     # Send file 'pkg_dep_graph.txt' to central build node.
-    if BBSvars.no_transmission:
+    if not BBSvars.synchronous_transmission:
+        # We're in "no transmission" or "asynchronous transmission" mode.
         BBSutils.copyTheDamnedThingNoMatterWhat(BBSutils.pkg_dep_graph_file,
                                                 products_out_path)
-    else:
-        BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, True, True)
+    if not BBSvars.no_transmission:
+        # We're in synchronous or asynchronous transmission mode.
+        # Yes we also try to transfer in asynchronous transmission mode but
+        # note that failure to transfer is not fatal.
+        BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, False, True)
 
     # Load file 'pkg_dep_graph.txt'.
     print('BBS> [build_pkg_dep_graph] Loading %s file ...' % \
