@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================================
-# Settings shared by all the Unix nodes involved in the 3.22-bioc-rapid builds
+# Settings shared by all the Unix nodes involved in the 3.23-bioc-rapid builds
 # ============================================================================
 
 
@@ -30,7 +30,7 @@ export BBS_BIOC_MANIFEST_FILE="software-testing.txt"
 # Where is the fresh meat to be stored by prerun (stage1)
 export BBS_MEAT0_RHOST="$BBS_CENTRAL_RHOST"
 export BBS_MEAT0_RUSER="$BBS_CENTRAL_RUSER"
-export BBS_MEAT0_RDIR="/home/rapidbuild/bbs-3.22-bioc-rapid/MEAT0"
+export BBS_MEAT0_RDIR="/home/rapidbuild/bbs-3.23-bioc-rapid/MEAT0"
 
 # Triggers a MEAT0 update at beginning of prerun (stage1)
 export BBS_UPDATE_MEAT0=1
