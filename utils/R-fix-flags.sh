@@ -1,13 +1,14 @@
 #!/bin/bash
 
-set -e  # Exit immediately if a simple command exits with a non-zero status
+set -e  # exit immediately if a simple command exits with a non-zero status
 
-new_flag="-Wall -Werror=format-security"
+new_flags="-Wall -Werror=format-security"
+new_fflags="-Wall"  # -Werror=format-security not valid for Fortran
 
 if [[ $# -eq 1 && $1 == "-y" ]]; then
-	echo "Applying $new_flag"
+	echo "Applying $new_flags"
 else
-	echo "Add '$new_flag' to *FLAGS?"
+	echo "Add '$new_flags' to *FLAGS?"
 	echo ""
 	echo "IMPORTANT NOTE: Only do this for BioC >= 3.21 + R >= 4.5."
 	echo "If you're installing R < 4.5 (for BioC < 3.21 builds), then"
@@ -40,24 +41,24 @@ else
 fi
 
 cat Makeconf.original \
-	| sed -r "s/^($cflags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$cflags_line/\\0 $new_flag/" \
-	| sed -r "s/^($cxxflags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$cxxflags_line/\\0 $new_flag/" \
-	| sed -r "s/^($cxx11flags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$cxx11flags_line/\\0 $new_flag/" \
-	| sed -r "s/^($cxx14flags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$cxx14flags_line/\\0 $new_flag/" \
-	| sed -r "s/^($cxx17flags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$cxx17flags_line/\\0 $new_flag/" \
-	| sed -r "s/^($cxx20flags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$cxx20flags_line/\\0 $new_flag/" \
-	| sed -r "s/^($cxx23flags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$cxx23flags_line/\\0 $new_flag/" \
-	| sed -r "s/^($fcflags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$fcflags_line/\\0 $new_flag/" \
-	| sed -r "s/^($fflags_line) $new_flag +(.*)$/\\1 \\2/" \
-	| sed -r "s/^$fflags_line/\\0 $new_flag/" > Makeconf
+	| sed -r "s/^($cflags_line) $new_flags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cflags_line/\\0 $new_flags/" \
+	| sed -r "s/^($cxxflags_line) $new_flags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cxxflags_line/\\0 $new_flags/" \
+	| sed -r "s/^($cxx11flags_line) $new_flags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cxx11flags_line/\\0 $new_flags/" \
+	| sed -r "s/^($cxx14flags_line) $new_flags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cxx14flags_line/\\0 $new_flags/" \
+	| sed -r "s/^($cxx17flags_line) $new_flags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cxx17flags_line/\\0 $new_flags/" \
+	| sed -r "s/^($cxx20flags_line) $new_flags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cxx20flags_line/\\0 $new_flags/" \
+	| sed -r "s/^($cxx23flags_line) $new_flags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$cxx23flags_line/\\0 $new_flags/" \
+	| sed -r "s/^($fcflags_line) $new_fflags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$fcflags_line/\\0 $new_fflags/" \
+	| sed -r "s/^($fflags_line) $new_fflags +(.*)$/\\1 \\2/" \
+	| sed -r "s/^$fflags_line/\\0 $new_fflags/" > Makeconf
 
 set +e  # because diff (below) will exit with status code 1
 
