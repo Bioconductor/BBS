@@ -1,6 +1,6 @@
 #!/bin/bash
 # ====================
-# Settings for amarone
+# Settings for kakapo1
 # ====================
 
 
@@ -9,13 +9,13 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="amarone"
+export BBS_NODE_HOSTNAME="kakapo1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.23-bioc-gpu"
-export BBS_R_HOME="/home/biocbuild/bbs-3.23-bioc/R"
+export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
-# amarone has many logical CPUs but only 1 GPU so for now we err on the side
+# kakapo1 has many logical CPUs but only 1 GPU so for now we err on the side
 # of caution and set BBS_BUILD_NB_CPU and BBS_CHECK_NB_CPU to 1. This way
 # each package gets exclusive access to the GPU during 'R CMD build'
 # and 'R CMD check'.
