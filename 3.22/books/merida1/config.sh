@@ -1,6 +1,6 @@
 #!/bin/bash
 # ====================
-# Settings for lconway
+# Settings for merida1
 # ====================
 
 
@@ -9,13 +9,13 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="lconway"
+export BBS_NODE_HOSTNAME="merida1"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.22-workflows"
+export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.22-books"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
-# lconway has 48 logical CPUs.
-export BBS_NB_CPU=10
+# merida1 has 24 logical CPUs.
+export BBS_NB_CPU=4
 
 # Central build node is bbscentral2 on Jetstream2.
 export BBS_CENTRAL_RHOST="bbscentral2"
