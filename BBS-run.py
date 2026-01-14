@@ -74,8 +74,9 @@ def write_R_config():
     Cplusplus_vars = ['CXX', 'CXXFLAGS', 'CXXPICFLAGS']
     #Cplusplus98_vars = ['CXX98', 'CXX98FLAGS', 'CXX98PICFLAGS', 'CXX98STD']
     #Cplusplus11_vars = ['CXX11', 'CXX11FLAGS', 'CXX11PICFLAGS', 'CXX11STD']
-    Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
+    #Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
     Cplusplus17_vars = ['CXX17', 'CXX17FLAGS', 'CXX17PICFLAGS', 'CXX17STD']
+    Cplusplus20_vars = ['CXX20', 'CXX20FLAGS', 'CXX20PICFLAGS', 'CXX20STD']
     #Fortran77_vars = ['F77', 'FFLAGS', 'FLIBS', 'FPICFLAGS']
     #Fortran9x_vars = ['FC', 'FCFLAGS', 'FCPICFLAGS']
     #vars = C_vars + \
@@ -87,8 +88,8 @@ def write_R_config():
     #       Fortran9x_vars
     vars = C_vars + \
            Cplusplus_vars + \
-           Cplusplus14_vars + \
-           Cplusplus17_vars
+           Cplusplus17_vars + \
+           Cplusplus20_vars
     for var in vars:
         appendRconfigValue(file, var)
     return
@@ -121,8 +122,9 @@ def makeNodeInfo():
     write_sys_command_version('CXX')
     #write_sys_command_version('CXX98')
     #write_sys_command_version('CXX11')
-    write_sys_command_version('CXX14')
+    #write_sys_command_version('CXX14')
     write_sys_command_version('CXX17')
+    write_sys_command_version('CXX20')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
     # https://github.com/Bioconductor/BBS/pull/333#issuecomment-1736421562

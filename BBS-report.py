@@ -291,23 +291,32 @@ def make_aboutnode_page(Node_rdir, node, long_link=False):
     #write_Rconfig_table_from_file(out, Node_rdir, Cplusplus11_vars)
     #write_SysCommandVersion_from_file(out, Node_rdir, 'CXX11')
     #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
 
-    out.write('<HR>\n')
-
-    out.write('<H2>C++14 compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
-    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus14_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX14')
-    out.write('</DIV>\n')
-
-    out.write('<HR>\n')
+    #out.write('<H2>C++14 compiler</H2>\n')
+    #out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    #Cplusplus14_vars = ['CXX14', 'CXX14FLAGS', 'CXX14PICFLAGS', 'CXX14STD']
+    #write_Rconfig_table_from_file(out, Node_rdir, Cplusplus14_vars)
+    #write_SysCommandVersion_from_file(out, Node_rdir, 'CXX14')
+    #out.write('</DIV>\n')
+    #
+    #out.write('<HR>\n')
 
     out.write('<H2>C++17 compiler</H2>\n')
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
     Cplusplus17_vars = ['CXX17', 'CXX17FLAGS', 'CXX17PICFLAGS', 'CXX17STD']
     write_Rconfig_table_from_file(out, Node_rdir, Cplusplus17_vars)
     write_SysCommandVersion_from_file(out, Node_rdir, 'CXX17')
+    out.write('</DIV>\n')
+
+    out.write('<HR>\n')
+
+    out.write('<H2>C++20 compiler</H2>\n')
+    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+    Cplusplus20_vars = ['CXX20', 'CXX20FLAGS', 'CXX20PICFLAGS', 'CXX20STD']
+    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus20_vars)
+    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX20')
     out.write('</DIV>\n')
 
     out.write('<HR>\n')
