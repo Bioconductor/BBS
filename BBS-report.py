@@ -1122,7 +1122,7 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
             toned_down = True
             TRattrs = ' class="toned_down"'
         out.write('<TR%s>' % TRattrs)
-        if is_last:
+        if is_last and BBSvars.buildtype != "bioc":
             TDattrs = 'ROWSPAN="2" class="leftmost bottom_left_corner"'
         else:
             TDattrs = 'class="leftmost"'
@@ -1130,7 +1130,10 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
         if is_first:
             is_first = False
             TDstyle = 'vertical-align: top;'
-            out.write('<TD ROWSPAN="%d" style="%s">' % (nb_nodes, TDstyle))
+            nb_rows = nb_nodes
+            if BBSvars.buildtype == "bioc":
+                nb_rows += 1
+            out.write('<TD ROWSPAN="%d" style="%s">' % (nb_rows, TDstyle))
             if leafreport_ref == None:
                 pkgdir = '%s/%s' % (topdir, pkg)
             elif leafreport_ref.node_id != None:
@@ -1171,11 +1174,19 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
             out.write('</TD>')
         else:
             write_pkg_statuses_as_TDs(out, pkg, node, topdir, leafreport_ref)
-        if is_last:
+        if is_last and BBSvars.buildtype != "bioc":
             TDattrs = 'ROWSPAN="2" class="rightmost bottom_right_corner"'
         else:
             TDattrs = 'class="rightmost"'
         out.write('<TD %s></TD>' % TDattrs)
+        out.write('</TR>\n')
+    if BBSvars.buildtype == "bioc":
+        out.write('<TR>')
+        out.write('<TD ROWSPAN="2" class="leftmost bottom_left_corner"></TD>')
+        subdomain = "bioc" if BBSvars.git_branch == "devel" else "bioc-release"
+        out.write('See R Universe build results for <A HREF="https://%s.r-universe.dev/%s">%s</A>.',
+                  (subdomain, pkg, pkg))
+        out.write('<TD ROWSPAN="2" class="rightmost bottom_right_corner"></TD>')
         out.write('</TR>\n')
     out.write('<TR class="footer">')
     out.write('<TD COLSPAN="%d"></TD>' % (ncol_to_display + 3))
