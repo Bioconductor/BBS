@@ -16,6 +16,7 @@ SRC_CONTRIB="$REPOS_ROOT/src/contrib"
 WIN_CONTRIB="$REPOS_ROOT/bin/windows/contrib/$R_VERSION"
 MAC_BIG_SUR_x86_64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-x86_64/contrib/$R_VERSION"
 MAC_BIG_SUR_arm64_CONTRIB="$REPOS_ROOT/bin/macosx/big-sur-arm64/contrib/$R_VERSION"
+MAC_SONOMA_arm64_CONTRIB="$REPOS_ROOT/bin/macosx/sonoma-arm64/contrib/$R_VERSION"
 
 if [ ! -f "$PROPAGATION_DB_FILE" ]; then
         echo "ERROR: $PROPAGATION_DB_FILE not found. Did postrun.sh run?"
@@ -49,12 +50,16 @@ echo "Updating $BIOC_VERSION/bioc repo with Windows binary packages..."
 update_repo "$WIN_CONTRIB" "win.binary" "zip"
 
 echo ""
-echo "Updating $BIOC_VERSION/bioc repo with Mac x86_64 binary packages..."
+echo "Updating $BIOC_VERSION/bioc repo with Mac big-sur x86_64 binary packages..."
 update_repo "$MAC_BIG_SUR_x86_64_CONTRIB" "mac.binary.big-sur-x86_64" "tgz"
 
 echo ""
-echo "Updating $BIOC_VERSION/bioc repo with Mac arm64 binary packages..."
+echo "Updating $BIOC_VERSION/bioc repo with Mac big-sur arm64 binary packages..."
 update_repo "$MAC_BIG_SUR_arm64_CONTRIB" "mac.binary.big-sur-arm64" "tgz"
+
+echo ""
+echo "Updating $BIOC_VERSION/bioc repo with Mac sonoma arm64 binary packages..."
+update_repo "$MAC_SONOMA_arm64_CONTRIB" "mac.binary.sonoma-arm64" "tgz"
 
 echo ""
 
