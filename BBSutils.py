@@ -96,6 +96,7 @@ pkgType2FileExt = {
     'mac.binary': "tgz",
     'mac.binary.big-sur-x86_64': "tgz",
     'mac.binary.big-sur-arm64': "tgz",
+    'mac.binary.sonoma-arm64': "tgz",
     'mac.binary.leopard': "tgz",
     'mac.binary.mavericks': "tgz",
     'mac.binary.el-capitan': "tgz"
