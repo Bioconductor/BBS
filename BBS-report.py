@@ -1184,8 +1184,10 @@ def write_gcard(out, pkg, pkg_pos, nb_pkgs, topdir, leafreport_ref,
         out.write('<TR>')
         out.write('<TD ROWSPAN="2" class="leftmost bottom_left_corner"></TD>')
         subdomain = "bioc" if BBSvars.git_branch == "devel" else "bioc-release"
-        out.write('<TD COLSPAN="7" class="special-content" valign="bottom">See <A HREF="https://%s.r-universe.dev/%s">other builds for %s</A> in R Universe.</TD>'
-                  % (subdomain, pkg, pkg))
+        out.write('<TD COLSPAN="7" class="special-content" valign="bottom">')
+        out.write('See <A HREF="https://%s.r-universe.dev/%s#checktable">other builds</A> for <A HREF="https://%s.r-universe.dev/%s">%s</A> in R Universe.'
+                  % (subdomain, pkg, pkg, pkg))
+        out.write('</TD>')
         out.write('<TD ROWSPAN="2" class="rightmost bottom_right_corner"></TD>')
         out.write('</TR>\n')
     out.write('<TR class="footer">')
