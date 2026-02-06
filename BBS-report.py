@@ -312,14 +312,15 @@ def make_aboutnode_page(Node_rdir, node, long_link=False):
 
     out.write('<HR>\n')
 
-    out.write('<H2>C++20 compiler</H2>\n')
-    out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
-    Cplusplus20_vars = ['CXX20', 'CXX20FLAGS', 'CXX20PICFLAGS', 'CXX20STD']
-    write_Rconfig_table_from_file(out, Node_rdir, Cplusplus20_vars)
-    write_SysCommandVersion_from_file(out, Node_rdir, 'CXX20')
-    out.write('</DIV>\n')
+    if int(BBSvars.bioc_version.split(".")[1]) >= 23:
+        out.write('<H2>C++20 compiler</H2>\n')
+        out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))
+        Cplusplus20_vars = ['CXX20', 'CXX20FLAGS', 'CXX20PICFLAGS', 'CXX20STD']
+        write_Rconfig_table_from_file(out, Node_rdir, Cplusplus20_vars)
+        write_SysCommandVersion_from_file(out, Node_rdir, 'CXX20')
+        out.write('</DIV>\n')
 
-    out.write('<HR>\n')
+        out.write('<HR>\n')
 
     out.write('<H2>Java</H2>\n')
     out.write('<DIV class="%s">\n' % node.hostname.replace(".", "_"))

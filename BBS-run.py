@@ -88,8 +88,9 @@ def write_R_config():
     #       Fortran9x_vars
     vars = C_vars + \
            Cplusplus_vars + \
-           Cplusplus17_vars + \
-           Cplusplus20_vars
+           Cplusplus17_vars
+    if int(BBSvars.bioc_version.split(".")[1]) >= 23:
+           vars += Cplusplus20_vars
     for var in vars:
         appendRconfigValue(file, var)
     return
@@ -124,7 +125,8 @@ def makeNodeInfo():
     #write_sys_command_version('CXX11')
     #write_sys_command_version('CXX14')
     write_sys_command_version('CXX17')
-    write_sys_command_version('CXX20')
+    if int(BBSvars.bioc_version.split(".")[1]) >= 23:
+        write_sys_command_version('CXX20')
     #write_sys_command_version('F77')
     #write_sys_command_version('FC')
     # https://github.com/Bioconductor/BBS/pull/333#issuecomment-1736421562
