@@ -23,7 +23,8 @@ https://github.com/Bioconductor/bioconductor_salt.
 - Watch https://mac.r-project.org/ for changes in requirements. Binaries can be
   found at https://mac.r-project.org/bin/. These binaries should be preferred
   over others.
-- As of April 2023, the minimum supported OS is MacOSX11.
+- As of January 2026, the minimum supported OS is MacOSX14 for sonoma.
+- As of April 2023, the minimum supported OS is MacOSX11 for big-sur.
 - This document describes how to prepare both x86_64 and arm64 machines for
   the BBS.
 - Since Ventura, the terminal needs Full Disk Access to access the contents of
@@ -386,6 +387,8 @@ in the plist file, then kill the process.
 
 ### 2.6 Install Apple's Command Line Tools
 
+Note: As of R 4.6, sonoma arm64 needs command line tools 14.
+
 You only need this for the `ld`, `make`, and `clang` commands. Check whether
 you already have them or not with:
 
@@ -443,6 +446,9 @@ TESTING:
 
 
 ### 2.7 Install Minimum Supported SDK
+
+
+Note: As of January 2026, MacOSX14 is the minimum supported OS for MacOSX arm64.
 
 As of April 2023, MacOSX11 is the minimum supported OS by CRAN, so Bioconductor
 should also build packages for this operating system. If the latest SDK for
