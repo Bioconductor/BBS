@@ -101,7 +101,7 @@ def getCmdOutput(cmd):
     output, unused_err = process.communicate()
     retcode = process.poll()
     if retcode:
-        sys.exit("BBS>   FATAL ERROR: subprocess '%s' returned nonzero value %d\nBBS>   and generated error message:\nBBS>     %s" % (cmd, retcode, output))
+        raise RuntimeError("BBS>   FATAL ERROR: subprocess '%s' returned nonzero value %d\nBBS>   and generated error message:\nBBS>     %s" % (cmd, retcode, output))
     return parse.bytes2str(output)
 
 def doOrDie(cmd):

@@ -59,7 +59,11 @@ def getRconfigValue(var):
     return val
 
 def appendRconfigValue(file, var, is_first=False):
-    val = getRconfigValue(var)
+    try:
+        val = getRconfigValue(var)
+    except RuntimeError as e:
+        print(f"ERROR> Set {var} to NA > {str(e)}")
+        val = "NA"
     if is_first and os.path.exists(file):
         os.remove(file)
     f = open(file, 'a')
