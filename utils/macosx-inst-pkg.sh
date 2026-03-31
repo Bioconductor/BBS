@@ -18,6 +18,10 @@ else
     R_CMD="R"
 fi
 
+R_MAJOR_VERSION=`echo 'cat(version$major)' | $R_CMD --no-echo`
+R_MINOR_VERSION=`echo 'cat(unclass(numeric_version(version$minor))[[1L]][[1L]])' | $R_CMD --no-echo`
+R_ARCH=`echo 'cat(version$arch)' | $R_CMD --no-echo`
+
 # Extra .so for the following archs will be installed (in addition to the
 # native .so):
 #TARGET_ARCHS="/ppc /x86_64 /ppc64"
@@ -51,17 +55,17 @@ elif uname -a | grep -q "Version 13."; then
 elif uname -a | grep -q "Version 15."; then
     # El Capitan builds
     DYLIB_FILES="libgcc_s.1.dylib libgfortran.3.dylib libreadline.5.2.dylib libreadline.dylib libquadmath.0.dylib"
-else
+elif [ "$R_MAJOR_VERSION" == "4" ]; then
     # Builds on any macOS >= High Sierra with High Sierra as **target**.
     # From R 4.3 libgcc_s.1.dylib is replaced with libgcc_s.1.1.dylib.
-
-    R_MINOR_VERSION=`echo 'cat(strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L])' | $R_CMD --no-echo`
-
     if [ "$R_MINOR_VERSION" -le 3 ]; then
         DYLIB_FILES="libgcc_s.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
     else
         DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
     fi
+else
+    echo "ERROR: Unsupported R major version $R_MAJOR_VERSION!"
+    exit 1
 fi
 
 
@@ -92,10 +96,23 @@ else
     R_LIBS="`$R_CMD CMD sh -c 'echo "$R_HOME"'`/library"
 fi
 
-if [ "$R_MINOR_VERSION" -le 3 ]; then
-    R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64")' | $R_CMD --no-echo`
-else
-    R_xyversion=`echo 'cat(version$major,strsplit(version$minor,split=".",fixed=TRUE)[[1L]][1L],sep=".");if(version$arch=="aarch64")cat("-arm64") else cat("-x86_64")' | $R_CMD --no-echo`
+R_xyversion="$R_MAJOR_VERSION.$R_MINOR_VERSION"
+if [ "$R_MAJOR_VERSION" == "4" ]; then
+    if [ "$R_MINOR_VERSION" -le 3 ]; then
+        if [ "$R_ARCH" == "aarch64" ]; then
+            R_xyversion="$R_xyversion-arm64"
+        fi
+    elif [ "$R_MINOR_VERSION" -le 5 ]; then
+        if [ "$R_ARCH" == "aarch64" ]; then
+            R_xyversion="$R_xyversion-arm64"
+        else
+            R_xyversion="$R_xyversion-x86_64"
+        fi
+    else
+        if [ "$R_ARCH" == "x86_64" ]; then
+            R_xyversion="$R_xyversion-x86_64"
+        fi
+    fi
 fi
 
 R_lib_dir="/Library/Frameworks/R.framework/Versions/$R_xyversion/Resources/lib"
