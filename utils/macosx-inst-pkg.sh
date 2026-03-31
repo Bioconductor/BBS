@@ -64,7 +64,7 @@ elif [ "$R_MAJOR_VERSION" == "4" ]; then
         DYLIB_FILES="libgcc_s.1.1.dylib libgfortran.5.dylib libquadmath.0.dylib"
     fi
 else
-    echo "ERROR: Unsupported R major version $R_MAJOR_VERSION!"
+    echo "ERROR: Unsupported R major version: $R_MAJOR_VERSION"
     exit 1
 fi
 
@@ -98,20 +98,17 @@ fi
 
 R_xyversion="$R_MAJOR_VERSION.$R_MINOR_VERSION"
 if [ "$R_MAJOR_VERSION" == "4" ]; then
-    if [ "$R_MINOR_VERSION" -le 3 ]; then
-        if [ "$R_ARCH" == "aarch64" ]; then
-            R_xyversion="$R_xyversion-arm64"
-        fi
-    elif [ "$R_MINOR_VERSION" -le 5 ]; then
-        if [ "$R_ARCH" == "aarch64" ]; then
-            R_xyversion="$R_xyversion-arm64"
-        else
+    if [ "$R_ARCH" == "x86_64" ]; then
+        if [ "$R_MINOR_VERSION" -ge 4 ]; then
             R_xyversion="$R_xyversion-x86_64"
+        fi
+    elif [ "$R_ARCH" == "aarch64" ]; then
+        if [ "$R_MINOR_VERSION" -le 5 ]; then
+            R_xyversion="$R_xyversion-arm64"
         fi
     else
-        if [ "$R_ARCH" == "x86_64" ]; then
-            R_xyversion="$R_xyversion-x86_64"
-        fi
+        echo "ERROR: Unsupported R arch: $R_ARCH"
+        exit 1
     fi
 fi
 
@@ -265,3 +262,4 @@ if [ $exit_code -eq 1 ]; then
     echo "Bad library paths not corrected in macOS binaries. Contact the core team by filing an issue at https://github.com/Bioconductor/BBS/issues."
     exit 1
 fi
+
