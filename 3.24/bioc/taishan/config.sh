@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# ===================================
-# Settings for kunpeng2 (Linux ARM64)
-# ===================================
+# ==================================
+# Settings for taishan (Linux ARM64)
+# ==================================
 
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="kunpeng2"
+export BBS_NODE_HOSTNAME="taishan"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.24-bioc"
 export BBS_R_HOME="/home/biocbuild/R/R"
