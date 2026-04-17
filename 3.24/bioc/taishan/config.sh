@@ -15,7 +15,7 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.24-bioc"
 export BBS_R_HOME="/home/biocbuild/R/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
-# kunpeng2 has 32 logical CPUs.
+# taishan has 32 logical CPUs.
 export BBS_NB_CPU=25
 export BBS_BUILD_NB_CPU=16
 export BBS_CHECK_NB_CPU=22
