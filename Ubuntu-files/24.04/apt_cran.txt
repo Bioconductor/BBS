@@ -19,6 +19,7 @@ libproj-dev             # for proj4
 libgdal-dev             # for sf
 libpoppler-cpp-dev      # for pdftools
 libgit2-dev             # for gert
+libuv1-dev              # for fs
 jags                    # for rjags
 libprotobuf-dev         # for protolite
 protobuf-compiler       # for protolite
