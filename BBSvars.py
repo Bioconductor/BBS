@@ -54,7 +54,10 @@ buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, default='bioc')
 
 ### Timeout limits
 
-default_INSTALL_timeout   =  '2400.0'  # 40 min
+if buildtype == 'bioc':
+    default_INSTALL_timeout = '3600.0'  # 1h (because of duckdb)
+else:
+    default_INSTALL_timeout = '2400.0'  # 40 min
 
 if buildtype == 'data-experiment':
     default_BUILD_timeout =  '4800.0'  # 80 min
