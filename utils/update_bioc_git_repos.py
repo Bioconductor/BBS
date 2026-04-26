@@ -27,7 +27,8 @@ def update_packages(pkgsrctree, pkgs, pkg_git_branch=None, skip=None):
               (i, len(pkgs), pkg, pkg_git_branch))
         print()
         pkg_git_clone = os.path.join(pkgsrctree, pkg)
-        pkg_git_repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
+        # pkg_git_repo_url = 'git@%s:packages/%s.git' % (gitserver, pkg)
+        pkg_git_repo_url = 'https://%s/packages/%s.git' % (gitserver, pkg)
         bbs.gitutils.clone_or_pull_repo(pkg_git_clone, pkg_git_repo_url,
                                         pkg_git_branch, cleanup=True)
     return
