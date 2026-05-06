@@ -75,17 +75,22 @@ if buildtype == 'books':
 else:
     default_CHECK_timeout = default_BUILD_timeout
 
-INSTALL_timeout  = float(BBSutils.getenv('BBS_INSTALL_TIMEOUT',  False,
-                                         default_INSTALL_timeout))
+default_BIOCCHECK_timeout = '300.0'  # 5 min
 
-BUILD_timeout    = float(BBSutils.getenv('BBS_BUILD_TIMEOUT',    False,
-                                         default_BUILD_timeout))
+INSTALL_timeout   = float(BBSutils.getenv('BBS_INSTALL_TIMEOUT',  False,
+                                          default_INSTALL_timeout))
 
-CHECK_timeout    = float(BBSutils.getenv('BBS_CHECK_TIMEOUT',    False,
-                                         default_CHECK_timeout))
+BUILD_timeout     = float(BBSutils.getenv('BBS_BUILD_TIMEOUT',    False,
+                                          default_BUILD_timeout))
 
-BUILDBIN_timeout = float(BBSutils.getenv('BBS_BUILDBIN_TIMEOUT', False,
-                                         default_INSTALL_timeout))
+CHECK_timeout     = float(BBSutils.getenv('BBS_CHECK_TIMEOUT',    False,
+                                          default_CHECK_timeout))
+
+BIOCCHECK_timeout = float(BBSutils.getenv('BBS_BIOCCHECK_TIMEOUT', False,
+                                          default_BIOCCHECK_timeout))
+
+BUILDBIN_timeout  = float(BBSutils.getenv('BBS_BUILDBIN_TIMEOUT', False,
+                                          default_INSTALL_timeout))
 
 
 ##############################################################################
@@ -100,10 +105,12 @@ nb_cpu = BBSutils.getenv('BBS_NB_CPU', False, default='1')
 install_nb_cpu = BBSutils.getenv('BBS_INSTALL_NB_CPU', False, default=nb_cpu)
 buildsrc_nb_cpu = BBSutils.getenv('BBS_BUILD_NB_CPU', False, default=nb_cpu)
 checksrc_nb_cpu = BBSutils.getenv('BBS_CHECK_NB_CPU', False, default=nb_cpu)
+bioccheck_nb_cpu = BBSutils.getenv('BBS_BIOCCHECK_NB_CPU', False, default=nb_cpu)
 nb_cpu = int(nb_cpu)
 install_nb_cpu = int(install_nb_cpu)
 buildsrc_nb_cpu = int(buildsrc_nb_cpu)
 checksrc_nb_cpu = int(checksrc_nb_cpu)
+bioccheck_nb_cpu = int(bioccheck_nb_cpu)
 
 extra_check_options = BBSutils.getenv('BBS_EXTRA_CHECK_OPTIONS', False)
 
@@ -118,6 +125,7 @@ dont_push_srcpkgs = int(dont_push_srcpkgs) != 0
 
 STAGE2_mode = BBSutils.getenv('BBS_STAGE2_MODE', False)
 STAGE4_mode = BBSutils.getenv('BBS_STAGE4_MODE', False)
+STAGE4B_mode = BBSutils.getenv('BBS_STAGE4B_MODE', False)
 STAGE5_mode = BBSutils.getenv('BBS_STAGE5_MODE', False)
 
 meat_path = BBSutils.getenv('BBS_MEAT_PATH')
@@ -160,6 +168,7 @@ if not no_transmission:
     install_rdir = Node_rdir.subdir('install')
     buildsrc_rdir = Node_rdir.subdir('buildsrc')
     checksrc_rdir = Node_rdir.subdir('checksrc')
+    bioccheck_rdir = Node_rdir.subdir('bioccheck')
     buildbin_rdir = Node_rdir.subdir('buildbin')
 
 ### Used by BBS-prerun.py only

@@ -617,6 +617,15 @@ def getSTAGE4cmd(srcpkg_path):
         cmd = '%s %s' % (prepend, cmd)
     return cmd
 
+def getSTAGE4Bcmd(srcpkg_path):
+    Rexpr = "BiocCheck::BiocCheck('%s')" % srcpkg_path
+    cmd = Rexpr2syscmd(Rexpr)
+    pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
+    prepend = _get_prepend_from_BBSoptions(pkg, 'BIOCCHECK')
+    if prepend != None and prepend != '':
+        cmd = '%s %s' % (prepend, cmd)
+    return cmd
+
 ## Generate the command used on each package for the BUILD BIN stage.
 ## On Windows we use 'R CMD INSTALL --build' on the source tarball produced
 ## at STAGE3. Note that zipping the package installation folder located in
