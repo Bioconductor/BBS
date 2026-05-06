@@ -835,7 +835,7 @@ class CheckSrc_Job(bbs.jobs.QueuedJob):
             self.summary.Append('DeployDestDir', deploy_destdir)
         else:
             Rcheck_dir = self.pkgdumps.product_path
-            if os.path.exists(Rcheck_dir):
+            if Rcheck_dir != None and os.path.exists(Rcheck_dir):
                 _clean_Rcheck_dir(Rcheck_dir, self.pkg)
             else:
                 Rcheck_dir = 'None'

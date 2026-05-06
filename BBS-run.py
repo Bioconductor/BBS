@@ -902,7 +902,8 @@ if __name__ == "__main__":
         ended_at = bbs.jobs.currentDateString(with_seconds=True)
         ticket.append(('STAGE4', BBSvars.checksrc_nb_cpu, started_at, ended_at, dt))
     ## STAGE4B: run BiocCheck on source packages
-    if stages in ["all", "all-no-bin"] or "STAGE4B" in stages:
+    #if stages in ["all", "all-no-bin"] or "STAGE4B" in stages:
+    if "STAGE4B" in stages:
         started_at = bbs.jobs.currentDateString(with_seconds=True)
         t1 = time.time()
         STAGE4B()
