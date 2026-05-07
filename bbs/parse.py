@@ -556,7 +556,12 @@ def countWARNINGs(out_file):
             if m.group(4) != None:
                 return m.group(4)
             return m.group(2)
-    return "0"
+        parts = line.split('|')
+        if len(parts) == 3 and 'WARNING' in parts[1]:
+            subparts = parts[1].split(' ')
+            if len(subparts) == 5 and 'WARNING' in subparts[3]:
+                return subparts[2]
+    return '0'
 
 
 if __name__ == "__main__":
