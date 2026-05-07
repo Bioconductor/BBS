@@ -602,11 +602,12 @@ def _get_stage_labels():
     return stage_labels
 
 ## Produce a SPAN element.
-def _status_as_glyph(status):
+def _status_as_glyph(status, mild=False):
     html = status
     if status != 'skipped':
         html = '&nbsp;&nbsp;%s&nbsp;&nbsp;' % html
-    return '<SPAN class="glyph %s">%s</SPAN>' % (status, html)
+    prefix = 'MILD' if mild else ''
+    return '<SPAN class="glyph %s">%s</SPAN>' % (prefix + status, html)
 
 ## Produce a TD element (table cell).
 def _write_glyph_box(out, status, toggleable=False):
@@ -894,7 +895,8 @@ def _write_pkg_status_as_TD(out, pkg, node, stage,
         else:
             pkgdir = '.'
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        TDcontent = _make_link_with_mouseover(url, _status_as_glyph(status))
+        TDcontent = _status_as_glyph(status, stage == 'bioc-rapid')
+        TDcontent = _make_link_with_mouseover(url, TDcontent)
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
 
@@ -1019,14 +1021,15 @@ def statuses2classes(statuses):
 def write_quickstats_TD(out, quickstats, node, stage):
     stats = quickstats[node.node_id][stage]
     html = '<TABLE class="quickstats"><TR>'
-    html += '<TD class="glyph %s">%d</TD>' % ("TIMEOUT", stats[0])
-    html += '<TD class="glyph %s">%d</TD>' % ("ERROR", stats[1])
+    prefix = 'MILD' if stage == 'bioc-rapid' else ''
+    html += '<TD class="glyph %s">%d</TD>' % (prefix + 'TIMEOUT', stats[0])
+    html += '<TD class="glyph %s">%d</TD>' % (prefix + 'ERROR', stats[1])
     if stage in ['checksrc', 'bioccheck']:
-        html += '<TD class="glyph %s">%d</TD>' % ("WARNINGS", stats[2])
-    html += '<TD class="glyph %s">%d</TD>' % ("OK", stats[3])
+        html += '<TD class="glyph %s">%d</TD>' % (prefix + 'WARNINGS', stats[2])
+    html += '<TD class="glyph %s">%d</TD>' % (prefix + 'OK', stats[3])
     # Only relevant when "smart STAGE2" is enabled.
     #if stage == 'install':
-    #    html += '<TD class="glyph %s">%d</TD>' % ("NotNeeded", stats[4])
+    #    html += '<TD class="glyph %s">%d</TD>' % ('NotNeeded', stats[4])
     html += '</TR></TABLE>'
     out.write('<TD>%s</TD>' % html)
     return
@@ -1420,7 +1423,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<TABLE>\n')
     for key, value in summary.items():
         if key == 'Status':
-            value = _status_as_glyph(value)
+            value = _status_as_glyph(value, stage == 'bioc-rapid')
         out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % (key, value))
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
