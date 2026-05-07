@@ -594,12 +594,12 @@ def write_vcs_meta_for_pkg_as_TABLE(out, pkg, full_info=False):
 ### write_explain_glyph_table()
 ##############################################################################
 
-def _get_stage_labels():
-    stage_labels = []
-    buildtype = BBSvars.buildtype
-    for stage in BBSreportutils.stages_to_display(buildtype):
-        stage_labels.append(BBSreportutils.stage_label(stage))
-    return stage_labels
+def _get_stage_LABELS():
+    stage_LABELS = []
+    stages = BBSreportutils.stages_to_display(BBSvars.buildtype)
+    for stage in stages:
+        stage_LABELS.append(BBSreportutils.stage_LABEL(stage))
+    return stage_LABELS
 
 ## Produce a SPAN element.
 def _status_as_glyph(status, mild=False):
@@ -647,22 +647,19 @@ def _write_glyph_as_TR(out, status, explain_html, toggleable=False):
     out.write('</TR>\n')
     return
 
-def _explain_TIMEOUT_in_HTML(stage_labels):
+def _explain_TIMEOUT_in_HTML(stage_LABELS):
     labels = []
     times = []
-    if 'INSTALL' in stage_labels:
+    if 'INSTALL' in stage_LABELS:
         labels.append('INSTALL')
         times.append(int(BBSvars.INSTALL_timeout / 60.0))
-    if 'BUILD' in stage_labels:
+    if 'BUILD' in stage_LABELS:
         labels.append('BUILD')
         times.append(int(BBSvars.BUILD_timeout / 60.0))
-    if 'CHECK' in stage_labels:
+    if 'CHECK' in stage_LABELS:
         labels.append('CHECK')
         times.append(int(BBSvars.CHECK_timeout / 60.0))
-    if 'BIOCCHECK' in stage_labels:
-        labels.append('BIOCCHECK')
-        times.append(int(BBSvars.BIOCCHECK_timeout / 60.0))
-    if 'BUILD BIN' in stage_labels:
+    if 'BUILD BIN' in stage_LABELS:
         labels.append('BUILD BIN')
         times.append(int(BBSvars.BUILDBIN_timeout / 60.0))
     if len(labels) == 1:
@@ -681,8 +678,8 @@ def _explain_TIMEOUT_in_HTML(stage_labels):
         html += ', respectively'
     return html
 
-def _explain_ERROR_in_HTML(stage_labels):
-    labels = stage_labels.copy()
+def _explain_ERROR_in_HTML(stage_LABELS):
+    labels = stage_LABELS.copy()
     if len(labels) == 1 and labels[0] == 'CHECK':
         html = 'CHECK of package produced errors'
     else:
@@ -701,33 +698,33 @@ def _explain_ERROR_in_HTML(stage_labels):
 def _explain_WARNINGS_in_HTML():
     return 'CHECK of package produced warnings'
 
-def _explain_OK_in_HTML(stage_labels, simple_layout=False):
-    if len(stage_labels) == 1:
-        html = stage_labels[0]
+def _explain_OK_in_HTML(stage_LABELS, simple_layout=False):
+    if len(stage_LABELS) == 1:
+        html = stage_LABELS[0]
     else:
         conjunction = 'and' if simple_layout else 'or'
         html = '%s %s %s' % \
-            (', '.join(stage_labels[:-1]), conjunction, stage_labels[-1])
+            (', '.join(stage_LABELS[:-1]), conjunction, stage_LABELS[-1])
     return html + ' of package went OK'
 
 def _explain_NotNeeded_in_HTML():
     return 'INSTALL of package was not needed ' + \
            '(click on glyph to see why)'
 
-def _explain_NA_in_HTML(stage_labels):
-    if len(stage_labels) == 1:
-        html = stage_labels[0]
+def _explain_NA_in_HTML(stage_LABELS):
+    if len(stage_LABELS) == 1:
+        html = stage_LABELS[0]
     else:
-        html = '%s or %s' % (', '.join(stage_labels[:-1]), stage_labels[-1])
+        html = '%s or %s' % (', '.join(stage_LABELS[:-1]), stage_LABELS[-1])
     html += ' result is not available because' + \
             ' of an anomaly in the Build System'
     return html
 
-def _explain_skipped_in_HTML(stage_labels):
+def _explain_skipped_in_HTML(stage_LABELS):
     labels = []
-    if 'CHECK' in stage_labels:
+    if 'CHECK' in stage_LABELS:
         labels.append('CHECK')
-    if 'BUILD BIN' in stage_labels:
+    if 'BUILD BIN' in stage_LABELS:
         labels.append('BUILD BIN')
     if len(labels) == 1:
         html = labels[0]
@@ -752,19 +749,21 @@ def write_explain_glyph_table(out, simple_layout=False):
     out.write('</TD>\n')
     out.write('</TR>\n')
 
-    stage_labels = _get_stage_labels()
+    stage_LABELS = _get_stage_LABELS()
+    if 'BIOCCHECK' in stage_LABELS:
+        stage_LABELS.remove('BIOCCHECK')
 
-    explain_html = _explain_TIMEOUT_in_HTML(stage_labels)
+    explain_html = _explain_TIMEOUT_in_HTML(stage_LABELS)
     _write_glyph_as_TR(out, "TIMEOUT", explain_html, True)
 
-    explain_html = _explain_ERROR_in_HTML(stage_labels)
+    explain_html = _explain_ERROR_in_HTML(stage_LABELS)
     _write_glyph_as_TR(out, "ERROR", explain_html, True)
 
-    if 'CHECK' in stage_labels:
+    if 'CHECK' in stage_LABELS:
         explain_html = _explain_WARNINGS_in_HTML()
         _write_glyph_as_TR(out, "WARNINGS", explain_html, True)
 
-    explain_html = _explain_OK_in_HTML(stage_labels, simple_layout)
+    explain_html = _explain_OK_in_HTML(stage_LABELS, simple_layout)
     _write_glyph_as_TR(out, "OK", explain_html, True)
 
     ## "NotNeeded" glyph (only used when "smart STAGE2" is enabled i.e.
@@ -773,12 +772,12 @@ def write_explain_glyph_table(out, simple_layout=False):
     #if buildtype not in ["workflows", "books", "bioc-longtests"]:
     #    _write_glyph_as_TR(out, "NotNeeded", _explain_NotNeeded_in_HTML())
 
-    explain_html = _explain_NA_in_HTML(stage_labels)
+    explain_html = _explain_NA_in_HTML(stage_LABELS)
     _write_glyph_as_TR(out, "NA", explain_html)
 
     if not simple_layout and \
-       ('CHECK' in stage_labels or 'BUILD BIN' in stage_labels):
-        explain_html = _explain_skipped_in_HTML(stage_labels)
+       ('CHECK' in stage_LABELS or 'BUILD BIN' in stage_LABELS):
+        explain_html = _explain_skipped_in_HTML(stage_LABELS)
         _write_glyph_as_TR(out, "skipped", explain_html)
 
     out.write('<TR>\n')
@@ -908,8 +907,8 @@ def write_stagelabel_as_TD(out, stage, leafreport_ref):
     TDclasses = 'STAGE %s' % stage
     if selected:
         TDclasses += ' selected'
-    stage_label = BBSreportutils.stage_label(stage)
-    TD_html = '<TD class="%s">%s</TD>' % (TDclasses, stage_label)
+    stage_LABEL = BBSreportutils.stage_LABEL(stage)
+    TD_html = '<TD class="%s">%s</TD>' % (TDclasses, stage_LABEL)
     out.write(TD_html)
     return
 
@@ -1367,10 +1366,10 @@ def write_simple_gcard_header(out):
     out.write('<TD></TD>')
     out.write('<TD>Package</TD>')
     out.write('<TD>Maintainer</TD>')
-    stage_labels = _get_stage_labels()
-    if 'BUILD BIN' in stage_labels:
-        stage_labels.remove('BUILD BIN')
-    out.write('<TD class="STAGE">%s</TD>' % '/'.join(stage_labels))
+    stage_LABELS = _get_stage_LABELS()
+    if 'BUILD BIN' in stage_LABELS:
+        stage_LABELS.remove('BUILD BIN')
+    out.write('<TD class="STAGE">%s</TD>' % '/'.join(stage_LABELS))
     out.write('<TD></TD>')
     out.write('</TR>\n')
     out.write('</TBODY>\n')
@@ -1734,7 +1733,7 @@ def make_LeafReport(leafreport_ref, allpkgs, long_link=False):
     node_id = leafreport_ref.node_id
     stage = leafreport_ref.stage
     page_title = '%s results for %s on %s' % \
-                 (BBSreportutils.stage_label(stage), pkg, node_id)
+                 (BBSreportutils.stage_LABEL(stage), pkg, node_id)
     out_rURL = BBSreportutils.get_leafreport_rel_path(pkg, node_id, stage)
     out = open(out_rURL, 'w')
 
@@ -1796,11 +1795,11 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
         if not no_raw_results:
             os.mkdir(os.path.join(pkg, 'raw-results', node.node_id))
 
-        stages_to_display = BBSreportutils.stages_to_display(BBSvars.buildtype)
+        stages = BBSreportutils.stages_to_display(BBSvars.buildtype)
 
         # INSTALL leaf-report
         stage = "install"
-        if stage in stages_to_display:
+        if stage in stages:
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
@@ -1811,7 +1810,7 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
 
         # BUILD leaf-report
         stage = "buildsrc"
-        if stage in stages_to_display:
+        if stage in stages:
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
@@ -1822,7 +1821,7 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
 
         # CHECK leaf-report
         stage = 'checksrc'
-        if stage in stages_to_display:
+        if stage in stages:
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
@@ -1833,8 +1832,7 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
 
         # BIOCCHECK leaf-report
         stage = 'bioccheck'
-        if stage in stages_to_display and \
-           BBSreportutils.is_doing_bioccheck(node):
+        if stage in stages and BBSreportutils.is_doing_bioccheck(node):
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,
@@ -1845,8 +1843,7 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
 
         # BUILD BIN leaf-report
         stage = "buildbin"
-        if stage in stages_to_display and \
-           BBSreportutils.is_doing_buildbin(node):
+        if stage in stages and BBSreportutils.is_doing_buildbin(node):
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,

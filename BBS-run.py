@@ -202,8 +202,8 @@ def get_list_of_target_pkgs():
                                        node_Arch, node_Platform, node_pkgType,
                                        BBSvars.buildtype)
 
-def getSrcPkgFilesFromSuccessfulSTAGE3(stage_label):
-    print('BBS> Get list of source tarballs to %s ...' % stage_label, end=' ')
+def getSrcPkgFilesFromSuccessfulSTAGE3(stage_LABEL):
+    print('BBS> Get list of source tarballs to %s ...' % stage_LABEL, end=' ')
     sys.stdout.flush()
     target_pkgs = get_list_of_target_pkgs()
     stage = 'buildsrc'

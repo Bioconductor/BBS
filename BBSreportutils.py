@@ -173,15 +173,15 @@ def make_report_title(report_nodes):
             title += "<BR>Report updated every 6 hours"
     return title
 
-def stage_label(stage):
-    stage2label = {
+def stage_LABEL(stage):
+    stage2LABEL = {
         'install':   "INSTALL",
         'buildsrc':  "BUILD",
         'checksrc':  "CHECK",
         'bioccheck': "BIOCCHECK",
         'buildbin':  "BUILD BIN"
     }
-    return stage2label[stage]
+    return stage2LABEL[stage]
 
 ## Stages to display on the report (as columns in HTML table) for the given
 ## buildtype. Should be a subset of the stages that were run because we
