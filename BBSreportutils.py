@@ -51,13 +51,15 @@ def write_htaccess_file():
 
 class Node:
 
-    def __init__(self, hostname, node_id, os_html, arch, platform, buildbin, pkgs):
+    def __init__(self, hostname, node_id, os_html, arch, platform,
+                       bioccheck, buildbin, pkgs):
         self.hostname = hostname
         self.node_id = node_id
         self.os_html = os_html
         self.arch = arch
         self.platform = platform
-        self.buildbin = buildbin  # boolean (or None if foreign node)
+        self.bioccheck = bioccheck  # boolean (or None if foreign node)
+        self.buildbin = buildbin    # boolean (or None if foreign node)
         self.pkgs = pkgs  # list of pkg names
 
 ### A list of Node objects
@@ -83,8 +85,9 @@ def set_NODES(fancynames_in_one_string):
         platform = BBSutils.getNodeSpec(hostname, 'Platform')
         foreign = fancyname_has_suffix(fancyname, "foreign")
         if foreign:
-            buildbin = pkgs = None
+            bioccheck = buildbin = pkgs = None
         else:
+            bioccheck = fancyname_has_suffix(fancyname, "bioccheck")
             buildbin = fancyname_has_suffix(fancyname, "bin")
             pkgType = BBSutils.getNodeSpec(hostname, 'pkgType')
             pkgs = bbs.parse.get_meat_packages_for_node(
@@ -92,14 +95,18 @@ def set_NODES(fancynames_in_one_string):
                                                hostname,
                                                arch, platform, pkgType,
                                                BBSvars.buildtype)
-        node = Node(hostname, node_id, os_html, arch, platform, buildbin, pkgs)
+        node = Node(hostname, node_id, os_html, arch, platform,
+                    bioccheck, buildbin, pkgs)
         NODES.append(node)
     if len(NODES) == 0:
         sys.exit("nothing to report (no nodes) => EXIT.")
     return
 
+def is_doing_bioccheck(node):
+    return node.bioccheck == True  # node.bioccheck can be None if foreign node
+
 def is_doing_buildbin(node):
-    return node.buildbin == True  # node.buildbin can be None if foreign node
+    return node.buildbin == True   # node.buildbin can be None if foreign node
 
 def supported_pkgs(node):
     return node.pkgs
@@ -365,7 +372,7 @@ def import_BUILD_STATUS_DB(allpkgs):
                 _update_quickstats(allpkgs_quickstats,
                                    node.node_id, stage, status)
             # BIOCCHECK status
-            if BBSvars.buildtype == "bioc-rapid":
+            if is_doing_bioccheck(node):
                 stage = 'bioccheck'
                 if skipped_is_OK:
                     status = "skipped"
@@ -397,7 +404,7 @@ def get_pkg_status(pkg, node_id, stage):
                  "using BBSreportutils.get_pkg_status() => EXIT.")
     return _build_status_db[pkg][node_id][stage]
 
-def get_distinct_pkg_statuses(pkg, nodes=None):
+def collect_distinct_pkg_statuses(pkg, nodes=None):
     if nodes == None:
         nodes = NODES
     statuses = []
@@ -407,6 +414,12 @@ def get_distinct_pkg_statuses(pkg, nodes=None):
         if not is_supported(pkg, node):
             continue
         stages = stages_to_display(BBSvars.buildtype)
+        # The results of the 'bioccheck' stage are not taken into consideration
+        # at the moment to determine package overall status or propagation,
+        # which is why the associated status glyphes have mild/hazy colors.
+        # So unlike what we do with the 'buildbin' stage, we **always** remove
+        # the 'bioccheck' stage for the purpose of collecting the distinct
+        # package statuses, even if 'is_doing_bioccheck(node)' is True.
         if 'bioccheck' in stages:
             stages.remove('bioccheck')
         if 'buildbin' in stages and not is_doing_buildbin(node):
@@ -463,7 +476,7 @@ def compute_quickstats(pkgs):
                     status = get_pkg_status(pkg, node.node_id, stage)
                 _update_quickstats(quickstats, node.node_id, stage, status)
             # BIOCCHECK status
-            if BBSvars.buildtype == "bioc-rapid":
+            if is_doing_bioccheck(node):
                 stage = 'bioccheck'
                 if skipped_is_OK:
                     status = "skipped"

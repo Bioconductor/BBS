@@ -971,11 +971,15 @@ def write_pkg_statuses_as_TDs(out, pkg, node,
         out.write('<TD %s>%s</TD>' % (TDattrs, TDcontent))
         return
     for stage in BBSreportutils.stages_to_display(buildtype):
-        if stage != 'buildbin' or BBSreportutils.is_doing_buildbin(node):
+        empty_TD = (stage == 'bioccheck' and \
+                    !BBSreportutils.is_doing_bioccheck(node)) or \
+                   (stage == 'buildbin' and \
+                    !BBSreportutils.is_doing_buildbin(node))
+        if empty_TD:
+            out.write('<TD class="%s"></TD>' % TDclasses)
+        else:
             _write_pkg_status_as_TD(out, pkg, node, stage,
                                     topdir, leafreport_ref)
-        else:
-            out.write('<TD class="%s"></TD>' % TDclasses)
     if BBSreportutils.display_propagation_status(buildtype):
         write_pkg_propagation_status_as_TD(out, pkg, node)
     return
@@ -1085,10 +1089,14 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
         out.write(TD_html)
         buildtype = BBSvars.buildtype
         for stage in BBSreportutils.stages_to_display(buildtype):
-            if stage == 'buildbin' and not BBSreportutils.is_doing_buildbin(node):
-                out.write('<TD></TD>')
-            else:
+            empty_TD = (stage == 'bioccheck' and \
+                        !BBSreportutils.is_doing_bioccheck(node)) or \
+                       (stage == 'buildbin' and \
+                        !BBSreportutils.is_doing_buildbin(node))
+            if empty_TD:
                 write_quickstats_TD(out, quickstats, node, stage)
+            else:
+                out.write('<TD></TD>')
         if BBSreportutils.display_propagation_status(buildtype):
             out.write('<TD style="width: 12px;"></TD>')
         if is_last:
@@ -1231,7 +1239,7 @@ def write_gcard_list(out, allpkgs,
                 if first_letter != current_letter:
                     current_letter = first_letter
                     write_abc_dispatcher_within_gcard_list(out, current_letter)
-            pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
+            pkg_statuses = BBSreportutils.collect_distinct_pkg_statuses(pkg)
             if pkg in skipped_pkgs:
                 pkg_status_classes = 'error'
             else:
@@ -1242,7 +1250,7 @@ def write_gcard_list(out, allpkgs,
             out.write('</TBODY>\n')
         elif pkg == leafreport_ref.pkg:
             ## Display gcard for that package only.
-            pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg)
+            pkg_statuses = BBSreportutils.collect_distinct_pkg_statuses(pkg)
             if pkg in skipped_pkgs:
                 pkg_status_classes = 'error'
             else:
@@ -1266,7 +1274,7 @@ def write_gcard_list(out, allpkgs,
 ### overall build status.
 def write_compact_gcard(out, pkg, node, pkg_pos, nb_pkgs):
     nodes = None if node == None else [node]
-    pkg_statuses = BBSreportutils.get_distinct_pkg_statuses(pkg, nodes)
+    pkg_statuses = BBSreportutils.collect_distinct_pkg_statuses(pkg, nodes)
     if pkg in skipped_pkgs:
         pkg_status_classes = 'error'
     else:
@@ -1823,7 +1831,8 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
 
         # BIOCCHECK leaf-report
         stage = 'bioccheck'
-        if stage in stages_to_display:
+        if stage in stages_to_display and \
+           BBSreportutils.is_doing_bioccheck(node):
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
                 leafreport_ref = LeafReportReference(pkg,

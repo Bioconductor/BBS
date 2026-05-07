@@ -19,8 +19,8 @@ export R_LIBS="$BBS_R_HOME/site-library"
 
 # teran2 has 16 logical CPUs.
 export BBS_NB_CPU=10
-export BBS_BUILD_NB_CPU=8
-export BBS_CHECK_NB_CPU=11
+export BBS_BUILD_NB_CPU=9
+export BBS_CHECK_NB_CPU=12
 export BBS_BIOCCHECK_NB_CPU=12
 
 export BBS_CENTRAL_RHOST="localhost"
@@ -46,7 +46,7 @@ cd "$wd0"
 # central node
 
 # Control generation of the report:
-export BBS_REPORT_NODES="teran2"
+export BBS_REPORT_NODES="teran2:bioccheck"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"

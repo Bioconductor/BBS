@@ -247,7 +247,7 @@ Here's what those lines look like:
 ```
 biocbuild@linux1:-~/BBS/3.2/bioc/linux1.bioconductor.org (start-linux1)$ egrep "BBS_OUTGOING_MAP|BBS_REPORT_NODES" config.sh
 export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin mac.binary.mavericks:oaxaca/buildbin"
-export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin oaxaca:bin"
+export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:buildbin perceval:buildbin oaxaca:buildbin"
 ```
 
 Let's assume the node that did not complete was `oaxaca`; we want 
@@ -269,8 +269,8 @@ index b7a14b5..490f8b4 100644
 +export BBS_OUTGOING_MAP="source:linux1.bioconductor.org/buildsrc win.binary:windows1.bioconductor.org/buildbin mac.binary:perceval/buildbin"
 
  # Control generation of the report: 
--export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin oaxaca:bin"
-+export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:bin perceval:bin"
+-export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:buildbin perceval:buildbin oaxaca:buildbin"
++export BBS_REPORT_NODES="linux1.bioconductor.org windows1.bioconductor.org:buildbin perceval:buildbin"
  export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
  export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 ```
@@ -299,8 +299,8 @@ is `buildbin`, and for Linux nodes it's `buildsrc`.
 `BBS_REPORT_NODES` governs which nodes are mentioned
 in the build report and is a space-separated list
 of items, each of which is the node name
-followed by `:bin` if the node is not a Linux 
-node.
+followed by `:buildbin` if the node runs the BUILD BIN
+stage (STAGE5) to build binary packages.
 
 Removing oaxaca's entry from both variables will allow
 the build report to be built. 
