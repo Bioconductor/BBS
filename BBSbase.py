@@ -618,7 +618,7 @@ def getSTAGE4cmd(srcpkg_path):
     return cmd
 
 def getSTAGE4Bcmd(srcpkg_path):
-    Rexpr = "BiocCheck::BiocCheck('%s')" % srcpkg_path
+    Rexpr = "res<-BiocCheck::BiocCheck('%s');q(status=length(res$error))" % srcpkg_path
     cmd = Rexpr2syscmd(Rexpr)
     pkg = bbs.parse.get_pkgname_from_srcpkg_path(srcpkg_path)
     prepend = _get_prepend_from_BBSoptions(pkg, 'BIOCCHECK')
