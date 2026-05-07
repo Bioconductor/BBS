@@ -407,6 +407,8 @@ def get_distinct_pkg_statuses(pkg, nodes=None):
         if not is_supported(pkg, node):
             continue
         stages = stages_to_display(BBSvars.buildtype)
+        if 'bioccheck' in stages:
+            stages.remove('bioccheck')
         if 'buildbin' in stages and not is_doing_buildbin(node):
             stages.remove('buildbin')
         for stage in stages:

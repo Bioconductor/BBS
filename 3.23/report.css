@@ -203,32 +203,32 @@ TABLE.Rconfig TD {
     color: white;
 }
 .glyph.MILDTIMEOUT {
-    background: #958;
-    color: white;
+    background: #A89;
+    color: #D4D4D4;
 }
 .glyph.ERROR {
     background: #C44;
     color: white;
 }
 .glyph.MILDERROR {
-    background: #B77;
-    color: white;
+    background: #D88;
+    color: #D4D4D4;
 }
 .glyph.WARNINGS {
     background: #D82;
     color: white;
 }
 .glyph.MILDWARNINGS {
-    background: #C75;
-    color: white;
+    background: #D97;
+    color: #D4D4D4;
 }
 .glyph.OK {
     background: #282;
     color: #DDD;
 }
 .glyph.MILDOK {
-    background: #585;
-    color: #DDD;
+    background: #797;
+    color: #D4D4D4;
 }
 .glyph.NotNeeded {
     background: #69C;
