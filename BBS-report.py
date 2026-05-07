@@ -1094,9 +1094,9 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
                        (stage == 'buildbin' and \
                         not BBSreportutils.is_doing_buildbin(node))
             if empty_TD:
-                write_quickstats_TD(out, quickstats, node, stage)
-            else:
                 out.write('<TD></TD>')
+            else:
+                write_quickstats_TD(out, quickstats, node, stage)
         if BBSreportutils.display_propagation_status(buildtype):
             out.write('<TD style="width: 12px;"></TD>')
         if is_last:
