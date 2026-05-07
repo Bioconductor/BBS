@@ -75,7 +75,7 @@ if buildtype == 'books':
 else:
     default_CHECK_timeout = default_BUILD_timeout
 
-default_BIOCCHECK_timeout = '300.0'  # 5 min
+default_BIOCCHECK_timeout = '600.0'  # 10 min
 
 INSTALL_timeout   = float(BBSutils.getenv('BBS_INSTALL_TIMEOUT',  False,
                                           default_INSTALL_timeout))
