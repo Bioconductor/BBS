@@ -1090,9 +1090,9 @@ def write_quickstats(out, quickstats, no_links, selected_node=None):
         buildtype = BBSvars.buildtype
         for stage in BBSreportutils.stages_to_display(buildtype):
             empty_TD = (stage == 'bioccheck' and \
-                        !BBSreportutils.is_doing_bioccheck(node)) or \
+                        not BBSreportutils.is_doing_bioccheck(node)) or \
                        (stage == 'buildbin' and \
-                        !BBSreportutils.is_doing_buildbin(node))
+                        not BBSreportutils.is_doing_buildbin(node))
             if empty_TD:
                 write_quickstats_TD(out, quickstats, node, stage)
             else:
