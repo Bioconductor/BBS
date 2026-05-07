@@ -605,6 +605,8 @@ def _get_stage_labels():
 def _status_as_glyph(status, mild=False):
     html = status
     if status != 'skipped':
+        if html == 'ERROR' and mild:
+            html = 'ERRORS'
         html = '&nbsp;&nbsp;%s&nbsp;&nbsp;' % html
     prefix = 'MILD' if mild else ''
     return '<SPAN class="glyph %s">%s</SPAN>' % (prefix + status, html)
