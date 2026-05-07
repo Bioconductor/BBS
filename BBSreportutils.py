@@ -168,10 +168,11 @@ def make_report_title(report_nodes):
 
 def stage_label(stage):
     stage2label = {
-        'install':  "INSTALL",
-        'buildsrc': "BUILD",
-        'checksrc': "CHECK",
-        'buildbin': "BUILD BIN"
+        'install':   "INSTALL",
+        'buildsrc':  "BUILD",
+        'checksrc':  "CHECK",
+        'bioccheck': "BIOCCHECK",
+        'buildbin':  "BUILD BIN"
     }
     return stage2label[stage]
 
@@ -183,8 +184,10 @@ def stage_label(stage):
 ## we run 'buildsrc' (STAGE3) and 'checksrc' (STAGE4) but we only display
 ## the results of 'checksrc' (CHECK column on the report).
 def stages_to_display(buildtype):
-    if buildtype in ["data-annotation", "data-experiment", "books", "bioc-gpu", "bioc-rapid"]:
+    if buildtype in ["data-annotation", "data-experiment", "books", "bioc-gpu"]:
         return ['install', 'buildsrc', 'checksrc']
+    if buildtype == "bioc-rapid":
+        return ['install', 'buildsrc', 'checksrc', 'bioccheck']
     if buildtype == "workflows":
         return ['install', 'buildsrc']
     if buildtype == "bioc-longtests":
@@ -299,10 +302,11 @@ def _zero_quickstats():
     for node in NODES:
         if node.buildbin == None:  # foreign node
             continue
-        quickstats[node.node_id] = { 'install':     (0, 0, 0, 0, 0), \
-                                     'buildsrc':    (0, 0, 0, 0, 0), \
-                                     'checksrc':    (0, 0, 0, 0, 0), \
-                                     'buildbin':    (0, 0, 0, 0, 0) }
+        quickstats[node.node_id] = { 'install':   (0, 0, 0, 0, 0), \
+                                     'buildsrc':  (0, 0, 0, 0, 0), \
+                                     'checksrc':  (0, 0, 0, 0, 0), \
+                                     'bioccheck': (0, 0, 0, 0, 0), \
+                                     'buildbin':  (0, 0, 0, 0, 0) }
     return quickstats
 
 def _update_quickstats(quickstats, node_id, stage, status):
@@ -351,6 +355,18 @@ def import_BUILD_STATUS_DB(allpkgs):
             # CHECK status
             if BBSvars.buildtype != "workflows":
                 stage = 'checksrc'
+                if skipped_is_OK:
+                    status = "skipped"
+                else:
+                    status = _get_pkg_status_from_BUILD_STATUS_DB(
+                                      BUILD_STATUS_DB,
+                                      pkg, node.node_id, stage)
+                _set_pkg_status(pkg, node.node_id, stage, status)
+                _update_quickstats(allpkgs_quickstats,
+                                   node.node_id, stage, status)
+            # BIOCCHECK status
+            if BBSvars.buildtype == "bioc-rapid":
+                stage = 'bioccheck'
                 if skipped_is_OK:
                     status = "skipped"
                 else:
@@ -439,6 +455,14 @@ def compute_quickstats(pkgs):
             # CHECK status
             if BBSvars.buildtype != "workflows":
                 stage = 'checksrc'
+                if skipped_is_OK:
+                    status = "skipped"
+                else:
+                    status = get_pkg_status(pkg, node.node_id, stage)
+                _update_quickstats(quickstats, node.node_id, stage, status)
+            # BIOCCHECK status
+            if BBSvars.buildtype == "bioc-rapid":
+                stage = 'bioccheck'
                 if skipped_is_OK:
                     status = "skipped"
                 else:

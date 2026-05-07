@@ -656,6 +656,9 @@ def _explain_TIMEOUT_in_HTML(stage_labels):
     if 'CHECK' in stage_labels:
         labels.append('CHECK')
         times.append(int(BBSvars.CHECK_timeout / 60.0))
+    if 'BIOCCHECK' in stage_labels:
+        labels.append('BIOCCHECK')
+        times.append(int(BBSvars.BIOCCHECK_timeout / 60.0))
     if 'BUILD BIN' in stage_labels:
         labels.append('BUILD BIN')
         times.append(int(BBSvars.BUILDBIN_timeout / 60.0))
@@ -1018,7 +1021,7 @@ def write_quickstats_TD(out, quickstats, node, stage):
     html = '<TABLE class="quickstats"><TR>'
     html += '<TD class="glyph %s">%d</TD>' % ("TIMEOUT", stats[0])
     html += '<TD class="glyph %s">%d</TD>' % ("ERROR", stats[1])
-    if stage == 'checksrc':
+    if stage in ['checksrc', 'bioccheck']:
         html += '<TD class="glyph %s">%d</TD>' % ("WARNINGS", stats[2])
     html += '<TD class="glyph %s">%d</TD>' % ("OK", stats[3])
     # Only relevant when "smart STAGE2" is enabled.
@@ -1806,6 +1809,17 @@ def make_node_LeafReports(allpkgs, node, long_link=False):
 
         # CHECK leaf-report
         stage = 'checksrc'
+        if stage in stages_to_display:
+            status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
+            if not status in ["skipped", "NA"]:
+                leafreport_ref = LeafReportReference(pkg,
+                                                     node.hostname,
+                                                     node.node_id,
+                                                     stage)
+                make_LeafReport(leafreport_ref, allpkgs, long_link)
+
+        # BIOCCHECK leaf-report
+        stage = 'bioccheck'
         if stage in stages_to_display:
             status = BBSreportutils.get_pkg_status(pkg, node.node_id, stage)
             if not status in ["skipped", "NA"]:
