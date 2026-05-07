@@ -895,7 +895,7 @@ def _write_pkg_status_as_TD(out, pkg, node, stage,
         else:
             pkgdir = '.'
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        TDcontent = _status_as_glyph(status, stage == 'bioc-rapid')
+        TDcontent = _status_as_glyph(status, stage == 'bioccheck')
         TDcontent = _make_link_with_mouseover(url, TDcontent)
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
@@ -1021,7 +1021,7 @@ def statuses2classes(statuses):
 def write_quickstats_TD(out, quickstats, node, stage):
     stats = quickstats[node.node_id][stage]
     html = '<TABLE class="quickstats"><TR>'
-    prefix = 'MILD' if stage == 'bioc-rapid' else ''
+    prefix = 'MILD' if stage == 'bioccheck' else ''
     html += '<TD class="glyph %s">%d</TD>' % (prefix + 'TIMEOUT', stats[0])
     html += '<TD class="glyph %s">%d</TD>' % (prefix + 'ERROR', stats[1])
     if stage in ['checksrc', 'bioccheck']:
@@ -1423,7 +1423,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<TABLE>\n')
     for key, value in summary.items():
         if key == 'Status':
-            value = _status_as_glyph(value, stage == 'bioc-rapid')
+            value = _status_as_glyph(value, stage == 'bioccheck')
         out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % (key, value))
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
