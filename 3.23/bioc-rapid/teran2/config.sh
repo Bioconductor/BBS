@@ -21,9 +21,14 @@ export R_LIBS="$BBS_R_HOME/site-library"
 export BBS_NB_CPU=5
 export BBS_BUILD_NB_CPU=4
 export BBS_CHECK_NB_CPU=6
+export BBS_BIOCCHECK_NB_CPU=10
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
+
+# Source tarballs produced during STAGE3 won't be propagated so we don't
+# need to push them to the products-in/ folder on the central builder.
+export DONT_PUSH_SRCPKGS="1"
 
 
 

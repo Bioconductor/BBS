@@ -23,8 +23,8 @@ export BBS_RSH_CMD="ssh -F /Users/biocbuild/.ssh/config"
 export BBS_CENTRAL_ROOT_URL="http://149.165.152.87"
 export BBS_PRODUCT_TRANSMISSION_MODE="asynchronous"
 
-# Source tarballs produced during STAGE3 won't be propagated
-# so we don't need to push them to the central builder.
+# Source tarballs produced during STAGE3 won't be propagated so we don't
+# need to push them to the products-in/ folder on the central builder.
 export DONT_PUSH_SRCPKGS="1"
 
 
