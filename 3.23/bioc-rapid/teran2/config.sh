@@ -18,10 +18,10 @@ export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
 # teran2 has 16 logical CPUs.
-export BBS_NB_CPU=5
-export BBS_BUILD_NB_CPU=4
-export BBS_CHECK_NB_CPU=6
-export BBS_BIOCCHECK_NB_CPU=10
+export BBS_NB_CPU=10
+export BBS_BUILD_NB_CPU=8
+export BBS_CHECK_NB_CPU=11
+export BBS_BIOCCHECK_NB_CPU=12
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
