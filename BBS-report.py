@@ -602,13 +602,13 @@ def _get_stage_LABELS():
     return stage_LABELS
 
 ## Produce a SPAN element.
-def _status_as_glyph(status, mild=False):
+def _status_as_glyph(status, stage=None):
     html = status
     if status != 'skipped':
-        if html == 'ERROR' and mild:
+        if html == 'ERROR' and stage == 'bioccheck':
             html = 'ERRORS'
         html = '&nbsp;&nbsp;%s&nbsp;&nbsp;' % html
-    prefix = 'MILD' if mild else ''
+    prefix = 'MILD' if stage == 'bioccheck' else ''
     return '<SPAN class="glyph %s">%s</SPAN>' % (prefix + status, html)
 
 ## Produce a TD element (table cell).
@@ -896,7 +896,7 @@ def _write_pkg_status_as_TD(out, pkg, node, stage,
         else:
             pkgdir = '.'
         url = BBSreportutils.get_leafreport_rel_url(pkgdir, node.node_id, stage)
-        TDcontent = _status_as_glyph(status, stage == 'bioccheck')
+        TDcontent = _status_as_glyph(status, stage)
         TDcontent = _make_link_with_mouseover(url, TDcontent)
     out.write('<TD class="%s">%s</TD>' % (TDclasses, TDcontent))
     return
@@ -1432,7 +1432,7 @@ def write_Summary_asHTML(out, node_hostname, pkg, node_id, stage):
     out.write('<TABLE>\n')
     for key, value in summary.items():
         if key == 'Status':
-            value = _status_as_glyph(value, stage == 'bioccheck')
+            value = _status_as_glyph(value, stage)
         out.write('<TR><TD><B>%s</B>: %s</TD></TR>\n' % (key, value))
     out.write('</TABLE>\n')
     out.write('</DIV>\n')
