@@ -56,7 +56,7 @@ def _write_pkg_results_to_BUILD_STATUS_DB(pkg, out):
             _write_status_to_BUILD_STATUS_DB(out, pkg, node.node_id, stage,
                                              status)
         # BIOCCHECK status
-        if BBSvars.buildtype == 'bioc-rapid':
+        if BBSreportutils.is_doing_bioccheck(node):
             stage = 'bioccheck'
             if skipped_is_OK:
                 status = 'skipped'
