@@ -1945,7 +1945,7 @@ def write_BioC_mainpage_top_asHTML(out, simp_link=False, long_link=False):
     write_switch_link(out, simp_link, long_link)
     out.write('<H1>%s</H1>\n' % title)
     if BBSvars.buildtype == "bioc-longtests":
-        long_tests_howto_url = '/developers/how-to/long-tests/'
+        long_tests_howto_url = 'https://contributions.bioconductor.org/advanced-build-options.html#long-tests'
         out.write('<P style="text-align: center;">')
         out.write('See <A href="%s">here</A> ' % long_tests_howto_url)
         out.write('for how to subscribe to these builds.</P>\n')
