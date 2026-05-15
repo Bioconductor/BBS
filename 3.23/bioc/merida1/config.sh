@@ -1,7 +1,7 @@
 #!/bin/bash
-# ======================
-# Settings for kjohnson3
-# ======================
+# ====================
+# Settings for merida1
+# ====================
 
 
 
@@ -9,15 +9,16 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="kjohnson3"
+export BBS_NODE_HOSTNAME="merida1"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.23-books"
+export BBS_WORK_TOPDIR="/Users/biocbuild/bbs-3.23-bioc"
 export BBS_R_HOME="/Library/Frameworks/R.framework/Resources"
 
-# kjohnson3 has 24 logical CPUs (16 performance, 8 efficiency).
-export BBS_NB_CPU=8
-export BBS_BUILD_NB_CPU=6
-export BBS_CHECK_NB_CPU=7
+# merida1 has 24 logical CPUs.
+export BBS_NB_CPU=23
+export BBS_BUILD_NB_CPU=22
+export BBS_CHECK_NB_CPU=24
+export BBS_EXTRA_CHECK_OPTIONS="--no-vignettes"
 
 # Central build node is bbscentral1 on Jetstream2.
 export BBS_CENTRAL_RHOST="bbscentral1"
