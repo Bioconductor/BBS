@@ -23,6 +23,11 @@ allnodes = {
                     'Platform': "x86_64-linux-gnu",
                     'pkgType' : "source",
                     'encoding': "utf_8"},
+    'bbscentral3': {'OS'      : "Linux (Ubuntu 24.04.4 LTS)",
+                    'Arch'    : "x86_64",
+                    'Platform': "x86_64-linux-gnu",
+                    'pkgType' : "source",
+                    'encoding': "utf_8"},
     ## Internal build nodes.
     'nebbiolo1':   {'OS'      : "Linux (Ubuntu 24.04.4 LTS)",
                     'Arch'    : "x86_64",
