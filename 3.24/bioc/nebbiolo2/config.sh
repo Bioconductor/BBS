@@ -23,10 +23,7 @@ export BBS_CHECK_NB_CPU=24
 # Central build node is bbscentral2 on Jetstream2.
 export BBS_CENTRAL_RHOST="bbscentral2"
 export BBS_RSH_CMD="ssh -F /home/biocbuild/.ssh/config"
-#bbscentral3
-export BBS_CENTRAL_ROOT_URL="http://149.165.154.114"
-#bbscentral2
-#export BBS_CENTRAL_ROOT_URL="http://149.165.152.87"
+export BBS_CENTRAL_ROOT_URL="http://149.165.152.87"
 export BBS_PRODUCT_TRANSMISSION_MODE="asynchronous"
 
 
