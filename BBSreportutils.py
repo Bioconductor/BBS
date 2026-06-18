@@ -88,7 +88,7 @@ def set_NODES(fancynames_in_one_string):
             bioccheck = buildbin = pkgs = None
         else:
             bioccheck = fancyname_has_suffix(fancyname, "bioccheck")
-            buildbin = fancyname_has_suffix(fancyname, "bin")
+            buildbin = fancyname_has_suffix(fancyname, "buildbin")
             pkgType = BBSutils.getNodeSpec(hostname, 'pkgType')
             pkgs = bbs.parse.get_meat_packages_for_node(
                                                BBSutils.meat_index_file,
