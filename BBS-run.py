@@ -651,7 +651,7 @@ def STAGE3():
     # skipped STAGE2 (e.g. bioc-longtests builds).
     logger.debug('Making NodeInfo')
     makeNodeInfo()
-    logger.info("BBS> [STAGE3] cd BBS_MEAT_PATH")
+    logger.info("[STAGE3] cd BBS_MEAT_PATH")
     target_pkgs = get_list_of_target_pkgs()
     meat_path = BBSvars.meat_path
     if BBSvars.buildtype == "bioc-longtests":
