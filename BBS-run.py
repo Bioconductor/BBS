@@ -48,7 +48,6 @@ def make_products_out_subdir(stage):
         os.mkdir(products_out_path)
         os.mkdir(products_out_subdir)
     logger.info('products-out subdir: %s' % products_out_subdir)
-    print('BBS>   products-out subdir: %s' % products_out_subdir)
     return products_out_subdir
 
 def make_products_push_cmd(out_dir, rdir):
@@ -81,7 +80,7 @@ def appendRconfigValue(file, var, is_first=False):
     try:
         val = getRconfigValue(var)
     except RuntimeError as e:
-        print(f"ERROR> Set {var} to NA > {str(e)}")
+        logger.error(f"ERROR> Set {var} to NA > {str(e)}")
         val = "NA"
     if is_first and os.path.exists(file):
         os.remove(file)
@@ -137,7 +136,6 @@ def makeNodeInfo():
     # Generate the NodeInfo files (the files containing some node related info)
     NodeInfo_subdir = 'NodeInfo'
     logger.info('Updating BBS_WORK_TOPDIR/%s' % NodeInfo_subdir)
-    print('BBS>   Updating BBS_WORK_TOPDIR/%s' % NodeInfo_subdir)
     NodeInfo_path = os.path.join(BBSvars.work_topdir, NodeInfo_subdir)
     bbs.fileutils.remake_dir(NodeInfo_path)
     os.chdir(NodeInfo_path)
@@ -168,7 +166,6 @@ def makeNodeInfo():
     bbs.jobs.runJob(BBSbase.Rexpr2syscmd(Rexpr), \
                     'R-instpkgs.txt', 120.0, True) # ignore retcode
     logger.info('cd BBS_WORK_TOPDIR')
-    print('BBS>   cd BBS_WORK_TOPDIR')
     os.chdir(BBSvars.work_topdir)
     if not BBSvars.synchronous_transmission:
         # We're in "no transmission" or "asynchronous transmission" mode.
@@ -189,9 +186,7 @@ def makeNodeInfo():
 def write_BBS_EndOfRun_ticket(ticket):
     logger = get_logger()
     logger.info('START writing BBS_EndOfRun.txt ticket.')
-    print('BBS> START writing BBS_EndOfRun.txt ticket.')
     logger.info('cd BBS_MEAT_PATH')
-    print('BBS>   cd BBS_MEAT_PATH')
     os.chdir(BBSvars.meat_path)
     file_path = 'BBS_EndOfRun.txt'
     f = open(file_path, 'w')
@@ -207,7 +202,6 @@ def write_BBS_EndOfRun_ticket(ticket):
         # note that failure to transfer is not fatal.
         BBSvars.Node_rdir.Put(file_path, False, True)
     logger.info('END writing BBS_EndOfRun.txt ticket.')
-    print('BBS> END writing BBS_EndOfRun.txt ticket.')
     return
 
 ## Get list of target packages from meat index file located on central
@@ -216,7 +210,6 @@ def write_BBS_EndOfRun_ticket(ticket):
 def get_list_of_target_pkgs():
     logger = get_logger()
     logger.debug('get_list_of_target_pkgs: downloading meat index file')
-    print('BBS> [get_list_of_target_pkgs]', end=' ')
     if not os.path.isdir(BBSvars.meat_path):
         os.mkdir(BBSvars.meat_path)
     meat_index_path = BBSutils.downloadFile(BBSutils.meat_index_file,
@@ -235,7 +228,6 @@ def get_list_of_target_pkgs():
 def getSrcPkgFilesFromSuccessfulSTAGE3(stage_LABEL):
     logger = get_logger()
     logger.debug('Getting list of source tarballs to %s' % stage_LABEL)
-    print('BBS> Get list of source tarballs to %s ...' % stage_LABEL, end=' ')
     sys.stdout.flush()
     target_pkgs = get_list_of_target_pkgs()
     stage = 'buildsrc'
@@ -270,19 +262,15 @@ def build_pkg_dep_graph(target_pkgs):
     for pkg in target_pkgs:
         out.write('%s\n' % pkg)
     out.close()
-    print('BBS> [build_pkg_dep_graph]', end=' ')
-    print('%s pkgs written to %s' % (len(target_pkgs), target_pkgs_file))
-    logger.debug('Wrote %d target packages to %s' % (len(target_pkgs), target_pkgs_file))
+    logger.debug('[build_pkg_dep_graph] Wrote %d target packages to %s' % (len(target_pkgs), target_pkgs_file))
 
     # Generate file 'pkg_dep_graph.txt'.
     Rfunction = 'build_pkg_dep_graph'
     script_path = os.path.join(BBSvars.BBS_home,
                                'utils',
                                'build_pkg_dep_graph.R')
-    print('BBS> [build_pkg_dep_graph]', end=' ')
-    print('Calling %s() defined in %s to generate file %s ...' % \
-          (Rfunction, script_path, BBSutils.pkg_dep_graph_file), end=' ')
-    logger.info('[build_pkg_dep_graph] Calling %s() to generate dependency graph' % Rfunction)
+    logger.info('[build_pkg_dep_graph] Calling %s() in %s to generate %s' % \
+          (Rfunction, script_path, BBSutils.pkg_dep_graph_file))
     sys.stdout.flush()
     # Backslashes in the paths injected in 'Rexpr' will be seen as escape
     # characters by R so we need to replace them. Nothing will be replaced
@@ -301,9 +289,8 @@ def build_pkg_dep_graph(target_pkgs):
     cmd = BBSbase.Rexpr2syscmd(Rexpr)
     retcode = bbs.jobs.runJob(cmd, out_file)
     if retcode != 0:
-        print('ERROR!')
-        print('BBS> [build_pkg_dep_graph] Command %s' % cmd, end=' ')
-        logger.error('[build_pkg_dep_graph] Command failed with retcode: %s' % retcode)
+        logger.error('[build_pkg_dep_graph] Command %s failed with retcode: %s' % \
+                     (cmd, retcode))
         if retcode == None:
             print('timed out', end=' ')
         else:
@@ -324,13 +311,12 @@ def build_pkg_dep_graph(target_pkgs):
         BBSvars.Node_rdir.Put(BBSutils.pkg_dep_graph_file, False, True)
 
     # Load file 'pkg_dep_graph.txt'.
-    print('BBS> [build_pkg_dep_graph] Loading %s file ...' % \
-          BBSutils.pkg_dep_graph_file, end=' ')
+    logger.info('[build_pkg_dep_graph] Loading %s file ...' % \
+                BBSutils.pkg_dep_graph_file)
     pkg_dep_graph = bbs.parse.load_pkg_dep_graph(BBSutils.pkg_dep_graph_file)
-    print('OK (%s pkgs and their deps loaded)' % len(pkg_dep_graph))
-    logger.debug('Loaded dependency graph with %d packages' % len(pkg_dep_graph))
+    logger.info('Loaded dependency graph with %d packages' % len(pkg_dep_graph))
 
-    print('BBS> [build_pkg_dep_graph] DONE.')
+    logger.info('[build_pkg_dep_graph] DONE.')
     return pkg_dep_graph
 
 def get_installed_pkgs():
@@ -346,7 +332,6 @@ def get_installed_pkgs():
     for line in f:
         installed_pkgs.append(line.strip())
     f.close()
-    print('BBS> [get_installed_pkgs] %s installed pkgs' % len(installed_pkgs))
     logger.info('[get_installed_pkgs] Found %s installed packages' % len(installed_pkgs))
     return installed_pkgs
 
@@ -373,7 +358,6 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
                              installed_pkgs, out_dir):
     logger = get_logger()
     logger.debug('Preparing STAGE2 job queue')
-    print('BBS> Preparing STAGE2 job queue ...', end=' ')
     sys.stdout.flush()
     stage = 'install'
     jobs = []
@@ -429,7 +413,6 @@ def prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
 def STAGE2_loop(job_queue, nb_cpu, out_dir):
     logger = get_logger()
     logger.info('BEGIN STAGE2 loop with %d CPUs' % nb_cpu)
-    print('BBS> BEGIN STAGE2 loop.')
     t1 = time.time()
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.install_rdir
@@ -443,7 +426,7 @@ def STAGE2_loop(job_queue, nb_cpu, out_dir):
                                             products_push_log,
                                             verbose=True)
     dt = time.time() - t1
-    print('BBS> END STAGE2 loop.')
+    logger.info('BBS> END STAGE2 loop.')
     nb_jobs = len(job_queue._jobs)
     nb_pkgs_to_install = job_queue._nb_pkgs_to_install
     nb_failures = nb_pkgs_to_install - nb_installed
@@ -461,7 +444,6 @@ def STAGE2_loop(job_queue, nb_cpu, out_dir):
 def STAGE2():
     logger = get_logger()
     logger.info('STARTING STAGE2 at %s' % time.asctime())
-    print('BBS> [STAGE2] STARTING STAGE2 at %s' % time.asctime())
     # We want to make sure the target repo is ready before we actually start
     # (if it's not ready yet it probably means that the prerun.sh script did
     # not finish on the main node, in which case we want to wait before we
@@ -506,12 +488,12 @@ def STAGE2():
 
     if BBSvars.MEAT0_type == 3 and not BBSvars.no_transmission:
         logger.debug('Syncing gitlog directory')
-        print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/gitlog')
+        logger.info('[STAGE2] cd BBS_WORK_TOPDIR/gitlog')
         gitlog_path = BBSutils.getenv('BBS_GITLOG_PATH')
         BBSvars.GITLOG_rdir.syncLocalDir(gitlog_path, True)
 
     logger.debug('Creating STAGE2_tmp directory')
-    print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp')
+    logger.info('[STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp')
     STAGE2_tmp = os.path.join(BBSvars.work_topdir, 'STAGE2_tmp')
     bbs.fileutils.remake_dir(STAGE2_tmp)
     os.chdir(STAGE2_tmp)
@@ -526,7 +508,6 @@ def STAGE2():
     if BBSvars.buildtype in ['bioc', 'bioc-gpu', 'bioc-rapid', 'bioc-testing']:
         # Update non-target packages.
         logger.info('Updating non-target packages (1st run)')
-        print('BBS> [STAGE2] Update non-target packages (1st run) ...', end=' ')
         sys.stdout.flush()
         cmd = BBSbase.get_update_cmd_for_non_target_pkgs()
         bbs.jobs.runJob(cmd, 'updateNonTargetPkgs1.Rout', 3600.0)
@@ -543,8 +524,7 @@ def STAGE2():
     logger.debug('Getting list of installed packages')
     installed_pkgs = get_installed_pkgs()
 
-    logger.debug('Changing to meat directory')
-    print('BBS> [STAGE2] cd BBS_MEAT_PATH')
+    logger.info('[STAGE2] cd BBS_MEAT_PATH')
     os.chdir(meat_path)
     # If BBS_PRODUCT_TRANSMISSION_MODE="none" then the meat got downloaded
     # from the target repo which got already injected during prerun, so no
@@ -554,9 +534,7 @@ def STAGE2():
         BBSbase.injectFieldsIntoMeat(meat_path, target_pkgs)
 
     if BBSvars.buildtype != 'cran':
-        logger.debug('Injecting Date/Publication field into DESCRIPTION files')
-        print('BBS>   Injecting Date/Publication field into',
-              '*/DESCRIPTION files ...', end=' ')
+        logger.debug('Injecting Date/Publication field into */DESCRIPTION files ...')
         for pkg in target_pkgs:
             desc_file = os.path.join(meat_path, pkg, 'DESCRIPTION')
             if not os.path.exists(desc_file):
@@ -567,15 +545,13 @@ def STAGE2():
         print('OK')
 
     # Then re-install the supporting packages.
-    logger.info('Re-installing supporting packages')
-    print('BBS> [STAGE2] Re-install supporting packages')
+    logger.info('[STAGE2] Re-installing supporting packages')
     os.chdir(meat_path)
     job_queue = prepare_STAGE2_job_queue(target_pkgs, pkg_dep_graph,
                                          installed_pkgs, out_dir)
     STAGE2_loop(job_queue, BBSvars.install_nb_cpu, out_dir)
 
-    logger.debug('Changing back to STAGE2_tmp directory')
-    print('BBS> [STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp')
+    logger.debug('[STAGE2] cd BBS_WORK_TOPDIR/STAGE2_tmp')
     os.chdir(STAGE2_tmp)
 
     if BBSvars.buildtype in ['bioc', 'bioc-gpu', 'bioc-rapid', 'bioc-testing']:
@@ -592,8 +568,7 @@ def STAGE2():
     logger.debug('Making NodeInfo')
     makeNodeInfo()
 
-    logger.info('DONE STAGE2 at %s' % time.asctime())
-    print('BBS> [STAGE2] DONE at %s.' % time.asctime())
+    logger.info('[STAGE2] DONE')
     return
 
 
@@ -603,8 +578,7 @@ def STAGE2():
 
 def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
     logger = get_logger()
-    logger.debug('Preparing STAGE3 job queue')
-    print("BBS> Preparing STAGE3 job queue ...", end=" ")
+    logger.info('Preparing STAGE3 job queue')
     sys.stdout.flush()
     stage = 'buildsrc'
     jobs = []
@@ -614,7 +588,7 @@ def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
             version = bbs.parse.get_Version_from_pkgsrctree(pkgsrctree)
             srcpkg_file = bbs.parse.make_srcpkg_file_from_pkgsrctree(pkgsrctree)
         except IOError:
-            print("BBS>   Can't read DESCRIPTION file!")
+            logger.error("Can't read DESCRIPTION file!")
         else:
             cmd = BBSbase.getSTAGE3cmd(pkgsrctree)
             pkgdumps_prefix = pkg + '.' + stage
@@ -632,7 +606,6 @@ def prepare_STAGE3_job_queue(pkgsrctrees, out_dir):
 def STAGE3_loop(job_queue, nb_cpu, out_dir):
     logger = get_logger()
     logger.info('BEGIN STAGE3 loop with %d CPUs' % nb_cpu)
-    print("BBS> BEGIN STAGE3 loop.")
     t1 = time.time()
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.buildsrc_rdir
@@ -678,8 +651,7 @@ def STAGE3():
     # skipped STAGE2 (e.g. bioc-longtests builds).
     logger.debug('Making NodeInfo')
     makeNodeInfo()
-    logger.debug('Changing to meat path')
-    print("BBS> [STAGE3] cd BBS_MEAT_PATH")
+    logger.info("BBS> [STAGE3] cd BBS_MEAT_PATH")
     target_pkgs = get_list_of_target_pkgs()
     meat_path = BBSvars.meat_path
     if BBSvars.buildtype == "bioc-longtests":
@@ -696,8 +668,7 @@ def STAGE3():
     job_queue = prepare_STAGE3_job_queue(target_pkgs, out_dir)
     logger.info('Starting to process STAGE3 job queue')
     STAGE3_loop(job_queue, BBSvars.buildsrc_nb_cpu, out_dir)
-    logger.info('DONE STAGE3 at %s' % time.asctime())
-    print("BBS> [STAGE3] DONE at %s." % time.asctime())
+    logger.info('[STAGE3] DONE')
     return
 
 
@@ -708,7 +679,6 @@ def STAGE3():
 def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
     logger = get_logger()
     logger.debug('Preparing STAGE4 job queue with %d packages' % len(srcpkg_paths))
-    print("BBS> Preparing STAGE4 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'checksrc'
     jobs = []
@@ -734,7 +704,6 @@ def prepare_STAGE4_job_queue(srcpkg_paths, out_dir):
 def STAGE4_loop(job_queue, nb_cpu, out_dir):
     logger = get_logger()
     logger.info('BEGIN STAGE4 loop with %d CPUs' % nb_cpu)
-    print("BBS> BEGIN STAGE4 loop.")
     t1 = time.time()
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.checksrc_rdir
@@ -748,7 +717,6 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
                              products_push_log,
                              verbose=True)
     dt = time.time() - t1
-    print("BBS> END STAGE4 loop.")
     nb_jobs = len(job_queue._jobs)
     total = job_queue._total
     logger.info('END STAGE4 loop in %.2f seconds' % dt)
@@ -763,8 +731,7 @@ def STAGE4_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE4():
     logger = get_logger()
-    logger.info('STARTING STAGE4 at %s' % time.asctime())
-    print("BBS> [STAGE4] STARTING STAGE4 at %s" % time.asctime())
+    logger.info('STARTING STAGE4 at %s')
     if not BBSvars.no_transmission:
         BBSvars.checksrc_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
@@ -773,16 +740,14 @@ def STAGE4():
     else:
         out_dir = make_products_out_subdir('checksrc')
 
-    logger.debug('Getting source packages from successful STAGE3')
-    print("BBS> [STAGE4] cd BBS_MEAT_PATH")
+    logger.debug("[STAGE4] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("CHECK")
     logger.debug('Found %d source packages for STAGE4' % len(srcpkg_paths))
     job_queue = prepare_STAGE4_job_queue(srcpkg_paths, out_dir)
     logger.info('Starting to process STAGE4 job queue')
     STAGE4_loop(job_queue, BBSvars.checksrc_nb_cpu, out_dir)
-    logger.info('DONE STAGE4 at %s' % time.asctime())
-    print("BBS> [STAGE4] DONE at %s." % time.asctime())
+    logger.info('[STAGE4] DONE')
     return
 
 
@@ -793,7 +758,6 @@ def STAGE4():
 def prepare_STAGE4B_job_queue(srcpkg_paths, out_dir):
     logger = get_logger()
     logger.debug('Preparing STAGE4B job queue with %d packages' % len(srcpkg_paths))
-    print("BBS> Preparing STAGE4B job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'bioccheck'
     jobs = []
@@ -814,7 +778,6 @@ def prepare_STAGE4B_job_queue(srcpkg_paths, out_dir):
 def STAGE4B_loop(job_queue, nb_cpu, out_dir):
     logger = get_logger()
     logger.info('BEGIN STAGE4B loop with %d CPUs' % nb_cpu)
-    print("BBS> BEGIN STAGE4B loop.")
     t1 = time.time()
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.bioccheck_rdir
@@ -828,7 +791,6 @@ def STAGE4B_loop(job_queue, nb_cpu, out_dir):
                              products_push_log,
                              verbose=True)
     dt = time.time() - t1
-    print("BBS> END STAGE4B loop.")
     nb_jobs = len(job_queue._jobs)
     total = job_queue._total
     logger.info('END STAGE4B loop in %.2f seconds' % dt)
@@ -843,8 +805,7 @@ def STAGE4B_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE4B():
     logger = get_logger()
-    logger.info('STARTING STAGE4B at %s' % time.asctime())
-    print("BBS> [STAGE4B] STARTING STAGE4B at %s" % time.asctime())
+    logger.info('[STAGE4B] STARTING STAGE4B')
     if not BBSvars.no_transmission:
         BBSvars.bioccheck_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
@@ -853,16 +814,14 @@ def STAGE4B():
     else:
         out_dir = make_products_out_subdir('bioccheck')
 
-    logger.debug('Getting source packages from successful STAGE3')
-    print("BBS> [STAGE4B] cd BBS_MEAT_PATH")
+    logger.info("[STAGE4B] cd BBS_MEAT_PATH")
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("BIOCCHECK")
     logger.debug('Found %d source packages for STAGE4B' % len(srcpkg_paths))
     job_queue = prepare_STAGE4B_job_queue(srcpkg_paths, out_dir)
     logger.info('Starting to process STAGE4B job queue')
     STAGE4B_loop(job_queue, BBSvars.bioccheck_nb_cpu, out_dir)
-    logger.info('DONE STAGE4B at %s' % time.asctime())
-    print("BBS> [STAGE4B] DONE at %s." % time.asctime())
+    logger.info('DONE STAGE4B')
     return
 
 
@@ -873,7 +832,6 @@ def STAGE4B():
 def prepare_STAGE5_job_queue(srcpkg_paths, out_dir):
     logger = get_logger()
     logger.debug('Preparing STAGE5 job queue with %d packages' % len(srcpkg_paths))
-    print("BBS> Preparing STAGE5 job queue ...", end=" ")
     sys.stdout.flush()
     stage = 'buildbin'
     jobs = []
@@ -896,7 +854,6 @@ def prepare_STAGE5_job_queue(srcpkg_paths, out_dir):
 def STAGE5_loop(job_queue, nb_cpu, out_dir):
     logger = get_logger()
     logger.info('BEGIN STAGE5 loop with %d CPUs' % nb_cpu)
-    print("BBS> BEGIN STAGE5 loop.")
     t1 = time.time()
     if BBSvars.asynchronous_transmission:
         rdir = BBSvars.buildbin_rdir
@@ -910,7 +867,6 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
                                            products_push_log,
                                            verbose=True)
     dt = time.time() - t1
-    print("BBS> END STAGE5 loop.")
     nb_jobs = len(job_queue._jobs)
     total = job_queue._total
     logger.info('END STAGE5 loop: %d binary packages produced in %.2f seconds' % (nb_products, dt))
@@ -926,8 +882,7 @@ def STAGE5_loop(job_queue, nb_cpu, out_dir):
 
 def STAGE5():
     logger = get_logger()
-    logger.info('STARTING STAGE5 at %s' % time.asctime())
-    print("BBS> [STAGE5] STARTING STAGE5 at %s" % time.asctime())
+    logger.info('STARTING STAGE5')
     if not BBSvars.no_transmission:
         BBSvars.buildbin_rdir.RemakeMe(True)
     if BBSvars.synchronous_transmission:
@@ -936,16 +891,14 @@ def STAGE5():
     else:
         out_dir = make_products_out_subdir('buildbin')
 
-    logger.debug('Getting source packages from successful STAGE3')
-    print("BBS> [STAGE5] cd BBS_MEAT_PATH")
+    logger.debug('[STAGE5] cd BBS_MEAT_PATH')
     os.chdir(BBSvars.meat_path)
     srcpkg_paths = getSrcPkgFilesFromSuccessfulSTAGE3("BUILD BIN")
     logger.debug('Found %d source packages for STAGE5' % len(srcpkg_paths))
     job_queue = prepare_STAGE5_job_queue(srcpkg_paths, out_dir)
     logger.info('Starting to process STAGE5 job queue')
     STAGE5_loop(job_queue, BBSvars.nb_cpu, out_dir)
-    logger.info('DONE STAGE5 at %s' % time.asctime())
-    print("BBS> [STAGE5] DONE at %s." % time.asctime())
+    logger.info('[STAGE5] DONE')
     return
 
 
