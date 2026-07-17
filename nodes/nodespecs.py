@@ -64,11 +64,6 @@ allnodes = {
                     'Platform': "x86_64-apple-darwin21.6.0",
                     'pkgType' : "mac.binary.big-sur-x86_64",
                     'encoding': "utf-8"},
-    'merida1':     {'OS'      : "macOS 12.7.6 Monterey",
-                    'Arch'    : "x86_64",
-                    'Platform': "x86_64-apple-darwin21.6.0",
-                    'pkgType' : "mac.binary.big-sur-x86_64",
-                    'encoding': "utf-8"},
     ## External nodes.
     'kunpeng2':    {'OS'      : "Linux (openEuler 24.03 LTS)",
                     'Arch'    : "aarch64",
