@@ -799,7 +799,7 @@ and
 
     C:\Users\biocbuild\AppData\Local\ExperimentHub\ExperimentHub\Cache
 
-even if the home folder of the `biocbuild` account was explicitely set to
+even if the home folder of the `biocbuild` account was explicitly set to
 something other than `C:\Users\biocbuild`! (See _Create the `biocbuild`
 account_ section above in this document for more information about using
 a customized `biocbuild`'s home folder.)
