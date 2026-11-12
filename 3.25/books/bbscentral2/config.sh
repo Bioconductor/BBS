@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================
-# Settings for bbscentral2
+# Settings for bbscentral1
 # ========================
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="bbscentral2"
+export BBS_NODE_HOSTNAME="bbscentral1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-books"
 export BBS_R_HOME="/home/biocbuild/R/R-4.7"

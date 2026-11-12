@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================
-# Settings for bbscentral2
+# Settings for bbscentral1
 # ========================
 
 
@@ -9,7 +9,7 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="bbscentral2"
+export BBS_NODE_HOSTNAME="bbscentral1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-bioc-gpu"
 export BBS_R_HOME="/home/biocbuild/R/R-4.7"
@@ -55,6 +55,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-export BBS_NOTIFY_NODES="bbscentral2"
+export BBS_NOTIFY_NODES="bbscentral1"
 export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
