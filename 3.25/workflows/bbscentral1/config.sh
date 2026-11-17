@@ -1,7 +1,7 @@
 #!/bin/bash
-# ======================
-# Settings for nebbiolo2
-# ======================
+# ========================
+# Settings for bbscentral1
+# ========================
 
 
 
@@ -9,15 +9,11 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="nebbiolo2"
+export BBS_NODE_HOSTNAME="bbscentral1"
 export BBS_USER="biocbuild"
-export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-data-annotation"
-export BBS_R_HOME="/home/biocbuild/bbs-3.25-bioc/R"
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-workflows"
+export BBS_R_HOME="/home/biocbuild/R/R-4.7"
 export R_LIBS="$BBS_R_HOME/site-library"
-
-# nebbiolo2 has 72 logical CPUs.
-export BBS_NB_CPU=16
-export BBS_CHECK_NB_CPU=20
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
@@ -38,11 +34,11 @@ cd "$wd0"
 # central node
 
 # Control propagation:
-export BBS_OUTGOING_MAP="source:nebbiolo2/buildsrc"
-export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/data/annotation"
+export BBS_OUTGOING_MAP="source:nebbiolo1/buildsrc"
+export BBS_FINAL_REPO="file://home/biocpush/PACKAGES/$BBS_BIOC_VERSION/workflows"
 
 # Control generation of the report:
-export BBS_REPORT_NODES="nebbiolo2"
+export BBS_REPORT_NODES="nebbiolo1 lconway"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
@@ -59,6 +55,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-export BBS_NOTIFY_NODES="nebbiolo2"
+export BBS_NOTIFY_NODES="nebbiolo1"
 export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 

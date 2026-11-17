@@ -1,6 +1,6 @@
 #!/bin/bash
 # ======================
-# Settings for nebbiolo2
+# Settings for nebbiolo1
 # ======================
 
 
@@ -9,13 +9,13 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="nebbiolo2"
+export BBS_NODE_HOSTNAME="nebbiolo1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-books"
 export BBS_R_HOME="/home/biocbuild/bbs-3.25-bioc/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
-# nebbiolo2 has 72 logical CPUs.
+# nebbiolo1 has 72 logical CPUs.
 export BBS_NB_CPU=8
 
 # Central build node is bbscentral1 on Jetstream2.

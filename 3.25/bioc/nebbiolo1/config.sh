@@ -1,6 +1,6 @@
 #!/bin/bash
 # ======================
-# Settings for nebbiolo2
+# Settings for nebbiolo1
 # ======================
 
 
@@ -9,13 +9,13 @@
 
 export BBS_DEBUG="0"
 
-export BBS_NODE_HOSTNAME="nebbiolo2"
+export BBS_NODE_HOSTNAME="nebbiolo1"
 export BBS_USER="biocbuild"
 export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-bioc"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
-# nebbiolo2 has 72 logical CPUs.
+# nebbiolo1 has 72 logical CPUs.
 export BBS_NB_CPU=20
 export BBS_BUILD_NB_CPU=15
 export BBS_CHECK_NB_CPU=24
