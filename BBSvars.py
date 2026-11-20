@@ -56,6 +56,8 @@ buildtype = BBSutils.getenv('BBS_BUILDTYPE', False, default='bioc')
 
 if buildtype == 'bioc':
     default_INSTALL_timeout = '3600.0'  # 1h (because of duckdb)
+elif buildtype == 'bioc-gpu':
+    default_INSTALL_timeout = '7200.0'  # 2h (because of duckdb)
 else:
     default_INSTALL_timeout = '2400.0'  # 40 min
 
