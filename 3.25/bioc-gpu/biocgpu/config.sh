@@ -18,8 +18,10 @@ export R_LIBS="$BBS_R_HOME/site-library"
 # biocgpu has 8 logical CPUs but only 1 GPU so for now we err on the side
 # of caution and set BBS_BUILD_NB_CPU and BBS_CHECK_NB_CPU to 1. This way
 # each package gets exclusive access to the GPU during 'R CMD build'
-# and 'R CMD check'.
+# and 'R CMD check'. BBS_INSTALL_NB_CPU is set to 1 so that heavy source
+# installs (e.g. duckdb) do not oversubscribe the host.
 export BBS_NB_CPU=5
+export BBS_INSTALL_NB_CPU=1
 export BBS_BUILD_NB_CPU=1
 export BBS_CHECK_NB_CPU=1
 
