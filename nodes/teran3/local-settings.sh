@@ -1,6 +1,6 @@
 #!/bin/bash
 # =========================
-# Local settings for teran2
+# Local settings for teran3
 # =========================
 
 

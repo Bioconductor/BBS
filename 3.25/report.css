@@ -510,17 +510,17 @@ DIV.nebbiolo2 {
     color: #005;
 }
 
-/* teran2 (Ubuntu 24.04) */
-.teran2,
-.gcard TD.teran2 {
+/* teran3 (Ubuntu 26.04) */
+.teran3,
+.gcard TD.teran3 {
     background: #E5E3FD;
 }
-.teran2.toned_down,
-TR.toned_down .teran2,
-TBODY.compact.gcard TR.even_row_number .teran2 {
+.teran3.toned_down,
+TR.toned_down .teran3,
+TBODY.compact.gcard TR.even_row_number .teran3 {
     background: #D5D3ED;
 }
-DIV.teran2 {
+DIV.teran3 {
     color: #005;
 }
 

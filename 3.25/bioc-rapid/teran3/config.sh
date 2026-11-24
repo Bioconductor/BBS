@@ -1,6 +1,6 @@
 #!/bin/bash
 # ===================
-# Settings for teran2
+# Settings for teran3
 # ===================
 
 
@@ -11,13 +11,13 @@ export BBS_DEBUG="0"
 
 export BBS_HOME="/home/rapidbuild/BBS"
 
-export BBS_NODE_HOSTNAME="teran2"
+export BBS_NODE_HOSTNAME="teran3"
 export BBS_USER="rapidbuild"
 export BBS_WORK_TOPDIR="/home/rapidbuild/bbs-3.25-bioc-rapid"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
-# teran2 has 16 logical CPUs.
+# teran3 has 16 logical CPUs.
 export BBS_NB_CPU=10
 export BBS_BUILD_NB_CPU=9
 export BBS_CHECK_NB_CPU=13
@@ -46,7 +46,7 @@ cd "$wd0"
 # central node
 
 # Control generation of the report:
-export BBS_REPORT_NODES="teran2:bioccheck"
+export BBS_REPORT_NODES="teran3:bioccheck"
 export BBS_REPORT_PATH="$BBS_CENTRAL_RDIR/report"
 export BBS_REPORT_CSS="$BBS_HOME/$BBS_BIOC_VERSION/report.css"
 export BBS_REPORT_BGIMG="$BBS_HOME/images/DEVEL3b.png"
@@ -63,6 +63,6 @@ export BBS_PUBLISHED_REPORT_DEST_DIR="webadmin@master.bioconductor.org:/extra/ww
 # the central node
 
 # TODO: when BBS_NOTIFY_NODES is not defined then take all the build nodes
-#export BBS_NOTIFY_NODES="teran2"
+#export BBS_NOTIFY_NODES="teran3"
 #export BBS_PUBLISHED_REPORT_URL="https://bioconductor.org/$BBS_PUBLISHED_REPORT_RELATIVEURL"
 
