@@ -482,15 +482,15 @@ TABLE.abc_dispatcher TD {
  * Node specific background colors
  */
 
-/* nebbiolo2 (Ubuntu 24.04) */
-.nebbiolo2,
-.gcard TD.nebbiolo2 {
-    background: #E5E3FD;
+/* nebbiolo1 (Ubuntu 26.04) */
+.nebbiolo1,
+.gcard TD.nebbiolo1 {
+    background: #D8BFD8;
 }
-.nebbiolo2.toned_down,
-TR.toned_down .nebbiolo2,
-TBODY.compact.gcard TR.even_row_number .nebbiolo2 {
-    background: #D5D3ED;
+.nebbiolo1.toned_down,
+TR.toned_down .nebbiolo1,
+TBODY.compact.gcard TR.even_row_number .nebbiolo1 {
+    background: #AA98A9;
 }
 DIV.nebbiolo2 {
     color: #005;

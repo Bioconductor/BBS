@@ -24,7 +24,7 @@ allnodes = {
                     'pkgType' : "source",
                     'encoding': "utf_8"},
     ## Internal build nodes.
-    'nebbiolo1':   {'OS'      : "Linux (Ubuntu 24.04.4 LTS)",
+    'nebbiolo1':   {'OS'      : "Linux (Ubuntu 26.04.1 LTS)",
                     'Arch'    : "x86_64",
                     'Platform': "x86_64-linux-gnu",
                     'pkgType' : "source",
