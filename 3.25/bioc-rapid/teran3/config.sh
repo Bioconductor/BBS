@@ -9,11 +9,11 @@
 
 export BBS_DEBUG="0"
 
-export BBS_HOME="/home/rapidbuild/BBS"
+export BBS_HOME="/home/biocbuild/BBS"
 
 export BBS_NODE_HOSTNAME="teran3"
-export BBS_USER="rapidbuild"
-export BBS_WORK_TOPDIR="/home/rapidbuild/bbs-3.25-bioc-rapid"
+export BBS_USER="biocbuild"
+export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-bioc-rapid"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 

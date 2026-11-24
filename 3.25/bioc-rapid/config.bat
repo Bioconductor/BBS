@@ -29,7 +29,7 @@ set BBS_BIOC_MANIFEST_FILE=software-testing.txt
 @rem Where is the fresh meat to be stored by prerun (stage1)
 set BBS_MEAT0_RHOST=%BBS_CENTRAL_RHOST%
 set BBS_MEAT0_RUSER=%BBS_CENTRAL_RUSER%
-set BBS_MEAT0_RDIR=/home/rapidbuild/bbs-3.25-bioc-rapid/MEAT0
+set BBS_MEAT0_RDIR=/home/biocbuild/bbs-3.25-bioc-rapid/MEAT0
 
 @rem Triggers a MEAT0 update at beginning of prerun (stage1)
 set BBS_UPDATE_MEAT0=1
