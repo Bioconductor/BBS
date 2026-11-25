@@ -17,11 +17,11 @@ export BBS_WORK_TOPDIR="/home/biocbuild/bbs-3.25-bioc-rapid"
 export BBS_R_HOME="$BBS_WORK_TOPDIR/R"
 export R_LIBS="$BBS_R_HOME/site-library"
 
-# teran3 has 16 logical CPUs.
-export BBS_NB_CPU=10
-export BBS_BUILD_NB_CPU=9
-export BBS_CHECK_NB_CPU=13
-export BBS_BIOCCHECK_NB_CPU=13
+# teran3 has 8 logical CPUs.
+export BBS_NB_CPU=6
+export BBS_BUILD_NB_CPU=5
+export BBS_CHECK_NB_CPU=6
+export BBS_BIOCCHECK_NB_CPU=6
 
 export BBS_CENTRAL_RHOST="localhost"
 export BBS_CENTRAL_ROOT_URL="http://$BBS_CENTRAL_RHOST"
